@@ -80,10 +80,10 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
             assert client._credential is None
 
-            properties = await client.get_repository_properties("library/alpine")
+            properties = await client.get_repository_properties("library/hello-world")
 
             assert isinstance(properties, RepositoryProperties)
-            assert properties.name == "library/alpine"
+            assert properties.name == "library/hello-world"
 
     @acr_preparer()
     @recorded_by_proxy_async
@@ -95,7 +95,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             assert client._credential is None
 
             count = 0
-            async for manifest in client.list_manifest_properties("library/alpine"):
+            async for manifest in client.list_manifest_properties("library/hello-world"):
                 assert isinstance(manifest, ArtifactManifestProperties)
                 count += 1
             assert count > 0
@@ -109,11 +109,11 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
             assert client._credential is None
 
-            registry_artifact = await client.get_manifest_properties("library/alpine", "latest")
+            registry_artifact = await client.get_manifest_properties("library/hello-world", "latest")
 
             assert isinstance(registry_artifact, ArtifactManifestProperties)
             assert "latest" in registry_artifact.tags
-            assert registry_artifact.repository_name == "library/alpine"
+            assert registry_artifact.repository_name == "library/hello-world"
 
     @acr_preparer()
     @recorded_by_proxy_async
@@ -125,7 +125,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             assert client._credential is None
 
             count = 0
-            async for tag in client.list_tag_properties("library/alpine"):
+            async for tag in client.list_tag_properties("library/hello-world"):
                 count += 1
                 assert isinstance(tag, ArtifactTagProperties)
             assert count > 0

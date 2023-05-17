@@ -22,6 +22,7 @@ SUPPORTED_API_VERSIONS = [
     "2021-07-01"
 ]
 DEFAULT_CHUNK_SIZE = 4 * 1024 * 1024 # 4MB
+MAX_MANIFEST_SIZE = 4 * 1024 * 1024
 
 # The default audience used for all clouds when audience is not set
 DEFAULT_AUDIENCE = "https://containerregistry.azure.net"
@@ -136,6 +137,21 @@ def _compute_digest(data: Union[IO[bytes], bytes]) -> str:
         data.seek(0)
     return "sha256:" + hashlib.sha256(value).hexdigest()
 
-def _validate_digest(data: Union[IO[bytes], bytes], expected_digest: str) -> bool:
-    digest = _compute_digest(data)
-    return digest == expected_digest
+def _validate_digest(data: IO[bytes], expected_digest: str) -> bool:
+    return _compute_digest(data) == expected_digest
+
+def _get_blob_size(headers: Dict[str, str]) -> int:
+    if not headers["Content-Range"]:
+        raise ValueError("Missing content-range header in response.")
+    blob_size = int(headers["Content-Range"].split("/")[1])
+    if blob_size <= 0:
+        raise ValueError(f"Invalid content-range header in response: {blob_size}")
+    return blob_size
+
+def _get_manifest_size(headers: Dict[str, str]) -> int:
+    if not headers["Content-Length"]:
+        raise ValueError("Missing content-length header in response.")
+    manifest_size = int(headers["Content-Length"])
+    if manifest_size <= 0:
+        raise ValueError(f"Invalid content-length header in response: {manifest_size}")
+    return manifest_size

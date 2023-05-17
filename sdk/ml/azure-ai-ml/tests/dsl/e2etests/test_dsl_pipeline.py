@@ -3286,3 +3286,19 @@ class TestDSLPipeline(AzureRecordedTestCase):
             node_compute = rest_obj.properties.jobs[node_name]["computeId"]
             assert is_singularity_id_for_resource(node_compute)
             assert node_compute.endswith(singularity_vc.name)
+
+    def test_assign_value_to_unknown_filed(self, client: MLClient):
+        path = "./tests/test_configs/components/helloworld_component.yml"
+        component_func = load_component(source=path)
+        # Due to it will block ci with the tags of yaml when generating records, remove the tags here.
+        component_func.tags = {}
+
+        @dsl.pipeline()
+        def pipeline_func(input):
+            node = component_func(component_in_path=input)
+            node.unknown_field = input
+
+        pipeline_job: PipelineJob = pipeline_func(input=Input(path=path))
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        job_res = client.jobs.create_or_update(job=pipeline_job, experiment_name="test_unknown_field")
+        assert job_res.jobs["node"].unknown_field == "${{parent.inputs.input}}"

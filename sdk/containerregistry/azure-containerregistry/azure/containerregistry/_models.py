@@ -307,7 +307,8 @@ class ArtifactTagProperties(object):
 class GetManifestResult(object):
     """The get manifest result.
 
-    :ivar dict manifest: The manifest JSON.
+    :ivar manifest: The manifest JSON.
+    :vartype manifest: Mapping[str, Any]
     :ivar str media_type: The manifest's media type.
     :ivar str digest: The manifest's digest, calculated by the registry.
     """
@@ -316,3 +317,13 @@ class GetManifestResult(object):
         self.manifest = kwargs.get("manifest")
         self.media_type = kwargs.get("media_type")
         self.digest = kwargs.get("digest")
+
+
+class DigestValidationError(ValueError):
+    """Thrown when a manifest digest validation fails.
+    :param str message: Message for caller describing the reason for the failure.
+    """
+
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)

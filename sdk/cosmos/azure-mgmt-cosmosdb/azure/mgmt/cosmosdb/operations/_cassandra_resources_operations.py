@@ -44,7 +44,7 @@ def build_list_cassandra_keyspaces_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -79,7 +79,7 @@ def build_get_cassandra_keyspace_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -115,7 +115,7 @@ def build_create_update_cassandra_keyspace_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -153,7 +153,7 @@ def build_delete_cassandra_keyspace_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-15"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -184,7 +184,7 @@ def build_get_cassandra_keyspace_throughput_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -220,7 +220,7 @@ def build_update_cassandra_keyspace_throughput_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -259,7 +259,7 @@ def build_migrate_cassandra_keyspace_to_autoscale_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -295,7 +295,7 @@ def build_migrate_cassandra_keyspace_to_manual_throughput_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -331,7 +331,7 @@ def build_list_cassandra_tables_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -372,7 +372,7 @@ def build_get_cassandra_table_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -414,7 +414,7 @@ def build_create_update_cassandra_table_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -458,7 +458,7 @@ def build_delete_cassandra_table_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-15"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -495,7 +495,7 @@ def build_get_cassandra_table_throughput_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -537,7 +537,7 @@ def build_update_cassandra_table_throughput_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -582,7 +582,7 @@ def build_migrate_cassandra_table_to_autoscale_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -624,7 +624,7 @@ def build_migrate_cassandra_table_to_manual_throughput_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL

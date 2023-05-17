@@ -41,7 +41,8 @@ from .._list_blobs_helper import IgnoreListBlobsDeserializer
 from ._models import FilteredBlobPaged
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from datetime import datetime
     from .._models import ( # pylint: disable=unused-import
         AccessPolicy,
@@ -113,7 +114,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
     def __init__(
             self, account_url: str,
             container_name: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
         ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)

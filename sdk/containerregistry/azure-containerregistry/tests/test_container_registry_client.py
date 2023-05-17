@@ -10,6 +10,8 @@ import hashlib
 import json
 from datetime import datetime
 from io import BytesIO
+from unittest.mock import MagicMock
+from typing import Optional, Iterator, Any, MutableMapping
 from azure.containerregistry import (
     RepositoryProperties,
     ArtifactManifestProperties,
@@ -17,10 +19,17 @@ from azure.containerregistry import (
     ArtifactTagProperties,
     ArtifactTagOrder,
     ContainerRegistryClient,
+    DigestValidationError,
 )
 from azure.containerregistry._helpers import DOCKER_MANIFEST, OCI_IMAGE_MANIFEST, DEFAULT_CHUNK_SIZE
-from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError, HttpResponseError
+from azure.core.exceptions import (
+    ResourceNotFoundError,
+    ClientAuthenticationError,
+    HttpResponseError,
+    ServiceRequestError,
+)
 from azure.core.paging import ItemPaged
+from azure.core.pipeline import PipelineRequest
 from azure.identity import AzureAuthorityHosts
 from testcase import ContainerRegistryTestClass, get_authority, get_audience
 from constants import HELLO_WORLD, ALPINE, BUSYBOX, DOES_NOT_EXIST
@@ -786,34 +795,44 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         repo = self.get_resource_name("repo")
         with self.create_registry_client(containerregistry_endpoint) as client:
             # Test blob upload and download in equal size chunks
-            blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
-            data = b'\x00' * int(blob_size)
-            digest, size = client.upload_blob(repo, BytesIO(data))
-            assert size == blob_size
+            try:
+                blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
+                data = b'\x00' * int(blob_size)
+                digest, size = client.upload_blob(repo, BytesIO(data))
+                assert size == blob_size
 
-            stream = client.download_blob(repo, digest)
-            size = 0
-            with open("text1.txt", "wb") as file:
-                for chunk in stream:
-                    size += file.write(chunk)
-            assert size == blob_size
+                stream = client.download_blob(repo, digest)
+                size = 0
+                with open("text1.txt", "wb") as file:
+                    for chunk in stream:
+                        size += file.write(chunk)
+                assert size == blob_size
 
-            client.delete_blob(repo, digest)
+                client.delete_blob(repo, digest)
+            except ServiceRequestError as err:
+                # Service does not support resumable upload when get transient error while uploading
+                # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
+                print(f"Failed to upload blob: {err.message}")
 
             # Test blob upload and download in unequal size chunks
-            blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
-            data = b'\x00' * int(blob_size)
-            digest, size = client.upload_blob(repo, BytesIO(data))
-            assert size == blob_size
+            try:
+                blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
+                data = b'\x00' * int(blob_size)
+                digest, size = client.upload_blob(repo, BytesIO(data))
+                assert size == blob_size
 
-            stream = client.download_blob(repo, digest)
-            size = 0
-            with open("text2.txt", "wb") as file:
-                for chunk in stream:
-                    size += file.write(chunk)
-            assert size == blob_size
+                stream = client.download_blob(repo, digest)
+                size = 0
+                with open("text2.txt", "wb") as file:
+                    for chunk in stream:
+                        size += file.write(chunk)
+                assert size == blob_size
 
-            client.delete_blob(repo, digest)
+                client.delete_blob(repo, digest)
+            except ServiceRequestError as err:
+                # Service does not support resumable upload when get transient error while uploading
+                # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
+                print(f"Failed to upload blob: {err.message}")
 
             # Cleanup
             client.delete_repository(repo)
@@ -856,24 +875,135 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_list_tags_in_empty_repo(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        self.import_image(containerregistry_endpoint, ALPINE, [repo])
         with self.create_registry_client(containerregistry_endpoint) as client:
-            # cleanup tags in ALPINE repo
-            for tag in client.list_tag_properties(ALPINE):
-                client.delete_tag(ALPINE, tag.name)
+            # cleanup tags in repo
+            for tag in client.list_tag_properties(repo):
+                client.delete_tag(repo, tag.name)
             
-            response = client.list_tag_properties(ALPINE)
+            response = client.list_tag_properties(repo)
             if response is not None:
                 for tag in response:
                     pass
+            
+            client.delete_repository(repo)
     
     @acr_preparer()
     @recorded_by_proxy
     def test_list_manifests_in_empty_repo(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        self.import_image(containerregistry_endpoint, ALPINE, [repo])
         with self.create_registry_client(containerregistry_endpoint) as client:
-            # cleanup manifests in ALPINE repo
-            for tag in client.list_tag_properties(ALPINE):
-                client.delete_manifest(ALPINE, tag.name)
-            response = client.list_manifest_properties(ALPINE)
+            # cleanup manifests in repo
+            for tag in client.list_tag_properties(repo):
+                client.delete_manifest(repo, tag.name)
+            response = client.list_manifest_properties(repo)
             if response is not None:
                 for manifest in response:
                     pass
+            
+            client.delete_repository(repo)
+
+
+class TestContainerRegistryClientUnitTests:
+    containerregistry_endpoint="https://fake_url.azurecr.io"
+    
+    def text(self, encoding: Optional[str] = None) -> str:
+            return '{"hello": "world"}'
+
+    def test_manifest_digest_validation(self):        
+        JSON = MutableMapping[str, Any]
+            
+        def send_in_set_manifest(request: PipelineRequest, **kwargs) -> MagicMock:
+            content_digest = hashlib.sha256(b"hello world").hexdigest()
+            return MagicMock(
+                status_code=201,
+                headers={"Docker-Content-Digest": content_digest},
+                content_type="application/json; charset=utf-8",
+                text=self.text
+        )
+            
+        def read() -> bytes:
+            return b'{"hello": "world"}'
+        
+        def json() -> JSON:
+            return {"hello": "world"}
+        
+        def send_in_get_manifest(request: PipelineRequest, **kwargs) -> MagicMock:
+            content_digest = hashlib.sha256(b"hello world").hexdigest()
+            content_type = "application/vnd.oci.image.manifest.v1+json"
+            return MagicMock(
+                status_code=200,
+                headers={"Docker-Content-Digest": content_digest, "Content-Type": content_type, "Content-Length": len(b"hello world")},
+                read=read,
+                json=json
+        )
+            
+        with ContainerRegistryClient(
+            endpoint=self.containerregistry_endpoint, transport = MagicMock(send=send_in_set_manifest)
+        ) as client:
+            with pytest.raises(DigestValidationError) as exp:
+                manifest = {"hello": "world"}
+                client.set_manifest("test-repo", manifest)
+            assert str(exp.value) == "The server-computed digest does not match the client-computed digest."
+            
+        with ContainerRegistryClient(
+            endpoint=self.containerregistry_endpoint,
+            transport = MagicMock(send=send_in_get_manifest)
+        ) as client:
+            with pytest.raises(DigestValidationError) as exp:
+                digest = hashlib.sha256(b"hello world").hexdigest()
+                client.get_manifest("test-repo", f"sha256:{digest}")
+            assert str(exp.value) == "The content of retrieved manifest digest does not match the requested digest."
+                
+            with pytest.raises(DigestValidationError) as exp:
+                client.get_manifest("test-repo", "test-tag")
+            assert str(exp.value) == "The server-computed digest does not match the client-computed digest."
+
+    def test_blob_digest_validation(self):       
+        def send_in_upload_blob(request: PipelineRequest, **kwargs) -> MagicMock:
+            if request.method == "PUT":
+                content_digest = hashlib.sha256(b"hello world").hexdigest()
+                return MagicMock(
+                    status_code=201,
+                    headers={"Docker-Content-Digest": content_digest},
+                    content_type="application/json; charset=utf-8",
+                    text=self.text
+                )
+            else:
+                return MagicMock(
+                    status_code=202,
+                    headers={"Location": "/v2/test-repo/blobs/uploads/fake_location"},
+                    content_type="application/json; charset=utf-8",
+                    text=self.text
+                )
+        
+        def iter_bytes() -> Iterator[bytes]:
+            yield b'{"hello": "world"}'
+        
+        def send_in_download_blob(request: PipelineRequest, **kwargs) -> MagicMock:
+            return MagicMock(
+                status_code=206,
+                headers={"Content-Range": "bytes 0-27/28", "Content-Length": "28"},
+                content_type="application/json; charset=utf-8",
+                text=self.text,
+                iter_bytes=iter_bytes
+            )
+            
+        with ContainerRegistryClient(
+            endpoint=self.containerregistry_endpoint, transport = MagicMock(send=send_in_upload_blob)
+        ) as client:
+            with pytest.raises(DigestValidationError) as exp:
+                client.upload_blob("test-repo", BytesIO(b'{"hello": "world"}'))
+            assert str(exp.value) == "The server-computed digest does not match the client-computed digest."
+            
+        with ContainerRegistryClient(
+            endpoint=self.containerregistry_endpoint, transport = MagicMock(send=send_in_download_blob)
+        ) as client:
+            digest = hashlib.sha256(b"hello world").hexdigest()
+            stream = client.download_blob("test-repo", f"sha256:{digest}")
+            with pytest.raises(DigestValidationError) as exp:
+                for chunk in stream:
+                    pass
+            assert str(exp.value) == "The content of retrieved blob digest does not match the requested digest."
