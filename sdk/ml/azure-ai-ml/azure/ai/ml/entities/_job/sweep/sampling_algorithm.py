@@ -81,11 +81,7 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
 
 
 class GridSamplingAlgorithm(SamplingAlgorithm):
-    """Grid Sampling Algorithm.
-
-    :ivar type: Specifies the type of sampling algorithm. Set automatically to "grid" for this class.
-    :vartype type: str
-    """
+    """Grid Sampling Algorithm."""
 
     def __init__(self) -> None:
         super().__init__()
