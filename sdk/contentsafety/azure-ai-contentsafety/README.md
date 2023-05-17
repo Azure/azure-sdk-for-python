@@ -75,7 +75,6 @@ Every harm category the service applies also comes with a severity level rating.
 |2	|Low|
 |4	|Medium|
 |6	|High|
-A severity of 0 or "Safe" indicates a negative result: no objectionable content was detected in that category.
 
 ### Text blocklist management
 Following operations are supported to manage your text blocklist:
@@ -453,7 +452,7 @@ additional questions or comments.
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
-[contentsafety_overview]: https://review.learn.microsoft.com/azure/cognitive-services/content-safety/overview
+[contentsafety_overview]: https://aka.ms/acs-doc
 [azure_portal]: https://ms.portal.azure.com/
 [azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show
 [azure_cli_key_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account/keys?view=azure-cli-latest#az-cognitiveservices-account-keys-list
