@@ -1,8 +1,10 @@
 # Release History
 
-## 0.0.0 (it should be perview) (2023-05-17)
+## 2.0.0b3 (2023-05-17)
 
+### Other Changes
 
+  - Added samples
 
 ## 2.0.0b2 (2023-04-20)
 
