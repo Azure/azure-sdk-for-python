@@ -21,10 +21,10 @@ The options for the resource throttle retry policy used for 429 error codes can 
 ### Connection Retry config
 
 The retry options below can be changed from the default client configurations. These are:
-- `Retry Connect`: Maximum number of connection error retry attempts. Can be changed by passing the `retry_connect` option.
-- `Retry Read`: Maximum number of socket read retry attempts. Can be changed by passing the `retry_read` option.
-- `Retry Status`: Maximum number of retry attempts on error status codes. Can be changed by passing the `retry_status` option.
-- `Retry On Status Codes`: A list of specific status codes to retry on. Can be changed by passing the `retry_on_status_codes` option.
+- `Retry Connect`: Maximum number of connection error retry attempts. Can be changed by passing the `retry_connect` option. Default value is 3.
+- `Retry Read`: Maximum number of socket read retry attempts. Can be changed by passing the `retry_read` option. Default value is 3.
+- `Retry Status`: Maximum number of retry attempts on error status codes. Can be changed by passing the `retry_status` option. Default value is 3.
+- `Retry On Status Codes`: A list of specific status codes to retry on. Can be changed by passing the `retry_on_status_codes` option. Default value is an empty list.
 - `Retry Backoff Factor`: Factor to calculate wait time between retry attempts. Can be changed by passing the `retry_backoff_factor` option. Default value is 0.8.
 
 More information on the SDK's default retry behaviors can be found in our error codes and retries [document](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/ErrorCodesAndRetries.md).
