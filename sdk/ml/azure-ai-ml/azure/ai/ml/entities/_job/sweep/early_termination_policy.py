@@ -116,10 +116,19 @@ class BanditPolicy(EarlyTerminationPolicy):
 class MedianStoppingPolicy(EarlyTerminationPolicy):
     """Defines an early termination policy based on running averages of the primary metric of all runs.
 
-    :param delay_evaluation: Number of intervals by which to delay the first evaluation.
+    :param delay_evaluation: Number of intervals by which to delay the first evaluation. Defaults to 0.
     :type delay_evaluation: int
-    :param evaluation_interval: Interval (number of runs) between policy evaluations.
+    :param evaluation_interval: Interval (number of runs) between policy evaluations. Defaults to 1.
     :type evaluation_interval: int
+
+    .. admonition:: Example:
+    :class: tip
+
+    .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/lightgbm/iris/lightgbm-iris-sweep.ipynb
+        :language: ipython
+        :linenos:
+        :lines: 329-331
+        :caption: Configuring an early termination policy for a hyperparameter sweep job using MedianStoppingPolicy
     """
 
     def __init__(
@@ -128,6 +137,13 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
         delay_evaluation: int = 0,
         evaluation_interval: int = 1,
     ) -> None:
+        """Defines an early termination policy based on running averages of the primary metric of all runs.
+
+        :param delay_evaluation: Number of intervals by which to delay the first evaluation. Defaults to 0.
+        :type delay_evaluation: int
+        :param evaluation_interval: Interval (number of runs) between policy evaluations. Defaults to 1.
+        :type evaluation_interval: int
+        """
         super().__init__(delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval)
         self.type = camel_to_snake(EarlyTerminationPolicyType.MEDIAN_STOPPING)
 
