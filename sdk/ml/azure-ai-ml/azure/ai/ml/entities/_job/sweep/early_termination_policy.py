@@ -79,6 +79,17 @@ class BanditPolicy(EarlyTerminationPolicy):
         slack_amount: Optional[float] = 0,
         slack_factor: Optional[float] = 0,
     ) -> None:
+        """Defines an early termination policy based on slack criteria and a frequency and delay interval for evaluation.
+
+        :param delay_evaluation: Number of intervals by which to delay the first evaluation. Defaults to 0.
+        :type delay_evaluation: int
+        :param evaluation_interval: Interval (number of runs) between policy evaluations. Defaults to 0.
+        :type evaluation_interval: int
+        :param slack_amount: Absolute distance allowed from the best performing run. Defaults to 0.
+        :type slack_amount: float
+        :param slack_factor: Ratio of the allowed distance from the best performing run. Defaults to 0.
+        :type slack_factor: float
+        """
         super().__init__(delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval)
         self.type = EarlyTerminationPolicyType.BANDIT.lower()
         self.slack_factor = slack_factor
