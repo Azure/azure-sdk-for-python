@@ -50,7 +50,7 @@ def test_local_endpoint_mir_e2e(
 ) -> None:
     endpoint = load_online_endpoint(endpoint_mir_yaml)
     endpoint.name = mir_endpoint_name
-    client.online_endpoints.begin_create_or_update(endpoint=endpoint, no_wait=False, local=True)
+    client.online_endpoints.begin_create_or_update(endpoint=endpoint, local=True)
 
     get_obj = client.online_endpoints.get(name=mir_endpoint_name, local=True)
     assert get_obj is not None
