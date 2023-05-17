@@ -57,7 +57,21 @@ def generate_coverage_xml():
     else:
         logging.error("Coverage file is not available in {} to generate coverage XML".format(coverage_dir))
 
+
+def fix_coverage_xml(coverage_file):
+    print("running 'fix_dot_coverage_file' on {}".format(coverage_file))
+
+    out = None
+    with open(coverage_file, encoding="utf-8") as cov_file:
+        line = cov_file.read()
+        out = re.sub("\/\.tox\/[\s\S]*?\/site-packages", "", line)
+
+    if out:
+        with open(coverage_file, 'w') as cov_file:
+            cov_file.write(out)
+
 if __name__ == "__main__":
     collect_tox_coverage_files()
     generate_coverage_xml()
     create_coverage_report()
+    fix_coverage_xml(os.path.join(root_dir, 'coverage.xml'))

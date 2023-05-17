@@ -198,6 +198,18 @@ def collect_log_files(working_dir):
     for f in glob.glob(os.path.join(root_dir, "_tox_logs", "*")):
         logging.info("Log file: {}".format(f))
 
+def cleanup_tox_environments(tox_dir: str, command_array: str) -> None:
+    """The new .coverage formats are no longer readily amended in place. Because we can't amend them in place,
+    we can't amend the source location to remove the path ".tox/<envname>/site-packages/". Because of this, we will
+    need the source where it was generated to stick around. We can do that by being a bit more circumspect about which
+    files we actually delete/clean up!
+    """
+    if "--cov-append" in command_array:
+        folders = [folder for folder in os.listdir(tox_dir) if "whl" != folder]
+        for folder in folders:
+            shutil.rmtree(folder)
+    else:
+        shutil.rmtree(tox_dir)
 
 def execute_tox_serial(tox_command_tuples):
     return_code = 0
@@ -218,7 +230,8 @@ def execute_tox_serial(tox_command_tuples):
 
         if in_ci():
             collect_log_files(cmd_tuple[1])
-            shutil.rmtree(tox_dir)
+
+            cleanup_tox_environments(tox_dir, cmd_tuple[0])
 
             if os.path.exists(clone_dir):
                 try:
