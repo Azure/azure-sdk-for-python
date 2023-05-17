@@ -102,13 +102,9 @@ class GridSamplingAlgorithm(SamplingAlgorithm):
 
 
 class BayesianSamplingAlgorithm(SamplingAlgorithm):
-    """Bayesian Sampling Algorithm.
+    """Bayesian Sampling Algorithm."""
 
-    :ivar type: Specifies the type of sampling algorithm. Set automatically to "bayesian" for this class.
-    :vartype type: str
-    """
-
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.type = SamplingAlgorithmType.BAYESIAN.lower()
 
