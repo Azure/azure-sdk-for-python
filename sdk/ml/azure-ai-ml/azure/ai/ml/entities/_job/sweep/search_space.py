@@ -64,6 +64,10 @@ class Choice(SweepDistribution):
     """
 
     def __init__(self, values: Optional[List[Union[float, str, dict]]] = None, **kwargs) -> None:
+        """
+        :param values: List of values to choose from.
+        :type values: List[Union[float, str, dict]]
+        """
         kwargs.setdefault(TYPE, SearchSpace.CHOICE)
         super().__init__(**kwargs)
         self.values = values
