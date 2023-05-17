@@ -12,8 +12,6 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class Objective(RestTranslatableMixin):
     """Optimization objective.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param goal: Required. Defines supported metric goals for hyperparameter tuning. Possible values
      include: "minimize", "maximize".
     :type goal: str
@@ -21,7 +19,15 @@ class Objective(RestTranslatableMixin):
     :type primary_metric: str
     """
 
-    def __init__(self, goal: Optional[str] = None, primary_metric: Optional[str] = None):
+    def __init__(self, goal: str, primary_metric: str) -> None:
+        """Optimization objective.
+
+        :param goal: Required. Defines supported metric goals for hyperparameter tuning. Possible values
+        include: "minimize", "maximize".
+        :type goal: str
+        :param primary_metric: Required. Name of the metric to optimize.
+        :type primary_metric: str
+        """
         self.goal = goal.lower()
         self.primary_metric = primary_metric
 
