@@ -288,16 +288,16 @@ see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
 <!-- LINKS -->
-[health_insights]: https://learn.microsoft.com/en-us/azure/azure-health-insights/overview
+[health_insights]: https://learn.microsoft.com/azure/azure-health-insights/overview
 [azure_core]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html#module-azure.core.exceptions
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [azure_sub]: https://azure.microsoft.com/free/
 [azure_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesHealthInsights
 [azure_cli]: https://learn.microsoft.com/cli/azure/
-[cancer_profiling_docs]: https://learn.microsoft.com/en-us/azure/azure-health-insights/oncophenotype/overview
-[cancer_profiling_api_documentation]: https://learn.microsoft.com/en-us/rest/api/cognitiveservices/healthinsights/onco-phenotype
+[cancer_profiling_docs]: https://learn.microsoft.com/azure/azure-health-insights/oncophenotype/overview
+[cancer_profiling_api_documentation]: https://learn.microsoft.com/rest/api/cognitiveservices/healthinsights/onco-phenotype
 [hi_pypi]: https://pypi.org/project/azure-healthinsights-cancerprofiling/
 [hi_pypi]: https://pypi.org/
-[product_docs]: https://learn.microsoft.com/en-us/azure/azure-health-insights/oncophenotype/
+[product_docs]: https://learn.microsoft.com/azure/azure-health-insights/oncophenotype/
 [hi_samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-cancerprofiling/samples
 [hi_source_code]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-cancerprofiling/azure/healthinsights/cancerprofiling
