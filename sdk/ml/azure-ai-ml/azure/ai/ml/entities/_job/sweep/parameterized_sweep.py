@@ -72,7 +72,21 @@ class ParameterizedSweep:
             ]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
-    ):
+    ) -> None:
+        """
+        :param limits: Limits for sweep job.
+        :type limits: SweepJobLimits
+        :param sampling_algorithm: Sampling algorithm for sweep job.
+        :type sampling_algorithm: SamplingAlgorithm
+        :param objective: Objective for sweep job.
+        :type objective: Objective
+        :param early_termination: Early termination policy for sweep job.
+        :type early_termination: EarlyTerminationPolicy
+        :param search_space: Search space for sweep job.
+        :type search_space: Dict[str, Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform]]
+        :param queue_settings: Queue settings for sweep job.
+        :type queue_settings: QueueSettings
+        """
         self.sampling_algorithm = sampling_algorithm
         self.early_termination = early_termination
         self._limits = limits
@@ -85,11 +99,17 @@ class ParameterizedSweep:
             self.objective = objective
 
     @property
-    def limits(self):
+    def limits(self) -> SweepJobLimits:
+        """Limits for sweep job."""
         return self._limits
 
     @limits.setter
-    def limits(self, value: SweepJobLimits):
+    def limits(self, value: SweepJobLimits) -> None:
+        """Set limits for sweep job.
+
+        :param value: Limits for sweep job.
+        :type value: SweepJobLimits
+        """
         if not isinstance(value, SweepJobLimits):
             msg = f"limits must be SweepJobLimits but get {type(value)} instead"
             raise ValidationException(
@@ -157,10 +177,16 @@ class ParameterizedSweep:
 
     @property
     def sampling_algorithm(self) -> Union[str, SamplingAlgorithm]:
+        """Sampling algorithm for sweep job."""
         return self._sampling_algorithm
 
     @sampling_algorithm.setter
-    def sampling_algorithm(self, value: Optional[Union[SamplingAlgorithm, str]] = None):
+    def sampling_algorithm(self, value: Optional[Union[SamplingAlgorithm, str]] = None) -> None:
+        """Set sampling algorithm for sweep job.
+
+        :param value: Sampling algorithm for sweep job.
+        :type value: SamplingAlgorithm
+        """
         if value is None:
             self._sampling_algorithm = None
         elif isinstance(value, SamplingAlgorithm):
@@ -198,10 +224,16 @@ class ParameterizedSweep:
 
     @property
     def early_termination(self) -> Union[str, EarlyTerminationPolicy]:
+        """Early termination policy for sweep job."""
         return self._early_termination
 
     @early_termination.setter
-    def early_termination(self, value: Union[EarlyTerminationPolicy, str]):
+    def early_termination(self, value: Union[EarlyTerminationPolicy, str]) -> None:
+        """Set early termination policy for sweep job.
+
+        :param value: Early termination policy for sweep job.
+        :type value: EarlyTerminationPolicy
+        """
         if value is None:
             self._early_termination = None
         elif isinstance(value, EarlyTerminationPolicy):
