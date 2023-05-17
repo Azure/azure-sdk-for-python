@@ -52,7 +52,7 @@ class SweepDistribution(ABC, RestTranslatableMixin):
 
 class Choice(SweepDistribution):
     """Choice distribution configuration.
-    
+
     .. admonition:: Example:
         :class: tip
 
@@ -107,7 +107,7 @@ class Choice(SweepDistribution):
 
 class Normal(SweepDistribution):
     """Normal distribution configuration.
-    
+
     :param mu: Mean of the distribution.
     :type mu: float
     :param sigma: Standard deviation of the distribution.
@@ -116,7 +116,7 @@ class Normal(SweepDistribution):
 
     def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs):
         """Normal distribution configuration.
-        
+
         :param mu: Mean of the distribution.
         :type mu: float
         :param sigma: Standard deviation of the distribution.
@@ -137,12 +137,13 @@ class Normal(SweepDistribution):
 
 class LogNormal(Normal):
     """LogNormal distribution configuration.
-    
+
     :param mu: Mean of the log of the distribution.
     :type mu: float
     :param sigma: Standard deviation of the log of the distribution.
     :type sigma: float
     """
+
     def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs) -> None:
         """LogNormal distribution configuration.
 
@@ -157,7 +158,7 @@ class LogNormal(Normal):
 
 class QNormal(Normal):
     """QNormal distribution configuration.
-    
+
     :param mu: Mean of the distribution.
     :type mu: float
     :param sigma: Standard deviation of the distribution.
@@ -166,9 +167,11 @@ class QNormal(Normal):
     :type q: int
     """
 
-    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs) -> None:
+    def __init__(
+        self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs
+    ) -> None:
         """QNormal distribution configuration.
-        
+
         :param mu: Mean of the distribution.
         :type mu: float
         :param sigma: Standard deviation of the distribution.
@@ -197,7 +200,9 @@ class QLogNormal(QNormal):
     :type sigma: float
     """
 
-    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs) -> None:
+    def __init__(
+        self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs
+    ) -> None:
         """QLogNormal distribution configuration.
 
         :param mu: Mean of the log of the distribution.
@@ -212,11 +217,16 @@ class QLogNormal(QNormal):
 class Randint(SweepDistribution):
     """Randint distribution configuration.
 
-    :ivar type: Specifies the type of sweep distribution. Set automatically to "randint" for this class.
-    :vartype type: str
+    :param upper: Upper bound of the distribution.
+    :type upper: int
     """
 
-    def __init__(self, upper: Optional[int] = None, **kwargs):
+    def __init__(self, upper: Optional[int] = None, **kwargs) -> None:
+        """Randint distribution configuration.
+
+        :param upper: Upper bound of the distribution.
+        :type upper: int
+        """
         kwargs.setdefault(TYPE, SearchSpace.RANDINT)
         super().__init__(**kwargs)
         self.upper = upper
@@ -252,7 +262,7 @@ class Uniform(SweepDistribution):
 
 class LogUniform(Uniform):
     """LogUniform distribution configuration.
-    
+
     :param min_value: Minimum value of the log of the distribution.
     :type min_value: float
     :param max_value: Maximum value of the log of the distribution.
@@ -270,7 +280,7 @@ class LogUniform(Uniform):
 
     def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs) -> None:
         """LogUniform distribution configuration.
-        
+
         :param min_value: Minimum value of the log of the distribution.
         :type min_value: float
         :param max_value: Maximum value of the log of the distribution.
@@ -282,7 +292,7 @@ class LogUniform(Uniform):
 
 class QUniform(Uniform):
     """QUniform distribution configuration.
-    
+
     :param min_value: Minimum value of the distribution.
     :type min_value: float
     :param max_value: Maximum value of the distribution.
@@ -299,7 +309,7 @@ class QUniform(Uniform):
         **kwargs,
     ) -> None:
         """QUniform distribution configuration.
-        
+
         :param min_value: Minimum value of the distribution.
         :type min_value: float
         :param max_value: Maximum value of the distribution.
@@ -321,7 +331,7 @@ class QUniform(Uniform):
 
 class QLogUniform(QUniform):
     """QLogUniform distribution configuration.
-    
+
     :param min_value: Minimum value of the log of the distribution.
     :type min_value: float
     :param max_value: Maximum value of the log of the distribution.
@@ -332,7 +342,7 @@ class QLogUniform(QUniform):
         self, min_value: Optional[float] = None, max_value: Optional[float] = None, q: Optional[int] = None, **kwargs
     ) -> None:
         """QLogUniform distribution configuration.
-        
+
         :param min_value: Minimum value of the log of the distribution.
         :type min_value: float
         :param max_value: Maximum value of the log of the distribution.
