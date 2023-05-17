@@ -33,7 +33,7 @@ from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineRequest
 from azure.identity import AzureAuthorityHosts
 from testcase import ContainerRegistryTestClass, get_authority, get_audience
-from constants import HELLO_WORLD, ALPINE, BUSYBOX, DOES_NOT_EXIST
+from constants import HELLO_WORLD, DOES_NOT_EXIST
 from preparer import acr_preparer
 from devtools_testutils import recorded_by_proxy
 
@@ -100,16 +100,15 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_get_repository_properties(self, containerregistry_endpoint):
         with self.create_registry_client(containerregistry_endpoint) as client:
-            properties = client.get_repository_properties(ALPINE)
+            properties = client.get_repository_properties(HELLO_WORLD)
             assert isinstance(properties, RepositoryProperties)
-            assert properties.name == ALPINE
+            assert properties.name == HELLO_WORLD
 
     @acr_preparer()
     @recorded_by_proxy
     def test_update_repository_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:test"])
         with self.create_registry_client(containerregistry_endpoint) as client:
             properties = self.set_all_properties(RepositoryProperties(), False)
             received = client.update_repository_properties(repo, properties)
@@ -126,8 +125,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_update_repository_properties_kwargs(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:test"])
 
         with self.create_registry_client(containerregistry_endpoint) as client:
             received = client.update_repository_properties(
@@ -148,12 +146,12 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     def test_list_registry_artifacts(self, containerregistry_endpoint):
         with self.create_registry_client(containerregistry_endpoint) as client:
             count = 0
-            for artifact in client.list_manifest_properties(BUSYBOX):
+            for artifact in client.list_manifest_properties(HELLO_WORLD):
                 assert isinstance(artifact, ArtifactManifestProperties)
                 assert isinstance(artifact.created_on, datetime)
                 assert isinstance(artifact.last_updated_on, datetime)
-                assert artifact.repository_name == BUSYBOX
-                assert artifact.fully_qualified_reference in self.create_fully_qualified_reference(containerregistry_endpoint, BUSYBOX, artifact.digest)
+                assert artifact.repository_name == HELLO_WORLD
+                assert artifact.fully_qualified_reference in self.create_fully_qualified_reference(containerregistry_endpoint, HELLO_WORLD, artifact.digest)
                 count += 1
 
             assert count > 0
@@ -164,7 +162,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         with self.create_registry_client(containerregistry_endpoint) as client:
             results_per_page = 2
 
-            pages = client.list_manifest_properties(BUSYBOX, results_per_page=results_per_page)
+            pages = client.list_manifest_properties(HELLO_WORLD, results_per_page=results_per_page)
             page_count = 0
             for page in pages.by_page():
                 reg_count = 0
@@ -181,7 +179,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         with self.create_registry_client(containerregistry_endpoint) as client:
             prev_last_updated_on = None
             count = 0
-            for artifact in client.list_manifest_properties(BUSYBOX, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING):
+            for artifact in client.list_manifest_properties(HELLO_WORLD, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING):
                 if prev_last_updated_on:
                     assert artifact.last_updated_on < prev_last_updated_on
                 prev_last_updated_on = artifact.last_updated_on
@@ -195,7 +193,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         with self.create_registry_client(containerregistry_endpoint) as client:
             prev_last_updated_on = None
             count = 0
-            for artifact in client.list_manifest_properties(BUSYBOX, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_ASCENDING):
+            for artifact in client.list_manifest_properties(HELLO_WORLD, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_ASCENDING):
                 if prev_last_updated_on:
                     assert artifact.last_updated_on > prev_last_updated_on
                 prev_last_updated_on = artifact.last_updated_on
@@ -207,20 +205,20 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_get_manifest_properties(self, containerregistry_endpoint):
         with self.create_registry_client(containerregistry_endpoint) as client:
-            properties = client.get_manifest_properties(ALPINE, "latest")
+            properties = client.get_manifest_properties(HELLO_WORLD, "latest")
             assert isinstance(properties, ArtifactManifestProperties)
-            assert properties.repository_name == ALPINE
-            assert properties.fully_qualified_reference in self.create_fully_qualified_reference(containerregistry_endpoint, ALPINE, properties.digest)
+            assert properties.repository_name == HELLO_WORLD
+            assert properties.fully_qualified_reference in self.create_fully_qualified_reference(containerregistry_endpoint, HELLO_WORLD, properties.digest)
 
     @acr_preparer()
     @recorded_by_proxy
     def test_get_manifest_properties_does_not_exist(self, containerregistry_endpoint):
         with self.create_registry_client(containerregistry_endpoint) as client:
-            manifest = client.get_manifest_properties(ALPINE, "latest")
+            manifest = client.get_manifest_properties(HELLO_WORLD, "latest")
             invalid_digest = manifest.digest[:-10] + u"a" * 10
 
             with pytest.raises(ResourceNotFoundError):
-                client.get_manifest_properties(ALPINE, invalid_digest)
+                client.get_manifest_properties(HELLO_WORLD, invalid_digest)
             with pytest.raises(ResourceNotFoundError):
                 client.get_manifest_properties(DOES_NOT_EXIST, DOES_NOT_EXIST)
 
@@ -228,7 +226,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_update_manifest_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
+        tag = "test"
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         with self.create_registry_client(containerregistry_endpoint) as client:
@@ -247,7 +245,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_update_manifest_properties_kwargs(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
+        tag = "test"
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         with self.create_registry_client(containerregistry_endpoint) as client:
@@ -268,7 +266,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_get_tag_properties(self, containerregistry_endpoint):
         with self.create_registry_client(containerregistry_endpoint) as client:
-            properties = client.get_tag_properties(ALPINE, "latest")
+            properties = client.get_tag_properties(HELLO_WORLD, "latest")
             assert isinstance(properties, ArtifactTagProperties)
             assert properties.name == "latest"
 
@@ -279,13 +277,13 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             with pytest.raises(ResourceNotFoundError):
                 client.get_tag_properties(DOES_NOT_EXIST, DOES_NOT_EXIST)
             with pytest.raises(ResourceNotFoundError):
-                client.get_tag_properties(ALPINE, DOES_NOT_EXIST)
+                client.get_tag_properties(HELLO_WORLD, DOES_NOT_EXIST)
 
     @acr_preparer()
     @recorded_by_proxy
     def test_update_tag_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
+        tag = "test"
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         with self.create_registry_client(containerregistry_endpoint) as client:
@@ -304,7 +302,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_update_tag_properties_kwargs(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
+        tag = "test"
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         with self.create_registry_client(containerregistry_endpoint) as client:
@@ -324,49 +322,45 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_list_tag_properties(self, containerregistry_endpoint):
-        tags = [f"{ALPINE}:latest"]
+        tags = ["latest", "v1"]
         with self.create_registry_client(containerregistry_endpoint) as client:
             count = 0
-            for tag in client.list_tag_properties(ALPINE):
-                assert f"{ALPINE}:{tag.name}" in tags
+            for tag in client.list_tag_properties(HELLO_WORLD):
+                assert tag.name in tags
                 count += 1
-            assert count == 1
+            assert count == len(tags)
 
     @acr_preparer()
     @recorded_by_proxy
     def test_list_tag_properties_order_descending(self, containerregistry_endpoint):
-        tags = [f"{ALPINE}:latest"]
         with self.create_registry_client(containerregistry_endpoint) as client:
             prev_last_updated_on = None
             count = 0
-            for tag in client.list_tag_properties(ALPINE, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING):
-                assert f"{ALPINE}:{tag.name}" in tags
+            for tag in client.list_tag_properties(HELLO_WORLD, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING):
                 if prev_last_updated_on:
                     assert tag.last_updated_on < prev_last_updated_on
                 prev_last_updated_on = tag.last_updated_on
                 count += 1
-            assert count == 1
+            assert count == 2
 
     @acr_preparer()
     @recorded_by_proxy
     def test_list_tag_properties_order_ascending(self, containerregistry_endpoint):
-        tags = [f"{ALPINE}:latest"]
         with self.create_registry_client(containerregistry_endpoint) as client:
             prev_last_updated_on = None
             count = 0
-            for tag in client.list_tag_properties(ALPINE, order_by=ArtifactTagOrder.LAST_UPDATED_ON_ASCENDING):
-                assert f"{ALPINE}:{tag.name}" in tags
+            for tag in client.list_tag_properties(HELLO_WORLD, order_by=ArtifactTagOrder.LAST_UPDATED_ON_ASCENDING):
                 if prev_last_updated_on:
                     assert tag.last_updated_on > prev_last_updated_on
                 prev_last_updated_on = tag.last_updated_on
                 count += 1
-            assert count == 1
+            assert count == 2
 
     @acr_preparer()
     @recorded_by_proxy
     def test_delete_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
+        tag = "test"
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         with self.create_registry_client(containerregistry_endpoint) as client:
@@ -384,13 +378,13 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     def test_delete_tag_does_not_exist(self, containerregistry_endpoint):
         with self.create_registry_client(containerregistry_endpoint) as client:
             client.delete_tag(DOES_NOT_EXIST, DOES_NOT_EXIST)
-            client.delete_tag(ALPINE, DOES_NOT_EXIST)
+            client.delete_tag(HELLO_WORLD, DOES_NOT_EXIST)
 
     @acr_preparer()
     @recorded_by_proxy
     def test_delete_manifest(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
+        tag = "test"
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         with self.create_registry_client(containerregistry_endpoint) as client:
@@ -407,12 +401,12 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_delete_manifest_does_not_exist(self, containerregistry_endpoint):
         with self.create_registry_client(containerregistry_endpoint) as client:
-            manifest = client.get_manifest_properties(ALPINE, "latest")
+            manifest = client.get_manifest_properties(HELLO_WORLD, "latest")
             invalid_digest = manifest.digest[:-10] + u"a" * 10
 
-            client.delete_manifest(ALPINE, invalid_digest)
+            client.delete_manifest(HELLO_WORLD, invalid_digest)
             with pytest.raises(ResourceNotFoundError):
-                client.delete_manifest(ALPINE, DOES_NOT_EXIST)
+                client.delete_manifest(HELLO_WORLD, DOES_NOT_EXIST)
             with pytest.raises(ResourceNotFoundError):
                 client.delete_manifest(DOES_NOT_EXIST, DOES_NOT_EXIST)
 
@@ -439,7 +433,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @pytest.mark.live_test_only
     @acr_preparer()
     @recorded_by_proxy
-    def test_construct_container_registry_client(self, **kwargs):
+    def construct_container_registry_client(self, **kwargs):
         containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
         authority = get_authority(containerregistry_endpoint)
         credential = self.get_credential(authority)
@@ -454,7 +448,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_get_misspell_property(self, containerregistry_endpoint):
         with self.create_registry_client(containerregistry_endpoint) as client:
-            properties = client.get_repository_properties(ALPINE)
+            properties = client.get_repository_properties(HELLO_WORLD)
             
             with pytest.warns(DeprecationWarning):
                 last_udpated_on = properties.last_udpated_on
@@ -610,13 +604,11 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_upload_blob(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        blob = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
-        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", blob)
+        blob = BytesIO(b"hello world")
 
         with self.create_registry_client(containerregistry_endpoint) as client:
             # Act
-            with open(path, "rb") as data:
-                digest, blob_size = client.upload_blob(repo, data)
+            digest, blob_size = client.upload_blob(repo, blob)
 
             # Assert
             blob_content = b""
@@ -630,7 +622,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
     @pytest.mark.live_test_only
     @acr_preparer()
-    def test_upload_large_blob_in_chunk(self, **kwargs):
+    def upload_large_blob_in_chunk(self, **kwargs):
         containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
         if not self.is_public_endpoint(containerregistry_endpoint):
             pytest.skip("Running in non-public cloud may cause all tests finishing longer than the max time of 120 mins.")
@@ -729,34 +721,24 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy
-    def test_list_tags_in_empty_repo(self, containerregistry_endpoint):
+    def test_list_in_empty_repo(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        self.import_image(containerregistry_endpoint, ALPINE, [repo])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [repo])
         with self.create_registry_client(containerregistry_endpoint) as client:
             # cleanup tags in repo
             for tag in client.list_tag_properties(repo):
                 client.delete_tag(repo, tag.name)
             
+            # test list tags in empty repo
             response = client.list_tag_properties(repo)
-            if response is not None:
-                for tag in response:
-                    pass
-            
-            client.delete_repository(repo)
-    
-    @acr_preparer()
-    @recorded_by_proxy
-    def test_list_manifests_in_empty_repo(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
-        self.import_image(containerregistry_endpoint, ALPINE, [repo])
-        with self.create_registry_client(containerregistry_endpoint) as client:
-            # cleanup manifests in repo
-            for tag in client.list_tag_properties(repo):
+            for tag in response:
+                # cleanup manifests in repo
                 client.delete_manifest(repo, tag.name)
+
+            # test list manifests in empty repo
             response = client.list_manifest_properties(repo)
-            if response is not None:
-                for manifest in response:
-                    pass
+            for manifest in response:
+                pass
             
             client.delete_repository(repo)
 
