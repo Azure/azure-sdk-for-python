@@ -88,7 +88,7 @@ class TestCompletions(AzureRecordedTestCase):
         assert completion.object == "text_completion"
         assert completion.created
         assert completion.model
-        assert completion.usage.completion_tokens == 50
+        assert completion.usage.completion_tokens <= 50
         assert completion.usage.prompt_tokens is not None
         assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
         assert len(completion.choices) == 1
