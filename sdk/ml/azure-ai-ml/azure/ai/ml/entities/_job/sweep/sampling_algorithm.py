@@ -15,7 +15,13 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class SamplingAlgorithm(ABC, RestTranslatableMixin):
+    """Base class for sampling algorithms.
+
+    You should not instantiate this class directly. Instead, use of its subclasses.
+    """
+
     def __init__(self) -> None:
+        """Base class for sampling algorithms"""
         self.type = None
 
     @classmethod
