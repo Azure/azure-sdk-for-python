@@ -163,11 +163,11 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
 class TruncationSelectionPolicy(EarlyTerminationPolicy):
     """Defines an early termination policy that cancels a given percentage of runs at each evaluation interval.
 
-    :param delay_evaluation: Number of intervals by which to delay the first evaluation.
+    :param delay_evaluation: Number of intervals by which to delay the first evaluation. Defaults to 0.
     :type delay_evaluation: int
-    :param evaluation_interval: Interval (number of runs) between policy evaluations.
+    :param evaluation_interval: Interval (number of runs) between policy evaluations. Defaults to 0.
     :type evaluation_interval: int
-    :param truncation_percentage: The percentage of runs to cancel at each evaluation interval.
+    :param truncation_percentage: The percentage of runs to cancel at each evaluation interval. Defaults to 0.
     :type truncation_percentage: int
     """
 
@@ -178,6 +178,15 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
         evaluation_interval: int = 0,
         truncation_percentage: int = 0,
     ) -> None:
+        """Defines an early termination policy that cancels a given percentage of runs at each evaluation interval.
+
+        :param delay_evaluation: Number of intervals by which to delay the first evaluation.
+        :type delay_evaluation: int
+        :param evaluation_interval: Interval (number of runs) between policy evaluations.
+        :type evaluation_interval: int
+        :param truncation_percentage: The percentage of runs to cancel at each evaluation interval.
+        :type truncation_percentage: int
+        """
         super().__init__(delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval)
         self.type = camel_to_snake(EarlyTerminationPolicyType.TRUNCATION_SELECTION)
         self.truncation_percentage = truncation_percentage
