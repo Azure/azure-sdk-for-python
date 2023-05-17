@@ -108,11 +108,11 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
             interval = self.trigger.interval
             if frequency == RecurrenceFrequency.MINUTE.lower() or RecurrenceFrequency.HOUR.lower():
                 default_data_window_size = "P1D"
-            if frequency == RecurrenceFrequency.DAY.lower():
+            elif frequency == RecurrenceFrequency.DAY.lower():
                 default_data_window_size = f"P{interval}D"
-            if frequency == RecurrenceFrequency.WEEK.lower():
+            elif frequency == RecurrenceFrequency.WEEK.lower():
                 default_data_window_size = f"P{interval * 7}D"
-            if frequency == RecurrenceFrequency.MONTH.lower():
+            elif frequency == RecurrenceFrequency.MONTH.lower():
                 default_data_window_size = f"P{interval * 30}D"
         return RestSchedule(
             properties=ScheduleProperties(

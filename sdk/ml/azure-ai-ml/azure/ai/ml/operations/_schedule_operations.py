@@ -336,7 +336,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                         if not signal.target_dataset:
                             # if target dataset is absent and data collector for input is enabled,
                             # create a default target dataset with production model inputs as target
-                            signal.target_dataset = TargetDataset(dataset=default_dataset, data_window_size=7)
+                            signal.target_dataset = TargetDataset(dataset=default_dataset)
                         if not signal.baseline_dataset:
                             signal.baseline_dataset = default_dataset
                             # set tags for trailing dataset
