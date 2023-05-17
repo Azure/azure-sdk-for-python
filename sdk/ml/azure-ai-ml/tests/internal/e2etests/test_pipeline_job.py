@@ -318,7 +318,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         @pipeline
         def pipeline_func():
             node = component_func()
-            # node level should not have output type when type not configured
+            # node level should have correct output type when type not configured
             node.outputs.output.mode = "mount"
 
         pipeline_job = pipeline_func()

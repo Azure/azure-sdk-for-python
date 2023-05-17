@@ -27,6 +27,15 @@ class ChainedTokenCredential(AsyncContextManager):
 
     :param credentials: credential instances to form the chain
     :type credentials: :class:`azure.core.credentials.AsyncTokenCredential`
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_chained_token_credential_async]
+            :end-before: [END create_chained_token_credential_async]
+            :language: python
+            :dedent: 4
+            :caption: Create a ChainedTokenCredential.
     """
 
     def __init__(self, *credentials: "AsyncTokenCredential") -> None:

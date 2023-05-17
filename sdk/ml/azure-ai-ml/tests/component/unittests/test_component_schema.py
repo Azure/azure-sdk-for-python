@@ -14,7 +14,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.entities._component.component import COMPONENT_CODE_PLACEHOLDER, COMPONENT_PLACEHOLDER
+from azure.ai.ml.entities._component.component import COMPONENT_PLACEHOLDER
 from azure.ai.ml.entities._component.component_factory import component_factory
 
 from .._util import _COMPONENT_TIMEOUT_SECOND

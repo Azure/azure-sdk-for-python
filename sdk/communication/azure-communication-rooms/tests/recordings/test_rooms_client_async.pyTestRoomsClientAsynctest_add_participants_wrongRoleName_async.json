@@ -1,0 +1,102 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/rooms?api-version=2023-03-31-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "39",
+        "Content-Type": "application/json",
+        "Repeatability-First-Sent": "sanitized",
+        "Repeatability-Request-ID": "sanitized",
+        "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "sanitized",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "sanitized",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": {
+        "validFrom": null,
+        "validUntil": null
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "2021-04-07",
+        "api-supported-versions": "2022-02-01, 2023-03-31-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "sanitized",
+        "Location": "99417835389606121",
+        "MS-CV": "sanitized",
+        "Repeatability-Result": "accepted",
+        "Request-Context": "appId=",
+        "Transfer-Encoding": "chunked",
+        "X-Azure-Ref": "sanitized",
+        "X-Cache": "CONFIG_NOCACHE"
+      },
+      "ResponseBody": {
+        "id": "99417835389606121",
+        "createdAt": "2023-05-05T21:09:38.7959306\u002B00:00",
+        "validFrom": "2023-05-05T21:09:38.7575864\u002B00:00",
+        "validUntil": "2023-11-01T21:09:38.7575864\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99417835389606121/participants?api-version=2023-03-31-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "89",
+        "Content-Type": "application/merge-patch\u002Bjson",
+        "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "sanitized",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "sanitized",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": {
+        "participants": {
+          "chris": {
+            "role": "kafka"
+          },
+          "8:acs:sanitized1": {
+            "role": "Presenter"
+          }
+        }
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "sanitized",
+        "MS-CV": "sanitized",
+        "Request-Context": "appId=",
+        "Transfer-Encoding": "chunked",
+        "X-Azure-Ref": "sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "x-ms-error-code": "BadRequest"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "BadRequest",
+          "message": "The request could not be understood by the server due to malformed syntax.",
+          "details": [
+            {
+              "code": "BadArgument",
+              "message": "The updateParticipantsRequestDto field is required.",
+              "target": "updateParticipantsRequestDto"
+            },
+            {
+              "code": "BadArgument",
+              "message": "The JSON value could not be converted to Microsoft.AzureCommunicationService.Rooms.Api.Contracts.V2023_03_31_Preview.RoleDto. Path: $.participants.chris.role | LineNumber: 0 | BytePositionInLine: 43.",
+              "target": "$.participants.chris.role"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

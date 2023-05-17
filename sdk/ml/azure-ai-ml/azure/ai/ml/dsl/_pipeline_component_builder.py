@@ -278,6 +278,8 @@ class PipelineComponentBuilder:
                 meta=output_meta,
                 owner="pipeline",
                 description=self._args_description.get(key, None),
+                # store original node output to be able to trace back to inner node from a pipeline output builder.
+                binding_output=value,
             )
             # copy node level output setting to pipeline output
             copy_output_setting(source=value._owner.outputs[value._port_name], target=pipeline_output)
@@ -351,8 +353,6 @@ class PipelineComponentBuilder:
             # for node name _, treat it as anonymous node with name unset
             if name == "_":
                 continue
-            if name is not None:
-                name = name.lower()
 
             # User defined name must be valid python identifier
             if not is_valid_node_name(name):

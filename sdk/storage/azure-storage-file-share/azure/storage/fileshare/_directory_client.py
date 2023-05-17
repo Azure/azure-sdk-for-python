@@ -102,6 +102,8 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             token_intent: Optional[Literal['backup']] = None,
             **kwargs: Any
         ) -> None:
+        if hasattr(credential, 'get_token') and not token_intent:
+            raise ValueError("'token_intent' keyword is required when 'credential' is an TokenCredential.")
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -562,7 +564,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def list_handles(self, recursive=False, **kwargs):
-        # type: (bool, Any) -> ItemPaged
+        # type: (bool, Any) -> ItemPaged[Handle]
         """Lists opened handles on a directory or a file under the directory.
 
         :param bool recursive:

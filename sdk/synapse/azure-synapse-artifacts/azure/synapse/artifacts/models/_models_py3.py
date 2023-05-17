@@ -4719,7 +4719,7 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
     :ivar annotations: List of tags that can be used for describing the linked service.
     :vartype annotations: list[JSON]
     :ivar url: Endpoint for the Azure Data Lake Storage Gen2 service. Type: string (or Expression
-     with resultType string). Required.
+     with resultType string).
     :vartype url: JSON
     :ivar account_key: Account key for the Azure Data Lake Storage Gen2 service. Type: string (or
      Expression with resultType string).
@@ -4751,11 +4751,15 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
     :vartype encrypted_credential: JSON
+    :ivar sas_uri: SAS URI of the Azure Data Lake Storage Gen2 service. Type: string, SecureString
+     or AzureKeyVaultSecretReference.
+    :vartype sas_uri: JSON
+    :ivar sas_token: The Azure key vault secret reference of sasToken in sas uri.
+    :vartype sas_token: ~azure.synapse.artifacts.models.SecretBase
     """
 
     _validation = {
         "type": {"required": True},
-        "url": {"required": True},
     }
 
     _attribute_map = {
@@ -4774,17 +4778,19 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
         "service_principal_credential_type": {"key": "typeProperties.servicePrincipalCredentialType", "type": "object"},
         "service_principal_credential": {"key": "typeProperties.servicePrincipalCredential", "type": "SecretBase"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "object"},
+        "sas_uri": {"key": "typeProperties.sasUri", "type": "object"},
+        "sas_token": {"key": "typeProperties.sasToken", "type": "SecretBase"},
     }
 
     def __init__(
         self,
         *,
-        url: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
+        url: Optional[JSON] = None,
         account_key: Optional[JSON] = None,
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
@@ -4793,6 +4799,8 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
         service_principal_credential_type: Optional[JSON] = None,
         service_principal_credential: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
+        sas_uri: Optional[JSON] = None,
+        sas_token: Optional["_models.SecretBase"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4808,7 +4816,7 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
         :keyword annotations: List of tags that can be used for describing the linked service.
         :paramtype annotations: list[JSON]
         :keyword url: Endpoint for the Azure Data Lake Storage Gen2 service. Type: string (or
-         Expression with resultType string). Required.
+         Expression with resultType string).
         :paramtype url: JSON
         :keyword account_key: Account key for the Azure Data Lake Storage Gen2 service. Type: string
          (or Expression with resultType string).
@@ -4840,6 +4848,11 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
          are encrypted using the integration runtime credential manager. Type: string (or Expression
          with resultType string).
         :paramtype encrypted_credential: JSON
+        :keyword sas_uri: SAS URI of the Azure Data Lake Storage Gen2 service. Type: string,
+         SecureString or AzureKeyVaultSecretReference.
+        :paramtype sas_uri: JSON
+        :keyword sas_token: The Azure key vault secret reference of sasToken in sas uri.
+        :paramtype sas_token: ~azure.synapse.artifacts.models.SecretBase
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -4859,6 +4872,8 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
         self.service_principal_credential_type = service_principal_credential_type
         self.service_principal_credential = service_principal_credential
         self.encrypted_credential = encrypted_credential
+        self.sas_uri = sas_uri
+        self.sas_token = sas_token
 
 
 class AzureBlobFSLocation(DatasetLocation):
@@ -4950,8 +4965,9 @@ class AzureBlobFSReadSettings(StoreReadSettings):  # pylint: disable=too-many-in
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
     :vartype file_list_path: JSON
-    :ivar enable_partition_discovery: Indicates whether to enable partition discovery.
-    :vartype enable_partition_discovery: bool
+    :ivar enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+     boolean (or Expression with resultType boolean).
+    :vartype enable_partition_discovery: JSON
     :ivar partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
     :vartype partition_root_path: JSON
@@ -4978,7 +4994,7 @@ class AzureBlobFSReadSettings(StoreReadSettings):  # pylint: disable=too-many-in
         "wildcard_folder_path": {"key": "wildcardFolderPath", "type": "object"},
         "wildcard_file_name": {"key": "wildcardFileName", "type": "object"},
         "file_list_path": {"key": "fileListPath", "type": "object"},
-        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "bool"},
+        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "object"},
         "partition_root_path": {"key": "partitionRootPath", "type": "object"},
         "delete_files_after_completion": {"key": "deleteFilesAfterCompletion", "type": "object"},
         "modified_datetime_start": {"key": "modifiedDatetimeStart", "type": "object"},
@@ -4994,7 +5010,7 @@ class AzureBlobFSReadSettings(StoreReadSettings):  # pylint: disable=too-many-in
         wildcard_folder_path: Optional[JSON] = None,
         wildcard_file_name: Optional[JSON] = None,
         file_list_path: Optional[JSON] = None,
-        enable_partition_discovery: Optional[bool] = None,
+        enable_partition_discovery: Optional[JSON] = None,
         partition_root_path: Optional[JSON] = None,
         delete_files_after_completion: Optional[JSON] = None,
         modified_datetime_start: Optional[JSON] = None,
@@ -5021,8 +5037,9 @@ class AzureBlobFSReadSettings(StoreReadSettings):  # pylint: disable=too-many-in
          configured in the dataset) that you want to copy. Type: string (or Expression with resultType
          string).
         :paramtype file_list_path: JSON
-        :keyword enable_partition_discovery: Indicates whether to enable partition discovery.
-        :paramtype enable_partition_discovery: bool
+        :keyword enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+         boolean (or Expression with resultType boolean).
+        :paramtype enable_partition_discovery: JSON
         :keyword partition_root_path: Specify the root path where partition discovery starts from.
          Type: string (or Expression with resultType string).
         :paramtype partition_root_path: JSON
@@ -5076,7 +5093,8 @@ class AzureBlobFSSink(CopySink):
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
     :vartype max_concurrent_connections: JSON
-    :ivar copy_behavior: The type of copy behavior for copy sink.
+    :ivar copy_behavior: The type of copy behavior for copy sink. Type: string (or Expression with
+     resultType string).
     :vartype copy_behavior: JSON
     """
 
@@ -5126,7 +5144,8 @@ class AzureBlobFSSink(CopySink):
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
         :paramtype max_concurrent_connections: JSON
-        :keyword copy_behavior: The type of copy behavior for copy sink.
+        :keyword copy_behavior: The type of copy behavior for copy sink. Type: string (or Expression
+         with resultType string).
         :paramtype copy_behavior: JSON
         """
         super().__init__(
@@ -5420,6 +5439,13 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
     :vartype encrypted_credential: str
+    :ivar authentication_type: The type used for authentication. Type: string. Known values are:
+     "Anonymous", "AccountKey", "SasUri", "ServicePrincipal", and "Msi".
+    :vartype authentication_type: str or
+     ~azure.synapse.artifacts.models.AzureStorageAuthenticationType
+    :ivar container_uri: Container uri of the Azure Blob Storage resource only support for
+     anonymous access. Type: string (or Expression with resultType string).
+    :vartype container_uri: JSON
     """
 
     _validation = {
@@ -5444,6 +5470,8 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
         "azure_cloud_type": {"key": "typeProperties.azureCloudType", "type": "object"},
         "account_kind": {"key": "typeProperties.accountKind", "type": "str"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
+        "authentication_type": {"key": "typeProperties.authenticationType", "type": "str"},
+        "container_uri": {"key": "typeProperties.containerUri", "type": "object"},
     }
 
     def __init__(
@@ -5465,6 +5493,8 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
         azure_cloud_type: Optional[JSON] = None,
         account_kind: Optional[str] = None,
         encrypted_credential: Optional[str] = None,
+        authentication_type: Optional[Union[str, "_models.AzureStorageAuthenticationType"]] = None,
+        container_uri: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5514,6 +5544,13 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
          are encrypted using the integration runtime credential manager. Type: string (or Expression
          with resultType string).
         :paramtype encrypted_credential: str
+        :keyword authentication_type: The type used for authentication. Type: string. Known values are:
+         "Anonymous", "AccountKey", "SasUri", "ServicePrincipal", and "Msi".
+        :paramtype authentication_type: str or
+         ~azure.synapse.artifacts.models.AzureStorageAuthenticationType
+        :keyword container_uri: Container uri of the Azure Blob Storage resource only support for
+         anonymous access. Type: string (or Expression with resultType string).
+        :paramtype container_uri: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -5535,6 +5572,8 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
         self.azure_cloud_type = azure_cloud_type
         self.account_kind = account_kind
         self.encrypted_credential = encrypted_credential
+        self.authentication_type = authentication_type
+        self.container_uri = container_uri
 
 
 class AzureBlobStorageLocation(DatasetLocation):
@@ -7819,8 +7858,9 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):  # pylint: disable=too-
      lexicographical order. Applies under the folderPath in data set, and filter files/sub-folders
      under the folderPath. Type: string (or Expression with resultType string).
     :vartype list_before: JSON
-    :ivar enable_partition_discovery: Indicates whether to enable partition discovery.
-    :vartype enable_partition_discovery: bool
+    :ivar enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+     boolean (or Expression with resultType boolean).
+    :vartype enable_partition_discovery: JSON
     :ivar partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
     :vartype partition_root_path: JSON
@@ -7849,7 +7889,7 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):  # pylint: disable=too-
         "file_list_path": {"key": "fileListPath", "type": "object"},
         "list_after": {"key": "listAfter", "type": "object"},
         "list_before": {"key": "listBefore", "type": "object"},
-        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "bool"},
+        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "object"},
         "partition_root_path": {"key": "partitionRootPath", "type": "object"},
         "delete_files_after_completion": {"key": "deleteFilesAfterCompletion", "type": "object"},
         "modified_datetime_start": {"key": "modifiedDatetimeStart", "type": "object"},
@@ -7867,7 +7907,7 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):  # pylint: disable=too-
         file_list_path: Optional[JSON] = None,
         list_after: Optional[JSON] = None,
         list_before: Optional[JSON] = None,
-        enable_partition_discovery: Optional[bool] = None,
+        enable_partition_discovery: Optional[JSON] = None,
         partition_root_path: Optional[JSON] = None,
         delete_files_after_completion: Optional[JSON] = None,
         modified_datetime_start: Optional[JSON] = None,
@@ -7902,8 +7942,9 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):  # pylint: disable=too-
          lexicographical order. Applies under the folderPath in data set, and filter files/sub-folders
          under the folderPath. Type: string (or Expression with resultType string).
         :paramtype list_before: JSON
-        :keyword enable_partition_discovery: Indicates whether to enable partition discovery.
-        :paramtype enable_partition_discovery: bool
+        :keyword enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+         boolean (or Expression with resultType boolean).
+        :paramtype enable_partition_discovery: JSON
         :keyword partition_root_path: Specify the root path where partition discovery starts from.
          Type: string (or Expression with resultType string).
         :paramtype partition_root_path: JSON
@@ -7959,7 +8000,8 @@ class AzureDataLakeStoreSink(CopySink):
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
     :vartype max_concurrent_connections: JSON
-    :ivar copy_behavior: The type of copy behavior for copy sink.
+    :ivar copy_behavior: The type of copy behavior for copy sink. Type: string (or Expression with
+     resultType string).
     :vartype copy_behavior: JSON
     :ivar enable_adls_single_file_parallel: Single File Parallel.
     :vartype enable_adls_single_file_parallel: JSON
@@ -8013,7 +8055,8 @@ class AzureDataLakeStoreSink(CopySink):
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
         :paramtype max_concurrent_connections: JSON
-        :keyword copy_behavior: The type of copy behavior for copy sink.
+        :keyword copy_behavior: The type of copy behavior for copy sink. Type: string (or Expression
+         with resultType string).
         :paramtype copy_behavior: JSON
         :keyword enable_adls_single_file_parallel: Single File Parallel.
         :paramtype enable_adls_single_file_parallel: JSON
@@ -8123,8 +8166,8 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
     :ivar copy_behavior: The type of copy behavior for copy sink.
     :vartype copy_behavior: JSON
     :ivar expiry_date_time: Specifies the expiry time of the written files. The time is applied to
-     the UTC time zone in the format of "2018-12-01T05:00:00Z". Default value is NULL. Type: integer
-     (or Expression with resultType integer).
+     the UTC time zone in the format of "2018-12-01T05:00:00Z". Default value is NULL. Type: string
+     (or Expression with resultType string).
     :vartype expiry_date_time: JSON
     """
 
@@ -8160,7 +8203,7 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
         :paramtype copy_behavior: JSON
         :keyword expiry_date_time: Specifies the expiry time of the written files. The time is applied
          to the UTC time zone in the format of "2018-12-01T05:00:00Z". Default value is NULL. Type:
-         integer (or Expression with resultType integer).
+         string (or Expression with resultType string).
         :paramtype expiry_date_time: JSON
         """
         super().__init__(
@@ -45723,7 +45766,7 @@ class RunQueryFilter(_serialization.Model):
      "ActivityType", "TriggerName", "TriggerRunTimestamp", "RunGroupId", and "LatestOnly".
     :vartype operand: str or ~azure.synapse.artifacts.models.RunQueryFilterOperand
     :ivar operator: Operator to be used for filter. Required. Known values are: "Equals",
-     "NotEquals", "In", and "NotIn".
+     "NotEquals", "In", "NotIn", and "In".
     :vartype operator: str or ~azure.synapse.artifacts.models.RunQueryFilterOperator
     :ivar values: List of filter values. Required.
     :vartype values: list[str]
@@ -45758,7 +45801,7 @@ class RunQueryFilter(_serialization.Model):
          "ActivityType", "TriggerName", "TriggerRunTimestamp", "RunGroupId", and "LatestOnly".
         :paramtype operand: str or ~azure.synapse.artifacts.models.RunQueryFilterOperand
         :keyword operator: Operator to be used for filter. Required. Known values are: "Equals",
-         "NotEquals", "In", and "NotIn".
+         "NotEquals", "In", "NotIn", and "In".
         :paramtype operator: str or ~azure.synapse.artifacts.models.RunQueryFilterOperator
         :keyword values: List of filter values. Required.
         :paramtype values: list[str]
@@ -50852,6 +50895,8 @@ class SetVariableActivity(ControlActivity):
     :vartype variable_name: str
     :ivar value: Value to be set. Could be a static value or Expression.
     :vartype value: JSON
+    :ivar set_system_variable: If set to true, it sets the pipeline run return value.
+    :vartype set_system_variable: bool
     """
 
     _validation = {
@@ -50868,6 +50913,7 @@ class SetVariableActivity(ControlActivity):
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "variable_name": {"key": "typeProperties.variableName", "type": "str"},
         "value": {"key": "typeProperties.value", "type": "object"},
+        "set_system_variable": {"key": "typeProperties.setSystemVariable", "type": "bool"},
     }
 
     def __init__(
@@ -50880,6 +50926,7 @@ class SetVariableActivity(ControlActivity):
         user_properties: Optional[List["_models.UserProperty"]] = None,
         variable_name: Optional[str] = None,
         value: Optional[JSON] = None,
+        set_system_variable: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -50898,6 +50945,8 @@ class SetVariableActivity(ControlActivity):
         :paramtype variable_name: str
         :keyword value: Value to be set. Could be a static value or Expression.
         :paramtype value: JSON
+        :keyword set_system_variable: If set to true, it sets the pipeline run return value.
+        :paramtype set_system_variable: bool
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -50910,6 +50959,7 @@ class SetVariableActivity(ControlActivity):
         self.type: str = "SetVariable"
         self.variable_name = variable_name
         self.value = value
+        self.set_system_variable = set_system_variable
 
 
 class SftpLocation(DatasetLocation):

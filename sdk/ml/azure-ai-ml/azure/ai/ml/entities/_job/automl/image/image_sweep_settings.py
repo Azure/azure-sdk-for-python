@@ -6,8 +6,8 @@
 
 from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ImageSweepSettings as RestImageSweepSettings
-from azure.ai.ml._restclient.v2023_02_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ImageSweepSettings as RestImageSweepSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SamplingAlgorithmType
 from azure.ai.ml.entities._job.sweep.early_termination_policy import (
     BanditPolicy,
     EarlyTerminationPolicy,
@@ -50,7 +50,6 @@ class ImageSweepSettings(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, obj: RestImageSweepSettings) -> "ImageSweepSettings":
-
         return cls(
             sampling_algorithm=obj.sampling_algorithm,
             early_termination=EarlyTerminationPolicy._from_rest_object(obj.early_termination)
