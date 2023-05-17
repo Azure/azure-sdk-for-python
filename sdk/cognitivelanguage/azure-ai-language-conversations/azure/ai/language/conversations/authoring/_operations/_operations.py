@@ -43,7 +43,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_conversation_authoring_list_projects_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_list_projects_request(
     *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -68,9 +68,7 @@ def build_conversation_authoring_list_projects_request(  # pylint: disable=name-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_create_project_request(  # pylint: disable=name-too-long
-    project_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_conversation_authoring_create_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -97,9 +95,7 @@ def build_conversation_authoring_create_project_request(  # pylint: disable=name
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_project_request(  # pylint: disable=name-too-long
-    project_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_conversation_authoring_get_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -123,9 +119,7 @@ def build_conversation_authoring_get_project_request(  # pylint: disable=name-to
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_delete_project_request(  # pylint: disable=name-too-long
-    project_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_conversation_authoring_delete_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -149,7 +143,7 @@ def build_conversation_authoring_delete_project_request(  # pylint: disable=name
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_export_project_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_export_project_request(
     project_name: str,
     *,
     string_index_type: str,
@@ -188,7 +182,7 @@ def build_conversation_authoring_export_project_request(  # pylint: disable=name
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_import_project_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_import_project_request(
     project_name: str, *, exported_project_format: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -219,9 +213,7 @@ def build_conversation_authoring_import_project_request(  # pylint: disable=name
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_train_request(  # pylint: disable=name-too-long
-    project_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_conversation_authoring_train_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -248,7 +240,7 @@ def build_conversation_authoring_train_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_list_deployments_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_list_deployments_request(
     project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -278,9 +270,7 @@ def build_conversation_authoring_list_deployments_request(  # pylint: disable=na
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_swap_deployments_request(  # pylint: disable=name-too-long
-    project_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_conversation_authoring_swap_deployments_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -307,7 +297,7 @@ def build_conversation_authoring_swap_deployments_request(  # pylint: disable=na
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_deployment_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_get_deployment_request(
     project_name: str, deployment_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -334,7 +324,7 @@ def build_conversation_authoring_get_deployment_request(  # pylint: disable=name
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_deploy_project_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_deploy_project_request(
     project_name: str, deployment_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -364,7 +354,7 @@ def build_conversation_authoring_deploy_project_request(  # pylint: disable=name
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_delete_deployment_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_delete_deployment_request(
     project_name: str, deployment_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -391,7 +381,7 @@ def build_conversation_authoring_delete_deployment_request(  # pylint: disable=n
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_deployment_job_status_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_get_deployment_job_status_request(
     project_name: str, deployment_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -419,7 +409,7 @@ def build_conversation_authoring_get_deployment_job_status_request(  # pylint: d
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_swap_deployments_job_status_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_get_swap_deployments_job_status_request(
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -446,7 +436,7 @@ def build_conversation_authoring_get_swap_deployments_job_status_request(  # pyl
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_export_project_job_status_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_get_export_project_job_status_request(
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -473,7 +463,7 @@ def build_conversation_authoring_get_export_project_job_status_request(  # pylin
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_import_project_job_status_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_get_import_project_job_status_request(
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -500,7 +490,7 @@ def build_conversation_authoring_get_import_project_job_status_request(  # pylin
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_list_trained_models_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_list_trained_models_request(
     project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -530,7 +520,7 @@ def build_conversation_authoring_list_trained_models_request(  # pylint: disable
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_trained_model_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_get_trained_model_request(
     project_name: str, trained_model_label: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -557,7 +547,7 @@ def build_conversation_authoring_get_trained_model_request(  # pylint: disable=n
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_delete_trained_model_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_delete_trained_model_request(
     project_name: str, trained_model_label: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -584,7 +574,7 @@ def build_conversation_authoring_delete_trained_model_request(  # pylint: disabl
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_load_snapshot_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_load_snapshot_request(
     project_name: str, trained_model_label: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -611,7 +601,7 @@ def build_conversation_authoring_load_snapshot_request(  # pylint: disable=name-
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_list_model_evaluation_results_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_list_model_evaluation_results_request(
     project_name: str,
     trained_model_label: str,
     *,
@@ -649,7 +639,7 @@ def build_conversation_authoring_list_model_evaluation_results_request(  # pylin
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_model_evaluation_summary_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_get_model_evaluation_summary_request(
     project_name: str, trained_model_label: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -678,7 +668,7 @@ def build_conversation_authoring_get_model_evaluation_summary_request(  # pylint
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_load_snapshot_status_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_get_load_snapshot_status_request(
     project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -708,7 +698,7 @@ def build_conversation_authoring_get_load_snapshot_status_request(  # pylint: di
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_list_training_jobs_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_list_training_jobs_request(
     project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -738,7 +728,7 @@ def build_conversation_authoring_list_training_jobs_request(  # pylint: disable=
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_training_job_status_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_get_training_job_status_request(
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -765,7 +755,7 @@ def build_conversation_authoring_get_training_job_status_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_cancel_training_job_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_cancel_training_job_request(
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -792,9 +782,7 @@ def build_conversation_authoring_cancel_training_job_request(  # pylint: disable
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_project_deletion_job_status_request(  # pylint: disable=name-too-long
-    job_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_conversation_authoring_get_project_deletion_job_status_request(job_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -818,7 +806,7 @@ def build_conversation_authoring_get_project_deletion_job_status_request(  # pyl
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_list_supported_languages_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_list_supported_languages_request(
     *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -844,7 +832,7 @@ def build_conversation_authoring_list_supported_languages_request(  # pylint: di
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_list_supported_prebuilt_entities_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_list_supported_prebuilt_entities_request(
     *,
     language: Optional[str] = None,
     multilingual: Optional[bool] = None,
@@ -878,7 +866,7 @@ def build_conversation_authoring_list_supported_prebuilt_entities_request(  # py
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_list_training_config_versions_request(  # pylint: disable=name-too-long
+def build_conversation_authoring_list_training_config_versions_request(
     *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})

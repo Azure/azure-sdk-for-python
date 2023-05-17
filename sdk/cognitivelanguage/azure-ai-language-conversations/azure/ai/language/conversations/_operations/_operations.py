@@ -41,9 +41,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_conversation_analysis_analyze_conversation_request(  # pylint: disable=name-too-long
-    **kwargs: Any,
-) -> HttpRequest:
+def build_conversation_analysis_analyze_conversation_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -65,9 +63,7 @@ def build_conversation_analysis_analyze_conversation_request(  # pylint: disable
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_analysis_conversation_analysis_request(  # pylint: disable=name-too-long
-    **kwargs: Any,
-) -> HttpRequest:
+def build_conversation_analysis_conversation_analysis_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 

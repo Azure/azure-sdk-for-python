@@ -54,7 +54,7 @@ batch:
 These settings apply only when `--tag=release_runtime_1_1` is specified on the command line.
 
 ```yaml $(tag) == 'release_runtime_1_1'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/2491b616cde43277fae339604f03f59412e016aa/specification/cognitiveservices/data-plane/Language/stable/2023-04-01/analyzeconversations.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/53240ebc58b3c4e99de723194032064db1d97e63/specification/cognitiveservices/data-plane/Language/stable/2023-04-01/analyzeconversations.json
 output-folder: ../azure/ai/language/conversations
 title: ConversationAnalysisClient
 ```
@@ -64,7 +64,7 @@ title: ConversationAnalysisClient
 These settings apply only when `--tag=release_authoring_1_1` is specified on the command line.
 
 ```yaml $(tag) == 'release_authoring_1_1'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/2491b616cde43277fae339604f03f59412e016aa/specification/cognitiveservices/data-plane/Language/stable/2023-04-01/analyzeconversations-authoring.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/53240ebc58b3c4e99de723194032064db1d97e63/specification/cognitiveservices/data-plane/Language/stable/2023-04-01/analyzeconversations-authoring.json
 output-folder: ../azure/ai/language/conversations/authoring
 title: ConversationAuthoringClient
 ```
@@ -185,8 +185,8 @@ directive:
 ### Runtime API Directives
 
 ```yaml $(tag) == 'release_runtime_1_1'
-# Give analyze job LRO a return type
 directive:
+  # Give analyze job LRO a return type
   - where-operation: AnalyzeConversation_SubmitJob
     transform: >
       $["responses"]["200"] = {
@@ -195,58 +195,34 @@ directive:
               "$ref": "#/definitions/AnalyzeConversationJobState"
           }
       };
-```
-
-```yaml $(tag) == 'release_runtime_1_1'
-# Rename Runtime client operation
-directive:
+  # Rename Runtime client operation
   - rename-operation:
       from: ConversationAnalysis_AnalyzeConversation
       to: AnalyzeConversation
-```
-
-```yaml $(tag) == 'release_runtime_1_1'
-# Rename Runtime client async operation
-directive:
+  # Rename Runtime client async operation
   - rename-operation:
       from: AnalyzeConversation_SubmitJob
       to: ConversationAnalysis
-```
-
-```yaml $(tag) == 'release_runtime_1_1'
-# Rename analyze_conversation `body` to `tasks`
-directive:
-    - from: swagger-document
-      where: $["paths"]["/:analyze-conversations"]["post"]
-      transform: >
-        $["parameters"][1]["x-ms-client-name"] = "task";
-```
-
-```yaml $(tag) == 'release_runtime_1_1'
-# Rename begin_conversation_analysis `body` to `tasks`
-directive:
-    - from: swagger-document
-      where: $["paths"]["/analyze-conversations/jobs"]["post"]
-      transform: >
-        $["parameters"][1]["x-ms-client-name"] = "task";
-```
-
-```yaml $(tag) == 'release_runtime_1_1'
-# Remove async GET operation status
-directive:
-    - from: swagger-document
-      where: $["paths"]
-      transform: >
-          delete $["/analyze-conversations/jobs/{jobId}"];
-```
-
-```yaml $(tag) == 'release_runtime_1_1'
-# Remove async cancel operation
-directive:
-    - from: swagger-document
-      where: $["paths"]
-      transform: >
-          delete $["/analyze-conversations/jobs/{jobId}:cancel"];
+  # Rename analyze_conversation `body` to `tasks`
+  - from: swagger-document
+    where: $["paths"]["/:analyze-conversations"]["post"]
+    transform: >
+      $["parameters"][1]["x-ms-client-name"] = "task";
+  # Rename begin_conversation_analysis `body` to `tasks`
+  - from: swagger-document
+    where: $["paths"]["/analyze-conversations/jobs"]["post"]
+    transform: >
+      $["parameters"][1]["x-ms-client-name"] = "task";
+  # Remove async GET operation status
+  - from: swagger-document
+    where: $["paths"]
+    transform: >
+        delete $["/analyze-conversations/jobs/{jobId}"];
+  # Remove async cancel operation
+  - from: swagger-document
+    where: $["paths"]
+    transform: >
+        delete $["/analyze-conversations/jobs/{jobId}:cancel"];
 ```
 
 ### Authoring API Directives
@@ -342,11 +318,7 @@ directive:
           "$ref": "#/definitions/ConversationalAnalysisAuthoringDeploymentResourcesJobState"
         }
       };
-```
-
-```yaml $(tag) == 'release_authoring_1_1'
-# Rename `body` param for operations
-directive:
+  # Rename `body` param for operations
   - where-operation: ConversationalAnalysisAuthoring_DeployProject
     transform: >
         $.parameters[2]["x-ms-client-name"] = "deployment";
@@ -362,11 +334,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_CreateProject
     transform: >
         $.parameters[1]["x-ms-client-name"] = "project";
-```
-
-```yaml $(tag) == 'release_authoring_1_1'
-# Rename Authoring client operations
-directive:
+  # Rename Authoring client operations
   - rename-operation:
       from: ConversationalAnalysisAuthoring_ListProjects
       to: ListProjects
