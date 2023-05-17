@@ -11,7 +11,7 @@ from azure.core.messaging import CloudEvent
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
 from ..models._models import CloudEvent as InternalCloudEvent
-from ..models._patch import ReceiveResult, ReceiveDetails, PublishResult
+from ..models._patch import ReceiveResult, ReceiveDetails
 
 
 def _cloud_event_to_generated(cloud_event, **kwargs):
