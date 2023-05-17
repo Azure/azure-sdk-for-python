@@ -20,13 +20,13 @@ class SparkJobEntryType:
 class SparkJobEntry(RestTranslatableMixin):
     """Entry for spark job.
 
-    :param entry_type: Can be python or scala entry.
+    :param entry_type: Can be python or scala entry. Defaults to SparkJobEntryType.SPARK_JOB_FILE_ENTRY.
     :type entry_type: SparkJobEntryType
     :param entry: File or class entry point.
     :type entry: str
     """
 
-    def __init__(self, *, entry: str, type: str = SparkJobEntryType.SPARK_JOB_FILE_ENTRY):
+    def __init__(self, *, entry: str, type: Optional[str] = SparkJobEntryType.SPARK_JOB_FILE_ENTRY) -> None:
         self.entry_type = type
         self.entry = entry
 
