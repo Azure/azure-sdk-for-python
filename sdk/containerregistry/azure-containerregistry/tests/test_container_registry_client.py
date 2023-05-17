@@ -538,7 +538,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     def test_set_docker_manifest(self, **kwargs):
         containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
-        repo = "library/hello-world"
+        repo = self.get_resource_name("repo")
         path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
         with self.create_registry_client(containerregistry_endpoint) as client:
             self.upload_docker_manifest_prerequisites(repo, client)
@@ -572,6 +572,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             assert response.media_type == DOCKER_MANIFEST
 
             client.delete_manifest(repo, digest1)
+            client.delete_repository(repo)
     
     # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly.
     # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
@@ -581,7 +582,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         if self.is_china_endpoint(containerregistry_endpoint):
             pytest.skip("Running in china cloud may cause all tests finishing longer than the max time of 120 mins.")
         
-        repo = "library/hello-world"
+        repo = self.get_resource_name("repo")
         path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest_without_spaces.json")
         with self.create_registry_client(containerregistry_endpoint) as client:
             self.upload_docker_manifest_prerequisites(repo, client)
@@ -603,6 +604,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             assert response.media_type == DOCKER_MANIFEST
 
             client.delete_manifest(repo, digest)
+            client.delete_repository(repo)
 
     @acr_preparer()
     @recorded_by_proxy
@@ -628,11 +630,11 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
     @pytest.mark.live_test_only
     @acr_preparer()
-    @recorded_by_proxy
-    def test_upload_large_blob_in_chunk(self, containerregistry_endpoint):
+    def test_upload_large_blob_in_chunk(self, **kwargs):
         if not self.is_public_endpoint(containerregistry_endpoint):
             pytest.skip("Running in non-public cloud may cause all tests finishing longer than the max time of 120 mins.")
         
+        containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
         repo = self.get_resource_name("repo")
         with self.create_registry_client(containerregistry_endpoint) as client:
             # Test blob upload and download in equal size chunks

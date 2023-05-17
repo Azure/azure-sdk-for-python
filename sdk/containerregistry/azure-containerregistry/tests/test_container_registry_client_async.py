@@ -542,7 +542,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     async def test_set_docker_manifest(self, **kwargs):
         containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
-        repo = "library/hello-world"
+        repo = self.get_resource_name("repo")
         path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await self.upload_docker_manifest_prerequisites(repo, client)
@@ -576,6 +576,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             assert response.media_type == DOCKER_MANIFEST
 
             await client.delete_manifest(repo, digest1)
+            await client.delete_repository(repo)
     
     # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly.
     # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
@@ -585,7 +586,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         if self.is_china_endpoint(containerregistry_endpoint):
             pytest.skip("Running in china cloud may cause all tests finishing longer than the max time of 120 mins.")
         
-        repo = "library/hello-world"
+        repo = self.get_resource_name("repo")
         path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest_without_spaces.json")
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await self.upload_docker_manifest_prerequisites(repo, client)
@@ -607,6 +608,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             assert response.media_type == DOCKER_MANIFEST
 
             await client.delete_manifest(repo, digest)
+            await client.delete_repository(repo)
 
     @acr_preparer()
     @recorded_by_proxy_async
@@ -632,11 +634,11 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
     @pytest.mark.live_test_only
     @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_upload_large_blob_in_chunk(self, containerregistry_endpoint):
+    async def test_upload_large_blob_in_chunk(self, **kwargs):
         if not self.is_public_endpoint(containerregistry_endpoint):
             pytest.skip("Running in non-public cloud may cause all tests finishing longer than the max time of 120 mins.")
         
+        containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
         repo = self.get_resource_name("repo")
         async with self.create_registry_client(containerregistry_endpoint) as client:
             # Test blob upload and download in equal size chunks
