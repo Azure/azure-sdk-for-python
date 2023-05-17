@@ -4,9 +4,10 @@
 
 # pylint: disable=unused-argument,no-self-use
 
-from marshmallow import fields, validate, post_load
+from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
+from azure.ai.ml.entities._feature_store_entity.data_column_type import DataColumnType
 
 
 class DataColumnSchema(metaclass=PatchedSchemaMeta):
@@ -14,10 +15,10 @@ class DataColumnSchema(metaclass=PatchedSchemaMeta):
         required=True,
         allow_none=False,
     )
-    type = fields.Str(
-        validate=validate.OneOf(["string", "integer", "long", "float", "double", "binary", "datetime", "boolean"]),
+    type = fields.Enum(
+        DataColumnType,
         required=True,
-        allow_none=False,
+        allow_none=False
     )
 
     @post_load
