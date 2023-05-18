@@ -47,8 +47,8 @@ class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
         *,
         block_headers_list: Optional[List[str]] = None,
         disable_cleanup: bool = False,
-        **kwargs: Dict  # pylint: disable=unused-argument
-    ) -> None:  # pylint: super-init-not-called
+        **kwargs: Dict
+    ) -> None:  # pylint: disable=unused-argument
         self._disable_cleanup = disable_cleanup
         self._block_headers_list = (
             SensitiveHeaderCleanupPolicy.DEFAULT_SENSITIVE_HEADERS if block_headers_list is None else block_headers_list
