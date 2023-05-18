@@ -64,12 +64,12 @@ class BanditPolicy(EarlyTerminationPolicy):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/pytorch/
-        train-hyperparameter-tune-deploy-with-pytorch/train-hyperparameter-tune-deploy-with-pytorch.ipynb
-            :language: ipython
-            :linenos:
-            :lines: 341-353
-            :caption: Configuring a BanditPolicy for a hyperparameter sweep on a Command job.
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_bandit_policy]
+            :end-before: [END configure_sweep_job_bandit_policy]
+            :language: python
+            :dedent: 8
+            :caption: Configuring BanditPolicy early termination of a hyperparameter sweep on a Command job.
     """
 
     def __init__(
@@ -80,7 +80,8 @@ class BanditPolicy(EarlyTerminationPolicy):
         slack_amount: Optional[float] = 0,
         slack_factor: Optional[float] = 0,
     ) -> None:
-        """Defines an early termination policy based on slack criteria and a frequency and delay interval for evaluation.
+        """Defines an early termination policy based on slack criteria and a frequency and delay interval
+        for evaluation.
 
         :param delay_evaluation: Number of intervals by which to delay the first evaluation. Defaults to 0.
         :type delay_evaluation: int
@@ -123,14 +124,14 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
     :type evaluation_interval: int
 
     .. admonition:: Example:
-    :class: tip
+        :class: tip
 
-    .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/lightgbm/iris/
-    lightgbm-iris-sweep.ipynb
-        :language: ipython
-        :linenos:
-        :lines: 329-331
-        :caption: Configuring an early termination policy for a hyperparameter sweep job using MedianStoppingPolicy
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_median_stopping_policy]
+            :end-before: [END configure_sweep_job_median_stopping_policy]
+            :language: python
+            :dedent: 8
+            :caption: Configuring an early termination policy for a hyperparameter sweep job using MedianStoppingPolicy
     """
 
     def __init__(
@@ -171,6 +172,17 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
     :type evaluation_interval: int
     :param truncation_percentage: The percentage of runs to cancel at each evaluation interval. Defaults to 0.
     :type truncation_percentage: int
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_truncation_selection_policy]
+            :end-before: [END configure_sweep_job_truncation_selection_policy]
+            :language: python
+            :dedent: 8
+            :caption: Configuring an early termination policy for a hyperparameter sweep job
+            using TruncationStoppingPolicy
     """
 
     def __init__(

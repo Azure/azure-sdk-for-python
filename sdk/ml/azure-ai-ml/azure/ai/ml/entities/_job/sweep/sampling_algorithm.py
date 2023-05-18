@@ -53,6 +53,16 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
     :param logbase: A positive number or e in string format to be used as base for log
         based random sampling.
     :type logbase: Union[float, str]
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_random_sampling_algorithm]
+            :end-before: [END configure_sweep_job_random_sampling_algorithm]
+            :language: python
+            :dedent: 8
+            :caption: Assigning a random sampling algorithm for a SweepJob
     """
 
     def __init__(
@@ -96,7 +106,18 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
 
 
 class GridSamplingAlgorithm(SamplingAlgorithm):
-    """Grid Sampling Algorithm."""
+    """Grid Sampling Algorithm.
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_grid_sampling_algorithm]
+            :end-before: [END configure_sweep_job_grid_sampling_algorithm]
+            :language: python
+            :dedent: 8
+            :caption: Assigning a grid sampling algorithm for a SweepJob
+    """
 
     def __init__(self) -> None:
         super().__init__()
@@ -113,7 +134,18 @@ class GridSamplingAlgorithm(SamplingAlgorithm):
 
 
 class BayesianSamplingAlgorithm(SamplingAlgorithm):
-    """Bayesian Sampling Algorithm."""
+    """Bayesian Sampling Algorithm.
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]
+            :end-before: [END configure_sweep_job_bayesian_sampling_algorithm]
+            :language: python
+            :dedent: 8
+            :caption: Assigning a Bayesian sampling algorithm for a SweepJob
+    """
 
     def __init__(self) -> None:
         super().__init__()

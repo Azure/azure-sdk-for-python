@@ -117,6 +117,16 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :type queue_settings: QueueSettings
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]
+            :end-before: [END configure_sweep_job_bayesian_sampling_algorithm]
+            :language: python
+            :dedent: 8
+            :caption: Creating a SweepJob
     """
 
     def __init__(

@@ -53,14 +53,17 @@ class SweepDistribution(ABC, RestTranslatableMixin):
 class Choice(SweepDistribution):
     """Choice distribution configuration.
 
+    :param values: List of values to choose from.
+    :type values: List[Union[float, str, dict]]
+
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/
-        scikit-learn/train-hyperparameter-tune-deploy-with-sklearn/train-hyperparameter-tune-with-sklearn.ipynb
-            :language: ipython
-            :linenos:
-            :lines: 488-505
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_choice_loguniform]
+            :end-before: [END configure_sweep_job_choice_loguniform]
+            :language: python
+            :dedent: 8
             :caption: Using Choice distribution to set values for a hyperparameter sweep
     """
 
@@ -117,6 +120,16 @@ class Normal(SweepDistribution):
     :type mu: float
     :param sigma: Standard deviation of the distribution.
     :type sigma: float
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_randint_normal]
+            :end-before: [END configure_sweep_job_randint_normal]
+            :language: python
+            :dedent: 8
+            :caption: Configuring Normal distributions for a hyperparameter sweep on a Command job.
     """
 
     def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs):
@@ -147,6 +160,16 @@ class LogNormal(Normal):
     :type mu: float
     :param sigma: Standard deviation of the log of the distribution.
     :type sigma: float
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_lognormal_qlognormal]
+            :end-before: [END configure_sweep_job_lognormal_qlognormal]
+            :language: python
+            :dedent: 8
+            :caption: Configuring LogNormal distributions for a hyperparameter sweep on a Command job.
     """
 
     def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs) -> None:
@@ -170,6 +193,16 @@ class QNormal(Normal):
     :type sigma: float
     :param q: Quantization factor.
     :type q: int
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_qloguniform_qnormal]
+            :end-before: [END configure_sweep_job_qloguniform_qnormal]
+            :language: python
+            :dedent: 8
+            :caption: Configuring QNormal distributions for a hyperparameter sweep on a Command job.
     """
 
     def __init__(
@@ -203,6 +236,15 @@ class QLogNormal(QNormal):
     :type mu: float
     :param sigma: Standard deviation of the log of the distribution.
     :type sigma: float
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_lognormal_qlognormal]
+            :end-before: [END configure_sweep_job_lognormal_qlognormal]
+            :language: python
+            :dedent: 8
+            :caption: Configuring QLogNormal distributions for a hyperparameter sweep on a Command job.
     """
 
     def __init__(
@@ -224,6 +266,16 @@ class Randint(SweepDistribution):
 
     :param upper: Upper bound of the distribution.
     :type upper: int
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_randint_normal]
+            :end-before: [END configure_sweep_job_randint_normal]
+            :language: python
+            :dedent: 8
+            :caption: Configuring Randint distributions for a hyperparameter sweep on a Command job.
     """
 
     def __init__(self, upper: Optional[int] = None, **kwargs) -> None:
@@ -255,12 +307,13 @@ class Uniform(SweepDistribution):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/pytorch/
-        train-hyperparameter-tune-deploy-with-pytorch/train-hyperparameter-tune-deploy-with-pytorch.ipynb
-            :language: ipython
-            :linenos:
-            :lines: 314-322
-            :caption: Configuring Uniform distributions for learning rates and momentum during a hyperparameter sweep on a Command job.
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_uniform]
+            :end-before: [END configure_sweep_job_uniform]
+            :language: python
+            :dedent: 8
+            :caption: Configuring Uniform distributions for learning rates and momentum
+            during a hyperparameter sweep on a Command job.
     """
 
     def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs) -> None:
@@ -293,14 +346,14 @@ class LogUniform(Uniform):
     :type max_value: float
 
     .. admonition:: Example:
-    :class: tip
+        :class: tip
 
-    .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/
-    tensorflow/train-hyperparameter-tune-deploy-with-tensorflow/train-hyperparameter-tune-deploy-with-tensorflow.ipynb
-        :language: ipython
-        :linenos:
-        :lines: 342-361
-        :caption: Configuring a LogUniform distribution for a hyperparameter sweep job learning rate
+            .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+                :start-after: [START configure_sweep_job_choice_loguniform]
+                :end-before: [END configure_sweep_job_choice_loguniform]
+                :language: python
+                :dedent: 8
+                :caption: Configuring a LogUniform distribution for a hyperparameter sweep job learning rate
     """
 
     def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs) -> None:
@@ -324,6 +377,16 @@ class QUniform(Uniform):
     :type max_value: float
     :param q: Quantization factor.
     :type q: int
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_truncation_selection_policy]
+            :end-before: [END configure_sweep_job_truncation_selection_policy]
+            :language: python
+            :dedent: 8
+            :caption: Configuring QUniform distributions for a hyperparameter sweep on a Command job.
     """
 
     def __init__(
@@ -361,6 +424,16 @@ class QLogUniform(QUniform):
     :type min_value: float
     :param max_value: Maximum value of the log of the distribution.
     :type max_value: float
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_qloguniform_qnormal]
+            :end-before: [END configure_sweep_job_qloguniform_qnormal]
+            :language: python
+            :dedent: 8
+            :caption: Configuring QLogUniform distributions for a hyperparameter sweep on a Command job.
     """
 
     def __init__(

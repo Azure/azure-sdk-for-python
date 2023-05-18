@@ -75,6 +75,16 @@ class SweepJobLimits(JobLimits):
     :type timeout: int
     :param trial_timeout: Sweep Job Trial timeout value in seconds.
     :type trial_timeout: int
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]
+            :end-before: [END configure_sweep_job_bayesian_sampling_algorithm]
+            :language: python
+            :dedent: 8
+            :caption: Assigning limits to a SweepJob
     """
 
     def __init__(
