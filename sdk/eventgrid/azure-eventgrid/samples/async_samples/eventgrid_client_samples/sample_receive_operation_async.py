@@ -24,11 +24,15 @@ async def run():
     try:
         async with client:
             receive_result = await client.receive_cloud_events(
-                topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=10, max_wait_time=10
+                topic_name=TOPIC_NAME,
+                event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+                max_events=10,
+                max_wait_time=10,
             )
             print(receive_result)
     except HttpResponseError:
         raise
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(run())

@@ -10,16 +10,25 @@ from typing import List
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.credentials import AzureKeyCredential
 from ._client import EventGridClient as ServiceClientGenerated
-from ._legacy import EventGridPublisherClient, SystemEventNames, EventGridEvent, generate_sas
+from ._legacy import (
+    EventGridPublisherClient,
+    SystemEventNames,
+    EventGridEvent,
+    generate_sas,
+)
 
 
 class EventGridSharedAccessKeyPolicy(SansIOHTTPPolicy):
-    def __init__(self, credential: "AzureKeyCredential", **kwargs) -> None:  # pylint: disable=unused-argument
+    def __init__(
+        self, credential: "AzureKeyCredential", **kwargs
+    ) -> None:  # pylint: disable=unused-argument
         super(EventGridSharedAccessKeyPolicy, self).__init__()
         self._credential = credential
 
     def on_request(self, request):
-        request.http_request.headers["Authorization"] = "SharedAccessKey " + self._credential.key
+        request.http_request.headers["Authorization"] = (
+            "SharedAccessKey " + self._credential.key
+        )
 
 
 class EventGridClient(ServiceClientGenerated):
@@ -39,7 +48,9 @@ class EventGridClient(ServiceClientGenerated):
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs) -> None:
         if isinstance(credential, AzureKeyCredential):
             if not kwargs.get("authentication_policy"):
-                kwargs["authentication_policy"] = EventGridSharedAccessKeyPolicy(credential)
+                kwargs["authentication_policy"] = EventGridSharedAccessKeyPolicy(
+                    credential
+                )
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
 

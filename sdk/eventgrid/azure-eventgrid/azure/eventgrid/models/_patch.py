@@ -15,6 +15,7 @@ from ._models import (
     BrokerProperties as InternalBrokerProperties,
 )
 
+
 class PublishResult(_model_base.Model):
     """The result of the Publish operation."""
 
@@ -31,7 +32,9 @@ class PublishResult(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(
+        self, *args: Any, **kwargs: Any
+    ) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -62,7 +65,9 @@ class ReceiveDetails(InternalReceiveDetails):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(
+        self, *args: Any, **kwargs: Any
+    ) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -90,7 +95,9 @@ class ReceiveResult(InternalReceiveResult):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(
+        self, *args: Any, **kwargs: Any
+    ) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -121,7 +128,9 @@ class BrokerProperties(InternalBrokerProperties):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(
+        self, *args: Any, **kwargs: Any
+    ) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 

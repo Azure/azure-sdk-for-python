@@ -25,13 +25,14 @@ async def run():
         async with client:
             tokens = ReleaseOptions(lock_tokens=["token"])
             release_events = await client.release_cloud_events(
-                topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=tokens
+                topic_name=TOPIC_NAME,
+                event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+                lock_tokens=tokens,
             )
-            print(release_events)   
+            print(release_events)
     except HttpResponseError:
         raise
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(run())

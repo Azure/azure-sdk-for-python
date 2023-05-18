@@ -25,13 +25,14 @@ async def run():
         async with client:
             tokens = RejectOptions(lock_tokens=["token"])
             reject_events = await client.reject_cloud_events(
-                topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=tokens
+                topic_name=TOPIC_NAME,
+                event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+                lock_tokens=tokens,
             )
-            print(reject_events)   
+            print(reject_events)
     except HttpResponseError:
         raise
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(run())

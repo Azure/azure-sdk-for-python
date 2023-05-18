@@ -37,7 +37,9 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
 
 
 class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
@@ -67,7 +69,12 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
 
     @overload
     async def publish_events(  # pylint: disable=inconsistent-return-statements
-        self, topic_hostname: str, events: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        topic_hostname: str,
+        events: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """Publishes a batch of events to an Azure Event Grid topic.
 
@@ -86,7 +93,10 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
 
     @distributed_trace_async
     async def publish_events(  # pylint: disable=inconsistent-return-statements
-        self, topic_hostname: str, events: Union[List[_models.EventGridEvent], IO], **kwargs: Any
+        self,
+        topic_hostname: str,
+        events: Union[List[_models.EventGridEvent], IO],
+        **kwargs: Any
     ) -> None:
         """Publishes a batch of events to an Azure Event Grid topic.
 
@@ -114,7 +124,9 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -134,7 +146,9 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "topicHostname": self._serialize.url("topic_hostname", topic_hostname, "str", skip_quote=True),
+            "topicHostname": self._serialize.url(
+                "topic_hostname", topic_hostname, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -146,7 +160,9 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -179,7 +195,10 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: str = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", "application/cloudevents-batch+json; charset=utf-8")
+            "content_type",
+            _headers.pop(
+                "Content-Type", "application/cloudevents-batch+json; charset=utf-8"
+            ),
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -193,7 +212,9 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "topicHostname": self._serialize.url("topic_hostname", topic_hostname, "str", skip_quote=True),
+            "topicHostname": self._serialize.url(
+                "topic_hostname", topic_hostname, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -205,7 +226,9 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -213,7 +236,12 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
 
     @overload
     async def publish_custom_event_events(  # pylint: disable=inconsistent-return-statements
-        self, topic_hostname: str, events: List[JSON], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        topic_hostname: str,
+        events: List[JSON],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """Publishes a batch of events to an Azure Event Grid topic.
 
@@ -232,7 +260,12 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
 
     @overload
     async def publish_custom_event_events(  # pylint: disable=inconsistent-return-statements
-        self, topic_hostname: str, events: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        topic_hostname: str,
+        events: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """Publishes a batch of events to an Azure Event Grid topic.
 
@@ -279,7 +312,9 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -299,7 +334,9 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "topicHostname": self._serialize.url("topic_hostname", topic_hostname, "str", skip_quote=True),
+            "topicHostname": self._serialize.url(
+                "topic_hostname", topic_hostname, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -311,7 +348,9 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:

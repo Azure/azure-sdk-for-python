@@ -21,9 +21,15 @@ EVENT_SUBSCRIPTION_NAME = os.environ.get("EVENT_SUBSCRIPTION_NAME")
 client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
 
-cloud_event_reject = CloudEvent(data="reject", source="https://example.com", type="example")
-cloud_event_release = CloudEvent(data="release", source="https://example.com", type="example")
-cloud_event_ack = CloudEvent(data="acknowledge", source="https://example.com", type="example")
+cloud_event_reject = CloudEvent(
+    data="reject", source="https://example.com", type="example"
+)
+cloud_event_release = CloudEvent(
+    data="release", source="https://example.com", type="example"
+)
+cloud_event_ack = CloudEvent(
+    data="acknowledge", source="https://example.com", type="example"
+)
 
 # Publish a CloudEvent
 try:
@@ -41,7 +47,10 @@ except HttpResponseError:
 # Receive Published Cloud Events
 try:
     receive_results = client.receive_cloud_events(
-        topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=10, max_wait_time=10
+        topic_name=TOPIC_NAME,
+        event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+        max_events=10,
+        max_wait_time=10,
     )
 except HttpResponseError:
     raise
@@ -67,7 +76,11 @@ for detail in receive_results.value:
 if len(release_events) > 0:
     try:
         release_tokens = ReleaseOptions(lock_tokens=release_events)
-        release_result = client.release_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=release_tokens)
+        release_result = client.release_cloud_events(
+            topic_name=TOPIC_NAME,
+            event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+            lock_tokens=release_tokens,
+        )
     except HttpResponseError:
         raise
 
@@ -77,7 +90,11 @@ if len(release_events) > 0:
 if len(acknowledge_events) > 0:
     try:
         ack_tokens = AcknowledgeOptions(lock_tokens=acknowledge_events)
-        ack_result = client.acknowledge_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=ack_tokens)
+        ack_result = client.acknowledge_cloud_events(
+            topic_name=TOPIC_NAME,
+            event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+            lock_tokens=ack_tokens,
+        )
     except HttpResponseError:
         raise
 
@@ -87,7 +104,11 @@ if len(acknowledge_events) > 0:
 if len(reject_events) > 0:
     try:
         reject_tokens = RejectOptions(lock_tokens=reject_events)
-        reject_result = client.reject_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=reject_tokens)
+        reject_result = client.reject_cloud_events(
+            topic_name=TOPIC_NAME,
+            event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+            lock_tokens=reject_tokens,
+        )
     except HttpResponseError:
         raise
 

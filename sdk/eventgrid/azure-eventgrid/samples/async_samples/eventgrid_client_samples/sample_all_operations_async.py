@@ -21,29 +21,43 @@ EVENT_SUBSCRIPTION_NAME = os.environ.get("EVENT_SUBSCRIPTION_NAME")
 client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
 
-cloud_event_reject = CloudEvent(data="reject", source="https://example.com", type="example")
-cloud_event_release = CloudEvent(data="release", source="https://example.com", type="example")
-cloud_event_ack = CloudEvent(data="acknowledge", source="https://example.com", type="example")
+cloud_event_reject = CloudEvent(
+    data="reject", source="https://example.com", type="example"
+)
+cloud_event_release = CloudEvent(
+    data="release", source="https://example.com", type="example"
+)
+cloud_event_ack = CloudEvent(
+    data="acknowledge", source="https://example.com", type="example"
+)
+
 
 async def main():
     async with client:
         # Publish a CloudEvent
         try:
-            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event_reject)
+            await client.publish_cloud_events(
+                topic_name=TOPIC_NAME, body=cloud_event_reject
+            )
         except HttpResponseError:
             raise
 
         # Publish a list of CloudEvents
         try:
             list_of_cloud_events = [cloud_event_release, cloud_event_ack]
-            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=list_of_cloud_events)
+            await client.publish_cloud_events(
+                topic_name=TOPIC_NAME, body=list_of_cloud_events
+            )
         except HttpResponseError:
             raise
 
         # Receive Published Cloud Events
         try:
             receive_results = await client.receive_cloud_events(
-                topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=10, max_wait_time=10
+                topic_name=TOPIC_NAME,
+                event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+                max_events=10,
+                max_wait_time=10,
             )
         except HttpResponseError:
             raise
@@ -69,7 +83,11 @@ async def main():
         if len(release_events) > 0:
             try:
                 release_tokens = ReleaseOptions(lock_tokens=release_events)
-                release_result = await client.release_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=release_tokens)
+                release_result = await client.release_cloud_events(
+                    topic_name=TOPIC_NAME,
+                    event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+                    lock_tokens=release_tokens,
+                )
             except HttpResponseError:
                 raise
 
@@ -79,7 +97,11 @@ async def main():
         if len(acknowledge_events) > 0:
             try:
                 ack_tokens = AcknowledgeOptions(lock_tokens=acknowledge_events)
-                ack_result = await client.acknowledge_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=ack_tokens)
+                ack_result = await client.acknowledge_cloud_events(
+                    topic_name=TOPIC_NAME,
+                    event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+                    lock_tokens=ack_tokens,
+                )
             except HttpResponseError:
                 raise
 
@@ -89,11 +111,16 @@ async def main():
         if len(reject_events) > 0:
             try:
                 reject_tokens = RejectOptions(lock_tokens=reject_events)
-                reject_result = await client.reject_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=reject_tokens)
+                reject_result = await client.reject_cloud_events(
+                    topic_name=TOPIC_NAME,
+                    event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+                    lock_tokens=reject_tokens,
+                )
             except HttpResponseError:
                 raise
 
             for succeeded_lock_token in reject_result.succeeded_lock_tokens:
                 print(f"Succeeded Lock Token:{succeeded_lock_token}")
+
 
 asyncio.run(main())

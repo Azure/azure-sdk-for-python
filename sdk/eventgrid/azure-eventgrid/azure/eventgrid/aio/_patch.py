@@ -30,7 +30,9 @@ class EventGridClient(ServiceClientGenerated):
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs) -> None:
         if isinstance(credential, AzureKeyCredential):
             if not kwargs.get("authentication_policy"):
-                kwargs["authentication_policy"] = EventGridSharedAccessKeyPolicy(credential)
+                kwargs["authentication_policy"] = EventGridSharedAccessKeyPolicy(
+                    credential
+                )
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
 

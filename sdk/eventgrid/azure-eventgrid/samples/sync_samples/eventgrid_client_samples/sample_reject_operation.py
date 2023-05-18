@@ -21,7 +21,9 @@ client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 try:
     lock_tokens = RejectOptions(lock_tokens=["token"])
     reject_events = client.reject_cloud_events(
-        topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, lock_tokens=lock_tokens
+        topic_name=TOPIC_NAME,
+        event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+        lock_tokens=lock_tokens,
     )
     print(reject_events)
 except HttpResponseError:

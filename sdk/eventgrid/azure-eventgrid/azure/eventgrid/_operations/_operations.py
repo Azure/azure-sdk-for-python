@@ -9,7 +9,14 @@
 import json
 from typing import Any, Callable, Dict, List, Optional, TypeVar
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -20,37 +27,39 @@ from .. import models as _models
 from .._model_base import AzureJSONEncoder, _deserialize
 from .._serialization import Serializer
 from .._vendor import EventGridClientMixinABC, _format_url_section
-T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
+T = TypeVar("T")
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
 def build_event_grid_publish_cloud_event_request(
-    topic_name: str,
-    *,
-    content: _models._models.CloudEvent,
-    **kwargs: Any
+    topic_name: str, *, content: _models._models.CloudEvent, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop('content_type')
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-06-01-preview"))
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-06-01-preview")
+    )
     # Construct URL
     _url = "/topics/{topicName}:publish"
     path_format_arguments = {
-        "topicName": _SERIALIZER.url("topic_name", topic_name, 'str'),
+        "topicName": _SERIALIZER.url("topic_name", topic_name, "str"),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(
         method="POST",
@@ -63,29 +72,28 @@ def build_event_grid_publish_cloud_event_request(
 
 
 def build_event_grid_publish_cloud_events_request(
-    topic_name: str,
-    *,
-    content: List[_models._models.CloudEvent],
-    **kwargs: Any
+    topic_name: str, *, content: List[_models._models.CloudEvent], **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop('content_type')
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-06-01-preview"))
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-06-01-preview")
+    )
     # Construct URL
     _url = "/topics/{topicName}:publish"
     path_format_arguments = {
-        "topicName": _SERIALIZER.url("topic_name", topic_name, 'str'),
+        "topicName": _SERIALIZER.url("topic_name", topic_name, "str"),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(
         method="POST",
@@ -108,34 +116,36 @@ def build_event_grid_receive_cloud_events_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-06-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-06-01-preview")
+    )
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/topics/{topicName}/eventsubscriptions/{eventSubscriptionName}:receive"
     path_format_arguments = {
-        "topicName": _SERIALIZER.url("topic_name", topic_name, 'str'),
-        "eventSubscriptionName": _SERIALIZER.url("event_subscription_name", event_subscription_name, 'str'),
+        "topicName": _SERIALIZER.url("topic_name", topic_name, "str"),
+        "eventSubscriptionName": _SERIALIZER.url(
+            "event_subscription_name", event_subscription_name, "str"
+        ),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if max_events is not None:
-        _params['maxEvents'] = _SERIALIZER.query("max_events", max_events, 'int')
+        _params["maxEvents"] = _SERIALIZER.query("max_events", max_events, "int")
     if max_wait_time is not None:
-        _params['maxWaitTime'] = _SERIALIZER.query("max_wait_time", max_wait_time, 'int')
+        _params["maxWaitTime"] = _SERIALIZER.query(
+            "max_wait_time", max_wait_time, "int"
+        )
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
+        method="POST", url=_url, params=_params, headers=_headers, **kwargs
     )
 
 
@@ -149,25 +159,29 @@ def build_event_grid_acknowledge_cloud_events_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop('content_type')
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-06-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-06-01-preview")
+    )
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/topics/{topicName}/eventsubscriptions/{eventSubscriptionName}:acknowledge"
     path_format_arguments = {
-        "topicName": _SERIALIZER.url("topic_name", topic_name, 'str'),
-        "eventSubscriptionName": _SERIALIZER.url("event_subscription_name", event_subscription_name, 'str'),
+        "topicName": _SERIALIZER.url("topic_name", topic_name, "str"),
+        "eventSubscriptionName": _SERIALIZER.url(
+            "event_subscription_name", event_subscription_name, "str"
+        ),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
         method="POST",
@@ -189,25 +203,29 @@ def build_event_grid_release_cloud_events_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop('content_type')
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-06-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-06-01-preview")
+    )
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/topics/{topicName}/eventsubscriptions/{eventSubscriptionName}:release"
     path_format_arguments = {
-        "topicName": _SERIALIZER.url("topic_name", topic_name, 'str'),
-        "eventSubscriptionName": _SERIALIZER.url("event_subscription_name", event_subscription_name, 'str'),
+        "topicName": _SERIALIZER.url("topic_name", topic_name, "str"),
+        "eventSubscriptionName": _SERIALIZER.url(
+            "event_subscription_name", event_subscription_name, "str"
+        ),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
         method="POST",
@@ -229,25 +247,29 @@ def build_event_grid_reject_cloud_events_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop('content_type')
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-06-01-preview"))
-    accept = _headers.pop('Accept', "application/json")
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-06-01-preview")
+    )
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/topics/{topicName}/eventsubscriptions/{eventSubscriptionName}:reject"
     path_format_arguments = {
-        "topicName": _SERIALIZER.url("topic_name", topic_name, 'str'),
-        "eventSubscriptionName": _SERIALIZER.url("event_subscription_name", event_subscription_name, 'str'),
+        "topicName": _SERIALIZER.url("topic_name", topic_name, "str"),
+        "eventSubscriptionName": _SERIALIZER.url(
+            "event_subscription_name", event_subscription_name, "str"
+        ),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
         method="POST",
@@ -258,14 +280,11 @@ def build_event_grid_reject_cloud_events_request(
         **kwargs
     )
 
-class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
+class EventGridClientOperationsMixin(EventGridClientMixinABC):
     @distributed_trace
     def _publish_cloud_event(  # pylint: disable=inconsistent-return-statements
-        self,
-        topic_name: str,
-        event: _models._models.CloudEvent,
-        **kwargs: Any
+        self, topic_name: str, event: _models._models.CloudEvent, **kwargs: Any
     ) -> None:
         """Publish Single Cloud Event to namespace topic. In case of success, the server responds with an
         HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
@@ -287,17 +306,21 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
+        content_type: str = kwargs.pop(
+            "content_type",
+            _headers.pop("content-type", "application/cloudevents+json; charset=utf-8"),
         )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _content = json.dumps(event, cls=AzureJSONEncoder)  # type: ignore
 
@@ -310,34 +333,33 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-
-
     @distributed_trace
     def _publish_cloud_events(  # pylint: disable=inconsistent-return-statements
-        self,
-        topic_name: str,
-        events: List[_models._models.CloudEvent],
-        **kwargs: Any
+        self, topic_name: str, events: List[_models._models.CloudEvent], **kwargs: Any
     ) -> None:
         """Publish Batch Cloud Event to namespace topic. In case of success, the server responds with an
         HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
@@ -359,17 +381,23 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents-batch+json; charset=utf-8"))
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
+        content_type: str = kwargs.pop(
+            "content_type",
+            _headers.pop(
+                "content-type", "application/cloudevents-batch+json; charset=utf-8"
+            ),
         )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _content = json.dumps(events, cls=AzureJSONEncoder)  # type: ignore
 
@@ -382,27 +410,29 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
-
-
 
     @distributed_trace
     def _receive_cloud_events(
@@ -436,18 +466,22 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ReceiveResult] = kwargs.pop(  # pylint: disable=protected-access
-            'cls', None
+        cls: ClsType[
+            _models._models.ReceiveResult
+        ] = kwargs.pop(  # pylint: disable=protected-access
+            "cls", None
         )
 
-        
         request = build_event_grid_receive_cloud_events_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
@@ -458,21 +492,25 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -480,15 +518,13 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         else:
             deserialized = _deserialize(
                 _models._models.ReceiveResult,  # pylint: disable=protected-access
-                response.json()
+                response.json(),
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized # type: ignore
-
-
+        return deserialized  # type: ignore
 
     @distributed_trace
     def acknowledge_cloud_events(
@@ -518,17 +554,21 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; charset=utf-8"))
-        cls: ClsType[_models.AcknowledgeResult] = kwargs.pop(
-            'cls', None
+        content_type: str = kwargs.pop(
+            "content_type",
+            _headers.pop("content-type", "application/json; charset=utf-8"),
         )
+        cls: ClsType[_models.AcknowledgeResult] = kwargs.pop("cls", None)
 
         _content = json.dumps(lock_tokens, cls=AzureJSONEncoder)  # type: ignore
 
@@ -542,37 +582,36 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AcknowledgeResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.AcknowledgeResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized # type: ignore
-
-
+        return deserialized  # type: ignore
 
     @distributed_trace
     def release_cloud_events(
@@ -601,17 +640,21 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; charset=utf-8"))
-        cls: ClsType[_models.ReleaseResult] = kwargs.pop(
-            'cls', None
+        content_type: str = kwargs.pop(
+            "content_type",
+            _headers.pop("content-type", "application/json; charset=utf-8"),
         )
+        cls: ClsType[_models.ReleaseResult] = kwargs.pop("cls", None)
 
         _content = json.dumps(lock_tokens, cls=AzureJSONEncoder)  # type: ignore
 
@@ -625,37 +668,36 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.ReleaseResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.ReleaseResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized # type: ignore
-
-
+        return deserialized  # type: ignore
 
     @distributed_trace
     def reject_cloud_events(
@@ -682,17 +724,21 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; charset=utf-8"))
-        cls: ClsType[_models.RejectResult] = kwargs.pop(
-            'cls', None
+        content_type: str = kwargs.pop(
+            "content_type",
+            _headers.pop("content-type", "application/json; charset=utf-8"),
         )
+        cls: ClsType[_models.RejectResult] = kwargs.pop("cls", None)
 
         _content = json.dumps(lock_tokens, cls=AzureJSONEncoder)  # type: ignore
 
@@ -706,34 +752,33 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            request,
-            stream=_stream,
-            **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.RejectResult,
-                response.json()
-            )
+            deserialized = _deserialize(_models.RejectResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized # type: ignore
-
-
+        return deserialized  # type: ignore

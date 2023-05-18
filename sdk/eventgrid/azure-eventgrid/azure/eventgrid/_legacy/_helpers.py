@@ -15,7 +15,10 @@ except ImportError:
 
 from azure.core.exceptions import raise_with_traceback
 from azure.core.pipeline.transport import HttpRequest
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
+from azure.core.pipeline.policies import (
+    AzureKeyCredentialPolicy,
+    BearerTokenCredentialPolicy,
+)
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from ._generated._serialization import Serializer
 from ._signature_credential_policy import EventGridSasCredentialPolicy
@@ -49,12 +52,16 @@ def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
             :dedent: 0
             :caption: Generate a shared access signature.
     """
-    full_endpoint = "{}?apiVersion={}".format(endpoint, kwargs.get("api_version", constants.DEFAULT_API_VERSION))
+    full_endpoint = "{}?apiVersion={}".format(
+        endpoint, kwargs.get("api_version", constants.DEFAULT_API_VERSION)
+    )
     encoded_resource = quote(full_endpoint, safe=constants.SAFE_ENCODE)
     encoded_expiration_utc = quote(str(expiration_date_utc), safe=constants.SAFE_ENCODE)
 
     unsigned_sas = "r={}&e={}".format(encoded_resource, encoded_expiration_utc)
-    signature = quote(_generate_hmac(shared_access_key, unsigned_sas), safe=constants.SAFE_ENCODE)
+    signature = quote(
+        _generate_hmac(shared_access_key, unsigned_sas), safe=constants.SAFE_ENCODE
+    )
     signed_sas = "{}&s={}".format(unsigned_sas, signature)
     return signed_sas
 
@@ -67,15 +74,21 @@ def _generate_hmac(key, message):
     return base64.b64encode(hmac_new)
 
 
-def _get_authentication_policy(credential, bearer_token_policy=BearerTokenCredentialPolicy):
+def _get_authentication_policy(
+    credential, bearer_token_policy=BearerTokenCredentialPolicy
+):
     if credential is None:
         raise ValueError("Parameter 'self._credential' must not be None.")
     if hasattr(credential, "get_token"):
         return bearer_token_policy(credential, constants.DEFAULT_EVENTGRID_SCOPE)
     if isinstance(credential, AzureKeyCredential):
-        return AzureKeyCredentialPolicy(credential=credential, name=constants.EVENTGRID_KEY_HEADER)
+        return AzureKeyCredentialPolicy(
+            credential=credential, name=constants.EVENTGRID_KEY_HEADER
+        )
     if isinstance(credential, AzureSasCredential):
-        return EventGridSasCredentialPolicy(credential=credential, name=constants.EVENTGRID_TOKEN_HEADER)
+        return EventGridSasCredentialPolicy(
+            credential=credential, name=constants.EVENTGRID_TOKEN_HEADER
+        )
     raise ValueError(
         "The provided credential should be an instance of a TokenCredential, AzureSasCredential or AzureKeyCredential"
     )
@@ -155,13 +168,17 @@ def _from_cncf_events(event):
 def _build_request(endpoint, content_type, events, *, channel_name=None):
     serialize = Serializer()
     header_parameters = {}  # type: Dict[str, Any]
-    header_parameters["Content-Type"] = serialize.header("content_type", content_type, "str")
+    header_parameters["Content-Type"] = serialize.header(
+        "content_type", content_type, "str"
+    )
 
     if channel_name:
         header_parameters["aeg-channel-name"] = channel_name
 
     query_parameters = {}  # type: Dict[str, Any]
-    query_parameters["api-version"] = serialize.query("api_version", "2018-01-01", "str")
+    query_parameters["api-version"] = serialize.query(
+        "api_version", "2018-01-01", "str"
+    )
 
     body = serialize.body(events, "[object]")
     if body is None:
@@ -170,6 +187,8 @@ def _build_request(endpoint, content_type, events, *, channel_name=None):
         data = json.dumps(body)
         header_parameters["Content-Length"] = str(len(data))
 
-    request = HttpRequest(method="POST", url=endpoint, headers=header_parameters, data=data)
+    request = HttpRequest(
+        method="POST", url=endpoint, headers=header_parameters, data=data
+    )
     request.format_parameters(query_parameters)
     return request

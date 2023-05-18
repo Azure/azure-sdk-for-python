@@ -7,6 +7,7 @@
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
+
 # pylint: disable=line-too-long
 # pylint: disable=enum-must-be-uppercase
 class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -18,7 +19,9 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     # These names at the top are 'corrected' aliases of duplicate values that appear below, which are
     # deprecated but maintained for backwards compatibility.
-    AcsChatMemberAddedToThreadWithUserEventName = "Microsoft.Communication.ChatMemberAddedToThreadWithUser"
+    AcsChatMemberAddedToThreadWithUserEventName = (
+        "Microsoft.Communication.ChatMemberAddedToThreadWithUser"
+    )
 
     ResourceWriteFailureEventName = "Microsoft.Resources.ResourceWriteFailure"
 
@@ -30,11 +33,15 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ResourceDeleteCancelEventName = "Microsoft.Resources.ResourceDeleteCancel"
 
-    AcsChatThreadParticipantAddedEventName = "Microsoft.Communication.ChatThreadParticipantAdded"
+    AcsChatThreadParticipantAddedEventName = (
+        "Microsoft.Communication.ChatThreadParticipantAdded"
+    )
 
     ResourceDeleteSuccessEventName = "Microsoft.Resources.ResourceDeleteSuccess"
 
-    EventGridSubscriptionValidationEventName = "Microsoft.EventGrid.SubscriptionValidationEvent"
+    EventGridSubscriptionValidationEventName = (
+        "Microsoft.EventGrid.SubscriptionValidationEvent"
+    )
 
     ResourceWriteSuccessEventName = "Microsoft.Resources.ResourceWriteSuccess"
 
@@ -44,13 +51,19 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ResourceActionFailureEventName = "Microsoft.Resources.ResourceActionFailure"
 
-    AcsChatMemberRemovedFromThreadWithUserEventName = "Microsoft.Communication.ChatMemberRemovedFromThreadWithUser"
+    AcsChatMemberRemovedFromThreadWithUserEventName = (
+        "Microsoft.Communication.ChatMemberRemovedFromThreadWithUser"
+    )
 
     IoTHubDeviceConnectedEventName = "Microsoft.Devices.DeviceConnected"
 
-    EventGridSubscriptionDeletedEventName = "Microsoft.EventGrid.SubscriptionDeletedEvent"
+    EventGridSubscriptionDeletedEventName = (
+        "Microsoft.EventGrid.SubscriptionDeletedEvent"
+    )
 
-    AcsChatThreadParticipantRemovedEventName = "Microsoft.Communication.ChatThreadParticipantRemoved"
+    AcsChatThreadParticipantRemovedEventName = (
+        "Microsoft.Communication.ChatThreadParticipantRemoved"
+    )
 
     ResourceActionCancelEventName = "Microsoft.Resources.ResourceActionCancel"
 
@@ -59,21 +72,33 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     # Aliases end here
     AcsChatMessageDeletedEventName = "Microsoft.Communication.ChatMessageDeleted"
 
-    AcsChatMessageDeletedInThreadEventName = "Microsoft.Communication.ChatMessageDeletedInThread"
+    AcsChatMessageDeletedInThreadEventName = (
+        "Microsoft.Communication.ChatMessageDeletedInThread"
+    )
 
     AcsChatMessageEditedEventName = "Microsoft.Communication.ChatMessageEdited"
 
-    AcsChatMessageEditedInThreadEventName = "Microsoft.Communication.ChatMessageEditedInThread"
+    AcsChatMessageEditedInThreadEventName = (
+        "Microsoft.Communication.ChatMessageEditedInThread"
+    )
 
     AcsChatMessageReceivedEventName = "Microsoft.Communication.ChatMessageReceived"
 
-    AcsChatMessageReceivedInThreadEventName = "Microsoft.Communication.ChatMessageReceivedInThread"
+    AcsChatMessageReceivedInThreadEventName = (
+        "Microsoft.Communication.ChatMessageReceivedInThread"
+    )
 
-    AcsChatParticipantAddedToThreadEventName = "Microsoft.Communication.ChatThreadParticipantAdded"
+    AcsChatParticipantAddedToThreadEventName = (
+        "Microsoft.Communication.ChatThreadParticipantAdded"
+    )
 
-    AcsChatParticipantAddedToThreadWithUserEventName = "Microsoft.Communication.ChatParticipantAddedToThreadWithUser"
+    AcsChatParticipantAddedToThreadWithUserEventName = (
+        "Microsoft.Communication.ChatParticipantAddedToThreadWithUser"
+    )
 
-    AcsChatParticipantRemovedFromThreadEventName = "Microsoft.Communication.ChatThreadParticipantRemoved"
+    AcsChatParticipantRemovedFromThreadEventName = (
+        "Microsoft.Communication.ChatThreadParticipantRemoved"
+    )
 
     AcsChatParticipantRemovedFromThreadWithUserEventName = (
         "Microsoft.Communication.ChatParticipantRemovedFromThreadWithUser"
@@ -81,25 +106,41 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AcsChatThreadCreatedEventName = "Microsoft.Communication.ChatThreadCreated"
 
-    AcsChatThreadCreatedWithUserEventName = "Microsoft.Communication.ChatThreadCreatedWithUser"
+    AcsChatThreadCreatedWithUserEventName = (
+        "Microsoft.Communication.ChatThreadCreatedWithUser"
+    )
 
     AcsChatThreadDeletedEventName = "Microsoft.Communication.ChatThreadDeleted"
 
-    AcsChatThreadPropertiesUpdatedEventName = "Microsoft.Communication.ChatThreadPropertiesUpdated"
+    AcsChatThreadPropertiesUpdatedEventName = (
+        "Microsoft.Communication.ChatThreadPropertiesUpdated"
+    )
 
-    AcsChatThreadPropertiesUpdatedPerUserEventName = "Microsoft.Communication.ChatThreadPropertiesUpdatedPerUser"
+    AcsChatThreadPropertiesUpdatedPerUserEventName = (
+        "Microsoft.Communication.ChatThreadPropertiesUpdatedPerUser"
+    )
 
-    AcsChatThreadWithUserDeletedEventName = "Microsoft.Communication.ChatThreadWithUserDeleted"
+    AcsChatThreadWithUserDeletedEventName = (
+        "Microsoft.Communication.ChatThreadWithUserDeleted"
+    )
 
-    AcsEmailDeliveryReportReceivedEventName = "Microsoft.Communication.EmailDeliveryReportReceived"
+    AcsEmailDeliveryReportReceivedEventName = (
+        "Microsoft.Communication.EmailDeliveryReportReceived"
+    )
 
-    AcsEmailEngagementTrackingReportReceivedEventName = "Microsoft.Communication.EmailEngagementTrackingReportReceived"
+    AcsEmailEngagementTrackingReportReceivedEventName = (
+        "Microsoft.Communication.EmailEngagementTrackingReportReceived"
+    )
 
     AcsIncomingCallEventName = "Microsoft.Communication.IncomingCall"
 
-    AcsRecordingFileStatusUpdatedEventName = "Microsoft.Communication.RecordingFileStatusUpdated"
+    AcsRecordingFileStatusUpdatedEventName = (
+        "Microsoft.Communication.RecordingFileStatusUpdated"
+    )
 
-    AcsSmsDeliveryReportReceivedEventName = "Microsoft.Communication.SMSDeliveryReportReceived"
+    AcsSmsDeliveryReportReceivedEventName = (
+        "Microsoft.Communication.SMSDeliveryReportReceived"
+    )
 
     AcsSmsReceivedEventName = "Microsoft.Communication.SMSReceived"
 
@@ -109,17 +150,25 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ApiManagementApiDeletedEventName = "Microsoft.ApiManagement.APIDeleted"
 
-    ApiManagementApiReleaseCreatedEventName = "Microsoft.ApiManagement.APIReleaseCreated"
+    ApiManagementApiReleaseCreatedEventName = (
+        "Microsoft.ApiManagement.APIReleaseCreated"
+    )
 
-    ApiManagementApiReleaseDeletedEventName = "Microsoft.ApiManagement.APIReleaseDeleted"
+    ApiManagementApiReleaseDeletedEventName = (
+        "Microsoft.ApiManagement.APIReleaseDeleted"
+    )
 
-    ApiManagementApiReleaseUpdatedEventName = "Microsoft.ApiManagement.APIReleaseUpdated"
+    ApiManagementApiReleaseUpdatedEventName = (
+        "Microsoft.ApiManagement.APIReleaseUpdated"
+    )
 
     ApiManagementApiUpdatedEventName = "Microsoft.ApiManagement.APIUpdated"
 
     ApiManagementGatewayApiAddedEventName = "Microsoft.ApiManagement.GatewayAPIAdded"
 
-    ApiManagementGatewayApiRemovedEventName = "Microsoft.ApiManagement.GatewayAPIRemoved"
+    ApiManagementGatewayApiRemovedEventName = (
+        "Microsoft.ApiManagement.GatewayAPIRemoved"
+    )
 
     ApiManagementGatewayCertificateAuthorityCreatedEventName = (
         "Microsoft.ApiManagement.GatewayCertificateAuthorityCreated"
@@ -157,11 +206,17 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ApiManagementProductUpdatedEventName = "Microsoft.ApiManagement.ProductUpdated"
 
-    ApiManagementSubscriptionCreatedEventName = "Microsoft.ApiManagement.SubscriptionCreated"
+    ApiManagementSubscriptionCreatedEventName = (
+        "Microsoft.ApiManagement.SubscriptionCreated"
+    )
 
-    ApiManagementSubscriptionDeletedEventName = "Microsoft.ApiManagement.SubscriptionDeleted"
+    ApiManagementSubscriptionDeletedEventName = (
+        "Microsoft.ApiManagement.SubscriptionDeleted"
+    )
 
-    ApiManagementSubscriptionUpdatedEventName = "Microsoft.ApiManagement.SubscriptionUpdated"
+    ApiManagementSubscriptionUpdatedEventName = (
+        "Microsoft.ApiManagement.SubscriptionUpdated"
+    )
 
     ApiManagementUserCreatedEventName = "Microsoft.ApiManagement.UserCreated"
 
@@ -169,9 +224,13 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ApiManagementUserUpdatedEventName = "Microsoft.ApiManagement.UserUpdated"
 
-    AppConfigurationKeyValueDeletedEventName = "Microsoft.AppConfiguration.KeyValueDeleted"
+    AppConfigurationKeyValueDeletedEventName = (
+        "Microsoft.AppConfiguration.KeyValueDeleted"
+    )
 
-    AppConfigurationKeyValueModifiedEventName = "Microsoft.AppConfiguration.KeyValueModified"
+    AppConfigurationKeyValueModifiedEventName = (
+        "Microsoft.AppConfiguration.KeyValueModified"
+    )
 
     ContainerRegistryChartDeletedEventName = "Microsoft.ContainerRegistry.ChartDeleted"
 
@@ -181,7 +240,9 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ContainerRegistryImagePushedEventName = "Microsoft.ContainerRegistry.ImagePushed"
 
-    ContainerServiceNewKubernetesVersionAvailableEventName = "Microsoft.ContainerService.NewKubernetesVersionAvailable"
+    ContainerServiceNewKubernetesVersionAvailableEventName = (
+        "Microsoft.ContainerService.NewKubernetesVersionAvailable"
+    )
 
     DataBoxCopyCompletedEventName = "Microsoft.DataBox.CopyCompleted"
 
@@ -199,11 +260,17 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HealthcareDicomImageUpdatedEventName = "Microsoft.HealthcareApis.DicomImageUpdated"
 
     # spell-checker:ignore Fhir
-    HealthcareFhirResourceCreatedEventName = "Microsoft.HealthcareApis.FhirResourceCreated"
+    HealthcareFhirResourceCreatedEventName = (
+        "Microsoft.HealthcareApis.FhirResourceCreated"
+    )
 
-    HealthcareFhirResourceDeletedEventName = "Microsoft.HealthcareApis.FhirResourceDeleted"
+    HealthcareFhirResourceDeletedEventName = (
+        "Microsoft.HealthcareApis.FhirResourceDeleted"
+    )
 
-    HealthcareFhirResourceUpdatedEventName = "Microsoft.HealthcareApis.FhirResourceUpdated"
+    HealthcareFhirResourceUpdatedEventName = (
+        "Microsoft.HealthcareApis.FhirResourceUpdated"
+    )
 
     IotHubDeviceConnectedEventName = "Microsoft.Devices.DeviceConnected"
 
@@ -219,7 +286,9 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     KeyVaultCertificateNearExpiryEventName = "Microsoft.KeyVault.CertificateNearExpiry"
 
-    KeyVaultCertificateNewVersionCreatedEventName = "Microsoft.KeyVault.CertificateNewVersionCreated"
+    KeyVaultCertificateNewVersionCreatedEventName = (
+        "Microsoft.KeyVault.CertificateNewVersionCreated"
+    )
 
     KeyVaultKeyExpiredEventName = "Microsoft.KeyVault.KeyExpired"
 
@@ -231,19 +300,33 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     KeyVaultSecretNearExpiryEventName = "Microsoft.KeyVault.SecretNearExpiry"
 
-    KeyVaultSecretNewVersionCreatedEventName = "Microsoft.KeyVault.SecretNewVersionCreated"
+    KeyVaultSecretNewVersionCreatedEventName = (
+        "Microsoft.KeyVault.SecretNewVersionCreated"
+    )
 
-    KeyVaultVaultAccessPolicyChangedEventName = "Microsoft.KeyVault.VaultAccessPolicyChanged"
+    KeyVaultVaultAccessPolicyChangedEventName = (
+        "Microsoft.KeyVault.VaultAccessPolicyChanged"
+    )
 
-    MachineLearningServicesDatasetDriftDetectedEventName = "Microsoft.MachineLearningServices.DatasetDriftDetected"
+    MachineLearningServicesDatasetDriftDetectedEventName = (
+        "Microsoft.MachineLearningServices.DatasetDriftDetected"
+    )
 
-    MachineLearningServicesModelDeployedEventName = "Microsoft.MachineLearningServices.ModelDeployed"
+    MachineLearningServicesModelDeployedEventName = (
+        "Microsoft.MachineLearningServices.ModelDeployed"
+    )
 
-    MachineLearningServicesModelRegisteredEventName = "Microsoft.MachineLearningServices.ModelRegistered"
+    MachineLearningServicesModelRegisteredEventName = (
+        "Microsoft.MachineLearningServices.ModelRegistered"
+    )
 
-    MachineLearningServicesRunCompletedEventName = "Microsoft.MachineLearningServices.RunCompleted"
+    MachineLearningServicesRunCompletedEventName = (
+        "Microsoft.MachineLearningServices.RunCompleted"
+    )
 
-    MachineLearningServicesRunStatusChangedEventName = "Microsoft.MachineLearningServices.RunStatusChanged"
+    MachineLearningServicesRunStatusChangedEventName = (
+        "Microsoft.MachineLearningServices.RunStatusChanged"
+    )
 
     MapsGeofenceEnteredEventName = "Microsoft.Maps.GeofenceEntered"
 
@@ -282,31 +365,55 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MediaJobStateChangeEventName = "Microsoft.Media.JobStateChange"
 
-    MediaLiveEventChannelArchiveHeartbeatEventName = "Microsoft.Media.LiveEventChannelArchiveHeartbeat"
+    MediaLiveEventChannelArchiveHeartbeatEventName = (
+        "Microsoft.Media.LiveEventChannelArchiveHeartbeat"
+    )
 
-    MediaLiveEventConnectionRejectedEventName = "Microsoft.Media.LiveEventConnectionRejected"
+    MediaLiveEventConnectionRejectedEventName = (
+        "Microsoft.Media.LiveEventConnectionRejected"
+    )
 
-    MediaLiveEventEncoderConnectedEventName = "Microsoft.Media.LiveEventEncoderConnected"
+    MediaLiveEventEncoderConnectedEventName = (
+        "Microsoft.Media.LiveEventEncoderConnected"
+    )
 
-    MediaLiveEventEncoderDisconnectedEventName = "Microsoft.Media.LiveEventEncoderDisconnected"
+    MediaLiveEventEncoderDisconnectedEventName = (
+        "Microsoft.Media.LiveEventEncoderDisconnected"
+    )
 
-    MediaLiveEventIncomingDataChunkDroppedEventName = "Microsoft.Media.LiveEventIncomingDataChunkDropped"
+    MediaLiveEventIncomingDataChunkDroppedEventName = (
+        "Microsoft.Media.LiveEventIncomingDataChunkDropped"
+    )
 
-    MediaLiveEventIncomingStreamReceivedEventName = "Microsoft.Media.LiveEventIncomingStreamReceived"
+    MediaLiveEventIncomingStreamReceivedEventName = (
+        "Microsoft.Media.LiveEventIncomingStreamReceived"
+    )
 
-    MediaLiveEventIncomingStreamsOutOfSyncEventName = "Microsoft.Media.LiveEventIncomingStreamsOutOfSync"
+    MediaLiveEventIncomingStreamsOutOfSyncEventName = (
+        "Microsoft.Media.LiveEventIncomingStreamsOutOfSync"
+    )
 
-    MediaLiveEventIncomingVideoStreamsOutOfSyncEventName = "Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync"
+    MediaLiveEventIncomingVideoStreamsOutOfSyncEventName = (
+        "Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync"
+    )
 
     MediaLiveEventIngestHeartbeatEventName = "Microsoft.Media.LiveEventIngestHeartbeat"
 
-    MediaLiveEventTrackDiscontinuityDetectedEventName = "Microsoft.Media.LiveEventTrackDiscontinuityDetected"
+    MediaLiveEventTrackDiscontinuityDetectedEventName = (
+        "Microsoft.Media.LiveEventTrackDiscontinuityDetected"
+    )
 
-    PolicyInsightsPolicyStateChangedEventName = "Microsoft.PolicyInsights.PolicyStateChanged"
+    PolicyInsightsPolicyStateChangedEventName = (
+        "Microsoft.PolicyInsights.PolicyStateChanged"
+    )
 
-    PolicyInsightsPolicyStateCreatedEventName = "Microsoft.PolicyInsights.PolicyStateCreated"
+    PolicyInsightsPolicyStateCreatedEventName = (
+        "Microsoft.PolicyInsights.PolicyStateCreated"
+    )
 
-    PolicyInsightsPolicyStateDeletedEventName = "Microsoft.PolicyInsights.PolicyStateDeleted"
+    PolicyInsightsPolicyStateDeletedEventName = (
+        "Microsoft.PolicyInsights.PolicyStateDeleted"
+    )
 
     RedisExportRDBCompletedEventName = "Microsoft.Cache.ExportRDBCompleted"
 
@@ -350,17 +457,25 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners"
     )
 
-    SignalRServiceClientConnectionConnectedEventName = "Microsoft.SignalRService.ClientConnectionConnected"
+    SignalRServiceClientConnectionConnectedEventName = (
+        "Microsoft.SignalRService.ClientConnectionConnected"
+    )
 
-    SignalRServiceClientConnectionDisconnectedEventName = "Microsoft.SignalRService.ClientConnectionDisconnected"
+    SignalRServiceClientConnectionDisconnectedEventName = (
+        "Microsoft.SignalRService.ClientConnectionDisconnected"
+    )
 
-    StorageAsyncOperationInitiatedEventName = "Microsoft.Storage.AsyncOperationInitiated"
+    StorageAsyncOperationInitiatedEventName = (
+        "Microsoft.Storage.AsyncOperationInitiated"
+    )
 
     StorageBlobCreatedEventName = "Microsoft.Storage.BlobCreated"
 
     StorageBlobDeletedEventName = "Microsoft.Storage.BlobDeleted"
 
-    StorageBlobInventoryPolicyCompletedEventName = "Microsoft.Storage.BlobInventoryPolicyCompleted"
+    StorageBlobInventoryPolicyCompletedEventName = (
+        "Microsoft.Storage.BlobInventoryPolicyCompleted"
+    )
 
     StorageBlobRenamedEventName = "Microsoft.Storage.BlobRenamed"
 
@@ -372,7 +487,9 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     StorageDirectoryRenamedEventName = "Microsoft.Storage.DirectoryRenamed"
 
-    StorageLifecyclePolicyCompletedEventName = "Microsoft.Storage.LifecyclePolicyCompleted"
+    StorageLifecyclePolicyCompletedEventName = (
+        "Microsoft.Storage.LifecyclePolicyCompleted"
+    )
 
     StorageTaskCompletedEventName = "Microsoft.Storage.StorageTaskCompleted"
 
@@ -404,7 +521,9 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     WebSlotSwapStartedEventName = "Microsoft.Web.SlotSwapStarted"
 
-    WebSlotSwapWithPreviewCancelledEventName = "Microsoft.Web.SlotSwapWithPreviewCancelled"
+    WebSlotSwapWithPreviewCancelledEventName = (
+        "Microsoft.Web.SlotSwapWithPreviewCancelled"
+    )
 
     WebSlotSwapWithPreviewStartedEventName = "Microsoft.Web.SlotSwapWithPreviewStarted"
 

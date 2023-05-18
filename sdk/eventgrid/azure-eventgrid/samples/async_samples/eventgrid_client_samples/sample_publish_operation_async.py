@@ -25,7 +25,9 @@ async def run():
     async with client:
         # Publish a CloudEvent
         try:
-            cloud_event = CloudEvent(data="HI", source="https://example.com", type="example")
+            cloud_event = CloudEvent(
+                data="HI", source="https://example.com", type="example"
+            )
             await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event)
         except HttpResponseError:
             raise
@@ -33,10 +35,12 @@ async def run():
         # Publish a list of CloudEvents
         try:
             list_of_cloud_events = [cloud_event, cloud_event]
-            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=list_of_cloud_events)
+            await client.publish_cloud_events(
+                topic_name=TOPIC_NAME, body=list_of_cloud_events
+            )
         except HttpResponseError:
             raise
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(run())
