@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import AnyStr, Dict, IO, Optional, Union
 
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
-from azure.ai.ml.constants._monitoring import DefaultMonitorSignalNames, SPARK_INSTANCE_TYPE_KEY, SPARK_RUNTIME_VERSION
+from azure.ai.ml.constants._monitoring import SPARK_INSTANCE_TYPE_KEY, SPARK_RUNTIME_VERSION
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._monitoring.definition import MonitorDefinition
 from azure.ai.ml.entities._system_data import SystemData
@@ -169,10 +169,6 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
 
     def _create_default_monitor_definition(self):
         self.create_monitor._populate_default_signal_information()
-
-        # add appropriate tags to schedule
-        for signal_name in [name.value for name in DefaultMonitorSignalNames]:
-            self._set_baseline_data_trailing_tags_for_signal(signal_name)
 
     def _set_baseline_data_trailing_tags_for_signal(self, signal_name):
         self.tags[f"{signal_name}.baselinedata.datarange.type"] = "Trailing"

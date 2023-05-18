@@ -10,7 +10,9 @@ from typing_extensions import Literal
 
 from azure.ai.ml.constants._monitoring import (
     AZMONITORING,
-    DefaultMonitorSignalNames,
+    DEFAULT_DATA_DRIFT_SIGNAL_NAME,
+    DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME,
+    DEFAULT_DATA_QUALITY_SIGNAL_NAME,
     SPARK_INSTANCE_TYPE_KEY,
     SPARK_RUNTIME_VERSION,
 )
@@ -117,7 +119,7 @@ class MonitorDefinition(RestTranslatableMixin):
 
     def _populate_default_signal_information(self):
         self.monitoring_signals = {
-            DefaultMonitorSignalNames.DATA_DRIFT_SIGNAL: DataDriftSignal._get_default_data_drift_signal(),
-            DefaultMonitorSignalNames.PREDICTION_DRIFT_SIGNAL: PredictionDriftSignal._get_default_prediction_drift_signal(),  # pylint: disable=line-too-long
-            DefaultMonitorSignalNames.DATA_QUALITY_SIGNAL: DataQualitySignal._get_default_data_quality_signal(),
+            DEFAULT_DATA_DRIFT_SIGNAL_NAME: DataDriftSignal._get_default_data_drift_signal(),
+            DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME: PredictionDriftSignal._get_default_prediction_drift_signal(),  # pylint: disable=line-too-long
+            DEFAULT_DATA_QUALITY_SIGNAL_NAME: DataQualitySignal._get_default_data_quality_signal(),
         }
