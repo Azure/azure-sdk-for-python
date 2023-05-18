@@ -6,7 +6,9 @@ import pytest
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._monitoring import (
-    DefaultMonitorSignalNames,
+    DEFAULT_DATA_QUALITY_SIGNAL_NAME,
+    DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME,
+    DEFAULT_DATA_DRIFT_SIGNAL_NAME,
     MonitorSignalType,
     MonitorDatasetContext,
     MonitorFeatureType,
@@ -81,9 +83,13 @@ class TestMonitorSchedule(AzureRecordedTestCase):
             AzureMLResourceType.DEPLOYMENT,
         )
 
-        for signal_name in DefaultMonitorSignalNames:
-            assert signal_name.value in created_schedule.create_monitor.monitoring_signals
-            signal = created_schedule.create_monitor.monitoring_signals[signal_name.value]
+        for signal_name in [
+            DEFAULT_DATA_DRIFT_SIGNAL_NAME,
+            DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME,
+            DEFAULT_DATA_QUALITY_SIGNAL_NAME,
+        ]:
+            assert signal_name in created_schedule.create_monitor.monitoring_signals
+            signal = created_schedule.create_monitor.monitoring_signals[signal_name]
             if signal.type == MonitorSignalType.DATA_DRIFT:
                 check_default_datasets(signal, model_inputs_name, model_inputs_version, model_inputs_type, True)
 
@@ -177,9 +183,13 @@ class TestMonitorSchedule(AzureRecordedTestCase):
             model_outputs_type,
         ) = get_model_inputs_outputs_from_deployment(client, endpoint_name, deployment_name)
 
-        for signal_name in DefaultMonitorSignalNames:
-            assert signal_name.value in created_schedule.create_monitor.monitoring_signals
-            signal = created_schedule.create_monitor.monitoring_signals[signal_name.value]
+        for signal_name in [
+            DEFAULT_DATA_DRIFT_SIGNAL_NAME,
+            DEFAULT_DATA_QUALITY_SIGNAL_NAME,
+            DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME,
+        ]:
+            assert signal_name in created_schedule.create_monitor.monitoring_signals
+            signal = created_schedule.create_monitor.monitoring_signals[signal_name]
             if signal.type == MonitorSignalType.DATA_DRIFT:
                 check_default_datasets(signal, model_inputs_name, model_inputs_version, model_inputs_type, True)
             elif signal.type == MonitorSignalType.PREDICTION_DRIFT:
