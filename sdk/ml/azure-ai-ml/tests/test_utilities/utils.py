@@ -291,12 +291,17 @@ def assert_job_cancel(
     experiment_name=None,
     check_before_cancelled: Callable[[Job], bool] = None,
     skip_cancel=False,
+    wait_for_completion=False,
 ) -> Job:
     created_job = client.jobs.create_or_update(job, experiment_name=experiment_name)
     if check_before_cancelled is not None:
         assert check_before_cancelled(created_job)
     if skip_cancel is False:
         cancel_job(client, created_job)
+    elif wait_for_completion is True:
+        assert wait_until_done(client, created_job) == JobStatus.COMPLETED, (
+            "Job failed. Please check it on studio for more details: %s" % created_job.studio_url
+        )
     return created_job
 
 

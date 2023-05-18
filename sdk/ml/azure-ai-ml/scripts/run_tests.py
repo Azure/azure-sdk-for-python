@@ -98,15 +98,15 @@ def run_simple(
         print(test_name)
 
     if log_file_path and log_suffix:
-        log_file_path = log_file_path.with_suffix(log_suffix)
+        log_file_path = log_file_path.with_suffix(log_file_path.suffix + log_suffix)
 
     if log_in_json:
         if log_file_path is None:
             raise ValueError("log_file_path must be specified when log_in_json is True")
         stdout = None
-        json_log_file_path = log_file_path.with_suffix(".log")
+        json_log_file_path = log_file_path.with_suffix(log_file_path.suffix + ".log")
     else:
-        stdout = open(log_file_path.with_suffix(".txt"), "wb")
+        stdout = open(log_file_path.with_suffix(log_file_path.suffix + ".txt"), "wb")
         json_log_file_path = None
 
     with update_dot_env_file(
@@ -136,7 +136,7 @@ def run_simple(
                     f.write(temp_log_file_path.read_text())
     if stdout is not None:
         stdout.close()
-        print(log_file_path.with_suffix(".txt").read_text())
+        print(log_file_path.with_suffix(log_file_path.suffix + ".txt").read_text())
 
     return json_log_file_path
 
@@ -219,7 +219,7 @@ def run_tests(tests_to_run, extras, *, skip_first_run=False, record_mismatch=Fal
     log_file_path = get_base_log_path(working_dir, create_new=not skip_first_run)
 
     if skip_first_run:
-        json_log_file_path = log_file_path.with_suffix(".first.log")
+        json_log_file_path = log_file_path.with_suffix(log_file_path.suffix + ".first.log")
     else:
         json_log_file_path = run_simple(
             tests_to_run,
@@ -256,7 +256,7 @@ def run_tests(tests_to_run, extras, *, skip_first_run=False, record_mismatch=Fal
                 log_file_path=log_file_path,
                 log_suffix=".final",
             )
-            print(log_file_path.with_suffix(".final.log").read_text())
+            print(log_file_path.with_suffix(log_file_path.suffix + ".final.log").read_text())
 
 
 if __name__ == "__main__":
