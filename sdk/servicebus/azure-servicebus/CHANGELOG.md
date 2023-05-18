@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- A new boolean keyword argument `connection_timeout` has been added to sync `get_queue_sender`, `get_queue_receiver`, `get_topic_sender`, and `get_subscription_receiver` on the sync `ServiceBusClient`.
+- A new boolean keyword argument `connection_timeout` has been added to `get_queue_sender`, `get_queue_receiver`, `get_topic_sender`, and `get_subscription_receiver` on the sync and async `ServiceBusClient`.
 
 ### Other Changes
 
