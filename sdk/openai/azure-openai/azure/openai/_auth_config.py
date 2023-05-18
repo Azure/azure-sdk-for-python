@@ -26,9 +26,9 @@ class CredentialRefresh:
 
     def __call__(self, req):
         if isinstance(self.credential, str):
-            if openai.api_type in ["azure", "openai", "open_ai"]:
+            if openai.api_type == "azure":
                 req.headers["api-key"] = openai.api_key
-            elif openai.api_type in ["azuread", "azure_ad"]:
+            elif openai.api_type in ["openai", "open_ai", "azuread", "azure_ad"]:
                 req.headers["Authorization"] = f"Bearer {openai.api_key}"
             return req
         if not self.cached_token or self.cached_token.expires_on - time.time() < 300:

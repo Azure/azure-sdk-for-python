@@ -24,9 +24,9 @@ class AsyncCredentialRefresh(aiohttp.ClientRequest):
 
     async def _refresh_credential(self):
         if isinstance(self.props["credential"], str):
-            if openai.api_type in ["azure", "openai", "open_ai"]:
+            if openai.api_type == "azure":
                 self.headers["api-key"] = openai.api_key
-            elif openai.api_type in ["azuread", "azure_ad"]:
+            elif openai.api_type in ["azuread", "azure_ad", "openai", "open_ai"]:
                 self.headers["Authorization"] = f"Bearer {openai.api_key}"
         elif self.props.get("cached_token") is None or self.props.get("cached_token").expires_on - time.time() < 300:
             async with self.props.get("lock"):
