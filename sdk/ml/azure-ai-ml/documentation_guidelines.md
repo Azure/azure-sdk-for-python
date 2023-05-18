@@ -1,5 +1,6 @@
 ## **AzureML v2 Reference Documentation Guide**
 
+When updating the codebase, please note the following guidelines for creating user-friendly docstrings.
  
 #### Principles 
 
@@ -59,8 +60,8 @@
 
 ##### Clarity 
 
- - Use Union/Optional when appropriate in function declaration, but not in docstring. Instead, note the default value in the docstring (e.g. “Defaults to 0.”) 
- - For classes, include summary in definition only. If you include in both class definition and constructor (init method) docstrings, it will show up twice in the reference docs: 
+ - Use Union/Optional when appropriate in function declaration, but not in docstring. Instead, note the default value in the docstring (e.g. “Defaults to 0.”).
+ - For classes, include summary in definition only. If you include in both class definition and constructor (init method) docstrings, it will show up twice in the reference docs.
 
  
 ##### Consistency 
@@ -72,8 +73,7 @@
 ##### Relevance 
 
 - If you deprecate an object, make sure it’s documented in the reference docs. 
-
-- If you change how an object should be used, ensure that all code snippets in the [samples directory](./samples/) are updated accordingly 
+- If you change how an object should be used, ensure that all code snippets in the [samples directory](./samples/) are updated accordingly.
 
  
 
