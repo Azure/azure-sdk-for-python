@@ -27,10 +27,9 @@ omit_fields = [
     "enable_pipeline_private_preview_features",
     "enable_private_preview_schema_features",
     "enable_private_preview_pipeline_node_types",
-    "mock_asset_name",
-    "mock_component_hash",
+    "mock_recorded_asset_name",
+    "mock_recorded_component_hash_based_on_normalized_arm_id",
     "mock_set_headers_with_user_aml_token",
-    "mock_anon_component_version",
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
@@ -165,7 +164,6 @@ class TestIfElse(TestConditionalNodeInPipeline):
 
 
 class TestDoWhile(TestConditionalNodeInPipeline):
-    @pytest.mark.disable_mock_code_hash
     def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(

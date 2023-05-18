@@ -161,11 +161,10 @@ def build_pipeline_with_parallel_run_function(data, literal_input=None):
     "enable_environment_id_arm_expansion",
     "enable_pipeline_private_preview_features",
     "enable_private_preview_schema_features",
-    "mock_code_hash",
-    "mock_component_hash",
+    "mock_recorded_component_hash_based_on_normalized_arm_id",
     "mock_set_headers_with_user_aml_token",
     "recorded_test",
-    "mock_asset_name",
+    "mock_recorded_asset_name",
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
@@ -1396,7 +1395,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         # assert "optional_param_with_default" not in pipeline_job.inputs
         # assert "optional_param_with_default" not in next(pipeline_job.jobs.values().__iter__()).inputs
 
-    @pytest.mark.disable_mock_code_hash
     @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_reuse(self, client: MLClient) -> None:
         path = "./tests/test_configs/components/helloworld_component.yml"
@@ -1425,7 +1423,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         assert len(component_ids) == 1, f"Got multiple component id: {component_ids} for same anon component."
 
-    @pytest.mark.disable_mock_code_hash
     @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_pipeline_reuse(self, client: MLClient, randstr: Callable[[str], str], randint: Callable) -> None:
         component_yaml = components_dir / "helloworld_component.yml"
@@ -2680,7 +2677,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client)
 
-    @pytest.mark.disable_mock_code_hash
     def test_register_output_sdk(self, client: MLClient):
         from azure.ai.ml.sweep import (
             BanditPolicy,
@@ -2915,7 +2911,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
             }
         }
 
-    @pytest.mark.disable_mock_code_hash
     def test_register_output_sdk_succeed(self, client: MLClient):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_input = Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
@@ -2961,8 +2956,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert pipeline_job.jobs["node_3"].outputs.component_out_path.name == "n3_output"
         check_name_and_version(pipeline_job.jobs["sub_node"].outputs.sub_pipeine_a_output, "sub_pipeline", "v1")
 
-    @pytest.mark.skip(reason="KeyError: 'node_2'")
-    @pytest.mark.disable_mock_code_hash
     def test_register_output_for_pipeline_component(self, client: MLClient):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_input = Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
@@ -2997,9 +2990,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         if is_live():
             check_name_and_version(subgraph.jobs["node_2"].outputs["component_out_path"], "sub_pipeline_2_output", "v2")
 
-    @pytest.mark.disable_mock_code_hash
-    # without this mark, the code would be passed with different id even when we upload the same component,
-    # add this mark to reuse node and further reuse pipeline
     def test_register_with_output_format(self, client: MLClient):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_input = Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")

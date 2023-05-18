@@ -58,11 +58,10 @@ def assert_job_input_output_types(job: PipelineJob):
     "recorded_test",
     "mock_code_hash",
     "enable_pipeline_private_preview_features",
-    "mock_asset_name",
-    "mock_component_hash",
+    "mock_recorded_asset_name",
+    "mock_recorded_component_hash_based_on_normalized_arm_id",
     "mock_set_headers_with_user_aml_token",
     "enable_environment_id_arm_expansion",
-    "mock_anon_component_version",
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest

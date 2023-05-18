@@ -67,7 +67,7 @@ def _get_component_in_first_child(_with_jobs: Union[PipelineJob, PipelineCompone
     "enable_environment_id_arm_expansion",
     "enable_pipeline_private_preview_features",
     "mock_code_hash",
-    "mock_component_hash",
+    "mock_recorded_component_hash_based_on_normalized_arm_id",
     "mock_set_headers_with_user_aml_token",
     "recorded_test",
 )

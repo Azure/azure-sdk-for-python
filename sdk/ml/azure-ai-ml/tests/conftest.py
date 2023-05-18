@@ -611,7 +611,8 @@ def mock_anon_component_version(mocker: MockFixture):
 
 
 @pytest.fixture
-def mock_asset_name(mocker: MockFixture):
+def mock_recorded_asset_name(mocker: MockFixture):
+    """Mocks the asset name to be a fake uuid in recordings. Will still use real uuid in live mode."""
     fake_uuid = "000000000000000000000"
 
     def generate_uuid(*args, **kwargs):
@@ -692,7 +693,7 @@ def clear_on_disk_cache(cached_resolver):
 
 
 @pytest.fixture
-def mock_component_hash(mocker: MockFixture, request: FixtureRequest):
+def mock_recorded_component_hash_based_on_normalized_arm_id(mocker: MockFixture, request: FixtureRequest):
     """Mock the component hash function.
 
     In playback mode, workspace information in returned arm_id will be normalized like this:
@@ -1050,6 +1051,9 @@ def singularity_vc(client: MLClient) -> SingularityVirtualCluster:
 def use_python_amlignore_during_upload(mocker: MockFixture) -> None:
     """Makes _upload_to_datastore default to using an ignore file that ignores
     non-essential python files (e.g. .pyc)
+
+    Please do not enable this fixture unless you're clear about what it does. Files to ignore should be skipped
+    without this mock in most cases.
     """
     IGNORE_FILE_DIR = Path(__file__).parent / "test_configs" / "_ignorefiles"
     py_ignore = IGNORE_FILE_DIR / "Python.amlignore"

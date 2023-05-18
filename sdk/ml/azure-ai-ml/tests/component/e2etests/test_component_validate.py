@@ -15,8 +15,8 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 @pytest.mark.usefixtures(
     "recorded_test",
     "mock_code_hash",
-    "mock_asset_name",
-    "mock_component_hash",
+    "mock_recorded_asset_name",
+    "mock_recorded_component_hash_based_on_normalized_arm_id",
     "enable_environment_id_arm_expansion",
 )
 @pytest.mark.pipeline_test

@@ -15,7 +15,10 @@ from .._util import _SCHEDULE_TIMEOUT_SECOND, TRIGGER_ENDTIME, TRIGGER_ENDTIME_D
 @pytest.mark.timeout(_SCHEDULE_TIMEOUT_SECOND)
 @pytest.mark.e2etest
 @pytest.mark.usefixtures(
-    "recorded_test", "mock_code_hash", "mock_asset_name", "mock_component_hash", "mock_anon_component_version"
+    "recorded_test",
+    "mock_recorded_asset_name",
+    "mock_recorded_component_hash_based_on_normalized_arm_id",
+    "mock_anon_component_version"
 )
 @pytest.mark.pipeline_test
 class TestSchedule(AzureRecordedTestCase):

@@ -53,8 +53,8 @@ def load_registered_component(
     "recorded_test",
     "enable_internal_components",
     "mock_code_hash",
-    "mock_asset_name",
-    "mock_component_hash",
+    "mock_recorded_asset_name",
+    "mock_recorded_component_hash_based_on_normalized_arm_id",
 )
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test

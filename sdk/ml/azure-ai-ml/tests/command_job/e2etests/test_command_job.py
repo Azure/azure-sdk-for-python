@@ -33,7 +33,7 @@ TEST_PARAMS = {"a_param": "1", "another_param": "2"}
 @pytest.mark.usefixtures(
     "recorded_test",
     "mock_code_hash",
-    "mock_asset_name",
+    "mock_recorded_asset_name",
     "enable_environment_id_arm_expansion",
     "mock_anon_component_version",
 )

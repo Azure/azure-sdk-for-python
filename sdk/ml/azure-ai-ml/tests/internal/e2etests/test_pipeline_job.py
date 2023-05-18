@@ -73,9 +73,8 @@ def create_internal_sample_dependent_datasets(client: MLClient):
 
 @pytest.mark.usefixtures(
     "recorded_test",
-    "mock_code_hash",
-    "mock_asset_name",
-    "mock_component_hash",
+    "mock_recorded_asset_name",
+    "mock_recorded_component_hash_based_on_normalized_arm_id",
     "mock_set_headers_with_user_aml_token",
     "enable_pipeline_private_preview_features",
     "create_internal_sample_dependent_datasets",

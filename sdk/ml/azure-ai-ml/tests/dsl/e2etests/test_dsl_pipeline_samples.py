@@ -45,11 +45,10 @@ def assert_dsl_curated(pipeline: PipelineJob, job_yaml, omit_fields):
     "enable_environment_id_arm_expansion",
     "enable_pipeline_private_preview_features",
     "mock_code_hash",
-    "mock_component_hash",
+    "mock_recorded_component_hash_based_on_normalized_arm_id",
     "mock_set_headers_with_user_aml_token",
     "recorded_test",
-    "mock_asset_name",
-    "mock_anon_component_version",
+    "mock_recorded_asset_name",
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
@@ -240,7 +239,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = e2e_inline_components()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.usefixtures("mock_asset_name")
+    @pytest.mark.usefixtures("mock_recorded_asset_name")
     @pytest.mark.e2etest
     def test_command_job_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.command_job_in_pipeline.pipeline import (

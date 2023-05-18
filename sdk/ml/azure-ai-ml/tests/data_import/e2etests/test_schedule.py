@@ -10,7 +10,7 @@ from azure.ai.ml.entities._load_functions import load_schedule
 
 @pytest.mark.timeout(1200)
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test", "mock_code_hash", "mock_asset_name", "mock_component_hash")
+@pytest.mark.usefixtures("recorded_test", "mock_recorded_asset_name", "mock_recorded_component_hash_based_on_normalized_arm_id")
 @pytest.mark.pipeline_test
 class TestSchedule(AzureRecordedTestCase):
     @pytest.mark.parametrize(

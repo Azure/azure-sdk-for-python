@@ -24,7 +24,7 @@ from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 @pytest.mark.automl_test
 @pytest.mark.usefixtures(
     "recorded_test",
-    "mock_asset_name",
+    "mock_recorded_asset_name",
     "mock_code_hash",
 )
 @pytest.mark.skipif(condition=not is_live(), reason="Datasets downloaded by test are too large to record reliably")

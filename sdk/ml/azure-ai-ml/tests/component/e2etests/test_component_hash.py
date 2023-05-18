@@ -38,7 +38,7 @@ def create_component(
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.usefixtures(
     "recorded_test",
-    "mock_asset_name",
+    "mock_recorded_asset_name",
 )
 @pytest.mark.pipeline_test
 class TestComponentHash(AzureRecordedTestCase):

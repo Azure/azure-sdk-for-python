@@ -21,7 +21,7 @@ from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryC
 @pytest.mark.usefixtures(
     "recorded_test",
     "mock_code_hash",
-    "mock_asset_name",
+    "mock_recorded_asset_name",
     "enable_environment_id_arm_expansion",
 )
 @pytest.mark.training_experiences_test

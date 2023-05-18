@@ -30,9 +30,8 @@ omit_fields = [
     "enable_private_preview_schema_features",
     "enable_environment_id_arm_expansion",
     "enable_pipeline_private_preview_features",
-    "mock_code_hash",
-    "mock_asset_name",
-    "mock_component_hash",
+    "mock_recorded_asset_name",
+    "mock_recorded_component_hash_based_on_normalized_arm_id",
     "mock_set_headers_with_user_aml_token",
     "recorded_test",
 )
@@ -43,7 +42,6 @@ class TestControlFlowPipeline(AzureRecordedTestCase):
     pass
 
 
-@pytest.mark.usefixtures("mock_anon_component_version")
 class TestIfElse(TestControlFlowPipeline):
     def test_dsl_condition_pipeline(self, client: MLClient):
         # update jobs field to include private preview nodes
@@ -398,7 +396,6 @@ class TestIfElse(TestControlFlowPipeline):
         }
 
 
-@pytest.mark.usefixtures("mock_anon_component_version")
 class TestDoWhilePipeline(TestControlFlowPipeline):
     @property
     def _basic_component_func(self):
@@ -408,7 +405,6 @@ class TestDoWhilePipeline(TestControlFlowPipeline):
         condition=not is_live(),
         reason="TODO (2374610): hash sanitizer is being applied unnecessarily and forcing playback failures",
     )
-    @pytest.mark.usefixtures("mock_anon_component_version")
     def test_do_while_pipeline(self, client: MLClient):
         @pipeline
         def do_while_body_pipeline_component(

@@ -121,9 +121,8 @@ def assert_component_basic_workflow(
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.usefixtures(
     "recorded_test",
-    "mock_code_hash",
-    "mock_asset_name",
-    "mock_component_hash",
+    "mock_recorded_asset_name",
+    "mock_recorded_component_hash_based_on_normalized_arm_id",
     "enable_environment_id_arm_expansion",
 )
 @pytest.mark.pipeline_test
@@ -466,7 +465,6 @@ class TestComponent(AzureRecordedTestCase):
         assert component_resource.description == description
         assert component_resource.display_name == display_name
 
-    @pytest.mark.disable_mock_code_hash
     @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_create_twice_same_code_arm_id(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_path = "./tests/test_configs/components/component_for_reuse_test/component.yml"
@@ -504,7 +502,6 @@ class TestComponent(AzureRecordedTestCase):
         with pytest.raises(HttpResponseError):
             client.components.create_or_update(command_component)
 
-    @pytest.mark.disable_mock_code_hash
     def test_component_create_default_code(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # step2: test component without code
         component_name = randstr("component_name")
@@ -522,7 +519,6 @@ class TestComponent(AzureRecordedTestCase):
         assert component_resource2.description == description
         assert component_resource2.display_name == display_name
 
-    @pytest.mark.disable_mock_code_hash
     def test_mpi_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_name = randstr("component_name")
         # Test mpi distribution
@@ -630,7 +626,6 @@ class TestComponent(AzureRecordedTestCase):
         assert next_version_regex.match(next_component_asset.version)
         assert next_component_asset._auto_increment_version is False
 
-    @pytest.mark.disable_mock_code_hash
     @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_anonymous_component_reuse(self, client: MLClient, variable_recorder) -> None:
         # component with different name will be created as different instance;

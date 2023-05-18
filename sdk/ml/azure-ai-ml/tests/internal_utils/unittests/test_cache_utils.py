@@ -12,7 +12,7 @@ from azure.ai.ml.entities import Component, PipelineJob
 
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
-@pytest.mark.usefixtures("enable_pipeline_private_preview_features", "mock_component_hash")
+@pytest.mark.usefixtures("enable_pipeline_private_preview_features", "mock_recorded_component_hash_based_on_normalized_arm_id")
 class TestCacheUtils:
     @staticmethod
     def _mock_resolver(component: Union[str, Component], azureml_type: str) -> str:

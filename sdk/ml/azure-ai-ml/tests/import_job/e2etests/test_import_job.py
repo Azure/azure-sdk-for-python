@@ -25,9 +25,9 @@ def import_job_enabled(mocker: MockFixture):
 @pytest.mark.timeout(600)
 @pytest.mark.usefixtures(
     "recorded_test",
-    "mock_asset_name",
+    "mock_recorded_asset_name",
     "mock_code_hash",
-    "mock_component_hash",
+    "mock_recorded_component_hash_based_on_normalized_arm_id",
     "enable_environment_id_arm_expansion",
 )
 class TestImportJob(AzureRecordedTestCase):
