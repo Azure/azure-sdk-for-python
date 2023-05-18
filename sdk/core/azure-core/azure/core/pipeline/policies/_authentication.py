@@ -169,7 +169,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy["HTTPRequestType", HTTPResponseT
     :param credential: The credential used to authenticate requests.
     :type credential: ~azure.core.credentials.AzureKeyCredential
     :param str name: The name of the key header used for the credential.
-    :keyword str scheme: The name of the auth schema used for the credential.
+    :keyword str prefix: The name of the prefix for the header value if any.
     :raises: ValueError or TypeError
     """
 
@@ -178,7 +178,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy["HTTPRequestType", HTTPResponseT
         credential: "AzureKeyCredential",
         name: str,
         *,
-        scheme: Optional[str] = None,
+        prefix: Optional[str] = None,
         **kwargs,  # pylint: disable=unused-argument
     ) -> None:
         super(AzureKeyCredentialPolicy, self).__init__()
@@ -188,10 +188,10 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy["HTTPRequestType", HTTPResponseT
         if not isinstance(name, str):
             raise TypeError("name must be a string.")
         self._name = name
-        self._scheme = scheme + " " if scheme else ""
+        self._prefix = prefix + " " if prefix else ""
 
     def on_request(self, request: "PipelineRequest[HTTPRequestType]") -> None:
-        request.http_request.headers[self._name] = f"{self._scheme}{self._credential.key}"
+        request.http_request.headers[self._name] = f"{self._prefix}{self._credential.key}"
 
 
 class AzureSasCredentialPolicy(SansIOHTTPPolicy):

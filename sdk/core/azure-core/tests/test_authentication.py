@@ -415,16 +415,16 @@ def test_azure_named_key_credential_raises():
 def test_azure_http_credential_policy(http_request):
     """Tests to see if we can create an AzureHttpKeyCredentialPolicy"""
 
-    scheme = "SharedAccessKey"
+    prefix = "SharedAccessKey"
     api_key = "test_key"
-    header_content = f"{scheme} {api_key}"
+    header_content = f"{prefix} {api_key}"
 
     def verify_authorization_header(request):
         assert request.headers["Authorization"] == header_content
 
     transport = Mock(send=verify_authorization_header)
     credential = AzureKeyCredential(api_key)
-    credential_policy = AzureKeyCredentialPolicy(credential=credential, name="Authorization", scheme=scheme)
+    credential_policy = AzureKeyCredentialPolicy(credential=credential, name="Authorization", prefix=prefix)
     pipeline = Pipeline(transport=transport, policies=[credential_policy])
 
     pipeline.run(http_request("GET", "https://test_key_credential"))
