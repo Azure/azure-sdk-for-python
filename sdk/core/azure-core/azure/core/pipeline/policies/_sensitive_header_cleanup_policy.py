@@ -43,14 +43,18 @@ class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
     )
 
     def __init__(
-        self, *, block_headers_list: Optional[List[str]] = None, disable_cleanup: bool = False, **kwargs: Dict
-    ) -> None:  # pylint: disable=unused-argument,super-init-not-called
+        self,
+        *,
+        block_headers_list: Optional[List[str]] = None,
+        disable_cleanup: bool = False,
+        **kwargs: Dict  # pylint: disable=unused-argument
+    ) -> None:  # pylint: super-init-not-called
         self._disable_cleanup = disable_cleanup
         self._block_headers_list = (
             SensitiveHeaderCleanupPolicy.DEFAULT_SENSITIVE_HEADERS if block_headers_list is None else block_headers_list
         )
 
-    def on_request(self, request: "PipelineRequest") -> None:  # pylint: disable=arguments-differ
+    def on_request(self, request: PipelineRequest) -> None:  # pylint: disable=arguments-differ
         """This is executed before sending the request to the next policy.
 
         :param request: The PipelineRequest object.
