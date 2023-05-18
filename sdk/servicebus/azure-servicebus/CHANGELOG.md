@@ -1,12 +1,10 @@
 # Release History
 
-## 7.10.1 (Unreleased)
+## 7.11.0 (Unreleased)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- A new boolean keyword argument `connection_timeout` has been added to sync and async `get_queue_sender`, `get_queue_receiver`, `get_topic_sender`, and `get_subscription_receiver` on the sync and async `ServiceBusClient`.
 
 ### Other Changes
 
@@ -14,7 +12,6 @@
   - Span links on receive/send spans now fall back to using `Diagnostic-Id` if the `traceparent` message application property is not found.
   - Span links will now still be created for receive/send spans even if no context propagation headers are found in message application properties.
   - The `component` attribute was removed from all spans.
-
 
 ## 7.10.0 (2023-05-09)
 
