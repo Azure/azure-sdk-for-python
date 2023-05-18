@@ -11,6 +11,7 @@ from typing import List, Any, Dict
 from packaging.version import Version
 from ghapi.all import GhApi
 from azure.storage.blob import BlobServiceClient, ContainerClient
+from datetime import datetime, timedelta
 
 _LOG = logging.getLogger()
 
@@ -125,6 +126,7 @@ class CodegenTestPR:
         self.spec_repo = os.getenv('SPEC_REPO', '')
         self.conn_str = os.getenv('STORAGE_CONN_STR')
         self.storage_endpoint = os.getenv('STORAGE_ENDPOINT').strip('/')
+        self.target_date = os.getenv('TARGET_DATE', '')
 
         self.package_name = ''
         self.new_branch = ''
@@ -136,6 +138,15 @@ class CodegenTestPR:
         self.container_name = ''
         self.private_package_link = []  # List[str]
         self.tag_is_stable = False
+
+    @property
+    def target_release_date(self) -> str:
+        try:
+            if self.target_date:
+                return (datetime.fromisoformat(self.target_date) + timedelta(days=-7)).strftime("%Y-%m-%d")
+        except:
+            log(f'Invalid target date: {self.target_date}')
+        return current_time()
 
     @return_origin_path
     def get_latest_commit_in_swagger_repo(self) -> str:
