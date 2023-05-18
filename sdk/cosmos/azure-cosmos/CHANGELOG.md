@@ -3,8 +3,7 @@
 ### 4.4.0b2 (Unreleased)
 
 #### Features Added
-
-#### Breaking Changes
+* Added conditional patching for Patch operations. See [PR 30180]().
 
 #### Bugs Fixed
 * Fixed bug with non english locales causing an error with the RFC 1123 Date Format. See [PR 30125](https://github.com/Azure/azure-sdk-for-python/pull/30125).
