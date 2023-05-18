@@ -369,9 +369,12 @@ class ComponentOperations(_ScopeDependentOperations):
         result = None
         try:
             if not component._is_anonymous:
-                remote_component_version = self.get_component_version(name=name)
-                remote_component_hash = None
                 client_component_hash = component.get_component_hash(keys_to_omit=["version"])
+                rest_component_resource.properties.properties["client_component_hash"] = client_component_hash
+                remote_component_version = self.get_component_version(
+                    name=name
+                )  # will raise error if not found, so need set client_component_hash in the above line first.
+                remote_component_hash = None
                 if remote_component_version:
                     remote_component_hash = remote_component_version.properties.properties.get("client_component_hash")
                 if remote_component_hash == client_component_hash and kwargs.get("skip_if_no_change"):
@@ -380,6 +383,10 @@ class ComponentOperations(_ScopeDependentOperations):
                     )  # only update the default version component instead of creating a new version component
                     version = component.version
                     rest_component_resource = component._to_rest_object()
+                    logger.warning(
+                        "The component is not modified compared to the default version "
+                        "and the new version component registration is skipped."
+                    )
                 rest_component_resource.properties.properties["client_component_hash"] = client_component_hash
         except Exception as e:
             logger.error(f"Failed to compare and set client_component_hash, {e}")

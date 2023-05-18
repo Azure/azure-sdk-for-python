@@ -1,4 +1,5 @@
 import re
+import time
 import uuid
 from itertools import tee
 from pathlib import Path
@@ -6,23 +7,25 @@ from typing import Callable
 
 import pydash
 import pytest
+from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged
+from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
+
 from azure.ai.ml import MLClient, MpiDistribution, load_component, load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
+from azure.ai.ml.constants._assets import IPProtectionLevel
 from azure.ai.ml.constants._common import (
     ANONYMOUS_COMPONENT_NAME,
     ARM_ID_PREFIX,
     PROVIDER_RESOURCE_ID_WITH_VERSION,
     AzureMLResourceType,
 )
-from azure.ai.ml.constants._assets import IPProtectionLevel
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code, load_job
-from azure.core.exceptions import HttpResponseError
-from azure.core.paging import ItemPaged
-from devtools_testutils import AzureRecordedTestCase, is_live
-from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
+from azure.ai.ml.operations import ComponentOperations
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
@@ -34,6 +37,7 @@ def create_component(
     path="./tests/test_configs/components/helloworld_component.yml",
     params_override=None,
     is_anonymous=False,
+    **kwargs,
 ):
     default_param_override = [{"name": component_name}]
     if params_override is None:
@@ -45,7 +49,7 @@ def create_component(
         source=path,
         params_override=params_override,
     )
-    return client.components.create_or_update(command_component, is_anonymous=is_anonymous)
+    return client.components.create_or_update(command_component, is_anonymous=is_anonymous, kwargs=kwargs)
 
 
 @pytest.fixture
@@ -1026,3 +1030,44 @@ class TestComponent(AzureRecordedTestCase):
             from_rest_component.outputs["model_output_ipp"]._intellectual_property
             == command_component.outputs["model_output_ipp"]._intellectual_property
         )
+
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="The request body has a variable parameter version and cannot match the record."
+    )
+    def test_create_component_skip_if_no_change(self, client: MLClient):
+        component_operation = client._operation_container.all_operations[AzureMLResourceType.COMPONENT]
+        component_name = "test_skip_if_no_change"
+        try:
+            default_component = component_operation.get(name=component_name)
+        except Exception:
+            default_component = None
+        default_version = default_component.version if default_component else "1"
+        # update  default component by current local component data.
+        default_component = create_component(client, component_name=component_name, version=default_version)
+
+        new_version = time.strftime("%Y%m%d%H%M%S", time.gmtime())
+        new_component = create_component(
+            client, component_name=component_name, version=new_version, skip_no_change=True
+        )
+        assert default_component.get_component_hash(
+            keys_to_omit=["creation_context"]
+        ) == new_component.get_component_hash(keys_to_omit=["creation_context"])
+        new_version = time.strftime("%Y%m%d%H%M%S", time.gmtime())
+        params_override = [
+            {"description": "description_{0}".format(new_version)},
+            {"display_name": "display_name_{0}".format(new_version)},
+            {"tags": {"tags": "tags_{0}".format(new_version)}},
+        ]
+        new_component = create_component(
+            client,
+            component_name=component_name,
+            version=new_version,
+            params_override=params_override,
+            skip_no_change=True,
+        )
+        assert default_component.get_component_hash(
+            keys_to_omit=["creation_context"]
+        ) != new_component.get_component_hash(keys_to_omit=["creation_context"])
+        assert new_component.description == "description_{0}".format(new_version)
+        assert new_component.display_name == "display_name_{0}".format(new_version)
+        assert new_component.tags == {"tags": "tags_{0}".format(new_version)}
