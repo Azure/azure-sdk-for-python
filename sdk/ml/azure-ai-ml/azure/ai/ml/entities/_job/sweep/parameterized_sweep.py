@@ -157,13 +157,13 @@ class ParameterizedSweep:
             if trial_timeout is not None:
                 self.limits.trial_timeout = trial_timeout
 
-    def set_objective(self, *, goal: Optional[str] = None, primary_metric: Optional[str] = None) -> None:
+    def set_objective(self, *, goal: str, primary_metric: str) -> None:
         """Set the sweep object.
 
-        :param goal: Required. Defines supported metric goals for hyperparameter tuning. Possible values
+        :param goal: Defines supported metric goals for hyperparameter tuning. Possible values
         include: "minimize", "maximize".
         :type goal: str
-        :param primary_metric: Required. Name of the metric to optimize.
+        :param primary_metric: Name of the metric to optimize.
         :type primary_metric: str
         """
 

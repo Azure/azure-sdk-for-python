@@ -64,7 +64,8 @@ class BanditPolicy(EarlyTerminationPolicy):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/pytorch/train-hyperparameter-tune-deploy-with-pytorch/train-hyperparameter-tune-deploy-with-pytorch.ipynb
+        .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/pytorch/
+        train-hyperparameter-tune-deploy-with-pytorch/train-hyperparameter-tune-deploy-with-pytorch.ipynb
             :language: ipython
             :linenos:
             :lines: 341-353
@@ -124,7 +125,8 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
     .. admonition:: Example:
     :class: tip
 
-    .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/lightgbm/iris/lightgbm-iris-sweep.ipynb
+    .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/lightgbm/iris/
+    lightgbm-iris-sweep.ipynb
         :language: ipython
         :linenos:
         :lines: 329-331

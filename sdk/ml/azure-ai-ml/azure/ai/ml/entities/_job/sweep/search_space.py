@@ -56,7 +56,8 @@ class Choice(SweepDistribution):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/scikit-learn/train-hyperparameter-tune-deploy-with-sklearn/train-hyperparameter-tune-with-sklearn.ipynb
+        .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/
+        scikit-learn/train-hyperparameter-tune-deploy-with-sklearn/train-hyperparameter-tune-with-sklearn.ipynb
             :language: ipython
             :linenos:
             :lines: 488-505
@@ -254,7 +255,8 @@ class Uniform(SweepDistribution):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/pytorch/train-hyperparameter-tune-deploy-with-pytorch/train-hyperparameter-tune-deploy-with-pytorch.ipynb
+        .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/pytorch/
+        train-hyperparameter-tune-deploy-with-pytorch/train-hyperparameter-tune-deploy-with-pytorch.ipynb
             :language: ipython
             :linenos:
             :lines: 314-322
@@ -293,7 +295,8 @@ class LogUniform(Uniform):
     .. admonition:: Example:
     :class: tip
 
-    .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/tensorflow/train-hyperparameter-tune-deploy-with-tensorflow/train-hyperparameter-tune-deploy-with-tensorflow.ipynb
+    .. literalinclude:: https://github.com/Azure/azureml-examples/blob/main/sdk/python/jobs/single-step/
+    tensorflow/train-hyperparameter-tune-deploy-with-tensorflow/train-hyperparameter-tune-deploy-with-tensorflow.ipynb
         :language: ipython
         :linenos:
         :lines: 342-361
