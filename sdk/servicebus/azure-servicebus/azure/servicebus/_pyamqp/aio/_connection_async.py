@@ -28,7 +28,6 @@ from ..constants import (
     ConnectionState,
     EMPTY_FRAME,
     TransportType,
-    READ_TIMEOUT_INTERVAL
 )
 
 from ..error import ErrorCondition, AMQPConnectionError, AMQPError
@@ -64,6 +63,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value). When using these settings,
      the transport_type would be AmqpOverWebSocket.
      Additionally the following keys may also be present: `'username', 'password'`.
+    :keyword float connection_timeout: The time in seconds that the underlying socket in the transport should
+     wait when reading or writing data before timing out. The default value is 0.2 (for transport type Amqp),
+     and 1 for transport type for AmqpOverWebsocket.
     """
 
     def __init__(self, endpoint, **kwargs):  # pylint:disable=too-many-statements
@@ -93,6 +95,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         self._network_trace_params = {"amqpConnection": self._container_id, "amqpSession": None, "amqpLink": None}
 
         transport = kwargs.get("transport")
+        self._connection_timeout = kwargs.get("connection_timeout")
         self._transport_type = kwargs.pop("transport_type", TransportType.Amqp)
         if transport:
             self._transport = transport
@@ -239,7 +242,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """
         timeout: Optional[Union[int, float]] = None
         if wait is False:
-            timeout = READ_TIMEOUT_INTERVAL
+            timeout = self._connection_timeout
         elif wait is True:
             timeout = None
         else:

@@ -147,9 +147,12 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         else:
             self._credential = credential # type: ignore
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
+        # overriding default 0.2 for async
+        connection_timeout = kwargs.pop("connection_timeout", 1)
         self._config = Configuration(
             hostname=self.fully_qualified_namespace,
             amqp_transport=self._amqp_transport,
+            connection_timeout=connection_timeout,
             **kwargs
         )
         self._running = False

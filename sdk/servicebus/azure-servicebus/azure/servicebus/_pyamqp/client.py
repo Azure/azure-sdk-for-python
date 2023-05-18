@@ -148,6 +148,9 @@ class AMQPClient(
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
     :paramtype connection_verify: str
+    :keyword float connection_timeout: The time in seconds that the underlying socket in the transport should
+     wait when reading or writing data before timing out. The default value is 0.2 (for transport type Amqp),
+     and 1 for transport type for AmqpOverWebsocket.
     """
 
     def __init__(self, hostname, **kwargs):
@@ -179,6 +182,7 @@ class AMQPClient(
         )
         self._network_trace = kwargs.pop("network_trace", False)
         self._network_trace_params = {"amqpConnection": None, "amqpSession": None, "amqpLink": None}
+        self._connection_timeout = kwargs.pop("connection_timeout", 0.2)
 
         # Session settings
         self._outgoing_window = kwargs.pop("outgoing_window", OUTGOING_WINDOW)
@@ -314,6 +318,7 @@ class AMQPClient(
                 transport_type=self._transport_type,
                 http_proxy=self._http_proxy,
                 custom_endpoint_address=self._custom_endpoint_address,
+                connection_timeout=self._connection_timeout,
             )
             self._connection.open()
         if not self._session:

@@ -108,6 +108,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             connection_verify=config.connection_verify,
             transport_type=config.transport_type,
             http_proxy=config.http_proxy,
+            connection_timeout=config.connection_timeout,
             **kwargs,
         )
 
@@ -184,6 +185,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 PyamqpTransportAsync.on_attach_async,
                 receiver
             ),
+            connection_timeout=config.connection_timeout,
             **kwargs,
         )
 
