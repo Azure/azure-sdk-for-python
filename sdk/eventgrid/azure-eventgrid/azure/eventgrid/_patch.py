@@ -38,8 +38,6 @@ class EventGridClient(ServiceClientGenerated):
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs) -> None:
         if isinstance(credential, AzureKeyCredential):
-            # if it's our credential, we default to our authentication policy.
-            # Otherwise, we use the default
             if not kwargs.get("authentication_policy"):
                 kwargs["authentication_policy"] = EventGridSharedAccessKeyPolicy(credential)
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
