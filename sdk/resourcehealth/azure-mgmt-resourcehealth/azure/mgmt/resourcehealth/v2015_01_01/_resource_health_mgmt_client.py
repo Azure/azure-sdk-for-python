@@ -14,12 +14,11 @@ from azure.mgmt.core import ARMPipelineClient
 
 from . import models as _models
 from .._serialization import Deserializer, Serializer
-from ._configuration import MicrosoftResourceHealthConfiguration
+from ._configuration import ResourceHealthMgmtClientConfiguration
 from .operations import (
     AvailabilityStatusesOperations,
-    EmergingIssuesOperations,
-    EventsOperations,
-    MetadataOperations,
+    ChildAvailabilityStatusesOperations,
+    ChildResourcesOperations,
     Operations,
 )
 
@@ -28,21 +27,20 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class MicrosoftResourceHealth:  # pylint: disable=client-accepts-api-version-keyword
+class ResourceHealthMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
     """The Resource Health Client.
 
-    :ivar events: EventsOperations operations
-    :vartype events: azure.mgmt.resourcehealth.v2018_07_01.operations.EventsOperations
     :ivar availability_statuses: AvailabilityStatusesOperations operations
     :vartype availability_statuses:
-     azure.mgmt.resourcehealth.v2018_07_01.operations.AvailabilityStatusesOperations
+     azure.mgmt.resourcehealth.v2015_01_01.operations.AvailabilityStatusesOperations
+    :ivar child_availability_statuses: ChildAvailabilityStatusesOperations operations
+    :vartype child_availability_statuses:
+     azure.mgmt.resourcehealth.v2015_01_01.operations.ChildAvailabilityStatusesOperations
+    :ivar child_resources: ChildResourcesOperations operations
+    :vartype child_resources:
+     azure.mgmt.resourcehealth.v2015_01_01.operations.ChildResourcesOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.resourcehealth.v2018_07_01.operations.Operations
-    :ivar emerging_issues: EmergingIssuesOperations operations
-    :vartype emerging_issues:
-     azure.mgmt.resourcehealth.v2018_07_01.operations.EmergingIssuesOperations
-    :ivar metadata: MetadataOperations operations
-    :vartype metadata: azure.mgmt.resourcehealth.v2018_07_01.operations.MetadataOperations
+    :vartype operations: azure.mgmt.resourcehealth.v2015_01_01.operations.Operations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure
@@ -50,7 +48,7 @@ class MicrosoftResourceHealth:  # pylint: disable=client-accepts-api-version-key
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2018-07-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2015-01-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -62,22 +60,23 @@ class MicrosoftResourceHealth:  # pylint: disable=client-accepts-api-version-key
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = MicrosoftResourceHealthConfiguration(
+        self._config = ResourceHealthMgmtClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.events = EventsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.availability_statuses = AvailabilityStatusesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.child_availability_statuses = ChildAvailabilityStatusesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.child_resources = ChildResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.emerging_issues = EmergingIssuesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.metadata = MetadataOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
@@ -104,7 +103,7 @@ class MicrosoftResourceHealth:  # pylint: disable=client-accepts-api-version-key
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "MicrosoftResourceHealth":
+    def __enter__(self) -> "ResourceHealthMgmtClient":
         self._client.__enter__()
         return self
 

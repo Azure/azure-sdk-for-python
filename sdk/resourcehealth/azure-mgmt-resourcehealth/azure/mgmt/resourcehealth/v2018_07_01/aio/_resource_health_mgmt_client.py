@@ -14,7 +14,7 @@ from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models as _models
 from ..._serialization import Deserializer, Serializer
-from ._configuration import MicrosoftResourceHealthConfiguration
+from ._configuration import ResourceHealthMgmtClientConfiguration
 from .operations import (
     AvailabilityStatusesOperations,
     EmergingIssuesOperations,
@@ -28,7 +28,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class MicrosoftResourceHealth:  # pylint: disable=client-accepts-api-version-keyword
+class ResourceHealthMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
     """The Resource Health Client.
 
     :ivar events: EventsOperations operations
@@ -62,10 +62,10 @@ class MicrosoftResourceHealth:  # pylint: disable=client-accepts-api-version-key
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = MicrosoftResourceHealthConfiguration(
+        self._config = ResourceHealthMgmtClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -104,7 +104,7 @@ class MicrosoftResourceHealth:  # pylint: disable=client-accepts-api-version-key
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "MicrosoftResourceHealth":
+    async def __aenter__(self) -> "ResourceHealthMgmtClient":
         await self._client.__aenter__()
         return self
 
