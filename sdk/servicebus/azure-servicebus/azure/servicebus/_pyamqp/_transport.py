@@ -174,7 +174,12 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             # are we already connected?
             if self.connected:
                 return
-            self._connect(self.host, self.port, self.socket_timeout)
+            # send in connect timeout of = 1
+            if self.socket_timeout < 1:
+                connect_timeout = 1
+            else:
+                connect_timeout = self.socket_timeout
+            self._connect(self.host, self.port, connect_timeout)
             self._init_socket(
                 self.socket_settings,
                 self.socket_timeout,
