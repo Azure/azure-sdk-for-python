@@ -2,4 +2,4 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-VERSION = "1.7.1"
+VERSION = "1.7.2"
