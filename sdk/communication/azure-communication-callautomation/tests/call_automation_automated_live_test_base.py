@@ -1,11 +1,10 @@
 import os
 import json
 import time
-from datetime import datetime, timedelta
-from typing import Any, Dict, Optional, Type
+from datetime import datetime
+from typing import Any, Dict
 
 import requests
-from azure.communication.callautomation import CallAutomationEventParser
 from azure.servicebus import ServiceBusClient
 
 from _shared.asynctestcase import AsyncCommunicationTestCase
@@ -13,14 +12,14 @@ from _shared.asynctestcase import AsyncCommunicationTestCase
 
 class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
     def __init__(self, method_name, *args, **kwargs):
-        self.servicebus_connection_str = os.environ.get('SERVICEBUS_STRING', 'Endpoint=sb://REDACTED.servicebus.windows.net/;SharedAccessKeyName=REDACTED;SharedAccessKey=REDACTED')
+        self.servicebus_connection_str = os.environ.get('SERVICEBUS_STRING', 'Endpoint=REDACTED=')
         self.dispatcher_endpoint = os.environ.get('DISPATCHER_ENDPOINT', 'https://REDACTED.azurewebsites.net')
         self.dispatcher_callback = self.dispatcher_endpoint + '/api/servicebuscallback/events'
         self.processor_store: Dict[str, Any] = {}
         self.incoming_call_context_store: Dict[str, Any] = {}
         self.event_store: Dict[str, Dict[str, Any]] = {}
         super(CallAutomationAutomatedLiveTestBase, self).__init__(method_name, *args, **kwargs)
-    
+
     def _format_string(self, s) -> str:
         s1 = f"{s[:12]}-{s[12:16]}-{s[16:20]}-{s[20:24]}-{s[24:36]}"
         s2 = f"{s[36:44]}-{s[44:48]}-{s[48:52]}-{s[52:56]}-{s[56:]}"
@@ -49,17 +48,11 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
             self.incoming_call_context_store[unique_id] = incoming_call_context
             return True
         else:
-            event = CallAutomationEventParser.parse(body_str)
-
-            if event is None:
-                raise ValueError("Event cannot be null")
-
-            call_connection_id = event.call_connection_id
-            
-            if call_connection_id not in self.event_store:
-                self.event_store[call_connection_id] = {}
-
-            self.event_store[call_connection_id][type(event)] = event
+            if isinstance(mapper, list):
+                mapper = mapper[0]
+            if mapper["type"]:
+                print('MAPPER: ' + mapper["type"])
+                self.event_store[mapper["data"]["callConnectionId"]] = mapper["type"].split(".")[-1]
             return False
     
     def service_bus_with_new_call(self, caller, receiver) -> str:
@@ -100,8 +93,9 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
         """
         service_bus_receiver = self.processor_store[unique_id].get_queue_receiver(queue_name=unique_id)
         time_out_time = datetime.now() + time_out
+
         while datetime.now() < time_out_time:
-            received_messages = service_bus_receiver.receive_messages(max_wait_time=5)
+            received_messages = service_bus_receiver.receive_messages(max_wait_time=20)
             for msg in received_messages:
                 print(msg)
                 is_incoming_call_event = self._message_handler(msg)
@@ -111,7 +105,7 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
             if not received_messages:
                 time.sleep(1)
 
-    def check_for_event(self, event_type: Type, call_connection_id: str) -> Optional[Any]:
+    def check_for_event(self, event_type: str, call_connection_id: str) -> bool:
         """Check for events.
         Checks the event_store for any events that have been received from the Service Bus queue with the specified event_type and call_connection_id.
 
@@ -123,9 +117,9 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
         :return: None if no events are found. The event object if an event is found.
         :rtype: Optional[Any]
         """
-        if call_connection_id in self.event_store:
-            return self.event_store[call_connection_id].get(event_type)
-        return None
+        if self.event_store[call_connection_id] == event_type:
+            return True
+        return False
 
     def cleanup(self) -> None:
         for _, receiver in self.processor_store.items():

@@ -2,7 +2,7 @@ import os
 import pytest
 from datetime import timedelta
 
-from azure.communication.callautomation import CallAutomationClient, CallInvite, CallConnected, ParticipantsUpdated, CallDisconnected
+from azure.communication.callautomation import CallAutomationClient, CallConnectionClient, CallInvite
 from azure.communication.callautomation._shared.utils import parse_connection_str
 from azure.communication.identity import CommunicationIdentityClient
 
@@ -37,11 +37,11 @@ class CallAutomationClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTest
 
             # create a call
             call_invite = CallInvite(target=target)
-            create_call_result = call_automation_client_caller.create_call(target=call_invite, callback_uri=(self.dispatcher_callback + "?q={}".format(unique_id)))
-            if create_call_result is None or create_call_result.call_connection_properties is None:
+            create_call_result = call_automation_client_caller.create_call(target_participant=call_invite, callback_url=(self.dispatcher_callback + "?q={}".format(unique_id)))
+            if create_call_result is None:
                 raise ValueError("Invalid create_call_result")
             
-            caller_connection_id = create_call_result.call_connection_properties.call_connection_id
+            caller_connection_id = create_call_result.call_connection_id
             if caller_connection_id is None:
                 raise ValueError("Caller connection ID is None")
             print('Caller connection ID: ' + caller_connection_id)
@@ -53,18 +53,19 @@ class CallAutomationClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTest
                 raise ValueError("Incoming call context is None")
 
             # answer the call
-            answer_call_result = call_automation_client_target.answer_call(incoming_call_context=incoming_call_context, callback_uri=self.dispatcher_callback)
-            if answer_call_result is None or answer_call_result.call_connection is None or answer_call_result.call_connection_properties is None:
-                raise ValueError("Invalid answer_call_result")
+            answer_call_result = call_automation_client_target.answer_call(incoming_call_context=incoming_call_context, callback_url=self.dispatcher_callback)
+            if answer_call_result is None:
+                raise ValueError("Invalid answer_call result")
 
-            receiver_connection_id = answer_call_result.call_connection_properties.call_connection_id
+            receiver_connection_id = answer_call_result.call_connection_id
             print('Receiver connection ID: ' + receiver_connection_id)
-            call_connection_list.append(answer_call_result.call_connection)
+            receiver_call_connection = CallConnectionClient.from_connection_string(self.connection_str, answer_call_result.call_connection_id)
+            call_connection_list.append(receiver_call_connection)
 
             # check events to caller side
             self.wait_for_messages(unique_id, timedelta(seconds=8))
-            caller_connected_event = self.check_for_event(event_type=CallConnected, call_connection_id=caller_connection_id)
-            caller_participant_updated_event = self.check_for_event(event_type=ParticipantsUpdated, call_connection_id=caller_connection_id)
+            caller_connected_event = self.check_for_event(event_type='CallConnected', call_connection_id=caller_connection_id)
+            caller_participant_updated_event = self.check_for_event(event_type='ParticipantsUpdated', call_connection_id=caller_connection_id)
             if caller_connected_event is None:
                 raise ValueError("Caller CallConnected event is None")
             if caller_participant_updated_event is None:
@@ -73,19 +74,19 @@ class CallAutomationClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTest
 
             # check events to receiver side
             self.wait_for_messages(unique_id, timedelta(seconds=8))
-            receiver_connected_event = self.check_for_event(event_type=CallConnected, call_connection_id=caller_connection_id)
-            receiver_participant_updated_event = self.check_for_event(event_type=ParticipantsUpdated, call_connection_id=caller_connection_id)
+            receiver_connected_event = self.check_for_event(event_type='CallConnected', call_connection_id=caller_connection_id)
+            receiver_participant_updated_event = self.check_for_event(event_type='ParticipantsUpdated', call_connection_id=caller_connection_id)
             if receiver_connected_event is None:
                 raise ValueError("Receiver CallConnected event is None")
             if receiver_participant_updated_event is None:
                 raise ValueError("Receiver ParticipantsUpdated event is None")
 
             # hang up the call
-            answer_call_result.call_connection.hang_up(is_for_everyone=True)
+            receiver_call_connection.hang_up(is_for_everyone=True)
             self.wait_for_messages(unique_id, timedelta(seconds=10))
 
             # check if call terminated
-            receiver_call_disconnected_event = self.check_for_event(event_type=CallDisconnected, call_connection_id=caller_connection_id)
+            receiver_call_disconnected_event = self.check_for_event(event_type='CallDisconnected', call_connection_id=caller_connection_id)
             if receiver_call_disconnected_event is None:
                 raise ValueError("Receiver CallDisconnected event is None")
             
