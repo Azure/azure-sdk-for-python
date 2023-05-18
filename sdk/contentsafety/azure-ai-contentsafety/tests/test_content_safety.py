@@ -5,7 +5,6 @@
 # ------------------------------------
 
 import os
-import base64
 import functools
 
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy

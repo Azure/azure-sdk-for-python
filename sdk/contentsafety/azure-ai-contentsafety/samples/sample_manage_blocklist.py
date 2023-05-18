@@ -6,33 +6,23 @@
 # license information.
 # --------------------------------------------------------------------------
 
-# [START manage_blocklist]
-import os
-from azure.ai.contentsafety import ContentSafetyClient
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.contentsafety.models import (
-    TextBlockItemInfo,
-    AddBlockItemsOptions,
-    RemoveBlockItemsOptions,
-    AnalyzeTextOptions,
-)
-from azure.core.exceptions import HttpResponseError
-import time
-
-
-key = os.environ["CONTENT_SAFETY_KEY"]
-endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
-
-blocklist_name = "TestBlocklist"
-blocklist_description = "Test blocklist management."
-block_item_text_1 = "k*ll"
-block_item_text_2 = "h*te"
-input_text = "I h*te you and I want to k*ll you."
-
-# Create an Content Safety client
-client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
-
 def create_or_update_text_blocklist():
+    # [START create_or_update_text_blocklist]
+
+    import os
+    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.core.credentials import AzureKeyCredential
+    from azure.core.exceptions import HttpResponseError
+
+    key = os.environ["CONTENT_SAFETY_KEY"]
+    endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
+
+    # Create an Content Safety client
+    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+
+    blocklist_name = "TestBlocklist"
+    blocklist_description = "Test blocklist management."
+
     try:
         blocklist = client.create_or_update_text_blocklist(blocklist_name=blocklist_name, resource={"description": blocklist_description})
         if blocklist is not None:
@@ -47,7 +37,30 @@ def create_or_update_text_blocklist():
         print(e)
         raise
 
+    # [END create_or_update_text_blocklist]
+
 def add_block_items():
+    # [START add_block_items]
+
+    import os
+    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.contentsafety.models import (
+        TextBlockItemInfo,
+        AddBlockItemsOptions
+    )
+    from azure.core.exceptions import HttpResponseError
+
+    key = os.environ["CONTENT_SAFETY_KEY"]
+    endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
+
+    # Create an Content Safety client
+    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+
+    blocklist_name = "TestBlocklist"
+    block_item_text_1 = "k*ll"
+    block_item_text_2 = "h*te"
+
     block_items = [TextBlockItemInfo(text=block_item_text_1), TextBlockItemInfo(text=block_item_text_2)]
     try:
         result = client.add_block_items(
@@ -67,10 +80,28 @@ def add_block_items():
         print(e)
         raise
 
+    # [END add_block_items]
+
 def analyze_text_with_blocklists():
+    # [START analyze_text_with_blocklists]
+
+    import os
+    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.contentsafety.models import AnalyzeTextOptions
+    from azure.core.exceptions import HttpResponseError
+
+    key = os.environ["CONTENT_SAFETY_KEY"]
+    endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
+
+    # Create an Content Safety client
+    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+
+    blocklist_name = "TestBlocklist"
+    input_text = "I h*te you and I want to k*ll you."
+
     try:
-        print("\nWaiting for blocklist service update...")
-        time.sleep(30)
+        # After you edit your blocklist, it usually takes effect in 5 minutes, please wait some time before analyzing with blocklist after editing.
         analysis_result = client.analyze_text(AnalyzeTextOptions(text=input_text, blocklist_names=[blocklist_name], break_by_blocklists=False))
         if analysis_result is not None and analysis_result.blocklists_match_results is not None:
             print("\nBlocklist match results: ")
@@ -86,7 +117,22 @@ def analyze_text_with_blocklists():
         print(e)
         raise
 
+    # [END analyze_text_with_blocklists]
+
 def list_text_blocklists():
+    # [START list_text_blocklists]
+
+    import os
+    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.core.credentials import AzureKeyCredential
+    from azure.core.exceptions import HttpResponseError
+
+    key = os.environ["CONTENT_SAFETY_KEY"]
+    endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
+
+    # Create an Content Safety client
+    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+
     try:
         blocklists = client.list_text_blocklists()
         if blocklists is not None:
@@ -102,7 +148,24 @@ def list_text_blocklists():
         print(e)
         raise
 
+    # [END list_text_blocklists]
+
 def get_text_blocklist():
+    # [START get_text_blocklist]
+
+    import os
+    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.core.credentials import AzureKeyCredential
+    from azure.core.exceptions import HttpResponseError
+
+    key = os.environ["CONTENT_SAFETY_KEY"]
+    endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
+
+    # Create an Content Safety client
+    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+
+    blocklist_name = "TestBlocklist"
+
     try:
         blocklist = client.get_text_blocklist(blocklist_name=blocklist_name)
         if blocklist is not None:
@@ -117,7 +180,24 @@ def get_text_blocklist():
         print(e)
         raise
 
+    # [END get_text_blocklist]
+
 def list_block_items():
+    # [START list_block_items]
+
+    import os
+    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.core.credentials import AzureKeyCredential
+    from azure.core.exceptions import HttpResponseError
+
+    key = os.environ["CONTENT_SAFETY_KEY"]
+    endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
+
+    # Create an Content Safety client
+    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+
+    blocklist_name = "TestBlocklist"
+
     try:
         block_items = client.list_text_blocklist_items(blocklist_name=blocklist_name)
         if block_items is not None:
@@ -133,7 +213,26 @@ def list_block_items():
         print(e)
         raise
 
+    # [END list_block_items]
+
 def get_block_item():
+    # [START get_block_item]
+
+    import os
+    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.contentsafety.models import TextBlockItemInfo, AddBlockItemsOptions
+    from azure.core.exceptions import HttpResponseError
+
+    key = os.environ["CONTENT_SAFETY_KEY"]
+    endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
+
+    # Create an Content Safety client
+    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+
+    blocklist_name = "TestBlocklist"
+    block_item_text_1 = "k*ll"
+
     try:
         add_result = client.add_block_items(
             blocklist_name=blocklist_name,
@@ -157,7 +256,30 @@ def get_block_item():
         print(e)
         raise
 
+    # [END get_block_item]
+
 def remove_block_items():
+    # [START remove_block_items]
+
+    import os
+    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.contentsafety.models import (
+        TextBlockItemInfo,
+        AddBlockItemsOptions,
+        RemoveBlockItemsOptions
+    )
+    from azure.core.exceptions import HttpResponseError
+
+    key = os.environ["CONTENT_SAFETY_KEY"]
+    endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
+
+    # Create an Content Safety client
+    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+
+    blocklist_name = "TestBlocklist"
+    block_item_text_1 = "k*ll"
+
     try:
         add_result = client.add_block_items(
             blocklist_name=blocklist_name,
@@ -179,7 +301,24 @@ def remove_block_items():
         print(e)
         raise
 
+    # [END remove_block_items]
+
 def delete_blocklist():
+    # [START delete_blocklist]
+
+    import os
+    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.core.credentials import AzureKeyCredential
+    from azure.core.exceptions import HttpResponseError
+
+    key = os.environ["CONTENT_SAFETY_KEY"]
+    endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
+
+    # Create an Content Safety client
+    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+
+    blocklist_name = "TestBlocklist"
+
     try:
         client.delete_text_blocklist(blocklist_name=blocklist_name)
         print("\nDeleted blocklist: {}".format(blocklist_name))
@@ -192,7 +331,7 @@ def delete_blocklist():
         print(e)
         raise
 
-# [END manage_blocklist]
+    # [END delete_blocklist]
 
 if __name__ == "__main__":
     create_or_update_text_blocklist()
