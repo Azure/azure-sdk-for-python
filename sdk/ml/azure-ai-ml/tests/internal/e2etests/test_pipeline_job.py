@@ -3,43 +3,23 @@
 # ---------------------------------------------------------
 import json
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Dict
 
 import pydash
 import pytest
+from azure.core.exceptions import HttpResponseError
+from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import assert_job_cancel, sleep_if_live
+
 from azure.ai.ml import Input, MLClient, Output, load_component
 from azure.ai.ml._internal.entities.component import InternalComponent
 from azure.ai.ml.constants import AssetTypes, InputOutputModes
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import Data, PipelineJob
-from azure.core.exceptions import HttpResponseError
-from devtools_testutils import AzureRecordedTestCase, is_live
-from test_utilities.utils import assert_job_cancel, sleep_if_live
 
-from .._utils import (
-    DATA_VERSION,
-    PARAMETERS_TO_TEST,
-    TEST_CASE_NAME_ENUMERATE,
-    get_expected_runsettings_items,
-    set_run_settings,
-)
+from .._utils import DATA_VERSION, PARAMETERS_TO_TEST, get_expected_runsettings_items, set_run_settings
 
 _dependent_datasets = {}
-
-PARAMETERS_TO_TEST_WITH_OUTPUT_OUTPUT_RELATED = [
-    ("output_path", "Distributed_output", "1"),
-    ("scored_dataset", "Parallel_output", "1"),
-    ("SSPath", "Scope_output", "1"),
-    ("output_path", "HDInsight_output", "1"),
-    ("output1", "Hemera_output", "1"),
-    ("destination_data", "DataTransfer_output", "1"),
-    ("CosmosPath", "Starlite_output", "1"),
-    ("outputfolderEnc", "Ae365expool_output", "1"),
-]
-PARAMETERS_TO_TEST_WITH_OUTPUT = []
-# don't use PARAMETERS_TO_TEST[0] because this component doesn't have output
-for ori_tuple, output_tuple in zip(PARAMETERS_TO_TEST[1:], PARAMETERS_TO_TEST_WITH_OUTPUT_OUTPUT_RELATED):
-    PARAMETERS_TO_TEST_WITH_OUTPUT.append(ori_tuple + output_tuple)
 
 
 @pytest.fixture
@@ -110,25 +90,23 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
 
     @pytest.mark.parametrize(
-        "test_case",
-        PARAMETERS_TO_TEST_WITH_OUTPUT,
+        "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
+        PARAMETERS_TO_TEST,
     )
     @pytest.mark.disable_mock_code_hash
     def test_register_output_for_anonymous_internal_component(
         self,
         client: MLClient,
-        test_case: tuple,
-    ):
-        (
-            yaml_path,
-            inputs,
-            runsettings_dict,
-            pipeline_runsettings_dict,
-            output_port_name,
-            output_name,
-            output_version,
-        ) = test_case
+        yaml_path: str,
+        inputs: Dict,
+        runsettings_dict: Dict,
+        pipeline_runsettings_dict: Dict,
+    ) -> None:
         node_func: InternalComponent = load_component(yaml_path)
+
+        output_port_name = next(iter(node_func.outputs))
+        output_name = node_func.type + "_output"
+        output_version = "1"
 
         @pipeline()
         def pipeline_func():
@@ -136,6 +114,11 @@ class TestPipelineJob(AzureRecordedTestCase):
             node.outputs[output_port_name].type = "uri_file"  # use this, in case that the type is path
             node.outputs[output_port_name].name = output_name
             node.outputs[output_port_name].version = output_version
+            from azure.ai.ml.constants._component import NodeType
+
+            if node.type == NodeType.SPARK:
+                # spark node supports only direct mode outputs
+                node.outputs[output_port_name].mode = InputOutputModes.DIRECT
             set_run_settings(node, runsettings_dict)
 
         dsl_pipeline: PipelineJob = pipeline_func()
@@ -151,33 +134,36 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert pipeline_job.jobs["node"].outputs[output_port_name].version == output_version
 
     @pytest.mark.parametrize(
-        "test_case_i,test_case_name",
-        TEST_CASE_NAME_ENUMERATE,
+        "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
+        PARAMETERS_TO_TEST,
     )
     def test_pipeline_job_with_anonymous_internal_component(
         self,
         client: MLClient,
-        test_case_i: int,
-        test_case_name: str,
-    ):
-        yaml_path, inputs, runsettings_dict, pipeline_runsettings_dict = PARAMETERS_TO_TEST[test_case_i]
+        yaml_path: str,
+        inputs: Dict,
+        runsettings_dict: Dict,
+        pipeline_runsettings_dict: Dict,
+    ) -> None:
+        # no need to override component name, since it will be used as an anonymous component
         # curated env with name & version
         node_func: InternalComponent = load_component(yaml_path)
 
         self._test_component(node_func, inputs, runsettings_dict, pipeline_runsettings_dict, client)
 
     @pytest.mark.parametrize(
-        "test_case_i,test_case_name",
-        TEST_CASE_NAME_ENUMERATE,
+        "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
+        PARAMETERS_TO_TEST,
     )
     def test_pipeline_job_with_registered_internal_component(
         self,
         client: MLClient,
         randstr: Callable[[str], str],
-        test_case_i: int,
-        test_case_name: str,
-    ):
-        yaml_path, inputs, runsettings_dict, pipeline_runsettings_dict = PARAMETERS_TO_TEST[test_case_i]
+        yaml_path: str,
+        inputs: Dict,
+        runsettings_dict: Dict,
+        pipeline_runsettings_dict: Dict,
+    ) -> None:
         component_name = randstr("component_name")
 
         component_to_register = load_component(yaml_path, params_override=[{"name": component_name}])
@@ -218,16 +204,17 @@ class TestPipelineJob(AzureRecordedTestCase):
     # TODO: Enable this when type fixed on master.
     @pytest.mark.skip(reason="marshmallow.exceptions.ValidationError: miss required jobs.node.component")
     @pytest.mark.parametrize(
-        "test_case_i,test_case_name",
-        TEST_CASE_NAME_ENUMERATE,
+        "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
+        PARAMETERS_TO_TEST,
     )
     def test_pipeline_component_with_anonymous_internal_component(
         self,
         client: MLClient,
-        test_case_i: int,
-        test_case_name: str,
-    ):
-        yaml_path, inputs, runsettings_dict, pipeline_runsettings_dict = PARAMETERS_TO_TEST[test_case_i]
+        yaml_path: str,
+        inputs: Dict,
+        runsettings_dict: Dict,
+        pipeline_runsettings_dict: Dict,
+    ) -> None:
         component_func = load_component(yaml_path)
 
         @pipeline()
