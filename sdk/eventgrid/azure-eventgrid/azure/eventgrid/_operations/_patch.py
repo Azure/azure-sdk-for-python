@@ -155,7 +155,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         received_result = self._receive_cloud_events(
             topic_name, event_subscription_name, max_events=max_events, max_wait_time=max_wait_time, **kwargs
         )
-        for detail_item in received_result.get("value"):
+        for detail_item in received_result.value:
             deserialized_cloud_event = CloudEvent.from_dict(detail_item.event)
             detail_item.event = deserialized_cloud_event
             detail_items.append(
