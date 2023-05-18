@@ -1,5 +1,11 @@
 # Release History
 
+## 1.7.2 (2023-05-18)
+
+### Features Added
+- Public preview support for new schedule type `MonitorSchedule`
+
+
 ## 1.7.1 (2023-05-17)
 
 ### Bugs Fixed
