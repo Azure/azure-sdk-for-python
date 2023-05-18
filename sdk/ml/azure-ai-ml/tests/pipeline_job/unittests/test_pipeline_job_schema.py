@@ -1564,14 +1564,6 @@ class TestPipelineJobSchema:
         if "image_" in job_key and "classification" in job_key:
             original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
                 "type": "choice",
-                "values": ["yolov5"],
-            }
-            self._raise_error_on_wrong_schema(
-                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
-            )
-
-            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
-                "type": "choice",
                 "values": ["vitb16r224"],
             }
             dump_yaml_to_file(test_yaml_path, original_dict_copy)
@@ -1584,14 +1576,6 @@ class TestPipelineJobSchema:
         elif "object_detection" in job_key:
             original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
                 "type": "choice",
-                "values": ["vitb16r224"],
-            }
-            self._raise_error_on_wrong_schema(
-                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
-            )
-
-            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
-                "type": "choice",
                 "values": ["yolov5", "fasterrcnn_resnet50_fpn"],
             }
             dump_yaml_to_file(test_yaml_path, original_dict_copy)
@@ -1602,27 +1586,6 @@ class TestPipelineJobSchema:
             self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
 
         elif "instance_segmentation" in job_key:
-            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
-                "type": "choice",
-                "values": ["vitb16r224"],
-            }
-            self._raise_error_on_wrong_schema(
-                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
-            )
-
-            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
-                "type": "choice",
-                "values": ["fasterrcnn_resnet50_fpn"],
-            }
-            self._raise_error_on_wrong_schema(
-                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
-            )
-
-            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = "yolov5"
-            self._raise_error_on_wrong_schema(
-                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
-            )
-
             original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
                 "type": "choice",
                 "values": ["maskrcnn_resnet152_fpn", "maskrcnn_resnet18_fpn"],

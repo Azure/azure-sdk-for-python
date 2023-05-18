@@ -10,7 +10,11 @@
 
 ### Other Changes
 
-- Tracing: span links on receive/send spans now fall back to using `Diagnostic-Id` if the `traceparent` message application property is not found.
+- Tracing updates:
+  - Span links on receive/send spans now fall back to using `Diagnostic-Id` if the `traceparent` message application property is not found.
+  - Span links will now still be created for receive/send spans even if no context propagation headers are found in message application properties.
+  - The `component` attribute was removed from all spans.
+
 
 ## 7.10.0 (2023-05-09)
 
