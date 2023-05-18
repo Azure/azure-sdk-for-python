@@ -14,7 +14,7 @@ from azure.mgmt.servicebus import ServiceBusManagementClient
     pip install azure-identity
     pip install azure-mgmt-servicebus
 # USAGE
-    python sb_subscription_delete.py
+    python sb_migrationconfiguration_complete_migration.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,18 +26,16 @@ from azure.mgmt.servicebus import ServiceBusManagementClient
 def main():
     client = ServiceBusManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="SubscriptionId",
     )
 
-    response = client.subscriptions.delete(
+    client.migration_configs.complete_migration(
         resource_group_name="ResourceGroup",
-        namespace_name="sdk-Namespace-5882",
-        topic_name="sdk-Topics-1804",
-        subscription_name="sdk-Subscriptions-3670",
+        namespace_name="sdk-Namespace-41",
+        config_name="$default",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/servicebus/resource-manager/Microsoft.ServiceBus/stable/2021-11-01/examples/Subscriptions/SBSubscriptionDelete.json
+# x-ms-original-file: specification/servicebus/resource-manager/Microsoft.ServiceBus/stable/2021-11-01/examples/Migrationconfigurations/SBMigrationconfigurationCompleteMigration.json
 if __name__ == "__main__":
     main()

@@ -14,7 +14,7 @@ from azure.mgmt.servicebus import ServiceBusManagementClient
     pip install azure-identity
     pip install azure-mgmt-servicebus
 # USAGE
-    python sb_name_space_authorization_rule_delete.py
+    python sb_topic_authorization_rule_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,14 @@ def main():
         subscription_id="5f750a97-50d9-4e36-8081-c9ee4c0210d4",
     )
 
-    response = client.namespaces.delete_authorization_rule(
+    client.topics.delete_authorization_rule(
         resource_group_name="ArunMonocle",
-        namespace_name="sdk-namespace-6914",
-        authorization_rule_name="sdk-AuthRules-1788",
+        namespace_name="sdk-Namespace-6261",
+        topic_name="sdk-Topics-1984",
+        authorization_rule_name="sdk-AuthRules-4310",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/servicebus/resource-manager/Microsoft.ServiceBus/stable/2021-11-01/examples/NameSpaces/SBNameSpaceAuthorizationRuleDelete.json
+# x-ms-original-file: specification/servicebus/resource-manager/Microsoft.ServiceBus/stable/2021-11-01/examples/Topics/SBTopicAuthorizationRuleDelete.json
 if __name__ == "__main__":
     main()

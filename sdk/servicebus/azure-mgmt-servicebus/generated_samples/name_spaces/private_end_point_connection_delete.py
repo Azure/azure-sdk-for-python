@@ -14,7 +14,7 @@ from azure.mgmt.servicebus import ServiceBusManagementClient
     pip install azure-identity
     pip install azure-mgmt-servicebus
 # USAGE
-    python sb_alias_fail_over.py
+    python private_end_point_connection_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,13 @@ def main():
         subscription_id="5f750a97-50d9-4e36-8081-c9ee4c0210d4",
     )
 
-    response = client.disaster_recovery_configs.fail_over(
-        resource_group_name="ardsouzatestRG",
-        namespace_name="sdk-Namespace-8860",
-        alias="sdk-DisasterRecovery-3814",
-    )
-    print(response)
+    client.private_endpoint_connections.begin_delete(
+        resource_group_name="ArunMonocle",
+        namespace_name="sdk-Namespace-3285",
+        private_endpoint_connection_name="928c44d5-b7c6-423b-b6fa-811e0c27b3e0",
+    ).result()
 
 
-# x-ms-original-file: specification/servicebus/resource-manager/Microsoft.ServiceBus/stable/2021-11-01/examples/disasterRecoveryConfigs/SBAliasFailOver.json
+# x-ms-original-file: specification/servicebus/resource-manager/Microsoft.ServiceBus/stable/2021-11-01/examples/NameSpaces/PrivateEndPointConnectionDelete.json
 if __name__ == "__main__":
     main()
