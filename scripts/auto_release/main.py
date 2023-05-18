@@ -387,14 +387,14 @@ class CodegenTestPR:
         def edit_changelog_for_new_service_proc(content: List[str]):
             for i in range(0, len(content)):
                 if '##' in content[i]:
-                    content[i] = f'## {self.next_version} ({current_time()})\n'
+                    content[i] = f'## {self.next_version} ({self.target_release_date})\n'
                     break
 
         modify_file(str(Path(self.sdk_code_path()) / 'CHANGELOG.md'), edit_changelog_for_new_service_proc)
 
     def edit_changelog(self):
         def edit_changelog_proc(content: List[str]):
-            content[1:1] = ['\n', f'## {self.next_version} ({current_time()})\n\n', self.get_changelog(), '\n']
+            content[1:1] = ['\n', f'## {self.next_version} ({self.-target_release_date})\n\n', self.get_changelog(), '\n']
 
         modify_file(str(Path(self.sdk_code_path()) / 'CHANGELOG.md'), edit_changelog_proc)
 
