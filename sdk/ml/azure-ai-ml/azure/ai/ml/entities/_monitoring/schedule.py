@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import AnyStr, Dict, IO, Optional, Union
 
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
-from azure.ai.ml.constants._monitoring import DefaultMonitorSignalNames, SPARK_INSTANCE_TYPE_KEY, SPARK_RUNTIME_VERSION
+from azure.ai.ml.constants._monitoring import SPARK_INSTANCE_TYPE_KEY, SPARK_RUNTIME_VERSION
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._monitoring.definition import MonitorDefinition
 from azure.ai.ml.entities._system_data import SystemData
@@ -19,7 +19,7 @@ from azure.ai.ml.entities._schedule.trigger import CronTrigger, RecurrenceTrigge
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CreateMonitorAction
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties, RecurrenceFrequency
 from azure.ai.ml._schema.monitoring.schedule import MonitorScheduleSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file
@@ -99,12 +99,31 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
                 SPARK_RUNTIME_VERSION: self.create_monitor.compute.runtime_version,
             },
         }
+        # default data window size is calculated based on the trigger frequency
+        # by default 7 days if user provides incorrect recurrence frequency
+        # or a cron expression
+        default_data_window_size = "P7D"
+        if isinstance(self.trigger, RecurrenceTrigger):
+            frequency = self.trigger.frequency.lower()
+            interval = self.trigger.interval
+            if frequency == RecurrenceFrequency.MINUTE.lower() or frequency == RecurrenceFrequency.HOUR.lower():
+                default_data_window_size = "P1D"
+            elif frequency == RecurrenceFrequency.DAY.lower():
+                default_data_window_size = f"P{interval}D"
+            elif frequency == RecurrenceFrequency.WEEK.lower():
+                default_data_window_size = f"P{interval * 7}D"
+            elif frequency == RecurrenceFrequency.MONTH.lower():
+                default_data_window_size = f"P{interval * 30}D"
         return RestSchedule(
             properties=ScheduleProperties(
                 description=self.description,
                 properties=self.properties,
                 tags=tags,
-                action=CreateMonitorAction(monitor_definition=self.create_monitor._to_rest_object()),
+                action=CreateMonitorAction(
+                    monitor_definition=self.create_monitor._to_rest_object(
+                        default_data_window_size=default_data_window_size
+                    )
+                ),
                 display_name=self.display_name,
                 is_enabled=self._is_enabled,
                 trigger=self.trigger._to_rest_object(),
@@ -148,17 +167,9 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
             creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
         )
 
-    def _create_default_monitor_definition(
-        self, model_inputs_arm_id: str, model_inputs_type: str, model_outputs_arm_id: str, model_outputs_type: str
-    ):
-        self.create_monitor._populate_default_signal_information(
-            model_inputs_arm_id,
-            model_inputs_type,
-            model_outputs_arm_id,
-            model_outputs_type,
-        )
+    def _create_default_monitor_definition(self):
+        self.create_monitor._populate_default_signal_information()
 
-        # add appropriate tags to schedule
-        for signal_name in [name.value for name in DefaultMonitorSignalNames]:
-            self.tags[f"{signal_name}.baselinedata.datarange.type"] = "Trailing"
-            self.tags[f"{signal_name}.baselinedata.datarange.window_size"] = "P7D"
+    def _set_baseline_data_trailing_tags_for_signal(self, signal_name):
+        self.tags[f"{signal_name}.baselinedata.datarange.type"] = "Trailing"
+        self.tags[f"{signal_name}.baselinedata.datarange.window_size"] = "P7D"

@@ -10,7 +10,9 @@ from typing_extensions import Literal
 
 from azure.ai.ml.constants._monitoring import (
     AZMONITORING,
-    DefaultMonitorSignalNames,
+    DEFAULT_DATA_DRIFT_SIGNAL_NAME,
+    DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME,
+    DEFAULT_DATA_QUALITY_SIGNAL_NAME,
     SPARK_INSTANCE_TYPE_KEY,
     SPARK_RUNTIME_VERSION,
 )
@@ -72,7 +74,8 @@ class MonitorDefinition(RestTranslatableMixin):
         self.monitoring_signals = monitoring_signals
         self.alert_notification = alert_notification
 
-    def _to_rest_object(self) -> RestMonitorDefinition:
+    def _to_rest_object(self, **kwargs) -> RestMonitorDefinition:
+        default_data_window_size = kwargs.get("default_data_window_size")
         rest_alert_notification = None
         if self.alert_notification:
             if isinstance(self.alert_notification, str) and self.alert_notification.lower() == AZMONITORING:
@@ -84,7 +87,12 @@ class MonitorDefinition(RestTranslatableMixin):
             monitoring_target=(self.monitoring_target.endpoint_deployment_id or self.monitoring_target.model_id)
             if self.monitoring_target
             else None,
-            signals={signal_name: signal._to_rest_object() for signal_name, signal in self.monitoring_signals.items()},
+            signals={
+                signal_name: signal._to_rest_object(
+                    default_data_window_size=default_data_window_size,
+                )
+                for signal_name, signal in self.monitoring_signals.items()
+            },
             alert_notification_setting=rest_alert_notification,
         )
 
@@ -109,21 +117,9 @@ class MonitorDefinition(RestTranslatableMixin):
             alert_notification=from_rest_alert_notification,
         )
 
-    def _populate_default_signal_information(
-        self,
-        model_inputs_arm_id: str,
-        model_inputs_type: str,
-        model_outputs_arm_id: str,
-        model_outputs_type: str,
-    ):
+    def _populate_default_signal_information(self):
         self.monitoring_signals = {
-            DefaultMonitorSignalNames.DATA_DRIFT_SIGNAL: DataDriftSignal._get_default_data_drift_signal(
-                model_inputs_arm_id, model_inputs_type
-            ),
-            DefaultMonitorSignalNames.PREDICTION_DRIFT_SIGNAL: PredictionDriftSignal._get_default_prediction_drift_signal(  # pylint: disable=line-too-long
-                model_outputs_arm_id, model_outputs_type
-            ),
-            DefaultMonitorSignalNames.DATA_QUALITY_SIGNAL: DataQualitySignal._get_default_data_quality_signal(
-                model_inputs_arm_id, model_inputs_type
-            ),
+            DEFAULT_DATA_DRIFT_SIGNAL_NAME: DataDriftSignal._get_default_data_drift_signal(),
+            DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME: PredictionDriftSignal._get_default_prediction_drift_signal(),  # pylint: disable=line-too-long
+            DEFAULT_DATA_QUALITY_SIGNAL_NAME: DataQualitySignal._get_default_data_quality_signal(),
         }
