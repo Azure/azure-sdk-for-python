@@ -57,7 +57,7 @@ from .constants import (
     TransportType,
     AMQP_WS_SUBPROTOCOL,
     WS_TIMEOUT_INTERVAL,
-    CONNECTION_TIMEOUT_INTERVAL,
+    SOCKET_TIMEOUT_INTERVAL,
 )
 from .error import AuthenticationException, ErrorCondition
 
@@ -152,7 +152,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         host,
         *,
         port=AMQP_PORT,
-        connection_timeout=None,
+        socket_timeout=None,
         socket_settings=None,
         raise_on_initial_eintr=True,
         **kwargs
@@ -165,7 +165,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         self.host, self.port = to_host_port(host, port)
         self.network_trace_params = kwargs.get('network_trace_params')
 
-        self.connection_timeout = connection_timeout or CONNECTION_TIMEOUT_INTERVAL
+        self.socket_timeout = socket_timeout or SOCKET_TIMEOUT_INTERVAL
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
 
@@ -174,10 +174,10 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             # are we already connected?
             if self.connected:
                 return
-            self._connect(self.host, self.port, self.connection_timeout)
+            self._connect(self.host, self.port, self.socket_timeout)
             self._init_socket(
                 self.socket_settings,
-                self.connection_timeout,
+                self.socket_timeout,
             )
             # we've sent the banner; signal connect
             # EINTR, EAGAIN, EWOULDBLOCK would signal that the banner
@@ -323,7 +323,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                     # hurray, we established connection
                     return
 
-    def _init_socket(self, socket_settings, connection_timeout):
+    def _init_socket(self, socket_settings, socket_timeout):
         self.sock.settimeout(None)  # set socket back to blocking mode
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
         self._set_socket_options(socket_settings)
@@ -342,7 +342,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         # TODO: a greater timeout value is needed in long distance communication
         #  we should either figure out a reasonable value error/dynamically adjust the timeout
         #  0.2 second is enough for perf analysis
-        self.sock.settimeout(connection_timeout)  # set socket back to non-blocking mode
+        self.sock.settimeout(socket_timeout)  # set socket back to non-blocking mode
 
     def _get_tcp_socket_defaults(self, sock):   # pylint: disable=no-self-use
         tcp_opts = {}
@@ -500,12 +500,12 @@ class SSLTransport(_AbstractTransport):
     """Transport that works over SSL."""
 
     def __init__(
-        self, host, *, port=AMQPS_PORT, connection_timeout=None, ssl_opts=None, **kwargs
+        self, host, *, port=AMQPS_PORT, socket_timeout=None, ssl_opts=None, **kwargs
     ):
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
         self._read_buffer = BytesIO()
         super(SSLTransport, self).__init__(
-            host, port=port, connection_timeout=connection_timeout, **kwargs
+            host, port=port, socket_timeout=socket_timeout, **kwargs
         )
 
     def _setup_transport(self):
@@ -666,7 +666,7 @@ class SSLTransport(_AbstractTransport):
                 )
 
 
-def Transport(host, transport_type, connection_timeout=None, ssl_opts=True, **kwargs):
+def Transport(host, transport_type, socket_timeout=None, ssl_opts=True, **kwargs):
     """Create transport.
 
     Given a few parameters from the Connection constructor,
@@ -676,7 +676,7 @@ def Transport(host, transport_type, connection_timeout=None, ssl_opts=True, **kw
         transport = WebSocketTransport
     else:
         transport = SSLTransport
-    return transport(host, connection_timeout=connection_timeout, ssl_opts=ssl_opts, **kwargs)
+    return transport(host, socket_timeout=socket_timeout, ssl_opts=ssl_opts, **kwargs)
 
 
 class WebSocketTransport(_AbstractTransport):
@@ -685,15 +685,15 @@ class WebSocketTransport(_AbstractTransport):
         host,
         *,
         port=WEBSOCKET_PORT,
-        connection_timeout=None,
+        socket_timeout=None,
         ssl_opts=None,
         **kwargs,
     ):
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
-        self.connection_timeout = connection_timeout or WS_TIMEOUT_INTERVAL
+        self.socket_timeout = socket_timeout or WS_TIMEOUT_INTERVAL
         self._host = host
         self._custom_endpoint = kwargs.get("custom_endpoint")
-        super().__init__(host, port=port, connection_timeout=connection_timeout, **kwargs)
+        super().__init__(host, port=port, socket_timeout=socket_timeout, **kwargs)
         self.ws = None
         self._http_proxy = kwargs.get("http_proxy", None)
 
@@ -721,7 +721,7 @@ class WebSocketTransport(_AbstractTransport):
             self.ws = create_connection(
                 url="wss://{}".format(self._custom_endpoint or self._host),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
-                timeout=self.connection_timeout,
+                timeout=self.socket_timeout,
                 skip_utf8_validation=True,
                 sslopt=self.sslopts,
                 http_proxy_host=http_proxy_host,
