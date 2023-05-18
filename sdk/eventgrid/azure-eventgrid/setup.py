@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 
 PACKAGE_NAME = "azure-eventgrid"
-PACKAGE_PPRINT_NAME = "Azure Eventgrid"
+PACKAGE_PPRINT_NAME = "Azure Event Grid"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
