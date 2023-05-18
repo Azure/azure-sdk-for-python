@@ -25,13 +25,13 @@ def _format_url_section(template, **kwargs):
         except KeyError as key:
             # Need the cast, as for some reasons "split" is typed as list[str | Any]
             formatted_components = cast(List[str], template.split("/"))
-            components = [c for c in formatted_components if "{}".format(key.args[0]) not in c]
+            components = [
+                c for c in formatted_components if "{}".format(key.args[0]) not in c
+            ]
             template = "/".join(components)
-
 
 class EventGridClientMixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
-
     _client: "PipelineClient"
     _config: EventGridClientConfiguration
     _serialize: "Serializer"

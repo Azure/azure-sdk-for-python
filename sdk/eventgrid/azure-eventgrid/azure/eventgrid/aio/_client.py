@@ -17,7 +17,6 @@ from .._serialization import Deserializer, Serializer
 from ._configuration import EventGridClientConfiguration
 from ._operations import EventGridClientOperationsMixin
 
-
 class EventGridClient(EventGridClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """Azure Messaging EventGrid Client.
 
@@ -32,8 +31,13 @@ class EventGridClient(EventGridClientOperationsMixin):  # pylint: disable=client
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
-        _endpoint = "{endpoint}"
+    def __init__(
+        self,
+        endpoint: str,
+        credential: AzureKeyCredential,
+        **kwargs: Any
+    ) -> None:
+        _endpoint = '{endpoint}'
         self._config = EventGridClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
@@ -41,7 +45,12 @@ class EventGridClient(EventGridClientOperationsMixin):  # pylint: disable=client
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+
+    def send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -61,7 +70,7 @@ class EventGridClient(EventGridClientOperationsMixin):  # pylint: disable=client
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

@@ -45,7 +45,7 @@ class AcknowledgeOptions(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -85,7 +85,7 @@ class AcknowledgeResult(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -104,6 +104,7 @@ class BrokerProperties(_model_base.Model):
     """The token used to lock the event. Required."""
     delivery_count: int = rest_field(name="deliveryCount")
     """The attempt count for delivering the event. Required."""
+
 
 
 class CloudEvent(_model_base.Model):
@@ -162,6 +163,7 @@ class CloudEvent(_model_base.Model):
      source)."""
 
 
+
 class FailedLockToken(_model_base.Model):
     """Failed LockToken information.
 
@@ -203,7 +205,7 @@ class FailedLockToken(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -224,6 +226,7 @@ class ReceiveDetails(_model_base.Model):
     """Cloud Event details. Required."""
 
 
+
 class ReceiveResult(_model_base.Model):
     """Details of the Receive operation response.
 
@@ -235,6 +238,7 @@ class ReceiveResult(_model_base.Model):
 
     value: List["_models._models.ReceiveDetails"] = rest_field()
     """Array of receive responses, one per cloud event. Required."""
+
 
 
 class RejectOptions(_model_base.Model):
@@ -264,7 +268,7 @@ class RejectOptions(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -304,7 +308,7 @@ class RejectResult(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -335,7 +339,7 @@ class ReleaseOptions(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -375,5 +379,5 @@ class ReleaseResult(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
