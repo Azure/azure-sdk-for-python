@@ -1,5 +1,11 @@
 # Release History
 
+## 23.0.1 (2023-05-17)
+
+### Other Changes
+
+  - Fix README.md
+
 ## 23.0.0 (2023-03-27)
 
 ### Features Added
