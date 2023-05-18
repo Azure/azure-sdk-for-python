@@ -59,7 +59,7 @@ class _LocalDeploymentHelper(object):
         :param local_endpoint_mode: Mode for how to create the local user container.
         :type local_endpoint_mode: LocalEndpointMode
         :param local_enable_gpu: enable local container to access gpu
-        :type local_enable_gpu: bool 
+        :type local_enable_gpu: bool
         """
         try:
             if deployment is None:
@@ -188,7 +188,11 @@ class _LocalDeploymentHelper(object):
             download_path=deployment_directory_path,
         )
         # We always require the model, however it may be anonymous for local (model_name=None)
-        (model_name, model_version, model_directory_path,) = get_model_artifacts(
+        (
+            model_name,
+            model_version,
+            model_directory_path,
+        ) = get_model_artifacts(
             endpoint_name=endpoint_name,
             deployment=deployment,
             model_operations=self._model_operations,
@@ -281,7 +285,7 @@ class _LocalDeploymentHelper(object):
             azureml_port=inference_config.scoring_route.port if is_byoc else LocalEndpointConstants.DOCKER_PORT,
             local_endpoint_mode=local_endpoint_mode,
             prebuilt_image_name=yaml_base_image_name if is_byoc else None,
-            local_enable_gpu=local_enable_gpu
+            local_enable_gpu=local_enable_gpu,
         )
 
 
