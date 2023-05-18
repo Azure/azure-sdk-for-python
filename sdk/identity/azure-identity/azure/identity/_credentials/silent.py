@@ -10,7 +10,6 @@ from typing import Dict, Optional, Any
 from msal import PublicClientApplication
 
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
 from .._internal import resolve_tenant, validate_tenant_id
