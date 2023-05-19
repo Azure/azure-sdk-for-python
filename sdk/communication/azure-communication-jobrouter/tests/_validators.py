@@ -748,6 +748,28 @@ class RouterJobValidator(object):
             assert entity.notes[k1] == note_collection[k2]
 
     @staticmethod
+    def validate_scheduled_time_utc(
+            entity: RouterJob,
+            scheduled_time_utc: Union[str, datetime],
+            **kwargs
+    ):
+        if isinstance(scheduled_time_utc, datetime):
+            assert entity.scheduled_time_utc == scheduled_time_utc
+        elif isinstance(scheduled_time_utc, str):
+            scheduled_time_utc_as_dt : datetime = parse(scheduled_time_utc, tzinfos = [timezone.utc])
+            assert entity.scheduled_time_utc == scheduled_time_utc_as_dt
+        else:
+            raise AssertionError
+
+    @staticmethod
+    def validate_unavailable_for_matching(
+            entity: RouterJob,
+            unavailable_for_matching,
+            **kwargs
+    ):
+        assert entity.unavailable_for_matching == unavailable_for_matching
+
+    @staticmethod
     def validate_job(
             router_job: RouterJob,
             **kwargs: Any
@@ -778,3 +800,9 @@ class RouterJobValidator(object):
 
         if 'notes' in kwargs:
             RouterJobValidator.validate_notes(router_job, kwargs.pop("notes"))
+
+        if 'scheduled_time_utc' in kwargs:
+            RouterJobValidator.validate_scheduled_time_utc(router_job, kwargs.pop("scheduled_time_utc"))
+
+        if 'unavailable_for_matching' in kwargs:
+            RouterJobValidator.validate_unavailable_for_matching(router_job, kwargs.pop("unavailable_for_matching"))
