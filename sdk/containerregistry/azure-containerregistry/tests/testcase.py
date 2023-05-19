@@ -73,6 +73,9 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
     def is_public_endpoint(self, endpoint):
         return ".azurecr.io" in endpoint
     
+    def is_china_endpoint(self, endpoint):
+        return ".azurecr.cn" in endpoint
+    
     def upload_oci_manifest_prerequisites(self, repo, client):
         layer = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
         config = "config.json"
@@ -158,23 +161,14 @@ def load_registry():
         return
     authority = get_authority(os.environ.get("CONTAINERREGISTRY_ENDPOINT"))
     authority_anon = get_authority(os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT"))
-    repos = [
-        "library/hello-world",
-        "library/alpine",
-        "library/busybox",
-    ]
+    repo = "library/hello-world"
     tags = [
         [
             "library/hello-world:latest",
-            "library/hello-world:v1",
-            "library/hello-world:v2",
-            "library/hello-world:v3",
-            "library/hello-world:v4",
-        ],
-        ["library/alpine"],
-        ["library/busybox"],
+            "library/hello-world:v1"
+        ]
     ]
-    for repo, tag in zip(repos, tags):
+    for tag in tags:
         try:
             import_image(authority, repo, tag)
             import_image(authority_anon, repo, tag, is_anonymous=True)

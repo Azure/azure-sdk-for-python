@@ -223,6 +223,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             self._resolve_monitor_schedule_arm_id(schedule)
         # Create schedule
         schedule_data = schedule._to_rest_object()
+        print(schedule_data.properties.tags)
         poller = self.service_client.begin_create_or_update(
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -271,7 +272,9 @@ class ScheduleOperations(_ScopeDependentOperations):
         schedule._is_enabled = False
         return self.begin_create_or_update(schedule, **kwargs)
 
-    def _resolve_monitor_schedule_arm_id(self, schedule: MonitorSchedule) -> None:
+    def _resolve_monitor_schedule_arm_id(  # pylint:disable=too-many-branches,too-many-statements
+        self, schedule: MonitorSchedule
+    ) -> None:
         # resolve target ARM ID
         model_inputs_name, model_outputs_name = None, None
         model_inputs_version, model_outputs_version = None, None
@@ -299,12 +302,7 @@ class ScheduleOperations(_ScopeDependentOperations):
 
         if not schedule.create_monitor.monitoring_signals:
             if mdc_input_enabled and mdc_output_enabled:
-                schedule._create_default_monitor_definition(
-                    f"{model_inputs_name}:{model_inputs_version}",
-                    self._data_operations.get(model_inputs_name, model_inputs_version).type,
-                    f"{model_outputs_name}:{model_outputs_version}",
-                    self._data_operations.get(model_outputs_name, model_outputs_version).type,
-                )
+                schedule._create_default_monitor_definition()
             else:
                 msg = (
                     "An ARM id for a deployment with data collector enabled for model inputs and outputs must be "
@@ -327,48 +325,56 @@ class ScheduleOperations(_ScopeDependentOperations):
                     )
                 continue
             error_messages = []
-            if not signal.target_dataset:
+            if not signal.target_dataset or not signal.baseline_dataset:
                 # if there is no target dataset, we check the type of signal
                 if signal.type == MonitorSignalType.DATA_DRIFT or signal.type == MonitorSignalType.DATA_QUALITY:
                     if mdc_input_enabled:
-                        # if target dataset is absent and data collector for input is enabled,
-                        # create a default target dataset with production model inputs as target
-                        signal.target_dataset = TargetDataset(
-                            dataset=MonitorInputData(
-                                input_dataset=Input(
-                                    path=f"{model_inputs_name}:{model_inputs_version}",
-                                    type=self._data_operations.get(model_inputs_name, model_inputs_version).type,
-                                ),
-                                dataset_context=MonitorDatasetContext.MODEL_INPUTS,
+                        default_dataset = MonitorInputData(
+                            input_dataset=Input(
+                                path=f"{model_inputs_name}:{model_inputs_version}",
+                                type=self._data_operations.get(model_inputs_name, model_inputs_version).type,
                             ),
+                            dataset_context=MonitorDatasetContext.MODEL_INPUTS,
                         )
-                    else:
-                        # if target dataset is absent and data collector for input is not enabled,
+                        if not signal.target_dataset:
+                            # if target dataset is absent and data collector for input is enabled,
+                            # create a default target dataset with production model inputs as target
+                            signal.target_dataset = TargetDataset(dataset=default_dataset)
+                        if not signal.baseline_dataset:
+                            signal.baseline_dataset = default_dataset
+                            # set tags for trailing dataset
+                            schedule._set_baseline_data_trailing_tags_for_signal(signal_name)
+                    elif not mdc_input_enabled and not (signal.target_dataset and signal.baseline_dataset):
+                        # if target or baseline dataset is absent and data collector for input is not enabled,
                         # collect exception message
                         msg = (
-                            f"A target dataset must be provided for signal with name {signal_name}"
+                            f"A target and baseline dataset must be provided for signal with name {signal_name}"
                             f"and type {signal.type} if the monitoring_target endpoint_deployment_id is empty"
                             "or refers to a deployment for which data collection for model inputs is not enabled."
                         )
                         error_messages.append(msg)
                 elif signal.type == MonitorSignalType.PREDICTION_DRIFT:
                     if mdc_output_enabled:
-                        # if target dataset is absent and data collector for output is enabled,
-                        # create a default target dataset with production model outputs as target
-                        signal.target_dataset = TargetDataset(
-                            dataset=MonitorInputData(
-                                input_dataset=Input(
-                                    path=f"{model_outputs_name}:{model_outputs_version}",
-                                    type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
-                                ),
-                                dataset_context=MonitorDatasetContext.MODEL_OUTPUTS,
+                        default_dataset = MonitorInputData(
+                            input_dataset=Input(
+                                path=f"{model_outputs_name}:{model_outputs_version}",
+                                type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
                             ),
+                            dataset_context=MonitorDatasetContext.MODEL_OUTPUTS,
                         )
-                    else:
+                        if not signal.target_dataset:
+                            # if target dataset is absent and data collector for output is enabled,
+                            # create a default target dataset with production model outputs as target
+                            signal.target_dataset = TargetDataset(dataset=default_dataset, data_window_size=7)
+                        if not signal.baseline_dataset:
+                            signal.baseline_dataset = default_dataset
+                            # set tags for trailing window
+                            schedule._set_baseline_data_trailing_tags_for_signal(signal_name)
+                    elif not mdc_output_enabled and not (signal.target_dataset and signal.baseline_dataset):
                         # if target dataset is absent and data collector for output is not enabled,
                         # collect exception message
                         msg = (
-                            f"A target dataset must be provided for signal with name {signal_name}"
+                            f"A target and baseline dataset must be provided for signal with name {signal_name}"
                             f"and type {signal.type} if the monitoring_target endpoint_deployment_id is empty"
                             "or refers to a deployment for which data collection for model outputs is not enabled."
                         )

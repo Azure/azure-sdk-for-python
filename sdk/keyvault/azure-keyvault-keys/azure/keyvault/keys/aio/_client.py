@@ -12,7 +12,6 @@ from ..crypto.aio import CryptographyClient
 from .._client import _get_key_id
 from .._shared._polling_async import AsyncDeleteRecoverPollingMethod
 from .._shared import AsyncKeyVaultClientBase
-from .._shared.exceptions import error_map as _error_map
 from .. import (
     DeletedKey,
     JsonWebKey,
@@ -163,7 +162,6 @@ class KeyClient(AsyncKeyVaultClientBase):
             vault_base_url=self.vault_url,
             key_name=name,
             parameters=parameters,
-            error_map=_error_map,
             **kwargs,
         )
         return KeyVaultKey._from_key_bundle(bundle)
@@ -330,7 +328,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         deleted_key = DeletedKey._from_deleted_key_bundle(
-            await self._client.delete_key(self.vault_url, name, error_map=_error_map, **kwargs)
+            await self._client.delete_key(self.vault_url, name, **kwargs)
         )
 
         polling_method = AsyncDeleteRecoverPollingMethod(
@@ -372,7 +370,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         if version is None:
             version = ""
 
-        bundle = await self._client.get_key(self.vault_url, name, version, error_map=_error_map, **kwargs)
+        bundle = await self._client.get_key(self.vault_url, name, version, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
@@ -398,7 +396,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Get a deleted key
                 :dedent: 8
         """
-        bundle = await self._client.get_deleted_key(self.vault_url, name, error_map=_error_map, **kwargs)
+        bundle = await self._client.get_deleted_key(self.vault_url, name, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -422,7 +420,6 @@ class KeyClient(AsyncKeyVaultClientBase):
             self.vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
-            error_map=_error_map,
             **kwargs,
         )
 
@@ -447,7 +444,6 @@ class KeyClient(AsyncKeyVaultClientBase):
             self.vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
-            error_map=_error_map,
             **kwargs,
         )
 
@@ -475,7 +471,6 @@ class KeyClient(AsyncKeyVaultClientBase):
             name,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
-            error_map=_error_map,
             **kwargs,
         )
 
@@ -504,7 +499,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 await key_client.purge_deleted_key("key-name")
 
         """
-        await self._client.purge_deleted_key(self.vault_url, name, error_map=_error_map, **kwargs)
+        await self._client.purge_deleted_key(self.vault_url, name, **kwargs)
 
     @distributed_trace_async
     async def recover_deleted_key(self, name: str, **kwargs) -> KeyVaultKey:
@@ -533,7 +528,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         recovered_key = KeyVaultKey._from_key_bundle(
-            await self._client.recover_deleted_key(self.vault_url, name, error_map=_error_map, **kwargs)
+            await self._client.recover_deleted_key(self.vault_url, name, **kwargs)
         )
 
         command = partial(self.get_key, name=name, **kwargs)
@@ -604,7 +599,6 @@ class KeyClient(AsyncKeyVaultClientBase):
             name,
             key_version=version or "",
             parameters=parameters,
-            error_map=_error_map,
             **kwargs,
         )
         return KeyVaultKey._from_key_bundle(bundle)
@@ -633,7 +627,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Get a key backup
                 :dedent: 8
         """
-        backup_result = await self._client.backup_key(self.vault_url, name, error_map=_error_map, **kwargs)
+        backup_result = await self._client.backup_key(self.vault_url, name, **kwargs)
         return backup_result.value
 
     @distributed_trace_async
@@ -664,7 +658,6 @@ class KeyClient(AsyncKeyVaultClientBase):
         bundle = await self._client.restore_key(
             self.vault_url,
             parameters=self._models.KeyRestoreParameters(key_bundle_backup=backup),
-            error_map=_error_map,
             **kwargs,
         )
         return KeyVaultKey._from_key_bundle(bundle)
@@ -721,7 +714,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
         bundle = await self._client.import_key(
-            self.vault_url, name, parameters=parameters, error_map=_error_map, **kwargs
+            self.vault_url, name, parameters=parameters, **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
 

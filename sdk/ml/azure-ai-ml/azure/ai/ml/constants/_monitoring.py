@@ -25,6 +25,10 @@ DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY = "data_collector.collections.model_outp
 SPARK_INSTANCE_TYPE_KEY = "compute.spark.resources.instance_type"
 SPARK_RUNTIME_VERSION = "compute.spark.resources.runtime_version"
 
+DEFAULT_DATA_DRIFT_SIGNAL_NAME = "data-drift-signal"
+DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME = "prediction-drift-signal"
+DEFAULT_DATA_QUALITY_SIGNAL_NAME = "data-quality-signal"
+
 
 @experimental
 class MonitorSignalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -78,9 +82,3 @@ class MonitorDatasetContext(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TEST = "test"
     VALIDATION = "validation"
     GROUND_TRUTH_DATA = "ground_truth"
-
-
-class DefaultMonitorSignalNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    DATA_DRIFT_SIGNAL = "data-drift-signal"
-    PREDICTION_DRIFT_SIGNAL = "prediction-drift-signal"
-    DATA_QUALITY_SIGNAL = "data-quality-signal"

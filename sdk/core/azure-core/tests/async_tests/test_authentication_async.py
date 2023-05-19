@@ -65,6 +65,23 @@ async def test_bearer_policy_send(http_request):
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_bearer_policy_sync_send(http_request):
+    """The bearer token policy should invoke the next policy's send method and return the result"""
+    expected_request = http_request("GET", "https://spam.eggs")
+    expected_response = Mock()
+
+    async def verify_request(request):
+        assert request.http_request is expected_request
+        return expected_response
+
+    fake_credential = Mock(get_token=lambda _: AccessToken("", 0))
+    policies = [AsyncBearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_request)]
+    response = await AsyncPipeline(transport=Mock(), policies=policies).run(expected_request)
+
+    assert response is expected_response
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_bearer_policy_token_caching(http_request):
     good_for_one_hour = AccessToken("token", time.time() + 3600)
     expected_token = good_for_one_hour
