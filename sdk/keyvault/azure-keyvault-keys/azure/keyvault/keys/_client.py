@@ -7,7 +7,6 @@ from azure.core.tracing.decorator import distributed_trace
 
 from .crypto import CryptographyClient
 from ._shared import KeyVaultClientBase
-from ._shared.exceptions import error_map as _error_map
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
 from ._models import DeletedKey, KeyVaultKey, KeyProperties, KeyRotationPolicy, ReleaseKeyResult
 
@@ -161,7 +160,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
         bundle = self._client.create_key(
-            vault_base_url=self.vault_url, key_name=name, parameters=parameters, error_map=_error_map, **kwargs
+            vault_base_url=self.vault_url, key_name=name, parameters=parameters, **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
 
@@ -331,7 +330,7 @@ class KeyClient(KeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         deleted_key = DeletedKey._from_deleted_key_bundle(
-            self._client.delete_key(self.vault_url, name, error_map=_error_map, **kwargs)
+            self._client.delete_key(self.vault_url, name, **kwargs)
         )
 
         command = partial(self.get_deleted_key, name=name, **kwargs)
@@ -369,7 +368,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a key
                 :dedent: 8
         """
-        bundle = self._client.get_key(self.vault_url, name, key_version=version or "", error_map=_error_map, **kwargs)
+        bundle = self._client.get_key(self.vault_url, name, key_version=version or "", **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
@@ -395,7 +394,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a deleted key
                 :dedent: 8
         """
-        bundle = self._client.get_deleted_key(self.vault_url, name, error_map=_error_map, **kwargs)
+        bundle = self._client.get_deleted_key(self.vault_url, name, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -419,7 +418,6 @@ class KeyClient(KeyVaultClientBase):
             self._vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
-            error_map=_error_map,
             **kwargs
         )
 
@@ -444,7 +442,6 @@ class KeyClient(KeyVaultClientBase):
             self._vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
-            error_map=_error_map,
             **kwargs
         )
 
@@ -472,7 +469,6 @@ class KeyClient(KeyVaultClientBase):
             name,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
-            error_map=_error_map,
             **kwargs
         )
 
@@ -501,7 +497,7 @@ class KeyClient(KeyVaultClientBase):
                 key_client.purge_deleted_key("key-name")
 
         """
-        self._client.purge_deleted_key(vault_base_url=self.vault_url, key_name=name, error_map=_error_map, **kwargs)
+        self._client.purge_deleted_key(vault_base_url=self.vault_url, key_name=name, **kwargs)
 
     @distributed_trace
     def begin_recover_deleted_key(self, name: str, **kwargs) -> "LROPoller[KeyVaultKey]":
@@ -536,7 +532,7 @@ class KeyClient(KeyVaultClientBase):
             polling_interval = 2
         recovered_key = KeyVaultKey._from_key_bundle(
             self._client.recover_deleted_key(
-                vault_base_url=self.vault_url, key_name=name, error_map=_error_map, **kwargs
+                vault_base_url=self.vault_url, key_name=name, **kwargs
             )
         )
         command = partial(self.get_key, name=name, **kwargs)
@@ -605,7 +601,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
         bundle = self._client.update_key(
-            self.vault_url, name, key_version=version or "", parameters=parameters, error_map=_error_map, **kwargs
+            self.vault_url, name, key_version=version or "", parameters=parameters, **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
 
@@ -635,7 +631,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a key backup
                 :dedent: 8
         """
-        backup_result = self._client.backup_key(self.vault_url, name, error_map=_error_map, **kwargs)
+        backup_result = self._client.backup_key(self.vault_url, name, **kwargs)
         return backup_result.value
 
     @distributed_trace
@@ -668,7 +664,6 @@ class KeyClient(KeyVaultClientBase):
         bundle = self._client.restore_key(
             self.vault_url,
             parameters=self._models.KeyRestoreParameters(key_bundle_backup=backup),
-            error_map=_error_map,
             **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
@@ -724,7 +719,7 @@ class KeyClient(KeyVaultClientBase):
             release_policy=policy,
         )
 
-        bundle = self._client.import_key(self.vault_url, name, parameters=parameters, error_map=_error_map, **kwargs)
+        bundle = self._client.import_key(self.vault_url, name, parameters=parameters, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
