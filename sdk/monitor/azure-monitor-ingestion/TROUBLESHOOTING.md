@@ -20,9 +20,9 @@ Monitor Ingestion raises exceptions defined in [Azure Core][azure_core_exception
 
 ### Enable client logging
 
-To troubleshoot issues with Azure Monitor Ingestion library, it's important to first enable logging to monitor the behavior of the application. The errors and warnings in the logs generally provide useful insights into what went wrong and sometimes include corrective actions to fix issues.
+To troubleshoot issues with the Azure Monitor Ingestion library, it's important to first enable logging to monitor the behavior of the application. The errors and warnings in the logs generally provide useful insights into what went wrong and sometimes include corrective actions to fix issues.
 
-This library uses the standard [logging][python_logging] library for logging. Basic information about HTTP sessions, such as URLs and headers, is logged at the INFO level. Detailed `DEBUG` level logging, including request/response bodies and unredacted headers, can be enabled on a client with the `logging_enable` argument:
+This library uses the standard [logging][python_logging] library for logging. Basic information about HTTP sessions, such as URLs and headers, is logged at the `INFO` level. Detailed `DEBUG` level logging, including request/response bodies and unredacted headers, can be enabled on a client with the `logging_enable` argument:
 
 ```python
 import logging
@@ -76,7 +76,7 @@ To resolve this issue:
 
 1. Check that the application or user making the request has sufficient permissions:
    * See this document to [manage access to data collection rule][dcr_role_permissions].
-   * To ingest logs, ensure the user or service principal is assigned the **Monitoring Metrics Publisher** role for the data collection rule.
+   * To ingest logs, ensure the user or service principal is assigned the **Monitoring Metrics Publisher** role for the DCR.
 1. If the user or application is granted sufficient privileges to upload logs, ensure you're authenticating as that user/application. If you're authenticating using the [DefaultAzureCredential](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/identity/azure-identity/README.md#authenticating-with-defaultazurecredential), check the logs to verify that the credential used is the one you expected. To enable logging, see the [Enable client logging](#enable-client-logging) section.
 1. The permissions may take up to 30 minutes to propagate. So, if the permissions were granted recently, retry after some time.
 
@@ -84,7 +84,7 @@ To resolve this issue:
 
 When you send logs to Azure Monitor for ingestion, the request may succeed, but you may not see the data appearing in the designated Log Analytics workspace table as configured in the DCR. To investigate and resolve this issue, ensure the following items:
 
-* Double-check that you're using the correct data collection endpoint when creating the `LogsIngestionClient`. Using the wrong endpoint can result in data not being properly sent to the Log Analytics workspace.
+* Double-check that you're using the correct DCE when creating the `LogsIngestionClient`. Using the wrong endpoint can result in data not being properly sent to the Log Analytics workspace.
 
 * Make sure you provide the correct DCR ID to the `upload` method. The DCR ID is an immutable identifier that determines the transformation rules applied to the uploaded logs and directs them to the appropriate Log Analytics workspace table.
 
@@ -102,7 +102,7 @@ To enable client logging and to troubleshoot this issue further, see the [Enable
 
 ## Extra azure-core configurations
 
-Some properties including `retry_mode`, `timeout`, `connection_verify` can be configured by passing them in as keyword arguments to the SDK method calls. See [configurations][azure_core_config] for a list of all such properties.
+Some properties, including `retry_mode`, `timeout`, and `connection_verify`, can be configured by passing them in as keyword arguments to the library method calls. See [configurations][azure_core_config] for a list of all such properties.
 
 <!-- LINKS -->
 [azure_core_config]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#configurations
