@@ -474,19 +474,23 @@ if response.violence_result is not None:
     block_item_text_1 = "k*ll"
 
     try:
+        # Add a blockItem
         add_result = client.add_block_items(
             blocklist_name=blocklist_name,
             body=AddBlockItemsOptions(block_items=[TextBlockItemInfo(text=block_item_text_1)]),
         )
-        if add_result is not None and add_result.value is not None and len(add_result.value) > 0:
-            block_item_id = add_result.value[0].block_item_id
-            block_item = client.get_text_blocklist_item(
-                blocklist_name=blocklist_name,
-                block_item_id= block_item_id
-            )
-            print("\nGet blockitem: ")
-            print("BlockItemId: {}, Text: {}, Description: {}".format(block_item.block_item_id, block_item.text,
-                                                                      block_item.description))
+        if add_result is None or add_result.value is None or len(add_result.value) <= 0:
+            raise RuntimeError("BlockItem not created.")
+        block_item_id = add_result.value[0].block_item_id
+
+        # Get this blockItem by blockItemId
+        block_item = client.get_text_blocklist_item(
+            blocklist_name=blocklist_name,
+            block_item_id= block_item_id
+        )
+        print("\nGet blockitem: ")
+        print("BlockItemId: {}, Text: {}, Description: {}".format(block_item.block_item_id, block_item.text,
+                                                                  block_item.description))
     except HttpResponseError as e:
         print("\nGet block item failed: ")
         if e.error is not None:
@@ -524,17 +528,21 @@ if response.violence_result is not None:
     block_item_text_1 = "k*ll"
 
     try:
+        # Add a blockItem
         add_result = client.add_block_items(
             blocklist_name=blocklist_name,
             body=AddBlockItemsOptions(block_items=[TextBlockItemInfo(text=block_item_text_1)]),
         )
-        if add_result is not None and add_result.value is not None and len(add_result.value) > 0:
-            block_item_id = add_result.value[0].block_item_id
-            client.remove_block_items(
-                blocklist_name=blocklist_name,
-                body=RemoveBlockItemsOptions(block_item_ids=[block_item_id])
-            )
-            print("\nRemoved blockItem: {}".format(add_result.value[0].block_item_id))
+        if add_result is None or add_result.value is None or len(add_result.value) <= 0:
+            raise RuntimeError("BlockItem not created.")
+        block_item_id = add_result.value[0].block_item_id
+
+        # Remove this blockItem by blockItemId
+        client.remove_block_items(
+            blocklist_name=blocklist_name,
+            body=RemoveBlockItemsOptions(block_item_ids=[block_item_id])
+        )
+        print("\nRemoved blockItem: {}".format(add_result.value[0].block_item_id))
     except HttpResponseError as e:
         print("\nRemove block item failed: ")
         if e.error is not None:
