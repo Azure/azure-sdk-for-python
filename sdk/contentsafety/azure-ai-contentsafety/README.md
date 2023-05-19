@@ -101,6 +101,7 @@ The following section provides several code snippets covering some of the most c
 
 #### Analyze text synchronously
 <!-- SNIPPET:sample_analyze_text.analyze_text -->
+
 ```python
 
     import os
@@ -138,10 +139,12 @@ The following section provides several code snippets covering some of the most c
     if response.self_harm_result is not None:
         print("SelfHarm severity: {}".format(response.self_harm_result.severity))
 ```
+
 <!-- END SNIPPET -->
 
 #### Analyze text asynchronously
 <!-- SNIPPET:sample_analyze_text_async.analyze_text_async -->
+
 ```python
 
     import os
@@ -180,10 +183,12 @@ The following section provides several code snippets covering some of the most c
     if response.self_harm_result is not None:
         print("SelfHarm severity: {}".format(response.self_harm_result.severity))
 ```
+
 <!-- END SNIPPET -->
 
 #### Analyze text with blocklists
 <!-- SNIPPET:sample_manage_blocklist.analyze_text_with_blocklists -->
+
 ```python
 
     import os
@@ -218,6 +223,7 @@ The following section provides several code snippets covering some of the most c
         print(e)
         raise
 ```
+
 <!-- END SNIPPET -->
 
 ### Analyze image
@@ -225,6 +231,7 @@ The following section provides several code snippets covering some of the most c
 #### Analyze image synchronously
 
 <!-- SNIPPET:sample_analyze_image.analyze_image -->
+
 ```python
 
 import os
@@ -265,10 +272,12 @@ if response.sexual_result is not None:
 if response.violence_result is not None:
     print("Violence severity: {}".format(response.violence_result.severity))
 ```
+
 <!-- END SNIPPET -->
 
 #### Analyze image asynchronously
 <!-- SNIPPET:sample_analyze_image_async.analyze_image_async -->
+
 ```python
 
     import os
@@ -310,12 +319,14 @@ if response.violence_result is not None:
     if response.violence_result is not None:
         print("Violence severity: {}".format(response.violence_result.severity))
 ```
+
 <!-- END SNIPPET -->
 
 ### Manage text blocklist
 
 #### Create or update text blocklist
 <!-- SNIPPET:sample_manage_blocklist.create_or_update_text_blocklist -->
+
 ```python
 
     import os
@@ -346,10 +357,12 @@ if response.violence_result is not None:
         print(e)
         raise
 ```
+
 <!-- END SNIPPET -->
 
 #### List text blocklists
 <!-- SNIPPET:sample_manage_blocklist.list_text_blocklists -->
+
 ```python
 
     import os
@@ -378,10 +391,12 @@ if response.violence_result is not None:
         print(e)
         raise
 ```
+
 <!-- END SNIPPET -->
 
 #### Get text blocklist
 <!-- SNIPPET:sample_manage_blocklist.get_text_blocklist -->
+
 ```python
 
     import os
@@ -411,10 +426,12 @@ if response.violence_result is not None:
         print(e)
         raise
 ```
+
 <!-- END SNIPPET -->
 
 #### Delete text blocklist
 <!-- SNIPPET:sample_manage_blocklist.delete_blocklist -->
+
 ```python
 
     import os
@@ -442,10 +459,12 @@ if response.violence_result is not None:
         print(e)
         raise
 ```
+
 <!-- END SNIPPET -->
 
 #### Add blockItems
 <!-- SNIPPET:sample_manage_blocklist.add_block_items -->
+
 ```python
 
     import os
@@ -486,10 +505,12 @@ if response.violence_result is not None:
         print(e)
         raise
 ```
+
 <!-- END SNIPPET -->
 
 #### List blockItems
 <!-- SNIPPET:sample_manage_blocklist.list_block_items -->
+
 ```python
 
     import os
@@ -520,10 +541,12 @@ if response.violence_result is not None:
         print(e)
         raise
 ```
+
 <!-- END SNIPPET -->
 
 #### Get blockItem
 <!-- SNIPPET:sample_manage_blocklist.get_block_item -->
+
 ```python
 
     import os
@@ -564,10 +587,12 @@ if response.violence_result is not None:
         print(e)
         raise
 ```
+
 <!-- END SNIPPET -->
 
 #### Remove blockItems
 <!-- SNIPPET:sample_manage_blocklist.remove_block_items -->
+
 ```python
 
     import os
@@ -610,6 +635,7 @@ if response.violence_result is not None:
         print(e)
         raise
 ```
+
 <!-- END SNIPPET -->
 
 ## Troubleshooting
