@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,too-many-lines
 import copy
 import decimal
 import hashlib
@@ -27,18 +27,18 @@ from uuid import UUID
 import isodate
 import pydash
 import yaml
+from azure.core.pipeline.policies import RetryPolicy
 
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType, ManagedServiceIdentity
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml.constants._common import (
     API_URL_KEY,
+    AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION,
+    AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
-    AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
-    AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION,
 )
-from azure.core.pipeline.policies import RetryPolicy
 
 module_logger = logging.getLogger(__name__)
 
@@ -542,6 +542,25 @@ def to_iso_duration_format_ms(time_in_ms: Optional[Union[int, float]]) -> str:
 
 def from_iso_duration_format_ms(duration: Optional[str]) -> int:
     return from_iso_duration_format(duration) * 1000 if duration else None
+
+
+def to_iso_duration_format_days(time_in_days: Optional[int]) -> str:
+    return isodate.duration_isoformat(timedelta(days=time_in_days)) if time_in_days else None
+
+
+@singledispatch
+def from_iso_duration_format_days(duration: Optional[Any] = None) -> int:  # pylint: disable=unused-argument
+    return None
+
+
+@from_iso_duration_format_days.register(str)
+def _(duration: str) -> int:
+    return int(isodate.parse_duration(duration).days)
+
+
+@from_iso_duration_format_days.register(timedelta)
+def _(duration: timedelta) -> int:
+    return int(duration.days)
 
 
 def _get_mfe_base_url_from_discovery_service(

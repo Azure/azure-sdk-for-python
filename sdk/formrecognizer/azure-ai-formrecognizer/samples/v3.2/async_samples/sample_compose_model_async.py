@@ -87,6 +87,7 @@ async def sample_compose_model_async():
     print("Model ID: {}".format(model.model_id))
     print("Description: {}".format(model.description))
     print("Model created on: {}\n".format(model.created_on))
+    print("Model expires on: {}".format(model.expires_on))
     print("Doc types the model can recognize:")
     for name, doc_type in model.doc_types.items():
         print("\nDoc Type: '{}' which has the following fields:".format(name))

@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Iterable, Tuple
 
 from azure.ai.ml._artifacts._artifact_utilities import download_artifact_from_storage_url
-from azure.ai.ml._utils._arm_id_utils import parse_name_version
+from azure.ai.ml._utils._arm_id_utils import parse_name_version, parse_name_label
 from azure.ai.ml._utils.utils import dump_yaml, is_url
 from azure.ai.ml.entities import OnlineDeployment
 from azure.ai.ml.entities._assets.environment import BuildContext, Environment
@@ -37,11 +37,15 @@ def get_environment_artifacts(
     # Validate environment for local endpoint
     if _environment_contains_cloud_artifacts(deployment=deployment):
         name, version = parse_name_version(deployment.environment)
-        environment_asset = environment_operations.get(name=name, version=version)
+        label = None
+        if not version:
+            name, label = parse_name_label(deployment.environment)
+        environment_asset = environment_operations.get(name=name, version=version, label=label)
         if not _cloud_environment_is_valid(environment=environment_asset):
             msg = (
                 "Cloud environment must have environment.image "
                 "or the environment.build.path set to work for local endpoints."
+                " Note: Curated environments are not supported for local deployments."
             )
             raise ValidationException(
                 message=msg,

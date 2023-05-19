@@ -159,6 +159,24 @@ async def examples_async():
             print("Failed to create user. Status code:{}".format(failure.status_code))
         # [END create_user]
 
+        # delete all items in a given partition key
+        # [START delete_all_items_by_partition_key]
+        container_name = "products"
+        container = database.get_container_client(container_name)
+        for i in range(1, 10):
+            await container.upsert_item(
+                dict(id="item{}".format(i), productName="Gadget", productModel="Model {}".format(i))
+            )
+        items = container.read_all_items()
+        async for item in items:
+            print(json.dumps(item, indent=True))
+        await container.delete_all_items_by_partition_key("Gadget")
+        print("All items in partition {} deleted.".format("Gadget"))
+        items = container.read_all_items()
+        async for item in items:
+            print(json.dumps(item, indent=True))
+        # [END delete_all_items_by_partition_key]
+
         await client.delete_database(database_name)
         print("Sample done running!")
 

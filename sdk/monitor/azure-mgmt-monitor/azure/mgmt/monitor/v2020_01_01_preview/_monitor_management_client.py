@@ -28,7 +28,7 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
     :ivar management_group_diagnostic_settings: ManagementGroupDiagnosticSettingsOperations
      operations
     :vartype management_group_diagnostic_settings:
-     $(python-base-namespace).v2020_01_01_preview.operations.ManagementGroupDiagnosticSettingsOperations
+     azure.mgmt.monitor.v2020_01_01_preview.operations.ManagementGroupDiagnosticSettingsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param base_url: Service URL. Default value is "https://management.azure.com".

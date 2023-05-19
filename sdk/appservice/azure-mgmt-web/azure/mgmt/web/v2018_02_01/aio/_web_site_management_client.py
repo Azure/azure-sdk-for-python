@@ -9,20 +9,38 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
+from ..._serialization import Deserializer, Serializer
 from ._configuration import WebSiteManagementClientConfiguration
-from .operations import AppServiceCertificateOrdersOperations, AppServiceEnvironmentsOperations, AppServicePlansOperations, CertificateRegistrationProviderOperations, CertificatesOperations, DeletedWebAppsOperations, DiagnosticsOperations, DomainRegistrationProviderOperations, DomainsOperations, ProviderOperations, RecommendationsOperations, ResourceHealthMetadataOperations, TopLevelDomainsOperations, WebAppsOperations, WebSiteManagementClientOperationsMixin
+from .operations import (
+    AppServiceCertificateOrdersOperations,
+    AppServiceEnvironmentsOperations,
+    AppServicePlansOperations,
+    CertificateRegistrationProviderOperations,
+    CertificatesOperations,
+    DeletedWebAppsOperations,
+    DiagnosticsOperations,
+    DomainRegistrationProviderOperations,
+    DomainsOperations,
+    ProviderOperations,
+    RecommendationsOperations,
+    ResourceHealthMetadataOperations,
+    TopLevelDomainsOperations,
+    WebAppsOperations,
+    WebSiteManagementClientOperationsMixin,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class WebSiteManagementClient(WebSiteManagementClientOperationsMixin):    # pylint: disable=too-many-instance-attributes
+
+class WebSiteManagementClient(
+    WebSiteManagementClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """WebSite Management Client.
 
     :ivar app_service_certificate_orders: AppServiceCertificateOrdersOperations operations
@@ -58,10 +76,10 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin):    # pyli
     :ivar resource_health_metadata: ResourceHealthMetadataOperations operations
     :vartype resource_health_metadata:
      azure.mgmt.web.v2018_02_01.aio.operations.ResourceHealthMetadataOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Your Azure subscription ID. This is a GUID-formatted string (e.g.
-     00000000-0000-0000-0000-000000000000).
+     00000000-0000-0000-0000-000000000000). Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -79,10 +97,12 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin):    # pyli
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = WebSiteManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = WebSiteManagementClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -92,33 +112,19 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin):    # pyli
         self.certificate_registration_provider = CertificateRegistrationProviderOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.domains = DomainsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.domains = DomainsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.top_level_domains = TopLevelDomainsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.domain_registration_provider = DomainRegistrationProviderOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.certificates = CertificatesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.deleted_web_apps = DeletedWebAppsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.diagnostics = DiagnosticsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.provider = ProviderOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.recommendations = RecommendationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.web_apps = WebAppsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.certificates = CertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.deleted_web_apps = DeletedWebAppsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.diagnostics = DiagnosticsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.provider = ProviderOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.recommendations = RecommendationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.web_apps = WebAppsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.app_service_environments = AppServiceEnvironmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -129,12 +135,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin):    # pyli
             self._client, self._config, self._serialize, self._deserialize
         )
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -143,7 +144,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin):    # pyli
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -163,5 +164,5 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin):    # pyli
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

@@ -31,8 +31,7 @@ Install [azure-keyvault-keys][pypi_package_keys] and
 ```Bash
 pip install azure-keyvault-keys azure-identity
 ```
-[azure-identity][azure_identity] is used for Azure Active Directory
-authentication as demonstrated below.
+[azure-identity][azure_identity] is used for Azure Active Directory authentication as demonstrated below.
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
@@ -41,16 +40,25 @@ authentication as demonstrated below.
 * If using Managed HSM, an existing [Key Vault Managed HSM][managed_hsm]. If you need to create a Managed HSM, you can do so using the Azure CLI by following the steps in [this document][managed_hsm_cli].
 
 ### Authenticate the client
-In order to interact with the Azure Key Vault service, you will need an instance of a [KeyClient][key_client_docs], as well as a **vault url** and a credential object. This document demonstrates using a [DefaultAzureCredential][default_cred_ref], which is appropriate for most scenarios, including local development and production environments. We recommend using a [managed identity][managed_identity] for authentication in production environments.
+In order to interact with the Azure Key Vault service, you will need an instance of a [KeyClient][key_client_docs], as
+well as a **vault URL** and a credential object. This document demonstrates using a
+[DefaultAzureCredential][default_cred_ref], which is appropriate for most scenarios. We recommend using a
+[managed identity][managed_identity] for authentication in production environments.
 
-See [azure-identity][azure_identity] documentation for more information about other methods of authentication and their corresponding credential types.
+See [azure-identity][azure_identity] documentation for more information about other methods of authentication and their
+corresponding credential types.
 
 #### Create a client
-After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create a key client (replacing the value of `VAULT_URL` with your vault's URL):
+After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of
+authentication, you can do the following to create a key client (replacing the value of `VAULT_URL` with your vault's
+URL):
 
 <!-- SNIPPET:hello_world.create_a_key_client -->
 
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.keys import KeyClient
+
 VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = KeyClient(vault_url=VAULT_URL, credential=credential)
@@ -62,10 +70,9 @@ client = KeyClient(vault_url=VAULT_URL, credential=credential)
 
 ## Key concepts
 ### Keys
-Azure Key Vault can create and store RSA and elliptic curve keys. Both can
-optionally be protected by hardware security modules (HSMs). Azure Key Vault
-can also perform cryptographic operations with them. For more information about
-keys and supported operations and algorithms, see the
+Azure Key Vault can create and store RSA and elliptic curve keys. Both can optionally be protected by hardware security
+modules (HSMs). Azure Key Vault can also perform cryptographic operations with them. For more information about keys
+and supported operations and algorithms, see the
 [Key Vault documentation](https://docs.microsoft.com/azure/key-vault/keys/about-keys).
 
 [KeyClient][key_client_docs] can create keys in the vault, get existing keys
@@ -86,6 +93,8 @@ This section contains code snippets covering common tasks:
 * [Asynchronously list keys](#asynchronously-list-keys)
 
 ### Create a key
+The [create_key](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.create_key) method can be
+used by a `KeyClient` to create a key of any type -- alternatively, specific helpers such as
 [create_rsa_key](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.create_rsa_key) and
 [create_ec_key](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.create_ec_key)
 create RSA and elliptic curve keys in the vault, respectively. If a key with the same name already exists, a new version
@@ -162,31 +171,38 @@ print(deleted_key.deleted_date)
 ```
 
 ### Configure automatic key rotation
-[update_key_rotation_policy](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-keyvault-keys/4.5.0b5/azure.keyvault.keys.html#azure.keyvault.keys.KeyClient.update_key_rotation_policy)
-allows you to configure automatic key rotation for a key by specifying a rotation policy.
-In addition,
-[rotate_key](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-keyvault-keys/4.5.0b5/azure.keyvault.keys.html#azure.keyvault.keys.KeyClient.rotate_key)
-allows you to rotate a key on-demand by creating a new version of the given key.
+[update_key_rotation_policy](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.update_key_rotation_policy)
+can be used by a `KeyClient` to configure automatic key rotation for a key by specifying a rotation policy.
+
+<!-- SNIPPET:key_rotation.update_a_rotation_policy -->
 
 ```python
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.keys import KeyClient, KeyRotationLifetimeAction, KeyRotationPolicyAction
+from azure.keyvault.keys import KeyRotationLifetimeAction, KeyRotationPolicy, KeyRotationPolicyAction
 
-credential = DefaultAzureCredential()
-key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
-
-# Set the key's automated rotation policy to rotate the key 30 days before the key expires
-actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.ROTATE, time_before_expiry="P30D")]
-# You may also specify the duration after which the newly rotated key will expire
-# In this example, any new key versions will expire after 90 days
-updated_policy = key_client.update_key_rotation_policy("key-name", expires_in="P90D", lifetime_actions=actions)
-
-# You can get the current rotation policy for a key with get_key_rotation_policy
-current_policy = key_client.get_key_rotation_policy("key-name")
-
-# Finally, you can rotate a key on-demand by creating a new version of the key
-rotated_key = key_client.rotate_key("key-name")
+# Here we set the key's automated rotation policy to rotate the key two months after the key was created.
+# If you pass an empty KeyRotationPolicy() as the `policy` parameter, the rotation policy will be set to the
+# default policy. Any keyword arguments will update specified properties of the policy.
+actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.rotate, time_after_create="P2M")]
+updated_policy = client.update_key_rotation_policy(
+    "rotation-sample-key", policy=KeyRotationPolicy(), expires_in="P90D", lifetime_actions=actions
+)
+assert updated_policy.expires_in == "P90D"
 ```
+
+<!-- END SNIPPET -->
+
+In addition,
+[rotate_key](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.rotate_key)
+allows you to rotate a key on-demand by creating a new version of the given key.
+
+<!-- SNIPPET:key_rotation.rotate_key -->
+
+```python
+rotated_key = client.rotate_key("rotation-sample-key")
+print(f"Rotated the key on-demand; new version is {rotated_key.properties.version}")
+```
+
+<!-- END SNIPPET -->
 
 ### List keys
 [list_properties_of_keys](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.list_properties_of_keys)
@@ -368,6 +384,7 @@ These provide example code for additional Key Vault scenarios:
 | [list_operations.py][list_operations_sample] ([async version][list_operations_async_sample]) | basic list operations for keys |
 | [backup_restore_operations.py][backup_operations_sample] ([async version][backup_operations_async_sample]) | back up and recover keys |
 | [recover_purge_operations.py][recover_purge_sample] ([async version][recover_purge_async_sample]) | recover and purge keys |
+| [key_rotation.py][key_rotation_sample] ([async version][key_rotation_async_sample]) | create/update key rotation policies and rotate keys on-demand |
 | [send_request.py][send_request_sample] | use the `send_request` client method |
 
 ###  Additional documentation
@@ -411,6 +428,8 @@ contact opencode@microsoft.com with any additional questions or comments.
 [hello_world_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-keys/samples/hello_world_async.py
 
 [key_client_docs]: https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient
+[key_rotation_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples/key_rotation.py
+[key_rotation_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples/key_rotation_async.py
 [key_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples
 
 [library_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/azure/keyvault/keys

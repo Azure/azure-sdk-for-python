@@ -1,0 +1,44 @@
+Service: servicebus
+
+Project: sdk/servicebus/azure-servicebus
+
+PrimaryPackage: azure-servicebus
+
+PackageVersions:
+- azure-core: 1.26.3
+  azure-servicebus: 7.8.3
+- azure-core: source
+  azure-servicebus: source
+
+Tests:
+- Test: send-queue-message-batch
+  Class: SendQueueMessageBatchTest
+  Arguments:
+  - --message-size 1024 --batch-size 100  
+  - --message-size 1024 --batch-size 100 --uamqp-transport
+  - --message-size 1024 --batch-size 100 --transport-type 1
+  - --message-size 1024 --batch-size 100 --transport-type 1 --uamqp-transport
+
+- Test: receive-queue-message-batch
+  Class: ReceiveQueueMessageBatchTest
+  Arguments:
+  - --message-size 2000 --num-messages 50 --preload 10000
+  - --message-size 2000 --num-messages 50 --preload 10000 --uamqp-transport
+  - --message-size 2000 --num-messages 50 --preload 10000 --transport-type 1
+  - --message-size 2000 --num-messages 50 --preload 10000 --transport-type 1 --uamqp-transport
+
+- Test: send-subscription-message-batch
+  Class: SendTopicMessageBatchTest
+  Arguments:
+  - --message-size 1024 --batch-size 100  
+  - --message-size 1024 --batch-size 100 --uamqp-transport
+  - --message-size 1024 --batch-size 100 --transport-type 1
+  - --message-size 1024 --batch-size 100 --transport-type 1 --uamqp-transport
+
+- Test: receive-subscription-message-batch
+  Class: ReceiveSubscriptionMessageBatchTest
+  Arguments:
+  - --message-size 2000 --num-messages 50 --preload 10000
+  - --message-size 2000 --num-messages 50 --preload 10000 --uamqp-transport
+  - --message-size 2000 --num-messages 50 --preload 10000 --transport-type 1
+  - --message-size 2000 --num-messages 50 --preload 10000 --transport-type 1 --uamqp-transport

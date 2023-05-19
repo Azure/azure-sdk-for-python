@@ -19,12 +19,18 @@ from typing import (
 import uuid
 import asyncio
 import logging
+import time
 from functools import partial
 
 from ..._common import EventData
 from ..._eventprocessor.common import CloseReason, LoadBalancingStrategy
 from ..._eventprocessor._eventprocessor_mixin import EventProcessorMixin
-from ..._utils import get_event_links
+from ..._tracing import (
+    get_span_links_from_received_events,
+    is_tracing_enabled,
+    receive_context_manager,
+    process_context_manager,
+)
 from .partition_context import PartitionContext
 from .in_memory_checkpoint_store import InMemoryCheckpointStore
 from .checkpoint_store import CheckpointStore
@@ -64,7 +70,7 @@ class EventProcessor(
         checkpoint_store: Optional[CheckpointStore] = None,
         initial_event_position: Union[str, int, "datetime", Dict[str, Any]] = "@latest",
         initial_event_position_inclusive: Union[bool, Dict[str, bool]] = False,
-        load_balancing_interval: float = 10.0,
+        load_balancing_interval: float = 30.0,
         partition_ownership_expiration_interval: Optional[float] = None,
         load_balancing_strategy: LoadBalancingStrategy = LoadBalancingStrategy.GREEDY,
         owner_level: Optional[int] = None,
@@ -130,6 +136,8 @@ class EventProcessor(
             self._load_balancing_strategy,
             self._partition_id,
         )
+
+        self._last_received_time = time.time_ns()
 
     def __repr__(self) -> str:
         return "EventProcessor: id {}".format(self._id)
@@ -233,8 +241,14 @@ class EventProcessor(
                 partition_context._last_received_event = event[-1]  # type: ignore  #pylint:disable=protected-access
             except TypeError:
                 partition_context._last_received_event = event  # type: ignore  # pylint:disable=protected-access
-            links = get_event_links(event)
-            with self._context(links=links):
+            links = []
+            if is_tracing_enabled():
+                links = get_span_links_from_received_events(event)
+
+            with receive_context_manager(self._eventhub_client, links=links, start_time=self._last_received_time):
+                self._last_received_time = time.time_ns()
+
+            with process_context_manager(self._eventhub_client, links=links):
                 await self._event_handler(partition_context, event)
         else:
             await self._event_handler(partition_context, event)

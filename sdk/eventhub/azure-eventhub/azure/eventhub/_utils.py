@@ -4,7 +4,6 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals, annotations
 
-from contextlib import contextmanager
 import sys
 import platform
 import datetime
@@ -24,9 +23,6 @@ from typing import (
     Callable
 )
 
-from azure.core.settings import settings
-from azure.core.tracing import SpanKind, Link
-
 from .amqp import AmqpAnnotatedMessage, AmqpMessageHeader
 from ._version import VERSION
 from ._constants import (
@@ -36,7 +32,6 @@ from ._constants import (
     PROP_LAST_ENQUEUED_TIME_UTC,
     PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC,
     PROP_LAST_ENQUEUED_OFFSET,
-    PROP_TIMESTAMP,
 )
 
 
@@ -45,13 +40,8 @@ if TYPE_CHECKING:
     from ._transport._base import AmqpTransport
     try:
         from uamqp import types as uamqp_types
-        from uamqp import Message as uamqp_Message
     except ImportError:
         uamqp_types = None
-        uamqp_Message = None
-    from ._pyamqp import types
-    from ._pyamqp.message import Message
-    from azure.core.tracing import AbstractSpan
     from azure.core.credentials import AzureSasCredential
     from ._common import EventData
 
@@ -122,17 +112,6 @@ def create_properties(
     return properties
 
 
-@contextmanager
-def send_context_manager():
-    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-
-    if span_impl_type is not None:
-        with span_impl_type(name="Azure.EventHubs.send", kind=SpanKind.CLIENT) as child:
-            yield child
-    else:
-        yield None
-
-
 def set_event_partition_key(
     event: Union[AmqpAnnotatedMessage, EventData],
     partition_key: Optional[Union[bytes, str]],
@@ -156,62 +135,6 @@ def set_event_partition_key(
         raw_message.header = AmqpMessageHeader(header=True)
     else:
         raw_message.header.durable = True
-
-
-def trace_message(
-    message: Union[uamqp_Message, Message],
-    amqp_transport: AmqpTransport,
-    parent_span: Optional[AbstractSpan] = None
-) -> Union[uamqp_Message, Message]:
-    """Add tracing information to the message and returns the updated message.
-
-    Will open and close a "Azure.EventHubs.message" span, and
-    add the "DiagnosticId" as app properties of the message.
-    """
-    try:
-        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-        if span_impl_type is not None:
-            current_span = parent_span or span_impl_type(
-                span_impl_type.get_current_span()
-            )
-            link = Link({"traceparent": current_span.get_trace_parent()})
-            with current_span.span(
-                name="Azure.EventHubs.message", kind=SpanKind.PRODUCER, links=[link]
-            ) as message_span:
-                message_span.add_attribute("az.namespace", "Microsoft.EventHub")
-                message = amqp_transport.update_message_app_properties(
-                    message,
-                    b"Diagnostic-Id",
-                    message_span.get_trace_parent().encode("ascii")
-                )
-    except Exception as exp:  # pylint:disable=broad-except
-        _LOGGER.warning("trace_message had an exception %r", exp)
-
-    return message
-
-
-def get_event_links(events):
-    # pylint:disable=isinstance-second-argument-not-valid-type
-    trace_events = events if isinstance(events, Iterable) else (events,)
-    links = []
-    try:
-        for event in trace_events:  # type: ignore
-            if event.properties:
-                traceparent = event.properties.get(b"Diagnostic-Id", "").decode("ascii")
-                if traceparent:
-                    links.append(
-                        Link(
-                            {"traceparent": traceparent},
-                            attributes={
-                                "enqueuedTime": event.message.annotations.get(
-                                    PROP_TIMESTAMP
-                                )
-                            },
-                        )
-                    )
-    except AttributeError:
-        pass
-    return links
 
 
 def event_position_selector(value, inclusive=False):

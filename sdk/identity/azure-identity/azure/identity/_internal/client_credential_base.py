@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import Any, Optional, Tuple
+from typing import Any, Optional
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -19,7 +19,7 @@ class ClientCredentialBase(MsalCredential, GetTokenMixin):
     @wrap_exceptions
     def _acquire_token_silently(
         self, *scopes: str, **kwargs: Any
-    ) -> Tuple[Optional[AccessToken], Optional[int]]:
+    ) -> Optional[AccessToken]:
         app = self._get_app(**kwargs)
         request_time = int(time.time())
         result = app.acquire_token_silent_with_error(
@@ -29,13 +29,8 @@ class ClientCredentialBase(MsalCredential, GetTokenMixin):
             **kwargs
         )
         if result and "access_token" in result and "expires_in" in result:
-            return (
-                AccessToken(
-                    result["access_token"], request_time + int(result["expires_in"])
-                ),
-                None,
-            )
-        return None, None
+            return AccessToken(result["access_token"], request_time + int(result["expires_in"]))
+        return None
 
     @wrap_exceptions
     def _request_token(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:

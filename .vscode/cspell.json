@@ -83,6 +83,7 @@
     "sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv",
     "sdk/storage/azure-storage-blob/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
+    "sdk/ml/azure-ai-ml/azure/ai/ml/_utils/_virtual_cluster_utils/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
     "sdk/ml/azure-ai-ml/azure/ai/ml/constants/_job/automl.py",
     "sdk/ml/azure-ai-ml/tests/**",
@@ -90,6 +91,11 @@
     "sdk/ml/azure-ai-ml/NOTICE.txt",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/monitor/azure-monitor-ingestion/**",
+    "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_serialization.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_break_sentence.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_translation.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_transliteration.py",
+    "sdk/translation/test-resources.json",
     "eng/**/*.json",
     "eng/*.txt",
     "eng/tox/tox.ini",
@@ -99,6 +105,8 @@
     "tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
     "tools/azure-sdk-tools/packaging_tools/**",
     "tools/azure-sdk-tools/setup.py",
+    "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_serialization.py",
+    "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_model_base.py",
     "tools/azure-sdk-tools/tests/test_servicemetadata.py"
   ],
   "words": [
@@ -168,6 +176,7 @@
     "dont",
     "dotenv",
     "dowhile",
+    "DPAPI",
     "dpkg",
     "dtlk",
     "dtlksd",
@@ -391,9 +400,16 @@
     "yarl",
     "SDDL",
     "dacl",
-    "whls"
+    "whls",
+    "aiter"
   ],
   "overrides": [
+    {
+      "filename": "doc/sphinx/generate_doc.py",
+      "words": [
+        "undoc"
+      ]
+    },
     {
       "filename": "doc/dev/test_proxy_migration_guide.md",
       "words": [
@@ -425,6 +441,12 @@
         "isfork",
         "ISFORK",
         "thead"
+      ]
+    },
+    {
+      "filename": "doc/esrp_release.md",
+      "words": [
+        "ESRP"
       ]
     },
     {
@@ -473,6 +495,20 @@
       "words": [
         "essai",
         "myfoldername"
+      ]
+    },
+    {
+      "filename": "sdk/translation/azure-ai-translation-text/**",
+      "words": [
+        "akhtabar",
+        "deserializers",
+        "Esto",
+        "hudha",
+        "mosca",
+        "mros",
+        "NOACTION",
+        "prueba",
+        "wordomatic"
       ]
     },
     {
@@ -577,7 +613,10 @@
     {
       "filename": "sdk/containerregistry/azure-containerregistry/**",
       "words": [
-        "udpated"
+        "udpated",
+        "cncf",
+        "oras",
+        "rootfs"
       ]
     },
     {
@@ -625,7 +664,9 @@
         "mymodel",
         "heif",
         "racwd",
-        "rrggbb"
+        "rrggbb",
+        "UPCA",
+        "UPCE"
       ]
     },
     {
@@ -736,7 +777,7 @@
         "xoperex",
         "Zocor"
       ]
-    },    
+    },
     {
       "filename": "sdk/keyvault/**",
       "words": [
@@ -887,7 +928,9 @@
         "thead",
         "tbody",
         "racwdlmeop",
-        "newfs"
+        "newfs",
+        "adlsstorage",
+        "adlskey"
       ]
     },
     {
@@ -1042,7 +1085,10 @@
         "pycache",
         "ruamel",
         "reprcrash",
-        "etests"
+        "etests",
+        "RMSE",
+        "azmonitoring",
+        "smirnov"
       ]
     },
     {
@@ -1421,6 +1467,21 @@
         "unflattened",
         "wday",
         "deseralize"
+      ]
+    },
+    {
+      "filename": "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_client.py",
+      "words": [
+        "awps"
+      ]
+    },
+    {
+      "filename": "sdk/contentsafety/azure-ai-contentsafety/azure/ai/contentsafety/*.py",
+      "words": [
+        "mros",
+        "deserializers",
+        "ctxt",
+        "wday"
       ]
     }
   ],
