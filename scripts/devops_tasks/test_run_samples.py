@@ -87,7 +87,20 @@ IGNORED_SAMPLES = {
         "consume_cloud_events_from_eventhub.py",
         "consume_eventgrid_events_from_service_bus_queue.py",
         "sample_publish_events_to_a_topic_using_sas_credential.py",
-        "sample_publish_events_to_a_topic_using_sas_credential_async.py"
+        "sample_publish_events_to_a_topic_using_sas_credential_async.py",
+        'sample_publish_operation.py',
+        'sample_receive_operation.py', 
+        'sample_reject_operation.py', 
+        'sample_eg_client_authentication.py', 
+        'sample_all_operations.py', 
+        'sample_release_operation.py', 
+        'sample_acknowledge_operation.py', 
+        'sample_publish_operation_async.py', 
+        'sample_release_operation_async.py', 
+        'sample_reject_operation_async.py', 
+        'sample_acknowledge_operation_async.py', 
+        'sample_receive_operation_async.py', 
+        'sample_all_operations_async.py'
     ],
     "azure-eventhub": [
         "client_identity_authentication.py",    # TODO: remove after fixing issue #29177

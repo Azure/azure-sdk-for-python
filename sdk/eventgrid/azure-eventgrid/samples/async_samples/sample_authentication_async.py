@@ -48,7 +48,7 @@ event = EventGridEvent(
     data={"team": "azure-sdk"},
     subject="Door1",
     event_type="Azure.Sdk.Demo",
-    data_version="2.0"
+    data_version="2.0",
 )
 
 default_az_credential = DefaultAzureCredential()
