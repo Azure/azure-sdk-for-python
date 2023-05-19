@@ -30,10 +30,8 @@ def _format_url_section(template, **kwargs):
             ]
             template = "/".join(components)
 
-
 class EventGridClientMixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
-
     _client: "PipelineClient"
     _config: EventGridClientConfiguration
     _serialize: "Serializer"

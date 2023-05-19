@@ -17,10 +17,7 @@ from ._configuration import EventGridClientConfiguration
 from ._operations import EventGridClientOperationsMixin
 from ._serialization import Deserializer, Serializer
 
-
-class EventGridClient(
-    EventGridClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class EventGridClient(EventGridClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """Azure Messaging EventGrid Client.
 
     :param endpoint: The host name of the namespace, e.g.
@@ -35,21 +32,25 @@ class EventGridClient(
     """
 
     def __init__(
-        self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any
+        self,
+        endpoint: str,
+        credential: AzureKeyCredential,
+        **kwargs: Any
     ) -> None:
-        _endpoint = "{endpoint}"
-        self._config = EventGridClientConfiguration(
-            endpoint=endpoint, credential=credential, **kwargs
-        )
-        self._client: PipelineClient = PipelineClient(
-            base_url=_endpoint, config=self._config, **kwargs
-        )
+        _endpoint = '{endpoint}'
+        self._config = EventGridClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+
+    def send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -69,14 +70,10 @@ class EventGridClient(
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
 
-        request_copy.url = self._client.format_url(
-            request_copy.url, **path_format_arguments
-        )
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
     def close(self) -> None:
