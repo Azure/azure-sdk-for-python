@@ -81,9 +81,12 @@ class DeviceRegistrationSamples(object):
         )
 
         # Query all device registrations for enrollment_group_id
-        await dps_service_client.device_registration_state.query(
+        registrations = await dps_service_client.device_registration_state.query(
             id=self.enrollment_group_id
         )
+
+        # Iterate through query results
+        [registration async for registration in registrations]
 
     async def get_device_registration_state_sample_async(self):
         # Instantiate a DPS Service Client using a connection string
