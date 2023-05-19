@@ -94,10 +94,7 @@ def build_event_grid_publish_cloud_events_request(  # pylint: disable=name-too-l
     # Construct headers
     _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
     return HttpRequest(
-        method="POST",
-        url=_url,
         params=_params,
         headers=_headers,
         **kwargs
