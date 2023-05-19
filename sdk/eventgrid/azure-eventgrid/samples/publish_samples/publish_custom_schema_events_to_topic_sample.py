@@ -27,6 +27,7 @@ from azure.eventgrid import EventGridPublisherClient
 key = os.environ["EVENTGRID_CUSTOM_EVENT_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_CUSTOM_EVENT_TOPIC_ENDPOINT"]
 
+
 def publish_event():
     # authenticate client
     credential = AzureKeyCredential(key)
@@ -38,13 +39,12 @@ def publish_event():
         "customDataVersion": "2.0",
         "customId": uuid.uuid4(),
         "customEventTime": dt.datetime.now(UTC()).isoformat(),
-        "customData": "sample data"
+        "customData": "sample data",
     }
 
     # publish events
-    for _  in range(3):
-
-        event_list = []     # list of events to publish
+    for _ in range(3):
+        event_list = []  # list of events to publish
         # create events and append to list
         for j in range(randint(1, 3)):
             event_list.append(custom_schema_event)
@@ -55,5 +55,5 @@ def publish_event():
         time.sleep(randint(1, 5))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     publish_event()
