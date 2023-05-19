@@ -1,6 +1,6 @@
 from azure.iot.deviceprovisioning import DeviceProvisioningClient
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from conftest import GLOBAL_PROVISIONING_HOST, ProvisioningServicePreparer
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from utility.common import generate_enrollment_group, sign_string
 
 
@@ -38,7 +38,9 @@ class TestDeviceRegistration(AzureRecordedTestCase):
     def test_device_registration_lifecycle(
         self, deviceprovisioningservices_endpoint, deviceprovisioningservices_idscope
     ):
-        client = self.create_provisioning_service_client(deviceprovisioningservices_endpoint)
+        client = self.create_provisioning_service_client(
+            deviceprovisioningservices_endpoint
+        )
         # create new enrollment group
         enrollment_group_id = self.create_random_name("reg_enroll_grp_")
         device_id = self.create_random_name("device-")
@@ -55,7 +57,7 @@ class TestDeviceRegistration(AzureRecordedTestCase):
         device_registrations = client.device_registration_state.query(
             id=enrollment_group_id
         )
-        assert len(device_registrations) == 0
+        assert len([d for d in device_registrations]) == 0
 
         # create device registration
         if self.is_live:
@@ -76,8 +78,9 @@ class TestDeviceRegistration(AzureRecordedTestCase):
         registration_query_response: list = client.device_registration_state.query(
             id=enrollment_group_id
         )
-        assert len(registration_query_response) == 1
-        assert registration_query_response[0]["registrationId"] == registration_id
+        registrations = [reg for reg in registration_query_response]
+        assert len(registrations) == 1
+        assert registrations[0]["registrationId"] == registration_id
 
         # delete registration
         client.device_registration_state.delete(id=registration_id)
@@ -86,7 +89,7 @@ class TestDeviceRegistration(AzureRecordedTestCase):
         registration_query_response: list = client.device_registration_state.query(
             id=enrollment_group_id
         )
-        assert len(registration_query_response) == 0
+        assert len([reg for reg in registration_query_response]) == 0
 
         # delete enrollment group
         client.enrollment_group.delete(id=enrollment_group_id)

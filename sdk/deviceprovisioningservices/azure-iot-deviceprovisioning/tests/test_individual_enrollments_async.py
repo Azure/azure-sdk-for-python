@@ -1,6 +1,4 @@
 from azure.iot.deviceprovisioning.aio import DeviceProvisioningClient
-from devtools_testutils import AzureRecordedTestCase
-from devtools_testutils.aio import recorded_by_proxy_async
 from conftest import (
     API_VERSION,
     CUSTOM_ALLOCATION,
@@ -12,6 +10,8 @@ from conftest import (
     WEBHOOK_URL,
     ProvisioningServicePreparer,
 )
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
 from utility.common import create_test_cert, generate_enrollment, generate_key
 
 
@@ -24,7 +24,9 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
     @ProvisioningServicePreparer()
     @recorded_by_proxy_async
     async def test_enrollment_tpm_lifecycle(self, deviceprovisioningservices_endpoint):
-        client = self.create_provisioning_service_client(deviceprovisioningservices_endpoint)
+        client = self.create_provisioning_service_client(
+            deviceprovisioningservices_endpoint
+        )
 
         attestation_type = "tpm"
         enrollment_id = self.create_random_name("ind_enroll_tpm_")
@@ -56,8 +58,9 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollment_list = await client.individual_enrollment.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_list) == 1
-        assert enrollment_list[0]["registrationId"] == enrollment_id
+        enrollments = [e async for e in enrollment_list]
+        assert len(enrollments) == 1
+        assert enrollments[0]["registrationId"] == enrollment_id
 
         # check enrollment get
         enrollment_response = await client.individual_enrollment.get(id=enrollment_id)
@@ -96,12 +99,14 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollment_list = await client.individual_enrollment.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_list) == 0
+        assert len([e async for e in enrollment_list]) == 0
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy_async
     async def test_enrollment_x509_lifecycle(self, deviceprovisioningservices_endpoint):
-        client = self.create_provisioning_service_client(deviceprovisioningservices_endpoint)
+        client = self.create_provisioning_service_client(
+            deviceprovisioningservices_endpoint
+        )
         enrollment_id = self.create_random_name("x509_enrollment_")
         device_id = self.create_random_name("x509_device_")
         attestation_type = "x509"
@@ -156,8 +161,9 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollment_list = await client.individual_enrollment.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_list) == 1
-        assert enrollment_list[0]["registrationId"] == enrollment_id
+        enrollments = [e async for e in enrollment_list]
+        assert len(enrollments) == 1
+        assert enrollments[0]["registrationId"] == enrollment_id
 
         # check enrollment get
         enrollment_response = await client.individual_enrollment.get(id=enrollment_id)
@@ -192,12 +198,16 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollment_list = await client.individual_enrollment.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_list) == 0
+        assert len([e async for e in enrollment_list]) == 0
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy_async
-    async def test_enrollment_symmetrickey_lifecycle(self, deviceprovisioningservices_endpoint):
-        client = self.create_provisioning_service_client(deviceprovisioningservices_endpoint)
+    async def test_enrollment_symmetrickey_lifecycle(
+        self, deviceprovisioningservices_endpoint
+    ):
+        client = self.create_provisioning_service_client(
+            deviceprovisioningservices_endpoint
+        )
         attestation_type = "symmetricKey"
         enrollment_id = self.create_random_name("sym_enrollment_")
         primary_key = generate_key()
@@ -213,7 +223,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             attestation_type=attestation_type,
             primary_key=primary_key,
             secondary_key=secondary_key,
-            initial_twin_properties=INITIAL_TWIN_PROPERTIES
+            initial_twin_properties=INITIAL_TWIN_PROPERTIES,
         )
 
         enrollment_id2 = self.create_random_name("sym_enrollment2_")
@@ -246,8 +256,9 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollment_list = await client.individual_enrollment.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_list) == 1
-        assert enrollment_list[0]["registrationId"] == enrollment_id
+        enrollments = [e async for e in enrollment_list]
+        assert len(enrollments) == 1
+        assert enrollments[0]["registrationId"] == enrollment_id
 
         # check enrollment get
         enrollment_response = await client.individual_enrollment.get(id=enrollment_id)
@@ -308,9 +319,10 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollment_list = await client.individual_enrollment.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_list) == 2
-        assert enrollment_id in [e["registrationId"] for e in enrollment_list]
-        assert enrollment_id2 in [e["registrationId"] for e in enrollment_list]
+        enrollments = [e["registrationId"] async for e in enrollment_list]
+        assert len(enrollments) == 2
+        assert enrollment_id in enrollments
+        assert enrollment_id2 in enrollments
 
         # delete both enrollments
         await client.individual_enrollment.delete(id=enrollment_id)
@@ -320,12 +332,16 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollment_list = await client.individual_enrollment.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_list) == 0
+        assert len([e async for e in enrollment_list]) == 0
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy_async
-    async def test_individual_enrollment_bulk_operations(self, deviceprovisioningservices_endpoint):
-        client = self.create_provisioning_service_client(deviceprovisioningservices_endpoint)
+    async def test_individual_enrollment_bulk_operations(
+        self, deviceprovisioningservices_endpoint
+    ):
+        client = self.create_provisioning_service_client(
+            deviceprovisioningservices_endpoint
+        )
         attestation_type = "tpm"
         enrollment_id = self.create_random_name("ind_enroll_tpm_")
         device_id = self.create_random_name("device_")

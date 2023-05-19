@@ -295,13 +295,17 @@ class TestIndividualEnrollmentQuery(object):
 
     @pytest.mark.parametrize("query", "select *")
     def test_individual_enrollment_query(self, service_client, sdk_client, query):
-        sdk_client.individual_enrollment.query(query_specification=query)
+        query = sdk_client.individual_enrollment.query(query_specification=query)
+        assert [enrollment for enrollment in query]
 
     def test_individual_enrollment_query_error(
         self, service_client_generic_error, sdk_client
     ):
         with pytest.raises(HttpResponseError):
-            sdk_client.individual_enrollment.query(query_specification="select *")
+            query = sdk_client.individual_enrollment.query(
+                query_specification="select *"
+            )
+            assert [enrollment for enrollment in query]
 
 
 class TestIndividualEnrollmentAttestation(object):

@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:30:57 GMT",
+        "Date": "Fri, 19 May 2023 18:50:10 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15357.5 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15427.9 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -100,6 +100,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+        "Cookie": "cookie;",
         "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -110,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:30:57 GMT",
+        "Date": "Fri, 19 May 2023 18:50:10 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15319.9 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15427.9 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -171,10 +172,11 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "97a0f52a-91dd-4b11-9111-99e1429c8861",
+        "client-request-id": "61e0dce5-431a-4777-bf0e-c16ae3b7a49d",
         "Connection": "keep-alive",
         "Content-Length": "298",
         "Content-Type": "application/x-www-form-urlencoded",
+        "Cookie": "cookie;",
         "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.11.2 (Windows-10-10.0.22621-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
@@ -188,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "97a0f52a-91dd-4b11-9111-99e1429c8861",
+        "client-request-id": "61e0dce5-431a-4777-bf0e-c16ae3b7a49d",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:30:58 GMT",
+        "Date": "Fri, 19 May 2023 18:50:11 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -199,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.15357.5 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15427.9 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -242,7 +244,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:30:58 GMT",
+        "Date": "Fri, 19 May 2023 18:50:11 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
@@ -255,10 +257,10 @@
             "secondaryKey": "secondaryKey"
           }
         },
-        "etag": "ImIwMDI3ODhhLTAwMDAtMDgwMC0wMDAwLTY0NWFhZDgyMDAwMCI=",
+        "etag": "IjA1MDBjYjg4LTAwMDAtMDgwMC0wMDAwLTY0NjdjNGU0MDAwMCI=",
         "provisioningStatus": null,
-        "createdDateTimeUtc": "2023-05-09T20:30:58.924567Z",
-        "lastUpdatedDateTimeUtc": "2023-05-09T20:30:58.924567Z",
+        "createdDateTimeUtc": "2023-05-19T18:50:12.0628524Z",
+        "lastUpdatedDateTimeUtc": "2023-05-19T18:50:12.0628524Z",
         "allocationPolicy": "static"
       }
     },
@@ -276,7 +278,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:30:58 GMT",
+        "Date": "Fri, 19 May 2023 18:50:11 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
@@ -301,12 +303,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:30:58 GMT",
+        "Date": "Fri, 19 May 2023 18:50:11 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15357.5 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15427.9 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -384,6 +386,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+        "Cookie": "cookie;",
         "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -394,12 +397,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:30:58 GMT",
+        "Date": "Fri, 19 May 2023 18:50:11 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15319.9 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15427.8 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -455,10 +458,11 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "88056938-b63d-4665-a226-10de52913cca",
+        "client-request-id": "7c92bf1f-7126-4922-9763-a9579e2fb5ba",
         "Connection": "keep-alive",
         "Content-Length": "298",
         "Content-Type": "application/x-www-form-urlencoded",
+        "Cookie": "cookie;",
         "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.11.2 (Windows-10-10.0.22621-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
@@ -472,10 +476,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "88056938-b63d-4665-a226-10de52913cca",
+        "client-request-id": "7c92bf1f-7126-4922-9763-a9579e2fb5ba",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:30:58 GMT",
+        "Date": "Fri, 19 May 2023 18:50:11 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -483,7 +487,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.15357.5 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15427.9 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -508,7 +512,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:30:58 GMT",
+        "Date": "Fri, 19 May 2023 18:50:11 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
@@ -533,19 +537,19 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:31:04 GMT",
+        "Date": "Fri, 19 May 2023 18:50:14 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
         "registrationId": "device-3ee83fa9",
-        "createdDateTimeUtc": "2023-05-09T20:31:00.6342803Z",
+        "createdDateTimeUtc": "2023-05-19T18:50:13.4847114Z",
         "assignedHub": "rk-cli-test-hub.azure-devices.net",
         "deviceId": "device-3ee83fa9",
         "status": "assigned",
-        "substatus": "initialAssignment",
-        "lastUpdatedDateTimeUtc": "2023-05-09T20:31:02.7515471Z",
-        "etag": "IjIwMDFlZmEzLTAwMDAtMDgwMC0wMDAwLTY0NWFhZDg2MDAwMCI="
+        "substatus": "reprovisionedToInitialAssignment",
+        "lastUpdatedDateTimeUtc": "2023-05-19T18:50:13.7215286Z",
+        "etag": "IjA1MDBlMTExLTAwMDAtMDgwMC0wMDAwLTY0NjdjNGU1MDAwMCI="
       }
     },
     {
@@ -562,13 +566,13 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:31:04 GMT",
+        "Date": "Fri, 19 May 2023 18:50:14 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
         "x-ms-item-type": "DeviceRegistration"
       },
-      "ResponseBody": "[{\u0022registrationId\u0022:\u0022device-3ee83fa9\u0022,\u0022createdDateTimeUtc\u0022:\u00222023-05-09T20:31:00.6342803Z\u0022,\u0022assignedHub\u0022:\u0022rk-cli-test-hub.azure-devices.net\u0022,\u0022deviceId\u0022:\u0022device-3ee83fa9\u0022,\u0022status\u0022:\u0022assigned\u0022,\u0022substatus\u0022:\u0022initialAssignment\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-05-09T20:31:02.7515471Z\u0022,\u0022etag\u0022:\u0022IjIwMDFlZmEzLTAwMDAtMDgwMC0wMDAwLTY0NWFhZDg2MDAwMCI=\u0022}]"
+      "ResponseBody": "[{\u0022registrationId\u0022:\u0022device-3ee83fa9\u0022,\u0022createdDateTimeUtc\u0022:\u00222023-05-19T18:50:13.4847114Z\u0022,\u0022assignedHub\u0022:\u0022rk-cli-test-hub.azure-devices.net\u0022,\u0022deviceId\u0022:\u0022device-3ee83fa9\u0022,\u0022status\u0022:\u0022assigned\u0022,\u0022substatus\u0022:\u0022reprovisionedToInitialAssignment\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-05-19T18:50:13.7215286Z\u0022,\u0022etag\u0022:\u0022IjA1MDBlMTExLTAwMDAtMDgwMC0wMDAwLTY0NjdjNGU1MDAwMCI=\u0022}]"
     },
     {
       "RequestUri": "https://fake-resource.azure-devices-provisioning.net/registrations/device-3ee83fa9?api-version=2021-10-01",
@@ -583,7 +587,7 @@
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "Date": "Tue, 09 May 2023 20:31:04 GMT",
+        "Date": "Fri, 19 May 2023 18:50:14 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
       },
       "ResponseBody": null
@@ -602,7 +606,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:31:04 GMT",
+        "Date": "Fri, 19 May 2023 18:50:14 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
@@ -623,7 +627,7 @@
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "Date": "Tue, 09 May 2023 20:31:04 GMT",
+        "Date": "Fri, 19 May 2023 18:50:14 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
       },
       "ResponseBody": null

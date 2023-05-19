@@ -1,5 +1,4 @@
 from azure.iot.deviceprovisioning import DeviceProvisioningClient
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from conftest import (
     API_VERSION,
     CUSTOM_ALLOCATION,
@@ -7,11 +6,8 @@ from conftest import (
     WEBHOOK_URL,
     ProvisioningServicePreparer,
 )
-from utility.common import (
-    create_test_cert,
-    generate_enrollment_group,
-    generate_key,
-)
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from utility.common import create_test_cert, generate_enrollment_group, generate_key
 
 
 class TestEnrollmentGroups(AzureRecordedTestCase):
@@ -23,7 +19,9 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
     @ProvisioningServicePreparer()
     @recorded_by_proxy
     def test_enrollment_group_x509_lifecycle(self, deviceprovisioningservices_endpoint):
-        client = self.create_provisioning_service_client(deviceprovisioningservices_endpoint)
+        client = self.create_provisioning_service_client(
+            deviceprovisioningservices_endpoint
+        )
         enrollment_group_id = self.create_random_name("x509_enroll_grp_")
         attestation_type = "x509"
 
@@ -74,8 +72,9 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
         enrollment_group_list = client.enrollment_group.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_group_list) == 1
-        assert enrollment_group_list[0]["enrollmentGroupId"] == enrollment_group_id
+        enrollments = [eg for eg in enrollment_group_list]
+        assert len(enrollments) == 1
+        assert enrollments[0]["enrollmentGroupId"] == enrollment_group_id
 
         # check enrollment get
         enrollment_group_response = client.enrollment_group.get(id=enrollment_group_id)
@@ -110,12 +109,16 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
         enrollment_group_list = client.enrollment_group.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_group_list) == 0
+        assert len([eg for eg in enrollment_group_list]) == 0
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy
-    def test_enrollment_group_symmetrickey_lifecycle(self, deviceprovisioningservices_endpoint):
-        client = self.create_provisioning_service_client(deviceprovisioningservices_endpoint)
+    def test_enrollment_group_symmetrickey_lifecycle(
+        self, deviceprovisioningservices_endpoint
+    ):
+        client = self.create_provisioning_service_client(
+            deviceprovisioningservices_endpoint
+        )
         attestation_type = "symmetricKey"
         enrollment_group_id = self.create_random_name("sym_enroll_grp_")
         primary_key = generate_key()
@@ -158,8 +161,9 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
         enrollment_group_list = client.enrollment_group.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_group_list) == 1
-        assert enrollment_group_list[0]["enrollmentGroupId"] == enrollment_group_id
+        enrollments = [eg for eg in enrollment_group_list]
+        assert len(enrollments) == 1
+        assert enrollments[0]["enrollmentGroupId"] == enrollment_group_id
 
         # check enrollment get
         enrollment_group_response = client.enrollment_group.get(id=enrollment_group_id)
@@ -218,13 +222,10 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
         enrollment_group_list = client.enrollment_group.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_group_list) == 2
-        assert enrollment_group_id in [
-            e["enrollmentGroupId"] for e in enrollment_group_list
-        ]
-        assert enrollment_group_id2 in [
-            e["enrollmentGroupId"] for e in enrollment_group_list
-        ]
+        enrollments = [eg for eg in enrollment_group_list]
+        assert len(enrollments) == 2
+        assert enrollment_group_id in [e["enrollmentGroupId"] for e in enrollments]
+        assert enrollment_group_id2 in [e["enrollmentGroupId"] for e in enrollments]
 
         # delete both enrollments
         client.enrollment_group.delete(id=enrollment_group_id)
@@ -234,12 +235,16 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
         enrollment_group_list = client.enrollment_group.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_group_list) == 0
+        assert len([eg for eg in enrollment_group_list]) == 0
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy
-    def test_enrollment_group_bulk_operations(self, deviceprovisioningservices_endpoint):
-        client = self.create_provisioning_service_client(deviceprovisioningservices_endpoint)
+    def test_enrollment_group_bulk_operations(
+        self, deviceprovisioningservices_endpoint
+    ):
+        client = self.create_provisioning_service_client(
+            deviceprovisioningservices_endpoint
+        )
         eg1_id = self.create_random_name("x509_enroll_grp_")
         attestation_type = "x509"
 

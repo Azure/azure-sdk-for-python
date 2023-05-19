@@ -3,7 +3,6 @@ import re
 
 import pytest
 from azure.core.exceptions import HttpResponseError
-
 from conftest import mock_dps_target
 
 registration_id = "test_registration_id"
@@ -101,10 +100,12 @@ class TestDeviceRegistrationStateQuery(object):
         )
 
     def test_device_registration_state_query(self, service_client_query, sdk_client):
-        sdk_client.device_registration_state.query(id=enrollment_group_id)
+        query = sdk_client.device_registration_state.query(id=enrollment_group_id)
+        assert [state for state in query]
 
     def test_device_registration_state_query_error(
         self, service_client_query_error, sdk_client
     ):
         with pytest.raises(HttpResponseError):
-            sdk_client.device_registration_state.query(id=enrollment_group_id)
+            query = sdk_client.device_registration_state.query(id=enrollment_group_id)
+            assert [state for state in query]

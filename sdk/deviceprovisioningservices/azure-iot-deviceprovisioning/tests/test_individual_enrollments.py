@@ -57,8 +57,9 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollment_list = client.individual_enrollment.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_list) == 1
-        assert enrollment_list[0]["registrationId"] == enrollment_id
+        enrollments = [e for e in enrollment_list]
+        assert len(enrollments) == 1
+        assert enrollments[0]["registrationId"] == enrollment_id
 
         # check enrollment get
         enrollment_response = client.individual_enrollment.get(id=enrollment_id)
@@ -95,7 +96,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollment_list = client.individual_enrollment.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_list) == 0
+        assert len([e for e in enrollment_list]) == 0
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy
@@ -157,8 +158,9 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollment_list = client.individual_enrollment.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_list) == 1
-        assert enrollment_list[0]["registrationId"] == enrollment_id
+        enrollments = [e for e in enrollment_list]
+        assert len(enrollments) == 1
+        assert enrollments[0]["registrationId"] == enrollment_id
 
         # check enrollment get
         enrollment_response = client.individual_enrollment.get(id=enrollment_id)
@@ -193,7 +195,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollment_list = client.individual_enrollment.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_list) == 0
+        assert len([e for e in enrollment_list]) == 0
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy
@@ -251,8 +253,9 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollment_list = client.individual_enrollment.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_list) == 1
-        assert enrollment_list[0]["registrationId"] == enrollment_id
+        enrollments = [e for e in enrollment_list]
+        assert len(enrollments) == 1
+        assert enrollments[0]["registrationId"] == enrollment_id
 
         # check enrollment get
         enrollment_response = client.individual_enrollment.get(id=enrollment_id)
@@ -312,9 +315,10 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollment_list = client.individual_enrollment.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_list) == 2
-        assert enrollment_id in [e["registrationId"] for e in enrollment_list]
-        assert enrollment_id2 in [e["registrationId"] for e in enrollment_list]
+        enrollments = [e["registrationId"] for e in enrollment_list]
+        assert len(enrollments) == 2
+        assert enrollment_id in enrollments
+        assert enrollment_id2 in enrollments
 
         # delete both enrollments
         client.individual_enrollment.delete(id=enrollment_id)
@@ -324,7 +328,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollment_list = client.individual_enrollment.query(
             query_specification={"query": "SELECT *"}
         )
-        assert len(enrollment_list) == 0
+        assert len([e for e in enrollment_list]) == 0
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy

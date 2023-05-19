@@ -16,14 +16,14 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:31:25 GMT",
+        "Date": "Fri, 19 May 2023 18:50:51 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15357.5 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.15427.9 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -75,7 +75,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:31:26 GMT",
+        "Date": "Fri, 19 May 2023 18:50:52 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
@@ -96,14 +96,14 @@
             }
           }
         },
-        "etag": "ImIwMDJjMDhkLTAwMDAtMDgwMC0wMDAwLTY0NWFhZDllMDAwMCI=",
+        "etag": "IjA1MDA0NThmLTAwMDAtMDgwMC0wMDAwLTY0NjdjNTBjMDAwMCI=",
         "provisioningStatus": null,
         "reprovisionPolicy": {
           "updateHubAssignment": true,
           "migrateDeviceData": true
         },
-        "createdDateTimeUtc": "2023-05-09T20:31:26.8794199Z",
-        "lastUpdatedDateTimeUtc": "2023-05-09T20:31:26.8794199Z",
+        "createdDateTimeUtc": "2023-05-19T18:50:52.91577Z",
+        "lastUpdatedDateTimeUtc": "2023-05-19T18:50:52.91577Z",
         "allocationPolicy": "geoLatency"
       }
     },
@@ -123,13 +123,13 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:31:26 GMT",
+        "Date": "Fri, 19 May 2023 18:50:52 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
         "x-ms-item-type": "Enrollment"
       },
-      "ResponseBody": "[{\u0022registrationId\u0022:\u0022sym_enrollment_9d0e46a3\u0022,\u0022deviceId\u0022:\u0022sym_key_device_9d0e46a3\u0022,\u0022attestation\u0022:{\u0022type\u0022:\u0022symmetricKey\u0022},\u0022initialTwin\u0022:{\u0022properties\u0022:{\u0022desired\u0022:{\u0022key\u0022:\u0022value\u0022}}},\u0022etag\u0022:\u0022ImIwMDJjMDhkLTAwMDAtMDgwMC0wMDAwLTY0NWFhZDllMDAwMCI=\u0022,\u0022provisioningStatus\u0022:null,\u0022reprovisionPolicy\u0022:{\u0022updateHubAssignment\u0022:true,\u0022migrateDeviceData\u0022:true},\u0022createdDateTimeUtc\u0022:\u00222023-05-09T20:31:26.8794199Z\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-05-09T20:31:26.8794199Z\u0022,\u0022allocationPolicy\u0022:\u0022geoLatency\u0022}]"
+      "ResponseBody": "[{\u0022registrationId\u0022:\u0022sym_enrollment_9d0e46a3\u0022,\u0022deviceId\u0022:\u0022sym_key_device_9d0e46a3\u0022,\u0022attestation\u0022:{\u0022type\u0022:\u0022symmetricKey\u0022},\u0022initialTwin\u0022:{\u0022properties\u0022:{\u0022desired\u0022:{\u0022key\u0022:\u0022value\u0022}}},\u0022etag\u0022:\u0022IjA1MDA0NThmLTAwMDAtMDgwMC0wMDAwLTY0NjdjNTBjMDAwMCI=\u0022,\u0022provisioningStatus\u0022:null,\u0022reprovisionPolicy\u0022:{\u0022updateHubAssignment\u0022:true,\u0022migrateDeviceData\u0022:true},\u0022createdDateTimeUtc\u0022:\u00222023-05-19T18:50:52.91577Z\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-05-19T18:50:52.91577Z\u0022,\u0022allocationPolicy\u0022:\u0022geoLatency\u0022}]"
     },
     {
       "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollments/sym_enrollment_9d0e46a3?api-version=2021-10-01",
@@ -143,7 +143,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:31:26 GMT",
+        "Date": "Fri, 19 May 2023 18:50:52 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
@@ -164,14 +164,14 @@
             }
           }
         },
-        "etag": "ImIwMDJjMDhkLTAwMDAtMDgwMC0wMDAwLTY0NWFhZDllMDAwMCI=",
+        "etag": "IjA1MDA0NThmLTAwMDAtMDgwMC0wMDAwLTY0NjdjNTBjMDAwMCI=",
         "provisioningStatus": null,
         "reprovisionPolicy": {
           "updateHubAssignment": true,
           "migrateDeviceData": true
         },
-        "createdDateTimeUtc": "2023-05-09T20:31:26.8794199Z",
-        "lastUpdatedDateTimeUtc": "2023-05-09T20:31:26.8794199Z",
+        "createdDateTimeUtc": "2023-05-19T18:50:52.91577Z",
+        "lastUpdatedDateTimeUtc": "2023-05-19T18:50:52.91577Z",
         "allocationPolicy": "geoLatency"
       }
     },
@@ -188,7 +188,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:31:26 GMT",
+        "Date": "Fri, 19 May 2023 18:50:52 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
@@ -208,7 +208,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "567",
         "Content-Type": "application/json",
-        "If-Match": "ImIwMDJjMDhkLTAwMDAtMDgwMC0wMDAwLTY0NWFhZDllMDAwMCI=",
+        "If-Match": "IjA1MDA0NThmLTAwMDAtMDgwMC0wMDAwLTY0NjdjNTBjMDAwMCI=",
         "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
@@ -246,7 +246,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:31:26 GMT",
+        "Date": "Fri, 19 May 2023 18:50:52 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
@@ -267,14 +267,14 @@
             }
           }
         },
-        "etag": "ImIwMDJjOThkLTAwMDAtMDgwMC0wMDAwLTY0NWFhZDlmMDAwMCI=",
+        "etag": "IjA1MDA0YzhmLTAwMDAtMDgwMC0wMDAwLTY0NjdjNTBkMDAwMCI=",
         "provisioningStatus": "disabled",
         "reprovisionPolicy": {
           "updateHubAssignment": true,
           "migrateDeviceData": true
         },
-        "createdDateTimeUtc": "2023-05-09T20:31:26.8794199Z",
-        "lastUpdatedDateTimeUtc": "2023-05-09T20:31:27.1875131Z",
+        "createdDateTimeUtc": "2023-05-19T18:50:52.91577Z",
+        "lastUpdatedDateTimeUtc": "2023-05-19T18:50:53.2467082Z",
         "allocationPolicy": "custom",
         "customAllocationDefinition": {
           "webhookUrl": "https://www.test.test",
@@ -318,7 +318,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:31:26 GMT",
+        "Date": "Fri, 19 May 2023 18:50:52 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked"
       },
@@ -331,10 +331,10 @@
             "secondaryKey": "secondaryKey"
           }
         },
-        "etag": "ImIwMDJjYThkLTAwMDAtMDgwMC0wMDAwLTY0NWFhZDlmMDAwMCI=",
+        "etag": "IjA1MDA0ZThmLTAwMDAtMDgwMC0wMDAwLTY0NjdjNTBkMDAwMCI=",
         "provisioningStatus": null,
-        "createdDateTimeUtc": "2023-05-09T20:31:27.2566692Z",
-        "lastUpdatedDateTimeUtc": "2023-05-09T20:31:27.2566692Z",
+        "createdDateTimeUtc": "2023-05-19T18:50:53.295588Z",
+        "lastUpdatedDateTimeUtc": "2023-05-19T18:50:53.295588Z",
         "allocationPolicy": "custom",
         "customAllocationDefinition": {
           "webhookUrl": "https://www.test.test",
@@ -358,13 +358,13 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:31:26 GMT",
+        "Date": "Fri, 19 May 2023 18:50:52 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
         "x-ms-item-type": "Enrollment"
       },
-      "ResponseBody": "[{\u0022registrationId\u0022:\u0022sym_enrollment_9d0e46a3\u0022,\u0022deviceId\u0022:\u0022sym_key_device_9d0e46a3\u0022,\u0022attestation\u0022:{\u0022type\u0022:\u0022symmetricKey\u0022},\u0022initialTwin\u0022:{\u0022properties\u0022:{\u0022desired\u0022:{\u0022key\u0022:\u0022value\u0022}}},\u0022etag\u0022:\u0022ImIwMDJjOThkLTAwMDAtMDgwMC0wMDAwLTY0NWFhZDlmMDAwMCI=\u0022,\u0022provisioningStatus\u0022:\u0022disabled\u0022,\u0022reprovisionPolicy\u0022:{\u0022updateHubAssignment\u0022:true,\u0022migrateDeviceData\u0022:true},\u0022createdDateTimeUtc\u0022:\u00222023-05-09T20:31:26.8794199Z\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-05-09T20:31:27.1875131Z\u0022,\u0022allocationPolicy\u0022:\u0022custom\u0022,\u0022customAllocationDefinition\u0022:{\u0022webhookUrl\u0022:\u0022https://www.test.test\u0022,\u0022apiVersion\u0022:\u00222019-03-31\u0022}},{\u0022registrationId\u0022:\u0022sym_enrollment2_9d0e46a3\u0022,\u0022attestation\u0022:{\u0022type\u0022:\u0022symmetricKey\u0022},\u0022etag\u0022:\u0022ImIwMDJjYThkLTAwMDAtMDgwMC0wMDAwLTY0NWFhZDlmMDAwMCI=\u0022,\u0022provisioningStatus\u0022:null,\u0022createdDateTimeUtc\u0022:\u00222023-05-09T20:31:27.2566692Z\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-05-09T20:31:27.2566692Z\u0022,\u0022allocationPolicy\u0022:\u0022custom\u0022,\u0022customAllocationDefinition\u0022:{\u0022webhookUrl\u0022:\u0022https://www.test.test\u0022,\u0022apiVersion\u0022:\u00222019-03-31\u0022}}]"
+      "ResponseBody": "[{\u0022registrationId\u0022:\u0022sym_enrollment_9d0e46a3\u0022,\u0022deviceId\u0022:\u0022sym_key_device_9d0e46a3\u0022,\u0022attestation\u0022:{\u0022type\u0022:\u0022symmetricKey\u0022},\u0022initialTwin\u0022:{\u0022properties\u0022:{\u0022desired\u0022:{\u0022key\u0022:\u0022value\u0022}}},\u0022etag\u0022:\u0022IjA1MDA0YzhmLTAwMDAtMDgwMC0wMDAwLTY0NjdjNTBkMDAwMCI=\u0022,\u0022provisioningStatus\u0022:\u0022disabled\u0022,\u0022reprovisionPolicy\u0022:{\u0022updateHubAssignment\u0022:true,\u0022migrateDeviceData\u0022:true},\u0022createdDateTimeUtc\u0022:\u00222023-05-19T18:50:52.91577Z\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-05-19T18:50:53.2467082Z\u0022,\u0022allocationPolicy\u0022:\u0022custom\u0022,\u0022customAllocationDefinition\u0022:{\u0022webhookUrl\u0022:\u0022https://www.test.test\u0022,\u0022apiVersion\u0022:\u00222019-03-31\u0022}},{\u0022registrationId\u0022:\u0022sym_enrollment2_9d0e46a3\u0022,\u0022attestation\u0022:{\u0022type\u0022:\u0022symmetricKey\u0022},\u0022etag\u0022:\u0022IjA1MDA0ZThmLTAwMDAtMDgwMC0wMDAwLTY0NjdjNTBkMDAwMCI=\u0022,\u0022provisioningStatus\u0022:null,\u0022createdDateTimeUtc\u0022:\u00222023-05-19T18:50:53.295588Z\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-05-19T18:50:53.295588Z\u0022,\u0022allocationPolicy\u0022:\u0022custom\u0022,\u0022customAllocationDefinition\u0022:{\u0022webhookUrl\u0022:\u0022https://www.test.test\u0022,\u0022apiVersion\u0022:\u00222019-03-31\u0022}}]"
     },
     {
       "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollments/sym_enrollment_9d0e46a3?api-version=2021-10-01",
@@ -378,7 +378,7 @@
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "Date": "Tue, 09 May 2023 20:31:26 GMT",
+        "Date": "Fri, 19 May 2023 18:50:52 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
       },
       "ResponseBody": null
@@ -395,7 +395,7 @@
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "Date": "Tue, 09 May 2023 20:31:26 GMT",
+        "Date": "Fri, 19 May 2023 18:50:52 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
       },
       "ResponseBody": null
@@ -416,7 +416,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 09 May 2023 20:31:26 GMT",
+        "Date": "Fri, 19 May 2023 18:50:52 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",

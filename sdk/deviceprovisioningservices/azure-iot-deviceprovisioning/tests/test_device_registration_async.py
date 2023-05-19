@@ -1,8 +1,8 @@
 import pytest
 from azure.iot.deviceprovisioning.aio import DeviceProvisioningClient
+from conftest import GLOBAL_PROVISIONING_HOST, ProvisioningServicePreparer
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
-from conftest import GLOBAL_PROVISIONING_HOST, ProvisioningServicePreparer
 from utility.common import generate_enrollment_group, sign_string
 
 
@@ -40,7 +40,9 @@ class TestDeviceRegistration(AzureRecordedTestCase):
     async def test_device_registration_lifecycle(
         self, deviceprovisioningservices_endpoint, deviceprovisioningservices_idscope
     ):
-        client = self.create_provisioning_service_client(deviceprovisioningservices_endpoint)
+        client = self.create_provisioning_service_client(
+            deviceprovisioningservices_endpoint
+        )
         # create new enrollment group
         enrollment_group_id = self.create_random_name("reg_enroll_grp_")
         device_id = self.create_random_name("device-")
@@ -57,7 +59,7 @@ class TestDeviceRegistration(AzureRecordedTestCase):
         device_registrations = await client.device_registration_state.query(
             id=enrollment_group_id
         )
-        assert len(device_registrations) == 0
+        assert len([r async for r in device_registrations]) == 0
 
         # create device registration
         if self.is_live:
@@ -75,20 +77,21 @@ class TestDeviceRegistration(AzureRecordedTestCase):
         registration_id = registration_response["registrationId"]
 
         # query registration
-        registration_query_response: list = (
-            await client.device_registration_state.query(id=enrollment_group_id)
+        registration_query_response = await client.device_registration_state.query(
+            id=enrollment_group_id
         )
-        assert len(registration_query_response) == 1
-        assert registration_query_response[0]["registrationId"] == registration_id
+        registrations = [reg async for reg in registration_query_response]
+        assert len(registrations) == 1
+        assert registrations[0]["registrationId"] == registration_id
 
         # delete registration
         await client.device_registration_state.delete(id=registration_id)
 
         # confirm delete
-        registration_query_response: list = (
-            await client.device_registration_state.query(id=enrollment_group_id)
+        registration_query_response = await client.device_registration_state.query(
+            id=enrollment_group_id
         )
-        assert len(registration_query_response) == 0
+        assert len([reg async for reg in registration_query_response]) == 0
 
         # delete enrollment group
         await client.enrollment_group.delete(id=enrollment_group_id)

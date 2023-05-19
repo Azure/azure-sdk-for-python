@@ -1,3 +1,4 @@
+import pytest
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.utils import parse_connection_string
 from azure.iot.deviceprovisioning import DeviceProvisioningClient, generate_sas_token
@@ -31,8 +32,8 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollments = client.individual_enrollment.query(
             query_specification={"query": "SELECT *"}
         )
-
-        assert len(enrollments) == 0
+        with pytest.raises(StopIteration):
+            enrollments.next()
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy
@@ -51,7 +52,8 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             query_specification={"query": "SELECT *"}
         )
 
-        assert len(enrollments) == 0
+        with pytest.raises(StopIteration):
+            enrollments.next()
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy
@@ -72,4 +74,5 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             query_specification={"query": "SELECT *"}
         )
 
-        assert len(enrollments) == 0
+        with pytest.raises(StopIteration):
+            enrollments.next()
