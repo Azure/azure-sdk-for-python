@@ -147,7 +147,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         else:
             self._credential = credential # type: ignore
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
-        # overriding default 0.2 for async, since, in async, longer socket timeout interval
+        # overriding default 0.6 for async, since, in async, longer socket timeout interval
         # doesn't slow down receives when waiting on a socket to return for empty queue/entity.
         # Chose arbitrary value of 1 since it works.
         socket_timeout = kwargs.pop("socket_timeout", 1)

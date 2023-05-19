@@ -344,9 +344,6 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         #             pack('ll', sec, usec),
         #         )
         self._setup_transport()
-        # TODO: a greater timeout value is needed in long distance communication
-        #  we should either figure out a reasonable value error/dynamically adjust the timeout
-        #  0.2 second is enough for perf analysis
         self.sock.settimeout(socket_timeout_interval)  # set socket back to non-blocking mode
 
     def _get_tcp_socket_defaults(self, sock):   # pylint: disable=no-self-use
