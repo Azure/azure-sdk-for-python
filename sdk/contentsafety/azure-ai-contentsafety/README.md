@@ -132,7 +132,7 @@ Please refer to [sample data](https://github.com/Azure/azure-sdk-for-python/tree
         if e.error is not None:
             print("Error code: {}".format(e.error.code))
             print("Error message: {}".format(e.error.message))
-            return
+            raise
         print(e)
         raise
 
@@ -215,7 +215,7 @@ except HttpResponseError as e:
     if e.error is not None:
         print("Error code: {}".format(e.error.code))
         print("Error message: {}".format(e.error.message))
-        return
+        raise
     print(e)
     raise
 

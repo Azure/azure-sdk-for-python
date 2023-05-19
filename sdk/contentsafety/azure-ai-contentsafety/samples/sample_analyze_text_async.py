@@ -37,7 +37,7 @@ async def analyze_text_async():
             if e.error is not None:
                 print("Error code: {}".format(e.error.code))
                 print("Error message: {}".format(e.error.message))
-                return
+                raise
             print(e)
             raise
 
