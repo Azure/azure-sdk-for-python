@@ -241,10 +241,6 @@ def build_event_grid_reject_cloud_events_request(
         params=_params,
         headers=_headers,
         **kwargs
-    )
-
-class EventGridClientOperationsMixin(EventGridClientMixinABC):
-
     @distributed_trace
     def _publish_cloud_event(  # pylint: disable=inconsistent-return-statements,protected-access
         self,

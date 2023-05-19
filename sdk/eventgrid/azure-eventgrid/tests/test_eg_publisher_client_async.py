@@ -145,10 +145,6 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     async def test_send_cloud_event_data_dict_async(
         self, eventgrid_cloud_event_topic_endpoint
     ):
-        client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
-        cloud_event = CloudEvent(
-            source="http://samplesource.dev",
-            data={"sample": "cloudevent"},
             type="Sample.Cloud.Event",
         )
         await client.send(cloud_event)
@@ -187,10 +183,6 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     async def test_send_cloud_event_data_as_list_async(
         self, eventgrid_cloud_event_topic_endpoint
     ):
-        client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
-        cloud_event = CloudEvent(
-            source="http://samplesource.dev",
-            data="cloudevent",
             type="Sample.Cloud.Event",
         )
         await client.send([cloud_event])
@@ -201,10 +193,6 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     async def test_send_cloud_event_data_with_extensions_async(
         self, eventgrid_cloud_event_topic_endpoint
     ):
-        client = self.create_eg_publisher_client(eventgrid_cloud_event_topic_endpoint)
-        cloud_event = CloudEvent(
-            source="http://samplesource.dev",
-            data="cloudevent",
             type="Sample.Cloud.Event",
             extensions={"reasoncode": 204, "extension": "hello"},
         )
