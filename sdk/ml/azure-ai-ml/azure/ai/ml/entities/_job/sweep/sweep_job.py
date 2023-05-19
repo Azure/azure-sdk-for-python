@@ -85,13 +85,13 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :type experiment_name: str
     :param identity: Identity that training job will use while running on compute.
     :type identity: Union[
-        azure.ai.ml.ManagedIdentityConfiguration,
-        azure.ai.ml.AmlTokenConfiguration,
-        azure.ai.ml.UserIdentityConfiguration]
+        ~azure.ai.ml.ManagedIdentityConfiguration,
+        ~azure.ai.ml.AmlTokenConfiguration,
+        ~azure.ai.ml.UserIdentityConfiguration]
     :param inputs: Inputs to the command.
     :type inputs: dict
     :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: dict[str, azure.ai.ml.Output]
+    :type outputs: dict[str, ~azure.ai.ml.Output]
     :param sampling_algorithm: The hyperparameter sampling algorithm to use over the `search_space`.
         Defaults to "random".
     :type sampling_algorithm: str
@@ -104,7 +104,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :type compute: str
     :param trial: The job configuration for each trial. Each trial will be provided with a different combination
         of hyperparameter values that the system samples from the search_space.
-    :type trial: Union[azure.ai.ml.entities.CommandJob, azure.ai.ml.entities.CommandComponent]
+    :type trial: Union[~azure.ai.ml.entities.CommandJob, ~azure.ai.ml.entities.CommandComponent]
     :param early_termination: The early termination policy to use.A trial job is canceled
         when the criteria of the specified policy are met. If omitted, no early termination policy will be applied.
     :type early_termination:  Union[
@@ -114,7 +114,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :param limits: Limits for the sweep job.
     :type limits: ~azure.ai.ml.entities.SweepJobLimits
     :param queue_settings: Queue settings for the job.
-    :type queue_settings: QueueSettings
+    :type queue_settings: ~azure.ai.ml.entities.QueueSettings
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
@@ -176,13 +176,13 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         :type experiment_name: str
         :param identity: Identity that training job will use while running on compute.
         :type identity: Union[
-            azure.ai.ml.ManagedIdentityConfiguration,
-            azure.ai.ml.AmlTokenConfiguration,
-            azure.ai.ml.UserIdentityConfiguration]
+            ~azure.ai.ml.ManagedIdentityConfiguration,
+            ~azure.ai.ml.AmlTokenConfiguration,
+            ~azure.ai.ml.UserIdentityConfiguration]
         :param inputs: Inputs to the command.
         :type inputs: dict
         :param outputs: Mapping of output data bindings used in the job.
-        :type outputs: dict[str, azure.ai.ml.Output]
+        :type outputs: dict[str, ~azure.ai.ml.Output]
         :param sampling_algorithm: The hyperparameter sampling algorithm to use over the `search_space`.
             Defaults to "random".
         :type sampling_algorithm: str
@@ -195,7 +195,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         :type compute: str
         :param trial: The job configuration for each trial. Each trial will be provided with a different combination
             of hyperparameter values that the system samples from the search_space.
-        :type trial: Union[azure.ai.ml.entities.CommandJob, azure.ai.ml.entities.CommandComponent]
+        :type trial: Union[~azure.ai.ml.entities.CommandJob, ~azure.ai.ml.entities.CommandComponent]
         :param early_termination: The early termination policy to use.A trial job is canceled
             when the criteria of the specified policy are met. If omitted, no early termination policy will be applied.
         :type early_termination:  Union[
@@ -205,7 +205,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         :param limits: Limits for the sweep job.
         :type limits: ~azure.ai.ml.entities.SweepJobLimits
         :param queue_settings: Queue settings for the job.
-        :type queue_settings: QueueSettings
+        :type queue_settings: ~azure.ai.ml.entities.QueueSettings
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """

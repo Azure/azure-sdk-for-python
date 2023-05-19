@@ -14,7 +14,18 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 
 
 class SweepDistribution(ABC, RestTranslatableMixin):
-    def __init__(self, *, type: Optional[str] = None):  # pylint: disable=redefined-builtin
+    """Base class for sweep distribution configuration.
+
+    :param type: Type of distribution.
+    :type type: str
+    """
+
+    def __init__(self, *, type: Optional[str] = None) -> None:  # pylint: disable=redefined-builtin
+        """Sweep distribution configuration.
+
+        :param type: Type of distribution.
+        :type type: str
+        """
         self.type = type
 
     @classmethod
@@ -132,7 +143,7 @@ class Normal(SweepDistribution):
             :caption: Configuring Normal distributions for a hyperparameter sweep on a Command job.
     """
 
-    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs):
+    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs) -> None:
         """Normal distribution configuration.
 
         :param mu: Mean of the distribution.
