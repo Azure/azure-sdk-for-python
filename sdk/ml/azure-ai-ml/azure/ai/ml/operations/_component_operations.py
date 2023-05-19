@@ -167,8 +167,8 @@ class ComponentOperations(_ScopeDependentOperations):
             )
         )
 
-    @monitor_with_telemetry_mixin(logger, "ComponentVersion.Get", ActivityType.PUBLICAPI)
-    def get_component_version(self, name: str, version: Optional[str] = DEFAULT_COMPONENT_VERSION) -> ComponentVersion:
+    @monitor_with_telemetry_mixin(logger, "ComponentVersion.Get", ActivityType.INTERNALCALL)
+    def _get_component_version(self, name: str, version: Optional[str] = DEFAULT_COMPONENT_VERSION) -> ComponentVersion:
         """Returns ComponentVersion information about the specified component name and version.
 
         :param name: Name of the code component.
@@ -231,7 +231,7 @@ class ComponentOperations(_ScopeDependentOperations):
         if label:
             return _resolve_label_to_asset(self, name, label)
 
-        result = self.get_component_version(name, version)
+        result = self._get_component_version(name, version)
         component = Component._from_rest_object(result)
         self._resolve_dependencies_for_pipeline_component_jobs(
             component,
@@ -369,24 +369,26 @@ class ComponentOperations(_ScopeDependentOperations):
         result = None
         try:
             if not component._is_anonymous:
-                client_component_hash = component.get_component_hash(keys_to_omit=["version"])
+                client_component_hash = component._get_component_hash(keys_to_omit=["version"])
                 rest_component_resource.properties.properties["client_component_hash"] = client_component_hash
-                remote_component_version = self.get_component_version(
-                    name=name
-                )  # will raise error if not found, so need set client_component_hash in the above line first.
-                remote_component_hash = None
-                if remote_component_version:
-                    remote_component_hash = remote_component_version.properties.properties.get("client_component_hash")
-                if remote_component_hash == client_component_hash and kwargs.get("skip_if_no_change"):
-                    component.version = remote_component_version.properties.component_spec.get(
-                        "version"
-                    )  # only update the default version component instead of creating a new version component
-                    version = component.version
-                    rest_component_resource = component._to_rest_object()
-                    logger.warning(
-                        "The component is not modified compared to the default version "
-                        "and the new version component registration is skipped."
-                    )
+                if kwargs.get("skip_if_no_change"):
+                    # will raise error if not found, so need set client_component_hash in the above line first.
+                    remote_component_version = self._get_component_version(name=name)
+                    remote_component_hash = None
+                    if remote_component_version:
+                        remote_component_hash = remote_component_version.properties.properties.get(
+                            "client_component_hash"
+                        )
+                    if client_component_hash == remote_component_hash:
+                        component.version = remote_component_version.properties.component_spec.get(
+                            "version"
+                        )  # only update the default version component instead of creating a new version component
+                        version = component.version
+                        rest_component_resource = component._to_rest_object()
+                        logger.warning(
+                            "The component is not modified compared to the default version "
+                            "and the new version component registration is skipped."
+                        )
                 rest_component_resource.properties.properties["client_component_hash"] = client_component_hash
         except Exception as e:
             logger.error(f"Failed to compare and set client_component_hash, {e}")

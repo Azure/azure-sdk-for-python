@@ -49,7 +49,7 @@ def create_component(
         source=path,
         params_override=params_override,
     )
-    return client.components.create_or_update(command_component, is_anonymous=is_anonymous, kwargs=kwargs)
+    return client.components.create_or_update(command_component, is_anonymous=is_anonymous, **kwargs)
 
 
 @pytest.fixture
@@ -1031,10 +1031,7 @@ class TestComponent(AzureRecordedTestCase):
             == command_component.outputs["model_output_ipp"]._intellectual_property
         )
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="The request body has a variable parameter version and cannot match the record."
-    )
-    def test_create_component_skip_if_no_change(self, client: MLClient):
+    def test_create_component_skip_if_no_change(self, client: MLClient, randstr):
         component_operation = client._operation_container.all_operations[AzureMLResourceType.COMPONENT]
         component_name = "test_skip_if_no_change"
         try:
@@ -1045,14 +1042,17 @@ class TestComponent(AzureRecordedTestCase):
         # update  default component by current local component data.
         default_component = create_component(client, component_name=component_name, version=default_version)
 
-        new_version = time.strftime("%Y%m%d%H%M%S", time.gmtime())
+        # test component has no change and use skip_if_no_change parameter
+        new_version = randstr("component_version")
         new_component = create_component(
-            client, component_name=component_name, version=new_version, skip_no_change=True
+            client, component_name=component_name, version=new_version, skip_if_no_change=True
         )
-        assert default_component.get_component_hash(
+        assert default_component._get_component_hash(
             keys_to_omit=["creation_context"]
-        ) == new_component.get_component_hash(keys_to_omit=["creation_context"])
-        new_version = time.strftime("%Y%m%d%H%M%S", time.gmtime())
+        ) == new_component._get_component_hash(keys_to_omit=["creation_context"])
+
+        # test component has change and use skip_if_no_change parameter
+        new_version = randstr("component_version")
         params_override = [
             {"description": "description_{0}".format(new_version)},
             {"display_name": "display_name_{0}".format(new_version)},
@@ -1063,11 +1063,20 @@ class TestComponent(AzureRecordedTestCase):
             component_name=component_name,
             version=new_version,
             params_override=params_override,
-            skip_no_change=True,
+            skip_if_no_change=True,
         )
-        assert default_component.get_component_hash(
+        assert default_component._get_component_hash(
             keys_to_omit=["creation_context"]
-        ) != new_component.get_component_hash(keys_to_omit=["creation_context"])
+        ) != new_component._get_component_hash(keys_to_omit=["creation_context"])
         assert new_component.description == "description_{0}".format(new_version)
         assert new_component.display_name == "display_name_{0}".format(new_version)
         assert new_component.tags == {"tags": "tags_{0}".format(new_version)}
+        assert new_component.version == new_version
+
+        # test component has no change and not use skip_if_no_change parameter
+        new_version = randstr("component_version")
+        new_component = create_component(client, component_name=component_name, version=new_version)
+        assert default_component._get_component_hash(
+            keys_to_omit=["creation_context"]
+        ) != new_component._get_component_hash(keys_to_omit=["creation_context"])
+        assert new_component.version == new_version

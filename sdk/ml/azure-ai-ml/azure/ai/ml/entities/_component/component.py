@@ -437,9 +437,9 @@ class Component(
             component_interface_dict, keys_to_omit=["name", "id", "version"] if keys_to_omit is None else keys_to_omit
         )
 
-    def get_component_hash(self, keys_to_omit=None) -> str:
+    def _get_component_hash(self, keys_to_omit=None) -> str:
         """Return the hash of component."""
-        return self._get_anonymous_hash(keys_to_omit=keys_to_omit)
+        return self._get_anonymous_hash(keys_to_omit=keys_to_omit if keys_to_omit is not None else [])
 
     @classmethod
     def _get_resource_type(cls) -> str:
