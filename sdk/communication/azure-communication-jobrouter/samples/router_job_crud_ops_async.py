@@ -482,10 +482,6 @@ async def main():
     await sample.list_scheduled_jobs()
     await sample.clean_up()
 
-async def test():
-    sample = RouterJobSamplesAsync()
-    await sample.list_scheduled_jobs()
-
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(test())
+    loop.run_until_complete(main())
