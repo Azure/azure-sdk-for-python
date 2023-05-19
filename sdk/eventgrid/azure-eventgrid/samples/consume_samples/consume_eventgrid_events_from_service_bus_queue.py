@@ -23,14 +23,14 @@ import os
 import json
 
 # all types of EventGridEvents below produce same DeserializedEvent
-connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
-queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
+connection_str = os.environ["SERVICE_BUS_CONNECTION_STR"]
+queue_name = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 with ServiceBusClient.from_connection_string(connection_str) as sb_client:
-    payload =  sb_client.get_queue_receiver(queue_name).receive_messages()
+    payload = sb_client.get_queue_receiver(queue_name).receive_messages()
 
     ## deserialize payload into a list of typed Events
     events = [EventGridEvent.from_json(msg) for msg in payload]
 
     for event in events:
-        print(type(event)) ## EventGridEvent
+        print(type(event))  ## EventGridEvent
