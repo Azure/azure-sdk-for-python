@@ -97,9 +97,11 @@ The following section provides several code snippets covering some of the most c
 - [Analyze image](#analyze-image)
 - [Manage text blocklist](#manage-text-blocklist)
 
+Please refer to [sample data](./samples/sample_data/) for the data used here. For more samples, please refer to [samples](./samples/).
+
 ### Analyze text
 
-#### Analyze text synchronously
+#### Analyze text without blocklists
 <!-- SNIPPET:sample_analyze_text.analyze_text -->
 
 ```python
@@ -133,50 +135,6 @@ The following section provides several code snippets covering some of the most c
             return
         print(e)
         raise
-
-    if response.hate_result is not None:
-        print("Hate severity: {}".format(response.hate_result.severity))
-    if response.self_harm_result is not None:
-        print("SelfHarm severity: {}".format(response.self_harm_result.severity))
-```
-
-<!-- END SNIPPET -->
-
-#### Analyze text asynchronously
-<!-- SNIPPET:sample_analyze_text_async.analyze_text_async -->
-
-```python
-
-    import os
-    from azure.ai.contentsafety.aio import ContentSafetyClient
-    from azure.core.credentials import AzureKeyCredential
-    from azure.core.exceptions import HttpResponseError
-    from azure.ai.contentsafety.models import AnalyzeTextOptions, TextCategory
-
-    key = os.environ["CONTENT_SAFETY_KEY"]
-    endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
-    text_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_data/text.txt"))
-
-    # Create an Content Safety client
-    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
-
-    async with client:
-        # Read sample data
-        with open(text_path) as f:
-            # Build request
-            request = AnalyzeTextOptions(text=f.readline(), categories=[TextCategory.HATE, TextCategory.SELF_HARM])
-
-        # Analyze text
-        try:
-            response = await client.analyze_text(request)
-        except HttpResponseError as e:
-            print("Analyze text failed.")
-            if e.error is not None:
-                print("Error code: {}".format(e.error.code))
-                print("Error message: {}".format(e.error.message))
-                return
-            print(e)
-            raise
 
     if response.hate_result is not None:
         print("Hate severity: {}".format(response.hate_result.severity))
@@ -228,8 +186,6 @@ The following section provides several code snippets covering some of the most c
 
 ### Analyze image
 
-#### Analyze image synchronously
-
 <!-- SNIPPET:sample_analyze_image.analyze_image -->
 
 ```python
@@ -271,53 +227,6 @@ if response.sexual_result is not None:
     print("Sexual severity: {}".format(response.sexual_result.severity))
 if response.violence_result is not None:
     print("Violence severity: {}".format(response.violence_result.severity))
-```
-
-<!-- END SNIPPET -->
-
-#### Analyze image asynchronously
-<!-- SNIPPET:sample_analyze_image_async.analyze_image_async -->
-
-```python
-
-    import os
-    from azure.ai.contentsafety.aio import ContentSafetyClient
-    from azure.core.credentials import AzureKeyCredential
-    from azure.core.exceptions import HttpResponseError
-    from azure.ai.contentsafety.models import AnalyzeImageOptions, ImageData
-
-    key = os.environ["CONTENT_SAFETY_KEY"]
-    endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
-    image_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_data/image.jpg"))
-
-    # Create an Content Safety client
-    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
-
-    async with client:
-        # Build request
-        with open(image_path, "rb") as file:
-            request = AnalyzeImageOptions(image=ImageData(content=file.read()))
-
-        # Analyze image
-        try:
-            response = await client.analyze_image(request)
-        except HttpResponseError as e:
-            print("Analyze image failed.")
-            if e.error is not None:
-                print("Error code: {}".format(e.error.code))
-                print("Error message: {}".format(e.error.message))
-                return
-            print(e)
-            raise
-
-    if response.hate_result is not None:
-        print("Hate severity: {}".format(response.hate_result.severity))
-    if response.self_harm_result is not None:
-        print("SelfHarm severity: {}".format(response.self_harm_result.severity))
-    if response.sexual_result is not None:
-        print("Sexual severity: {}".format(response.sexual_result.severity))
-    if response.violence_result is not None:
-        print("Violence severity: {}".format(response.violence_result.severity))
 ```
 
 <!-- END SNIPPET -->
