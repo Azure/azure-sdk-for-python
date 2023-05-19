@@ -26,16 +26,16 @@ credential = AzureKeyCredential(topic_key)
 client = EventGridPublisherClient(endpoint, credential)
 
 # [START publish_cloud_event_dict]
-client.send([
-    {
-        "type": "Contoso.Items.ItemReceived",
-        "source": "/contoso/items",	
-        "data": {	
-            "itemSku": "Contoso Item SKU #1"	
-        },	
-        "subject": "Door1",	
-        "specversion": "1.0",	
-        "id": "randomclouduuid11"
-    }
-])
+client.send(
+    [
+        {
+            "type": "Contoso.Items.ItemReceived",
+            "source": "/contoso/items",
+            "data": {"itemSku": "Contoso Item SKU #1"},
+            "subject": "Door1",
+            "specversion": "1.0",
+            "id": "randomclouduuid11",
+        }
+    ]
+)
 # [END publish_cloud_event_dict]
