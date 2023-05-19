@@ -4,11 +4,8 @@
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added a new EventGridClient that supports `publish_cloud_events`, `receive_cloud_events`, `acknowledge_cloud_events` , `release_cloud_events`, and `reject_cloud_events` operations.
+- Added new models to support these new operations on EventGridClient.
 
 ## 4.15.0 (2023-10-12)
 
