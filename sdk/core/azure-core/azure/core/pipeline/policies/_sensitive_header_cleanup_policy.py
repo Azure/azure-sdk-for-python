@@ -23,10 +23,11 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import List, Optional, Dict
+from typing import List, Optional, Any, TypeVar
 from azure.core.pipeline import PipelineRequest
 from ._base import SansIOHTTPPolicy
 
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
     """A simple policy that cleans up sensitive headers
@@ -43,18 +44,18 @@ class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
     )
 
     def __init__(
-        self,   # pylint: disable=unused-argument
+        self,  # pylint: disable=unused-argument
         *,
         block_headers_list: Optional[List[str]] = None,
         disable_cleanup: bool = False,
-        **kwargs: Dict
+        **kwargs: Any
     ) -> None:
         self._disable_cleanup = disable_cleanup
         self._block_headers_list = (
             SensitiveHeaderCleanupPolicy.DEFAULT_SENSITIVE_HEADERS if block_headers_list is None else block_headers_list
         )
 
-    def on_request(self, request: PipelineRequest) -> None:  # pylint: disable=arguments-differ
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:  # pylint: disable=arguments-differ
         """This is executed before sending the request to the next policy.
 
         :param request: The PipelineRequest object.
