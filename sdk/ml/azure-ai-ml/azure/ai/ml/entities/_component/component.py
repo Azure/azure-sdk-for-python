@@ -425,7 +425,7 @@ class Component(
         # note that there is an issue that environment == {} will always be true, so use isinstance here
         return {k: v for k, v in init_kwargs.items() if v is not None and not (isinstance(v, dict) and not v)}
 
-    def _get_anonymous_hash(self, keys_to_omit=None) -> str:
+    def _get_anonymous_hash(self) -> str:
         """Return the name of anonymous component.
 
         same anonymous component(same code and interface) will have same name.
@@ -433,13 +433,12 @@ class Component(
         component_interface_dict = self._to_dict()
         # omit version since anonymous component's version is random guid
         # omit name since name doesn't impact component's uniqueness
-        return hash_dict(
-            component_interface_dict, keys_to_omit=["name", "id", "version"] if keys_to_omit is None else keys_to_omit
-        )
+        return self._get_component_hash(keys_to_omit=["name", "id", "version"])
 
     def _get_component_hash(self, keys_to_omit=None) -> str:
         """Return the hash of component."""
-        return self._get_anonymous_hash(keys_to_omit=keys_to_omit if keys_to_omit is not None else [])
+        component_interface_dict = self._to_dict()
+        return hash_dict(component_interface_dict, keys_to_omit=keys_to_omit)
 
     @classmethod
     def _get_resource_type(cls) -> str:
