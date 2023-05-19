@@ -458,7 +458,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             connection_verify=config.connection_verify,
             transport_type=config.transport_type,
             http_proxy=config.http_proxy,
-            socket_timeout=config.socket_timeout,
+            socket_timeout_interval=config.socket_timeout,
             **kwargs,
         )
 
@@ -560,7 +560,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 PyamqpTransport.on_attach,
                 receiver
             ),
-            socket_timeout=config.socket_timeout,
+            socket_timeout_interval=config.socket_timeout,
             **kwargs
         )
 

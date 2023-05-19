@@ -236,7 +236,7 @@ class AsyncTransport(
         host,
         *,
         port=AMQP_PORT,
-        socket_timeout=None,
+        socket_timeout_interval=None,
         ssl_opts=False,
         socket_settings=None,
         raise_on_initial_eintr=True,
@@ -250,7 +250,7 @@ class AsyncTransport(
         self._read_buffer = BytesIO()
         self.host, self.port = to_host_port(host, port)
         # not used by asyncio connections
-        self.socket_timeout = socket_timeout or SOCKET_TIMEOUT_INTERVAL
+        self.socket_timeout_interval = socket_timeout_interval or SOCKET_TIMEOUT_INTERVAL
         self.socket_settings = socket_settings
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts
@@ -427,14 +427,14 @@ class WebSocketTransportAsync(
         host,
         *,
         port=WEBSOCKET_PORT,
-        socket_timeout=None,
+        socket_timeout_interval=None,
         ssl_opts=None,
         **kwargs
     ):
         self._read_buffer = BytesIO()
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else None
-        self.socket_timeout = socket_timeout or WS_TIMEOUT_INTERVAL
+        self.socket_timeout_interval = socket_timeout_interval or WS_TIMEOUT_INTERVAL
         self._custom_endpoint = kwargs.get("custom_endpoint")
         self.host, self.port = to_host_port(host, port)
         self.ws = None
@@ -489,7 +489,7 @@ class WebSocketTransportAsync(
 
             self.ws = await self.session.ws_connect(
                 url=url,
-                timeout=self.socket_timeout,
+                timeout=self.socket_timeout_interval,
                 protocols=[AMQP_WS_SUBPROTOCOL],
                 autoclose=False,
                 proxy=http_proxy_host,
