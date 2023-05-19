@@ -130,6 +130,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     def __exit__(self, *args):
         self._container_client.close()
+        self._datalake_client_for_blob_operation.close()
         super(FileSystemClient, self).__exit__(*args)
 
     def close(self):
@@ -137,7 +138,6 @@ class FileSystemClient(StorageAccountHostsMixin):
         """ This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
-        self._container_client.close()
         self.__exit__()
 
     @classmethod

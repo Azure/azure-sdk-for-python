@@ -1,0 +1,35 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeEndpoint.cognitive.microsofttranslator.com/translate?to=zh-cn\u0026profanityAction=Marked\u0026profanityMarker=Asterisk\u0026api-version=3.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "40",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Region": "fakeregion",
+        "User-Agent": "azsdk-python-ai-translation-text/1.0.0b1 Python/3.10.10 (Windows-10-10.0.19042-SP0)"
+      },
+      "RequestBody": "[{\u0022text\u0022: \u0022shit this is fucking crazy\u0022}]",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "X-RequestId",
+          "X-Metered-Usage"
+        ],
+        "Content-Length": "123",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 03 Apr 2023 21:49:54 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Metered-Usage": "26",
+        "X-MT-System": "Microsoft",
+        "X-RequestId": "TRAN.MW1P.99BE.0403T2149.2FCA6B2"
+      },
+      "ResponseBody": "[{\u0022detectedLanguage\u0022:{\u0022language\u0022:\u0022en\u0022,\u0022score\u0022:1.0},\u0022translations\u0022:[{\u0022text\u0022:\u0022\u5988\u7684\uFF0C\u8FD9***\u592A\u75AF\u72C2\u4E86\u0022,\u0022to\u0022:\u0022zh-Hans\u0022}]}]"
+    }
+  ],
+  "Variables": {}
+}

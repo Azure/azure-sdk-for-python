@@ -10,7 +10,11 @@ from typing import Dict, Iterable, List, NewType, Any, Union, Sequence, Optional
 from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
-from ._generated.v2023_02_28_preview.models import DocumentModelDetails as ModelDetails, Error
+from ._generated.v2023_02_28_preview.models import (
+    DocumentModelDetails as ModelDetails,
+    DocumentClassifierDetails as ClassifierDetails,
+    Error
+)
 from ._generated.models import ClassifierDocumentTypeDetails
 from ._helpers import (
     adjust_value_type,
@@ -160,6 +164,8 @@ def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
         return value.value_selection_mark
     if value.type == "countryRegion":
         return value.value_country_region
+    if value.type == "boolean":
+        return value.value_boolean
     return None
 
 
@@ -1979,8 +1985,13 @@ class BoundingRegion:
         )
 
 
-class AddressValue:
-    """An address field value."""
+class AddressValue:  # pylint: disable=too-many-instance-attributes
+    """An address field value.
+
+    .. versionadded:: 2023-02-28-preview
+        The *unit*, *city_district*, *state_district*, *suburb*, *house*,
+        and *level*  properties.
+    """
 
     house_number: Optional[str]
     """House or building number."""
@@ -1999,6 +2010,19 @@ class AddressValue:
     street_address: Optional[str]
     """Street-level address, excluding city, state, countryRegion, and
      postalCode."""
+    unit: Optional[str]
+    """Apartment or office number."""
+    city_district: Optional[str]
+    """Districts or boroughs within a city, such as Brooklyn in New York City or City
+    of Westminster in London."""
+    state_district: Optional[str]
+    """Second-level administrative division used in certain locales."""
+    suburb: Optional[str]
+    """Unofficial neighborhood name, like Chinatown."""
+    house: Optional[str]
+    """Building name, such as World Trade Center."""
+    level: Optional[str]
+    """Floor number, such as 3F."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.house_number = kwargs.get("house_number", None)
@@ -2009,9 +2033,21 @@ class AddressValue:
         self.postal_code = kwargs.get("postal_code", None)
         self.country_region = kwargs.get("country_region", None)
         self.street_address = kwargs.get("street_address", None)
+        self.unit = kwargs.get("unit", None)
+        self.city_district = kwargs.get("city_district", None)
+        self.state_district = kwargs.get("state_district", None)
+        self.suburb = kwargs.get("suburb", None)
+        self.house = kwargs.get("house", None)
+        self.level = kwargs.get("level", None)
 
     @classmethod
     def _from_generated(cls, data):
+        unit = data.unit if hasattr(data, "unit") else None
+        city_district = data.city_district if hasattr(data, "city_district") else None
+        state_district = data.state_district if hasattr(data, "state_district") else None
+        suburb = data.suburb if hasattr(data, "suburb") else None
+        house = data.house if hasattr(data, "house") else None
+        level = data.level if hasattr(data, "level") else None
         return cls(
             house_number=data.house_number,
             po_box=data.po_box,
@@ -2021,13 +2057,21 @@ class AddressValue:
             postal_code=data.postal_code,
             country_region=data.country_region,
             street_address=data.street_address,
+            unit=unit,
+            city_district=city_district,
+            state_district=state_district,
+            suburb=suburb,
+            house=house,
+            level=level
         )
 
     def __repr__(self) -> str:
         return (
             f"AddressValue(house_number={self.house_number}, po_box={self.po_box}, road={self.road}, "
             f"city={self.city}, state={self.state}, postal_code={self.postal_code}, "
-            f"country_region={self.country_region}, street_address={self.street_address})"
+            f"country_region={self.country_region}, street_address={self.street_address}, "
+            f"unit={self.unit}, city_district={self.city_district}, state_district={self.state_district}, "
+            f"suburb={self.suburb}, house={self.house}, level={self.level})"
         )
 
     def to_dict(self) -> Dict:
@@ -2041,6 +2085,12 @@ class AddressValue:
             "postal_code": self.postal_code,
             "country_region": self.country_region,
             "street_address": self.street_address,
+            "unit": self.unit,
+            "city_district": self.city_district,
+            "state_district": self.state_district,
+            "suburb": self.suburb,
+            "house": self.house,
+            "level": self.level,
         }
 
     @classmethod
@@ -2060,26 +2110,41 @@ class AddressValue:
             postal_code=data.get("postal_code", None),
             country_region=data.get("country_region", None),
             street_address=data.get("street_address", None),
+            unit=data.get("unit", None),
+            city_district=data.get("city_district", None),
+            state_district=data.get("state_district", None),
+            suburb=data.get("suburb", None),
+            house=data.get("house", None),
+            level=data.get("level", None)
         )
 
 
 class CurrencyValue:
-    """A currency value element."""
+    """A currency value element.
+
+    .. versionadded:: 2023-02-28-preview
+        The *code*  property.
+    """
 
     amount: float
     """The currency amount."""
     symbol: Optional[str]
     """The currency symbol, if found."""
+    code: Optional[str]
+    """Resolved currency code (ISO 4217), if any."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.amount = kwargs.get("amount", None)
         self.symbol = kwargs.get("symbol", None)
+        self.code = kwargs.get("code", None)
 
     @classmethod
     def _from_generated(cls, data):
+        currency_code = data.currency_code if hasattr(data, "currency_code") else None
         return cls(
             amount=data.amount,
             symbol=data.currency_symbol,
+            code=currency_code
         )
 
     def __str__(self):
@@ -2088,13 +2153,14 @@ class CurrencyValue:
         return f"{self.amount}"
 
     def __repr__(self) -> str:
-        return f"CurrencyValue(amount={self.amount}, symbol={self.symbol})"
+        return f"CurrencyValue(amount={self.amount}, symbol={self.symbol}, code={self.code})"
 
     def to_dict(self) -> Dict:
         """Returns a dict representation of CurrencyValue."""
         return {
             "amount": self.amount,
             "symbol": self.symbol,
+            "code": self.code,
         }
 
     @classmethod
@@ -2108,6 +2174,7 @@ class CurrencyValue:
         return cls(
             amount=data.get("amount", None),
             symbol=data.get("symbol", None),
+            code=data.get("code", None),
         )
 
 
@@ -2167,13 +2234,17 @@ class DocumentLanguage:
 
 
 class DocumentField:
-    """An object representing the content and location of a document field value."""
+    """An object representing the content and location of a document field value.
+
+    .. versionadded:: 2023-02-28-preview
+        The `boolean` value_type and `bool` value
+    """
 
     value_type: str
     """The type of `value` found on DocumentField. Possible types include:
      "string", "date", "time", "phoneNumber", "float", "integer", "selectionMark", "countryRegion",
-     "signature", "currency", "address", "list", "dictionary"."""
-    value: Optional[Union[str, int, float, datetime.date, datetime.time,
+     "signature", "currency", "address", "boolean", "list", "dictionary"."""
+    value: Optional[Union[str, int, float, bool, datetime.date, datetime.time,
         CurrencyValue, AddressValue, Dict[str, "DocumentField"], List["DocumentField"]]]
     """The value for the recognized field. Its semantic data type is described by `value_type`.
         If the value is extracted from the document, but cannot be normalized to its type,
@@ -2448,7 +2519,11 @@ class DocumentKeyValueElement:
 
 
 class DocumentKeyValuePair:
-    """An object representing a document field with distinct field label (key) and field value (may be empty)."""
+    """An object representing a document field with distinct field label (key) and field value (may be empty).
+
+    .. versionadded:: 2023-02-28-preview
+        The *common_name*  property.
+    """
 
     key: DocumentKeyValueElement
     """Field label of the key-value pair."""
@@ -2456,14 +2531,18 @@ class DocumentKeyValuePair:
     """Field value of the key-value pair."""
     confidence: float
     """Confidence of correctly extracting the key-value pair."""
+    common_name: Optional[str]
+    """Common name of the key-value pair."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.key = kwargs.get("key", None)
         self.value = kwargs.get("value", None)
         self.confidence = kwargs.get("confidence", None)
+        self.common_name = kwargs.get("common_name", None)
 
     @classmethod
     def _from_generated(cls, key_value_pair):
+        common_name = key_value_pair.common_name if hasattr(key_value_pair, "common_name") else None
         return cls(
             key=DocumentKeyValueElement._from_generated(key_value_pair.key)
             if key_value_pair.key
@@ -2472,12 +2551,13 @@ class DocumentKeyValuePair:
             if key_value_pair.value
             else None,
             confidence=key_value_pair.confidence,
+            common_name=common_name
         )
 
     def __repr__(self) -> str:
         return (
             f"DocumentKeyValuePair(key={repr(self.key)}, value={repr(self.value)}, "
-            f"confidence={self.confidence})"
+            f"confidence={self.confidence}, common_name={self.common_name})"
         )
 
     def to_dict(self) -> Dict:
@@ -2486,6 +2566,7 @@ class DocumentKeyValuePair:
             "key": self.key.to_dict() if self.key else None,
             "value": self.value.to_dict() if self.value else None,
             "confidence": self.confidence,
+            "common_name": self.common_name,
         }
 
     @classmethod
@@ -2504,6 +2585,7 @@ class DocumentKeyValuePair:
             if data.get("value")
             else None,
             confidence=data.get("confidence", None),
+            common_name=data.get("common_name", None),
         )
 
 
@@ -2715,11 +2797,15 @@ class DocumentLine:
 
 
 class DocumentParagraph:
-    """A paragraph object generally consisting of contiguous lines with common alignment and spacing."""
+    """A paragraph object generally consisting of contiguous lines with common alignment and spacing.
+
+    .. versionadded:: 2023-02-28-preview
+        The `formulaBlock` role.
+    """
 
     role: Optional[str]
     """Semantic role of the paragraph. Known values are: "pageHeader", "pageFooter",
-     "pageNumber", "title", "sectionHeading", "footnote"."""
+     "pageNumber", "title", "sectionHeading", "footnote", "formulaBlock"."""
     content: str
     """Concatenated content of the paragraph in reading order."""
     bounding_regions: Optional[List[BoundingRegion]]
@@ -2781,8 +2867,287 @@ class DocumentParagraph:
         )
 
 
-class DocumentPage:
-    """Content and layout elements extracted from a page of the input."""
+class DocumentAnnotation:
+    """An annotation object that represents a visual annotation in the document,
+    such as checks ✓ and crosses X.
+    """
+
+    kind: str
+    """Annotation kind. Known values are: "check", "cross"."""
+    polygon: Sequence[Point]
+    """Bounding polygon of the annotation."""
+    confidence: float
+    """Confidence of correctly extracting the annotation."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.kind = kwargs.get("kind", None)
+        self.polygon = kwargs.get("polygon", None)
+        self.confidence = kwargs.get("confidence", None)
+
+    @classmethod
+    def _from_generated(cls, annotation):
+        return cls(
+            kind=annotation.kind,
+            polygon=get_polygon(annotation),
+            confidence=annotation.confidence
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentAnnotation(kind={self.kind}, polygon={self.polygon}, confidence={self.confidence})"
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of DocumentAnnotation."""
+        return {
+            "kind": self.kind,
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
+            else [],
+            "confidence": self.confidence,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "DocumentAnnotation":
+        """Converts a dict in the shape of a DocumentAnnotation to the model itself.
+
+        :param Dict data: A dictionary in the shape of DocumentAnnotation.
+        :return: DocumentAnnotation
+        :rtype: DocumentAnnotation
+        """
+        return cls(
+            kind=data.get("kind", None),
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
+            else [],
+            confidence=data.get("confidence", None),
+        )
+
+
+class DocumentBarcode:
+    """A barcode object."""
+
+    kind: str
+    """Barcode kind. Known values are "QRCode", "PDF417", "UPCA", "UPCE",
+     "Code39", "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar", "DataBarExpanded", "ITF",
+     "MicroQRCode", "Aztec", "DataMatrix", "MaxiCode"."""
+    value: str
+    """Barcode value."""
+    polygon: Sequence[Point]
+    """Bounding polygon of the barcode."""
+    span: DocumentSpan
+    """Location of the barcode in the reading order concatenated content."""
+    confidence: float
+    """Confidence of correctly extracting the barcode."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.kind = kwargs.get("kind", None)
+        self.value = kwargs.get("value", None)
+        self.polygon = kwargs.get("polygon", None)
+        self.span = kwargs.get("span", None)
+        self.confidence = kwargs.get("confidence", None)
+
+    @classmethod
+    def _from_generated(cls, barcode):
+        return cls(
+            kind=barcode.kind,
+            value=barcode.value,
+            span=DocumentSpan._from_generated(barcode.span)
+            if barcode.span
+            else None,
+            polygon=get_polygon(barcode) if barcode.polygon else [],
+            confidence=barcode.confidence
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentBarcode(kind={self.kind}, polygon={self.polygon}, confidence={self.confidence}, "
+            f"value={self.value}, span={repr(self.span)})"
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of DocumentBarcode."""
+        return {
+            "kind": self.kind,
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
+            else [],
+            "confidence": self.confidence,
+            "span": self.span.to_dict() if self.span else None,
+            "value": self.value,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "DocumentBarcode":
+        """Converts a dict in the shape of a DocumentBarcode to the model itself.
+
+        :param Dict data: A dictionary in the shape of DocumentBarcode.
+        :return: DocumentBarcode
+        :rtype: DocumentBarcode
+        """
+        return cls(
+            kind=data.get("kind", None),
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
+            else [],
+            confidence=data.get("confidence", None),
+            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
+            value=data.get("value", None),
+        )
+
+
+class DocumentFormula:
+    """A formula object."""
+
+    kind: str
+    """Formula kind. Known values are "inline", "display"."""
+    value: str
+    """LaTex expression describing the formula."""
+    polygon: Sequence[Point]
+    """Bounding polygon of the formula."""
+    span: DocumentSpan
+    """Location of the formula in the reading order concatenated content."""
+    confidence: float
+    """Confidence of correctly extracting the formula."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.kind = kwargs.get("kind", None)
+        self.value = kwargs.get("value", None)
+        self.polygon = kwargs.get("polygon", None)
+        self.span = kwargs.get("span", None)
+        self.confidence = kwargs.get("confidence", None)
+
+    @classmethod
+    def _from_generated(cls, formula):
+        return cls(
+            kind=formula.kind,
+            value=formula.value,
+            span=DocumentSpan._from_generated(formula.span)
+            if formula.span
+            else None,
+            polygon=get_polygon(formula) if formula.polygon else [],
+            confidence=formula.confidence
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentFormula(kind={self.kind}, polygon={self.polygon}, confidence={self.confidence}, "
+            f"value={self.value}, span={repr(self.span)})"
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of DocumentFormula."""
+        return {
+            "kind": self.kind,
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
+            else [],
+            "confidence": self.confidence,
+            "span": self.span.to_dict() if self.span else None,
+            "value": self.value,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "DocumentFormula":
+        """Converts a dict in the shape of a DocumentFormula to the model itself.
+
+        :param Dict data: A dictionary in the shape of DocumentFormula.
+        :return: DocumentFormula
+        :rtype: DocumentFormula
+        """
+        return cls(
+            kind=data.get("kind", None),
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
+            else [],
+            confidence=data.get("confidence", None),
+            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
+            value=data.get("value", None),
+        )
+
+
+class DocumentImage:
+    """An image object detected in the page."""
+
+    page_number: int
+    """1-based page number of the page that contains the image."""
+    polygon: Sequence[Point]
+    """Bounding polygon of the image."""
+    span: DocumentSpan
+    """Location of the image in the reading order concatenated content."""
+    confidence: float
+    """Confidence of correctly identifying the image."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.page_number = kwargs.get("page_number", None)
+        self.polygon = kwargs.get("polygon", None)
+        self.span = kwargs.get("span", None)
+        self.confidence = kwargs.get("confidence", None)
+
+    @classmethod
+    def _from_generated(cls, image):
+        return cls(
+            page_number=image.page_number,
+            span=DocumentSpan._from_generated(image.span)
+            if image.span
+            else None,
+            polygon=get_polygon(image) if image.polygon else [],
+            confidence=image.confidence
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentImage(page_number={self.page_number}, polygon={self.polygon}, confidence={self.confidence}, "
+            f"span={repr(self.span)})"
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of DocumentImage."""
+        return {
+            "page_number": self.page_number,
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
+            else [],
+            "confidence": self.confidence,
+            "span": self.span.to_dict() if self.span else None,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "DocumentImage":
+        """Converts a dict in the shape of a DocumentImage to the model itself.
+
+        :param Dict data: A dictionary in the shape of DocumentImage.
+        :return: DocumentImage
+        :rtype: DocumentImage
+        """
+        return cls(
+            page_number=data.get("page_number", None),
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
+            else [],
+            confidence=data.get("confidence", None),
+            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
+        )
+
+
+class DocumentPage:  # pylint: disable=too-many-instance-attributes
+    """Content and layout elements extracted from a page of the input.
+
+    .. versionadded:: 2023-02-28-preview
+        The *kind*, *annotations*, *barcodes*, *formulas*, and *images* properties.
+    """
 
     page_number: int
     """1-based page number in the input document."""
@@ -2806,6 +3171,17 @@ class DocumentPage:
     lines: Optional[List[DocumentLine]]
     """Extracted lines from the page, potentially containing both textual and
      visual elements."""
+    kind: str
+    """Kind of document page. Known values are: "document", "sheet", "slide",
+     "image"."""
+    annotations: List[DocumentAnnotation]
+    """Extracted annotations from the page."""
+    barcodes: List[DocumentBarcode]
+    """Extracted barcodes from the page."""
+    formulas: List[DocumentFormula]
+    """Extracted formulas from the page"""
+    images: List[DocumentImage]
+    """Extracted images from the page."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.page_number = kwargs.get("page_number", None)
@@ -2817,9 +3193,20 @@ class DocumentPage:
         self.words = kwargs.get("words", None)
         self.selection_marks = kwargs.get("selection_marks", None)
         self.lines = kwargs.get("lines", None)
+        self.kind = kwargs.get("kind", None)
+        self.annotations = kwargs.get("annotations", None)
+        self.barcodes = kwargs.get("barcodes", None)
+        self.formulas = kwargs.get("formulas", None)
+        self.images = kwargs.get("images", None)
 
     @classmethod
     def _from_generated(cls, page):
+        kind = page.kind if hasattr(page, "kind") else None
+        annotations = page.annotations if hasattr(page, "annotations") else None
+        barcodes = page.barcodes if hasattr(page, "barcodes") else None
+        formulas = page.formulas if hasattr(page, "formulas") else None
+        images = page.images if hasattr(page, "images") else None
+
         return cls(
             page_number=page.page_number,
             angle=adjust_text_angle(page.angle)
@@ -2840,6 +3227,31 @@ class DocumentPage:
             if page.selection_marks
             else [],
             spans=prepare_document_spans(page.spans),
+            kind=kind,
+            annotations=[
+                DocumentAnnotation._from_generated(annotation)
+                for annotation in annotations
+            ]
+            if annotations
+            else [],
+            barcodes=[
+                DocumentBarcode._from_generated(barcode)
+                for barcode in barcodes
+            ]
+            if barcodes
+            else [],
+            formulas=[
+                DocumentBarcode._from_generated(formula)
+                for formula in formulas
+            ]
+            if formulas
+            else [],
+            images=[
+                DocumentImage._from_generated(image)
+                for image in images
+            ]
+            if images
+            else [],
         )
 
     def __repr__(self) -> str:
@@ -2847,7 +3259,8 @@ class DocumentPage:
             f"DocumentPage(page_number={self.page_number}, angle={self.angle}, "
             f"width={self.width}, height={self.height}, unit={self.unit}, lines={repr(self.lines)}, "
             f"words={repr(self.words)}, selection_marks={repr(self.selection_marks)}, "
-            f"spans={repr(self.spans)})"
+            f"spans={repr(self.spans)}, kind={self.kind}, annotations={repr(self.annotations)}, "
+            f"barcodes={repr(self.barcodes)}, formulas={repr(self.formulas)}, images={repr(self.images)})"
         )
 
     def to_dict(self) -> Dict:
@@ -2869,6 +3282,19 @@ class DocumentPage:
             else [],
             "spans": [f.to_dict() for f in self.spans]
             if self.spans
+            else [],
+            "kind": self.kind,
+            "annotations": [f.to_dict() for f in self.annotations]
+            if self.annotations
+            else [],
+            "barcodes": [f.to_dict() for f in self.barcodes]
+            if self.barcodes
+            else [],
+            "formulas": [f.to_dict() for f in self.formulas]
+            if self.formulas
+            else [],
+            "images": [f.to_dict() for f in self.images]
+            if self.images
             else [],
         }
 
@@ -2897,6 +3323,19 @@ class DocumentPage:
             else [],
             spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
             if len(data.get("spans", [])) > 0
+            else [],
+            kind=data.get("kind", None),
+            annotations=[DocumentAnnotation.from_dict(v) for v in data.get("annotations")]  # type: ignore
+            if len(data.get("annotations", [])) > 0
+            else [],
+            barcodes=[DocumentBarcode.from_dict(v) for v in data.get("barcodes")]  # type: ignore
+            if len(data.get("barcodes", [])) > 0
+            else [],
+            formulas=[DocumentFormula.from_dict(v) for v in data.get("formulas")]  # type: ignore
+            if len(data.get("formulas", [])) > 0
+            else [],
+            images=[DocumentImage.from_dict(v) for v in data.get("images")]  # type: ignore
+            if len(data.get("images", [])) > 0
             else [],
         )
 
@@ -3251,6 +3690,9 @@ class DocumentTypeDetails:
 class DocumentModelSummary:
     """A summary of document model information including the model ID,
     its description, and when the model was created.
+
+    .. versionadded:: 2023-02-28-preview
+        The *expires_on* property.
     """
     model_id: str
     """Unique model id."""
@@ -3258,6 +3700,8 @@ class DocumentModelSummary:
     """A description for the model."""
     created_on: datetime.datetime
     """Date and time (UTC) when the model was created."""
+    expires_on: Optional[datetime.datetime]
+    """Date and time (UTC) when the document model will expire."""
     api_version: Optional[str]
     """API version used to create this model."""
     tags: Optional[Dict[str, str]]
@@ -3270,26 +3714,30 @@ class DocumentModelSummary:
         self.model_id = kwargs.get("model_id", None)
         self.description = kwargs.get("description", None)
         self.created_on = kwargs.get("created_on", None)
+        self.expires_on = kwargs.get("expires_on", None)
         self.api_version = kwargs.get("api_version", None)
         self.tags = kwargs.get("tags", None)
 
     def __repr__(self) -> str:
         return (
             f"DocumentModelSummary(model_id={self.model_id}, description={self.description}, "
-            f"created_on={self.created_on}, api_version={self.api_version}, tags={self.tags})"
+            f"created_on={self.created_on}, api_version={self.api_version}, tags={self.tags}, "
+            f"expires_on={self.expires_on})"
         )
 
     @classmethod
     def _from_generated(cls, model):
+        expires_on = model.expiration_date_time if hasattr(model, "expiration_date_time") else None
         return cls(
             model_id=model.model_id,
             description=model.description,
             created_on=model.created_date_time,
             api_version=model.api_version,
             tags=model.tags if model.tags else {},
+            expires_on=expires_on
         )
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> Dict[str, Any]:
         """Returns a dict representation of DocumentModelSummary."""
         return {
             "model_id": self.model_id,
@@ -3297,10 +3745,11 @@ class DocumentModelSummary:
             "created_on": self.created_on,
             "api_version": self.api_version,
             "tags": self.tags if self.tags else {},
+            "expires_on": self.expires_on,
         }
 
     @classmethod
-    def from_dict(cls, data: Dict) -> "DocumentModelSummary":
+    def from_dict(cls, data: Dict[str, Any]) -> "DocumentModelSummary":
         """Converts a dict in the shape of a DocumentModelSummary to the model itself.
 
         :param Dict data: A dictionary in the shape of DocumentModelSummary.
@@ -3312,7 +3761,8 @@ class DocumentModelSummary:
             description=data.get("description", None),
             created_on=data.get("created_on", None),
             api_version=data.get("api_version", None),
-            tags=data.get("tags", {})
+            tags=data.get("tags", {}),
+            expires_on=data.get("expires_on", None),
         )
 
 
@@ -3323,9 +3773,9 @@ class DocumentClassifierDetails:
     """Unique document classifier name."""
     description: Optional[str]
     """Document classifier description."""
-    created_date_time: datetime.datetime
+    created_on: datetime.datetime
     """Date and time (UTC) when the document classifier was created."""
-    expiration_date_time: Optional[datetime.datetime]
+    expires_on: Optional[datetime.datetime]
     """Date and time (UTC) when the document classifier will expire."""
     api_version: str
     """API version used to create this document classifier."""
@@ -3338,15 +3788,15 @@ class DocumentClassifierDetails:
     ) -> None:
         self.classifier_id = kwargs.get("classifier_id", None)
         self.description = kwargs.get("description", None)
-        self.created_date_time = kwargs.get("created_date_time", None)
-        self.expiration_date_time = kwargs.get("expiration_date_time", None)
+        self.created_on = kwargs.get("created_on", None)
+        self.expires_on = kwargs.get("expires_on", None)
         self.api_version = kwargs.get("api_version", None)
         self.doc_types = kwargs.get("doc_types", None)
 
     def __repr__(self) -> str:
         return (
             f"DocumentClassifierDetails(classifier_id={self.classifier_id}, description={self.description}, "
-            f"created_date_time={self.created_date_time}, expiration_date_time={self.expiration_date_time}, "
+            f"created_on={self.created_on}, expires_on={self.expires_on}, "
             f"api_version={self.api_version}, doc_types={repr(self.doc_types)})"
         )
 
@@ -3355,8 +3805,8 @@ class DocumentClassifierDetails:
         return cls(
             classifier_id=model.classifier_id,
             description=model.description,
-            created_date_time=model.created_date_time,
-            expiration_date_time=model.expiration_date_time,
+            created_on=model.created_date_time,
+            expires_on=model.expiration_date_time,
             api_version=model.api_version,
             doc_types={k: ClassifierDocumentTypeDetails._from_generated(v) for k, v in model.doc_types.items()}
             if model.doc_types else {}
@@ -3367,8 +3817,8 @@ class DocumentClassifierDetails:
         return {
             "classifier_id": self.classifier_id,
             "description": self.description,
-            "created_date_time": self.created_date_time,
-            "expiration_date_time": self.expiration_date_time,
+            "created_on": self.created_on,
+            "expires_on": self.expires_on,
             "api_version": self.api_version,
             "doc_types": {k: v.to_dict() for k, v in self.doc_types.items()} if self.doc_types else {}  # type: ignore
         }
@@ -3384,8 +3834,8 @@ class DocumentClassifierDetails:
         return cls(
             classifier_id=data.get("classifier_id", None),
             description=data.get("description", None),
-            created_date_time=data.get("created_date_time", None),
-            expiration_date_time=data.get("expiration_date_time", None),
+            created_on=data.get("created_on", None),
+            expires_on=data.get("expires_on", None),
             api_version=data.get("api_version", None),
             doc_types={k: ClassifierDocumentTypeDetails.from_dict(v)
                        for k, v in data.get("doc_types").items()}  # type: ignore
@@ -3395,7 +3845,11 @@ class DocumentClassifierDetails:
 
 
 class DocumentModelDetails(DocumentModelSummary):
-    """Document model information. Includes the doc types that the model can analyze."""
+    """Document model information. Includes the doc types that the model can analyze.
+
+    .. versionadded:: 2023-02-28-preview
+        The *expires_on* property.
+    """
 
     model_id: str
     """Unique model id."""
@@ -3403,6 +3857,8 @@ class DocumentModelDetails(DocumentModelSummary):
     """A description for the model."""
     created_on: datetime.datetime
     """Date and time (UTC) when the model was created."""
+    expires_on: Optional[datetime.datetime]
+    """Date and time (UTC) when the document model will expire."""
     api_version: Optional[str]
     """API version used to create this model."""
     tags: Optional[Dict[str, str]]
@@ -3421,11 +3877,12 @@ class DocumentModelDetails(DocumentModelSummary):
         return (
             f"DocumentModelDetails(model_id={self.model_id}, description={self.description}, "
             f"created_on={self.created_on}, api_version={self.api_version}, tags={self.tags}, "
-            f"doc_types={repr(self.doc_types)})"
+            f"doc_types={repr(self.doc_types)}, expires_on={self.expires_on})"
         )
 
     @classmethod
     def _from_generated(cls, model):
+        expires_on = model.expiration_date_time if hasattr(model, "expiration_date_time") else None
         return cls(
             model_id=model.model_id,
             description=model.description,
@@ -3433,10 +3890,11 @@ class DocumentModelDetails(DocumentModelSummary):
             api_version=model.api_version,
             tags=model.tags if model.tags else {},
             doc_types={k: DocumentTypeDetails._from_generated(v) for k, v in model.doc_types.items()}
-            if model.doc_types else {}
+            if model.doc_types else {},
+            expires_on=expires_on
         )
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> Dict[str, Any]:
         """Returns a dict representation of DocumentModelDetails."""
         return {
             "model_id": self.model_id,
@@ -3444,11 +3902,12 @@ class DocumentModelDetails(DocumentModelSummary):
             "created_on": self.created_on,
             "api_version": self.api_version,
             "tags": self.tags if self.tags else {},
-            "doc_types": {k: v.to_dict() for k, v in self.doc_types.items()} if self.doc_types else {}
+            "doc_types": {k: v.to_dict() for k, v in self.doc_types.items()} if self.doc_types else {},
+            "expires_on": self.expires_on,
         }
 
     @classmethod
-    def from_dict(cls, data: Dict) -> "DocumentModelDetails":
+    def from_dict(cls, data: Dict[str, Any]) -> "DocumentModelDetails":
         """Converts a dict in the shape of a DocumentModelDetails to the model itself.
 
         :param Dict data: A dictionary in the shape of DocumentModelDetails.
@@ -3464,6 +3923,7 @@ class DocumentModelDetails(DocumentModelSummary):
             doc_types={k: DocumentTypeDetails.from_dict(v) for k, v in data.get("doc_types").items()}  # type: ignore
             if data.get("doc_types")
             else {},
+            expires_on=data.get("expires_on", None),
         )
 
 
@@ -3597,8 +4057,12 @@ class OperationSummary:
     created, and more.
 
     Note that operation information only persists for 24 hours. If the operation was successful,
-    the model can be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
+    the model can be accessed using the :func:`~get_document_model`, :func:`~list_document_models`,
+    :func:`~get_document_classifier`, :func:`~list_document_classifiers` APIs.
     To find out why an operation failed, use :func:`~get_operation` and provide the `operation_id`.
+
+    .. versionadded:: 2023-02-28-preview
+        The `documentClassifierBuild` kind.
     """
     operation_id: str
     """Operation ID."""
@@ -3613,7 +4077,7 @@ class OperationSummary:
     """Date and time (UTC) when the operation was last updated."""
     kind: str
     """Type of operation. Possible values include: "documentModelBuild",
-        "documentModelCompose", "documentModelCopyTo"."""
+        "documentModelCompose", "documentModelCopyTo", "documentClassifierBuild"."""
     resource_location: str
     """URL of the resource targeted by this operation."""
     api_version: Optional[str]
@@ -3694,7 +4158,11 @@ class OperationDetails(OperationSummary):
     error of the operation if it has completed.
 
     Note that operation information only persists for 24 hours. If the operation was successful,
-    the model can also be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
+    the model can also be accessed using the :func:`~get_document_model`, :func:`~list_document_models`,
+    :func:`~get_document_classifier`, :func:`~list_document_classifiers` APIs.
+
+    .. versionadded:: 2023-02-28-preview
+        The `documentClassifierBuild` kind and `DocumentClassifierDetails` result.
     """
     operation_id: str
     """Operation ID."""
@@ -3709,16 +4177,15 @@ class OperationDetails(OperationSummary):
     """Date and time (UTC) when the operation was last updated."""
     kind: str
     """Type of operation. Possible values include: "documentModelBuild",
-        "documentModelCompose", "documentModelCopyTo"."""
+        "documentModelCompose", "documentModelCopyTo", "documentClassifierBuild"."""
     resource_location: str
     """URL of the resource targeted by this operation."""
     error: Optional[DocumentAnalysisError]
     """Encountered error, includes the error code, message, and details for why
         the operation failed."""
-    result: Optional[DocumentModelDetails]
-    """Operation result upon success. Returns a DocumentModelDetails which contains
-        all information about the model including the doc types
-        and fields it can analyze from documents."""
+    result: Optional[Union[DocumentModelDetails, DocumentClassifierDetails]]
+    """Operation result upon success. Returns a DocumentModelDetails or DocumentClassifierDetails
+        which contains all the information about the model."""
     api_version: Optional[str]
     """API version used to create this operation."""
     tags: Optional[Dict[str, str]]
@@ -3762,6 +4229,14 @@ class OperationDetails(OperationSummary):
         :return: OperationDetails
         :rtype: OperationDetails
         """
+
+        kind = data.get("kind", None)
+        if kind == "documentClassifierBuild":
+            result = \
+                DocumentClassifierDetails.from_dict(data.get("result")) if data.get("result") else None  # type: ignore
+        else:
+            result = \
+                DocumentModelDetails.from_dict(data.get("result")) if data.get("result") else None  # type: ignore
         return cls(
             operation_id=data.get("operation_id", None),
             status=data.get("status", None),
@@ -3770,7 +4245,7 @@ class OperationDetails(OperationSummary):
             last_updated_on=data.get("last_updated_on", None),
             kind=data.get("kind", None),
             resource_location=data.get("resource_location", None),
-            result=DocumentModelDetails.from_dict(data.get("result")) if data.get("result") else None,  # type: ignore
+            result=result,
             error=DocumentAnalysisError.from_dict(data.get("error")) if data.get("error") else None,  # type: ignore
             api_version=data.get("api_version", None),
             tags=data.get("tags", {}),
@@ -3779,6 +4254,12 @@ class OperationDetails(OperationSummary):
     @classmethod
     def _from_generated(cls, op, api_version):  # pylint: disable=arguments-differ
         deserialize = _get_deserialize(api_version)
+        if op.kind == "documentClassifierBuild":
+            result = DocumentClassifierDetails._from_generated(deserialize(ClassifierDetails, op.result)) \
+                if op.result else None
+        else:
+            result = DocumentModelDetails._from_generated(deserialize(ModelDetails, op.result)) \
+                if op.result else None
         return cls(
             operation_id=op.operation_id,
             status=op.status,
@@ -3787,8 +4268,7 @@ class OperationDetails(OperationSummary):
             last_updated_on=op.last_updated_date_time,
             kind=op.kind,
             resource_location=op.resource_location,
-            result=DocumentModelDetails._from_generated(deserialize(ModelDetails, op.result))
-            if op.result else None,
+            result=result,
             error=DocumentAnalysisError._from_generated(deserialize(Error, op.error))
             if op.error else None,
             api_version=op.api_version,
@@ -3989,34 +4469,99 @@ class CustomDocumentModelsDetails:
         )
 
 
+class QuotaDetails:
+    """Quota used, limit, and next reset date/time."""
+
+    used: int
+    """Amount of the resource quota used."""
+    quota: int
+    """Resource quota limit."""
+    quota_resets_on: datetime.datetime
+    """Date/time when the resource quota usage will be reset."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.used = kwargs.get("used", None)
+        self.quota = kwargs.get("quota", None)
+        self.quota_resets_on = kwargs.get("quota_resets_on", None)
+
+    def __repr__(self) -> str:
+        return f"QuotaDetails(used={self.used}, quota={self.quota}, quota_resets_on={self.quota_resets_on})"
+
+    @classmethod
+    def _from_generated(cls, info):
+        return cls(
+            used=info.used,
+            quota=info.quota,
+            quota_resets_on=info.quota_reset_date_time
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of QuotaDetails."""
+        return {
+                "used": self.used,
+                "quota": self.quota,
+                "quota_resets_on": self.quota_resets_on
+            }
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> "QuotaDetails":
+        """Converts a dict in the shape of a QuotaDetails to the model itself.
+
+        :param Dict data: A dictionary in the shape of QuotaDetails.
+        :return: QuotaDetails
+        :rtype: QuotaDetails
+        """
+        return cls(
+            used=data.get("used", None),
+            quota=data.get("quota", None),
+            quota_resets_on=data.get("quota_resets_on", None)
+        )
+
+
 class ResourceDetails:
-    """Details regarding the Form Recognizer resource."""
+    """Details regarding the Form Recognizer resource.
+
+    .. versionadded:: 2023-02-28-preview
+        The *custom_neural_document_model_builds* property.
+    """
 
     custom_document_models: CustomDocumentModelsDetails
     """Details regarding the custom models under the Form Recognizer resource."""
+    custom_neural_document_model_builds: QuotaDetails
 
     def __init__(
         self,
         **kwargs: Any
     ) -> None:
         self.custom_document_models = kwargs.get("custom_document_models", None)
+        self.custom_neural_document_model_builds = kwargs.get("custom_neural_document_model_builds", None)
 
     def __repr__(self) -> str:
-        return f"ResourceDetails(custom_document_models={repr(self.custom_document_models)})"
+        return f"ResourceDetails(custom_document_models={repr(self.custom_document_models)}, " \
+               f"custom_neural_document_model_builds={repr(self.custom_neural_document_model_builds)})"
 
     @classmethod
     def _from_generated(cls, info):
+        custom_neural_builds = info.custom_neural_document_model_builds \
+            if hasattr(info, "custom_neural_document_model_builds") else None
         return cls(
-            custom_document_models=CustomDocumentModelsDetails._from_generated(info)
-            if info else None,
+            custom_document_models=CustomDocumentModelsDetails._from_generated(info.custom_document_models)
+            if info.custom_document_models else None,
+            custom_neural_document_model_builds=QuotaDetails._from_generated(custom_neural_builds)
+            if custom_neural_builds else None,
         )
-
 
     def to_dict(self) -> Dict:
         """Returns a dict representation of ResourceDetails."""
         return {
                 "custom_document_models": self.custom_document_models.to_dict()
                 if self.custom_document_models
+                else None,
+                "custom_neural_document_model_builds": self.custom_neural_document_model_builds.to_dict()
+                if self.custom_neural_document_model_builds
                 else None,
             }
 
@@ -4032,6 +4577,9 @@ class ResourceDetails:
             custom_document_models=CustomDocumentModelsDetails.from_dict(
                 data.get("custom_document_models")  # type: ignore
             ) if data.get("custom_document_models") else None,
+            custom_neural_document_model_builds=QuotaDetails.from_dict(
+                data.get("custom_neural_document_model_builds")  # type: ignore
+            ) if data.get("custom_neural_document_model_builds") else None,
         )
 
 

@@ -6,19 +6,19 @@
 
 from typing import List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ClassificationModels
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ClassificationModels
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ClassificationTrainingSettings as RestClassificationTrainingSettings,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ForecastingModels
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ForecastingModels
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ForecastingTrainingSettings as RestForecastingTrainingSettings,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models import RegressionModels
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import RegressionModels
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     RegressionTrainingSettings as RestRegressionTrainingSettings,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models import TrainingSettings as RestTrainingSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import TrainingSettings as RestTrainingSettings
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_mins, to_iso_duration_format_mins
 from azure.ai.ml.constants import TabularTrainingMode
@@ -47,14 +47,23 @@ class TrainingSettings(RestTranslatableMixin):
         """TrainingSettings class for Azure Machine Learning.
 
         :param enable_onnx_compatible_models: If set to True, the model will be trained to be compatible with ONNX
+        :type enable_onnx_compatible_models: typing.Optional[bool]
         :param enable_dnn_training: If set to True,the model will use DNN training
+        :type enable_dnn_training: typing.Optional[bool]
         :param enable_model_explainability: If set to True, the model will be trained to be explainable
+        :type enable_model_explainability: typing.Optional[bool]
         :param enable_stack_ensemble: If set to True, a final ensemble model will be created using a stack of models
+        :type enable_stack_ensemble: typing.Optional[bool]
         :param enable_vote_ensemble: If set to True, a final ensemble model will be created using a voting ensemble
+        :type enable_vote_ensemble: typing.Optional[bool]
         :param stack_ensemble_settings: Settings for stack ensemble
+        :type stack_ensemble_settings: typing.Optional[azure.ai.ml.automl.StackEnsembleSettings]
         :param ensemble_model_download_timeout: Timeout for downloading ensemble models
+        :type ensemble_model_download_timeout: typing.Optional[typing.List[int]]
         :param allowed_training_algorithms: Models to train
+        :type allowed_training_algorithms: typing.Optional[typing.List[str]]
         :param blocked_training_algorithms: Models that will not be considered for training
+        :type blocked_training_algorithms: typing.Optional[typing.List[str]]
         :param training_mode: [Experimental] The training mode to use.
             The possible values are-
 
@@ -65,6 +74,7 @@ class TrainingSettings(RestTranslatableMixin):
             * auto- Currently, it is same as non_distributed. In future, this might change.
 
             Note: This parameter is in public preview and may change in future.
+        :type training_mode: typing.Optional[typing.Union[str, azure.ai.ml.constants.TabularTrainingMode]]
         """
         self.enable_onnx_compatible_models = enable_onnx_compatible_models
         self.enable_dnn_training = enable_dnn_training
@@ -79,7 +89,7 @@ class TrainingSettings(RestTranslatableMixin):
 
     @experimental
     @property
-    def training_mode(self):
+    def training_mode(self) -> Optional[TabularTrainingMode]:
         return self._training_mode
 
     @training_mode.setter
@@ -102,11 +112,11 @@ class TrainingSettings(RestTranslatableMixin):
             )
 
     @property
-    def allowed_training_algorithms(self):
+    def allowed_training_algorithms(self) -> Optional[List[str]]:
         return self._allowed_training_algorithms
 
     @property
-    def blocked_training_algorithms(self):
+    def blocked_training_algorithms(self) -> Optional[List[str]]:
         return self._blocked_training_algorithms
 
     def _to_rest_object(self) -> RestTrainingSettings:

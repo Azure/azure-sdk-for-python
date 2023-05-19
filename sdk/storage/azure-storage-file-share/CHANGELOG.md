@@ -1,14 +1,15 @@
 # Release History
 
-## 12.12.0 (Unreleased)
+## 12.13.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service version 2023-01-03.
+- Added `access_rights` property to `Handle`.
 
-### Breaking Changes
+## 12.12.0 (2023-04-12)
 
-### Bugs Fixed
-
-### Other Changes
+### Features Added
+- Stable release of features from 12.12.0b1
 
 ## 12.12.0b1 (2023-03-28)
 
@@ -16,7 +17,7 @@
 - Added support for service version 2022-11-02.
 - Added support for `TokenCredential` to be used for authentication. A `TokenCredential` can be provided for the
 `credential` parameter to any client constructor. **Note:** When using a `TokenCredential`, the new keyword parameter
-`token_intnet` is **required** and must be provided. Additionally, this form of authentication is only supported for
+`token_intent` is **required** and must be provided. Additionally, this form of authentication is only supported for
 certain operations in the Data Plane SDK.
 - Added support for `allow_trailing_dot` and `allow_source_trailing_dot` on client construction. When
 `allow_trailing_dot` is provided, the service will not silently remove any trailing `.` character from directory/file

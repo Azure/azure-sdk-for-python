@@ -7,6 +7,7 @@
 # pylint: disable=super-init-not-called, too-many-lines
 
 from enum import Enum
+from typing import Dict, List, Optional, TYPE_CHECKING
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.paging import PageIterator
@@ -22,6 +23,9 @@ from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import StaticWebsite as GeneratedStaticWebsite
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import AccessPolicy as GenAccessPolicy
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 def parse_page_list(page_list):
@@ -505,170 +509,6 @@ class ImmutabilityPolicy(DictMixin):
         immutability_policy.expiry_time = generated.properties.immutability_policy_expires_on
         immutability_policy.policy_mode = generated.properties.immutability_policy_mode
         return immutability_policy
-
-
-class BlobProperties(DictMixin):
-    """
-    Blob Properties.
-
-    :ivar str name:
-        The name of the blob.
-    :ivar str container:
-        The container in which the blob resides.
-    :ivar str snapshot:
-        Datetime value that uniquely identifies the blob snapshot.
-    :ivar ~azure.blob.storage.BlobType blob_type:
-        String indicating this blob's type.
-    :ivar dict metadata:
-        Name-value pairs associated with the blob as metadata.
-    :ivar ~datetime.datetime last_modified:
-        A datetime object representing the last time the blob was modified.
-    :ivar str etag:
-        The ETag contains a value that you can use to perform operations
-        conditionally.
-    :ivar int size:
-        The size of the content returned. If the entire blob was requested,
-        the length of blob in bytes. If a subset of the blob was requested, the
-        length of the returned subset.
-    :ivar str content_range:
-        Indicates the range of bytes returned in the event that the client
-        requested a subset of the blob.
-    :ivar int append_blob_committed_block_count:
-        (For Append Blobs) Number of committed blocks in the blob.
-    :ivar bool is_append_blob_sealed:
-        Indicate if the append blob is sealed or not.
-
-        .. versionadded:: 12.4.0
-
-    :ivar int page_blob_sequence_number:
-        (For Page Blobs) Sequence number for page blob used for coordinating
-        concurrent writes.
-    :ivar bool server_encrypted:
-        Set to true if the blob is encrypted on the server.
-    :ivar ~azure.storage.blob.CopyProperties copy:
-        Stores all the copy properties for the blob.
-    :ivar ~azure.storage.blob.ContentSettings content_settings:
-        Stores all the content settings for the blob.
-    :ivar ~azure.storage.blob.LeaseProperties lease:
-        Stores all the lease information for the blob.
-    :ivar ~azure.storage.blob.StandardBlobTier blob_tier:
-        Indicates the access tier of the blob. The hot tier is optimized
-        for storing data that is accessed frequently. The cool storage tier
-        is optimized for storing data that is infrequently accessed and stored
-        for at least a month. The archive tier is optimized for storing
-        data that is rarely accessed and stored for at least six months
-        with flexible latency requirements.
-    :ivar str rehydrate_priority:
-        Indicates the priority with which to rehydrate an archived blob
-    :ivar ~datetime.datetime blob_tier_change_time:
-        Indicates when the access tier was last changed.
-    :ivar bool blob_tier_inferred:
-        Indicates whether the access tier was inferred by the service.
-        If false, it indicates that the tier was set explicitly.
-    :ivar bool deleted:
-        Whether this blob was deleted.
-    :ivar ~datetime.datetime deleted_time:
-        A datetime object representing the time at which the blob was deleted.
-    :ivar int remaining_retention_days:
-        The number of days that the blob will be retained before being permanently deleted by the service.
-    :ivar ~datetime.datetime creation_time:
-        Indicates when the blob was created, in UTC.
-    :ivar str archive_status:
-        Archive status of blob.
-    :ivar str encryption_key_sha256:
-        The SHA-256 hash of the provided encryption key.
-    :ivar str encryption_scope:
-        A predefined encryption scope used to encrypt the data on the service. An encryption
-        scope can be created using the Management API and referenced here by name. If a default
-        encryption scope has been defined at the container, this value will override it if the
-        container-level scope is configured to allow overrides. Otherwise an error will be raised.
-    :ivar bool request_server_encrypted:
-        Whether this blob is encrypted.
-    :ivar list(~azure.storage.blob.ObjectReplicationPolicy) object_replication_source_properties:
-        Only present for blobs that have policy ids and rule ids applied to them.
-
-        .. versionadded:: 12.4.0
-
-    :ivar str object_replication_destination_policy:
-        Represents the Object Replication Policy Id that created this blob.
-
-        .. versionadded:: 12.4.0
-
-    :ivar ~datetime.datetime last_accessed_on:
-        Indicates when the last Read/Write operation was performed on a Blob.
-
-        .. versionadded:: 12.6.0
-
-    :ivar int tag_count:
-        Tags count on this blob.
-
-        .. versionadded:: 12.4.0
-
-    :ivar dict(str, str) tags:
-        Key value pair of tags on this blob.
-
-        .. versionadded:: 12.4.0
-    :ivar bool has_versions_only:
-        A true value indicates the root blob is deleted
-
-        .. versionadded:: 12.10.0
-
-    :ivar ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
-        Specifies the immutability policy of a blob, blob snapshot or blob version.
-
-        .. versionadded:: 12.10.0
-            This was introduced in API version '2020-10-02'.
-
-    :ivar bool has_legal_hold:
-        Specified if a legal hold should be set on the blob.
-        Currently this parameter of upload_blob() API is for BlockBlob only.
-
-        .. versionadded:: 12.10.0
-            This was introduced in API version '2020-10-02'.
-
-    """
-
-    def __init__(self, **kwargs):
-        self.name = kwargs.get('name')
-        self.container = None
-        self.snapshot = kwargs.get('x-ms-snapshot')
-        self.version_id = kwargs.get('x-ms-version-id')
-        self.is_current_version = kwargs.get('x-ms-is-current-version')
-        self.blob_type = BlobType(kwargs['x-ms-blob-type']) if kwargs.get('x-ms-blob-type') else None
-        self.metadata = kwargs.get('metadata')
-        self.encrypted_metadata = kwargs.get('encrypted_metadata')
-        self.last_modified = kwargs.get('Last-Modified')
-        self.etag = kwargs.get('ETag')
-        self.size = kwargs.get('Content-Length')
-        self.content_range = kwargs.get('Content-Range')
-        self.append_blob_committed_block_count = kwargs.get('x-ms-blob-committed-block-count')
-        self.is_append_blob_sealed = kwargs.get('x-ms-blob-sealed')
-        self.page_blob_sequence_number = kwargs.get('x-ms-blob-sequence-number')
-        self.server_encrypted = kwargs.get('x-ms-server-encrypted')
-        self.copy = CopyProperties(**kwargs)
-        self.content_settings = ContentSettings(**kwargs)
-        self.lease = LeaseProperties(**kwargs)
-        self.blob_tier = kwargs.get('x-ms-access-tier')
-        self.rehydrate_priority = kwargs.get('x-ms-rehydrate-priority')
-        self.blob_tier_change_time = kwargs.get('x-ms-access-tier-change-time')
-        self.blob_tier_inferred = kwargs.get('x-ms-access-tier-inferred')
-        self.deleted = False
-        self.deleted_time = None
-        self.remaining_retention_days = None
-        self.creation_time = kwargs.get('x-ms-creation-time')
-        self.archive_status = kwargs.get('x-ms-archive-status')
-        self.encryption_key_sha256 = kwargs.get('x-ms-encryption-key-sha256')
-        self.encryption_scope = kwargs.get('x-ms-encryption-scope')
-        self.request_server_encrypted = kwargs.get('x-ms-server-encrypted')
-        self.object_replication_source_properties = kwargs.get('object_replication_source_properties')
-        self.object_replication_destination_policy = kwargs.get('x-ms-or-policy-id')
-        self.last_accessed_on = kwargs.get('x-ms-last-access-time')
-        self.tag_count = kwargs.get('x-ms-tag-count')
-        self.tags = None
-        self.immutability_policy = ImmutabilityPolicy(expiry_time=kwargs.get('x-ms-immutability-policy-until-date'),
-                                                      policy_mode=kwargs.get('x-ms-immutability-policy-mode'))
-        self.has_legal_hold = kwargs.get('x-ms-legal-hold')
-        self.has_versions_only = None
 
 
 class FilteredBlob(DictMixin):
@@ -1294,6 +1134,140 @@ class ObjectReplicationPolicy(DictMixin):
     def __init__(self, **kwargs):
         self.policy_id = kwargs.pop('policy_id', None)
         self.rules = kwargs.pop('rules', None)
+
+
+class BlobProperties(DictMixin):
+    """Blob Properties."""
+
+    name: str
+    """The name of the blob."""
+    container: str
+    """The container in which the blob resides."""
+    snapshot: Optional[str]
+    """Datetime value that uniquely identifies the blob snapshot."""
+    blob_type: "BlobType"
+    """String indicating this blob's type."""
+    metadata: Optional[Dict[str, str]]
+    """Name-value pairs associated with the blob as metadata."""
+    last_modified: "datetime"
+    """A datetime object representing the last time the blob was modified."""
+    etag: str
+    """The ETag contains a value that you can use to perform operations
+        conditionally."""
+    size: int
+    """The size of the content returned. If the entire blob was requested,
+        the length of blob in bytes. If a subset of the blob was requested, the
+        length of the returned subset."""
+    content_range: Optional[str]
+    """Indicates the range of bytes returned in the event that the client
+        requested a subset of the blob."""
+    append_blob_committed_block_count: Optional[int]
+    """(For Append Blobs) Number of committed blocks in the blob."""
+    is_append_blob_sealed: Optional[bool]
+    """Indicate if the append blob is sealed or not."""
+    page_blob_sequence_number: Optional[int]
+    """(For Page Blobs) Sequence number for page blob used for coordinating
+        concurrent writes."""
+    server_encrypted: bool
+    """Set to true if the blob is encrypted on the server."""
+    copy: "CopyProperties"
+    """Stores all the copy properties for the blob."""
+    content_settings: ContentSettings
+    """Stores all the content settings for the blob."""
+    lease: LeaseProperties
+    """Stores all the lease information for the blob."""
+    blob_tier: Optional[StandardBlobTier]
+    """Indicates the access tier of the blob. The hot tier is optimized
+        for storing data that is accessed frequently. The cool storage tier
+        is optimized for storing data that is infrequently accessed and stored
+        for at least a month. The archive tier is optimized for storing
+        data that is rarely accessed and stored for at least six months
+        with flexible latency requirements."""
+    rehydrate_priority: Optional[str]
+    """Indicates the priority with which to rehydrate an archived blob"""
+    blob_tier_change_time: Optional["datetime"]
+    """Indicates when the access tier was last changed."""
+    blob_tier_inferred: Optional[bool]
+    """Indicates whether the access tier was inferred by the service.
+        If false, it indicates that the tier was set explicitly."""
+    deleted: Optional[bool]
+    """Whether this blob was deleted."""
+    deleted_time: Optional["datetime"]
+    """A datetime object representing the time at which the blob was deleted."""
+    remaining_retention_days: Optional[int]
+    """The number of days that the blob will be retained before being permanently deleted by the service."""
+    creation_time: "datetime"
+    """Indicates when the blob was created, in UTC."""
+    archive_status: Optional[str]
+    """Archive status of blob."""
+    encryption_key_sha256: Optional[str]
+    """The SHA-256 hash of the provided encryption key."""
+    encryption_scope: Optional[str]
+    """A predefined encryption scope used to encrypt the data on the service. An encryption
+        scope can be created using the Management API and referenced here by name. If a default
+        encryption scope has been defined at the container, this value will override it if the
+        container-level scope is configured to allow overrides. Otherwise an error will be raised."""
+    request_server_encrypted: Optional[bool]
+    """Whether this blob is encrypted."""
+    object_replication_source_properties: Optional[List[ObjectReplicationPolicy]]
+    """Only present for blobs that have policy ids and rule ids applied to them."""
+    object_replication_destination_policy: Optional[str]
+    """Represents the Object Replication Policy Id that created this blob."""
+    last_accessed_on: Optional["datetime"]
+    """Indicates when the last Read/Write operation was performed on a Blob."""
+    tag_count: Optional[int]
+    """Tags count on this blob."""
+    tags: Optional[Dict[str, str]]
+    """Key value pair of tags on this blob."""
+    has_versions_only: Optional[bool]
+    """A true value indicates the root blob is deleted"""
+    immutability_policy: ImmutabilityPolicy
+    """Specifies the immutability policy of a blob, blob snapshot or blob version."""
+    has_legal_hold: Optional[bool]
+    """Specified if a legal hold should be set on the blob.
+        Currently this parameter of upload_blob() API is for BlockBlob only."""
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('name')
+        self.container = None
+        self.snapshot = kwargs.get('x-ms-snapshot')
+        self.version_id = kwargs.get('x-ms-version-id')
+        self.is_current_version = kwargs.get('x-ms-is-current-version')
+        self.blob_type = BlobType(kwargs['x-ms-blob-type']) if kwargs.get('x-ms-blob-type') else None
+        self.metadata = kwargs.get('metadata')
+        self.encrypted_metadata = kwargs.get('encrypted_metadata')
+        self.last_modified = kwargs.get('Last-Modified')
+        self.etag = kwargs.get('ETag')
+        self.size = kwargs.get('Content-Length')
+        self.content_range = kwargs.get('Content-Range')
+        self.append_blob_committed_block_count = kwargs.get('x-ms-blob-committed-block-count')
+        self.is_append_blob_sealed = kwargs.get('x-ms-blob-sealed')
+        self.page_blob_sequence_number = kwargs.get('x-ms-blob-sequence-number')
+        self.server_encrypted = kwargs.get('x-ms-server-encrypted')
+        self.copy = CopyProperties(**kwargs)
+        self.content_settings = ContentSettings(**kwargs)
+        self.lease = LeaseProperties(**kwargs)
+        self.blob_tier = kwargs.get('x-ms-access-tier')
+        self.rehydrate_priority = kwargs.get('x-ms-rehydrate-priority')
+        self.blob_tier_change_time = kwargs.get('x-ms-access-tier-change-time')
+        self.blob_tier_inferred = kwargs.get('x-ms-access-tier-inferred')
+        self.deleted = False
+        self.deleted_time = None
+        self.remaining_retention_days = None
+        self.creation_time = kwargs.get('x-ms-creation-time')
+        self.archive_status = kwargs.get('x-ms-archive-status')
+        self.encryption_key_sha256 = kwargs.get('x-ms-encryption-key-sha256')
+        self.encryption_scope = kwargs.get('x-ms-encryption-scope')
+        self.request_server_encrypted = kwargs.get('x-ms-server-encrypted')
+        self.object_replication_source_properties = kwargs.get('object_replication_source_properties')
+        self.object_replication_destination_policy = kwargs.get('x-ms-or-policy-id')
+        self.last_accessed_on = kwargs.get('x-ms-last-access-time')
+        self.tag_count = kwargs.get('x-ms-tag-count')
+        self.tags = None
+        self.immutability_policy = ImmutabilityPolicy(expiry_time=kwargs.get('x-ms-immutability-policy-until-date'),
+                                                      policy_mode=kwargs.get('x-ms-immutability-policy-mode'))
+        self.has_legal_hold = kwargs.get('x-ms-legal-hold')
+        self.has_versions_only = None
 
 
 class ObjectReplicationRule(DictMixin):

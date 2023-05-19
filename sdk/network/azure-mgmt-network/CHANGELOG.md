@@ -1,5 +1,11 @@
 # Release History
 
+## 23.0.1 (2023-04-26)
+
+### Bugs Fixed
+
+  - Fix calling failure for those operations which could be called by client directly #30057
+
 ## 23.0.0 (2023-03-29)
 
 ### Other Changes

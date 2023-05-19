@@ -5,6 +5,7 @@ include =
 omit =
 	*/test*
 	env*
+	*/_serialization.py
 
 [paths]
 source =
@@ -19,3 +20,7 @@ exclude_lines =
 	if headers:
 	if response.status_code not in
 	if TYPE_CHECKING:
+omit =
+	*/test*
+	env*
+	*/_serialization.py

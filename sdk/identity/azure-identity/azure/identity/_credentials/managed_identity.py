@@ -31,10 +31,20 @@ class ManagedIdentityCredential:
         or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
         learn what values it expects.
     :paramtype identity_config: Mapping[str, str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_managed_identity_credential]
+            :end-before: [END create_managed_identity_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create a ManagedIdentityCredential.
     """
 
     def __init__(self, **kwargs: Any) -> None:
         self._credential = None  # type: Optional[TokenCredential]
+        exclude_workload_identity = kwargs.pop("_exclude_workload_identity_credential", False)
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
             if os.environ.get(EnvironmentVariables.IDENTITY_HEADER):
                 if os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT):
@@ -63,7 +73,8 @@ class ManagedIdentityCredential:
                 from .cloud_shell import CloudShellCredential
 
                 self._credential = CloudShellCredential(**kwargs)
-        elif all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
+        elif all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS)\
+                and not exclude_workload_identity:
             _LOGGER.info("%s will use workload identity", self.__class__.__name__)
             from .workload_identity import WorkloadIdentityCredential
 

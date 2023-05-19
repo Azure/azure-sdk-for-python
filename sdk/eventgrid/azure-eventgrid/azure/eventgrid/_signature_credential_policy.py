@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------
 
 from typing import Any, TYPE_CHECKING
-import six
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
@@ -27,7 +26,7 @@ class EventGridSasCredentialPolicy(SansIOHTTPPolicy):
         self._credential = credential
         if not name:
             raise ValueError("name can not be None or empty")
-        if not isinstance(name, six.string_types):
+        if not isinstance(name, str):
             raise TypeError("name must be a string.")
         self._name = name
 

@@ -38,9 +38,12 @@ def sample_manage_models():
     document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     account_details = document_model_admin_client.get_resource_details()
-    print("Our resource has {} custom models, and we can have at most {} custom models\n".format(
+    print("Our resource has {} custom models, and we can have at most {} custom models".format(
         account_details.custom_document_models.count, account_details.custom_document_models.limit
     ))
+    neural_models = account_details.custom_neural_document_model_builds
+    print(f"The quota limit for custom neural document models is {neural_models.quota} and the resource has"
+          f"used {neural_models.used}. The resource quota will reset on {neural_models.quota_resets_on}")
     # [END get_resource_details]
 
     # Next, we get a paged list of all of our custom models
@@ -61,6 +64,7 @@ def sample_manage_models():
     print("\nModel ID: {}".format(my_model.model_id))
     print("Description: {}".format(my_model.description))
     print("Model created on: {}".format(my_model.created_on))
+    print("Model expires on: {}".format(my_model.expires_on))
     # [END get_document_model]
 
     # Finally, we will delete this model by ID
