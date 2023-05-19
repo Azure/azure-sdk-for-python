@@ -97,7 +97,7 @@ The following section provides several code snippets covering some of the most c
 - [Analyze image](#analyze-image)
 - [Manage text blocklist](#manage-text-blocklist)
 
-Please refer to [sample data](./samples/sample_data/) for the data used here. For more samples, please refer to [samples](./samples/).
+Please refer to [sample data](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentsafety/azure-ai-contentsafety/samples/sample_data) for the data used here. For more samples, please refer to [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentsafety/azure-ai-contentsafety/samples).
 
 ### Analyze text
 
