@@ -1,5 +1,11 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
 import os
 import pytest
+import inspect
 from datetime import timedelta
 
 from azure.communication.callautomation import CallAutomationClient, CallConnectionClient, CallInvite, FileSource
@@ -14,17 +20,21 @@ play_source_uri = 'https://acstestapp1.azurewebsites.net/audio/bot-hold-music-1.
 class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase):
     def setUp(self):
         super(CallMediaClientAsyncAutomatedLiveTest, self).setUp()
-        self.connection_str = os.environ.get('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING', 'endpoint=https://REDACTED.communication.azure.com/;accesskey=QWNjZXNzS2V5')
+        self.connection_str = os.environ.get('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING', 'endpoint=https://sanitized.communication.azure.com/;accesskey=REDACTED')
         self.identity_client = CommunicationIdentityClient.from_connection_string(self.connection_str)
         endpoint, _ = parse_connection_str(self.connection_str)
         self.endpoint = endpoint
+        self.test_name = ''
     
     def tearDown(self):
         super(CallMediaClientAsyncAutomatedLiveTest, self).tearDown()
+        self.persist_events(self.test_name)
 
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_play_media_in_a_call(self):
+        self.test_name = inspect.currentframe().f_code.co_name
+        self.load_persisted_events(self.test_name)
         call_connection_list = []
         print("starting test")
         try:

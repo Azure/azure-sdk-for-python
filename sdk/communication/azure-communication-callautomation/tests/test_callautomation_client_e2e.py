@@ -1,5 +1,11 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
 import os
 import pytest
+import inspect
 from datetime import timedelta
 
 from azure.communication.callautomation import CallAutomationClient, CallConnectionClient, CallInvite
@@ -13,18 +19,22 @@ from call_automation_automated_live_test_base import CallAutomationAutomatedLive
 class CallAutomationClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase):
     def setUp(self):
         super(CallAutomationClientAsyncAutomatedLiveTest, self).setUp()
-        self.connection_str = os.environ.get('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING', 'endpoint=https://REDACTED.communication.azure.com/;accesskey=QWNjZXNzS2V5')
+        self.connection_str = os.environ.get('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING', 'endpoint=https://sanitized.communication.azure.com/;accesskey=QWNjZXNzS2V5')
         self.identity_client = CommunicationIdentityClient.from_connection_string(self.connection_str)
         endpoint, _ = parse_connection_str(self.connection_str)
         self.endpoint = endpoint
+        self.test_name = ''
     
     def tearDown(self):
         super(CallAutomationClientAsyncAutomatedLiveTest, self).tearDown()
+        self.persist_events(self.test_name)
 
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_VOIP_call_and_answer_then_hangup(self):
         call_connection_list = []
+        self.test_name = inspect.currentframe().f_code.co_name
+        self.load_persisted_events(self.test_name)
         print("starting test")
         try:
             # create caller and receiver
