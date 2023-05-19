@@ -65,7 +65,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword float socket_timeout_interval: The time in seconds that the underlying socket in the transport should
      wait when reading or writing data before timing out. The default value is 0.2 (for transport type Amqp),
-     and 1 for transport type for AmqpOverWebsocket.
+     and 1 for transport type AmqpOverWebsocket.
     """
 
     def __init__(self, endpoint, **kwargs):  # pylint:disable=too-many-statements
