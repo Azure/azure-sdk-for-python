@@ -1,0 +1,63 @@
+name: default-momo-schedule
+display_name: Loan Approval model monitoring
+description: Loan approval model monitoring setup with minimal configurations
+
+trigger:
+  type: recurrence
+  frequency: week
+  time_zone: utc
+  interval: 1
+  schedule:
+    hours:
+      - 22
+      - 20
+    minutes:
+      - 0
+      - 30
+    week_days:
+      - monday
+      - tuesday
+      - wednesday
+      - thursday
+      - friday
+
+create_monitor:
+  compute:
+    instance_type: "standard_e8s_v3"
+    runtime_version: "3.2"
+  monitoring_target:
+    endpoint_deployment_id: azureml:iris-endpoint:my-iris-deployment
+  monitoring_signals:
+    data-drift-signal:
+      type: data_drift
+      metric_thresholds:
+        - applicable_feature_type: numerical
+          metric_name: jensen_shannon_distance
+          threshold: 0.5
+        - applicable_feature_type: categorical
+          metric_name: pearsons_chi_squared_test
+          threshold: 0.2
+      data_segment:
+        feature_name: foo
+        feature_values:
+          - a
+          - b
+          - c
+    data-quality-signal:
+      type: data_quality
+      metric_thresholds:
+        - applicable_feature_type: numerical
+          metric_name: null_value_rate
+          threshold: 0.5
+        - applicable_feature_type: categorical
+          metric_name: out_of_bounds_rate
+          threshold: 0.2
+    prediction-drift-signal:
+      type: prediction_drift
+      metric_thresholds:
+        - applicable_feature_type: numerical
+          metric_name: jensen_shannon_distance
+          threshold: 0.5
+        - applicable_feature_type: categorical
+          metric_name: population_stability_index
+          threshold: 0.2

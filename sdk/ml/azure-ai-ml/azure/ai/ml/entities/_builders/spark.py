@@ -5,6 +5,7 @@
 
 import copy
 import logging
+import re
 from enum import Enum
 from os import PathLike, path
 from pathlib import Path
@@ -16,7 +17,7 @@ from ..._restclient.v2023_04_01_preview.models import JobBase as JobBaseData
 from ..._restclient.v2023_04_01_preview.models import SparkJob as RestSparkJob
 from ..._schema import NestedField, PathAwareSchema, UnionField
 from ..._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
-from ..._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
+from ..._schema.job.parameterized_spark import CONF_KEY_MAP
 from ..._schema.job.spark_job import SparkJobSchema
 from ..._utils.utils import is_url
 from ...constants._common import (
@@ -304,13 +305,6 @@ class Spark(BaseNode, SparkJobEntryMixin):
         if "entry" in obj and obj["entry"]:
             obj["entry"] = SparkJobEntry._from_rest_object(obj["entry"])
         if "conf" in obj and obj["conf"]:
-            identify_schema = UnionField(
-                [
-                    NestedField(SparkConfSchema, unknown=INCLUDE),
-                ]
-            )
-            obj["conf"] = identify_schema._deserialize(value=obj["conf"], attr=None, data=None)
-
             # get conf setting value from conf
             for field_name, _ in CONF_KEY_MAP.items():
                 value = obj["conf"].get(field_name, None)
@@ -333,13 +327,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         from .spark_func import spark
 
         rest_spark_job: RestSparkJob = obj.properties
-        identify_schema = UnionField(
-            [
-                NestedField(SparkConfSchema, unknown=INCLUDE),
-            ]
-        )
         rest_spark_conf = copy.copy(rest_spark_job.conf) or {}
-        rest_spark_conf = identify_schema._deserialize(value=rest_spark_conf, attr=None, data=None)
 
         spark_job = spark(
             name=obj.name,
@@ -479,10 +467,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
                 message=SPARK_ENVIRONMENT_WARNING_MESSAGE,
             )
         result.merge_with(self._validate_entry_exist(raise_error=False))
-        try:
-            self._validate_fields()
-        except ValidationException as e:
-            result.append_error(yaml_path="*", message=str(e))
+        result.merge_with(self._validate_fields())
         return result
 
     def _validate_entry_exist(self, raise_error=False) -> MutableValidationResult:
@@ -521,14 +506,42 @@ class Spark(BaseNode, SparkJobEntryMixin):
                     )
         return validation_result.try_raise(error_target=self._get_validation_error_target(), raise_error=raise_error)
 
-    def _validate_fields(self) -> None:
-        _validate_compute_or_resources(self.compute, self.resources)
-        _validate_input_output_mode(self.inputs, self.outputs)
-        _validate_spark_configurations(self)
-        self._validate_entry()
+    def _validate_fields(self) -> MutableValidationResult:
+        validation_result = self._create_empty_validation_result()
+        try:
+            _validate_compute_or_resources(self.compute, self.resources)
+        except ValidationException as e:
+            validation_result.append_error(message=str(e), yaml_path="resources")
+            validation_result.append_error(message=str(e), yaml_path="compute")
+
+        try:
+            _validate_input_output_mode(self.inputs, self.outputs)
+        except ValidationException as e:
+            msg = str(e)
+            m = re.match(r"(Input|Output) '(\w+)'", msg)
+            if m:
+                io_type, io_name = m.groups()
+                if io_type == "Input":
+                    validation_result.append_error(message=msg, yaml_path=f"inputs.{io_name}")
+                else:
+                    validation_result.append_error(message=msg, yaml_path=f"outputs.{io_name}")
+
+        try:
+            _validate_spark_configurations(self)
+        except ValidationException as e:
+            validation_result.append_error(message=str(e), yaml_path="conf")
+
+        try:
+            self._validate_entry()
+        except ValidationException as e:
+            validation_result.append_error(message=str(e), yaml_path="entry")
 
         if self.args:
-            validate_inputs_for_args(self.args, self.inputs)
+            try:
+                validate_inputs_for_args(self.args, self.inputs)
+            except ValidationException as e:
+                validation_result.append_error(message=str(e), yaml_path="args")
+        return validation_result
 
     def __call__(self, *args, **kwargs) -> "Spark":
         """Call Spark as a function will return a new instance each time."""

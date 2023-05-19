@@ -8,15 +8,19 @@ import asyncio
 import logging
 from typing import Iterable, Union, Optional, Any, AnyStr, List, TYPE_CHECKING, cast
 
-from azure.core.tracing import AbstractSpan
-
 from .._common import EventData, EventDataBatch
 from .._producer import _set_partition_key
 from .._utils import (
     create_properties,
+    transform_outbound_single_message,
+)
+from .._tracing import (
     trace_message,
     send_context_manager,
-    transform_outbound_single_message,
+    get_span_links_from_batch,
+    get_span_link_from_message,
+    is_tracing_enabled,
+    TraceAttributes,
 )
 from .._constants import TIMEOUT_SYMBOL
 from ..amqp import AmqpAnnotatedMessage
@@ -171,7 +175,6 @@ class EventHubProducer(
         event_data: Union[
             EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]
         ],
-        span: Optional[AbstractSpan],
         partition_key: Optional[AnyStr],
     ) -> Union[EventData, EventDataBatch]:
         if isinstance(event_data, (EventData, AmqpAnnotatedMessage)):
@@ -187,7 +190,10 @@ class EventHubProducer(
             wrapper_event_data._message = trace_message(    # pylint: disable=protected-access
                 wrapper_event_data._message,    # pylint: disable=protected-access
                 amqp_transport=self._amqp_transport,
-                parent_span=span
+                additional_attributes={
+                    TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE: self._client._address.hostname,  # pylint: disable=protected-access
+                    TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self._client._address.path,  # pylint: disable=protected-access
+                }
             )
         else:
             if isinstance(
@@ -259,27 +265,27 @@ class EventHubProducer(
         """
         # Tracing code
         async with self._lock:
-            with send_context_manager() as child:
-                self._check_closed()
-                wrapper_event_data = self._wrap_eventdata(
-                    event_data, child, partition_key
-                )
+            self._check_closed()
+            wrapper_event_data = self._wrap_eventdata(
+                event_data, partition_key
+            )
 
-                if not wrapper_event_data:
-                    return
+            if not wrapper_event_data:
+                return
 
-                self._unsent_events = [
-                    wrapper_event_data._message  # pylint: disable=protected-access
-                ]
-
-                if child:
-                    self._client._add_span_request_attributes(  # pylint: disable=protected-access
-                        child
+            links = []
+            if is_tracing_enabled():
+                if isinstance(wrapper_event_data, EventDataBatch):
+                    links = get_span_links_from_batch(wrapper_event_data)
+                else:
+                    link = get_span_link_from_message(
+                        wrapper_event_data._message  # pylint: disable=protected-access
                     )
+                    links = [link] if link else []
 
-                await self._send_event_data_with_retry(
-                    timeout=timeout
-                )  # pylint:disable=unexpected-keyword-arg
+            self._unsent_events = [wrapper_event_data._message] # pylint: disable=protected-access
+            with send_context_manager(self._client, links=links):
+                await self._send_event_data_with_retry(timeout=timeout)
 
     async def close(self) -> None:
         """
