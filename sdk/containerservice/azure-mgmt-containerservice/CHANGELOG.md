@@ -1,5 +1,11 @@
 # Release History
 
+## 23.0.0 (2023-05-16)
+
+### Breaking Changes
+
+  - Model ContainerServiceNetworkProfile no longer has parameter docker_bridge_cidr
+
 ## 22.1.0 (2023-04-19)
 
 ### Features Added

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b3 (2023-05-10)
+## 1.0.0b3 (2023-05-17)
 
 ### Features Added
 - Added the ability specify the API version by an optional `api_version` keyword parameter.

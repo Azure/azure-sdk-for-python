@@ -1124,14 +1124,12 @@ class ContinuousDtmfRecognitionStopped(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     """
 
@@ -1158,14 +1156,12 @@ class ContinuousDtmfRecognitionStopped(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super().__init__(**kwargs)
@@ -1183,12 +1179,13 @@ class ContinuousDtmfRecognitionToneFailed(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
     """
 
     _attribute_map = {
@@ -1196,6 +1193,7 @@ class ContinuousDtmfRecognitionToneFailed(_serialization.Model):
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "operation_context": {"key": "operationContext", "type": "str"},
     }
 
     def __init__(
@@ -1205,6 +1203,7 @@ class ContinuousDtmfRecognitionToneFailed(_serialization.Model):
         server_call_id: Optional[str] = None,
         correlation_id: Optional[str] = None,
         result_information: Optional["_models.ResultInformation"] = None,
+        operation_context: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1212,18 +1211,20 @@ class ContinuousDtmfRecognitionToneFailed(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
+         request to the response event.
+        :paramtype operation_context: str
         """
         super().__init__(**kwargs)
         self.call_connection_id = call_connection_id
         self.server_call_id = server_call_id
         self.correlation_id = correlation_id
         self.result_information = result_information
+        self.operation_context = operation_context
 
 
 class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
@@ -1238,9 +1239,11 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId or
      skype chain ID.
     :vartype correlation_id: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
     """
 
     _attribute_map = {
@@ -1249,6 +1252,7 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "operation_context": {"key": "operationContext", "type": "str"},
     }
 
     def __init__(
@@ -1259,6 +1263,7 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
         server_call_id: Optional[str] = None,
         correlation_id: Optional[str] = None,
         result_information: Optional["_models.ResultInformation"] = None,
+        operation_context: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1271,9 +1276,11 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
         :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId or
          skype chain ID.
         :paramtype correlation_id: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
+         request to the response event.
+        :paramtype operation_context: str
         """
         super().__init__(**kwargs)
         self.tone_info = tone_info
@@ -1281,6 +1288,7 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
         self.server_call_id = server_call_id
         self.correlation_id = correlation_id
         self.result_information = result_information
+        self.operation_context = operation_context
 
 
 class CreateCallRequest(_serialization.Model):
@@ -1844,8 +1852,7 @@ class PlayCanceled(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
@@ -1873,8 +1880,7 @@ class PlayCanceled(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
@@ -1894,14 +1900,12 @@ class PlayCompleted(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     """
 
@@ -1928,14 +1932,12 @@ class PlayCompleted(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super().__init__(**kwargs)
@@ -1953,14 +1955,12 @@ class PlayFailed(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     """
 
@@ -1987,14 +1987,12 @@ class PlayFailed(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super().__init__(**kwargs)
@@ -2156,8 +2154,7 @@ class RecognizeCanceled(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
@@ -2185,8 +2182,7 @@ class RecognizeCanceled(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
@@ -2208,14 +2204,12 @@ class RecognizeCompleted(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     :ivar recognition_type: Determines the sub-type of the recognize operation.
      In case of cancel operation the this field is not set and is returned empty. Known values are:
@@ -2268,14 +2262,12 @@ class RecognizeCompleted(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         :keyword recognition_type: Determines the sub-type of the recognize operation.
          In case of cancel operation the this field is not set and is returned empty. Known values are:
@@ -2309,14 +2301,12 @@ class RecognizeFailed(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     """
 
@@ -2343,14 +2333,12 @@ class RecognizeFailed(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super().__init__(**kwargs)
@@ -2513,8 +2501,7 @@ class RecordingStateChanged(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar recording_id: The call recording id.
     :vartype recording_id: str
@@ -2552,8 +2539,7 @@ class RecordingStateChanged(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword state: Known values are: "active" and "inactive".
         :paramtype state: str or ~azure.communication.callautomation.models.RecordingState
@@ -2926,14 +2912,12 @@ class SendDtmfCompleted(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     """
 
@@ -2960,14 +2944,12 @@ class SendDtmfCompleted(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super().__init__(**kwargs)
@@ -2985,14 +2967,12 @@ class SendDtmfFailed(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     """
 
@@ -3019,14 +2999,12 @@ class SendDtmfFailed(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super().__init__(**kwargs)
@@ -3348,8 +3326,6 @@ class ToneInfo(_serialization.Model):
     :ivar tone: Required. Known values are: "zero", "one", "two", "three", "four", "five", "six",
      "seven", "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
     :vartype tone: str or ~azure.communication.callautomation.models.DtmfTone
-    :ivar participant_id: The id of participant.
-    :vartype participant_id: str
     """
 
     _validation = {
@@ -3360,17 +3336,9 @@ class ToneInfo(_serialization.Model):
     _attribute_map = {
         "sequence_id": {"key": "sequenceId", "type": "int"},
         "tone": {"key": "tone", "type": "str"},
-        "participant_id": {"key": "participantId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        sequence_id: int,
-        tone: Union[str, "_models.DtmfTone"],
-        participant_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, sequence_id: int, tone: Union[str, "_models.DtmfTone"], **kwargs: Any) -> None:
         """
         :keyword sequence_id: The sequence id which can be used to determine if the same tone was
          played multiple times or if any tones were missed. Required.
@@ -3378,13 +3346,10 @@ class ToneInfo(_serialization.Model):
         :keyword tone: Required. Known values are: "zero", "one", "two", "three", "four", "five",
          "six", "seven", "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
         :paramtype tone: str or ~azure.communication.callautomation.models.DtmfTone
-        :keyword participant_id: The id of participant.
-        :paramtype participant_id: str
         """
         super().__init__(**kwargs)
         self.sequence_id = sequence_id
         self.tone = tone
-        self.participant_id = participant_id
 
 
 class TransferCallResponse(_serialization.Model):

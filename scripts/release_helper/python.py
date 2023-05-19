@@ -92,7 +92,8 @@ class IssueProcessPython(IssueProcess):
                                            pipeline_url=release_pipeline_url,
                                            spec_readme=self.readme_link + '/readme.md',
                                            python_tag=self.python_tag,
-                                           rest_repo_hash=self.rest_repo_hash
+                                           rest_repo_hash=self.rest_repo_hash,
+                                           target_date=self.target_date,
                                            )
                     if res_run:
                         self.log(f'{issue_number} run pipeline successfully')

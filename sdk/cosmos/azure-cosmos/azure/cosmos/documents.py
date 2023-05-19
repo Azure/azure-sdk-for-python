@@ -358,7 +358,7 @@ class ConnectionPolicy(object):  # pylint: disable=too-many-instance-attributes
         int or azure.cosmos.ConnectionRetryPolicy or urllib3.util.retry
     """
 
-    __defaultRequestTimeout = 60000  # milliseconds
+    __defaultRequestTimeout = 60  # seconds
 
     def __init__(self):
         self.RequestTimeout = self.__defaultRequestTimeout
