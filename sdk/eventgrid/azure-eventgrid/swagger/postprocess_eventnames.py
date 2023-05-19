@@ -6,6 +6,7 @@ from urllib.request import urlopen
 from azure.eventgrid._generated import models
 from _constants import files, backward_compat, additional_events, EXCEPTIONS
 
+
 def extract(definitions):
     if not definitions:
         return
@@ -27,8 +28,11 @@ def extract(definitions):
                     sys.exit(1)
     return tups
 
+
 def generate_enum_content(tuples):
-    print("# These names at the top are 'corrected' aliases of duplicate values that appear below, which are")
+    print(
+        "# These names at the top are 'corrected' aliases of duplicate values that appear below, which are"
+    )
     print("# deprecated but maintained for backwards compatibility.")
     for k, v in backward_compat.items():
         print(k + " = '" + v + "'\n")
@@ -38,10 +42,11 @@ def generate_enum_content(tuples):
     for k, v in additional_events.items():
         print(k + " = '" + v + "'\n")
 
+
 definitions = {}
 for fp in files:
     data = json.loads(urlopen(fp).read())
-    definitions.update(data.get('definitions'))
+    definitions.update(data.get("definitions"))
 tup_list = extract(definitions)
 tup_list.sort(key=lambda tup: tup[0])
 generate_enum_content(tup_list)
