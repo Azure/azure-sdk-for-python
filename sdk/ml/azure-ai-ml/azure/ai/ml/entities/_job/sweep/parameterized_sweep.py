@@ -83,7 +83,8 @@ class ParameterizedSweep:
         :param early_termination: Early termination policy for sweep job.
         :type early_termination: EarlyTerminationPolicy
         :param search_space: Search space for sweep job.
-        :type search_space: Dict[str, Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform]]
+        :type search_space: Dict[str, Union[Choice, LogNormal, LogUniform, Normal, QLogNormal,
+        QLogUniform, QNormal, QUniform, Randint, Uniform]]
         :param queue_settings: Queue settings for sweep job.
         :type queue_settings: QueueSettings
         """
@@ -157,8 +158,8 @@ class ParameterizedSweep:
             if trial_timeout is not None:
                 self.limits.trial_timeout = trial_timeout
 
-    def set_objective(self, *, goal: str, primary_metric: str) -> None:
-        """Set the sweep object.
+    def set_objective(self, *, goal: Optional[str] = None, primary_metric: Optional[str] = None) -> None:
+        """Set the sweep object.. Leave parameters as None if you don't want to update corresponding values.
 
         :param goal: Defines supported metric goals for hyperparameter tuning. Possible values
         include: "minimize", "maximize".
@@ -167,13 +168,13 @@ class ParameterizedSweep:
         :type primary_metric: str
         """
 
-        if self.objective is None:
-            self.objective = Objective()
-
-        if goal:
-            self.objective.goal = goal
-        if primary_metric:
-            self.objective.primary_metric = primary_metric
+        if self.objective is not None:
+            if goal:
+                self.objective.goal = goal
+            if primary_metric:
+                self.objective.primary_metric = primary_metric
+        else:
+            self.objective = Objective(goal=goal, primary_metric=primary_metric)
 
     @property
     def sampling_algorithm(self) -> Union[str, SamplingAlgorithm]:
