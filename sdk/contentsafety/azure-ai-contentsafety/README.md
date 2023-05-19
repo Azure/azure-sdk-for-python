@@ -580,7 +580,7 @@ Optional keyword arguments can be passed in at the client and per-operation leve
 
 ### Additional documentation
 
-For more extensive documentation on Azure Anomaly Detector, see the [Azure AI Content Safety documentation][[contentsafety_overview]] on docs.microsoft.com.
+For more extensive documentation on Azure Content Safety, see the [Azure AI Content Safety][contentsafety_overview] on docs.microsoft.com.
 
 ## Contributing
 
