@@ -17,7 +17,7 @@ When updating the codebase, please note the following guidelines for creating us
 
 - No broken links are allowed in reference documentation, and all links must be location/language neutral (e.g. no /en-us/ in links)
 - Docstring details should be aligned with type hints 
-- Any code snippets should be defined in the samples directory in this folder so that they are tested during CI 
+- Any code snippets should be defined in the samples directory in this folder so that they are tested during every CI run
 - Constructors (`def __init__`) should return None, per [PEP 484 standards](https://peps.python.org/pep-0484/#the-meaning-of-annotations)
 
  
@@ -62,15 +62,23 @@ When updating the codebase, please note the following guidelines for creating us
 
  - Use Union/Optional when appropriate in function declaration, but not in docstring. Instead, note the default value in the docstring (e.g. “Defaults to 0.”).
  - For classes, include summary in definition only. If you include in both class definition and constructor (init method) docstrings, it will show up twice in the reference docs.
+ - When referencing an AzureML v2 class as a type in a docstring, use the full path to the class and prepend it with a "~". This will create a link when the documentation is rendered on learn.microsoft.com that will take the user to the class reference documentation for more information.
+
+```python
+"""
+:param sampling_algorithm: Sampling algorithm for sweep job.
+:type sampling_algorithm: ~azure.ai.ml.sweep.SamplingAlgorithm
+"""
+```
 
  
 ##### Consistency 
 
- - All docstrings should be written in Sphinx style. The autoDocstring VSCode extension or GitHub Copilot can help autocomplete in this style for you. 
+ - All docstrings should be written in [Sphinx style](https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html#the-sphinx-docstring-format) noting all types and if any exceptions are raised. The [autoDocstring](https://marketplace.visualstudio.com/items?itemName=njpwerner.autodocstring) VSCode extension or GitHub Copilot can help autocomplete in this style for you. 
 
  
 
-##### Relevance 
+##### Relevance
 
 - If you deprecate an object, make sure it’s documented in the reference docs. 
 - If you change how an object should be used, ensure that all code snippets in the samples directory in this folder are updated accordingly.
