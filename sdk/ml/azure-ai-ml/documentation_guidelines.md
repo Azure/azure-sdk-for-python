@@ -15,9 +15,9 @@ When updating the codebase, please note the following guidelines for creating us
 
 ##### Accuracy 
 
-- No broken links are allowed in reference documentation 
+- No broken links are allowed in reference documentation, and all links must be location/language neutral (e.g. no /en-us/ in links)
 - Docstring details should be aligned with type hints 
-- Any code snippets should be defined in the [samples directory](./samples/) so that they are tested during CI 
+- Any code snippets should be defined in the [samples directory]((https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples)) so that they are tested during CI 
 - Constructors (`def __init__`) should return None, per [PEP 484 standards](https://peps.python.org/pep-0484/#the-meaning-of-annotations)
 
  
@@ -73,7 +73,7 @@ When updating the codebase, please note the following guidelines for creating us
 ##### Relevance 
 
 - If you deprecate an object, make sure it’s documented in the reference docs. 
-- If you change how an object should be used, ensure that all code snippets in the [samples directory](./samples/) are updated accordingly.
+- If you change how an object should be used, ensure that all code snippets in the [samples directory](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples) are updated accordingly.
 
  
 
@@ -85,11 +85,11 @@ When updating the codebase, please note the following guidelines for creating us
 
 ##### Demonstration 
 
-- Unless the object is not meant to be used directly, a code snippet should be added. The [samples directory](./samples/) should be updated to include your new examples – these can be taken from a notebook in [azureml-examples](https://github.com/Azure/azureml-examples), a test scenario, or you can create your own. You should test them locally, but they will also be tested during CI. See [this guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/sample_guide.md) for more information. 
+- Unless the object is not meant to be used directly, a code snippet should be added. The [samples directory](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples) should be updated to include your new examples – these can be taken from a notebook in [azureml-examples](https://github.com/Azure/azureml-examples), a test scenario, or you can create your own. You should test them locally, but they will also be tested during CI. See [this guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/sample_guide.md) for more information. 
 - The code snippet should be comprehensive enough to show understand how the object works; however, keep it concise – this is still a reference documentation page, not a sample repository. 
 
 
 ##### Previewing Docs Before Release
 The Azure SDK for Python repository automatically generates a documentation build with every CI run. To preview your documentation changes before merging into main, create a pull request, go to the CI run, and download the output of the "documentation" folder in the Artifacts.
 
-After a PR is merged, you should double-check your changes the next day at on [review.learn.microsoft.com](https://review.learn.microsoft.com/en-us/python/api/azure-ai-ml/azure.ai.ml) where a daily build based off the main branch is hosted. Every release, the official reference documentation is updated on [learn.microsoft.com](https://learn.microsoft.com/en-us/python/api/azure-ai-ml/azure.ai.ml) for public consumption.
+After a PR is merged, you should double-check your changes the next day at on [review.learn.microsoft.com](https://review.learn.microsoft.com/python/api/azure-ai-ml/azure.ai.ml) where a daily build based off the main branch is hosted. Every release, the official reference documentation is updated on [learn.microsoft.com](https://learn.microsoft.com/python/api/azure-ai-ml/azure.ai.ml) for public consumption.
