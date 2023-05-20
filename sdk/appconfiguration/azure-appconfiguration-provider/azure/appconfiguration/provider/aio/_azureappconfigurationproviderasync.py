@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import os
 import json
 from typing import Any, Dict, Iterable, Mapping, Optional, overload, List, Tuple, TYPE_CHECKING, Union
 
@@ -12,7 +13,7 @@ from azure.keyvault.secrets.aio import SecretClient
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
 
 from .._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
-from .._constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_PREFIX, EMPTY_LABEL
+from .._constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_PREFIX, EMPTY_LABEL,RequestTracingDisabledEnvironmentVariable
 from .._azureappconfigurationprovider import _is_json_content_type, _get_correlation_context
 from .._user_agent import USER_AGENT
 
@@ -148,7 +149,8 @@ def _buildprovider(
     #pylint:disable=protected-access
     provider = AzureAppConfigurationProvider()
     headers = kwargs.pop("headers", {})
-    headers["Correlation-Context"] = _get_correlation_context(key_vault_options)
+    if not os.environ.get(RequestTracingDisabledEnvironmentVariable).lower() == "true":
+        headers["Correlation-Context"] = _get_correlation_context(key_vault_options)
     useragent = USER_AGENT
 
     if connection_string:

@@ -16,6 +16,7 @@ from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from ._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_PREFIX,
+    RequestTracingDisabledEnvironmentVariable,
     ServiceFabricEnvironmentVariable,
     AzureFunctionEnvironmentVariable,
     AzureWebAppEnvironmentVariable,
@@ -178,7 +179,10 @@ def _buildprovider(
     #pylint:disable=protected-access
     provider = AzureAppConfigurationProvider()
     headers = kwargs.pop("headers", {})
-    headers["Correlation-Context"] = _get_correlation_context(key_vault_options)
+
+    if not os.environ.get(RequestTracingDisabledEnvironmentVariable).lower() == "true":
+        headers["Correlation-Context"] = _get_correlation_context(key_vault_options)
+
     useragent = USER_AGENT
 
     if connection_string:
