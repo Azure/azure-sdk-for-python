@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+* Updated to use AZURE_APP_CONFIGURATION_TRACING_DISABLED environment variable to disable tracing.
+* Changed default max retry to 2 from 3.
+
 ## 1.0.0 (2023-03-09)
 
 ### Breaking Changes
