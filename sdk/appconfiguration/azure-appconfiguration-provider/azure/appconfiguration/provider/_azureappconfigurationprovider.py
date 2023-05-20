@@ -185,6 +185,9 @@ def _buildprovider(
 
     useragent = USER_AGENT
 
+    if 'retry_backoff_max' in kwargs:
+        retry_backoff_max = 2
+
     if connection_string:
         provider._client = AzureAppConfigurationClient.from_connection_string(
             connection_string, user_agent=useragent, headers=headers, **kwargs

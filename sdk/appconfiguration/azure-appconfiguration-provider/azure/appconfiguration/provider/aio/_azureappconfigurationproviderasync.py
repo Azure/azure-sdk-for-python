@@ -151,7 +151,12 @@ def _buildprovider(
     headers = kwargs.pop("headers", {})
     if not os.environ.get(RequestTracingDisabledEnvironmentVariable).lower() == "true":
         headers["Correlation-Context"] = _get_correlation_context(key_vault_options)
+
     useragent = USER_AGENT
+
+    if 'retry_backoff_max' in kwargs:
+        retry_backoff_max = 2
+
 
     if connection_string:
         provider._client = AzureAppConfigurationClient.from_connection_string(
