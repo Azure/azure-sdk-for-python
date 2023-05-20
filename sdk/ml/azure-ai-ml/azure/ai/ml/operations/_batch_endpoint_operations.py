@@ -7,6 +7,7 @@
 import json
 import os
 import re
+import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, Optional
 
@@ -238,6 +239,10 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             self._validate_deployment_name(endpoint_name, deployment_name)
 
         if input and isinstance(input, Input):
+            warnings.warn(
+                "the 'input' parameter for batch endpoint invoke is deprecated. Please use 'inputs' instead.",
+                DeprecationWarning,
+            )
             if HTTP_PREFIX not in input.path:
                 self._resolve_input(input, os.getcwd())
             # MFE expects a dictionary as input_data that's why we are using
