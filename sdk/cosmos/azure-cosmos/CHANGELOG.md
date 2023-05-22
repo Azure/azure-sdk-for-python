@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.4.0b2 (2023-05-18)
+### 4.4.0b2 (2023-05-22)
 
 #### Features Added
 * Added conditional patching for Patch operations. See [PR 30455](https://github.com/Azure/azure-sdk-for-python/pull/30455).
