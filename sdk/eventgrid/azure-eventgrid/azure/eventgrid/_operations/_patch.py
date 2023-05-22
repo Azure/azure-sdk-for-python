@@ -59,8 +59,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
-        :param events: Array of Cloud Events being published. Required.
-        :type events: list[~azure.core.messaging.CloudEvent]
+        :param body: Array of Cloud Events being published. Required.
+        :type body: list[~azure.core.messaging.CloudEvent]
         :keyword content_type: content type. Default value is "application/cloudevents-batch+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -88,8 +88,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
-        :param event: Single Cloud Event being published. Required.
-        :type event: ~azure.core.messaging.CloudEvent
+        :param body: Single Cloud Event being published. Required.
+        :type body: ~azure.core.messaging.CloudEvent
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
