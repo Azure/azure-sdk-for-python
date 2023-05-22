@@ -5,6 +5,7 @@
 ### Features Added
 - Added support to enable set workspace connection secret expiry time.
 - Added support for `stage` on model version
+- Added support to enable gpu access (local_enable_gpu) for local deployment.
 
 ### Bugs Fixed
 
