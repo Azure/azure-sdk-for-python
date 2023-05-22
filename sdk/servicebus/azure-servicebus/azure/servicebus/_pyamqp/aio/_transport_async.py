@@ -249,7 +249,7 @@ class AsyncTransport(
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
         self.host, self.port = to_host_port(host, port)
-        # not used by asyncio connections
+        # socket_timeout_interval not used by asyncio.create_connection() when creating connection
         self.socket_timeout_interval = socket_timeout_interval or SOCKET_TIMEOUT_INTERVAL
         self.socket_settings = socket_settings
         self.socket_lock = asyncio.Lock()

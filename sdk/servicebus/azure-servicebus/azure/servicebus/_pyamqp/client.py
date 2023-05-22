@@ -148,7 +148,7 @@ class AMQPClient(
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
     :paramtype connection_verify: str
-    :keyword float socket_timeout_interval: The time in seconds that the underlying socket in the transport should
+    :keyword float socket_timeout_interval: The maximum time in seconds that the underlying socket in the transport should
      wait when reading or writing data before timing out. The default value is 0.2 (for transport type Amqp),
      and 1 for transport type AmqpOverWebsocket.
     """
