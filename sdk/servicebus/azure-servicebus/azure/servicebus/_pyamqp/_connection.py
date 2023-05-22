@@ -82,8 +82,8 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value). When using these settings,
      the transport_type would be AmqpOverWebSocket.
      Additionally the following keys may also be present: `'username', 'password'`.
-    :keyword float socket_timeout_interval: The maximum time in seconds that the underlying socket in the transport should
-     wait when reading or writing data before timing out. The default value is 0.2 (for transport type Amqp),
+    :keyword float socket_timeout_interval: The maximum time in seconds that the underlying socket in the transport
+     should wait when reading or writing data before timing out. The default value is 0.2 (for transport type Amqp),
      and 1 for transport type AmqpOverWebsocket.
     """
 
