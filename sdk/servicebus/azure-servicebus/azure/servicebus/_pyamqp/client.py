@@ -46,6 +46,8 @@ from .constants import (
     OUTGOING_WINDOW,
     DEFAULT_AUTH_TIMEOUT,
     MESSAGE_DELIVERY_DONE_STATES,
+    SOCKET_TIMEOUT,
+    WS_TIMEOUT_INTERVAL,
 )
 
 from .management_operation import ManagementOperation
@@ -162,7 +164,6 @@ class AMQPClient(
         self._connection = None
         self._session = None
         self._link = None
-        self._socket_timeout = kwargs.pop("socket_timeout", 0.2)
         self._external_connection = False
         self._cbs_authenticator = None
         self._auth_timeout = kwargs.pop("auth_timeout", DEFAULT_AUTH_TIMEOUT)
@@ -207,6 +208,10 @@ class AMQPClient(
                 "Http proxy settings can't be passed if transport_type is explicitly set to Amqp"
             )
         self._transport_type = kwargs.pop("transport_type", TransportType.Amqp)
+        if self._transport_type.value == TransportType.Amqp.value:
+            self._socket_timeout = kwargs.pop("socket_timeout", SOCKET_TIMEOUT)
+        else:
+            self._socket_timeout = kwargs.pop("socket_timeout", WS_TIMEOUT_INTERVAL)
         self._http_proxy = kwargs.pop("http_proxy", None)
 
         # Custom Endpoint

@@ -98,7 +98,8 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
         transport = kwargs.get("transport")
         self._transport_type = kwargs.pop("transport_type", TransportType.Amqp)
-        socket_timeout = kwargs.pop("socket_timeout", None)
+        # socket_timeout that will be used by `asyncio.wait_for()` in send/receive ops
+        self._socket_timeout = kwargs.pop("socket_timeout")
         if transport:
             self._transport = transport
         elif "sasl_credential" in kwargs:
@@ -121,11 +122,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 network_trace_params=self._network_trace_params,
                 **kwargs)
 
-        # socket_timeout that will be used by `asyncio.wait_for()` in send/receive ops
-        if isinstance(self._transport, WebSocketTransportAsync):
-            self._socket_timeout = socket_timeout or WS_TIMEOUT_INTERVAL
-        else:
-            self._socket_timeout = socket_timeout or SOCKET_TIMEOUT
         self._max_frame_size = kwargs.pop(
             "max_frame_size", MAX_FRAME_SIZE_BYTES
         )  # type: int
