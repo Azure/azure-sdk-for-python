@@ -186,8 +186,8 @@ def _buildprovider(
 
     useragent = USER_AGENT
 
-    if "retry_backoff_max" not in kwargs:
-        kwargs["retry_backoff_max"] = 2
+    if "retry_total" not in kwargs:
+        kwargs["retry_total"] = 2
 
     if connection_string:
         provider._client = AzureAppConfigurationClient.from_connection_string(
