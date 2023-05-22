@@ -34,7 +34,7 @@ from azure.appconfiguration.provider import load
 config = load(endpoint="your-endpoint", credential=DefaultAzureCredential())
 ```
 
-these providers will by default load all configurations with `(No Label)` from your configuration store.
+these providers will by default load all configurations with `(No Label)` from your configuration store into a dictionary of key/values.
 
 ### Features
 
