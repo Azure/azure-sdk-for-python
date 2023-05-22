@@ -51,7 +51,12 @@ class EventGridClientOperationsMixin(OperationsMixin):
         content_type: str = "application/cloudevents-batch+json; charset=utf-8",
         **kwargs: Any
     ) -> None:
-        """Publish Batch of Cloud Events to namespace topic.
+        """Publish Batch Cloud Event to namespace topic. In case of success, the server responds with an
+        HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
+        various error codes. For example, 401: which indicates authorization failure, 403: which
+        indicates quota exceeded or message is too large, 410: which indicates that specific topic is
+        not found, 400: for bad request, and 500: for internal server error.
+
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param body: Array of Cloud Events being published. Required.
@@ -62,7 +67,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
-        :rtype:  None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -75,7 +80,12 @@ class EventGridClientOperationsMixin(OperationsMixin):
         content_type: str = "application/cloudevents+json; charset=utf-8",
         **kwargs: Any
     ) -> None:
-        """Publish Single Cloud Event to namespace topic.
+        """Publish Single Cloud Event to namespace topic. In case of success, the server responds with an
+        HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
+        various error codes. For example, 401: which indicates authorization failure, 403: which
+        indicates quota exceeded or message is too large, 410: which indicates that specific topic is
+        not found, 400: for bad request, and 500: for internal server error.
+
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param body: Single Cloud Event being published. Required.
@@ -86,7 +96,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
-        :rtype:  None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -94,10 +104,15 @@ class EventGridClientOperationsMixin(OperationsMixin):
     def publish_cloud_events(
         self, topic_name: str, body: Union[List[CloudEvent], CloudEvent], **kwargs
     ) -> None:
-        """Publish Cloud Events to namespace topic.
+        """Publish Batch Cloud Event or Events to namespace topic. In case of success, the server responds with an
+        HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
+        various error codes. For example, 401: which indicates authorization failure, 403: which
+        indicates quota exceeded or message is too large, 410: which indicates that specific topic is
+        not found, 400: for bad request, and 500: for internal server error.
+
         :param topic_name: Topic Name. Required.
         :type topic_name: str
-        :param body: Single Cloud Event or list of Cloud Events being published. Required.
+        :param body: Cloud Event or array of Cloud Events being published. Required.
         :type body: ~azure.core.messaging.CloudEvent or list[~azure.core.messaging.CloudEvent]
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
@@ -105,7 +120,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
-        :rtype:  None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
