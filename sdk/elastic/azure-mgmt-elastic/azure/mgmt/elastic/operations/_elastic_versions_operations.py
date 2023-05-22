@@ -36,7 +36,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_list_request(resource_group_name: str, monitor_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_list_request(subscription_id: str, *, region: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -44,35 +44,31 @@ def build_list_request(resource_group_name: str, monitor_name: str, subscription
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Elastic/monitors/{monitorName}/listMonitoredResources",
-    )  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Elastic/elasticVersions")
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "monitorName": _SERIALIZER.url("monitor_name", monitor_name, "str"),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["region"] = _SERIALIZER.query("region", region, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class MonitoredResourcesOperations:
+class ElasticVersionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.elastic.MicrosoftElastic`'s
-        :attr:`monitored_resources` attribute.
+        :attr:`elastic_versions` attribute.
     """
 
     models = _models
@@ -85,26 +81,24 @@ class MonitoredResourcesOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, resource_group_name: str, monitor_name: str, **kwargs: Any) -> Iterable["_models.MonitoredResource"]:
-        """List the resources currently being monitored by the Elastic monitor resource.
+    def list(self, region: str, **kwargs: Any) -> Iterable["_models.ElasticVersionListFormat"]:
+        """Get a list of available versions for a region.
 
-        List the resources currently being monitored by the Elastic monitor resource.
+        Get a list of available versions for a region.
 
-        :param resource_group_name: The name of the resource group to which the Elastic resource
-         belongs. Required.
-        :type resource_group_name: str
-        :param monitor_name: Monitor resource name. Required.
-        :type monitor_name: str
+        :param region: Region where elastic deployment will take place. Required.
+        :type region: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either MonitoredResource or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.elastic.models.MonitoredResource]
+        :return: An iterator like instance of either ElasticVersionListFormat or the result of
+         cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.elastic.models.ElasticVersionListFormat]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.MonitoredResourceListResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ElasticVersionsListResponse] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -118,9 +112,8 @@ class MonitoredResourcesOperations:
             if not next_link:
 
                 request = build_list_request(
-                    resource_group_name=resource_group_name,
-                    monitor_name=monitor_name,
                     subscription_id=self._config.subscription_id,
+                    region=region,
                     api_version=api_version,
                     template_url=self.list.metadata["url"],
                     headers=_headers,
@@ -148,7 +141,7 @@ class MonitoredResourcesOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("MonitoredResourceListResponse", pipeline_response)
+            deserialized = self._deserialize("ElasticVersionsListResponse", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -174,6 +167,4 @@ class MonitoredResourcesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Elastic/monitors/{monitorName}/listMonitoredResources"
-    }
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Elastic/elasticVersions"}
