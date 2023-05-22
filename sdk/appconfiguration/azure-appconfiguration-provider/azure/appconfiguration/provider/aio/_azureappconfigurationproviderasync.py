@@ -154,7 +154,7 @@ def _buildprovider(
     # pylint:disable=protected-access
     provider = AzureAppConfigurationProvider()
     headers = kwargs.pop("headers", {})
-    if not os.environ.get(RequestTracingDisabledEnvironmentVariable).lower() == "true":
+    if not os.environ.get(RequestTracingDisabledEnvironmentVariable, default="").lower() == "true":
         headers["Correlation-Context"] = _get_correlation_context(key_vault_options)
 
     useragent = USER_AGENT
