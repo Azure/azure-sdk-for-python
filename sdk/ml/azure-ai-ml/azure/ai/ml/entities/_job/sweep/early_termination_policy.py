@@ -116,7 +116,7 @@ class BanditPolicy(EarlyTerminationPolicy):
 
 
 class MedianStoppingPolicy(EarlyTerminationPolicy):
-    """Defines an early termination policy based on running averages of the primary metric of all runs.
+    """Defines an early termination policy based on a running average of the primary metric of all runs.
 
     :param delay_evaluation: Number of intervals by which to delay the first evaluation. Defaults to 0.
     :type delay_evaluation: int
@@ -140,7 +140,7 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
         delay_evaluation: Optional[int] = 0,
         evaluation_interval: Optional[int] = 1,
     ) -> None:
-        """Defines an early termination policy based on running averages of the primary metric of all runs.
+        """Defines an early termination policy based on a running average of the primary metric of all runs.
 
         :param delay_evaluation: Number of intervals by which to delay the first evaluation. Defaults to 0.
         :type delay_evaluation: int
