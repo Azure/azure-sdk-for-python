@@ -1,5 +1,34 @@
 # Release History
 
+## 3.0.0b1 (2023-05-20)
+
+### Features Added
+
+  - Added operation group JobsExecutionsOperations
+  - Added operation group JobsOperations
+  - Added operation group ManagedCertificatesOperations
+  - Model AvailableWorkloadProfileProperties has a new parameter category
+  - Model ContainerApp has a new parameter managed_by
+  - Model ContainerApp has a new parameter workload_profile_name
+  - Model ContainerAppSecret has a new parameter identity
+  - Model ContainerAppSecret has a new parameter key_vault_url
+  - Model Ingress has a new parameter sticky_sessions
+  - Model ManagedEnvironment has a new parameter dapr_configuration
+  - Model ManagedEnvironment has a new parameter infrastructure_resource_group
+  - Model ManagedEnvironment has a new parameter keda_configuration
+  - Model Secret has a new parameter identity
+  - Model Secret has a new parameter key_vault_url
+  - Model Volume has a new parameter secrets
+
+### Breaking Changes
+
+  - Model AvailableWorkloadProfileProperties no longer has parameter billing_meter_category
+  - Model ContainerApp no longer has parameter workload_profile_type
+  - Model ManagedEnvironment no longer has parameter sku
+  - Model VnetConfiguration no longer has parameter outbound_settings
+  - Model VnetConfiguration no longer has parameter runtime_subnet_id
+  - Model WorkloadProfile has a new required parameter name
+
 ## 2.0.0 (2023-03-20)
 
 ### Features Added

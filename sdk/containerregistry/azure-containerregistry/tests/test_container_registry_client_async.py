@@ -18,16 +18,22 @@ from azure.containerregistry import (
     ArtifactManifestOrder,
     ArtifactTagProperties,
     ArtifactTagOrder,
-    ManifestDigestValidationError,
+    DigestValidationError,
 )
 from azure.containerregistry.aio import ContainerRegistryClient
 from azure.containerregistry._helpers import DOCKER_MANIFEST, OCI_IMAGE_MANIFEST, DEFAULT_CHUNK_SIZE
-from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError, HttpResponseError
+from azure.core.exceptions import (
+    ResourceNotFoundError,
+    ClientAuthenticationError,
+    HttpResponseError,
+    ServiceRequestError,
+    ServiceResponseError,
+)
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline import PipelineRequest
 from azure.identity import AzureAuthorityHosts
 from asynctestcase import AsyncContainerRegistryTestClass, get_authority, get_audience
-from constants import HELLO_WORLD, ALPINE, BUSYBOX, DOES_NOT_EXIST
+from constants import HELLO_WORLD, DOES_NOT_EXIST
 from preparer import acr_preparer
 from devtools_testutils.aio import recorded_by_proxy_async
 
@@ -94,16 +100,15 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_get_repository_properties(self, containerregistry_endpoint):
         async with self.create_registry_client(containerregistry_endpoint) as client:
-            properties = await client.get_repository_properties(ALPINE)
+            properties = await client.get_repository_properties(HELLO_WORLD)
             assert isinstance(properties, RepositoryProperties)
-            assert properties.name == ALPINE
+            assert properties.name == HELLO_WORLD
 
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_update_repository_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:test"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
             properties = self.set_all_properties(RepositoryProperties(), False)
@@ -121,8 +126,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_update_repository_properties_kwargs(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:test"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
             received = await client.update_repository_properties(
@@ -143,12 +147,12 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_list_registry_artifacts(self, containerregistry_endpoint):
         async with self.create_registry_client(containerregistry_endpoint) as client:
             count = 0
-            async for artifact in client.list_manifest_properties(BUSYBOX):
+            async for artifact in client.list_manifest_properties(HELLO_WORLD):
                 assert isinstance(artifact, ArtifactManifestProperties)
                 assert isinstance(artifact.created_on, datetime)
                 assert isinstance(artifact.last_updated_on, datetime)
-                assert artifact.repository_name == BUSYBOX
-                assert artifact.fully_qualified_reference in self.create_fully_qualified_reference(containerregistry_endpoint, BUSYBOX, artifact.digest)
+                assert artifact.repository_name == HELLO_WORLD
+                assert artifact.fully_qualified_reference in self.create_fully_qualified_reference(containerregistry_endpoint, HELLO_WORLD, artifact.digest)
                 count += 1
 
             assert count > 0
@@ -159,7 +163,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         async with self.create_registry_client(containerregistry_endpoint) as client:
             results_per_page = 2
 
-            pages = client.list_manifest_properties(BUSYBOX, results_per_page=results_per_page)
+            pages = client.list_manifest_properties(HELLO_WORLD, results_per_page=results_per_page)
             page_count = 0
             async for page in pages.by_page():
                 reg_count = 0
@@ -177,7 +181,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             prev_last_updated_on = None
             count = 0
             async for artifact in client.list_manifest_properties(
-                BUSYBOX, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING
+                HELLO_WORLD, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING
             ):
                 if prev_last_updated_on:
                     assert artifact.last_updated_on < prev_last_updated_on
@@ -193,7 +197,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             prev_last_updated_on = None
             count = 0
             async for artifact in client.list_manifest_properties(
-                BUSYBOX, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_ASCENDING
+                HELLO_WORLD, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_ASCENDING
             ):
                 if prev_last_updated_on:
                     assert artifact.last_updated_on > prev_last_updated_on
@@ -206,20 +210,20 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_get_manifest_properties(self, containerregistry_endpoint):
         async with self.create_registry_client(containerregistry_endpoint) as client:
-            properties = await client.get_manifest_properties(ALPINE, "latest")
+            properties = await client.get_manifest_properties(HELLO_WORLD, "latest")
             assert isinstance(properties, ArtifactManifestProperties)
-            assert properties.repository_name == ALPINE
-            assert properties.fully_qualified_reference in self.create_fully_qualified_reference(containerregistry_endpoint, ALPINE, properties.digest)
+            assert properties.repository_name == HELLO_WORLD
+            assert properties.fully_qualified_reference in self.create_fully_qualified_reference(containerregistry_endpoint, HELLO_WORLD, properties.digest)
 
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_get_manifest_properties_does_not_exist(self, containerregistry_endpoint):
         async with self.create_registry_client(containerregistry_endpoint) as client:
-            manifest = await client.get_manifest_properties(ALPINE, "latest")
+            manifest = await client.get_manifest_properties(HELLO_WORLD, "latest")
             invalid_digest = manifest.digest[:-10] + u"a" * 10
 
             with pytest.raises(ResourceNotFoundError):
-                await client.get_manifest_properties(ALPINE, invalid_digest)
+                await client.get_manifest_properties(HELLO_WORLD, invalid_digest)
             with pytest.raises(ResourceNotFoundError):
                 await client.get_manifest_properties(DOES_NOT_EXIST, DOES_NOT_EXIST)
 
@@ -227,7 +231,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_update_manifest_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
+        tag = "test"
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client: 
@@ -246,7 +250,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_update_manifest_properties_kwargs(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
+        tag = "test"
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
@@ -267,7 +271,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_get_tag_properties(self, containerregistry_endpoint):
         async with self.create_registry_client(containerregistry_endpoint) as client:
-            properties = await client.get_tag_properties(ALPINE, "latest")
+            properties = await client.get_tag_properties(HELLO_WORLD, "latest")
             assert isinstance(properties, ArtifactTagProperties)
             assert properties.name == "latest"
 
@@ -278,13 +282,13 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             with pytest.raises(ResourceNotFoundError):
                 await client.get_tag_properties(DOES_NOT_EXIST, DOES_NOT_EXIST)
             with pytest.raises(ResourceNotFoundError):
-                await client.get_tag_properties(ALPINE, DOES_NOT_EXIST)
+                await client.get_tag_properties(HELLO_WORLD, DOES_NOT_EXIST)
 
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_update_tag_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
+        tag = "test"
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
@@ -303,7 +307,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_update_tag_properties_kwargs(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
+        tag = "test"
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
@@ -323,49 +327,45 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_list_tag_properties(self, containerregistry_endpoint):
-        tags = [f"{ALPINE}:latest"]
+        tags = ["latest", "v1"]
         async with self.create_registry_client(containerregistry_endpoint) as client:
             count = 0
-            async for tag in client.list_tag_properties(ALPINE):
-                assert f"{ALPINE}:{tag.name}" in tags
+            async for tag in client.list_tag_properties(HELLO_WORLD):
+                assert tag.name in tags
                 count += 1
-            assert count == 1
+            assert count == 2
 
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_list_tag_properties_order_descending(self, containerregistry_endpoint):
-        tags = [f"{ALPINE}:latest"]
         async with self.create_registry_client(containerregistry_endpoint) as client:
             prev_last_updated_on = None
             count = 0
-            async for tag in client.list_tag_properties(ALPINE, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING):
-                assert f"{ALPINE}:{tag.name}" in tags
+            async for tag in client.list_tag_properties(HELLO_WORLD, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING):
                 if prev_last_updated_on:
                     assert tag.last_updated_on < prev_last_updated_on
                 prev_last_updated_on = tag.last_updated_on
                 count += 1
-            assert count == 1
+            assert count == 2
 
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_list_tag_properties_order_ascending(self, containerregistry_endpoint):
-        tags = [f"{ALPINE}:latest"]
         async with self.create_registry_client(containerregistry_endpoint) as client:
             prev_last_updated_on = None
             count = 0
-            async for tag in client.list_tag_properties(ALPINE, order_by=ArtifactTagOrder.LAST_UPDATED_ON_ASCENDING):
-                assert f"{ALPINE}:{tag.name}" in tags
+            async for tag in client.list_tag_properties(HELLO_WORLD, order_by=ArtifactTagOrder.LAST_UPDATED_ON_ASCENDING):
                 if prev_last_updated_on:
                     assert tag.last_updated_on > prev_last_updated_on
                 prev_last_updated_on = tag.last_updated_on
                 count += 1
-            assert count == 1
+            assert count == 2
 
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_delete_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
+        tag = "test"
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
@@ -383,13 +383,13 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_delete_tag_does_not_exist(self, containerregistry_endpoint):
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await client.delete_tag(DOES_NOT_EXIST, DOES_NOT_EXIST)
-            await client.delete_tag(ALPINE, DOES_NOT_EXIST)
+            await client.delete_tag(HELLO_WORLD, DOES_NOT_EXIST)
 
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_delete_manifest(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
+        tag = "test"
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
@@ -406,12 +406,12 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_delete_manifest_does_not_exist(self, containerregistry_endpoint):
         async with self.create_registry_client(containerregistry_endpoint) as client:
-            manifest = await client.get_manifest_properties(ALPINE, "latest")
+            manifest = await client.get_manifest_properties(HELLO_WORLD, "latest")
             invalid_digest = manifest.digest[:-10] + u"a" * 10
 
-            await client.delete_manifest(ALPINE, invalid_digest)
+            await client.delete_manifest(HELLO_WORLD, invalid_digest)
             with pytest.raises(ResourceNotFoundError):
-                await client.delete_manifest(ALPINE, DOES_NOT_EXIST)
+                await client.delete_manifest(HELLO_WORLD, DOES_NOT_EXIST)
             with pytest.raises(ResourceNotFoundError):
                 await client.delete_manifest(DOES_NOT_EXIST, DOES_NOT_EXIST)
 
@@ -452,7 +452,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_get_misspell_property(self, containerregistry_endpoint):
         async with self.create_registry_client(containerregistry_endpoint) as client:
-            properties = await client.get_repository_properties(ALPINE)
+            properties = await client.get_repository_properties(HELLO_WORLD)
             
             with pytest.warns(DeprecationWarning):
                 last_udpated_on = properties.last_udpated_on
@@ -463,308 +463,144 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
     @pytest.mark.live_test_only
     @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_set_oci_manifest_json(self, containerregistry_endpoint):
+    async def test_set_oci_manifest(self, **kwargs):
+        containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
         repo = self.get_resource_name("repo")
         path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest.json")
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await self.upload_oci_manifest_prerequisites(repo, client)
-
-            with open(path, "rb") as manifest_stream:
-                manifest_json = json.loads(manifest_stream.read().decode())
-                with pytest.raises(HttpResponseError):
-                    await client.set_manifest(repo, manifest_json, media_type=DOCKER_MANIFEST)
-            digest = await client.set_manifest(repo, manifest_json)
             
-            response = await client.get_manifest(repo, digest)
-            assert response.media_type == OCI_IMAGE_MANIFEST
-
-            await client.delete_manifest(repo, digest)
-            await client.delete_repository(repo)
-
-    # Live only, as test proxy now cannot handle spaces correctly
-    # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
-    @pytest.mark.live_test_only
-    @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_set_oci_manifest_json_with_tag(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
-        tag = "v1"
-        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest.json")
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            await self.upload_oci_manifest_prerequisites(repo, client)
-
             with open(path, "rb") as manifest_stream:
-                manifest_json = json.loads(manifest_stream.read().decode())
+                # test set oci manifest in stream format
                 with pytest.raises(HttpResponseError):
-                    await client.set_manifest(repo, manifest_json, tag=tag, media_type=DOCKER_MANIFEST)
-                digest = await client.set_manifest(repo, manifest_json, tag=tag)
-            
-            response = await client.get_manifest(repo, tag)
-            assert response.media_type == OCI_IMAGE_MANIFEST
-
-            tags = (await client.get_manifest_properties(repo, digest)).tags
-            assert len(tags) == 1
-            assert tags[0] == tag
-
-            await client.delete_manifest(repo, digest)
-            await client.delete_repository(repo)
-
-    # Live only, as test proxy now cannot handle spaces correctly
-    # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
-    @pytest.mark.live_test_only
-    @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_set_oci_manifest_stream(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
-        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest.json")
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            await self.upload_oci_manifest_prerequisites(repo, client)
-
-            with open(path, "rb") as manifest_stream:
-                with pytest.raises(HttpResponseError):
-                    await client.set_manifest(repo, manifest_stream, media_type=DOCKER_MANIFEST)
+                    await client.set_manifest(repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST)
                 manifest_stream.seek(0)
-                digest = await client.set_manifest(repo, manifest_stream)
-            
-            response = await client.get_manifest(repo, digest)
-            assert response.media_type == OCI_IMAGE_MANIFEST
-
-            await client.delete_manifest(repo, digest)
-            await client.delete_repository(repo)
-    
-    @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_set_oci_manifest_stream_without_spaces(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
-        # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly
-        # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
-        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest_without_spaces.json")
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            await self.upload_oci_manifest_prerequisites(repo, client)
-
-            with open(path, "rb") as manifest_stream:
-                with pytest.raises(HttpResponseError):
-                    await client.set_manifest(repo, manifest_stream, media_type=DOCKER_MANIFEST)
+                digest1 = await client.set_manifest(repo, manifest_stream, tag="v1")
                 manifest_stream.seek(0)
-                digest = await client.set_manifest(repo, manifest_stream)
-            
-            response = await client.get_manifest(repo, digest)
-            assert response.media_type == OCI_IMAGE_MANIFEST
-
-            await client.delete_manifest(repo, digest)
-            await client.delete_repository(repo)
-
-    # Live only, as test proxy now cannot handle spaces correctly
-    # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
-    @pytest.mark.live_test_only
-    @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_set_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
-        tag = "v1"
-        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest.json")
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            await self.upload_oci_manifest_prerequisites(repo, client)
-            
-            with open(path, "rb") as manifest_stream:
-                with pytest.raises(HttpResponseError):
-                    await client.set_manifest(repo, manifest_stream, tag=tag, media_type=DOCKER_MANIFEST)
-                manifest_stream.seek(0)
-                digest = await client.set_manifest(repo, manifest_stream, tag=tag)
-            
-            response = await client.get_manifest(repo, tag)
-            assert response.media_type == OCI_IMAGE_MANIFEST
-
-            tags = (await client.get_manifest_properties(repo, digest)).tags
-            assert len(tags) == 1
-            assert tags[0] == tag
-
-            await client.delete_manifest(repo, digest)
-            await client.delete_repository(repo)
-    
-    @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_set_oci_manifest_stream_without_spaces_with_tag(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
-        tag = "v1"
-        # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly
-        # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
-        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest_without_spaces.json")
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            await self.upload_oci_manifest_prerequisites(repo, client)
-            
-            with open(path, "rb") as manifest_stream:
-                with pytest.raises(HttpResponseError):
-                    await client.set_manifest(repo, manifest_stream, tag=tag, media_type=DOCKER_MANIFEST)
-                manifest_stream.seek(0)
-                digest = await client.set_manifest(repo, manifest_stream, tag=tag)
-            
-            response = await client.get_manifest(repo, tag)
-            assert response.media_type == OCI_IMAGE_MANIFEST
-
-            tags = (await client.get_manifest_properties(repo, digest)).tags
-            assert len(tags) == 1
-            assert tags[0] == tag
-
-            await client.delete_manifest(repo, digest)
-            await client.delete_repository(repo)
-    
-    # Live only, as test proxy now cannot handle spaces correctly
-    # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
-    @pytest.mark.live_test_only
-    @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_set_docker_manifest_stream(self, containerregistry_endpoint):
-        repo = "library/hello-world"
-        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            await self.upload_docker_manifest_prerequisites(repo, client)
-
-            with open(path, "rb") as manifest_stream:
-                with pytest.raises(HttpResponseError):
-                    # It fails as the default media type is oci image manifest media type
-                    await client.set_manifest(repo, manifest_stream)
-                manifest_stream.seek(0)
-                digest = await client.set_manifest(repo, manifest_stream, media_type=DOCKER_MANIFEST)
-
-            response = await client.get_manifest(repo, digest)
-            assert response.media_type == DOCKER_MANIFEST
-
-            await client.delete_manifest(repo, digest)
-            await client.delete_repository(repo)
-    
-    @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_set_docker_manifest_stream_without_spaces(self, containerregistry_endpoint):
-        repo = "library/hello-world"
-        # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly
-        # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
-        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest_without_spaces.json")
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            await self.upload_docker_manifest_prerequisites(repo, client)
-
-            with open(path, "rb") as manifest_stream:
-                with pytest.raises(HttpResponseError):
-                    # It fails as the default media type is oci image manifest media type
-                    await client.set_manifest(repo, manifest_stream)
-                manifest_stream.seek(0)
-                digest = await client.set_manifest(repo, manifest_stream, media_type=DOCKER_MANIFEST)
-
-            response = await client.get_manifest(repo, digest)
-            assert response.media_type == DOCKER_MANIFEST
-
-            await client.delete_manifest(repo, digest)
-            await client.delete_repository(repo)
-
-    # Live only, as test proxy now cannot handle spaces correctly
-    # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
-    @pytest.mark.live_test_only
-    @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_set_docker_manifest_stream_with_tag(self, containerregistry_endpoint):
-        repo = "library/hello-world"
-        tag = "v1"
-        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            await self.upload_docker_manifest_prerequisites(repo, client)
-
-            with open(path, "rb") as manifest_stream:
-                with pytest.raises(HttpResponseError):
-                    # It fails as the default media type is oci image manifest media type
-                    await client.set_manifest(repo, manifest_stream, tag=tag)
-                manifest_stream.seek(0)
-                digest = await client.set_manifest(repo, manifest_stream, tag=tag, media_type=DOCKER_MANIFEST)
-            
-            response = await client.get_manifest(repo, tag)
-            assert response.media_type == DOCKER_MANIFEST
-
-            tags = (await client.get_manifest_properties(repo, digest)).tags
-            assert len(tags) == 1
-            assert tags[0] == tag
-            
-            await client.delete_manifest(repo, digest)
-            await client.delete_repository(repo)
-    
-    @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_set_docker_manifest_stream_without_spaces_with_tag(self, containerregistry_endpoint):
-        repo = "library/hello-world"
-        tag = "v1"
-        # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly
-        # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
-        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest_without_spaces.json")
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            await self.upload_docker_manifest_prerequisites(repo, client)
-
-            with open(path, "rb") as manifest_stream:
-                with pytest.raises(HttpResponseError):
-                    # It fails as the default media type is oci image manifest media type
-                    await client.set_manifest(repo, manifest_stream, tag=tag)
-                manifest_stream.seek(0)
-                digest = await client.set_manifest(repo, manifest_stream, tag=tag, media_type=DOCKER_MANIFEST)
-            
-            response = await client.get_manifest(repo, tag)
-            assert response.media_type == DOCKER_MANIFEST
-
-            tags = (await client.get_manifest_properties(repo, digest)).tags
-            assert len(tags) == 1
-            assert tags[0] == tag
-            
-            await client.delete_manifest(repo, digest)
-            await client.delete_repository(repo)
-
-    # Live only, as test proxy now cannot handle spaces correctly
-    # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
-    @pytest.mark.live_test_only
-    @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_set_docker_manifest_json(self, containerregistry_endpoint):
-        repo = "library/hello-world"
-        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            await self.upload_docker_manifest_prerequisites(repo, client)
-
-            with open(path, "rb") as manifest_stream:
-                manifest_json = json.loads(manifest_stream.read().decode())
                 
+                # test set oci manifest in JSON format
+                manifest_json = json.loads(manifest_stream.read().decode())
                 with pytest.raises(HttpResponseError):
-                    # It fails as the default media type is oci image manifest media type
-                    await client.set_manifest(repo, manifest_json)
-                digest = await client.set_manifest(repo, manifest_json, media_type=DOCKER_MANIFEST)
+                    await client.set_manifest(repo, manifest_json, tag="v2", media_type=DOCKER_MANIFEST)
+                digest2 = await client.set_manifest(repo, manifest_json, tag="v2")
+                
+            assert digest1 == digest2
             
+            # test get oci manifest by digest
+            response = await client.get_manifest(repo, digest1)
+            assert response.media_type == OCI_IMAGE_MANIFEST
+            
+            # test get oci manifest by tag
+            response = await client.get_manifest(repo, "v1")
+            assert response.media_type == OCI_IMAGE_MANIFEST
+            response = await client.get_manifest(repo, "v2")
+            assert response.media_type == OCI_IMAGE_MANIFEST
+
+            await client.delete_manifest(repo, digest1)
+            await client.delete_repository(repo)
+    
+    # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly.
+    # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_set_oci_manifest_without_spaces(self, containerregistry_endpoint):
+        if self.is_china_endpoint(containerregistry_endpoint):
+            pytest.skip("Running in china cloud may cause all tests finishing longer than the max time of 120 mins.")
+        
+        repo = self.get_resource_name("repo")
+        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest_without_spaces.json")
+        async with self.create_registry_client(containerregistry_endpoint) as client:
+            await self.upload_oci_manifest_prerequisites(repo, client)
+
+            with open(path, "rb") as manifest_stream:
+                # test set oci manifest in stream format
+                with pytest.raises(HttpResponseError):
+                    await client.set_manifest(repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST)
+                manifest_stream.seek(0)
+                digest = await client.set_manifest(repo, manifest_stream, tag="v1")
+                
+            # test get oci manifest by digest
             response = await client.get_manifest(repo, digest)
-            assert response.media_type == DOCKER_MANIFEST
+            assert response.media_type == OCI_IMAGE_MANIFEST
+            
+            # test get oci manifest by tag
+            response = await client.get_manifest(repo, "v1")
+            assert response.media_type == OCI_IMAGE_MANIFEST
 
             await client.delete_manifest(repo, digest)
             await client.delete_repository(repo)
-    
+
     # Live only, as test proxy now cannot handle spaces correctly
     # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
     @pytest.mark.live_test_only
     @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_set_docker_manifest_json_with_tag(self, containerregistry_endpoint):
-        repo = "library/hello-world"
-        tag = "v1"
+    async def test_set_docker_manifest(self, **kwargs):
+        containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
+        repo = self.get_resource_name("repo")
         path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await self.upload_docker_manifest_prerequisites(repo, client)
-
+            
             with open(path, "rb") as manifest_stream:
+                # test set Docker manifest in stream format
+                with pytest.raises(HttpResponseError):
+                    # It fails as the default media type is oci image manifest media type
+                    await client.set_manifest(repo, manifest_stream, tag="v1")
+                manifest_stream.seek(0)
+                digest1 = await client.set_manifest(repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST)
+                manifest_stream.seek(0)
+                
+                # test set Docker manifest in JSON format
                 manifest_json = json.loads(manifest_stream.read().decode())
                 with pytest.raises(HttpResponseError):
                     # It fails as the default media type is oci image manifest media type
-                    await client.set_manifest(repo, manifest_json, tag=tag)
-                digest = await client.set_manifest(repo, manifest_json, tag=tag, media_type=DOCKER_MANIFEST)
+                    await client.set_manifest(repo, manifest_json, tag="v2")
+                digest2 = await client.set_manifest(repo, manifest_json, tag="v2", media_type=DOCKER_MANIFEST)
             
-            response = await client.get_manifest(repo, tag)
+            assert digest1 == digest2
+                
+            # test get Docker manifest by digest
+            response = await client.get_manifest(repo, digest1)
+            assert response.media_type == DOCKER_MANIFEST
+            
+            # test get Docker manifest by tag
+            response = await client.get_manifest(repo, "v1")
+            assert response.media_type == DOCKER_MANIFEST
+            response = await client.get_manifest(repo, "v2")
             assert response.media_type == DOCKER_MANIFEST
 
-            tags = (await client.get_manifest_properties(repo, digest)).tags
-            assert len(tags) == 1
-            assert tags[0] == tag
+            await client.delete_manifest(repo, digest1)
+            await client.delete_repository(repo)
+    
+    # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly.
+    # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_set_docker_manifest_without_spaces(self, containerregistry_endpoint):
+        if self.is_china_endpoint(containerregistry_endpoint):
+            pytest.skip("Running in china cloud may cause all tests finishing longer than the max time of 120 mins.")
+        
+        repo = self.get_resource_name("repo")
+        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest_without_spaces.json")
+        async with self.create_registry_client(containerregistry_endpoint) as client:
+            await self.upload_docker_manifest_prerequisites(repo, client)
             
+            with open(path, "rb") as manifest_stream:
+                # test set Docker manifest in stream format
+                with pytest.raises(HttpResponseError):
+                    # It fails as the default media type is oci image manifest media type
+                    await client.set_manifest(repo, manifest_stream, tag="v1")
+                manifest_stream.seek(0)
+                digest = await client.set_manifest(repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST)
+                
+            # test get Docker manifest by digest
+            response = await client.get_manifest(repo, digest)
+            assert response.media_type == DOCKER_MANIFEST
+            
+            # test get Docker manifest by tag
+            response = await client.get_manifest(repo, "v1")
+            assert response.media_type == DOCKER_MANIFEST
+
             await client.delete_manifest(repo, digest)
             await client.delete_repository(repo)
 
@@ -772,13 +608,11 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_upload_blob(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        blob = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
-        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", blob)
+        blob = BytesIO(b"hello world")
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
             # Act
-            with open(path, "rb") as data:
-                digest, blob_size = await client.upload_blob(repo, data)
+            digest, blob_size = await client.upload_blob(repo, blob)
 
             # Assert
             blob_content = b""
@@ -792,39 +626,64 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
     @pytest.mark.live_test_only
     @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_upload_large_blob_in_chunk(self, containerregistry_endpoint):
+    async def test_upload_large_blob_in_chunk(self, **kwargs):
+        containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
+        if not self.is_public_endpoint(containerregistry_endpoint):
+            pytest.skip("Running in non-public cloud may cause all tests finishing longer than the max time of 120 mins.")
+        
         repo = self.get_resource_name("repo")
         async with self.create_registry_client(containerregistry_endpoint) as client:
             # Test blob upload and download in equal size chunks
-            blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
-            data = b'\x00' * int(blob_size)
-            digest, size = await client.upload_blob(repo, BytesIO(data))
-            assert size == blob_size
+            try:
+                blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
+                data = b'\x00' * int(blob_size)
+                digest, size = await client.upload_blob(repo, BytesIO(data))
+                assert size == blob_size
 
-            stream = await client.download_blob(repo, digest)
-            size = 0
-            with open("text1.txt", "wb") as file:
-                async for chunk in stream:
-                    size += file.write(chunk)
-            assert size == blob_size
+                stream = await client.download_blob(repo, digest)
+                size = 0
+                with open("text1.txt", "wb") as file:
+                    async for chunk in stream:
+                        size += file.write(chunk)
+                assert size == blob_size
 
-            await client.delete_blob(repo, digest)
+                await client.delete_blob(repo, digest)
+            except (ServiceRequestError, ServiceResponseError) as err:
+                # Service does not support resumable upload when get transient error while uploading
+                # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
+                print(f"Failed to upload blob: {err.message}")
+            except ResourceNotFoundError as err:
+                # Service does not support resumable upload when get transient error while uploading
+                # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
+                assert err.status_code == 404
+                assert err.response.request.method == "PATCH"
+                assert err.response.text() == '{"errors":[{"code":"BLOB_UPLOAD_INVALID","message":"blob upload invalid"}]}\n'
 
             # Test blob upload and download in unequal size chunks
-            blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
-            data = b'\x00' * int(blob_size)
-            digest, size = await client.upload_blob(repo, BytesIO(data))
-            assert size == blob_size
+            try:
+                blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
+                data = b'\x00' * int(blob_size)
+                digest, size = await client.upload_blob(repo, BytesIO(data))
+                assert size == blob_size
 
-            stream = await client.download_blob(repo, digest)
-            size = 0
-            with open("text2.txt", "wb") as file:
-                async for chunk in stream:
-                    size += file.write(chunk)
-            assert size == blob_size
+                stream = await client.download_blob(repo, digest)
+                size = 0
+                with open("text2.txt", "wb") as file:
+                    async for chunk in stream:
+                        size += file.write(chunk)
+                assert size == blob_size
 
-            await client.delete_blob(repo, digest)
+                await client.delete_blob(repo, digest)
+            except (ServiceRequestError, ServiceResponseError) as err:
+                # Service does not support resumable upload when get transient error while uploading
+                # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
+                print(f"Failed to upload blob: {err.message}")
+            except ResourceNotFoundError as err:
+                # Service does not support resumable upload when get transient error while uploading
+                # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
+                assert err.status_code == 404
+                assert err.response.request.method == "PATCH"
+                assert err.response.text() == '{"errors":[{"code":"BLOB_UPLOAD_INVALID","message":"blob upload invalid"}]}\n'
 
             # Cleanup
             await client.delete_repository(repo)
@@ -866,29 +725,26 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy_async
-    async def test_list_tags_in_empty_repo(self, containerregistry_endpoint):
+    async def test_list_in_empty_repo(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [repo])
         async with self.create_registry_client(containerregistry_endpoint) as client:
-            # cleanup tags in ALPINE repo
-            async for tag in client.list_tag_properties(ALPINE):
-                await client.delete_tag(ALPINE, tag.name)
+            # cleanup tags in repo
+            async for tag in client.list_tag_properties(repo):
+                await client.delete_tag(repo, tag.name)
             
-            response = client.list_tag_properties(ALPINE)
-            if response is not None:
-                async for tag in response:
-                    pass
-    
-    @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_list_manifests_in_empty_repo(self, containerregistry_endpoint):
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            # cleanup manifests in ALPINE repo
-            async for tag in client.list_tag_properties(ALPINE):
-                await client.delete_manifest(ALPINE, tag.name)
+            # test list tags in empty repo
+            response = client.list_tag_properties(repo)
+            async for tag in response:
+                # cleanup manifests in repo
+                await client.delete_manifest(repo, tag.name)
 
-            response = client.list_manifest_properties(ALPINE)
-            if response is not None:
-                async for manifest in response:
-                    pass
+            # test list manifests in empty repo
+            response = client.list_manifest_properties(repo)
+            async for manifest in response:
+                pass
+            
+            await client.delete_repository(repo)
 
 
 class MyMagicMock(MagicMock):
@@ -932,7 +788,7 @@ class TestContainerRegistryClientAsyncUnitTests:
             content_type = "application/vnd.oci.image.manifest.v1+json"
             return MyMagicMock(
                 status_code=200,
-                headers={"Docker-Content-Digest": content_digest, "Content-Type": content_type},
+                headers={"Docker-Content-Digest": content_digest, "Content-Type": content_type, "Content-Length": len(b"hello world")},
                 read=read,
                 json=json
         )
@@ -940,7 +796,7 @@ class TestContainerRegistryClientAsyncUnitTests:
         async with ContainerRegistryClient(
             endpoint=self.containerregistry_endpoint, transport = MyMagicMock(send=send_in_set_manifest)
         ) as client:
-            with pytest.raises(ManifestDigestValidationError) as exp:
+            with pytest.raises(DigestValidationError) as exp:
                 manifest = {"hello": "world"}
                 await client.set_manifest("test-repo", manifest)
             assert str(exp.value) == "The server-computed digest does not match the client-computed digest."
@@ -948,12 +804,12 @@ class TestContainerRegistryClientAsyncUnitTests:
         async with ContainerRegistryClient(
             endpoint=self.containerregistry_endpoint, transport = MyMagicMock(send=send_in_get_manifest)
         ) as client:
-            with pytest.raises(ManifestDigestValidationError) as exp:
+            with pytest.raises(DigestValidationError) as exp:
                 digest = hashlib.sha256(b"hello world").hexdigest()
                 await client.get_manifest("test-repo", f"sha256:{digest}")
             assert str(exp.value) == "The content of retrieved manifest digest does not match the requested digest."
                 
-            with pytest.raises(ManifestDigestValidationError) as exp:
+            with pytest.raises(DigestValidationError) as exp:
                 await client.get_manifest("test-repo", "test-tag")
             assert str(exp.value) == "The server-computed digest does not match the client-computed digest."
 
@@ -991,7 +847,7 @@ class TestContainerRegistryClientAsyncUnitTests:
         async with ContainerRegistryClient(
             endpoint=self.containerregistry_endpoint, transport = MyMagicMock(send=send_in_upload_blob)
         ) as client:
-            with pytest.raises(ManifestDigestValidationError) as exp:
+            with pytest.raises(DigestValidationError) as exp:
                 await client.upload_blob("test-repo", BytesIO(b'{"hello": "world"}'))
             assert str(exp.value) == "The server-computed digest does not match the client-computed digest."
             
@@ -1000,7 +856,7 @@ class TestContainerRegistryClientAsyncUnitTests:
         ) as client:
             digest = hashlib.sha256(b"hello world").hexdigest()
             stream = await client.download_blob("test-repo", f"sha256:{digest}")
-            with pytest.raises(ManifestDigestValidationError) as exp:
+            with pytest.raises(DigestValidationError) as exp:
                 async for chunk in stream:
                     pass
             assert str(exp.value) == "The content of retrieved blob digest does not match the requested digest."

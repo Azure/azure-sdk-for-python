@@ -1,9 +1,38 @@
 # Release History
 
-## 1.7.0 (Unreleased)
+## 1.8.0 (Unreleased)
+
+### Features Added
+- Added support to enable set workspace connection secret expiry time.
+- Added support for `stage` on model version
+
+### Bugs Fixed
+
+- Fixed an issue affecting authentication to registry-related services in sovereign regions.
+
+### Breaking Changes
+
+### Other Changes
+
+
+## 1.7.2 (2023-05-18)
+
+### Features Added
+- Public preview support for new schedule type `MonitorSchedule`
+
+
+## 1.7.1 (2023-05-17)
+
+### Bugs Fixed
+- Fixed an issue where `OnlineDeployment.provisioning_state` was incorrectly deserialized and set as `None`
+
+
+## 1.7.0 (2023-05-15)
 
 ### Features Added
 - Added data import schedule. The class added is `ImportDataSchedule`.
+- Added support to enable data isolation feature at workspace creation stage.
+- Added auto_delete_setting support for asset version in data import job.
 
 ### Bugs Fixed
 
@@ -12,7 +41,7 @@
 ### Other Changes
 
 
-## 1.6.0 (05/01/2023)
+## 1.6.0 (2023-05-01)
 
 ### Features Added
 - Added experimental scatter gather node to DSL package. This node has a unique mldesigner dependency.
@@ -22,8 +51,6 @@
 - Added Feature Store, its dedicated classes and updated the docstrings, now available in public interface. The classes added are `FeatureStoreOperations, FeatureSetOperations, FeatureStoreEntityOperations` with properties classes specific to the new features.
 - Support additional_includes in command component
 - Added experimental `distribution: ray` support in command job.
-- Added support to enable data isolation feature at workspace creation stage.
-- Added auto_delete_setting support for asset version in data import job.
 
 ### Bugs Fixed
 

@@ -19,6 +19,8 @@ from ._models_py3 import CheckNameAvailabilityOutput
 from ._models_py3 import CustomHttpsConfiguration
 from ._models_py3 import CustomRule
 from ._models_py3 import CustomRuleList
+from ._models_py3 import DefaultErrorResponse
+from ._models_py3 import DefaultErrorResponseError
 from ._models_py3 import Endpoint
 from ._models_py3 import Error
 from ._models_py3 import ErrorDetails
@@ -162,6 +164,8 @@ __all__ = [
     "CustomHttpsConfiguration",
     "CustomRule",
     "CustomRuleList",
+    "DefaultErrorResponse",
+    "DefaultErrorResponseError",
     "Endpoint",
     "Error",
     "ErrorDetails",

@@ -1,5 +1,16 @@
 # Release History
 
+## 6.0.0 (2023-05-04)
+
+### Features Added
+
+  - Model PrivateEndpointConnection has a new parameter group_ids
+  - Model PrivateLinkServiceConnectionState has a new parameter actions_required
+
+### Breaking Changes
+
+  - Model PrivateLinkServiceConnectionState no longer has parameter action_required
+
 ## 5.2.0 (2023-03-20)
 
 ### Features Added

@@ -112,6 +112,11 @@ Azure Confidential Ledger applications can attach arbitrary data, called applica
 
 Later, application claims can be revealed in their un-digested form in the receipt payload corresponding to the same transaction where they were added. This allows users to leverage the information in the receipt to re-compute the same claims digest that was attached and signed in place by the Azure Confidential Ledger instance during the transaction. The claims digest can be used as part of the write transaction receipt verification process, providing an offline way for users to fully verify the authenticity of the recorded claims.
 
+More details on the application claims format and the digest computation algorithm can be found at the following links:
+
+- [Azure Confidential Ledger application claims](https://learn.microsoft.com/azure/confidential-ledger/write-transaction-receipts#application-claims)
+- [Azure Confidential Ledger application claims digest verification](https://learn.microsoft.com/azure/confidential-ledger/verify-write-transaction-receipts#verify-application-claims-digest)
+
 Please refer to the following CCF documentation pages for more information about CCF Application claims:
 
 - [Application Claims](https://microsoft.github.io/CCF/main/use_apps/verify_tx.html#application-claims)
@@ -437,7 +442,7 @@ application_claims = get_receipt_result.get("applicationClaims", None)
 
 try:
     # Verify the contents of the receipt.
-    verify_receipt(get_receipt_result["receipt"], service_cert_content, application_claims)
+    verify_receipt(get_receipt_result["receipt"], service_cert_content, application_claims=application_claims)
     print(f"Receipt for transaction id {transaction_id} successfully verified")
 except ValueError:
     print(f"Receipt verification for transaction id {transaction_id} failed")

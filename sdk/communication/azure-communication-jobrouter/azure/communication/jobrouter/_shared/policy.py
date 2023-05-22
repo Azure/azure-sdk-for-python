@@ -53,6 +53,19 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         # Get the path and query from url, which looks like https://host/path/query
         query_url = str(request.http_request.url[len(self._host) + 8:])
 
+        # Need URL() to get a correct encoded key value, from "%3A" to ":", when transport is in type AioHttpTransport.
+        # There's a similar scenario in azure-storage-blob and azure-appconfiguration, the check logic is from there.
+        try:
+            from yarl import URL
+            from azure.core.pipeline.transport import AioHttpTransport
+            if isinstance(request.context.transport, AioHttpTransport) or \
+                    isinstance(getattr(request.context.transport, "_transport", None), AioHttpTransport) or \
+                    isinstance(getattr(getattr(request.context.transport, "_transport", None), "_transport", None),
+                               AioHttpTransport):
+                query_url = str(URL(query_url))
+        except (ImportError, TypeError):
+            pass
+
         if self._decode_url:
             query_url = urllib.parse.unquote(query_url)
 

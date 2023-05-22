@@ -20,13 +20,13 @@ def mock_credential() -> Mock:
 @pytest.fixture
 def mock_feature_store_operation(
     mock_workspace_scope: OperationScope,
-    mock_aml_services_2022_12_01_preview: Mock,
+    mock_aml_services_2023_04_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
 ) -> FeatureStoreOperations:
     yield FeatureStoreOperations(
         operation_scope=mock_workspace_scope,
-        service_client=mock_aml_services_2022_12_01_preview,
+        service_client=mock_aml_services_2023_04_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
     )
@@ -66,10 +66,10 @@ class TestFeatureStoreOperation:
             description="description",
         )
 
-        def outgoing_get_call(rg, name, **kwargs):
+        def outgoing_get_call(rg, name):
             return Workspace(name=name, kind="featurestore")._to_rest_object()
 
-        def outgoing_call(rg, name, params, polling, cls, **kwargs):
+        def outgoing_call(rg, name, params, polling, cls):
             assert rg == "test_resource_group"
             assert name == "name"
             assert params.description == "description"
@@ -83,7 +83,7 @@ class TestFeatureStoreOperation:
         mock_feature_store_operation._operation.begin_update.assert_called()
 
     def test_delete(self, mock_feature_store_operation: FeatureStoreOperations, mocker: MockFixture) -> None:
-        def outgoing_call(rg, name, **kwargs):
+        def outgoing_call(rg, name):
             return Workspace(name=name, kind="featurestore")._to_rest_object()
 
         mock_feature_store_operation._operation.get.side_effect = outgoing_call
@@ -94,7 +94,7 @@ class TestFeatureStoreOperation:
     def test_delete_non_feature_store_kind(
         self, mock_feature_store_operation: FeatureStoreOperations, mocker: MockFixture
     ) -> None:
-        def outgoing_call(rg, name, **kwargs):
+        def outgoing_call(rg, name):
             return Workspace(name=name)._to_rest_object()
 
         mock_feature_store_operation._operation.get.side_effect = outgoing_call

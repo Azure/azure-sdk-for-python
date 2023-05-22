@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
-
+from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import TYPE_CHECKING, Dict, Union
@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 
 
 def read_feature_set_metadata_contents(*, path: str) -> Dict:
-    metadata_path = str(Path(path, "FeaturesetSpec.yaml"))
+    metadata_path = str(Path(path, "FeatureSetSpec.yaml"))
     return load_yaml(metadata_path)
 
 
@@ -45,8 +45,8 @@ def read_remote_feature_set_spec_metadata_contents(
         storage_client = get_storage_client(**datastore_info)
         with TemporaryDirectory() as tmp_dir:
             starts_with = datastore_path_uri.path.rstrip("/")
-            storage_client.download(f"{starts_with}/FeaturesetSpec.yaml", tmp_dir)
-            downloaded_spec_path = Path(tmp_dir, "FeaturesetSpec.yaml")
+            storage_client.download(f"{starts_with}/FeatureSetSpec.yaml", tmp_dir)
+            downloaded_spec_path = Path(tmp_dir, "FeatureSetSpec.yaml")
             with open(downloaded_spec_path, "r") as f:
                 return yaml.safe_load(f)
     return None
@@ -101,3 +101,7 @@ def _archive_or_restore(
         body=version_resource,
         **kwargs,
     )
+
+
+def _datetime_to_str(datetime_obj: Union[str, datetime]):
+    return datetime_obj if isinstance(datetime_obj, str) else datetime_obj.isoformat()
