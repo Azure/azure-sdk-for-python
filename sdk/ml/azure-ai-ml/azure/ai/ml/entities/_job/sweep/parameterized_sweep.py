@@ -167,8 +167,8 @@ class ParameterizedSweep:
     def set_objective(self, *, goal: Optional[str] = None, primary_metric: Optional[str] = None) -> None:
         """Set the sweep object.. Leave parameters as None if you don't want to update corresponding values.
 
-        :param goal: Defines supported metric goals for hyperparameter tuning. Possible values
-        include: "minimize", "maximize".
+        :param goal: Defines supported metric goals for hyperparameter tuning. Acceptable values are:
+        "minimize", "maximize".
         :type goal: str
         :param primary_metric: Name of the metric to optimize.
         :type primary_metric: str

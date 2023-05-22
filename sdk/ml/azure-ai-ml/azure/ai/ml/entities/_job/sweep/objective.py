@@ -10,8 +10,8 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class Objective(RestTranslatableMixin):
     """Optimization objective.
 
-    :param goal: Required. Defines supported metric goals for hyperparameter tuning. Possible values
-     include: "minimize", "maximize".
+    :param goal: Required. Defines supported metric goals for hyperparameter tuning. Acceptable values
+     are: "minimize", "maximize".
     :type goal: str
     :param primary_metric: Required. Name of the metric to optimize.
     :type primary_metric: str
@@ -30,8 +30,8 @@ class Objective(RestTranslatableMixin):
     def __init__(self, goal: str, primary_metric: str) -> None:
         """Optimization objective.
 
-        :param goal: Required. Defines supported metric goals for hyperparameter tuning. Possible values
-        include: "minimize", "maximize".
+        :param goal: Required. Defines supported metric goals for hyperparameter tuning. Acceptable values
+        are: "minimize", "maximize".
         :type goal: str
         :param primary_metric: Required. Name of the metric to optimize.
         :type primary_metric: str

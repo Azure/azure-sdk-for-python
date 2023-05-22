@@ -17,7 +17,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class SamplingAlgorithm(ABC, RestTranslatableMixin):
     """Base class for sampling algorithms.
 
-    You should not instantiate this class directly. Instead, use of its subclasses.
+    You should not instantiate this class directly. Instead, use one of its subclasses.
     """
 
     def __init__(self) -> None:
@@ -45,12 +45,12 @@ class SamplingAlgorithm(ABC, RestTranslatableMixin):
 class RandomSamplingAlgorithm(SamplingAlgorithm):
     """Random Sampling Algorithm.
 
-    :param rule: The specific type of random algorithm. Possible values include: "random",
+    :param rule: The specific type of random algorithm. Acceptable values are: "random",
         "sobol".
     :type rule: str
     :param seed: The seed for random number generation.
     :type seed: int
-    :param logbase: A positive number or e in string format to be used as base for log
+    :param logbase: A positive number or the number "e" in string format to be used as the base for log
         based random sampling.
     :type logbase: Union[float, str]
 
@@ -74,12 +74,12 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
     ) -> None:
         """Random Sampling Algorithm.
 
-        :param rule: The specific type of random algorithm. Possible values include: "random",
+        :param rule: The specific type of random algorithm. Acceptable values are: "random",
             "sobol".
         :type rule: str
         :param seed: The seed for random number generation.
         :type seed: int
-        :param logbase: A positive number or e in string format to be used as base for log
+        :param logbase: A positive number or the number "e" in string format to be used as the base for log
             based random sampling.
         :type logbase: Union[float, str]
         """

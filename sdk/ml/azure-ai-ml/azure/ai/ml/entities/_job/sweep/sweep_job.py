@@ -83,7 +83,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :param experiment_name:  Name of the experiment the job will be created under, if None is provided,
         job will be created under experiment 'Default'.
     :type experiment_name: str
-    :param identity: Identity that training job will use while running on compute.
+    :param identity: Identity that the training job will use while running on compute.
     :type identity: Union[
         ~azure.ai.ml.ManagedIdentityConfiguration,
         ~azure.ai.ml.AmlTokenConfiguration,
@@ -105,7 +105,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :param trial: The job configuration for each trial. Each trial will be provided with a different combination
         of hyperparameter values that the system samples from the search_space.
     :type trial: Union[~azure.ai.ml.entities.CommandJob, ~azure.ai.ml.entities.CommandComponent]
-    :param early_termination: The early termination policy to use.A trial job is canceled
+    :param early_termination: The early termination policy to use. A trial job is canceled
         when the criteria of the specified policy are met. If omitted, no early termination policy will be applied.
     :type early_termination:  Union[
     ~azure.mgmt.machinelearningservices.models.BanditPolicy,
@@ -171,10 +171,10 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         :type tags: dict[str, str]
         :param properties: The asset property dictionary.
         :type properties: dict[str, str]
-        :param experiment_name:  Name of the experiment the job will be created under, if None is provided,
+        :param experiment_name:  Name of the experiment the job will be created under. If None is provided,
             job will be created under experiment 'Default'.
         :type experiment_name: str
-        :param identity: Identity that training job will use while running on compute.
+        :param identity: Identity that the training job will use while running on compute.
         :type identity: Union[
             ~azure.ai.ml.ManagedIdentityConfiguration,
             ~azure.ai.ml.AmlTokenConfiguration,
@@ -196,7 +196,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         :param trial: The job configuration for each trial. Each trial will be provided with a different combination
             of hyperparameter values that the system samples from the search_space.
         :type trial: Union[~azure.ai.ml.entities.CommandJob, ~azure.ai.ml.entities.CommandComponent]
-        :param early_termination: The early termination policy to use.A trial job is canceled
+        :param early_termination: The early termination policy to use. A trial job is canceled
             when the criteria of the specified policy are met. If omitted, no early termination policy will be applied.
         :type early_termination:  Union[
         ~azure.mgmt.machinelearningservices.models.BanditPolicy,
