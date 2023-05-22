@@ -27,12 +27,12 @@ def create_or_update_text_blocklist():
         blocklist = client.create_or_update_text_blocklist(blocklist_name=blocklist_name, resource={"description": blocklist_description})
         if blocklist is not None:
             print("\nBlocklist created or updated: ")
-            print("Name: {}, Description: {}".format(blocklist.blocklist_name, blocklist.description))
+            print(f"Name: {blocklist.blocklist_name}, Description: {blocklist.description}")
     except HttpResponseError as e:
         print("\nCreate or update text blocklist failed: ")
         if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise
@@ -70,12 +70,12 @@ def add_block_items():
         if result is not None and result.value is not None:
             print("\nBlock items added: ")
             for block_item in result.value:
-                print("BlockItemId: {}, Text: {}, Description: {}".format(block_item.block_item_id, block_item.text, block_item.description))
+                print(f"BlockItemId: {block_item.block_item_id}, Text: {block_item.text}, Description: {block_item.description}")
     except HttpResponseError as e:
         print("\nAdd block items failed: ")
         if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise
@@ -106,13 +106,13 @@ def analyze_text_with_blocklists():
         if analysis_result is not None and analysis_result.blocklists_match_results is not None:
             print("\nBlocklist match results: ")
             for match_result in analysis_result.blocklists_match_results:
-                print("Block item was hit in text, Offset={}, Length={}.".format(match_result.offset, match_result.length))
-                print("BlocklistName: {}, BlockItemId: {}, BlockItemText: {}".format(match_result.blocklist_name, match_result.block_item_id, match_result.block_item_text))
+                print(f"Block item was hit in text, Offset={match_result.offset}, Length={match_result.length}.")
+                print(f"BlocklistName: {match_result.blocklist_name}, BlockItemId: {match_result.block_item_id}, BlockItemText: {match_result.block_item_text}")
     except HttpResponseError as e:
         print("\nAnalyze text failed: ")
         if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise
@@ -138,12 +138,12 @@ def list_text_blocklists():
         if blocklists is not None:
             print("\nList blocklists: ")
             for blocklist in blocklists:
-                print("Name: {}, Description: {}".format(blocklist.blocklist_name, blocklist.description))
+                print(f"Name: {blocklist.blocklist_name}, Description: {blocklist.description}")
     except HttpResponseError as e:
         print("\nList text blocklists failed: ")
         if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise
@@ -170,12 +170,12 @@ def get_text_blocklist():
         blocklist = client.get_text_blocklist(blocklist_name=blocklist_name)
         if blocklist is not None:
             print("\nGet blocklist: ")
-            print("Name: {}, Description: {}".format(blocklist.blocklist_name, blocklist.description))
+            print(f"Name: {blocklist.blocklist_name}, Description: {blocklist.description}")
     except HttpResponseError as e:
         print("\nGet text blocklist failed: ")
         if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise
@@ -203,12 +203,12 @@ def list_block_items():
         if block_items is not None:
             print("\nList block items: ")
             for block_item in block_items:
-                print("BlockItemId: {}, Text: {}, Description: {}".format(block_item.block_item_id, block_item.text, block_item.description))
+                print(f"BlockItemId: {block_item.block_item_id}, Text: {block_item.text}, Description: {block_item.description}")
     except HttpResponseError as e:
         print("\nList block items failed: ")
         if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise
@@ -249,13 +249,12 @@ def get_block_item():
             block_item_id= block_item_id
         )
         print("\nGet blockitem: ")
-        print("BlockItemId: {}, Text: {}, Description: {}".format(block_item.block_item_id, block_item.text,
-                                                                  block_item.description))
+        print(f"BlockItemId: {block_item.block_item_id}, Text: {block_item.text}, Description: {block_item.description}")
     except HttpResponseError as e:
         print("\nGet block item failed: ")
         if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise
@@ -299,12 +298,12 @@ def remove_block_items():
             blocklist_name=blocklist_name,
             body=RemoveBlockItemsOptions(block_item_ids=[block_item_id])
         )
-        print("\nRemoved blockItem: {}".format(add_result.value[0].block_item_id))
+        print(f"\nRemoved blockItem: {add_result.value[0].block_item_id}")
     except HttpResponseError as e:
         print("\nRemove block item failed: ")
         if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise
@@ -329,12 +328,12 @@ def delete_blocklist():
 
     try:
         client.delete_text_blocklist(blocklist_name=blocklist_name)
-        print("\nDeleted blocklist: {}".format(blocklist_name))
+        print(f"\nDeleted blocklist: {blocklist_name}")
     except HttpResponseError as e:
         print("\nDelete blocklist failed:")
         if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise

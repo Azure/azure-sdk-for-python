@@ -35,16 +35,16 @@ async def analyze_text_async():
         except HttpResponseError as e:
             print("Analyze text failed.")
             if e.error is not None:
-                print("Error code: {}".format(e.error.code))
-                print("Error message: {}".format(e.error.message))
+                print(f"Error code: {e.error.code}")
+                print(f"Error message: {e.error.message}")
                 raise
             print(e)
             raise
 
     if response.hate_result is not None:
-        print("Hate severity: {}".format(response.hate_result.severity))
+        print(f"Hate severity: {response.hate_result.severity}")
     if response.self_harm_result is not None:
-        print("SelfHarm severity: {}".format(response.self_harm_result.severity))
+        print(f"SelfHarm severity: {response.self_harm_result.severity}")
 
     # [END analyze_text_async]
 
