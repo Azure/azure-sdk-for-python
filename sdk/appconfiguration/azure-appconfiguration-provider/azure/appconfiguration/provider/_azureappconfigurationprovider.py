@@ -156,11 +156,11 @@ def _get_correlation_context(key_vault_options: Optional[AzureAppConfigurationKe
         correlation_context += ",UsesKeyVault"
     host_type = ""
     if os.environ.get(AzureFunctionEnvironmentVariable) is not None:
-        host_type = "AzureFunctions"
+        host_type = "AzureFunction"
     elif os.environ.get(AzureWebAppEnvironmentVariable) is not None:
-        host_type = "AzureWebApps"
+        host_type = "AzureWebApp"
     elif os.environ.get(ContainerAppEnvironmentVariable) is not None:
-        host_type = "ContainerApps"
+        host_type = "ContainerApp"
     elif os.environ.get(KubernetesEnvironmentVariable) is not None:
         host_type = "Kubernetes"
     elif os.environ.get(ServiceFabricEnvironmentVariable) is not None:
