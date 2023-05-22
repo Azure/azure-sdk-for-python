@@ -14,7 +14,7 @@ from azure.mgmt.devcenter import DevCenterMgmtClient
     pip install azure-identity
     pip install azure-mgmt-devcenter
 # USAGE
-    python network_connections_create_or_update.py
+    python image_versions_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,24 +29,16 @@ def main():
         subscription_id="0ac520ee-14c0-480f-b6c9-0a90c58ffff",
     )
 
-    response = client.network_connections.begin_create_or_update(
+    response = client.image_versions.list_by_image(
         resource_group_name="rg1",
-        network_connection_name="uswest3network",
-        body={
-            "location": "centralus",
-            "properties": {
-                "domainJoinType": "HybridAzureADJoin",
-                "domainName": "mydomaincontroller.local",
-                "domainPassword": "Password value for user",
-                "domainUsername": "testuser@mydomaincontroller.local",
-                "networkingResourceGroupName": "NetworkInterfaces",
-                "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ExampleRG/providers/Microsoft.Network/virtualNetworks/ExampleVNet/subnets/default",
-            },
-        },
-    ).result()
-    print(response)
+        dev_center_name="Contoso",
+        gallery_name="DefaultDevGallery",
+        image_name="Win11",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2022-11-11-preview/examples/NetworkConnections_Put.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/stable/2023-04-01/examples/ImageVersions_List.json
 if __name__ == "__main__":
     main()

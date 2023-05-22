@@ -14,7 +14,7 @@ from azure.mgmt.devcenter import DevCenterMgmtClient
     pip install azure-identity
     pip install azure-mgmt-devcenter
 # USAGE
-    python galleries_get.py
+    python operation_status_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,13 @@ def main():
         subscription_id="0ac520ee-14c0-480f-b6c9-0a90c58ffff",
     )
 
-    response = client.galleries.get(
-        resource_group_name="rg1",
-        dev_center_name="Contoso",
-        gallery_name="StandardGallery",
+    response = client.operation_statuses.get(
+        location="westus3",
+        operation_id="3fa1a29d-e807-488d-81d1-f1c5456a08cd",
     )
     print(response)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/stable/2023-04-01/examples/Galleries_Get.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/stable/2023-04-01/examples/OperationStatus_Get.json
 if __name__ == "__main__":
     main()
