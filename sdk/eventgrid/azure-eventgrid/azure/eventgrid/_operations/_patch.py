@@ -20,7 +20,7 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
     if isinstance(cloud_event.data, bytes):
         data_kwargs["data_base64"] = base64.b64encode(
             cloud_event.data
-        )  # base64 encode double check
+        )
     else:
         data_kwargs["data"] = cloud_event.data
 
