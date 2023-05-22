@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Union
+from typing import Union, Optional
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     BayesianSamplingAlgorithm as RestBayesianSamplingAlgorithm,
@@ -68,9 +68,9 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
     def __init__(
         self,
         *,
-        rule: str = None,
-        seed: int = None,
-        logbase: Union[float, str] = None,
+        rule: Optional[str] = None,
+        seed: Optional[int] = None,
+        logbase: Optional[Union[float, str]]= None,
     ) -> None:
         """Random Sampling Algorithm.
 

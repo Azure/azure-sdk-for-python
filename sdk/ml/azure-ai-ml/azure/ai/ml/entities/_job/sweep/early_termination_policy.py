@@ -137,8 +137,8 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
     def __init__(
         self,
         *,
-        delay_evaluation: int = 0,
-        evaluation_interval: int = 1,
+        delay_evaluation: Optional[int] = 0,
+        evaluation_interval: Optional[int] = 1,
     ) -> None:
         """Defines an early termination policy based on running averages of the primary metric of all runs.
 
@@ -188,9 +188,9 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
     def __init__(
         self,
         *,
-        delay_evaluation: int = 0,
-        evaluation_interval: int = 0,
-        truncation_percentage: int = 0,
+        delay_evaluation: Optional[int] = 0,
+        evaluation_interval: Optional[int] = 0,
+        truncation_percentage: Optional[int] = 0,
     ) -> None:
         """Defines an early termination policy that cancels a given percentage of runs at each evaluation interval.
 
