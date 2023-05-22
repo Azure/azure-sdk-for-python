@@ -14,7 +14,7 @@ from azure.mgmt.devcenter import DevCenterMgmtClient
     pip install azure-identity
     pip install azure-mgmt-devcenter
 # USAGE
-    python project_environment_types_update.py
+    python network_connections_put.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,30 +29,24 @@ def main():
         subscription_id="0ac520ee-14c0-480f-b6c9-0a90c58ffff",
     )
 
-    response = client.project_environment_types.update(
+    response = client.network_connections.begin_create_or_update(
         resource_group_name="rg1",
-        project_name="ContosoProj",
-        environment_type_name="DevTest",
+        network_connection_name="uswest3network",
         body={
-            "identity": {
-                "type": "UserAssigned",
-                "userAssignedIdentities": {
-                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/identityGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testidentity1": {}
-                },
-            },
+            "location": "centralus",
             "properties": {
-                "deploymentTargetId": "/subscriptions/00000000-0000-0000-0000-000000000000",
-                "status": "Enabled",
-                "userRoleAssignments": {
-                    "e45e3m7c-176e-416a-b466-0c5ec8298f8a": {"roles": {"4cbf0b6c-e750-441c-98a7-10da8387e4d6": {}}}
-                },
+                "domainJoinType": "HybridAzureADJoin",
+                "domainName": "mydomaincontroller.local",
+                "domainPassword": "Password value for user",
+                "domainUsername": "testuser@mydomaincontroller.local",
+                "networkingResourceGroupName": "NetworkInterfaces",
+                "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ExampleRG/providers/Microsoft.Network/virtualNetworks/ExampleVNet/subnets/default",
             },
-            "tags": {"CostCenter": "RnD"},
         },
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2022-11-11-preview/examples/ProjectEnvironmentTypes_Patch.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/stable/2023-04-01/examples/NetworkConnections_Put.json
 if __name__ == "__main__":
     main()

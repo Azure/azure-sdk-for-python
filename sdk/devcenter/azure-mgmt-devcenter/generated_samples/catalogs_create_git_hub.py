@@ -14,7 +14,7 @@ from azure.mgmt.devcenter import DevCenterMgmtClient
     pip install azure-identity
     pip install azure-mgmt-devcenter
 # USAGE
-    python schedules_get_by_pool.py
+    python catalogs_create_git_hub.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,15 +29,24 @@ def main():
         subscription_id="0ac520ee-14c0-480f-b6c9-0a90c58ffff",
     )
 
-    response = client.schedules.get(
+    response = client.catalogs.begin_create_or_update(
         resource_group_name="rg1",
-        project_name="TestProject",
-        pool_name="DevPool",
-        schedule_name="autoShutdown",
-    )
+        dev_center_name="Contoso",
+        catalog_name="CentralCatalog",
+        body={
+            "properties": {
+                "gitHub": {
+                    "branch": "main",
+                    "path": "/templates",
+                    "secretIdentifier": "https://contosokv.vault.azure.net/secrets/CentralRepoPat",
+                    "uri": "https://github.com/Contoso/centralrepo-fake.git",
+                }
+            }
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2022-11-11-preview/examples/Schedules_Get.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/stable/2023-04-01/examples/Catalogs_CreateGitHub.json
 if __name__ == "__main__":
     main()

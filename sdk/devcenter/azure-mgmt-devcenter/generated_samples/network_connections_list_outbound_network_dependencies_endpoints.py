@@ -14,7 +14,7 @@ from azure.mgmt.devcenter import DevCenterMgmtClient
     pip install azure-identity
     pip install azure-mgmt-devcenter
 # USAGE
-    python pools_list_by_project.py
+    python network_connections_list_outbound_network_dependencies_endpoints.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,14 @@ def main():
         subscription_id="0ac520ee-14c0-480f-b6c9-0a90c58ffff",
     )
 
-    response = client.pools.list_by_project(
+    response = client.network_connections.list_outbound_network_dependencies_endpoints(
         resource_group_name="rg1",
-        project_name="DevProject",
+        network_connection_name="uswest3network",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2022-11-11-preview/examples/Pools_List.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/stable/2023-04-01/examples/NetworkConnections_ListOutboundNetworkDependenciesEndpoints.json
 if __name__ == "__main__":
     main()
