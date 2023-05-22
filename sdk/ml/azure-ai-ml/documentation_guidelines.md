@@ -15,10 +15,10 @@ When updating the codebase, please note the following guidelines for creating us
 
 ##### Accuracy 
 
-- No broken links are allowed in reference documentation, and all links must be location/language neutral (e.g. no /en-us/ in links)
-- Docstring details should be aligned with type hints 
-- Any code snippets should be defined in the samples directory in this folder so that they are tested during every CI run
-- Constructors (`def __init__`) should return None, per [PEP 484 standards](https://peps.python.org/pep-0484/#the-meaning-of-annotations)
+- No broken links are allowed in reference documentation, and all links must be location/language neutral (e.g. no /en-us/ in links).
+- Docstring details should be aligned with type hints.
+- Any code snippets should be defined in the samples directory in this folder so that they are tested during every CI run.
+- Constructors (`def __init__`) should return None, per [PEP 484 standards](https://peps.python.org/pep-0484/#the-meaning-of-annotations).
 
  
 ##### Completeness 
@@ -27,33 +27,19 @@ When updating the codebase, please note the following guidelines for creating us
 
     ```markdown
     .. admonition:: Additional Note 
-    
        :class: note 
-    
        This is a note admonition. 
     
-      
-    
     .. admonition:: Warning 
-    
        :class: warning 
-    
        This is a warning admonition. 
     
-      
-    
     .. admonition:: Important 
-    
        :class: danger 
-    
        This is an important admonition. 
     
-      
-    
     .. admonition:: Information 
-    
        :class: info 
-    
        This is an informational admonition. 
     ```
  
