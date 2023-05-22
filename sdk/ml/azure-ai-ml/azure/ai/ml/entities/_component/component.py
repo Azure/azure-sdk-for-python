@@ -517,7 +517,7 @@ class Component(
             component_spec=component,
             description=self.description,
             is_anonymous=self._is_anonymous,
-            properties=self.properties,
+            properties=dict(self.properties) if self.properties else {},
             tags=self.tags,
         )
         result = ComponentVersion(properties=properties)

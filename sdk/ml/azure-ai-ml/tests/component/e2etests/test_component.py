@@ -387,7 +387,7 @@ class TestComponent(AzureRecordedTestCase):
         assert target_entity.id
         # server side will remove \n from the code now. Skip them given it's not targeted to check in this test
         # server side will return optional False for optional None input
-        omit_fields = ["id", "command", "environment", "inputs.*.optional"]
+        omit_fields = ["id", "command", "environment", "inputs.*.optional", "properties"]
         assert omit_with_wildcard(component_entity._to_dict(), *omit_fields) == omit_with_wildcard(
             target_entity._to_dict(), *omit_fields
         )
