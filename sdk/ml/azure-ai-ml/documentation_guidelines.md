@@ -75,6 +75,11 @@ When updating the codebase, please note the following guidelines for creating us
 
 - AzureML v2 is working to get 95% documentation coverage of the entire codebase. ALL new code that you write or existing code that you edit must include a docstring following all of the guidelines. This will be enforced via the interrogate Python package in CI in the future. In the meantime, you can use [interrogate](https://interrogate.readthedocs.io/en/latest/) locally to keep yourself honest. 
 
+```bash
+$ pip install interrogate
+$ interrogate -vv [PATH TO REPO/MODULE/FILE]
+```
+
  
 
 ##### Demonstration 
