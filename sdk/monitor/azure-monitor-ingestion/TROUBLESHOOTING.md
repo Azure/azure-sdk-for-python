@@ -16,7 +16,7 @@ This troubleshooting guide contains instructions to diagnose frequently encounte
 
 ## General troubleshooting
 
-Monitor Ingestion raises exceptions defined in [Azure Core][azure_core_exceptions].
+The Monitor Ingestion library raises exceptions defined in [Azure Core][azure_core_exceptions].
 
 ### Enable client logging
 
@@ -46,7 +46,7 @@ Similarly, `logging_enable` can enable detailed logging for a single operation, 
 client.upload(rule_id, stream_name, logs, logging_enable=True)
 ```
 
-See full Python SDK logging documentation with examples [here][sdk_logging_docs].
+For logging documentation with examples, see [Configure logging in the Azure libraries for Python][sdk_logging_docs].
 
 ### Authentication errors
 
