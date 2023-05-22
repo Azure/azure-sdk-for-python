@@ -136,7 +136,7 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
 
         If the test is running in playback mode, this function opens the <test_name>.txt file located in the recordings directory and loads the events into the event_store.
 
-        :param test_name: The name of the test curreently running.
+        :param test_name: The name of the test currently running.
         :type test_name: str
 
         :return: None
@@ -162,7 +162,7 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
 
         If the test is running in record mode, this function creates a .txt file and writes the events to it.
 
-        :param test_name: The name of the test curreently running to be used as the file name.
+        :param test_name: The name of the test currently running to be used as the file name.
         :type test_name: str
 
         :return: None
