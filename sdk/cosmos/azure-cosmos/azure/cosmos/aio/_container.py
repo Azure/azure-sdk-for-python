@@ -809,7 +809,7 @@ class ContainerProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
 
-    @distributed_trace
+    @distributed_trace_async
     async def delete_all_items_by_partition_key(
         self,
         partition_key: Union[str, int, float, bool],
