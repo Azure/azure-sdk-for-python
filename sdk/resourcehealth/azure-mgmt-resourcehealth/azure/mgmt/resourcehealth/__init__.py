@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._microsoft_resource_health import MicrosoftResourceHealth
-__all__ = ['MicrosoftResourceHealth']
+from ._resource_health_mgmt_client import ResourceHealthMgmtClient
+__all__ = ['ResourceHealthMgmtClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore
