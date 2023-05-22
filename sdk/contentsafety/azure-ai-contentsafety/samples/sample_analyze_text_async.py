@@ -34,16 +34,16 @@ async def analyze_text_async():
             response = await client.analyze_text(request)
         except HttpResponseError as e:
             print("Analyze text failed.")
-            if e.error is not None:
+            if e.error:
                 print(f"Error code: {e.error.code}")
                 print(f"Error message: {e.error.message}")
                 raise
             print(e)
             raise
 
-    if response.hate_result is not None:
+    if response.hate_result:
         print(f"Hate severity: {response.hate_result.severity}")
-    if response.self_harm_result is not None:
+    if response.self_harm_result:
         print(f"SelfHarm severity: {response.self_harm_result.severity}")
 
     # [END analyze_text_async]

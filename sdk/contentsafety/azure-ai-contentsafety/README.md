@@ -129,17 +129,17 @@ Please refer to [sample data](https://github.com/Azure/azure-sdk-for-python/tree
         response = client.analyze_text(request)
     except HttpResponseError as e:
         print("Analyze text failed.")
-        if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+        if e.error:
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise
 
-    if response.hate_result is not None:
-        print("Hate severity: {}".format(response.hate_result.severity))
-    if response.self_harm_result is not None:
-        print("SelfHarm severity: {}".format(response.self_harm_result.severity))
+    if response.hate_result:
+        print(f"Hate severity: {response.hate_result.severity}")
+    if response.self_harm_result:
+        print(f"SelfHarm severity: {response.self_harm_result.severity}")
 ```
 
 <!-- END SNIPPET -->
@@ -167,16 +167,16 @@ Please refer to [sample data](https://github.com/Azure/azure-sdk-for-python/tree
     try:
         # After you edit your blocklist, it usually takes effect in 5 minutes, please wait some time before analyzing with blocklist after editing.
         analysis_result = client.analyze_text(AnalyzeTextOptions(text=input_text, blocklist_names=[blocklist_name], break_by_blocklists=False))
-        if analysis_result is not None and analysis_result.blocklists_match_results is not None:
+        if analysis_result and analysis_result.blocklists_match_results:
             print("\nBlocklist match results: ")
             for match_result in analysis_result.blocklists_match_results:
-                print("Block item was hit in text, Offset={}, Length={}.".format(match_result.offset, match_result.length))
-                print("BlocklistName: {}, BlockItemId: {}, BlockItemText: {}".format(match_result.blocklist_name, match_result.block_item_id, match_result.block_item_text))
+                print(f"Block item was hit in text, Offset={match_result.offset}, Length={match_result.length}.")
+                print(f"BlocklistName: {match_result.blocklist_name}, BlockItemId: {match_result.block_item_id}, BlockItemText: {match_result.block_item_text}")
     except HttpResponseError as e:
         print("\nAnalyze text failed: ")
-        if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+        if e.error:
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise
@@ -212,21 +212,21 @@ try:
     response = client.analyze_image(request)
 except HttpResponseError as e:
     print("Analyze image failed.")
-    if e.error is not None:
-        print("Error code: {}".format(e.error.code))
-        print("Error message: {}".format(e.error.message))
+    if e.error:
+        print(f"Error code: {e.error.code}")
+        print(f"Error message: {e.error.message}")
         raise
     print(e)
     raise
 
-if response.hate_result is not None:
-    print("Hate severity: {}".format(response.hate_result.severity))
-if response.self_harm_result is not None:
-    print("SelfHarm severity: {}".format(response.self_harm_result.severity))
-if response.sexual_result is not None:
-    print("Sexual severity: {}".format(response.sexual_result.severity))
-if response.violence_result is not None:
-    print("Violence severity: {}".format(response.violence_result.severity))
+if response.hate_result:
+    print(f"Hate severity: {response.hate_result.severity}")
+if response.self_harm_result:
+    print(f"SelfHarm severity: {response.self_harm_result.severity}")
+if response.sexual_result:
+    print(f"Sexual severity: {response.sexual_result.severity}")
+if response.violence_result:
+    print(f"Violence severity: {response.violence_result.severity}")
 ```
 
 <!-- END SNIPPET -->
@@ -254,14 +254,14 @@ if response.violence_result is not None:
 
     try:
         blocklist = client.create_or_update_text_blocklist(blocklist_name=blocklist_name, resource={"description": blocklist_description})
-        if blocklist is not None:
+        if blocklist:
             print("\nBlocklist created or updated: ")
-            print("Name: {}, Description: {}".format(blocklist.blocklist_name, blocklist.description))
+            print(f"Name: {blocklist.blocklist_name}, Description: {blocklist.description}")
     except HttpResponseError as e:
         print("\nCreate or update text blocklist failed: ")
-        if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+        if e.error:
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise
@@ -287,15 +287,15 @@ if response.violence_result is not None:
 
     try:
         blocklists = client.list_text_blocklists()
-        if blocklists is not None:
+        if blocklists:
             print("\nList blocklists: ")
             for blocklist in blocklists:
-                print("Name: {}, Description: {}".format(blocklist.blocklist_name, blocklist.description))
+                print(f"Name: {blocklist.blocklist_name}, Description: {blocklist.description}")
     except HttpResponseError as e:
         print("\nList text blocklists failed: ")
-        if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+        if e.error:
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise
@@ -323,14 +323,14 @@ if response.violence_result is not None:
 
     try:
         blocklist = client.get_text_blocklist(blocklist_name=blocklist_name)
-        if blocklist is not None:
+        if blocklist:
             print("\nGet blocklist: ")
-            print("Name: {}, Description: {}".format(blocklist.blocklist_name, blocklist.description))
+            print(f"Name: {blocklist.blocklist_name}, Description: {blocklist.description}")
     except HttpResponseError as e:
         print("\nGet text blocklist failed: ")
-        if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+        if e.error:
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise
@@ -358,12 +358,12 @@ if response.violence_result is not None:
 
     try:
         client.delete_text_blocklist(blocklist_name=blocklist_name)
-        print("\nDeleted blocklist: {}".format(blocklist_name))
+        print(f"\nDeleted blocklist: {blocklist_name}")
     except HttpResponseError as e:
         print("\nDelete blocklist failed:")
-        if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+        if e.error:
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise
@@ -401,15 +401,15 @@ if response.violence_result is not None:
             blocklist_name=blocklist_name,
             body=AddBlockItemsOptions(block_items=block_items),
         )
-        if result is not None and result.value is not None:
+        if result and result.value:
             print("\nBlock items added: ")
             for block_item in result.value:
-                print("BlockItemId: {}, Text: {}, Description: {}".format(block_item.block_item_id, block_item.text, block_item.description))
+                print(f"BlockItemId: {block_item.block_item_id}, Text: {block_item.text}, Description: {block_item.description}")
     except HttpResponseError as e:
         print("\nAdd block items failed: ")
-        if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+        if e.error:
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise
@@ -437,15 +437,15 @@ if response.violence_result is not None:
 
     try:
         block_items = client.list_text_blocklist_items(blocklist_name=blocklist_name)
-        if block_items is not None:
+        if block_items:
             print("\nList block items: ")
             for block_item in block_items:
-                print("BlockItemId: {}, Text: {}, Description: {}".format(block_item.block_item_id, block_item.text, block_item.description))
+                print(f"BlockItemId: {block_item.block_item_id}, Text: {block_item.text}, Description: {block_item.description}")
     except HttpResponseError as e:
         print("\nList block items failed: ")
-        if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+        if e.error:
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise
@@ -479,7 +479,7 @@ if response.violence_result is not None:
             blocklist_name=blocklist_name,
             body=AddBlockItemsOptions(block_items=[TextBlockItemInfo(text=block_item_text_1)]),
         )
-        if add_result is None or add_result.value is None or len(add_result.value) <= 0:
+        if not add_result or not add_result.value or len(add_result.value) <= 0:
             raise RuntimeError("BlockItem not created.")
         block_item_id = add_result.value[0].block_item_id
 
@@ -489,13 +489,12 @@ if response.violence_result is not None:
             block_item_id= block_item_id
         )
         print("\nGet blockitem: ")
-        print("BlockItemId: {}, Text: {}, Description: {}".format(block_item.block_item_id, block_item.text,
-                                                                  block_item.description))
+        print(f"BlockItemId: {block_item.block_item_id}, Text: {block_item.text}, Description: {block_item.description}")
     except HttpResponseError as e:
         print("\nGet block item failed: ")
-        if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+        if e.error:
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise
@@ -533,7 +532,7 @@ if response.violence_result is not None:
             blocklist_name=blocklist_name,
             body=AddBlockItemsOptions(block_items=[TextBlockItemInfo(text=block_item_text_1)]),
         )
-        if add_result is None or add_result.value is None or len(add_result.value) <= 0:
+        if not add_result or not add_result.value or len(add_result.value) <= 0:
             raise RuntimeError("BlockItem not created.")
         block_item_id = add_result.value[0].block_item_id
 
@@ -542,12 +541,12 @@ if response.violence_result is not None:
             blocklist_name=blocklist_name,
             body=RemoveBlockItemsOptions(block_item_ids=[block_item_id])
         )
-        print("\nRemoved blockItem: {}".format(add_result.value[0].block_item_id))
+        print(f"\nRemoved blockItem: {add_result.value[0].block_item_id}")
     except HttpResponseError as e:
         print("\nRemove block item failed: ")
-        if e.error is not None:
-            print("Error code: {}".format(e.error.code))
-            print("Error message: {}".format(e.error.message))
+        if e.error:
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
             raise
         print(e)
         raise
