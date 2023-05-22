@@ -240,13 +240,12 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :returns: A tuple with the incoming channel number, and the frame in the form or a tuple of performative
          descriptor and field values.
         """
-        if wait is False:
+        # Since we use `sock.settimeout()` in the transport for reading/writing,
+        # that acts as a "block with timeout" when we pass in a timeout value.
+        if isinstance(wait, float) or wait is False:
             new_frame = self._transport.receive_frame(**kwargs)
-        elif wait is True:
+        else: # wait is True
             with self._transport.block():
-                new_frame = self._transport.receive_frame(**kwargs)
-        else:
-            with self._transport.block_with_timeout(timeout=wait):
                 new_frame = self._transport.receive_frame(**kwargs)
         return self._process_incoming_frame(*new_frame)
 
@@ -272,11 +271,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         if self._can_write():
             try:
                 self._last_frame_sent_time = time.time()
-                if timeout:
-                    with self._transport.block_with_timeout(timeout):
-                        self._transport.send_frame(channel, frame, **kwargs)
-                else:
-                    self._transport.send_frame(channel, frame, **kwargs)
+                # Since we use `sock.settimeout()` in the transport for reading/writing,
+                # that acts as a "block with timeout" when we pass in a timeout value.
+                self._transport.send_frame(channel, frame, **kwargs)
             except (OSError, IOError, SSLError, socket.error) as exc:
                 self._error = AMQPConnectionError(
                     ErrorCondition.SocketError,
@@ -702,7 +699,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :param wait: Whether to block on the socket until a frame arrives. If set to `True`, socket will
          block indefinitely. Alternatively, if set to a time in seconds, the socket will block for at most
          the specified timeout. Default value is `False`, where the socket will block for its configured read
-         timeout (by default 0.1 seconds).
+         timeout (by default 0.2 seconds).
         :type wait: int or float or bool
         :param int batch: The number of frames to attempt to read and process before returning. The default value
          is 1, i.e. process frames one-at-a-time. A higher value should only be used when a receiver is established

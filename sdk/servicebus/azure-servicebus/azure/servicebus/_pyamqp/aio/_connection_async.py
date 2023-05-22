@@ -13,7 +13,7 @@ from ssl import SSLError
 import asyncio
 from typing import Any, Dict, Tuple, Optional, NamedTuple, Union, cast
 
-from ._transport_async import AsyncTransport
+from ._transport_async import AsyncTransport, WebSocketTransportAsync
 from ._sasl_async import SASLTransport, SASLWithWebSocket
 from ._session_async import Session
 from ..performatives import OpenFrame, CloseFrame
@@ -28,6 +28,8 @@ from ..constants import (
     ConnectionState,
     EMPTY_FRAME,
     TransportType,
+    SOCKET_TIMEOUT,
+    WS_TIMEOUT_INTERVAL,
 )
 
 from ..error import ErrorCondition, AMQPConnectionError, AMQPError
@@ -95,8 +97,8 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         self._network_trace_params = {"amqpConnection": self._container_id, "amqpSession": None, "amqpLink": None}
 
         transport = kwargs.get("transport")
-        self._socket_timeout = kwargs.get("socket_timeout")
         self._transport_type = kwargs.pop("transport_type", TransportType.Amqp)
+        socket_timeout = kwargs.pop("socket_timeout", None)
         if transport:
             self._transport = transport
         elif "sasl_credential" in kwargs:
@@ -119,9 +121,15 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 network_trace_params=self._network_trace_params,
                 **kwargs)
 
+        # socket_timeout that will be used by `asyncio.wait_for()` in send/receive ops
+        if isinstance(self._transport, WebSocketTransportAsync):
+            self._socket_timeout = socket_timeout or WS_TIMEOUT_INTERVAL
+        else:
+            self._socket_timeout = socket_timeout or SOCKET_TIMEOUT
         self._max_frame_size = kwargs.pop(
             "max_frame_size", MAX_FRAME_SIZE_BYTES
         )  # type: int
+
         self._remote_max_frame_size = None  # type: Optional[int]
         self._channel_max = kwargs.pop("channel_max", MAX_CHANNELS)  # type: int
         self._idle_timeout = kwargs.pop("idle_timeout", None)  # type: Optional[int]

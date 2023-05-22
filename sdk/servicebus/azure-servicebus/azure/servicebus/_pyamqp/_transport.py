@@ -58,6 +58,7 @@ from .constants import (
     AMQP_WS_SUBPROTOCOL,
     WS_TIMEOUT_INTERVAL,
     SOCKET_TIMEOUT,
+    CONNECT_TIMEOUT,
 )
 from .error import AuthenticationException, ErrorCondition
 
@@ -152,7 +153,8 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         host,
         *,
         port=AMQP_PORT,
-        socket_timeout=None,
+        connect_timeout=CONNECT_TIMEOUT,
+        socket_timeout=SOCKET_TIMEOUT,
         socket_settings=None,
         raise_on_initial_eintr=True,
         **kwargs
@@ -165,7 +167,8 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         self.host, self.port = to_host_port(host, port)
         self.network_trace_params = kwargs.get('network_trace_params')
 
-        self.socket_timeout = socket_timeout or SOCKET_TIMEOUT
+        self.connect_timeout = connect_timeout
+        self.socket_timeout = socket_timeout
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
 
@@ -174,12 +177,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             # are we already connected?
             if self.connected:
                 return
-            # send in connect timeout of = 1
-            if self.socket_timeout < 1:
-                connect_timeout = 1
-            else:
-                connect_timeout = self.socket_timeout
-            self._connect(self.host, self.port, connect_timeout)
+            self._connect(self.host, self.port, self.connect_timeout)
             self._init_socket(
                 self.socket_settings,
                 self.socket_timeout,
@@ -195,33 +193,6 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                 self.sock.close()
                 self.sock = None
             raise
-
-    @contextmanager
-    def block_with_timeout(self, timeout):
-        if timeout is None:
-            yield self.sock
-        else:
-            sock = self.sock
-            prev = sock.gettimeout()
-            if prev != timeout:
-                sock.settimeout(timeout)
-            try:
-                yield self.sock
-            except SSLError as exc:
-                if "timed out" in str(exc):
-                    # http://bugs.python.org/issue10272
-                    raise socket.timeout()
-                if "The operation did not complete" in str(exc):
-                    # Non-blocking SSL sockets can throw SSLError
-                    raise socket.timeout()
-                raise
-            except socket.error as exc:
-                if get_errno(exc) == errno.EWOULDBLOCK:
-                    raise socket.timeout()
-                raise
-            finally:
-                if timeout != prev:
-                    sock.settimeout(prev)
 
     @contextmanager
     def block(self):
@@ -344,7 +315,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         #             pack('ll', sec, usec),
         #         )
         self._setup_transport()
-        self.sock.settimeout(socket_timeout)  # set socket back to non-blocking mode
+        self.sock.settimeout(socket_timeout)  # set socket to blocking with timeout
 
     def _get_tcp_socket_defaults(self, sock):   # pylint: disable=no-self-use
         tcp_opts = {}
@@ -723,7 +694,7 @@ class WebSocketTransport(_AbstractTransport):
             self.sock = create_connection(
                 url="wss://{}".format(self._custom_endpoint or self._host),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
-                timeout=self.socket_timeout,
+                timeout=self.socket_timeout,    # timeout for read/write operations
                 skip_utf8_validation=True,
                 sslopt=self.sslopts,
                 http_proxy_host=http_proxy_host,
