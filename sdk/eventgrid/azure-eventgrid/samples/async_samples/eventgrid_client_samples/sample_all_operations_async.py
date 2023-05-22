@@ -32,7 +32,7 @@ cloud_event_ack = CloudEvent(
 )
 
 
-async def main():
+async def run():
     async with client:
         # Publish a CloudEvent
         try:
@@ -123,4 +123,5 @@ async def main():
                 print(f"Succeeded Lock Token:{succeeded_lock_token}")
 
 
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.get_event_loop().run_until_complete(run())
