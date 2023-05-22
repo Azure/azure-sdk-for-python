@@ -29,8 +29,6 @@ _SERIALIZER.client_side_validation = False
 
 def build_event_grid_publish_cloud_event_request(
     topic_name: str,
-    *,
-    content: _models._models.CloudEvent,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -57,15 +55,12 @@ def build_event_grid_publish_cloud_event_request(
         url=_url,
         params=_params,
         headers=_headers,
-        content=content,
         **kwargs
     )
 
 
 def build_event_grid_publish_cloud_events_request(
     topic_name: str,
-    *,
-    content: List[_models._models.CloudEvent],
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -92,7 +87,6 @@ def build_event_grid_publish_cloud_events_request(
         url=_url,
         params=_params,
         headers=_headers,
-        content=content,
         **kwargs
     )
 
@@ -142,8 +136,6 @@ def build_event_grid_receive_cloud_events_request(
 def build_event_grid_acknowledge_cloud_events_request(
     topic_name: str,
     event_subscription_name: str,
-    *,
-    content: _models.AcknowledgeOptions,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -174,7 +166,6 @@ def build_event_grid_acknowledge_cloud_events_request(
         url=_url,
         params=_params,
         headers=_headers,
-        content=content,
         **kwargs
     )
 
@@ -182,8 +173,6 @@ def build_event_grid_acknowledge_cloud_events_request(
 def build_event_grid_release_cloud_events_request(
     topic_name: str,
     event_subscription_name: str,
-    *,
-    content: _models.ReleaseOptions,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -214,7 +203,6 @@ def build_event_grid_release_cloud_events_request(
         url=_url,
         params=_params,
         headers=_headers,
-        content=content,
         **kwargs
     )
 
@@ -222,8 +210,6 @@ def build_event_grid_release_cloud_events_request(
 def build_event_grid_reject_cloud_events_request(
     topic_name: str,
     event_subscription_name: str,
-    *,
-    content: _models.RejectOptions,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -254,14 +240,13 @@ def build_event_grid_reject_cloud_events_request(
         url=_url,
         params=_params,
         headers=_headers,
-        content=content,
         **kwargs
     )
 
 class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
     @distributed_trace
-    def _publish_cloud_event(  # pylint: disable=inconsistent-return-statements
+    def _publish_cloud_event(  # pylint: disable=inconsistent-return-statements,protected-access
         self,
         topic_name: str,
         event: _models._models.CloudEvent,
@@ -405,7 +390,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
 
     @distributed_trace
-    def _receive_cloud_events(
+    def _receive_cloud_events(  # pylint: disable=protected-access
         self,
         topic_name: str,
         event_subscription_name: str,

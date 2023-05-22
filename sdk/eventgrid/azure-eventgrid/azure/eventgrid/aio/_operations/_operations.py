@@ -26,7 +26,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
     @distributed_trace_async
-    async def _publish_cloud_event(  # pylint: disable=inconsistent-return-statements
+    async def _publish_cloud_event(  # pylint: disable=inconsistent-return-statements,protected-access
         self,
         topic_name: str,
         event: _models._models.CloudEvent,
@@ -170,7 +170,7 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
 
     @distributed_trace_async
-    async def _receive_cloud_events(
+    async def _receive_cloud_events(  # pylint: disable=protected-access
         self,
         topic_name: str,
         event_subscription_name: str,
