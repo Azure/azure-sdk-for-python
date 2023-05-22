@@ -25,8 +25,9 @@ def create_or_update_text_blocklist():
 
     try:
         blocklist = client.create_or_update_text_blocklist(blocklist_name=blocklist_name, resource={"description": blocklist_description})
-        print("\nBlocklist created or updated: ")
-        print(f"Name: {blocklist.blocklist_name}, Description: {blocklist.description}")
+        if blocklist:
+            print("\nBlocklist created or updated: ")
+            print(f"Name: {blocklist.blocklist_name}, Description: {blocklist.description}")
     except HttpResponseError as e:
         print("\nCreate or update text blocklist failed: ")
         if e.error:

@@ -32,8 +32,11 @@ def analyze_text():
         response = client.analyze_text(request)
     except HttpResponseError as e:
         print("Analyze text failed.")
-        print(f"Error code: {e.error.code}")
-        print(f"Error message: {e.error.message}")
+        if e.error:
+            print(f"Error code: {e.error.code}")
+            print(f"Error message: {e.error.message}")
+            raise
+        print(e)
         raise
 
     if response.hate_result:
