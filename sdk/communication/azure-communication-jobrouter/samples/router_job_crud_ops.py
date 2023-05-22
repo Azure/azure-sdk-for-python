@@ -27,6 +27,7 @@ class RouterJobSamples(object):
 
     _job_id = "sample_job"
     _job_w_cp_id = "sample_job_w_cp"
+    _job_scheduled_id = "sample_scheduled_job"
     _assignment_id = "sample_assignment"
     _distribution_policy_id = "sample_distribution_policy"
     _classification_policy_id = "sample_classification_policy"
@@ -137,10 +138,12 @@ class RouterJobSamples(object):
         connection_string = self.endpoint
         job_id = self._job_id
         job_w_cp_id = self._job_w_cp_id
+        scheduled_job_id = self._job_scheduled_id
         queue_id = self._queue_id
         classification_policy_id = self._classification_policy_id
 
         # [START create_job]
+        from datetime import datetime, timedelta
         from azure.communication.jobrouter import (
             RouterClient,
             RouterJob
@@ -174,6 +177,21 @@ class RouterJobSamples(object):
             )
         )
         print(f"Job has been successfully created with status: {router_job_with_cp.job_status}")
+
+        # Additionally, any job can be created as a scheduled job
+        # by simply specifying a scheduled_time_utc and setting unavailable_for_matching to true
+        router_scheduled_job = router_client.create_job(
+            job_id = scheduled_job_id,
+            router_job = RouterJob(
+                channel_id = "general",
+                queue_id = queue_id,
+                priority = 10,
+                channel_reference = "12345",
+                scheduled_time_utc = datetime.utcnow() + timedelta(0, 30),  # scheduled after 30 secs
+                unavailable_for_matching = True
+            )
+        )
+        print(f"Scheduled job has been successfully created with status: {router_scheduled_job.job_status}")
 
         # [END create_job]
 
@@ -248,7 +266,7 @@ class RouterJobSamples(object):
 
         router_client = RouterClient.from_connection_string(conn_str = connection_string)
 
-        unassign_job_result = router_client.unassign_job_result(job_id = job_id, assignment_id = assignment_id)
+        unassign_job_result = router_client.unassign_job(job_id = job_id, assignment_id = assignment_id)
 
         print(f"Successfully unassigned job")
         # [END unassign_job]
@@ -381,6 +399,28 @@ class RouterJobSamples(object):
         print(f"Successfully completed fetching jobs")
         # [END list_jobs_batched]
 
+    def list_scheduled_jobs(self):
+        connection_string = self.endpoint
+        # [START list_scheduled_jobs]
+        from datetime import datetime
+        from azure.communication.jobrouter import RouterClient
+
+        router_client = RouterClient.from_connection_string(conn_str = connection_string)
+
+        scheduled_before = datetime.utcnow()
+
+        router_job_iterator = router_client.list_jobs(scheduled_before = scheduled_before, results_per_page = 10)
+
+        for job_page in router_job_iterator.by_page():
+            jobs_in_page = list(job_page)
+            print(f"Retrieved {len(jobs_in_page)} jobs in current page")
+
+            for j in jobs_in_page:
+                print(f"Retrieved job with id: {j.router_job.id}")
+
+        print(f"Successfully completed fetching scheduled jobs")
+        # [END list_scheduled_jobs]
+
     def cancel_job(self):
         connection_string = self.endpoint
         job_id = self._job_w_cp_id
@@ -423,4 +463,5 @@ if __name__ == '__main__':
     sample.complete_and_close_job()
     sample.list_jobs()
     sample.list_jobs_batched()
+    sample.list_scheduled_jobs()
     sample.clean_up()

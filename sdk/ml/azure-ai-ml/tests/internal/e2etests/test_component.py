@@ -61,10 +61,18 @@ def load_registered_component(
 @pytest.mark.pipeline_test
 class TestComponent(AzureRecordedTestCase):
     @pytest.mark.parametrize(
-        "yaml_path",
-        list(map(lambda x: x[0], PARAMETERS_TO_TEST)),
+        "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
+        PARAMETERS_TO_TEST,
     )
-    def test_component_create(self, client: MLClient, randstr: Callable[[], str], yaml_path: str) -> None:
+    def test_component_create(
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
+        yaml_path: str,
+        inputs: Dict,
+        runsettings_dict: Dict,
+        pipeline_runsettings_dict: Dict,
+    ) -> None:
         component_name = randstr("component_name")
         component_resource = create_component(client, component_name, path=yaml_path)
         assert component_resource.name == component_name
@@ -76,14 +84,17 @@ class TestComponent(AzureRecordedTestCase):
         assert component_resource.creation_context
 
     @pytest.mark.parametrize(
-        "yaml_path",
-        list(map(lambda x: x[0], PARAMETERS_TO_TEST)),
+        "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
+        PARAMETERS_TO_TEST,
     )
     def test_component_load(
         self,
         client: MLClient,
-        randstr: Callable[[str], str],
+        randstr: Callable[[], str],
         yaml_path: str,
+        inputs: Dict,
+        runsettings_dict: Dict,
+        pipeline_runsettings_dict: Dict,
     ) -> None:
         omit_fields = ["id", "creation_context", "code", "name"]
         component_name = randstr("component_name")

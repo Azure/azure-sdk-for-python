@@ -9,21 +9,19 @@
 from ._models_py3 import Association
 from ._models_py3 import AssociationListResult
 from ._models_py3 import AssociationSubnet
+from ._models_py3 import AssociationSubnetUpdate
 from ._models_py3 import AssociationUpdate
-from ._models_py3 import AssociationUpdateProperties
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import Frontend
 from ._models_py3 import FrontendListResult
-from ._models_py3 import FrontendPropertiesIPAddress
 from ._models_py3 import FrontendUpdate
-from ._models_py3 import FrontendUpdateProperties
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
 from ._models_py3 import Resource
-from ._models_py3 import ResourceID
+from ._models_py3 import ResourceId
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
 from ._models_py3 import TrafficController
@@ -31,8 +29,8 @@ from ._models_py3 import TrafficControllerListResult
 from ._models_py3 import TrafficControllerUpdate
 
 from ._service_networking_mgmt_client_enums import ActionType
+from ._service_networking_mgmt_client_enums import AssociationType
 from ._service_networking_mgmt_client_enums import CreatedByType
-from ._service_networking_mgmt_client_enums import FrontendIPAddressVersion
 from ._service_networking_mgmt_client_enums import Origin
 from ._service_networking_mgmt_client_enums import ProvisioningState
 from ._patch import __all__ as _patch_all
@@ -43,29 +41,27 @@ __all__ = [
     "Association",
     "AssociationListResult",
     "AssociationSubnet",
+    "AssociationSubnetUpdate",
     "AssociationUpdate",
-    "AssociationUpdateProperties",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
     "Frontend",
     "FrontendListResult",
-    "FrontendPropertiesIPAddress",
     "FrontendUpdate",
-    "FrontendUpdateProperties",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
     "Resource",
-    "ResourceID",
+    "ResourceId",
     "SystemData",
     "TrackedResource",
     "TrafficController",
     "TrafficControllerListResult",
     "TrafficControllerUpdate",
     "ActionType",
+    "AssociationType",
     "CreatedByType",
-    "FrontendIPAddressVersion",
     "Origin",
     "ProvisioningState",
 ]
