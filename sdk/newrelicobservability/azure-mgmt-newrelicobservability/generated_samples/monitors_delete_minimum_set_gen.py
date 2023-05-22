@@ -14,7 +14,7 @@ from azure.mgmt.newrelicobservability import NewRelicObservabilityMgmtClient
     pip install azure-identity
     pip install azure-mgmt-newrelicobservability
 # USAGE
-    python organizations_list_maximum_set_gen.py
+    python monitors_delete_minimum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,17 +26,17 @@ from azure.mgmt.newrelicobservability import NewRelicObservabilityMgmtClient
 def main():
     client = NewRelicObservabilityMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="nqmcgifgaqlf",
+        subscription_id="ddqonpqwjr",
     )
 
-    response = client.organizations.list(
+    response = client.monitors.begin_delete(
+        resource_group_name="rgopenapi",
         user_email="ruxvg@xqkmdhrnoo.hlmbpm",
-        location="egh",
-    )
-    for item in response:
-        print(item)
+        monitor_name="ipxmlcbonyxtolzejcjshkmlron",
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/newrelic/resource-manager/NewRelic.Observability/stable/2022-07-01/examples/Organizations_List_MaximumSet_Gen.json
+# x-ms-original-file: specification/newrelic/resource-manager/NewRelic.Observability/stable/2022-07-01/examples/Monitors_Delete_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()
