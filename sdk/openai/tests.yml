@@ -4,6 +4,10 @@ stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: openai
+      CloudConfig:
+        Public:
+          SubscriptionConfigurations:
+            - $(python-openai-test-config)
       EnvVars:
         AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
         AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
