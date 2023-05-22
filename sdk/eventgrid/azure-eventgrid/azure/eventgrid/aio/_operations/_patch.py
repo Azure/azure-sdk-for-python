@@ -86,7 +86,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type topic_name: str
         :param body: Cloud Event or Array of Cloud Events being published. Required.
         :type body: ~azure.core.messaging.CloudEvent or list[~azure.core.messaging.CloudEvent]
-        :keyword content_type: content type. Default value is "application/cloudevents-batch+json;
+        :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
