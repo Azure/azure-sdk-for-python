@@ -13,7 +13,7 @@ from ssl import SSLError
 import asyncio
 from typing import Any, Dict, Tuple, Optional, NamedTuple, Union, cast
 
-from ._transport_async import AsyncTransport, WebSocketTransportAsync
+from ._transport_async import AsyncTransport
 from ._sasl_async import SASLTransport, SASLWithWebSocket
 from ._session_async import Session
 from ..performatives import OpenFrame, CloseFrame
@@ -28,8 +28,6 @@ from ..constants import (
     ConnectionState,
     EMPTY_FRAME,
     TransportType,
-    SOCKET_TIMEOUT,
-    WS_TIMEOUT_INTERVAL,
 )
 
 from ..error import ErrorCondition, AMQPConnectionError, AMQPError

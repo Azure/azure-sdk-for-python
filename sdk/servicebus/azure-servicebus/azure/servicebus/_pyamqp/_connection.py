@@ -240,8 +240,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :returns: A tuple with the incoming channel number, and the frame in the form or a tuple of performative
          descriptor and field values.
         """
-        # Since we use `sock.settimeout()` in the transport for reading/writing,
-        # that acts as a "block with timeout" when we pass in a timeout value.
+        # Since we use `sock.settimeout()` in the transport for reading/writing, that acts as a
+        # "block with timeout" when we pass in a timeout value. If `wait` is float value, then
+        # timeout was set during socket init.
         if isinstance(wait, float) or wait is False:
             new_frame = self._transport.receive_frame(**kwargs)
         else: # wait is True
@@ -254,13 +255,12 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """Whether the connection is in a state where it is legal to write outgoing frames."""
         return self.state not in _CLOSING_STATES
 
-    def _send_frame(self, channel, frame, timeout=None, **kwargs):
-        # type: (int, NamedTuple, Optional[int], Any) -> None
+    def _send_frame(self, channel, frame, **kwargs):
+        # type: (int, NamedTuple, Any) -> None
         """Send a frame over the connection.
 
         :param int channel: The outgoing channel number.
         :param NamedTuple: The outgoing frame.
-        :param int timeout: An optional timeout value to wait until the socket is ready to send the frame.
         :rtype: None
         """
         try:
