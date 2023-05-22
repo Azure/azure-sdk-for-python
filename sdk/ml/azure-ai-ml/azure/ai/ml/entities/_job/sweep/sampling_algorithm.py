@@ -70,7 +70,7 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
         *,
         rule: Optional[str] = None,
         seed: Optional[int] = None,
-        logbase: Optional[Union[float, str]]= None,
+        logbase: Optional[Union[float, str]] = None,
     ) -> None:
         """Random Sampling Algorithm.
 
