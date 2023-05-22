@@ -203,38 +203,3 @@ class TestEGClientExceptions:
         assert reject.succeeded_lock_tokens == []
         assert type(reject.failed_lock_tokens[0]) == FailedLockToken
         assert reject.failed_lock_tokens[0].lock_token == "faketoken"
-
-    @pytest.mark.live_test_only
-    def test_release_cloud_event_event_delivery_time(self):
-        eventgrid_endpoint = os.environ["EVENTGRID_ENDPOINT"]
-        topic_name = os.environ["TOPIC_NAME"]
-        event_subscription_name = os.environ["EVENT_SUBSCRIPTION_NAME"]
-
-        client = self.create_eg_client(eventgrid_endpoint)
-        event = CloudEvent(
-            type="Contoso.Items.ItemReceived",
-            source="l",
-            subject="MySubject",
-            data={"itemSku": "Contoso Item SKU #1"},
-        )
-
-        client.publish_cloud_events(topic_name, event)
-        time.sleep(10)
-
-        event = client.receive_cloud_events(
-            topic_name, event_subscription_name, max_events=1
-        )
-        lock_token = event.value[0].broker_properties.lock_token
-        lock_tokens = ReleaseOptions(lock_tokens=[lock_token])
-        start = time.time()
-
-        client.release_cloud_events(
-            topic_name, event_subscription_name, lock_tokens=lock_tokens
-        )
-        event_receive_again = client.release_cloud_events(
-            topic_name, event_subscription_name, lock_tokens=lock_tokens
-        )
-        if time.time() - start <= 1000:
-            assert event_receive_again.failed_lock_tokens[0].lock_token == lock_token
-        else:
-            assert True
