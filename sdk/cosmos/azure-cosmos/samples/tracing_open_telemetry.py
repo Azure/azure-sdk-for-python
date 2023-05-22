@@ -1,8 +1,21 @@
-# -------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
-# -------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------
+# Prerequisites -
+#
+# 1. An Azure Cosmos account -
+#    https://learn.microsoft.com/azure/cosmos-db/nosql/quickstart-python#create-an-azure-cosmos-db-account
+#
+# 2. Microsoft Azure Cosmos PyPI package -
+#    https://pypi.python.org/pypi/azure-cosmos/
+#
+# 3. Azure Core Tracing OpenTelemetry plugin and OpenTelemetry Python SDK
+#    pip install azure-core-tracing-opentelemetry opentelemetry-sdk
+# ----------------------------------------------------------------------------------------------------------
+# Sample - demonstrates tracing using OpenTelemetry
+# ----------------------------------------------------------------------------------------------------------
 
 # Declare OpenTelemetry as enabled tracing plugin for Azure SDKs
 from azure.core.settings import settings
