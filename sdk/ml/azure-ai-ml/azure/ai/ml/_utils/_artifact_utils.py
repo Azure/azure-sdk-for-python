@@ -17,6 +17,8 @@ from threading import Lock
 
 import requests
 
+from .utils import get_base_directory_for_cache
+
 _logger = logging.getLogger(__name__)
 
 
@@ -28,9 +30,8 @@ class ArtifactCache:
     The value is the files/folders in this cache folder.
     """
 
-    DEFAULT_DISK_CACHE_DIRECTORY = os.path.join(
-        tempfile.gettempdir(),
-        "azure-ai-ml",
+    # artifact cache is shared across SDK versions and across workspaces/registries
+    DEFAULT_DISK_CACHE_DIRECTORY = get_base_directory_for_cache().joinpath(
         "components",
         "additional_includes",
         "artifacts",

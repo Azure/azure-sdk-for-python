@@ -1,24 +1,26 @@
+import enum
 import os
 import sys
-from io import StringIO
-import enum
-from pathlib import Path
 import tempfile
+from io import StringIO
+from pathlib import Path
 from unittest.mock import patch
 from zipfile import ZipFile
 
 import pydash
 import pytest
-
 from conftest import normalized_arm_id_in_object
-from test_utilities.utils import verify_entity_load_and_dump, build_temp_folder
+from test_utilities.utils import (
+    build_temp_folder,
+    mock_artifact_download_to_temp_directory,
+    verify_entity_load_and_dump,
+)
 
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AzureMLResourceType
-from azure.ai.ml.entities import Component, CommandComponent, CommandJobLimits, JobResourceConfiguration
-from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.entities._assets import Environment
+from azure.ai.ml.entities import CommandComponent, CommandJobLimits, Component, JobResourceConfiguration
+from azure.ai.ml.entities._assets import Code, Environment
 from azure.ai.ml.entities._builders import Command, Sweep
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
@@ -105,61 +107,46 @@ class TestCommandComponentEntity:
     def test_command_component_with_additional_includes(self):
         tests_root_dir = Path(__file__).parent.parent.parent
         samples_dir = tests_root_dir / "test_configs/components/"
-        with tempfile.TemporaryDirectory() as temp_dir:
-
-            def mock_get_artifacts(**kwargs):
-                version = kwargs.get("version")
-                artifact = Path(temp_dir) / version
-                if version in ["version_1", "version_3"]:
-                    version = "version_1"
-                artifact.mkdir(parents=True, exist_ok=True)
-                (artifact / version).mkdir(exist_ok=True)
-                (artifact / version / "file").touch(exist_ok=True)
-                (artifact / f"file_{version}").touch(exist_ok=True)
-                return str(artifact)
-
-            with patch(
-                "azure.ai.ml.entities._component._artifact_cache.ArtifactCache.get", side_effect=mock_get_artifacts
-            ):
-                component = CommandComponent(
-                    name="additional_files",
-                    description="A sample to demonstrate component with additional files",
-                    version="0.0.1",
-                    command="echo Hello World",
-                    environment=Environment(image="zzn2/azureml_sdk"),
-                    # as sdk will take working directory as root folder, so we need to specify the absolution path
-                    additional_includes=[
-                        str(samples_dir / "additional_includes/assets/LICENSE"),
-                        str(samples_dir / "additional_includes/library.zip"),
-                        str(samples_dir / "additional_includes/library1"),
-                    ],
-                )
-                component.additional_includes.append(
-                    {
-                        "type": "artifact",
-                        "organization": "https://msdata.visualstudio.com/",
-                        "project": "Vienna",
-                        "feed": "component-sdk-test-feed",
-                        "name": "test_additional_include",
-                        "version": "version_2",
-                        "scope": "project",
-                    }
-                )
-                assert component._validate().passed, repr(component._validate())
-                with component._resolve_local_code() as code:
-                    code_path: Path = code.path
-                    assert code_path.is_dir()
-                    assert (code_path / "LICENSE").is_file()
-                    assert (code_path / "library.zip").is_file()
-                    assert ZipFile(code_path / "library.zip").namelist() == [
-                        "library/",
-                        "library/hello.py",
-                        "library/world.py",
-                    ]
-                    assert (code_path / "library1" / "hello.py").is_file()
-                    assert (code_path / "library1" / "world.py").is_file()
-                    assert (code_path / "file_version_2").is_file()
-                    assert (code_path / "version_2" / "file").is_file()
+        with mock_artifact_download_to_temp_directory():
+            component = CommandComponent(
+                name="additional_files",
+                description="A sample to demonstrate component with additional files",
+                version="0.0.1",
+                command="echo Hello World",
+                environment=Environment(image="zzn2/azureml_sdk"),
+                # as sdk will take working directory as root folder, so we need to specify the absolution path
+                additional_includes=[
+                    str(samples_dir / "additional_includes/assets/LICENSE"),
+                    str(samples_dir / "additional_includes/library.zip"),
+                    str(samples_dir / "additional_includes/library1"),
+                ],
+            )
+            component.additional_includes.append(
+                {
+                    "type": "artifact",
+                    "organization": "https://msdata.visualstudio.com/",
+                    "project": "Vienna",
+                    "feed": "component-sdk-test-feed",
+                    "name": "test_additional_include",
+                    "version": "version_2",
+                    "scope": "project",
+                }
+            )
+            assert component._validate().passed, repr(component._validate())
+            with component._resolve_local_code() as code:
+                code_path: Path = code.path
+                assert code_path.is_dir()
+                assert (code_path / "LICENSE").is_file()
+                assert (code_path / "library.zip").is_file()
+                assert ZipFile(code_path / "library.zip").namelist() == [
+                    "library/",
+                    "library/hello.py",
+                    "library/world.py",
+                ]
+                assert (code_path / "library1" / "hello.py").is_file()
+                assert (code_path / "library1" / "world.py").is_file()
+                assert (code_path / "file_version_2").is_file()
+                assert (code_path / "version_2" / "file").is_file()
 
     def test_command_component_entity_with_io_class(self):
         component = CommandComponent(
@@ -864,55 +851,38 @@ class TestCommandComponentEntity:
                 assert code_path.resolve() == specified_code_path.resolve()
 
     def test_artifacts_in_additional_includes(self):
-        with tempfile.TemporaryDirectory() as temp_dir:
+        with mock_artifact_download_to_temp_directory():
+            yaml_path = "./tests/test_configs/components/component_with_additional_includes/with_artifacts.yml"
+            component = load_component(source=yaml_path)
+            assert component._validate().passed, repr(component._validate())
+            with component._resolve_local_code() as code:
+                code_path = code.path
+                assert code_path.is_dir()
+                for path in [
+                    "version_1/",
+                    "version_1/file",
+                    "version_2/",
+                    "version_2/file",
+                    "file_version_1",
+                    "file_version_2",
+                    "DockerFile",
+                ]:
+                    assert (code_path / path).exists()
 
-            def mock_get_artifacts(**kwargs):
-                version = kwargs.get("version")
-                artifact = Path(temp_dir) / version
-                if version in ["version_1", "version_3"]:
-                    version = "version_1"
-                artifact.mkdir(parents=True, exist_ok=True)
-                (artifact / version).mkdir(exist_ok=True)
-                (artifact / version / "file").touch(exist_ok=True)
-                (artifact / f"file_{version}").touch(exist_ok=True)
-                return str(artifact)
-
-            with patch(
-                "azure.ai.ml.entities._component._artifact_cache.ArtifactCache.get", side_effect=mock_get_artifacts
-            ):
-                yaml_path = "./tests/test_configs/components/component_with_additional_includes/with_artifacts.yml"
-                component = load_component(source=yaml_path)
-                assert component._validate().passed, repr(component._validate())
-                with component._resolve_local_code() as code:
-                    code_path = code.path
-                    assert code_path.is_dir()
-                    for path in [
-                        "version_1/",
-                        "version_1/file",
-                        "version_2/",
-                        "version_2/file",
-                        "file_version_1",
-                        "file_version_2",
-                        "DockerFile",
-                    ]:
-                        assert (code_path / path).exists()
-
-                yaml_path = (
-                    "./tests/test_configs/components/component_with_additional_includes/"
-                    "artifacts_additional_includes_with_conflict.yml"
-                )
-                component = load_component(source=yaml_path)
-                validation_result = component._validate()
-                assert validation_result.passed is False
-                assert "There are conflict files in additional include" in validation_result.error_messages["*"]
-                assert (
-                    "test_additional_include:version_1 in component-sdk-test-feed"
-                    in validation_result.error_messages["*"]
-                )
-                assert (
-                    "test_additional_include:version_3 in component-sdk-test-feed"
-                    in validation_result.error_messages["*"]
-                )
+            yaml_path = (
+                "./tests/test_configs/components/component_with_additional_includes/"
+                "artifacts_additional_includes_with_conflict.yml"
+            )
+            component = load_component(source=yaml_path)
+            validation_result = component._validate()
+            assert validation_result.passed is False
+            assert "There are conflict files in additional include" in validation_result.error_messages["*"]
+            assert (
+                "test_additional_include:version_1 in component-sdk-test-feed" in validation_result.error_messages["*"]
+            )
+            assert (
+                "test_additional_include:version_3 in component-sdk-test-feed" in validation_result.error_messages["*"]
+            )
 
     @pytest.mark.parametrize(
         "yaml_path,expected_error_msg_prefix",

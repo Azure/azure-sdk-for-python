@@ -4,7 +4,6 @@
 import hashlib
 import logging
 import os.path
-import tempfile
 import threading
 import time
 from collections import defaultdict
@@ -15,6 +14,7 @@ from typing import Callable, Dict, List, Optional, Union
 
 from azure.ai.ml._utils._asset_utils import get_object_hash
 from azure.ai.ml._utils.utils import (
+    get_versioned_base_directory_for_cache,
     is_concurrent_component_registration_enabled,
     is_on_disk_cache_enabled,
     is_private_preview_enabled,
@@ -197,9 +197,9 @@ class CachedNodeResolver(object):
             if hasattr(code, "_upload_hash"):
                 content_hash = code._upload_hash  # pylint: disable=protected-access
             else:
-                path = code.path if os.path.isabs(code.path) else os.path.join(code.base_path, code.path)
-                if os.path.exists(path):
-                    content_hash = get_object_hash(path)
+                code_path = code.path if os.path.isabs(code.path) else os.path.join(code.base_path, code.path)
+                if os.path.exists(code_path):
+                    content_hash = get_object_hash(code_path)
                 else:
                     # this will be gated by schema validation, so it shouldn't happen except for mock tests
                     return in_memory_hash
@@ -213,15 +213,9 @@ class CachedNodeResolver(object):
     @property
     def _on_disk_cache_dir(self) -> Path:
         """Get the base path for on disk cache."""
-        from azure.ai.ml._version import VERSION
-
-        return Path(tempfile.gettempdir()).joinpath(
-            ".azureml",
-            "azure-ai-ml",
-            VERSION,
-            "cache",
-            self._client_hash,
+        return get_versioned_base_directory_for_cache().joinpath(
             "components",
+            self._client_hash,
         )
 
     def _get_on_disk_cache_path(self, on_disk_hash: str) -> Path:

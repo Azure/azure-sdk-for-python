@@ -15,7 +15,7 @@ import pydash
 import pytest
 import yaml
 from pytest_mock import MockFixture
-from test_utilities.utils import build_temp_folder, parse_local_path
+from test_utilities.utils import build_temp_folder, mock_artifact_download_to_temp_directory, parse_local_path
 
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
@@ -718,23 +718,7 @@ class TestComponent:
             }
 
     def test_artifacts_in_additional_includes(self, mocker: MockFixture):
-        with tempfile.TemporaryDirectory() as temp_dir:
-
-            def mock_get_artifacts(**kwargs):
-                version = kwargs.get("version")
-                artifact = Path(temp_dir) / version
-                if version in ["version_1", "version_3"]:
-                    version = "version_1"
-                artifact.mkdir(parents=True, exist_ok=True)
-                (artifact / version).mkdir(exist_ok=True)
-                (artifact / version / "file").touch(exist_ok=True)
-                (artifact / f"file_{version}").touch(exist_ok=True)
-                return str(artifact)
-
-            mocker.patch(
-                "azure.ai.ml.entities._component._artifact_cache.ArtifactCache.get", side_effect=mock_get_artifacts
-            )
-
+        with mock_artifact_download_to_temp_directory():
             yaml_path = "./tests/test_configs/internal/component_with_additional_includes/with_artifacts.yml"
             component: InternalComponent = load_component(source=yaml_path)
             assert component._validate().passed, repr(component._validate())

@@ -8,18 +8,18 @@ import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import cpu_count
 from pathlib import Path
-from typing import Union, List
+from typing import List, Union
+
 import yaml
 
-from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
 from azure.ai.ml.constants._common import AzureDevopsArtifactsType
+from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
 
-from .code import ComponentIgnoreFile
-from ._artifact_cache import ArtifactCache
+from ..._utils._artifact_utils import ArtifactCache
+from ..._utils._asset_utils import IgnoreFile, traverse_directory
 from ..._utils.utils import is_concurrent_component_registration_enabled, is_private_preview_enabled
-from ..._utils._asset_utils import traverse_directory, IgnoreFile
 from ...entities._util import _general_copy
-
+from .code import ComponentIgnoreFile
 
 PLACEHOLDER_FILE_NAME = "_placeholder_spec.yaml"
 ADDITIONAL_INCLUDES_KEY = "additional_includes"
