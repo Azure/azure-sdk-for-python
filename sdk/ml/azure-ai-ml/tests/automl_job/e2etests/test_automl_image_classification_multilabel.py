@@ -88,6 +88,8 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
 
         training_data = Input(type=AssetTypes.MLTABLE, path=train_path)
         validation_data = Input(type=AssetTypes.MLTABLE, path=val_path)
+        properties = get_automl_job_properties()
+        properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/image_classification_pipeline/versions/0.0.5"
 
         # Make generic multilabel classification job
         image_classification_multilabel_job = automl.image_classification_multilabel(
@@ -98,7 +100,7 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
             target_column_name="label",
             primary_metric="iou",
             # These are temporal properties needed in Private Preview
-            properties=get_automl_job_properties(),
+            properties=properties,
         )
 
         # Configure regular sweep job
@@ -107,19 +109,25 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
         image_classification_multilabel_job_sweep.extend_search_space(
             [
                 SearchSpace(
-                    model_name=Choice(["vitb16r224"]),
+                    model_name=Choice(["microsoft/beit-base-patch16-224"]),
                     learning_rate=Uniform(0.005, 0.05),
                     number_of_epochs=Choice([15, 30]),
                     gradient_accumulation_step=Choice([1, 2]),
                 ),
-                SearchSpace(
-                    model_name=Choice(["seresnext"]),
-                    learning_rate=Uniform(0.005, 0.05),
-                    # model-specific, valid_resize_size should be larger or equal than valid_crop_size
-                    validation_resize_size=Choice([288, 320, 352]),
-                    validation_crop_size=Choice([224, 256]),  # model-specific
-                    training_crop_size=Choice([224, 256]),  # model-specific
-                ),
+                # SearchSpace(
+                #     model_name=Choice(["vitb16r224"]),
+                #     learning_rate=Uniform(0.005, 0.05),
+                #     number_of_epochs=Choice([15, 30]),
+                #     gradient_accumulation_step=Choice([1, 2]),
+                # ),
+                # SearchSpace(
+                #     model_name=Choice(["seresnext"]),
+                #     learning_rate=Uniform(0.005, 0.05),
+                #     # model-specific, valid_resize_size should be larger or equal than valid_crop_size
+                #     validation_resize_size=Choice([288, 320, 352]),
+                #     validation_crop_size=Choice([224, 256]),  # model-specific
+                #     training_crop_size=Choice([224, 256]),  # model-specific
+                # ),
             ]
         )
         image_classification_multilabel_job_sweep.set_limits(max_trials=1, max_concurrent_trials=1)

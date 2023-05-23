@@ -168,7 +168,9 @@ def assert_final_job_status(
 
 
 def get_automl_job_properties() -> Dict:
-    return {}
+    return {
+        "_aml_internal_automl_subgraph_orchestration": "true",
+    }
 
 
 def download_dataset(download_url: str, data_file: str, retries=3) -> None:
