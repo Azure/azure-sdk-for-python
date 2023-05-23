@@ -32,7 +32,6 @@ def collect_tox_coverage_files():
         for f in files:
             if re.match(".coverage_*", f):
                 coverage_files.append(os.path.join(root, f))
-                fix_dot_coverage_file(os.path.join(root, f))
 
     logging.info(".coverage files: {}".format(coverage_files))
 
@@ -59,20 +58,25 @@ def generate_coverage_xml():
         logging.error("Coverage file is not available in {} to generate coverage XML".format(coverage_dir))
 
 
-def fix_dot_coverage_file(coverage_file):
+def fix_coverage_xml(coverage_file):
     print("running 'fix_dot_coverage_file' on {}".format(coverage_file))
 
     out = None
-    with open(coverage_file) as cov_file:
+    with open(coverage_file, encoding="utf-8") as cov_file:
         line = cov_file.read()
-        out = re.sub("\/\.tox\/[\s\S]*?\/site-packages", "/", line)
+
+        # replace relative paths in folder structure pattern
+        out = re.sub("\/\.tox\/[\s\S_]*?\/site-packages", "", line)
+
+        # replace relative paths in python import pattern
+        out = re.sub("\.?\.tox[\s\S\.\d]*?\.site-packages", "", out)
 
     if out:
         with open(coverage_file, 'w') as cov_file:
             cov_file.write(out)
 
-
 if __name__ == "__main__":
     collect_tox_coverage_files()
     generate_coverage_xml()
     create_coverage_report()
+    fix_coverage_xml(os.path.join(root_dir, 'coverage.xml'))
