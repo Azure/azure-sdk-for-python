@@ -2,6 +2,10 @@
 
 ## 1.0.0b10 (Unreleased)
 
+### Features Added
+
+- Enabled the use of the `context` keyword argument for passing in context headers of a parent span. This will be the parent context used when creating the span. ([#30411](https://github.com/Azure/azure-sdk-for-python/pull/30411))
+
 ### Other Changes
 
 - Python 2.7 is no longer supported. Please use Python version 3.7 or later.
