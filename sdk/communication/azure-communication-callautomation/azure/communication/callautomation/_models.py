@@ -6,7 +6,6 @@
 from typing import List, Optional, Union, TYPE_CHECKING, Dict
 from ._generated.models import (
     CallLocator,
-    MediaStreamingConfiguration as MediaStreamingConfigurationRest,
     FileSource as FileSourceInternal,
     PlaySource as PlaySourceInternal,
     ChannelAffinity as ChannelAffinityInternal
@@ -27,9 +26,6 @@ from ._utils import (
 )
 if TYPE_CHECKING:
     from ._generated.models._enums  import (
-        MediaStreamingTransportType,
-        MediaStreamingContentType,
-        MediaStreamingAudioChannelType,
         CallConnectionState,
         RecordingState
     )
@@ -52,10 +48,6 @@ class CallInvite(object):
     :vartype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
     :ivar source_display_name: Set display name for caller
     :vartype source_display_name: str
-    :ivar sip_headers: Custom context for PSTN
-    :vartype sip_headers: dict[str, str]
-    :ivar voip_headers: Custom context for VOIP
-    :vartype voip_headers: dict[str, str]
     """
     def __init__(
         self,
@@ -63,8 +55,6 @@ class CallInvite(object):
         *,
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         """CallInvitation that can be used to do outbound calls, such as creating call.
@@ -76,17 +66,11 @@ class CallInvite(object):
         :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
         :keyword source_display_name: Set display name for caller
         :paramtype source_display_name: str
-        :keyword sip_headers: Custom context for PSTN calls
-        :paramtype sip_headers: str
-        :keyword voip_headers: Custom context for VOIP calls
-        :paramtype voip_headers: str
         """
         super().__init__(**kwargs)
         self.target = target
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
-        self.sip_headers = sip_headers
-        self.voip_headers = voip_headers
 
 class ServerCallLocator(object):
     """The locator to locate ongoing call, using server call id.
@@ -204,51 +188,6 @@ class FileSource(object):
                 play_source_id=self.play_source_id
             )
 
-class MediaStreamingConfiguration(object):
-    """Configuration of Media streaming.
-
-    :ivar transport_url: Transport URL for media streaming.
-    :vartype transport_url: str
-    :ivar transport_type: The type of transport to be used for media streaming.
-    :vartype transport_type: str or ~azure.communication.callautomation.MediaStreamingTransportType
-    :ivar content_type: Content type to stream, eg. audio, audio/video.
-    :vartype content_type: str or ~azure.communication.callautomation.MediaStreamingContentType
-    :ivar audio_channel_type: Audio channel type to stream, eg. unmixed audio, mixed audio.
-    :vartype audio_channel_type: str or ~azure.communication.callautomation.MediaStreamingAudioChannelType
-    """
-    def __init__(
-        self,
-        transport_url: str,
-        transport_type: Union[str, 'MediaStreamingTransportType'],
-        content_type: Union[str, 'MediaStreamingContentType'],
-        audio_channel_type: Union[str, 'MediaStreamingAudioChannelType'],
-        **kwargs
-    ):
-        """Configuration of Media streaming details.
-
-        :param transport_url: Transport URL for media streaming.
-        :type transport_url: str
-        :param transport_type: The type of transport to be used for media streaming.
-        :type transport_type: str or ~azure.communication.callautomation.MediaStreamingTransportType
-        :param content_type: Content type to stream, eg. audio, audio/video.
-        :type content_type: str or ~azure.communication.callautomation.MediaStreamingContentType
-        :param audio_channel_type: Audio channel type to stream, eg. unmixed audio, mixed audio.
-        :type audio_channel_type: str or ~azure.communication.callautomation.MediaStreamingAudioChannelType
-        """
-        super().__init__(**kwargs)
-        self.transport_url = transport_url
-        self.transport_type = transport_type
-        self.content_type = content_type
-        self.audio_channel_type = audio_channel_type
-
-    def to_generated(self):
-        return MediaStreamingConfigurationRest(
-            transport_url=self.transport_url,
-            transport_type=self.transport_type,
-            content_type=self.content_type,
-            audio_channel_type=self.audio_channel_type
-            )
-
 class CallConnectionProperties(): # type: ignore # pylint: disable=too-many-instance-attributes
     """ Detailed properties of the call.
 
@@ -262,8 +201,6 @@ class CallConnectionProperties(): # type: ignore # pylint: disable=too-many-inst
     :vartype call_connection_state: str or ~azure.communication.callautomation.CallConnectionState
     :ivar callback_url: The callback URL.
     :vartype callback_url: str
-    :ivar media_subscription_id: SubscriptionId for media streaming.
-    :vartype media_subscription_id: str
     :ivar source_caller_id_number:
      The source caller Id, a phone number, that's shown to the
      PSTN participant being invited.
@@ -271,12 +208,12 @@ class CallConnectionProperties(): # type: ignore # pylint: disable=too-many-inst
     :vartype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
     :ivar source_display_name:  Display name of the call if dialing out.
     :vartype source_display_name: str
-    :ivar source_identity: Source identity of the caller.
-    :vartype source_identity: ~azure.communication.callautomation.CommunicationIdentifier
+    :ivar source: Source identity of the caller.
+    :vartype source: ~azure.communication.callautomation.CommunicationIdentifier
     :ivar correlation_id: Correlation ID of the call
     :vartype correlation_id: str
-    :ivar answered_by_identifier: The identifier that answered the call
-    :vartype answered_by_identifier: ~azure.communication.callautomation.CommunicationUserIdentifier
+    :ivar answered_by: The identifier that answered the call
+    :vartype answered_by: ~azure.communication.callautomation.CommunicationUserIdentifier
     """
     def __init__(
         self,
@@ -287,12 +224,11 @@ class CallConnectionProperties(): # type: ignore # pylint: disable=too-many-inst
         call_connection_state:
         Optional[Union[str, 'CallConnectionState']] = None,
         callback_url: Optional[str] = None,
-        media_subscription_id: Optional[str] = None,
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
-        source_identity: Optional[CommunicationIdentifier] = None,
+        source: Optional[CommunicationIdentifier] = None,
         correlation_id: Optional[str] = None,
-        answered_by_identifier: Optional[CommunicationUserIdentifier] = None,
+        answered_by: Optional[CommunicationUserIdentifier] = None,
         **kwargs
     ):
         super().__init__(**kwargs)
@@ -301,12 +237,11 @@ class CallConnectionProperties(): # type: ignore # pylint: disable=too-many-inst
         self.targets = targets
         self.call_connection_state = call_connection_state
         self.callback_url = callback_url
-        self.media_subscription_id = media_subscription_id
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
-        self.source_identity = source_identity
+        self.source = source
         self.correlation_id = correlation_id
-        self.answered_by_identifier = answered_by_identifier
+        self.answered_by = answered_by
 
     @classmethod
     def _from_generated(cls, call_connection_properties_generated: 'CallConnectionPropertiesRest'):
@@ -320,19 +255,18 @@ class CallConnectionProperties(): # type: ignore # pylint: disable=too-many-inst
             targets=target_models,
             call_connection_state=call_connection_properties_generated.call_connection_state,
             callback_url=call_connection_properties_generated.callback_uri,
-            media_subscription_id=call_connection_properties_generated.media_subscription_id,
             source_caller_id_number=deserialize_phone_identifier(
             call_connection_properties_generated.source_caller_id_number)
             if call_connection_properties_generated.source_caller_id_number
             else None,
             source_display_name=call_connection_properties_generated.source_display_name,
-            source_identity=deserialize_identifier(call_connection_properties_generated.source_identity)
-            if call_connection_properties_generated.source_identity
+            source=deserialize_identifier(call_connection_properties_generated.source)
+            if call_connection_properties_generated.source
             else None,
             correlation_id=call_connection_properties_generated.correlation_id,
-            answered_by_identifier=deserialize_comm_user_identifier(
-                call_connection_properties_generated.answered_by_identifier)
-            if call_connection_properties_generated.answered_by_identifier
+            answered_by=deserialize_comm_user_identifier(
+                call_connection_properties_generated.answered_by)
+            if call_connection_properties_generated.answered_by
             else None
             )
 

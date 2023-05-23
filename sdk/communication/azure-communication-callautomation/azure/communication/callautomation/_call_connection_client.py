@@ -29,9 +29,6 @@ from ._generated.models import (
     TransferToParticipantRequest,
     PlayRequest,
     RecognizeRequest,
-    ContinuousDtmfRecognitionRequest,
-    SendDtmfRequest,
-    CustomContext,
     DtmfOptions,
     PlayOptions,
     RecognizeOptions,
@@ -92,13 +89,20 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         parsed_url = urlparse(endpoint.rstrip('/'))
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {format(endpoint)}")
+        # self._client = AzureCommunicationCallAutomationService(
+        #     endpoint,
+        #     api_version=api_version or DEFAULT_VERSION,
+        #     authentication_policy=get_authentication_policy(
+        #         endpoint, credential),
+        #     sdk_moniker=SDK_MONIKER,
+        #     **kwargs)
+        
         self._client = AzureCommunicationCallAutomationService(
-            endpoint,
+            endpoint=endpoint,
+            credential=credential,
             api_version=api_version or DEFAULT_VERSION,
-            authentication_policy=get_authentication_policy(
-                endpoint, credential),
-            sdk_moniker=SDK_MONIKER,
-            **kwargs)
+            **kwargs
+        )
 
         self._call_connection_id = call_connection_id
         self._call_connection_client = self._client.call_connection
@@ -194,15 +198,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: ItemPaged[azure.communication.callautomation.CallParticipant]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._call_connection_client.get_participants(self._call_connection_id, **kwargs).values
+        return self._call_connection_client.get_participants(self._call_connection_id, **kwargs)
 
     @distributed_trace
     def transfer_call_to_participant(
         self,
         target_participant: 'CommunicationIdentifier',
         *,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
         operation_context: Optional[str] = None,
         **kwargs
     ) -> TransferCallResult:
@@ -210,23 +212,14 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         :param target_participant: The transfer target.
         :type target_participant: CommunicationIdentifier
-        :keyword sip_headers: Custom context for PSTN
-        :paramtype sip_headers: dict[str, str]
-        :keyword voip_headers: Custom context for VOIP
-        :paramtype voip_headers: dict[str, str]
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
         :return: TransferCallResult
         :rtype: ~azure.communication.callautomation.TransferCallResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = CustomContext(
-            voip_headers=voip_headers,
-            sip_headers=sip_headers
-            ) if sip_headers or voip_headers else None
         request = TransferToParticipantRequest(
-            target_participant=serialize_identifier(target_participant),
-            custom_context=user_custom_context, operation_context=operation_context)
+            target_participant=serialize_identifier(target_participant), operation_context=operation_context)
 
         return self._call_connection_client.transfer_to_participant(
             self._call_connection_id, request,
@@ -256,16 +249,11 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: ~azure.communication.callautomation.AddParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = CustomContext(
-            voip_headers=target_participant.voip_headers,
-            sip_headers=target_participant.sip_headers
-            ) if target_participant.sip_headers or target_participant.voip_headers else None
         add_participant_request = AddParticipantRequest(
             participant_to_add=serialize_identifier(target_participant.target),
             source_caller_id_number=serialize_phone_identifier(
                 target_participant.source_caller_id_number) if target_participant.source_caller_id_number else None,
             source_display_name=target_participant.source_display_name,
-            custom_context=user_custom_context,
             invitation_timeout=invitation_timeout,
             operation_context=operation_context)
 
@@ -449,88 +437,3 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """
         self._call_media_client.cancel_all_media_operations(
             self._call_connection_id, **kwargs)
-
-    @distributed_trace
-    def start_continuous_dtmf_recognition(
-        self,
-        target_participant: 'CommunicationIdentifier',
-        *,
-        operation_context: Optional[str] = None,
-        **kwargs
-    ) -> None:
-        """Start continuous Dtmf recognition by subscribing to tones.
-
-        :param target_participant: Target participant.
-        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
-        :keyword operation_context: The value to identify context of the operation.
-        :paramtype operation_context: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
-            target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context)
-
-        self._call_media_client.start_continuous_dtmf_recognition(
-            self._call_connection_id,
-            continuous_dtmf_recognition_request,
-            **kwargs)
-
-    @distributed_trace
-    def stop_continuous_dtmf_recognition(
-        self,
-        target_participant: 'CommunicationIdentifier',
-        *,
-        operation_context: Optional[str] = None,
-        **kwargs
-    ) -> None:
-        """Stop continuous Dtmf recognition by unsubscribing to tones.
-
-        :param target_participant: Target participant.
-        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
-        :keyword operation_context: The value to identify context of the operation.
-        :paramtype operation_context: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
-            target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context)
-
-        self._call_media_client.stop_continuous_dtmf_recognition(
-            self._call_connection_id,
-            continuous_dtmf_recognition_request,
-            **kwargs)
-
-    @distributed_trace
-    def send_dtmf(
-        self,
-        tones: List[Union[str, 'DtmfTone']],
-        target_participant: 'CommunicationIdentifier',
-        *,
-        operation_context: Optional[str] = None,
-        **kwargs
-    ) -> None:
-        """Send Dtmf tones to this call.
-
-        :param tones: List of tones to be sent to target participant.
-        :type tones:list[str or ~azure.communication.callautomation.DtmfTone]
-        :param target_participant: Target participant.
-        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
-        :keyword operation_context: The value to identify context of the operation.
-        :paramtype operation_context: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        send_dtmf_request = SendDtmfRequest(
-            tones=tones,
-            target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context)
-
-        self._call_media_client.send_dtmf(
-            self._call_connection_id,
-            send_dtmf_request,
-            **kwargs)

@@ -6,9 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+import datetime
+from typing import Any, Optional
 
 from azure.core.configuration import Configuration
+from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 VERSION = "unknown"
@@ -24,19 +26,45 @@ class AzureCommunicationCallAutomationServiceConfiguration(
 
     :param endpoint: The endpoint of the Azure Communication resource. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2023-01-15-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :param repeatability_request_id: If specified, the client directs that the request is
+     repeatable; that is, that the client can make the request multiple times with the same
+     Repeatability-Request-Id and get back an appropriate response without the server executing the
+     request multiple times. The value of the Repeatability-Request-Id is an opaque string
+     representing a client-generated unique identifier for the request. It is a version 4 (random)
+     UUID. Default value is None.
+    :type repeatability_request_id: str
+    :param repeatability_first_sent: If Repeatability-Request-ID header is specified, then
+     Repeatability-First-Sent header must also be specified. The value should be the date and time
+     at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
+     Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
+    :type repeatability_first_sent: ~datetime.datetime
+    :keyword api_version: Api Version. Default value is "2023-03-06". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: AzureKeyCredential,
+        repeatability_request_id: Optional[str] = None,
+        repeatability_first_sent: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
         super(AzureCommunicationCallAutomationServiceConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2023-01-15-preview")
+        api_version: str = kwargs.pop("api_version", "2023-03-06")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
 
         self.endpoint = endpoint
+        self.credential = credential
+        self.repeatability_request_id = repeatability_request_id
+        self.repeatability_first_sent = repeatability_first_sent
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "communication-callautomation/{}".format(VERSION))
         self._configure(**kwargs)
@@ -51,3 +79,5 @@ class AzureCommunicationCallAutomationServiceConfiguration(
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
+        if self.credential and not self.authentication_policy:
+            self.authentication_policy = policies.AzureKeyCredentialPolicy(self.credential, "Authorization", **kwargs)

@@ -7,9 +7,11 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable
+import datetime
+from typing import Any, Awaitable, Optional
 
 from azure.core import AsyncPipelineClient
+from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .. import models as _models
@@ -38,19 +40,45 @@ class AzureCommunicationCallAutomationService(
      azure.communication.callautomation.aio.operations.CallRecordingOperations
     :param endpoint: The endpoint of the Azure Communication resource. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2023-01-15-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :param repeatability_request_id: If specified, the client directs that the request is
+     repeatable; that is, that the client can make the request multiple times with the same
+     Repeatability-Request-Id and get back an appropriate response without the server executing the
+     request multiple times. The value of the Repeatability-Request-Id is an opaque string
+     representing a client-generated unique identifier for the request. It is a version 4 (random)
+     UUID. Default value is None.
+    :type repeatability_request_id: str
+    :param repeatability_first_sent: If Repeatability-Request-ID header is specified, then
+     Repeatability-First-Sent header must also be specified. The value should be the date and time
+     at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
+     Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
+    :type repeatability_first_sent: ~datetime.datetime
+    :keyword api_version: Api Version. Default value is "2023-03-06". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, endpoint: str, **kwargs: Any
+    def __init__(
+        self,
+        endpoint: str,
+        credential: AzureKeyCredential,
+        repeatability_request_id: Optional[str] = None,
+        repeatability_first_sent: Optional[datetime.datetime] = None,
+        **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        self._config = AzureCommunicationCallAutomationServiceConfiguration(endpoint=endpoint, **kwargs)
+        self._config = AzureCommunicationCallAutomationServiceConfiguration(
+            endpoint=endpoint,
+            credential=credential,
+            repeatability_request_id=repeatability_request_id,
+            repeatability_first_sent=repeatability_first_sent,
+            **kwargs
+        )
         self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models._models.__dict__.items() if isinstance(v, type)}
+        client_models.update({k: v for k, v in _models.__dict__.items() if isinstance(v, type)})
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False

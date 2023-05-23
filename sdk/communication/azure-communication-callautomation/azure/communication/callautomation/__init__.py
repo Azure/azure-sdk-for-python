@@ -17,7 +17,6 @@ from ._models import (
     AddParticipantResult,
     RemoveParticipantResult,
     TransferCallResult,
-    MediaStreamingConfiguration,
     ChannelAffinity
 )
 from ._shared.models import (
@@ -35,11 +34,7 @@ from ._generated.models._enums import (
     RecordingContent,
     RecordingChannel,
     RecordingFormat,
-    RecordingStorage,
     RecognizeInputType,
-    MediaStreamingAudioChannelType,
-    MediaStreamingContentType,
-    MediaStreamingTransportType,
     DtmfTone,
     CallConnectionState,
     RecordingState
@@ -63,7 +58,6 @@ __all__ = [
     "AddParticipantResult",
     "RemoveParticipantResult",
     "TransferCallResult",
-    "MediaStreamingConfiguration",
 
     # common ACS communication identifier
     "CommunicationIdentifier",
@@ -80,11 +74,7 @@ __all__ = [
     "RecordingContent",
     "RecordingChannel",
     "RecordingFormat",
-    "RecordingStorage",
     "RecognizeInputType",
-    "MediaStreamingAudioChannelType",
-    "MediaStreamingContentType",
-    "MediaStreamingTransportType",
     "DtmfTone",
     "CallConnectionState",
     "RecordingState"

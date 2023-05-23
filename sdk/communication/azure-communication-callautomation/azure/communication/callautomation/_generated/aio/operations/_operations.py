@@ -7,8 +7,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import urllib.parse
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -20,6 +22,7 @@ from azure.core.exceptions import (
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
@@ -34,17 +37,12 @@ from ...operations._operations import (
     build_call_connection_get_participant_request,
     build_call_connection_get_participants_request,
     build_call_connection_hangup_call_request,
-    build_call_connection_mute_request,
     build_call_connection_remove_participant_request,
     build_call_connection_terminate_call_request,
     build_call_connection_transfer_to_participant_request,
-    build_call_connection_unmute_request,
     build_call_media_cancel_all_media_operations_request,
     build_call_media_play_request,
     build_call_media_recognize_request,
-    build_call_media_send_dtmf_request,
-    build_call_media_start_continuous_dtmf_recognition_request,
-    build_call_media_stop_continuous_dtmf_recognition_request,
     build_call_recording_get_recording_properties_request,
     build_call_recording_pause_recording_request,
     build_call_recording_resume_recording_request,
@@ -60,13 +58,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationCallAutomationServiceMixinABC):
     @overload
     async def create_call(
-        self,
-        create_call_request: _models.CreateCallRequest,
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, create_call_request: _models.CreateCallRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CallConnectionProperties:
         """Create an outbound call.
 
@@ -74,18 +66,6 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
         :param create_call_request: The create call request. Required.
         :type create_call_request: ~azure.communication.callautomation.models.CreateCallRequest
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -96,13 +76,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
     @overload
     async def create_call(
-        self,
-        create_call_request: IO,
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, create_call_request: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CallConnectionProperties:
         """Create an outbound call.
 
@@ -110,18 +84,6 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
         :param create_call_request: The create call request. Required.
         :type create_call_request: IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -132,12 +94,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
     @distributed_trace_async
     async def create_call(
-        self,
-        create_call_request: Union[_models.CreateCallRequest, IO],
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        **kwargs: Any
+        self, create_call_request: Union[_models.CreateCallRequest, IO], **kwargs: Any
     ) -> _models.CallConnectionProperties:
         """Create an outbound call.
 
@@ -146,18 +103,6 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
         :param create_call_request: The create call request. Is either a CreateCallRequest type or a IO
          type. Required.
         :type create_call_request: ~azure.communication.callautomation.models.CreateCallRequest or IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -188,8 +133,8 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
             _json = self._serialize.body(create_call_request, "CreateCallRequest")
 
         request = build_azure_communication_call_automation_service_create_call_request(
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
+            repeatability_request_id=self._config.repeatability_request_id,
+            repeatability_first_sent=self._config.repeatability_first_sent,
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -223,13 +168,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
     @overload
     async def answer_call(
-        self,
-        answer_call_request: _models.AnswerCallRequest,
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, answer_call_request: _models.AnswerCallRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CallConnectionProperties:
         """Answer a Call.
 
@@ -237,18 +176,6 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
         :param answer_call_request: The answer call request. Required.
         :type answer_call_request: ~azure.communication.callautomation.models.AnswerCallRequest
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -259,13 +186,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
     @overload
     async def answer_call(
-        self,
-        answer_call_request: IO,
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, answer_call_request: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CallConnectionProperties:
         """Answer a Call.
 
@@ -273,18 +194,6 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
         :param answer_call_request: The answer call request. Required.
         :type answer_call_request: IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -295,12 +204,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
     @distributed_trace_async
     async def answer_call(
-        self,
-        answer_call_request: Union[_models.AnswerCallRequest, IO],
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        **kwargs: Any
+        self, answer_call_request: Union[_models.AnswerCallRequest, IO], **kwargs: Any
     ) -> _models.CallConnectionProperties:
         """Answer a Call.
 
@@ -309,18 +213,6 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
         :param answer_call_request: The answer call request. Is either a AnswerCallRequest type or a IO
          type. Required.
         :type answer_call_request: ~azure.communication.callautomation.models.AnswerCallRequest or IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -351,8 +243,8 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
             _json = self._serialize.body(answer_call_request, "AnswerCallRequest")
 
         request = build_azure_communication_call_automation_service_answer_call_request(
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
+            repeatability_request_id=self._config.repeatability_request_id,
+            repeatability_first_sent=self._config.repeatability_first_sent,
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -389,8 +281,6 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
         self,
         redirect_call_request: _models.RedirectCallRequest,
         *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
@@ -400,18 +290,6 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
         :param redirect_call_request: The redirect call request. Required.
         :type redirect_call_request: ~azure.communication.callautomation.models.RedirectCallRequest
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -422,13 +300,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
     @overload
     async def redirect_call(  # pylint: disable=inconsistent-return-statements
-        self,
-        redirect_call_request: IO,
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, redirect_call_request: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Redirect a call.
 
@@ -436,18 +308,6 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
         :param redirect_call_request: The redirect call request. Required.
         :type redirect_call_request: IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -458,12 +318,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
     @distributed_trace_async
     async def redirect_call(  # pylint: disable=inconsistent-return-statements
-        self,
-        redirect_call_request: Union[_models.RedirectCallRequest, IO],
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        **kwargs: Any
+        self, redirect_call_request: Union[_models.RedirectCallRequest, IO], **kwargs: Any
     ) -> None:
         """Redirect a call.
 
@@ -473,18 +328,6 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
          or a IO type. Required.
         :type redirect_call_request: ~azure.communication.callautomation.models.RedirectCallRequest or
          IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -515,8 +358,8 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
             _json = self._serialize.body(redirect_call_request, "RedirectCallRequest")
 
         request = build_azure_communication_call_automation_service_redirect_call_request(
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
+            repeatability_request_id=self._config.repeatability_request_id,
+            repeatability_first_sent=self._config.repeatability_first_sent,
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -546,13 +389,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
     @overload
     async def reject_call(  # pylint: disable=inconsistent-return-statements
-        self,
-        reject_call_request: _models.RejectCallRequest,
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, reject_call_request: _models.RejectCallRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Reject the call.
 
@@ -560,18 +397,6 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
         :param reject_call_request: The reject call request. Required.
         :type reject_call_request: ~azure.communication.callautomation.models.RejectCallRequest
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -582,13 +407,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
     @overload
     async def reject_call(  # pylint: disable=inconsistent-return-statements
-        self,
-        reject_call_request: IO,
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, reject_call_request: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Reject the call.
 
@@ -596,18 +415,6 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
         :param reject_call_request: The reject call request. Required.
         :type reject_call_request: IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -618,12 +425,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
     @distributed_trace_async
     async def reject_call(  # pylint: disable=inconsistent-return-statements
-        self,
-        reject_call_request: Union[_models.RejectCallRequest, IO],
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        **kwargs: Any
+        self, reject_call_request: Union[_models.RejectCallRequest, IO], **kwargs: Any
     ) -> None:
         """Reject the call.
 
@@ -632,18 +434,6 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
         :param reject_call_request: The reject call request. Is either a RejectCallRequest type or a IO
          type. Required.
         :type reject_call_request: ~azure.communication.callautomation.models.RejectCallRequest or IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -674,8 +464,8 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
             _json = self._serialize.body(reject_call_request, "RejectCallRequest")
 
         request = build_azure_communication_call_automation_service_reject_call_request(
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
+            repeatability_request_id=self._config.repeatability_request_id,
+            repeatability_first_sent=self._config.repeatability_first_sent,
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -725,9 +515,9 @@ class CallConnectionOperations:
 
     @distributed_trace_async
     async def get_call(self, call_connection_id: str, **kwargs: Any) -> _models.CallConnectionProperties:
-        """Get call connection.
+        """Get the detail properties of an ongoing call.
 
-        Get call connection.
+        Get the detail properties of an ongoing call.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
@@ -782,9 +572,11 @@ class CallConnectionOperations:
     async def hangup_call(  # pylint: disable=inconsistent-return-statements
         self, call_connection_id: str, **kwargs: Any
     ) -> None:
-        """Hangup the call.
+        """Hang up call automation service from the call. This will make call automation service leave the
+        call, but does not terminate if there are more than 1 caller in the call.
 
-        Hangup the call.
+        Hang up call automation service from the call. This will make call automation service leave the
+        call, but does not terminate if there are more than 1 caller in the call.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
@@ -833,12 +625,7 @@ class CallConnectionOperations:
 
     @distributed_trace_async
     async def terminate_call(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        **kwargs: Any
+        self, call_connection_id: str, **kwargs: Any
     ) -> None:
         """Terminate a call using CallConnectionId.
 
@@ -846,18 +633,6 @@ class CallConnectionOperations:
 
         :param call_connection_id: The terminate call request. Required.
         :type call_connection_id: str
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -877,8 +652,8 @@ class CallConnectionOperations:
 
         request = build_call_connection_terminate_call_request(
             call_connection_id=call_connection_id,
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
+            repeatability_request_id=self._config.repeatability_request_id,
+            repeatability_first_sent=self._config.repeatability_first_sent,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -909,8 +684,6 @@ class CallConnectionOperations:
         call_connection_id: str,
         transfer_to_participant_request: _models.TransferToParticipantRequest,
         *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TransferCallResponse:
@@ -923,18 +696,6 @@ class CallConnectionOperations:
         :param transfer_to_participant_request: The transfer to participant request. Required.
         :type transfer_to_participant_request:
          ~azure.communication.callautomation.models.TransferToParticipantRequest
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -949,8 +710,6 @@ class CallConnectionOperations:
         call_connection_id: str,
         transfer_to_participant_request: IO,
         *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TransferCallResponse:
@@ -962,18 +721,6 @@ class CallConnectionOperations:
         :type call_connection_id: str
         :param transfer_to_participant_request: The transfer to participant request. Required.
         :type transfer_to_participant_request: IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -987,9 +734,6 @@ class CallConnectionOperations:
         self,
         call_connection_id: str,
         transfer_to_participant_request: Union[_models.TransferToParticipantRequest, IO],
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
         **kwargs: Any
     ) -> _models.TransferCallResponse:
         """Transfer the call to a participant.
@@ -1002,18 +746,6 @@ class CallConnectionOperations:
          TransferToParticipantRequest type or a IO type. Required.
         :type transfer_to_participant_request:
          ~azure.communication.callautomation.models.TransferToParticipantRequest or IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -1045,8 +777,8 @@ class CallConnectionOperations:
 
         request = build_call_connection_transfer_to_participant_request(
             call_connection_id=call_connection_id,
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
+            repeatability_request_id=self._config.repeatability_request_id,
+            repeatability_first_sent=self._config.repeatability_first_sent,
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -1078,18 +810,26 @@ class CallConnectionOperations:
 
         return deserialized
 
-    @distributed_trace_async
-    async def get_participants(self, call_connection_id: str, **kwargs: Any) -> _models.GetParticipantsResponse:
+    @distributed_trace
+    def get_participants(self, call_connection_id: str, **kwargs: Any) -> AsyncIterable["_models.CallParticipant"]:
         """Get participants from a call.
 
         Get participants from a call.
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
-        :return: GetParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.GetParticipantsResponse
+        :return: An iterator like instance of CallParticipant
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.callautomation.models.CallParticipant]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.GetParticipantsResponse] = kwargs.pop(  # pylint: disable=protected-access
+            "cls", None
+        )
+
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1098,40 +838,70 @@ class CallConnectionOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models.GetParticipantsResponse] = kwargs.pop("cls", None)
+                request = build_call_connection_get_participants_request(
+                    call_connection_id=call_connection_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        request = build_call_connection_get_participants_request(
-            call_connection_id=call_connection_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
+            return request
 
-        response = pipeline_response.http_response
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize(
+                _models._models.GetParticipantsResponse, pipeline_response  # pylint: disable=protected-access
+            )
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
 
-        deserialized = self._deserialize("GetParticipantsResponse", pipeline_response)
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
 
-        return deserialized
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @overload
     async def add_participant(
@@ -1139,31 +909,17 @@ class CallConnectionOperations:
         call_connection_id: str,
         add_participant_request: _models.AddParticipantRequest,
         *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AddParticipantResponse:
-        """Add participants to the call.
+        """Add a participant to the call.
 
-        Add participants to the call.
+        Add a participant to the call.
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
         :param add_participant_request: Required.
         :type add_participant_request: ~azure.communication.callautomation.models.AddParticipantRequest
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1178,31 +934,17 @@ class CallConnectionOperations:
         call_connection_id: str,
         add_participant_request: IO,
         *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AddParticipantResponse:
-        """Add participants to the call.
+        """Add a participant to the call.
 
-        Add participants to the call.
+        Add a participant to the call.
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
         :param add_participant_request: Required.
         :type add_participant_request: IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1213,35 +955,17 @@ class CallConnectionOperations:
 
     @distributed_trace_async
     async def add_participant(
-        self,
-        call_connection_id: str,
-        add_participant_request: Union[_models.AddParticipantRequest, IO],
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        **kwargs: Any
+        self, call_connection_id: str, add_participant_request: Union[_models.AddParticipantRequest, IO], **kwargs: Any
     ) -> _models.AddParticipantResponse:
-        """Add participants to the call.
+        """Add a participant to the call.
 
-        Add participants to the call.
+        Add a participant to the call.
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
         :param add_participant_request: Is either a AddParticipantRequest type or a IO type. Required.
         :type add_participant_request: ~azure.communication.callautomation.models.AddParticipantRequest
          or IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -1273,8 +997,8 @@ class CallConnectionOperations:
 
         request = build_call_connection_add_participant_request(
             call_connection_id=call_connection_id,
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
+            repeatability_request_id=self._config.repeatability_request_id,
+            repeatability_first_sent=self._config.repeatability_first_sent,
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -1312,32 +1036,18 @@ class CallConnectionOperations:
         call_connection_id: str,
         remove_participant_request: _models.RemoveParticipantRequest,
         *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RemoveParticipantResponse:
-        """Remove participant from the call using identifier.
+        """Remove a participant from the call using identifier.
 
-        Remove participant from the call using identifier.
+        Remove a participant from the call using identifier.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
         :param remove_participant_request: The participant to be removed from the call. Required.
         :type remove_participant_request:
          ~azure.communication.callautomation.models.RemoveParticipantRequest
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1352,31 +1062,17 @@ class CallConnectionOperations:
         call_connection_id: str,
         remove_participant_request: IO,
         *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RemoveParticipantResponse:
-        """Remove participant from the call using identifier.
+        """Remove a participant from the call using identifier.
 
-        Remove participant from the call using identifier.
+        Remove a participant from the call using identifier.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
         :param remove_participant_request: The participant to be removed from the call. Required.
         :type remove_participant_request: IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1390,14 +1086,11 @@ class CallConnectionOperations:
         self,
         call_connection_id: str,
         remove_participant_request: Union[_models.RemoveParticipantRequest, IO],
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
         **kwargs: Any
     ) -> _models.RemoveParticipantResponse:
-        """Remove participant from the call using identifier.
+        """Remove a participant from the call using identifier.
 
-        Remove participant from the call using identifier.
+        Remove a participant from the call using identifier.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
@@ -1405,18 +1098,6 @@ class CallConnectionOperations:
          RemoveParticipantRequest type or a IO type. Required.
         :type remove_participant_request:
          ~azure.communication.callautomation.models.RemoveParticipantRequest or IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -1448,8 +1129,8 @@ class CallConnectionOperations:
 
         request = build_call_connection_remove_participant_request(
             call_connection_id=call_connection_id,
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
+            repeatability_request_id=self._config.repeatability_request_id,
+            repeatability_first_sent=self._config.repeatability_first_sent,
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -1475,356 +1156,6 @@ class CallConnectionOperations:
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize("RemoveParticipantResponse", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    @overload
-    async def mute(
-        self,
-        call_connection_id: str,
-        mute_participants_request: _models.MuteParticipantsRequest,
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.MuteParticipantsResponse:
-        """Mute participants from the call using identifier.
-
-        Mute participants from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param mute_participants_request: The participants to be muted from the call. Required.
-        :type mute_participants_request:
-         ~azure.communication.callautomation.models.MuteParticipantsRequest
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MuteParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.MuteParticipantsResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def mute(
-        self,
-        call_connection_id: str,
-        mute_participants_request: IO,
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.MuteParticipantsResponse:
-        """Mute participants from the call using identifier.
-
-        Mute participants from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param mute_participants_request: The participants to be muted from the call. Required.
-        :type mute_participants_request: IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MuteParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.MuteParticipantsResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def mute(
-        self,
-        call_connection_id: str,
-        mute_participants_request: Union[_models.MuteParticipantsRequest, IO],
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.MuteParticipantsResponse:
-        """Mute participants from the call using identifier.
-
-        Mute participants from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param mute_participants_request: The participants to be muted from the call. Is either a
-         MuteParticipantsRequest type or a IO type. Required.
-        :type mute_participants_request:
-         ~azure.communication.callautomation.models.MuteParticipantsRequest or IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :return: MuteParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.MuteParticipantsResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MuteParticipantsResponse] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(mute_participants_request, (IOBase, bytes)):
-            _content = mute_participants_request
-        else:
-            _json = self._serialize.body(mute_participants_request, "MuteParticipantsRequest")
-
-        request = build_call_connection_mute_request(
-            call_connection_id=call_connection_id,
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize("MuteParticipantsResponse", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    @overload
-    async def unmute(
-        self,
-        call_connection_id: str,
-        unmute_participants_request: _models.UnmuteParticipantsRequest,
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.UnmuteParticipantsResponse:
-        """Unmute participants from the call using identifier.
-
-        Unmute participants from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param unmute_participants_request: The participants to be unmuted from the call. Required.
-        :type unmute_participants_request:
-         ~azure.communication.callautomation.models.UnmuteParticipantsRequest
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: UnmuteParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.UnmuteParticipantsResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def unmute(
-        self,
-        call_connection_id: str,
-        unmute_participants_request: IO,
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.UnmuteParticipantsResponse:
-        """Unmute participants from the call using identifier.
-
-        Unmute participants from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param unmute_participants_request: The participants to be unmuted from the call. Required.
-        :type unmute_participants_request: IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: UnmuteParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.UnmuteParticipantsResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def unmute(
-        self,
-        call_connection_id: str,
-        unmute_participants_request: Union[_models.UnmuteParticipantsRequest, IO],
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.UnmuteParticipantsResponse:
-        """Unmute participants from the call using identifier.
-
-        Unmute participants from the call using identifier.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param unmute_participants_request: The participants to be unmuted from the call. Is either a
-         UnmuteParticipantsRequest type or a IO type. Required.
-        :type unmute_participants_request:
-         ~azure.communication.callautomation.models.UnmuteParticipantsRequest or IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :return: UnmuteParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.UnmuteParticipantsResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.UnmuteParticipantsResponse] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(unmute_participants_request, (IOBase, bytes)):
-            _content = unmute_participants_request
-        else:
-            _json = self._serialize.body(unmute_participants_request, "UnmuteParticipantsRequest")
-
-        request = build_call_connection_unmute_request(
-            call_connection_id=call_connection_id,
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize("UnmuteParticipantsResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -2195,374 +1526,6 @@ class CallMediaOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    @overload
-    async def start_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        continuous_dtmf_recognition_request: _models.ContinuousDtmfRecognitionRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Start continuous Dtmf recognition by subscribing to tones.
-
-        Start continuous Dtmf recognition by subscribing to tones.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param continuous_dtmf_recognition_request: The continuous recognize request. Required.
-        :type continuous_dtmf_recognition_request:
-         ~azure.communication.callautomation.models.ContinuousDtmfRecognitionRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def start_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        continuous_dtmf_recognition_request: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Start continuous Dtmf recognition by subscribing to tones.
-
-        Start continuous Dtmf recognition by subscribing to tones.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param continuous_dtmf_recognition_request: The continuous recognize request. Required.
-        :type continuous_dtmf_recognition_request: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def start_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        continuous_dtmf_recognition_request: Union[_models.ContinuousDtmfRecognitionRequest, IO],
-        **kwargs: Any
-    ) -> None:
-        """Start continuous Dtmf recognition by subscribing to tones.
-
-        Start continuous Dtmf recognition by subscribing to tones.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param continuous_dtmf_recognition_request: The continuous recognize request. Is either a
-         ContinuousDtmfRecognitionRequest type or a IO type. Required.
-        :type continuous_dtmf_recognition_request:
-         ~azure.communication.callautomation.models.ContinuousDtmfRecognitionRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(continuous_dtmf_recognition_request, (IOBase, bytes)):
-            _content = continuous_dtmf_recognition_request
-        else:
-            _json = self._serialize.body(continuous_dtmf_recognition_request, "ContinuousDtmfRecognitionRequest")
-
-        request = build_call_media_start_continuous_dtmf_recognition_request(
-            call_connection_id=call_connection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    @overload
-    async def stop_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        continuous_dtmf_recognition_request: _models.ContinuousDtmfRecognitionRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Stop continuous Dtmf recognition by unsubscribing to tones.
-
-        Stop continuous Dtmf recognition by unsubscribing to tones.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param continuous_dtmf_recognition_request: The continuous recognize request. Required.
-        :type continuous_dtmf_recognition_request:
-         ~azure.communication.callautomation.models.ContinuousDtmfRecognitionRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def stop_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        continuous_dtmf_recognition_request: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Stop continuous Dtmf recognition by unsubscribing to tones.
-
-        Stop continuous Dtmf recognition by unsubscribing to tones.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param continuous_dtmf_recognition_request: The continuous recognize request. Required.
-        :type continuous_dtmf_recognition_request: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def stop_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        continuous_dtmf_recognition_request: Union[_models.ContinuousDtmfRecognitionRequest, IO],
-        **kwargs: Any
-    ) -> None:
-        """Stop continuous Dtmf recognition by unsubscribing to tones.
-
-        Stop continuous Dtmf recognition by unsubscribing to tones.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param continuous_dtmf_recognition_request: The continuous recognize request. Is either a
-         ContinuousDtmfRecognitionRequest type or a IO type. Required.
-        :type continuous_dtmf_recognition_request:
-         ~azure.communication.callautomation.models.ContinuousDtmfRecognitionRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(continuous_dtmf_recognition_request, (IOBase, bytes)):
-            _content = continuous_dtmf_recognition_request
-        else:
-            _json = self._serialize.body(continuous_dtmf_recognition_request, "ContinuousDtmfRecognitionRequest")
-
-        request = build_call_media_stop_continuous_dtmf_recognition_request(
-            call_connection_id=call_connection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    @overload
-    async def send_dtmf(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        send_dtmf_request: _models.SendDtmfRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Send dtmf tones.
-
-        Send dtmf tones.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param send_dtmf_request: The send dtmf request. Required.
-        :type send_dtmf_request: ~azure.communication.callautomation.models.SendDtmfRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def send_dtmf(  # pylint: disable=inconsistent-return-statements
-        self, call_connection_id: str, send_dtmf_request: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Send dtmf tones.
-
-        Send dtmf tones.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param send_dtmf_request: The send dtmf request. Required.
-        :type send_dtmf_request: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def send_dtmf(  # pylint: disable=inconsistent-return-statements
-        self, call_connection_id: str, send_dtmf_request: Union[_models.SendDtmfRequest, IO], **kwargs: Any
-    ) -> None:
-        """Send dtmf tones.
-
-        Send dtmf tones.
-
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :param send_dtmf_request: The send dtmf request. Is either a SendDtmfRequest type or a IO type.
-         Required.
-        :type send_dtmf_request: ~azure.communication.callautomation.models.SendDtmfRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(send_dtmf_request, (IOBase, bytes)):
-            _content = send_dtmf_request
-        else:
-            _json = self._serialize.body(send_dtmf_request, "SendDtmfRequest")
-
-        request = build_call_media_send_dtmf_request(
-            call_connection_id=call_connection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
 
 class CallRecordingOperations:
     """
@@ -2588,8 +1551,6 @@ class CallRecordingOperations:
         self,
         start_call_recording: _models.StartCallRecordingRequest,
         *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RecordingStateResponse:
@@ -2600,18 +1561,6 @@ class CallRecordingOperations:
         :param start_call_recording: The request body of start call recording request. Required.
         :type start_call_recording:
          ~azure.communication.callautomation.models.StartCallRecordingRequest
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2622,13 +1571,7 @@ class CallRecordingOperations:
 
     @overload
     async def start_recording(
-        self,
-        start_call_recording: IO,
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, start_call_recording: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.RecordingStateResponse:
         """Start recording the call.
 
@@ -2636,18 +1579,6 @@ class CallRecordingOperations:
 
         :param start_call_recording: The request body of start call recording request. Required.
         :type start_call_recording: IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2658,12 +1589,7 @@ class CallRecordingOperations:
 
     @distributed_trace_async
     async def start_recording(
-        self,
-        start_call_recording: Union[_models.StartCallRecordingRequest, IO],
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
-        **kwargs: Any
+        self, start_call_recording: Union[_models.StartCallRecordingRequest, IO], **kwargs: Any
     ) -> _models.RecordingStateResponse:
         """Start recording the call.
 
@@ -2673,18 +1599,6 @@ class CallRecordingOperations:
          StartCallRecordingRequest type or a IO type. Required.
         :type start_call_recording:
          ~azure.communication.callautomation.models.StartCallRecordingRequest or IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
-         UUID. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
-        :paramtype repeatability_first_sent: str
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -2715,8 +1629,8 @@ class CallRecordingOperations:
             _json = self._serialize.body(start_call_recording, "StartCallRecordingRequest")
 
         request = build_call_recording_start_recording_request(
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
+            repeatability_request_id=self._config.repeatability_request_id,
+            repeatability_first_sent=self._config.repeatability_first_sent,
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
