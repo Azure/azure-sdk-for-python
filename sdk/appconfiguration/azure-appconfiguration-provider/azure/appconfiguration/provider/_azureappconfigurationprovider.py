@@ -16,7 +16,7 @@ from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from ._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_PREFIX,
-    RequestTracingDisabledEnvironmentVariable,
+    REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE,
     ServiceFabricEnvironmentVariable,
     AzureFunctionEnvironmentVariable,
     AzureWebAppEnvironmentVariable,
@@ -181,24 +181,26 @@ def _buildprovider(
     provider = AzureAppConfigurationProvider()
     headers = kwargs.pop("headers", {})
 
-    if os.environ.get(RequestTracingDisabledEnvironmentVariable, "").lower() != "true":
+    if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, "").lower() != "true":
         headers["Correlation-Context"] = _get_correlation_context(key_vault_options)
 
     useragent = USER_AGENT
 
-    if "retry_total" not in kwargs:
-        kwargs["retry_total"] = 2
-
-    if "retry_backoff_max" not in kwargs:
-        kwargs["retry_backoff_max"] = 1
+    retry_total = kwargs.pop("retry_total", 2)
+    retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
 
     if connection_string:
         provider._client = AzureAppConfigurationClient.from_connection_string(
-            connection_string, user_agent=useragent, headers=headers, **kwargs
+            connection_string,
+            user_agent=useragent,
+            headers=headers,
+            retry_total=retry_total,
+            retry_backoff_max=retry_backoff_max,
+            **kwargs
         )
         return provider
     provider._client = AzureAppConfigurationClient(
-        endpoint, credential, user_agent=useragent, headers=headers, **kwargs
+        endpoint, credential, user_agent=useragent, headers=headers, retry_backoff_max=retry_backoff_max, **kwargs
     )
     return provider
 
