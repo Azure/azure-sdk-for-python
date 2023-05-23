@@ -14,7 +14,10 @@ class DataColumnSchema(metaclass=PatchedSchemaMeta):
         required=True,
         allow_none=False,
     )
-    type = fields.Str(required=True, allow_none=False)
+    type = fields.Str(
+        required=True,
+        allow_none=False,
+    )
 
     @post_load
     def make(self, data, **kwargs):

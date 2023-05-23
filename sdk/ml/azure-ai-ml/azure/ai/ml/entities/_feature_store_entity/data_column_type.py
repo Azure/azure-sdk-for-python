@@ -19,3 +19,6 @@ class DataColumnType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BINARY = "binary"
     DATETIME = "datetime"
     BOOLEAN = "boolean"
+
+    def __str__(self):
+        return self.value
