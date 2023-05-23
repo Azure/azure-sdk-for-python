@@ -14,7 +14,11 @@ class FeatureSchema(metaclass=PatchedSchemaMeta):
         required=True,
         allow_none=False,
     )
-    data_type = fields.Str(required=True, allow_none=False)
+    data_type = fields.Str(
+        required=True,
+        allow_none=False,
+        data_key="type",
+    )
     description = fields.Str(required=False)
     tags = fields.Dict(keys=fields.Str(), values=fields.Str(), required=False)
 
