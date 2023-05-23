@@ -37,7 +37,10 @@ import trio
 async def test_example_trio():
     async def req():
         request = HttpRequest("GET", "https://bing.com/")
-        policies : Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [UserAgentPolicy("myuseragent"), AsyncRedirectPolicy()]
+        policies: Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
+            UserAgentPolicy("myuseragent"),
+            AsyncRedirectPolicy(),
+        ]
         # [START trio]
         from azure.core.pipeline.transport import TrioRequestsTransport
 
@@ -51,9 +54,11 @@ async def test_example_trio():
 
 @pytest.mark.asyncio
 async def test_example_asyncio():
-
     request = HttpRequest("GET", "https://bing.com")
-    policies : Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [UserAgentPolicy("myuseragent"), AsyncRedirectPolicy()]
+    policies: Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
+        UserAgentPolicy("myuseragent"),
+        AsyncRedirectPolicy(),
+    ]
     # [START asyncio]
     from azure.core.pipeline.transport import AsyncioRequestsTransport
 
@@ -66,9 +71,11 @@ async def test_example_asyncio():
 
 @pytest.mark.asyncio
 async def test_example_aiohttp():
-
     request = HttpRequest("GET", "https://bing.com")
-    policies : Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [UserAgentPolicy("myuseragent"), AsyncRedirectPolicy()]
+    policies: Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
+        UserAgentPolicy("myuseragent"),
+        AsyncRedirectPolicy(),
+    ]
     # [START aiohttp]
     from azure.core.pipeline.transport import AioHttpTransport
 
@@ -88,9 +95,9 @@ async def test_example_async_pipeline():
 
     # example: create request and policies
     request = HttpRequest("GET", "https://bing.com")
-    policies : Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
+    policies: Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
         UserAgentPolicy("myuseragent"),
-        AsyncRedirectPolicy()
+        AsyncRedirectPolicy(),
     ]
 
     # run the pipeline
@@ -103,7 +110,6 @@ async def test_example_async_pipeline():
 
 @pytest.mark.asyncio
 async def test_example_async_pipeline_client():
-
     url = "https://bing.com"
 
     # [START build_async_pipeline_client]
@@ -113,7 +119,7 @@ async def test_example_async_pipeline_client():
 
     # example policies
     request = HttpRequest("GET", url)
-    policies : Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
+    policies: Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
         UserAgentPolicy("myuseragent"),
         AsyncRedirectPolicy(),
     ]
@@ -159,7 +165,7 @@ async def test_example_async_redirect_policy():
 async def test_example_async_retry_policy():
     url = "https://bing.com"
     request = HttpRequest("GET", "https://bing.com")
-    policies : MutableSequence[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
+    policies: MutableSequence[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = [
         UserAgentPolicy("myuseragent"),
         AsyncRedirectPolicy(),
     ]
