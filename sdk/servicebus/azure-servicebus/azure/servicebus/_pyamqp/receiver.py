@@ -34,9 +34,9 @@ class ReceiverLink(Link):
         # check link_create_from_endpoint in C lib
         raise NotImplementedError("Pending")
 
-    def _process_incoming_message(self, delivery_id, message):
+    def _process_incoming_message(self, frame, message):
         try:
-            return self._on_transfer(delivery_id, message)
+            return self._on_transfer(frame, message)
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.error("Transfer callback function failed with error: %r", e, extra=self.network_trace_params)
         return None
