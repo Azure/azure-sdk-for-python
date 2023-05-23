@@ -249,7 +249,7 @@ from the code in the PR vs. the latest release on PyPi.
 
 To run verifytypes on your library, run the tox verifytypes env at the package level:
 
-`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox run -e verifytypes -c ../../../eng/tox/tox.ini --root sdk/textanalytics/azure-ai-textanalytics`
+`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox run -e verifytypes -c ../../../eng/tox/tox.ini --root .`
 
 If you don't want to use `tox` you can also install and run pyright/verifytypes on its own:
 
