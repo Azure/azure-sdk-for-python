@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+import sys
 
 from azure.communication.callautomation import (
     CallConnectionClient,
@@ -19,11 +20,11 @@ from azure.communication.callautomation._generated.models import (
     RecognizeOptions,
     DtmfOptions,
     ContinuousDtmfRecognitionRequest,
-    DtmfTone,
     SendDtmfRequest,
 )
 from azure.communication.callautomation._generated.models._enums import (
-    RecognizeInputType
+    RecognizeInputType,
+    DtmfTone
 )
 from unittest.mock import Mock
 from azure.core.credentials import AzureKeyCredential
