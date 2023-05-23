@@ -1,6 +1,19 @@
 ## Release History
 
-### 4.4.0b2 (2023-05-17)
+### 4.4.0b3 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
+### 4.4.0b2 (2023-05-22)
+
+#### Features Added
+* Added conditional patching for Patch operations. See [PR 30455](https://github.com/Azure/azure-sdk-for-python/pull/30455).
 
 #### Bugs Fixed
 * Fixed bug with non english locales causing an error with the RFC 1123 Date Format. See [PR 30125](https://github.com/Azure/azure-sdk-for-python/pull/30125).
