@@ -385,9 +385,9 @@ class ComponentOperations(_ScopeDependentOperations):
                         "and the new version component registration is skipped."
                     )
         except ResourceNotFoundError as e:
-            logger.info(f"Failed to get component version, {e}")
+            logger.info("Failed to get component version, %s", e)
         except Exception as e:
-            logger.error(f"Failed to compare client_component_hash, {e}")
+            logger.error("Failed to compare client_component_hash, %s", e)
 
         try:
             if self._registry_name:

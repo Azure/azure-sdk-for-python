@@ -1,8 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import hashlib
-import json
 import re
 import uuid
 from contextlib import contextmanager
@@ -430,7 +428,6 @@ class Component(
 
         same anonymous component(same code and interface) will have same name.
         """
-        component_interface_dict = self._to_dict()
         # omit version since anonymous component's version is random guid
         # omit name since name doesn't impact component's uniqueness
         return self._get_component_hash(keys_to_omit=["name", "id", "version"])
