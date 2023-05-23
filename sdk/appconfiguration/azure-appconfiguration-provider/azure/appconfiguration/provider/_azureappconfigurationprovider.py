@@ -347,11 +347,15 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             self._dict = updated_dict
             self._refresh_options._refresh_registrations = updated_registrations
             self._next_refresh_time = datetime.now() + timedelta(
-                seconds=self._refresh_options._refresh_interval
+                seconds=self._refresh_options.refresh_interval
             )
         except Exception as error:
-            logging.warning("An error occurred while checking for configuration updates. \
-                {} attempts have been made.\n {}".format(self._attempts, error.message))
+            if hasattr(error, 'message'):
+                logging.warning("An error occurred while checking for configuration updates. \
+                    {} attempts have been made.\n {}".format(self._attempts, error.message))
+            else:
+                logging.warning("An error occurred while checking for configuration updates. \
+                    {} attempts have been made.\n {}".format(self._attempts, error))
             # Refresh All or None, any failure will trigger a backoff
             self._next_refresh_time = datetime.now() + timedelta(
                 microseconds=self._calculate_backoff()
