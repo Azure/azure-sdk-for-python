@@ -34,9 +34,9 @@ class ReceiverLink(Link):
         # check link_create_from_endpoint in C lib
         raise NotImplementedError("Pending")
 
-    def _process_incoming_message(self, frame, message):
+    def _process_incoming_message(self, delivery_id, message):
         try:
-            return self._on_transfer(frame, message)
+            return self._on_transfer(delivery_id, message)
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.error("Transfer callback function failed with error: %r", e, extra=self.network_trace_params)
         return None
@@ -55,7 +55,7 @@ class ReceiverLink(Link):
             _LOGGER.debug("<- %r", TransferFrame(payload=b"***", *frame[:-1]), extra=self.network_trace_params)
         self.current_link_credit -= 1
         self.delivery_count += 1
-        self.received_delivery_id = frame[1]  # delivery_id
+        self.received_delivery_id = frame[1] if frame[1] else self.received_delivery_id  # delivery_id
         if not self.received_delivery_id and not self._received_payload:
             pass  # TODO: delivery error
         if self._received_payload or frame[5]:  # more
@@ -66,7 +66,7 @@ class ReceiverLink(Link):
                 self._received_payload = bytearray()
             else:
                 message = decode_payload(frame[11])
-            delivery_state = self._process_incoming_message(frame, message)
+            delivery_state = self._process_incoming_message(self.received_delivery_id, message)
             if not frame[4] and delivery_state:  # settled
                 self._outgoing_disposition(
                     first=frame[1],

@@ -634,7 +634,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def enhanced_message_received(
         receiver: "ServiceBusReceiver",
-        frame: "AttachFrame",
+        delivery_id: int,
         message: "Message"
     ) -> None:
         """
@@ -643,9 +643,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         # pylint: disable=protected-access
         receiver._handler._last_activity_timestamp = time.time()
         if receiver._receive_context.is_set():
-            receiver._handler._received_messages.put((frame, message))
+            receiver._handler._received_messages.put((delivery_id, message))
         else:
-            receiver._handler.settle_messages(frame[1], 'released')
+            receiver._handler.settle_messages(delivery_id, 'released')
 
     @staticmethod
     def build_received_message(

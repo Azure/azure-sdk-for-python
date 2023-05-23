@@ -740,7 +740,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             return False
         return True
 
-    async def _message_received_async(self, frame, message):
+    async def _message_received_async(self, delivery_id, message):
         """Callback run on receipt of every message. If there is
         a user-defined callback, this will be called.
         Additionally if the client is retrieving messages for a batch
@@ -753,7 +753,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         if self._message_received_callback:
             await self._message_received_callback(message)
         if not self._streaming_receive:
-            self._received_messages.put((frame, message))
+            self._received_messages.put((delivery_id, message))
 
     async def _receive_message_batch_impl_async(self, max_batch_size=None, on_message_received=None, timeout=0):
         self._message_received_callback = on_message_received
