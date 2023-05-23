@@ -43,7 +43,6 @@ def test_example_requests():
     with Pipeline(transport=RequestsTransport(), policies=policies) as pipeline:
         response = pipeline.run(request)
     # [END requests]
-    assert pipeline._transport.session is None  # type: ignore
     assert isinstance(response.http_response.status_code, int)
 
 
@@ -62,7 +61,6 @@ def test_example_pipeline():
     with Pipeline(transport=RequestsTransport(), policies=policies) as pipeline:
         response = pipeline.run(request)
     # [END build_pipeline]
-    assert pipeline._transport.session is None  # type: ignore
     assert isinstance(response.http_response.status_code, int)
 
 

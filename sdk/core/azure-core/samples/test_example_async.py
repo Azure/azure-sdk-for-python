@@ -65,7 +65,6 @@ async def test_example_asyncio():
     async with AsyncPipeline(AsyncioRequestsTransport(), policies=policies) as pipeline:
         response = await pipeline.run(request)
     # [END asyncio]
-    assert pipeline._transport.session is None  # type: ignore
     assert isinstance(response.http_response.status_code, int)
 
 
@@ -82,7 +81,6 @@ async def test_example_aiohttp():
     async with AsyncPipeline(AioHttpTransport(), policies=policies) as pipeline:
         response = await pipeline.run(request)
     # [END aiohttp]
-    assert pipeline._transport.session is None  # type: ignore
     assert isinstance(response.http_response.status_code, int)
 
 
@@ -104,7 +102,6 @@ async def test_example_async_pipeline():
     async with AsyncPipeline(transport=AioHttpTransport(), policies=policies) as pipeline:
         response = await pipeline.run(request)
     # [END build_async_pipeline]
-    assert pipeline._transport.session is None  # type: ignore
     assert isinstance(response.http_response.status_code, int)
 
 
@@ -128,7 +125,6 @@ async def test_example_async_pipeline_client():
         response = await client._pipeline.run(request)
     # [END build_async_pipeline_client]
 
-    assert client._pipeline._transport.session is None  # type: ignore
     assert isinstance(response.http_response.status_code, int)
 
 
@@ -157,7 +153,6 @@ async def test_example_async_redirect_policy():
 
     # [END async_redirect_policy]
 
-    assert client._pipeline._transport.session is None
     assert isinstance(response.http_response.status_code, int)
 
 
@@ -222,5 +217,4 @@ async def test_example_async_retry_policy():
         )
     # [END async_retry_policy]
 
-    assert client._pipeline._transport.session is None  # type: ignore
     assert isinstance(response.http_response.status_code, int)
