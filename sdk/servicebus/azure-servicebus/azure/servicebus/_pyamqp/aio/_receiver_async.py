@@ -59,7 +59,7 @@ class ReceiverLink(Link):
         self.current_link_credit -= 1
         self.delivery_count += 1
         self.received_delivery_id = frame[1] # delivery_id
-        if self.received_delivery_id:
+        if self.received_delivery_id != None:
             self._first_frame = frame
         if not self.received_delivery_id and not self._received_payload:
             pass  # TODO: delivery error
