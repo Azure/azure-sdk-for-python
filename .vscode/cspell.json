@@ -417,6 +417,12 @@
       ]
     },
     {
+      "filename": "doc/dev/pylint_checking.md",
+      "words": [
+        "pylintrc"
+      ]
+    },
+    {
       "filename": "tools/azure-sdk-tools/devtools_testutils/proxy_startup.py",
       "words": [
         "certifi",
