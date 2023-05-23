@@ -21,7 +21,6 @@ class OperationConfig(object):
     """
 
     def __init__(self, show_progress: bool, enable_telemetry: bool) -> None:
-
         self._show_progress = show_progress
         self._enable_telemetry = enable_telemetry
 

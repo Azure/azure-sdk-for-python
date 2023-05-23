@@ -17,9 +17,7 @@ class AzureAppConfigurationKeyVaultOptions:
         *,
         credential: Optional[Union["TokenCredential", "AsyncTokenCredential"]] = None,
         client_configs: Optional[Mapping[str, Mapping[str, Any]]] = None,
-        secret_resolver: Optional[
-            Union[Callable[[str], str], Callable[[str], Awaitable[str]]]
-        ] = None
+        secret_resolver: Optional[Union[Callable[[str], str], Callable[[str], Awaitable[str]]]] = None
     ):
         """
         Options for connecting to Key Vault.

@@ -33,84 +33,79 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
             azure.mgmt.compute.ComputeManagementClient
         )
 
-        if self.is_live:
-            from azure.mgmt.storage import StorageManagementClient
-            self.storage_client = self.create_mgmt_client(
-                StorageManagementClient
-            )
+        from azure.mgmt.storage import StorageManagementClient
+        self.storage_client = self.create_mgmt_client(
+            StorageManagementClient
+        )
 
     def create_sas_uri(self, group_name, location, storage_account_name):
-        if self.is_live:
-            from azure.mgmt.storage.models import BlobContainer
-            from azure.storage.blob import generate_account_sas, AccountSasPermissions, ContainerClient, ResourceTypes
-            BODY = {
-              "sku": {
-                "name": "Standard_GRS"
+        from azure.mgmt.storage.models import BlobContainer
+        from azure.storage.blob import generate_account_sas, AccountSasPermissions, ContainerClient, ResourceTypes
+        BODY = {
+          "sku": {
+            "name": "Standard_GRS"
+          },
+          "kind": "StorageV2",  # Storage v2 support policy
+          "location": location,
+          "encryption": {
+            "services": {
+              "file": {
+                "key_type": "Account",
+                "enabled": True
               },
-              "kind": "StorageV2",  # Storage v2 support policy
-              "location": location,
-              "encryption": {
-                "services": {
-                  "file": {
-                    "key_type": "Account",
-                    "enabled": True
-                  },
-                  "blob": {
-                    "key_type": "Account",
-                    "enabled": True
-                  }
-                },
-                "key_source": "Microsoft.Storage"
-              },
-
-              "tags": {
-                "key1": "value1",
-                "key2": "value2"
+              "blob": {
+                "key_type": "Account",
+                "enabled": True
               }
-            }
-            result = self.storage_client.storage_accounts.begin_create(
-                group_name,
-                storage_account_name,
-                BODY
-            )
-            storage_account = result.result()
+            },
+            "key_source": "Microsoft.Storage"
+          },
 
-            # result = self.storage_client.blob_containers.create(
-            #     group_name,
-            #     storage_account_name,
-            #     "foo",
-            #     {}
-            # )
-            # result = result.result()
+          "tags": {
+            "key1": "value1",
+            "key2": "value2"
+          }
+        }
+        result = self.storage_client.storage_accounts.begin_create(
+            group_name,
+            storage_account_name,
+            BODY
+        )
+        storage_account = result.result()
 
-            keys = self.storage_client.storage_accounts.list_keys(
-                group_name,
-                storage_account_name
-            ).keys
+        # result = self.storage_client.blob_containers.create(
+        #     group_name,
+        #     storage_account_name,
+        #     "foo",
+        #     {}
+        # )
+        # result = result.result()
 
-            sas_token = generate_account_sas(
-                account_name=storage_account_name,
-                account_key=keys[0].value,
-                resource_types=ResourceTypes(object=True),
-                permission=AccountSasPermissions(read=True, list=True),
-                start=dt.datetime.now() - dt.timedelta(hours=24),
-                expiry=dt.datetime.now() - dt.timedelta(days=8)
-            )
-            
-            container_client = ContainerClient(
-                storage_account.primary_endpoints.blob.rstrip("/"),
-                credential="?" + sas_token,
-                container_name="foo",
-                blob_name="default"
-            )
-            # self.scrubber.register_name_pair(container_client.url, "fakeuri")
-            return container_client.url
-            # container_client.create_container()
-            # return container_client.url + "?" + sas_token
-        else:
-            return "fakeuri"
+        keys = self.storage_client.storage_accounts.list_keys(
+            group_name,
+            storage_account_name
+        ).keys
 
-    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
+        sas_token = generate_account_sas(
+            account_name=storage_account_name,
+            account_key=keys[0].value,
+            resource_types=ResourceTypes(object=True),
+            permission=AccountSasPermissions(read=True, list=True),
+            start=dt.datetime.now() - dt.timedelta(hours=24),
+            expiry=dt.datetime.now() - dt.timedelta(days=8)
+        )
+        
+        container_client = ContainerClient(
+            storage_account.primary_endpoints.blob.rstrip("/"),
+            credential="?" + sas_token,
+            container_name="foo",
+            blob_name="default"
+        )
+        # self.scrubber.register_name_pair(container_client.url, "fakeuri")
+        return container_client.url
+        # container_client.create_container()
+        # return container_client.url + "?" + sas_token
+
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_compute(self, resource_group):
@@ -124,7 +119,6 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         # Lists all available Resource SKUs[get]
         result = self.mgmt_client.resource_skus.list()
 
-    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_compute_availability_sets(self, resource_group):
@@ -160,7 +154,6 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         # Delete availability sets (TODO: need a swagger file)
         resout = self.mgmt_client.availability_sets.delete(resource_group.name, AVAILABILITY_SET_NAME)
 
-    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_compute_proximity_placement_groups(self, resource_group):

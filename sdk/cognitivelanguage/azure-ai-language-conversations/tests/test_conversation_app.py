@@ -62,7 +62,7 @@ class TestConversationApp(AzureRecordedTestCase):
             assert result["result"]["prediction"]["entities"][0]["text"] == 'Carol'
             assert result["result"]["prediction"]["entities"][0]["confidenceScore"] > 0
 
-    @pytest.mark.skip("no runtime AAD yet for 2022-10-01-preview")
+    @pytest.mark.skip("no runtime AAD yet for 2023-04-01")
     def test_conversation_app_aad_auth(self, recorded_test, conversation_creds):
         token = self.get_credential(ConversationAnalysisClient)
         client = ConversationAnalysisClient(conversation_creds["endpoint"], token)

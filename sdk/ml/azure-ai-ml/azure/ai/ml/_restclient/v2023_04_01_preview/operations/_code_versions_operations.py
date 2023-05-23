@@ -211,7 +211,7 @@ def build_create_or_update_request(
     )
 
 
-def build_create_or_get_pending_upload_request(
+def build_create_or_get_start_pending_upload_request(
     subscription_id,  # type: str
     resource_group_name,  # type: str
     workspace_name,  # type: str
@@ -225,7 +225,7 @@ def build_create_or_get_pending_upload_request(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/codes/{name}/versions/pendingUpload/{version}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/codes/{name}/versions/{version}/startPendingUpload")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
@@ -613,7 +613,7 @@ class CodeVersionsOperations(object):
 
 
     @distributed_trace
-    def create_or_get_pending_upload(
+    def create_or_get_start_pending_upload(
         self,
         resource_group_name,  # type: str
         workspace_name,  # type: str
@@ -653,7 +653,7 @@ class CodeVersionsOperations(object):
 
         _json = self._serialize.body(body, 'PendingUploadRequestDto')
 
-        request = build_create_or_get_pending_upload_request(
+        request = build_create_or_get_start_pending_upload_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
@@ -662,7 +662,7 @@ class CodeVersionsOperations(object):
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.create_or_get_pending_upload.metadata['url'],
+            template_url=self.create_or_get_start_pending_upload.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -686,5 +686,5 @@ class CodeVersionsOperations(object):
 
         return deserialized
 
-    create_or_get_pending_upload.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/codes/{name}/versions/pendingUpload/{version}"}  # type: ignore
+    create_or_get_start_pending_upload.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/codes/{name}/versions/{version}/startPendingUpload"}  # type: ignore
 

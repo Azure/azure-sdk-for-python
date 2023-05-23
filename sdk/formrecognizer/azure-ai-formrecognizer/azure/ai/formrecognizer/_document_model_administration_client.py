@@ -10,8 +10,9 @@ from typing import (
     Any,
     Union,
     List,
+    overload,
     Optional,
-    Mapping,
+    Mapping
 )
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
@@ -68,14 +69,14 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/v3.2/sample_authentication.py
+        .. literalinclude:: ../samples/v3.2_and_later/sample_authentication.py
             :start-after: [START create_dt_client_with_key]
             :end-before: [END create_dt_client_with_key]
             :language: python
             :dedent: 4
             :caption: Creating the DocumentModelAdministrationClient with an endpoint and API key.
 
-        .. literalinclude:: ../samples/v3.2/sample_authentication.py
+        .. literalinclude:: ../samples/v3.2_and_later/sample_authentication.py
             :start-after: [START create_dt_client_with_aad]
             :end-before: [END create_dt_client_with_aad]
             :language: python
@@ -88,6 +89,34 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         super().__init__(
             endpoint=endpoint, credential=credential, api_version=api_version, client_kind="document", **kwargs
         )
+
+    @overload
+    def begin_build_document_model(
+        self,
+        build_mode: Union[str, ModelBuildMode],
+        *,
+        blob_container_url: str,
+        prefix: Optional[str] = None,
+        model_id: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Mapping[str, str]] = None,
+        **kwargs: Any
+    ) -> DocumentModelAdministrationLROPoller[DocumentModelDetails]:
+        ...
+
+    @overload
+    def begin_build_document_model(
+        self,
+        build_mode: Union[str, ModelBuildMode],
+        *,
+        blob_container_url: str,
+        file_list: str,
+        model_id: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Mapping[str, str]] = None,
+        **kwargs: Any
+    ) -> DocumentModelAdministrationLROPoller[DocumentModelDetails]:
+        ...
 
     @distributed_trace
     def begin_build_document_model(
@@ -115,6 +144,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :keyword str prefix: A case-sensitive prefix string to filter documents in the blob container url path.
             For example, when using an Azure storage blob URI, use the prefix to restrict sub folders.
             `prefix` should end in '/' to avoid cases where filenames share the same prefix.
+        :keyword str file_list: Path to a JSONL file within the container specifying a subset of
+            documents for training.
         :keyword tags: List of user defined key-value tag attributes associated with the model.
         :paramtype tags: dict[str, str]
         :return: An instance of an DocumentModelAdministrationLROPoller. Call `result()` on the poller
@@ -122,9 +153,12 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :rtype: ~azure.ai.formrecognizer.DocumentModelAdministrationLROPoller[DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
+        .. versionadded:: 2023-02-28-preview
+            The *file_list* keyword argument.
+
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_build_model.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_build_model.py
                 :start-after: [START build_model]
                 :end-before: [END build_model]
                 :language: python
@@ -143,23 +177,47 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         cls = kwargs.pop("cls", callback)
         continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        prefix = kwargs.pop("prefix", None)
+        file_list = kwargs.pop("file_list", None)
 
         if model_id is None:
             model_id = str(uuid.uuid4())
 
-        _client_op_path = self._client.document_models.begin_build_model
+        azure_blob_source = None
+        azure_blob_file_list_source = None
+        if prefix:
+            azure_blob_source = self._generated_models.AzureBlobContentSource(
+                container_url=blob_container_url,
+                prefix=prefix
+            )
+        if file_list:
+            azure_blob_file_list_source = self._generated_models.AzureBlobFileListSource(
+                container_url=blob_container_url,
+                file_list=file_list
+            )
+        if not azure_blob_source and not azure_blob_file_list_source:
+            azure_blob_source = self._generated_models.AzureBlobContentSource(
+                container_url=blob_container_url,
+            )
+
+        model_kwargs = {}
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.begin_build_document_model
+            if file_list:
+                raise ValueError(
+                    "Keyword argument 'file_list' is only available for API version V2023_02_28_PREVIEW and later."
+                )
+        else:
+            _client_op_path = self._client.document_models.begin_build_model
+            model_kwargs.update({"azure_blob_file_list_source": azure_blob_file_list_source})
         return _client_op_path(  # type: ignore
             build_request=self._generated_models.BuildDocumentModelRequest(
                 model_id=model_id,
                 build_mode=build_mode,
                 description=description,
                 tags=tags,
-                azure_blob_source=self._generated_models.AzureBlobContentSource(
-                    container_url=blob_container_url,
-                    prefix=kwargs.pop("prefix", None),
-                ),
+                azure_blob_source=azure_blob_source,
+                **model_kwargs
             ),
             cls=cls,
             continuation_token=continuation_token,
@@ -192,7 +250,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_compose_model.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_compose_model.py
                 :start-after: [START composed_model]
                 :end-before: [END composed_model]
                 :language: python
@@ -214,9 +272,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if model_id is None:
             model_id = str(uuid.uuid4())
 
-        _client_op_path = self._client.document_models.begin_compose_model
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.begin_compose_document_model
+        else:
+            _client_op_path = self._client.document_models.begin_compose_model
         return _client_op_path(  # type: ignore
             compose_request=self._generated_models.ComposeDocumentModelRequest(
                 model_id=model_id,
@@ -261,9 +320,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if model_id is None:
             model_id = str(uuid.uuid4())
 
-        _client_op_path = self._client.document_models.authorize_model_copy
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.authorize_copy_document_model
+        else:
+            _client_op_path = self._client.document_models.authorize_model_copy
         response = _client_op_path(
             authorize_copy_request=self._generated_models.AuthorizeCopyRequest(
                 model_id=model_id, description=description, tags=tags
@@ -295,7 +355,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_copy_model_to.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_copy_model_to.py
                 :start-after: [START begin_copy_document_model_to]
                 :end-before: [END begin_copy_document_model_to]
                 :language: python
@@ -314,9 +374,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
-        _client_op_path = self._client.document_models.begin_copy_model_to
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.begin_copy_document_model_to
+        else:
+            _client_op_path = self._client.document_models.begin_copy_model_to
         return _client_op_path(  # type: ignore
             model_id=model_id,
             copy_to_request=self._generated_models.CopyAuthorization(
@@ -348,7 +409,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_models.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_models.py
                 :start-after: [START delete_document_model]
                 :end-before: [END delete_document_model]
                 :language: python
@@ -359,9 +420,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        _client_op_path = self._client.document_models.delete_model
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.delete_document_model
+        else:
+            _client_op_path = self._client.document_models.delete_model
         return _client_op_path(model_id=model_id, **kwargs)
 
     @distributed_trace
@@ -375,7 +437,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_models.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_models.py
                 :start-after: [START list_document_models]
                 :end-before: [END list_document_models]
                 :language: python
@@ -383,9 +445,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
                 :caption: List all models that were built successfully under the Form Recognizer resource.
         """
 
-        _client_op_path = self._client.document_models.list_models
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.get_document_models
+        else:
+            _client_op_path = self._client.document_models.list_models
         return _client_op_path(  # type: ignore
             cls=kwargs.pop(
                 "cls",
@@ -404,7 +467,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_models.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_models.py
                 :start-after: [START get_resource_details]
                 :end-before: [END get_resource_details]
                 :language: python
@@ -412,11 +475,12 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
                 :caption: Get model counts and limits under the Form Recognizer resource.
         """
 
-        _client_op_path = self._client.miscellaneous.get_resource_info
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.get_resource_details
+        else:
+            _client_op_path = self._client.miscellaneous.get_resource_info
         response = _client_op_path(**kwargs)
-        return ResourceDetails._from_generated(response.custom_document_models)
+        return ResourceDetails._from_generated(response)
 
     @distributed_trace
     def get_document_model(self, model_id: str, **kwargs: Any) -> DocumentModelDetails:
@@ -429,7 +493,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_models.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_models.py
                 :start-after: [START get_document_model]
                 :end-before: [END get_document_model]
                 :language: python
@@ -440,9 +504,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        _client_op_path = self._client.document_models.get_model
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.get_document_model
+        else:
+            _client_op_path = self._client.document_models.get_model
         response = _client_op_path(model_id=model_id, **kwargs)
         return DocumentModelDetails._from_generated(response)
 
@@ -460,7 +525,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_get_operations.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_get_operations.py
                 :start-after: [START list_operations]
                 :end-before: [END list_operations]
                 :language: python
@@ -468,9 +533,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
                 :caption: List all document model operations in the past 24 hours.
         """
 
-        _client_op_path = self._client.miscellaneous.list_operations
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.get_operations
+        else:
+            _client_op_path = self._client.miscellaneous.list_operations
         return _client_op_path(  # type: ignore
             cls=kwargs.pop(
                 "cls",
@@ -494,7 +560,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_get_operations.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_get_operations.py
                 :start-after: [START get_operation]
                 :end-before: [END get_operation]
                 :language: python
@@ -505,9 +571,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if not operation_id:
             raise ValueError("'operation_id' cannot be None or empty.")
 
-        _client_op_path = self._client.miscellaneous.get_operation
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.get_operation
+        else:
+            _client_op_path = self._client.miscellaneous.get_operation
         return OperationDetails._from_generated(
             _client_op_path(operation_id, **kwargs),
             api_version=self._api_version,
@@ -539,7 +606,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_build_classifier.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_build_classifier.py
                 :start-after: [START build_classifier]
                 :end-before: [END build_classifier]
                 :language: python
@@ -589,7 +656,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_classifiers.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_classifiers.py
                 :start-after: [START get_document_classifier]
                 :end-before: [END get_document_classifier]
                 :language: python
@@ -620,7 +687,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_classifiers.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_classifiers.py
                 :start-after: [START list_document_classifiers]
                 :end-before: [END list_document_classifiers]
                 :language: python
@@ -652,7 +719,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_manage_classifiers.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_manage_classifiers.py
                 :start-after: [START delete_document_classifier]
                 :end-before: [END delete_document_classifier]
                 :language: python

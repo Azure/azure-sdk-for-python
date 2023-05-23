@@ -22,13 +22,14 @@ class MsalCredential:   # pylint: disable=too-many-instance-attributes
             client_credential: Optional[Union[str, Dict]] = None,
             *,
             additionally_allowed_tenants: Optional[List[str]] = None,
-            allow_broker: Optional[bool] = None,
+            # allow_broker: Optional[bool] = None,
             authority: Optional[str] = None,
             disable_instance_discovery: Optional[bool] = None,
             tenant_id: Optional[str] = None,
             **kwargs
     ) -> None:
-        self._instance_discovery = None if disable_instance_discovery is None else not disable_instance_discovery
+        self._instance_discovery = None if disable_instance_discovery is None\
+            else not disable_instance_discovery
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         self._regional_authority = os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME)
         if self._regional_authority and self._regional_authority.lower() in ["tryautodetect", "true"]:
@@ -39,7 +40,7 @@ class MsalCredential:   # pylint: disable=too-many-instance-attributes
         self._client_applications: Dict[str, msal.ClientApplication] = {}
         self._client_credential = client_credential
         self._client_id = client_id
-        self._allow_broker = allow_broker
+        # self._allow_broker = allow_broker
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
         self._cache = kwargs.pop("_cache", None)
@@ -82,7 +83,7 @@ class MsalCredential:   # pylint: disable=too-many-instance-attributes
                 token_cache=self._cache,
                 http_client=self._client,
                 instance_discovery=self._instance_discovery,
-                allow_broker=self._allow_broker
+                # allow_broker=self._allow_broker
             )
 
         return self._client_applications[tenant_id]

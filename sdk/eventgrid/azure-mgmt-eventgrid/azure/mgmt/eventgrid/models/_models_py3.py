@@ -25,7 +25,10 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class AdvancedFilter(_serialization.Model):
-    """This is the base type that represents an advanced filter. To configure an advanced filter, do not directly instantiate an object of this class. Instead, instantiate an object of a derived class such as BoolEqualsAdvancedFilter, NumberInAdvancedFilter, StringEqualsAdvancedFilter etc. depending on the type of the key based on which you want to filter.
+    """This is the base type that represents an advanced filter. To configure an advanced filter, do
+    not directly instantiate an object of this class. Instead, instantiate an object of a derived
+    class such as BoolEqualsAdvancedFilter, NumberInAdvancedFilter, StringEqualsAdvancedFilter etc.
+    depending on the type of the key based on which you want to filter.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     BoolEqualsAdvancedFilter, IsNotNullAdvancedFilter, IsNullOrUndefinedAdvancedFilter,
@@ -82,7 +85,7 @@ class AdvancedFilter(_serialization.Model):
         }
     }
 
-    def __init__(self, *, key: Optional[str] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -92,20 +95,100 @@ class AdvancedFilter(_serialization.Model):
         self.key = key
 
 
+class PartnerClientAuthentication(_serialization.Model):
+    """Partner client authentication.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureADPartnerClientAuthentication
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar client_authentication_type: Type of client authentication. "AzureAD"
+    :vartype client_authentication_type: str or
+     ~azure.mgmt.eventgrid.models.PartnerClientAuthenticationType
+    """
+
+    _validation = {
+        "client_authentication_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "client_authentication_type": {"key": "clientAuthenticationType", "type": "str"},
+    }
+
+    _subtype_map = {"client_authentication_type": {"AzureAD": "AzureADPartnerClientAuthentication"}}
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.client_authentication_type: Optional[str] = None
+
+
+class AzureADPartnerClientAuthentication(PartnerClientAuthentication):
+    """Azure Active Directory Partner Client Authentication.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar client_authentication_type: Type of client authentication. "AzureAD"
+    :vartype client_authentication_type: str or
+     ~azure.mgmt.eventgrid.models.PartnerClientAuthenticationType
+    :ivar azure_active_directory_tenant_id: The Azure Active Directory Tenant ID to get the access
+     token that will be included as the bearer token in delivery requests.
+    :vartype azure_active_directory_tenant_id: str
+    :ivar azure_active_directory_application_id_or_uri: The Azure Active Directory Application ID
+     or URI to get the access token that will be included as the bearer token in delivery requests.
+    :vartype azure_active_directory_application_id_or_uri: str
+    """
+
+    _validation = {
+        "client_authentication_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "client_authentication_type": {"key": "clientAuthenticationType", "type": "str"},
+        "azure_active_directory_tenant_id": {"key": "properties.azureActiveDirectoryTenantId", "type": "str"},
+        "azure_active_directory_application_id_or_uri": {
+            "key": "properties.azureActiveDirectoryApplicationIdOrUri",
+            "type": "str",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        azure_active_directory_tenant_id: Optional[str] = None,
+        azure_active_directory_application_id_or_uri: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword azure_active_directory_tenant_id: The Azure Active Directory Tenant ID to get the
+         access token that will be included as the bearer token in delivery requests.
+        :paramtype azure_active_directory_tenant_id: str
+        :keyword azure_active_directory_application_id_or_uri: The Azure Active Directory Application
+         ID or URI to get the access token that will be included as the bearer token in delivery
+         requests.
+        :paramtype azure_active_directory_application_id_or_uri: str
+        """
+        super().__init__(**kwargs)
+        self.client_authentication_type: str = "AzureAD"
+        self.azure_active_directory_tenant_id = azure_active_directory_tenant_id
+        self.azure_active_directory_application_id_or_uri = azure_active_directory_application_id_or_uri
+
+
 class EventSubscriptionDestination(_serialization.Model):
     """Information about the destination for an event subscription.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureFunctionEventSubscriptionDestination, EventHubEventSubscriptionDestination,
-    HybridConnectionEventSubscriptionDestination, ServiceBusQueueEventSubscriptionDestination,
-    ServiceBusTopicEventSubscriptionDestination, StorageQueueEventSubscriptionDestination,
-    WebHookEventSubscriptionDestination
+    HybridConnectionEventSubscriptionDestination, PartnerEventSubscriptionDestination,
+    ServiceBusQueueEventSubscriptionDestination, ServiceBusTopicEventSubscriptionDestination,
+    StorageQueueEventSubscriptionDestination, WebHookEventSubscriptionDestination
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
-     "ServiceBusTopic", and "AzureFunction".
+     "ServiceBusTopic", "AzureFunction", and "PartnerDestination".
     :vartype endpoint_type: str or ~azure.mgmt.eventgrid.models.EndpointType
     """
 
@@ -122,6 +205,7 @@ class EventSubscriptionDestination(_serialization.Model):
             "AzureFunction": "AzureFunctionEventSubscriptionDestination",
             "EventHub": "EventHubEventSubscriptionDestination",
             "HybridConnection": "HybridConnectionEventSubscriptionDestination",
+            "PartnerDestination": "PartnerEventSubscriptionDestination",
             "ServiceBusQueue": "ServiceBusQueueEventSubscriptionDestination",
             "ServiceBusTopic": "ServiceBusTopicEventSubscriptionDestination",
             "StorageQueue": "StorageQueueEventSubscriptionDestination",
@@ -129,7 +213,7 @@ class EventSubscriptionDestination(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.endpoint_type: Optional[str] = None
@@ -142,7 +226,7 @@ class AzureFunctionEventSubscriptionDestination(EventSubscriptionDestination):
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
-     "ServiceBusTopic", and "AzureFunction".
+     "ServiceBusTopic", "AzureFunction", and "PartnerDestination".
     :vartype endpoint_type: str or ~azure.mgmt.eventgrid.models.EndpointType
     :ivar resource_id: The Azure Resource Id that represents the endpoint of the Azure Function
      destination of an event subscription.
@@ -178,8 +262,8 @@ class AzureFunctionEventSubscriptionDestination(EventSubscriptionDestination):
         max_events_per_batch: int = 1,
         preferred_batch_size_in_kilobytes: int = 64,
         delivery_attribute_mappings: Optional[List["_models.DeliveryAttributeMapping"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: The Azure Resource Id that represents the endpoint of the Azure Function
          destination of an event subscription.
@@ -228,7 +312,117 @@ class BoolEqualsAdvancedFilter(AdvancedFilter):
         "value": {"key": "value", "type": "bool"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, value: Optional[bool] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, value: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        :keyword value: The boolean filter value.
+        :paramtype value: bool
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "BoolEquals"
+        self.value = value
+
+
+class Filter(_serialization.Model):
+    """This is the base type that represents a filter. To configure a filter, do not directly
+    instantiate an object of this class. Instead, instantiate
+    an object of a derived class such as BoolEqualsFilter, NumberInFilter, StringEqualsFilter etc
+    depending on the type of the key based on
+    which you want to filter.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    BoolEqualsFilter, IsNotNullFilter, IsNullOrUndefinedFilter, NumberGreaterThanFilter,
+    NumberGreaterThanOrEqualsFilter, NumberInFilter, NumberInRangeFilter, NumberLessThanFilter,
+    NumberLessThanOrEqualsFilter, NumberNotInFilter, NumberNotInRangeFilter,
+    StringBeginsWithFilter, StringContainsFilter, StringEndsWithFilter, StringInFilter,
+    StringNotBeginsWithFilter, StringNotContainsFilter, StringNotEndsWithFilter, StringNotInFilter
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+    }
+
+    _subtype_map = {
+        "operator_type": {
+            "BoolEquals": "BoolEqualsFilter",
+            "IsNotNull": "IsNotNullFilter",
+            "IsNullOrUndefined": "IsNullOrUndefinedFilter",
+            "NumberGreaterThan": "NumberGreaterThanFilter",
+            "NumberGreaterThanOrEquals": "NumberGreaterThanOrEqualsFilter",
+            "NumberIn": "NumberInFilter",
+            "NumberInRange": "NumberInRangeFilter",
+            "NumberLessThan": "NumberLessThanFilter",
+            "NumberLessThanOrEquals": "NumberLessThanOrEqualsFilter",
+            "NumberNotIn": "NumberNotInFilter",
+            "NumberNotInRange": "NumberNotInRangeFilter",
+            "StringBeginsWith": "StringBeginsWithFilter",
+            "StringContains": "StringContainsFilter",
+            "StringEndsWith": "StringEndsWithFilter",
+            "StringIn": "StringInFilter",
+            "StringNotBeginsWith": "StringNotBeginsWithFilter",
+            "StringNotContains": "StringNotContainsFilter",
+            "StringNotEndsWith": "StringNotEndsWithFilter",
+            "StringNotIn": "StringNotInFilter",
+        }
+    }
+
+    def __init__(self, *, key: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        """
+        super().__init__(**kwargs)
+        self.operator_type: Optional[str] = None
+        self.key = key
+
+
+class BoolEqualsFilter(Filter):
+    """BoolEquals Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    :ivar value: The boolean filter value.
+    :vartype value: bool
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "value": {"key": "value", "type": "bool"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, value: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -265,7 +459,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -273,7 +467,102 @@ class Resource(_serialization.Model):
         self.type = None
 
 
-class Channel(Resource):
+class CaCertificate(Resource):
+    """The CA Certificate resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    :ivar system_data: The system metadata relating to the CaCertificate resource.
+    :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar description: Description for the CA Certificate resource.
+    :vartype description: str
+    :ivar encoded_certificate: Base64 encoded PEM (Privacy Enhanced Mail) format certificate data.
+    :vartype encoded_certificate: str
+    :ivar issue_time_in_utc: Certificate issue time in UTC. This is a read-only field.
+    :vartype issue_time_in_utc: ~datetime.datetime
+    :ivar expiry_time_in_utc: Certificate expiry time in UTC. This is a read-only field.
+    :vartype expiry_time_in_utc: ~datetime.datetime
+    :ivar provisioning_state: Provisioning state of the CA Certificate resource. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed", and "Deleted".
+    :vartype provisioning_state: str or ~azure.mgmt.eventgrid.models.CaCertificateProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "issue_time_in_utc": {"readonly": True},
+        "expiry_time_in_utc": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "description": {"key": "properties.description", "type": "str"},
+        "encoded_certificate": {"key": "properties.encodedCertificate", "type": "str"},
+        "issue_time_in_utc": {"key": "properties.issueTimeInUtc", "type": "iso-8601"},
+        "expiry_time_in_utc": {"key": "properties.expiryTimeInUtc", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self, *, description: Optional[str] = None, encoded_certificate: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: Description for the CA Certificate resource.
+        :paramtype description: str
+        :keyword encoded_certificate: Base64 encoded PEM (Privacy Enhanced Mail) format certificate
+         data.
+        :paramtype encoded_certificate: str
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.description = description
+        self.encoded_certificate = encoded_certificate
+        self.issue_time_in_utc = None
+        self.expiry_time_in_utc = None
+        self.provisioning_state = None
+
+
+class CaCertificatesListResult(_serialization.Model):
+    """Result of the List CA Certificate operation.
+
+    :ivar value: A collection of CA Certificate.
+    :vartype value: list[~azure.mgmt.eventgrid.models.CaCertificate]
+    :ivar next_link: A link for the next page of CA Certificate.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[CaCertificate]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.CaCertificate"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A collection of CA Certificate.
+        :paramtype value: list[~azure.mgmt.eventgrid.models.CaCertificate]
+        :keyword next_link: A link for the next page of CA Certificate.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class Channel(Resource):  # pylint: disable=too-many-instance-attributes
     """Channel info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -287,17 +576,21 @@ class Channel(Resource):
     :ivar system_data: The system metadata relating to Channel resource.
     :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
     :ivar channel_type: The type of the event channel which represents the direction flow of
-     events. "PartnerTopic"
+     events. Known values are: "PartnerTopic" and "PartnerDestination".
     :vartype channel_type: str or ~azure.mgmt.eventgrid.models.ChannelType
     :ivar partner_topic_info: This property should be populated when channelType is PartnerTopic
      and represents information about the partner topic resource corresponding to the channel.
     :vartype partner_topic_info: ~azure.mgmt.eventgrid.models.PartnerTopicInfo
+    :ivar partner_destination_info: This property should be populated when channelType is
+     PartnerDestination and represents information about the partner destination resource
+     corresponding to the channel.
+    :vartype partner_destination_info: ~azure.mgmt.eventgrid.models.PartnerDestinationInfo
     :ivar message_for_activation: Context or helpful message that can be used during the approval
      process by the subscriber.
     :vartype message_for_activation: str
     :ivar provisioning_state: Provisioning state of the channel. Known values are: "Creating",
-     "Updating", "Deleting", "Succeeded", "Canceled", "Failed", and
-     "IdleDueToMirroredPartnerTopicDeletion".
+     "Updating", "Deleting", "Succeeded", "Canceled", "Failed",
+     "IdleDueToMirroredPartnerTopicDeletion", and "IdleDueToMirroredPartnerDestinationDeletion".
     :vartype provisioning_state: str or ~azure.mgmt.eventgrid.models.ChannelProvisioningState
     :ivar readiness_state: The readiness state of the corresponding partner topic. Known values
      are: "NeverActivated" and "Activated".
@@ -322,6 +615,7 @@ class Channel(Resource):
         "system_data": {"key": "systemData", "type": "SystemData"},
         "channel_type": {"key": "properties.channelType", "type": "str"},
         "partner_topic_info": {"key": "properties.partnerTopicInfo", "type": "PartnerTopicInfo"},
+        "partner_destination_info": {"key": "properties.partnerDestinationInfo", "type": "PartnerDestinationInfo"},
         "message_for_activation": {"key": "properties.messageForActivation", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "readiness_state": {"key": "properties.readinessState", "type": "str"},
@@ -336,25 +630,30 @@ class Channel(Resource):
         *,
         channel_type: Optional[Union[str, "_models.ChannelType"]] = None,
         partner_topic_info: Optional["_models.PartnerTopicInfo"] = None,
+        partner_destination_info: Optional["_models.PartnerDestinationInfo"] = None,
         message_for_activation: Optional[str] = None,
         provisioning_state: Optional[Union[str, "_models.ChannelProvisioningState"]] = None,
         readiness_state: Optional[Union[str, "_models.ReadinessState"]] = None,
         expiration_time_if_not_activated_utc: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword channel_type: The type of the event channel which represents the direction flow of
-         events. "PartnerTopic"
+         events. Known values are: "PartnerTopic" and "PartnerDestination".
         :paramtype channel_type: str or ~azure.mgmt.eventgrid.models.ChannelType
         :keyword partner_topic_info: This property should be populated when channelType is PartnerTopic
          and represents information about the partner topic resource corresponding to the channel.
         :paramtype partner_topic_info: ~azure.mgmt.eventgrid.models.PartnerTopicInfo
+        :keyword partner_destination_info: This property should be populated when channelType is
+         PartnerDestination and represents information about the partner destination resource
+         corresponding to the channel.
+        :paramtype partner_destination_info: ~azure.mgmt.eventgrid.models.PartnerDestinationInfo
         :keyword message_for_activation: Context or helpful message that can be used during the
          approval process by the subscriber.
         :paramtype message_for_activation: str
         :keyword provisioning_state: Provisioning state of the channel. Known values are: "Creating",
-         "Updating", "Deleting", "Succeeded", "Canceled", "Failed", and
-         "IdleDueToMirroredPartnerTopicDeletion".
+         "Updating", "Deleting", "Succeeded", "Canceled", "Failed",
+         "IdleDueToMirroredPartnerTopicDeletion", and "IdleDueToMirroredPartnerDestinationDeletion".
         :paramtype provisioning_state: str or ~azure.mgmt.eventgrid.models.ChannelProvisioningState
         :keyword readiness_state: The readiness state of the corresponding partner topic. Known values
          are: "NeverActivated" and "Activated".
@@ -368,6 +667,7 @@ class Channel(Resource):
         self.system_data = None
         self.channel_type = channel_type
         self.partner_topic_info = partner_topic_info
+        self.partner_destination_info = partner_destination_info
         self.message_for_activation = message_for_activation
         self.provisioning_state = provisioning_state
         self.readiness_state = readiness_state
@@ -388,7 +688,9 @@ class ChannelsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Channel"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Channel"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A collection of Channels.
         :paramtype value: list[~azure.mgmt.eventgrid.models.Channel]
@@ -407,6 +709,9 @@ class ChannelUpdateParameters(_serialization.Model):
      expires while the corresponding partner topic or partner destination is never activated,
      the channel and corresponding partner topic or partner destination are deleted.
     :vartype expiration_time_if_not_activated_utc: ~datetime.datetime
+    :ivar partner_destination_info: Partner destination properties which can be updated if the
+     channel is of type PartnerDestination.
+    :vartype partner_destination_info: ~azure.mgmt.eventgrid.models.PartnerUpdateDestinationInfo
     :ivar partner_topic_info: Partner topic properties which can be updated if the channel is of
      type PartnerTopic.
     :vartype partner_topic_info: ~azure.mgmt.eventgrid.models.PartnerUpdateTopicInfo
@@ -417,6 +722,10 @@ class ChannelUpdateParameters(_serialization.Model):
             "key": "properties.expirationTimeIfNotActivatedUtc",
             "type": "iso-8601",
         },
+        "partner_destination_info": {
+            "key": "properties.partnerDestinationInfo",
+            "type": "PartnerUpdateDestinationInfo",
+        },
         "partner_topic_info": {"key": "properties.partnerTopicInfo", "type": "PartnerUpdateTopicInfo"},
     }
 
@@ -424,21 +733,440 @@ class ChannelUpdateParameters(_serialization.Model):
         self,
         *,
         expiration_time_if_not_activated_utc: Optional[datetime.datetime] = None,
+        partner_destination_info: Optional["_models.PartnerUpdateDestinationInfo"] = None,
         partner_topic_info: Optional["_models.PartnerUpdateTopicInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword expiration_time_if_not_activated_utc: Expiration time of the channel. If this timer
          expires while the corresponding partner topic or partner destination is never activated,
          the channel and corresponding partner topic or partner destination are deleted.
         :paramtype expiration_time_if_not_activated_utc: ~datetime.datetime
+        :keyword partner_destination_info: Partner destination properties which can be updated if the
+         channel is of type PartnerDestination.
+        :paramtype partner_destination_info: ~azure.mgmt.eventgrid.models.PartnerUpdateDestinationInfo
         :keyword partner_topic_info: Partner topic properties which can be updated if the channel is of
          type PartnerTopic.
         :paramtype partner_topic_info: ~azure.mgmt.eventgrid.models.PartnerUpdateTopicInfo
         """
         super().__init__(**kwargs)
         self.expiration_time_if_not_activated_utc = expiration_time_if_not_activated_utc
+        self.partner_destination_info = partner_destination_info
         self.partner_topic_info = partner_topic_info
+
+
+class Client(Resource):  # pylint: disable=too-many-instance-attributes
+    """The Client resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    :ivar system_data: The system metadata relating to the Client resource.
+    :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar description: Description for the Client resource.
+    :vartype description: str
+    :ivar authentication_name: The name presented by the client for authentication. The default
+     value is the name of the resource.
+    :vartype authentication_name: str
+    :ivar authentication: Authentication information for the client.
+    :vartype authentication: ~azure.mgmt.eventgrid.models.ClientAuthentication
+    :ivar client_certificate_authentication: The client certificate authentication information.
+    :vartype client_certificate_authentication:
+     ~azure.mgmt.eventgrid.models.ClientCertificateAuthentication
+    :ivar state: Indicates if the client is enabled or not. Default value is Enabled. Known values
+     are: "Enabled" and "Disabled".
+    :vartype state: str or ~azure.mgmt.eventgrid.models.ClientState
+    :ivar attributes: Attributes for the client. Supported values are int, bool, string, string[].
+     Example:
+     "attributes": { "room": "345", "floor": 12, "deviceTypes": ["Fan", "Light"] }.
+    :vartype attributes: dict[str, any]
+    :ivar provisioning_state: Provisioning state of the Client resource. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed", and "Deleted".
+    :vartype provisioning_state: str or ~azure.mgmt.eventgrid.models.ClientProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "description": {"key": "properties.description", "type": "str"},
+        "authentication_name": {"key": "properties.authenticationName", "type": "str"},
+        "authentication": {"key": "properties.authentication", "type": "ClientAuthentication"},
+        "client_certificate_authentication": {
+            "key": "properties.clientCertificateAuthentication",
+            "type": "ClientCertificateAuthentication",
+        },
+        "state": {"key": "properties.state", "type": "str"},
+        "attributes": {"key": "properties.attributes", "type": "{object}"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        authentication_name: Optional[str] = None,
+        authentication: Optional["_models.ClientAuthentication"] = None,
+        client_certificate_authentication: Optional["_models.ClientCertificateAuthentication"] = None,
+        state: Union[str, "_models.ClientState"] = "Enabled",
+        attributes: Optional[Dict[str, Any]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: Description for the Client resource.
+        :paramtype description: str
+        :keyword authentication_name: The name presented by the client for authentication. The default
+         value is the name of the resource.
+        :paramtype authentication_name: str
+        :keyword authentication: Authentication information for the client.
+        :paramtype authentication: ~azure.mgmt.eventgrid.models.ClientAuthentication
+        :keyword client_certificate_authentication: The client certificate authentication information.
+        :paramtype client_certificate_authentication:
+         ~azure.mgmt.eventgrid.models.ClientCertificateAuthentication
+        :keyword state: Indicates if the client is enabled or not. Default value is Enabled. Known
+         values are: "Enabled" and "Disabled".
+        :paramtype state: str or ~azure.mgmt.eventgrid.models.ClientState
+        :keyword attributes: Attributes for the client. Supported values are int, bool, string,
+         string[].
+         Example:
+         "attributes": { "room": "345", "floor": 12, "deviceTypes": ["Fan", "Light"] }.
+        :paramtype attributes: dict[str, any]
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.description = description
+        self.authentication_name = authentication_name
+        self.authentication = authentication
+        self.client_certificate_authentication = client_certificate_authentication
+        self.state = state
+        self.attributes = attributes
+        self.provisioning_state = None
+
+
+class ClientAuthentication(_serialization.Model):
+    """The Authentication properties for the client.
+
+    :ivar certificate_thumbprint: The self signed certificate's thumbprints data used for
+     authentication.
+    :vartype certificate_thumbprint: ~azure.mgmt.eventgrid.models.ClientCertificateThumbprint
+    :ivar certificate_subject: The CA certificate subject name used for authentication.
+    :vartype certificate_subject:
+     ~azure.mgmt.eventgrid.models.ClientCertificateSubjectDistinguishedName
+    """
+
+    _attribute_map = {
+        "certificate_thumbprint": {"key": "certificateThumbprint", "type": "ClientCertificateThumbprint"},
+        "certificate_subject": {"key": "certificateSubject", "type": "ClientCertificateSubjectDistinguishedName"},
+    }
+
+    def __init__(
+        self,
+        *,
+        certificate_thumbprint: Optional["_models.ClientCertificateThumbprint"] = None,
+        certificate_subject: Optional["_models.ClientCertificateSubjectDistinguishedName"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword certificate_thumbprint: The self signed certificate's thumbprints data used for
+         authentication.
+        :paramtype certificate_thumbprint: ~azure.mgmt.eventgrid.models.ClientCertificateThumbprint
+        :keyword certificate_subject: The CA certificate subject name used for authentication.
+        :paramtype certificate_subject:
+         ~azure.mgmt.eventgrid.models.ClientCertificateSubjectDistinguishedName
+        """
+        super().__init__(**kwargs)
+        self.certificate_thumbprint = certificate_thumbprint
+        self.certificate_subject = certificate_subject
+
+
+class ClientAuthenticationSettings(_serialization.Model):
+    """Client authentication settings for namespace resource.
+
+    :ivar alternative_authentication_name_sources: Alternative authentication name sources related
+     to client authentication settings for namespace resource.
+    :vartype alternative_authentication_name_sources: list[str or
+     ~azure.mgmt.eventgrid.models.AlternativeAuthenticationNameSource]
+    """
+
+    _attribute_map = {
+        "alternative_authentication_name_sources": {"key": "alternativeAuthenticationNameSources", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        alternative_authentication_name_sources: Optional[
+            List[Union[str, "_models.AlternativeAuthenticationNameSource"]]
+        ] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword alternative_authentication_name_sources: Alternative authentication name sources
+         related to client authentication settings for namespace resource.
+        :paramtype alternative_authentication_name_sources: list[str or
+         ~azure.mgmt.eventgrid.models.AlternativeAuthenticationNameSource]
+        """
+        super().__init__(**kwargs)
+        self.alternative_authentication_name_sources = alternative_authentication_name_sources
+
+
+class ClientCertificateAuthentication(_serialization.Model):
+    """The certificate authentication properties for the client.
+
+    :ivar validation_scheme: The validation scheme used to authenticate the client. Default value
+     is SubjectMatchesAuthenticationName. Known values are: "SubjectMatchesAuthenticationName",
+     "DnsMatchesAuthenticationName", "UriMatchesAuthenticationName", "IpMatchesAuthenticationName",
+     "EmailMatchesAuthenticationName", and "ThumbprintMatch".
+    :vartype validation_scheme: str or
+     ~azure.mgmt.eventgrid.models.ClientCertificateValidationScheme
+    :ivar allowed_thumbprints: The list of thumbprints that are allowed during client
+     authentication. This property is required only if the validationScheme is 'ThumbprintMatch'.
+    :vartype allowed_thumbprints: list[str]
+    """
+
+    _attribute_map = {
+        "validation_scheme": {"key": "validationScheme", "type": "str"},
+        "allowed_thumbprints": {"key": "allowedThumbprints", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        validation_scheme: Optional[Union[str, "_models.ClientCertificateValidationScheme"]] = None,
+        allowed_thumbprints: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword validation_scheme: The validation scheme used to authenticate the client. Default
+         value is SubjectMatchesAuthenticationName. Known values are:
+         "SubjectMatchesAuthenticationName", "DnsMatchesAuthenticationName",
+         "UriMatchesAuthenticationName", "IpMatchesAuthenticationName",
+         "EmailMatchesAuthenticationName", and "ThumbprintMatch".
+        :paramtype validation_scheme: str or
+         ~azure.mgmt.eventgrid.models.ClientCertificateValidationScheme
+        :keyword allowed_thumbprints: The list of thumbprints that are allowed during client
+         authentication. This property is required only if the validationScheme is 'ThumbprintMatch'.
+        :paramtype allowed_thumbprints: list[str]
+        """
+        super().__init__(**kwargs)
+        self.validation_scheme = validation_scheme
+        self.allowed_thumbprints = allowed_thumbprints
+
+
+class ClientCertificateSubjectDistinguishedName(_serialization.Model):
+    """CA certificate subject distinguished name information used by service to authenticate clients.
+    For more information, see
+    https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.x509certificates.x500distinguishedname?view=net-6.0#remarks.
+
+    :ivar common_name: The common name field in the subject name. The allowed limit is 64
+     characters and it should be specified.
+    :vartype common_name: str
+    :ivar organization: The organization field in the subject name. If present, the allowed limit
+     is 64 characters.
+    :vartype organization: str
+    :ivar organization_unit: The organization unit field in the subject name. If present, the
+     allowed limit is 32 characters.
+    :vartype organization_unit: str
+    :ivar country_code: The country code field in the subject name. If present, the country code
+     should be represented by two-letter code defined in ISO 2166-1 (alpha-2). For example: 'US'.
+    :vartype country_code: str
+    """
+
+    _validation = {
+        "common_name": {"max_length": 64},
+        "organization": {"max_length": 64},
+        "organization_unit": {"max_length": 32},
+        "country_code": {"max_length": 2, "min_length": 2},
+    }
+
+    _attribute_map = {
+        "common_name": {"key": "commonName", "type": "str"},
+        "organization": {"key": "organization", "type": "str"},
+        "organization_unit": {"key": "organizationUnit", "type": "str"},
+        "country_code": {"key": "countryCode", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        common_name: Optional[str] = None,
+        organization: Optional[str] = None,
+        organization_unit: Optional[str] = None,
+        country_code: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword common_name: The common name field in the subject name. The allowed limit is 64
+         characters and it should be specified.
+        :paramtype common_name: str
+        :keyword organization: The organization field in the subject name. If present, the allowed
+         limit is 64 characters.
+        :paramtype organization: str
+        :keyword organization_unit: The organization unit field in the subject name. If present, the
+         allowed limit is 32 characters.
+        :paramtype organization_unit: str
+        :keyword country_code: The country code field in the subject name. If present, the country code
+         should be represented by two-letter code defined in ISO 2166-1 (alpha-2). For example: 'US'.
+        :paramtype country_code: str
+        """
+        super().__init__(**kwargs)
+        self.common_name = common_name
+        self.organization = organization
+        self.organization_unit = organization_unit
+        self.country_code = country_code
+
+
+class ClientCertificateThumbprint(_serialization.Model):
+    """Thumbprints are used by the service to validate the device permission when authentication is
+    done using self signed certificate.
+
+    :ivar primary: The primary thumbprint used for validation.
+    :vartype primary: str
+    :ivar secondary: The secondary thumbprint used for validation.
+    :vartype secondary: str
+    """
+
+    _attribute_map = {
+        "primary": {"key": "primary", "type": "str"},
+        "secondary": {"key": "secondary", "type": "str"},
+    }
+
+    def __init__(self, *, primary: Optional[str] = None, secondary: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword primary: The primary thumbprint used for validation.
+        :paramtype primary: str
+        :keyword secondary: The secondary thumbprint used for validation.
+        :paramtype secondary: str
+        """
+        super().__init__(**kwargs)
+        self.primary = primary
+        self.secondary = secondary
+
+
+class ClientGroup(Resource):
+    """The Client group resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    :ivar system_data: The system metadata relating to the ClientGroup resource.
+    :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar description: Description for the Client Group resource.
+    :vartype description: str
+    :ivar query: The grouping query for the clients.
+     Example : attributes.keyName IN ['a', 'b', 'c'].
+    :vartype query: str
+    :ivar provisioning_state: Provisioning state of the ClientGroup resource. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed", and "Deleted".
+    :vartype provisioning_state: str or ~azure.mgmt.eventgrid.models.ClientGroupProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "description": {"key": "properties.description", "type": "str"},
+        "query": {"key": "properties.query", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(self, *, description: Optional[str] = None, query: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword description: Description for the Client Group resource.
+        :paramtype description: str
+        :keyword query: The grouping query for the clients.
+         Example : attributes.keyName IN ['a', 'b', 'c'].
+        :paramtype query: str
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.description = description
+        self.query = query
+        self.provisioning_state = None
+
+
+class ClientGroupsListResult(_serialization.Model):
+    """Result of the List Client Group operation.
+
+    :ivar value: A collection of Client Group.
+    :vartype value: list[~azure.mgmt.eventgrid.models.ClientGroup]
+    :ivar next_link: A link for the next page of Client Group.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ClientGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.ClientGroup"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A collection of Client Group.
+        :paramtype value: list[~azure.mgmt.eventgrid.models.ClientGroup]
+        :keyword next_link: A link for the next page of Client Group.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class ClientsListResult(_serialization.Model):
+    """Result of the List Client operation.
+
+    :ivar value: A collection of Client.
+    :vartype value: list[~azure.mgmt.eventgrid.models.Client]
+    :ivar next_link: A link for the next page of Client.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Client]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.Client"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A collection of Client.
+        :paramtype value: list[~azure.mgmt.eventgrid.models.Client]
+        :keyword next_link: A link for the next page of Client.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class ConnectionState(_serialization.Model):
@@ -465,8 +1193,8 @@ class ConnectionState(_serialization.Model):
         status: Optional[Union[str, "_models.PersistedConnectionStatus"]] = None,
         description: Optional[str] = None,
         actions_required: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Status of the connection. Known values are: "Pending", "Approved", "Rejected",
          and "Disconnected".
@@ -483,7 +1211,10 @@ class ConnectionState(_serialization.Model):
 
 
 class DeadLetterDestination(_serialization.Model):
-    """Information about the dead letter destination for an event subscription. To configure a deadletter destination, do not directly instantiate an object of this class. Instead, instantiate an object of a derived class. Currently, StorageBlobDeadLetterDestination is the only class that derives from this class.
+    """Information about the dead letter destination for an event subscription. To configure a
+    deadletter destination, do not directly instantiate an object of this class. Instead,
+    instantiate an object of a derived class. Currently, StorageBlobDeadLetterDestination is the
+    only class that derives from this class.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     StorageBlobDeadLetterDestination
@@ -505,7 +1236,7 @@ class DeadLetterDestination(_serialization.Model):
 
     _subtype_map = {"endpoint_type": {"StorageBlob": "StorageBlobDeadLetterDestination"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.endpoint_type: Optional[str] = None
@@ -533,8 +1264,8 @@ class DeadLetterWithResourceIdentity(_serialization.Model):
         *,
         identity: Optional["_models.EventSubscriptionIdentity"] = None,
         dead_letter_destination: Optional["_models.DeadLetterDestination"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: The identity to use when dead-lettering events.
         :paramtype identity: ~azure.mgmt.eventgrid.models.EventSubscriptionIdentity
@@ -560,7 +1291,7 @@ class DeliveryAttributeListResult(_serialization.Model):
         "value": {"key": "value", "type": "[DeliveryAttributeMapping]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.DeliveryAttributeMapping"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.DeliveryAttributeMapping"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A collection of DeliveryAttributeMapping.
         :paramtype value: list[~azure.mgmt.eventgrid.models.DeliveryAttributeMapping]
@@ -595,7 +1326,7 @@ class DeliveryAttributeMapping(_serialization.Model):
 
     _subtype_map = {"type": {"Dynamic": "DynamicDeliveryAttributeMapping", "Static": "StaticDeliveryAttributeMapping"}}
 
-    def __init__(self, *, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Name of the delivery attribute or header.
         :paramtype name: str
@@ -603,6 +1334,40 @@ class DeliveryAttributeMapping(_serialization.Model):
         super().__init__(**kwargs)
         self.name = name
         self.type: Optional[str] = None
+
+
+class DeliveryConfiguration(_serialization.Model):
+    """Properties of the delivery configuration information of the event subscription.
+
+    :ivar delivery_mode: Delivery mode of the event subscription. "Queue"
+    :vartype delivery_mode: str or ~azure.mgmt.eventgrid.models.DeliveryMode
+    :ivar queue: This property should be populated when deliveryMode is queue and represents
+     information about the queue subscription.
+    :vartype queue: ~azure.mgmt.eventgrid.models.QueueInfo
+    """
+
+    _attribute_map = {
+        "delivery_mode": {"key": "deliveryMode", "type": "str"},
+        "queue": {"key": "queue", "type": "QueueInfo"},
+    }
+
+    def __init__(
+        self,
+        *,
+        delivery_mode: Optional[Union[str, "_models.DeliveryMode"]] = None,
+        queue: Optional["_models.QueueInfo"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword delivery_mode: Delivery mode of the event subscription. "Queue"
+        :paramtype delivery_mode: str or ~azure.mgmt.eventgrid.models.DeliveryMode
+        :keyword queue: This property should be populated when deliveryMode is queue and represents
+         information about the queue subscription.
+        :paramtype queue: ~azure.mgmt.eventgrid.models.QueueInfo
+        """
+        super().__init__(**kwargs)
+        self.delivery_mode = delivery_mode
+        self.queue = queue
 
 
 class DeliveryWithResourceIdentity(_serialization.Model):
@@ -627,8 +1392,8 @@ class DeliveryWithResourceIdentity(_serialization.Model):
         *,
         identity: Optional["_models.EventSubscriptionIdentity"] = None,
         destination: Optional["_models.EventSubscriptionDestination"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: The identity to use when delivering events.
         :paramtype identity: ~azure.mgmt.eventgrid.models.EventSubscriptionIdentity
@@ -677,7 +1442,7 @@ class TrackedResource(Resource):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Location of the resource. Required.
         :paramtype location: str
@@ -706,16 +1471,21 @@ class Domain(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype location: str
     :ivar tags: Tags of the resource.
     :vartype tags: dict[str, str]
-    :ivar system_data: The system metadata relating to the Event Grid Domain resource.
-    :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar sku: The Sku pricing tier for the Event Grid Domain resource.
+    :vartype sku: ~azure.mgmt.eventgrid.models.ResourceSku
     :ivar identity: Identity information for the Event Grid Domain resource.
     :vartype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
-    :ivar private_endpoint_connections: List of private endpoint connections.
+    :ivar system_data: The system metadata relating to the Event Grid Domain resource.
+    :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar private_endpoint_connections:
     :vartype private_endpoint_connections:
      list[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
     :ivar provisioning_state: Provisioning state of the Event Grid Domain Resource. Known values
      are: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.eventgrid.models.DomainProvisioningState
+    :ivar minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish to
+     this domain. Known values are: "1.0", "1.1", and "1.2".
+    :vartype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
     :ivar endpoint: Endpoint for the Event Grid Domain Resource which is used for publishing the
      events.
     :vartype endpoint: str
@@ -723,6 +1493,10 @@ class Domain(TrackedResource):  # pylint: disable=too-many-instance-attributes
      events published to the Event Grid Domain Resource. Known values are: "EventGridSchema",
      "CustomEventSchema", and "CloudEventSchemaV1_0".
     :vartype input_schema: str or ~azure.mgmt.eventgrid.models.InputSchema
+    :ivar event_type_info: Event Type Information for the domain. This information is provided by
+     the publisher and can be used by the
+     subscriber to view different types of events that are published.
+    :vartype event_type_info: ~azure.mgmt.eventgrid.models.EventTypeInfo
     :ivar input_schema_mapping: Information about the InputSchemaMapping which specified the info
      about mapping event payload.
     :vartype input_schema_mapping: ~azure.mgmt.eventgrid.models.InputSchemaMapping
@@ -794,15 +1568,18 @@ class Domain(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "type": {"key": "type", "type": "str"},
         "location": {"key": "location", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
         "identity": {"key": "identity", "type": "IdentityInfo"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "private_endpoint_connections": {
             "key": "properties.privateEndpointConnections",
             "type": "[PrivateEndpointConnection]",
         },
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "minimum_tls_version_allowed": {"key": "properties.minimumTlsVersionAllowed", "type": "str"},
         "endpoint": {"key": "properties.endpoint", "type": "str"},
         "input_schema": {"key": "properties.inputSchema", "type": "str"},
+        "event_type_info": {"key": "properties.eventTypeInfo", "type": "EventTypeInfo"},
         "input_schema_mapping": {"key": "properties.inputSchemaMapping", "type": "InputSchemaMapping"},
         "metric_resource_id": {"key": "properties.metricResourceId", "type": "str"},
         "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
@@ -824,8 +1601,11 @@ class Domain(TrackedResource):  # pylint: disable=too-many-instance-attributes
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
+        sku: Optional["_models.ResourceSku"] = None,
         identity: Optional["_models.IdentityInfo"] = None,
+        minimum_tls_version_allowed: Optional[Union[str, "_models.TlsVersion"]] = None,
         input_schema: Optional[Union[str, "_models.InputSchema"]] = None,
+        event_type_info: Optional["_models.EventTypeInfo"] = None,
         input_schema_mapping: Optional["_models.InputSchemaMapping"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         inbound_ip_rules: Optional[List["_models.InboundIpRule"]] = None,
@@ -833,19 +1613,28 @@ class Domain(TrackedResource):  # pylint: disable=too-many-instance-attributes
         auto_create_topic_with_first_subscription: bool = True,
         auto_delete_topic_with_last_subscription: bool = True,
         data_residency_boundary: Optional[Union[str, "_models.DataResidencyBoundary"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Location of the resource. Required.
         :paramtype location: str
         :keyword tags: Tags of the resource.
         :paramtype tags: dict[str, str]
+        :keyword sku: The Sku pricing tier for the Event Grid Domain resource.
+        :paramtype sku: ~azure.mgmt.eventgrid.models.ResourceSku
         :keyword identity: Identity information for the Event Grid Domain resource.
         :paramtype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
+        :keyword minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish
+         to this domain. Known values are: "1.0", "1.1", and "1.2".
+        :paramtype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
         :keyword input_schema: This determines the format that Event Grid should expect for incoming
          events published to the Event Grid Domain Resource. Known values are: "EventGridSchema",
          "CustomEventSchema", and "CloudEventSchemaV1_0".
         :paramtype input_schema: str or ~azure.mgmt.eventgrid.models.InputSchema
+        :keyword event_type_info: Event Type Information for the domain. This information is provided
+         by the publisher and can be used by the
+         subscriber to view different types of events that are published.
+        :paramtype event_type_info: ~azure.mgmt.eventgrid.models.EventTypeInfo
         :keyword input_schema_mapping: Information about the InputSchemaMapping which specified the
          info about mapping event payload.
         :paramtype input_schema_mapping: ~azure.mgmt.eventgrid.models.InputSchemaMapping
@@ -897,12 +1686,15 @@ class Domain(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype data_residency_boundary: str or ~azure.mgmt.eventgrid.models.DataResidencyBoundary
         """
         super().__init__(location=location, tags=tags, **kwargs)
-        self.system_data = None
+        self.sku = sku
         self.identity = identity
+        self.system_data = None
         self.private_endpoint_connections = None
         self.provisioning_state = None
+        self.minimum_tls_version_allowed = minimum_tls_version_allowed
         self.endpoint = None
         self.input_schema = input_schema
+        self.event_type_info = event_type_info
         self.input_schema_mapping = input_schema_mapping
         self.metric_resource_id = None
         self.public_network_access = public_network_access
@@ -930,7 +1722,7 @@ class DomainRegenerateKeyRequest(_serialization.Model):
         "key_name": {"key": "keyName", "type": "str"},
     }
 
-    def __init__(self, *, key_name: str, **kwargs):
+    def __init__(self, *, key_name: str, **kwargs: Any) -> None:
         """
         :keyword key_name: Key name to regenerate key1 or key2. Required.
         :paramtype key_name: str
@@ -953,7 +1745,7 @@ class DomainSharedAccessKeys(_serialization.Model):
         "key2": {"key": "key2", "type": "str"},
     }
 
-    def __init__(self, *, key1: Optional[str] = None, key2: Optional[str] = None, **kwargs):
+    def __init__(self, *, key1: Optional[str] = None, key2: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword key1: Shared access key1 for the domain.
         :paramtype key1: str
@@ -979,7 +1771,9 @@ class DomainsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Domain"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Domain"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A collection of Domains.
         :paramtype value: list[~azure.mgmt.eventgrid.models.Domain]
@@ -1025,7 +1819,7 @@ class DomainTopic(Resource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.system_data = None
@@ -1047,8 +1841,8 @@ class DomainTopicsListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.DomainTopic"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.DomainTopic"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A collection of Domain Topics.
         :paramtype value: list[~azure.mgmt.eventgrid.models.DomainTopic]
@@ -1060,13 +1854,15 @@ class DomainTopicsListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class DomainUpdateParameters(_serialization.Model):
+class DomainUpdateParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Properties of the Domain update.
 
     :ivar tags: Tags of the domains resource.
     :vartype tags: dict[str, str]
     :ivar identity: Identity information for the resource.
     :vartype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
+    :ivar sku: The Sku pricing tier for the domain.
+    :vartype sku: ~azure.mgmt.eventgrid.models.ResourceSku
     :ivar public_network_access: This determines if traffic is allowed over public network. By
      default it is enabled.
      You can further restrict to specific IPs by configuring :code:`<seealso
@@ -1076,6 +1872,9 @@ class DomainUpdateParameters(_serialization.Model):
     :ivar inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of all
      IPs. Note: These are considered only if PublicNetworkAccess is enabled.
     :vartype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+    :ivar minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish to
+     this domain. Known values are: "1.0", "1.1", and "1.2".
+    :vartype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
     :ivar disable_local_auth: This boolean is used to enable or disable local auth. Default value
      is false. When the property is set to true, only AAD token will be used to authenticate if user
      is allowed to publish to the domain.
@@ -1113,13 +1912,17 @@ class DomainUpdateParameters(_serialization.Model):
     :ivar data_residency_boundary: The data residency boundary for the domain. Known values are:
      "WithinGeopair" and "WithinRegion".
     :vartype data_residency_boundary: str or ~azure.mgmt.eventgrid.models.DataResidencyBoundary
+    :ivar event_type_info: The eventTypeInfo for the domain.
+    :vartype event_type_info: ~azure.mgmt.eventgrid.models.EventTypeInfo
     """
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
         "identity": {"key": "identity", "type": "IdentityInfo"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
         "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
         "inbound_ip_rules": {"key": "properties.inboundIpRules", "type": "[InboundIpRule]"},
+        "minimum_tls_version_allowed": {"key": "properties.minimumTlsVersionAllowed", "type": "str"},
         "disable_local_auth": {"key": "properties.disableLocalAuth", "type": "bool"},
         "auto_create_topic_with_first_subscription": {
             "key": "properties.autoCreateTopicWithFirstSubscription",
@@ -1130,6 +1933,7 @@ class DomainUpdateParameters(_serialization.Model):
             "type": "bool",
         },
         "data_residency_boundary": {"key": "properties.dataResidencyBoundary", "type": "str"},
+        "event_type_info": {"key": "properties.eventTypeInfo", "type": "EventTypeInfo"},
     }
 
     def __init__(
@@ -1137,19 +1941,24 @@ class DomainUpdateParameters(_serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.IdentityInfo"] = None,
+        sku: Optional["_models.ResourceSku"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         inbound_ip_rules: Optional[List["_models.InboundIpRule"]] = None,
+        minimum_tls_version_allowed: Optional[Union[str, "_models.TlsVersion"]] = None,
         disable_local_auth: Optional[bool] = None,
         auto_create_topic_with_first_subscription: Optional[bool] = None,
         auto_delete_topic_with_last_subscription: Optional[bool] = None,
         data_residency_boundary: Optional[Union[str, "_models.DataResidencyBoundary"]] = None,
-        **kwargs
-    ):
+        event_type_info: Optional["_models.EventTypeInfo"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Tags of the domains resource.
         :paramtype tags: dict[str, str]
         :keyword identity: Identity information for the resource.
         :paramtype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
+        :keyword sku: The Sku pricing tier for the domain.
+        :paramtype sku: ~azure.mgmt.eventgrid.models.ResourceSku
         :keyword public_network_access: This determines if traffic is allowed over public network. By
          default it is enabled.
          You can further restrict to specific IPs by configuring :code:`<seealso
@@ -1159,6 +1968,9 @@ class DomainUpdateParameters(_serialization.Model):
         :keyword inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of
          all IPs. Note: These are considered only if PublicNetworkAccess is enabled.
         :paramtype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+        :keyword minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish
+         to this domain. Known values are: "1.0", "1.1", and "1.2".
+        :paramtype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
         :keyword disable_local_auth: This boolean is used to enable or disable local auth. Default
          value is false. When the property is set to true, only AAD token will be used to authenticate
          if user is allowed to publish to the domain.
@@ -1196,16 +2008,21 @@ class DomainUpdateParameters(_serialization.Model):
         :keyword data_residency_boundary: The data residency boundary for the domain. Known values are:
          "WithinGeopair" and "WithinRegion".
         :paramtype data_residency_boundary: str or ~azure.mgmt.eventgrid.models.DataResidencyBoundary
+        :keyword event_type_info: The eventTypeInfo for the domain.
+        :paramtype event_type_info: ~azure.mgmt.eventgrid.models.EventTypeInfo
         """
         super().__init__(**kwargs)
         self.tags = tags
         self.identity = identity
+        self.sku = sku
         self.public_network_access = public_network_access
         self.inbound_ip_rules = inbound_ip_rules
+        self.minimum_tls_version_allowed = minimum_tls_version_allowed
         self.disable_local_auth = disable_local_auth
         self.auto_create_topic_with_first_subscription = auto_create_topic_with_first_subscription
         self.auto_delete_topic_with_last_subscription = auto_delete_topic_with_last_subscription
         self.data_residency_boundary = data_residency_boundary
+        self.event_type_info = event_type_info
 
 
 class DynamicDeliveryAttributeMapping(DeliveryAttributeMapping):
@@ -1232,7 +2049,7 @@ class DynamicDeliveryAttributeMapping(DeliveryAttributeMapping):
         "source_field": {"key": "properties.sourceField", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, source_field: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, source_field: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Name of the delivery attribute or header.
         :paramtype name: str
@@ -1244,6 +2061,124 @@ class DynamicDeliveryAttributeMapping(DeliveryAttributeMapping):
         self.source_field = source_field
 
 
+class DynamicRoutingEnrichment(_serialization.Model):
+    """DynamicRoutingEnrichment.
+
+    :ivar key: Dynamic routing enrichment key.
+    :vartype key: str
+    :ivar value: Dynamic routing enrichment value.
+    :vartype value: str
+    """
+
+    _attribute_map = {
+        "key": {"key": "key", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: Dynamic routing enrichment key.
+        :paramtype key: str
+        :keyword value: Dynamic routing enrichment value.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
+        self.key = key
+        self.value = value
+
+
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.eventgrid.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.eventgrid.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.eventgrid.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.eventgrid.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
 class EventHubEventSubscriptionDestination(EventSubscriptionDestination):
     """Information about the event hub destination for an event subscription.
 
@@ -1251,7 +2186,7 @@ class EventHubEventSubscriptionDestination(EventSubscriptionDestination):
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
-     "ServiceBusTopic", and "AzureFunction".
+     "ServiceBusTopic", "AzureFunction", and "PartnerDestination".
     :vartype endpoint_type: str or ~azure.mgmt.eventgrid.models.EndpointType
     :ivar resource_id: The Azure Resource Id that represents the endpoint of an Event Hub
      destination of an event subscription.
@@ -1279,8 +2214,8 @@ class EventHubEventSubscriptionDestination(EventSubscriptionDestination):
         *,
         resource_id: Optional[str] = None,
         delivery_attribute_mappings: Optional[List["_models.DeliveryAttributeMapping"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: The Azure Resource Id that represents the endpoint of an Event Hub
          destination of an event subscription.
@@ -1397,8 +2332,8 @@ class EventSubscription(Resource):  # pylint: disable=too-many-instance-attribut
         retry_policy: Optional["_models.RetryPolicy"] = None,
         dead_letter_destination: Optional["_models.DeadLetterDestination"] = None,
         dead_letter_with_resource_identity: Optional["_models.DeadLetterWithResourceIdentity"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword destination: Information about the destination where events have to be delivered for
          the event subscription.
@@ -1497,8 +2432,8 @@ class EventSubscriptionFilter(_serialization.Model):
         is_subject_case_sensitive: bool = False,
         enable_advanced_filtering_on_arrays: Optional[bool] = None,
         advanced_filters: Optional[List["_models.AdvancedFilter"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword subject_begins_with: An optional string to filter events for an event subscription
          based on a resource path prefix.
@@ -1545,7 +2480,7 @@ class EventSubscriptionFullUrl(_serialization.Model):
         "endpoint_url": {"key": "endpointUrl", "type": "str"},
     }
 
-    def __init__(self, *, endpoint_url: Optional[str] = None, **kwargs):
+    def __init__(self, *, endpoint_url: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword endpoint_url: The URL that represents the endpoint of the destination of an event
          subscription.
@@ -1576,8 +2511,8 @@ class EventSubscriptionIdentity(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.EventSubscriptionIdentityType"]] = None,
         user_assigned_identity: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of managed identity used. The type 'SystemAssigned, UserAssigned'
          includes both an implicitly created identity and a set of user-assigned identities. The type
@@ -1606,8 +2541,12 @@ class EventSubscriptionsListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.EventSubscription"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.EventSubscription"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: A collection of EventSubscriptions.
         :paramtype value: list[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -1689,8 +2628,8 @@ class EventSubscriptionUpdateParameters(_serialization.Model):
         retry_policy: Optional["_models.RetryPolicy"] = None,
         dead_letter_destination: Optional["_models.DeadLetterDestination"] = None,
         dead_letter_with_resource_identity: Optional["_models.DeadLetterWithResourceIdentity"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword destination: Information about the destination where events have to be delivered for
          the event subscription.
@@ -1784,8 +2723,8 @@ class EventType(Resource):
         description: Optional[str] = None,
         schema_url: Optional[str] = None,
         is_in_default_set: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: Display name of the event type.
         :paramtype display_name: str
@@ -1826,8 +2765,8 @@ class EventTypeInfo(_serialization.Model):
         *,
         kind: Optional[Union[str, "_models.EventDefinitionKind"]] = None,
         inline_event_types: Optional[Dict[str, "_models.InlineEventProperties"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: The kind of event type used. "Inline"
         :paramtype kind: str or ~azure.mgmt.eventgrid.models.EventDefinitionKind
@@ -1854,7 +2793,7 @@ class EventTypesListResult(_serialization.Model):
         "value": {"key": "value", "type": "[EventType]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.EventType"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.EventType"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A collection of event types.
         :paramtype value: list[~azure.mgmt.eventgrid.models.EventType]
@@ -1863,8 +2802,35 @@ class EventTypesListResult(_serialization.Model):
         self.value = value
 
 
+class ExtendedLocation(_serialization.Model):
+    """Definition of an Extended Location.
+
+    :ivar name: Fully qualified name of the extended location.
+    :vartype name: str
+    :ivar type: Type of the extended location.
+    :vartype type: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: Fully qualified name of the extended location.
+        :paramtype name: str
+        :keyword type: Type of the extended location.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.type = type
+
+
 class ExtensionTopic(Resource):
-    """Event grid Extension Topic. This is used for getting Event Grid related metrics for Azure resources.
+    """Event grid Extension Topic. This is used for getting Event Grid related metrics for Azure
+    resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1898,7 +2864,7 @@ class ExtensionTopic(Resource):
         "system_topic": {"key": "properties.systemTopic", "type": "str"},
     }
 
-    def __init__(self, *, description: Optional[str] = None, system_topic: Optional[str] = None, **kwargs):
+    def __init__(self, *, description: Optional[str] = None, system_topic: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword description: Description of the extension topic.
         :paramtype description: str
@@ -1911,6 +2877,42 @@ class ExtensionTopic(Resource):
         self.system_topic = system_topic
 
 
+class FiltersConfiguration(_serialization.Model):
+    """Filters configuration for the Event Subscription.
+
+    :ivar included_event_types: A list of applicable event types that need to be part of the event
+     subscription. If it is desired to subscribe to all default event types, set the
+     IncludedEventTypes to null.
+    :vartype included_event_types: list[str]
+    :ivar filters: An array of filters that are used for filtering event subscriptions.
+    :vartype filters: list[~azure.mgmt.eventgrid.models.Filter]
+    """
+
+    _attribute_map = {
+        "included_event_types": {"key": "includedEventTypes", "type": "[str]"},
+        "filters": {"key": "filters", "type": "[Filter]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        included_event_types: Optional[List[str]] = None,
+        filters: Optional[List["_models.Filter"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword included_event_types: A list of applicable event types that need to be part of the
+         event subscription. If it is desired to subscribe to all default event types, set the
+         IncludedEventTypes to null.
+        :paramtype included_event_types: list[str]
+        :keyword filters: An array of filters that are used for filtering event subscriptions.
+        :paramtype filters: list[~azure.mgmt.eventgrid.models.Filter]
+        """
+        super().__init__(**kwargs)
+        self.included_event_types = included_event_types
+        self.filters = filters
+
+
 class HybridConnectionEventSubscriptionDestination(EventSubscriptionDestination):
     """Information about the HybridConnection destination for an event subscription.
 
@@ -1918,7 +2920,7 @@ class HybridConnectionEventSubscriptionDestination(EventSubscriptionDestination)
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
-     "ServiceBusTopic", and "AzureFunction".
+     "ServiceBusTopic", "AzureFunction", and "PartnerDestination".
     :vartype endpoint_type: str or ~azure.mgmt.eventgrid.models.EndpointType
     :ivar resource_id: The Azure Resource ID of an hybrid connection that is the destination of an
      event subscription.
@@ -1946,8 +2948,8 @@ class HybridConnectionEventSubscriptionDestination(EventSubscriptionDestination)
         *,
         resource_id: Optional[str] = None,
         delivery_attribute_mappings: Optional[List["_models.DeliveryAttributeMapping"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: The Azure Resource ID of an hybrid connection that is the destination of
          an event subscription.
@@ -1996,8 +2998,8 @@ class IdentityInfo(_serialization.Model):
         principal_id: Optional[str] = None,
         tenant_id: Optional[str] = None,
         user_assigned_identities: Optional[Dict[str, "_models.UserIdentityProperties"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of managed identity used. The type 'SystemAssigned, UserAssigned'
          includes both an implicitly created identity and a set of user-assigned identities. The type
@@ -2037,8 +3039,12 @@ class InboundIpRule(_serialization.Model):
     }
 
     def __init__(
-        self, *, ip_mask: Optional[str] = None, action: Optional[Union[str, "_models.IpActionType"]] = None, **kwargs
-    ):
+        self,
+        *,
+        ip_mask: Optional[str] = None,
+        action: Optional[Union[str, "_models.IpActionType"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword ip_mask: IP Address in CIDR notation e.g., 10.0.0.0/8.
         :paramtype ip_mask: str
@@ -2077,8 +3083,8 @@ class InlineEventProperties(_serialization.Model):
         display_name: Optional[str] = None,
         documentation_url: Optional[str] = None,
         data_schema_url: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: The description for the inline event.
         :paramtype description: str
@@ -2097,7 +3103,9 @@ class InlineEventProperties(_serialization.Model):
 
 
 class InputSchemaMapping(_serialization.Model):
-    """By default, Event Grid expects events to be in the Event Grid event schema. Specifying an input schema mapping enables publishing to Event Grid using a custom input schema. Currently, the only supported type of InputSchemaMapping is 'JsonInputSchemaMapping'.
+    """By default, Event Grid expects events to be in the Event Grid event schema. Specifying an input
+    schema mapping enables publishing to Event Grid using a custom input schema. Currently, the
+    only supported type of InputSchemaMapping is 'JsonInputSchemaMapping'.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     JsonInputSchemaMapping
@@ -2118,7 +3126,7 @@ class InputSchemaMapping(_serialization.Model):
 
     _subtype_map = {"input_schema_mapping_type": {"Json": "JsonInputSchemaMapping"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.input_schema_mapping_type: Optional[str] = None
@@ -2149,7 +3157,41 @@ class IsNotNullAdvancedFilter(AdvancedFilter):
         "key": {"key": "key", "type": "str"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "IsNotNull"
+
+
+class IsNotNullFilter(Filter):
+    """IsNotNull Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -2183,7 +3225,41 @@ class IsNullOrUndefinedAdvancedFilter(AdvancedFilter):
         "key": {"key": "key", "type": "str"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "IsNullOrUndefined"
+
+
+class IsNullOrUndefinedFilter(Filter):
+    """IsNullOrUndefined Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -2193,7 +3269,9 @@ class IsNullOrUndefinedAdvancedFilter(AdvancedFilter):
 
 
 class JsonField(_serialization.Model):
-    """This is used to express the source of an input schema mapping for a single target field in the Event Grid Event schema. This is currently used in the mappings for the 'id', 'topic' and 'eventtime' properties. This represents a field in the input event schema.
+    """This is used to express the source of an input schema mapping for a single target field in the
+    Event Grid Event schema. This is currently used in the mappings for the 'id', 'topic' and
+    'eventtime' properties. This represents a field in the input event schema.
 
     :ivar source_field: Name of a field in the input event schema that's to be used as the source
      of a mapping.
@@ -2204,7 +3282,7 @@ class JsonField(_serialization.Model):
         "source_field": {"key": "sourceField", "type": "str"},
     }
 
-    def __init__(self, *, source_field: Optional[str] = None, **kwargs):
+    def __init__(self, *, source_field: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword source_field: Name of a field in the input event schema that's to be used as the
          source of a mapping.
@@ -2218,14 +3296,15 @@ class JsonFieldWithDefault(_serialization.Model):
     """This is used to express the source of an input schema mapping for a single target field
     in the Event Grid Event schema. This is currently used in the mappings for the 'subject',
     'eventtype' and 'dataversion' properties. This represents a field in the input event schema
-    along with a default value to be used, and at least one of these two properties should be provided.
+    along with a default value to be used, and at least one of these two properties should be
+    provided.
 
-        :ivar source_field: Name of a field in the input event schema that's to be used as the source
-         of a mapping.
-        :vartype source_field: str
-        :ivar default_value: The default value to be used for mapping when a SourceField is not
-         provided or if there's no property with the specified name in the published JSON event payload.
-        :vartype default_value: str
+    :ivar source_field: Name of a field in the input event schema that's to be used as the source
+     of a mapping.
+    :vartype source_field: str
+    :ivar default_value: The default value to be used for mapping when a SourceField is not
+     provided or if there's no property with the specified name in the published JSON event payload.
+    :vartype default_value: str
     """
 
     _attribute_map = {
@@ -2233,7 +3312,9 @@ class JsonFieldWithDefault(_serialization.Model):
         "default_value": {"key": "defaultValue", "type": "str"},
     }
 
-    def __init__(self, *, source_field: Optional[str] = None, default_value: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, source_field: Optional[str] = None, default_value: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword source_field: Name of a field in the input event schema that's to be used as the
          source of a mapping.
@@ -2248,7 +3329,8 @@ class JsonFieldWithDefault(_serialization.Model):
 
 
 class JsonInputSchemaMapping(InputSchemaMapping):
-    """This enables publishing to Event Grid using a custom input schema. This can be used to map properties from a custom input JSON schema to the Event Grid event schema.
+    """This enables publishing to Event Grid using a custom input schema. This can be used to map
+    properties from a custom input JSON schema to the Event Grid event schema.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2292,8 +3374,8 @@ class JsonInputSchemaMapping(InputSchemaMapping):
         event_type: Optional["_models.JsonFieldWithDefault"] = None,
         subject: Optional["_models.JsonFieldWithDefault"] = None,
         data_version: Optional["_models.JsonFieldWithDefault"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The mapping information for the Id property of the Event Grid Event.
         :paramtype id: ~azure.mgmt.eventgrid.models.JsonField
@@ -2319,6 +3401,476 @@ class JsonInputSchemaMapping(InputSchemaMapping):
         self.event_type = event_type
         self.subject = subject
         self.data_version = data_version
+
+
+class Namespace(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """Namespace resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    :ivar location: Location of the resource. Required.
+    :vartype location: str
+    :ivar tags: Tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar sku: Represents available Sku pricing tiers.
+    :vartype sku: ~azure.mgmt.eventgrid.models.NamespaceSku
+    :ivar identity: Identity information for the Namespace resource.
+    :vartype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
+    :ivar system_data: The system metadata relating to the namespace resource.
+    :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar private_endpoint_connections:
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
+    :ivar provisioning_state: Provisioning state of the namespace resource. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed", "Deleted",
+     "DeleteFailed", "CreateFailed", and "UpdatedFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.eventgrid.models.NamespaceProvisioningState
+    :ivar topics_configuration: Topics configuration information for the namespace resource.
+    :vartype topics_configuration: ~azure.mgmt.eventgrid.models.TopicsConfiguration
+    :ivar topic_spaces_configuration: Topic spaces configuration information for the namespace
+     resource.
+    :vartype topic_spaces_configuration: ~azure.mgmt.eventgrid.models.TopicSpacesConfiguration
+    :ivar is_zone_redundant: Allows the user to specify if the service is zone-redundant. This is a
+     required property and user needs to specify this value explicitly.
+     Once specified, this property cannot be updated.
+    :vartype is_zone_redundant: bool
+    :ivar public_network_access: This determines if traffic is allowed over public network. By
+     default it is enabled.
+     You can further restrict to specific IPs by configuring :code:`<seealso
+     cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.PubSub.NamespaceProperties.InboundIpRules"
+     />`. Known values are: "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.eventgrid.models.PublicNetworkAccess
+    :ivar inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of all
+     IPs. Note: These are considered only if PublicNetworkAccess is enabled.
+    :vartype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+    :ivar minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish to
+     this namespace. Only TLS version 1.2 is supported. Known values are: "1.0", "1.1", and "1.2".
+    :vartype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "NamespaceSku"},
+        "identity": {"key": "identity", "type": "IdentityInfo"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "topics_configuration": {"key": "properties.topicsConfiguration", "type": "TopicsConfiguration"},
+        "topic_spaces_configuration": {
+            "key": "properties.topicSpacesConfiguration",
+            "type": "TopicSpacesConfiguration",
+        },
+        "is_zone_redundant": {"key": "properties.isZoneRedundant", "type": "bool"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
+        "inbound_ip_rules": {"key": "properties.inboundIpRules", "type": "[InboundIpRule]"},
+        "minimum_tls_version_allowed": {"key": "properties.minimumTlsVersionAllowed", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        sku: Optional["_models.NamespaceSku"] = None,
+        identity: Optional["_models.IdentityInfo"] = None,
+        private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None,
+        topics_configuration: Optional["_models.TopicsConfiguration"] = None,
+        topic_spaces_configuration: Optional["_models.TopicSpacesConfiguration"] = None,
+        is_zone_redundant: Optional[bool] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
+        inbound_ip_rules: Optional[List["_models.InboundIpRule"]] = None,
+        minimum_tls_version_allowed: Optional[Union[str, "_models.TlsVersion"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: Location of the resource. Required.
+        :paramtype location: str
+        :keyword tags: Tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword sku: Represents available Sku pricing tiers.
+        :paramtype sku: ~azure.mgmt.eventgrid.models.NamespaceSku
+        :keyword identity: Identity information for the Namespace resource.
+        :paramtype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
+        :keyword private_endpoint_connections:
+        :paramtype private_endpoint_connections:
+         list[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
+        :keyword topics_configuration: Topics configuration information for the namespace resource.
+        :paramtype topics_configuration: ~azure.mgmt.eventgrid.models.TopicsConfiguration
+        :keyword topic_spaces_configuration: Topic spaces configuration information for the namespace
+         resource.
+        :paramtype topic_spaces_configuration: ~azure.mgmt.eventgrid.models.TopicSpacesConfiguration
+        :keyword is_zone_redundant: Allows the user to specify if the service is zone-redundant. This
+         is a required property and user needs to specify this value explicitly.
+         Once specified, this property cannot be updated.
+        :paramtype is_zone_redundant: bool
+        :keyword public_network_access: This determines if traffic is allowed over public network. By
+         default it is enabled.
+         You can further restrict to specific IPs by configuring :code:`<seealso
+         cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.PubSub.NamespaceProperties.InboundIpRules"
+         />`. Known values are: "Enabled" and "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.eventgrid.models.PublicNetworkAccess
+        :keyword inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of
+         all IPs. Note: These are considered only if PublicNetworkAccess is enabled.
+        :paramtype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+        :keyword minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish
+         to this namespace. Only TLS version 1.2 is supported. Known values are: "1.0", "1.1", and
+         "1.2".
+        :paramtype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
+        self.sku = sku
+        self.identity = identity
+        self.system_data = None
+        self.private_endpoint_connections = private_endpoint_connections
+        self.provisioning_state = None
+        self.topics_configuration = topics_configuration
+        self.topic_spaces_configuration = topic_spaces_configuration
+        self.is_zone_redundant = is_zone_redundant
+        self.public_network_access = public_network_access
+        self.inbound_ip_rules = inbound_ip_rules
+        self.minimum_tls_version_allowed = minimum_tls_version_allowed
+
+
+class NamespaceRegenerateKeyRequest(_serialization.Model):
+    """Namespace regenerate share access key request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar key_name: Key name to regenerate key1 or key2. Required.
+    :vartype key_name: str
+    """
+
+    _validation = {
+        "key_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "key_name": {"key": "keyName", "type": "str"},
+    }
+
+    def __init__(self, *, key_name: str, **kwargs: Any) -> None:
+        """
+        :keyword key_name: Key name to regenerate key1 or key2. Required.
+        :paramtype key_name: str
+        """
+        super().__init__(**kwargs)
+        self.key_name = key_name
+
+
+class NamespaceSharedAccessKeys(_serialization.Model):
+    """Shared access keys of the Namespace.
+
+    :ivar key1: Shared access key1 for the namespace.
+    :vartype key1: str
+    :ivar key2: Shared access key2 for the namespace.
+    :vartype key2: str
+    """
+
+    _attribute_map = {
+        "key1": {"key": "key1", "type": "str"},
+        "key2": {"key": "key2", "type": "str"},
+    }
+
+    def __init__(self, *, key1: Optional[str] = None, key2: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword key1: Shared access key1 for the namespace.
+        :paramtype key1: str
+        :keyword key2: Shared access key2 for the namespace.
+        :paramtype key2: str
+        """
+        super().__init__(**kwargs)
+        self.key1 = key1
+        self.key2 = key2
+
+
+class NamespaceSku(_serialization.Model):
+    """Represents available Sku pricing tiers.
+
+    :ivar name: The name of the SKU. "Standard"
+    :vartype name: str or ~azure.mgmt.eventgrid.models.SkuName
+    :ivar capacity: Specifies the number of Throughput Units that defines the capacity for the
+     namespace. The property default value is
+     1 which signifies 1 Throughput Unit = 1MB/s ingress and 2MB/s egress per namespace. Min
+     capacity is 1 and
+     max allowed capacity is 20.
+    :vartype capacity: int
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
+    }
+
+    def __init__(
+        self, *, name: Optional[Union[str, "_models.SkuName"]] = None, capacity: Optional[int] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the SKU. "Standard"
+        :paramtype name: str or ~azure.mgmt.eventgrid.models.SkuName
+        :keyword capacity: Specifies the number of Throughput Units that defines the capacity for the
+         namespace. The property default value is
+         1 which signifies 1 Throughput Unit = 1MB/s ingress and 2MB/s egress per namespace. Min
+         capacity is 1 and
+         max allowed capacity is 20.
+        :paramtype capacity: int
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.capacity = capacity
+
+
+class NamespacesListResult(_serialization.Model):
+    """Result of the List Namespaces operation.
+
+    :ivar value: A collection of namespaces.
+    :vartype value: list[~azure.mgmt.eventgrid.models.Namespace]
+    :ivar next_link: A link for the next page of namespaces.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Namespace]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.Namespace"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A collection of namespaces.
+        :paramtype value: list[~azure.mgmt.eventgrid.models.Namespace]
+        :keyword next_link: A link for the next page of namespaces.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class NamespaceTopic(Resource):
+    """Namespace topic details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    :ivar system_data: The system metadata relating to namespace topic resource.
+    :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar provisioning_state: Provisioning state of the namespace topic. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed", "Deleted",
+     "DeleteFailed", "CreateFailed", and "UpdatedFailed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.eventgrid.models.NamespaceTopicProvisioningState
+    :ivar publisher_type: Publisher type of the namespace topic. "Custom"
+    :vartype publisher_type: str or ~azure.mgmt.eventgrid.models.PublisherType
+    :ivar input_schema: This determines the format that is expected for incoming events published
+     to the topic. "CloudEventSchemaV1_0"
+    :vartype input_schema: str or ~azure.mgmt.eventgrid.models.EventInputSchema
+    :ivar event_retention_in_days: Event retention for the namespace topic expressed in days. The
+     property default value is 1 day.
+     Min event retention duration value is 1 day and max event retention duration value is 1 day.
+    :vartype event_retention_in_days: int
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "publisher_type": {"key": "properties.publisherType", "type": "str"},
+        "input_schema": {"key": "properties.inputSchema", "type": "str"},
+        "event_retention_in_days": {"key": "properties.eventRetentionInDays", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        publisher_type: Optional[Union[str, "_models.PublisherType"]] = None,
+        input_schema: Union[str, "_models.EventInputSchema"] = "CloudEventSchemaV1_0",
+        event_retention_in_days: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword publisher_type: Publisher type of the namespace topic. "Custom"
+        :paramtype publisher_type: str or ~azure.mgmt.eventgrid.models.PublisherType
+        :keyword input_schema: This determines the format that is expected for incoming events
+         published to the topic. "CloudEventSchemaV1_0"
+        :paramtype input_schema: str or ~azure.mgmt.eventgrid.models.EventInputSchema
+        :keyword event_retention_in_days: Event retention for the namespace topic expressed in days.
+         The property default value is 1 day.
+         Min event retention duration value is 1 day and max event retention duration value is 1 day.
+        :paramtype event_retention_in_days: int
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.provisioning_state = None
+        self.publisher_type = publisher_type
+        self.input_schema = input_schema
+        self.event_retention_in_days = event_retention_in_days
+
+
+class NamespaceTopicsListResult(_serialization.Model):
+    """Result of the List namespace topics operation.
+
+    :ivar value: A collection of namespace topics.
+    :vartype value: list[~azure.mgmt.eventgrid.models.NamespaceTopic]
+    :ivar next_link: A link for the next page of namespace topics.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[NamespaceTopic]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.NamespaceTopic"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A collection of namespace topics.
+        :paramtype value: list[~azure.mgmt.eventgrid.models.NamespaceTopic]
+        :keyword next_link: A link for the next page of namespace topics.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class NamespaceTopicUpdateParameters(_serialization.Model):
+    """Properties of the namespace topic update.
+
+    :ivar event_retention_in_days: Event retention for the namespace topic expressed in days. The
+     property default value is 1 day.
+     Min event retention duration value is 1 day and max event retention duration value is 1 day.
+    :vartype event_retention_in_days: int
+    """
+
+    _attribute_map = {
+        "event_retention_in_days": {"key": "properties.eventRetentionInDays", "type": "int"},
+    }
+
+    def __init__(self, *, event_retention_in_days: Optional[int] = None, **kwargs: Any) -> None:
+        """
+        :keyword event_retention_in_days: Event retention for the namespace topic expressed in days.
+         The property default value is 1 day.
+         Min event retention duration value is 1 day and max event retention duration value is 1 day.
+        :paramtype event_retention_in_days: int
+        """
+        super().__init__(**kwargs)
+        self.event_retention_in_days = event_retention_in_days
+
+
+class NamespaceUpdateParameters(_serialization.Model):
+    """Properties to update namespace.
+
+    :ivar tags: Tags of the namespace resource.
+    :vartype tags: dict[str, str]
+    :ivar identity: Namespace resource identity information.
+    :vartype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
+    :ivar sku: Represents available Sku pricing tiers.
+    :vartype sku: ~azure.mgmt.eventgrid.models.NamespaceSku
+    :ivar topic_spaces_configuration: Topic spaces configuration properties that can be updated.
+    :vartype topic_spaces_configuration:
+     ~azure.mgmt.eventgrid.models.UpdateTopicSpacesConfigurationInfo
+    :ivar public_network_access: This determines if traffic is allowed over public network. By
+     default it is enabled.
+     You can further restrict to specific IPs by configuring :code:`<seealso
+     cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.PubSub.NamespaceUpdateParameterProperties.InboundIpRules"
+     />`. Known values are: "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.eventgrid.models.PublicNetworkAccess
+    :ivar inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of all
+     IPs. Note: These are considered only if PublicNetworkAccess is enabled.
+    :vartype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "IdentityInfo"},
+        "sku": {"key": "sku", "type": "NamespaceSku"},
+        "topic_spaces_configuration": {
+            "key": "properties.topicSpacesConfiguration",
+            "type": "UpdateTopicSpacesConfigurationInfo",
+        },
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
+        "inbound_ip_rules": {"key": "properties.inboundIpRules", "type": "[InboundIpRule]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        identity: Optional["_models.IdentityInfo"] = None,
+        sku: Optional["_models.NamespaceSku"] = None,
+        topic_spaces_configuration: Optional["_models.UpdateTopicSpacesConfigurationInfo"] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
+        inbound_ip_rules: Optional[List["_models.InboundIpRule"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Tags of the namespace resource.
+        :paramtype tags: dict[str, str]
+        :keyword identity: Namespace resource identity information.
+        :paramtype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
+        :keyword sku: Represents available Sku pricing tiers.
+        :paramtype sku: ~azure.mgmt.eventgrid.models.NamespaceSku
+        :keyword topic_spaces_configuration: Topic spaces configuration properties that can be updated.
+        :paramtype topic_spaces_configuration:
+         ~azure.mgmt.eventgrid.models.UpdateTopicSpacesConfigurationInfo
+        :keyword public_network_access: This determines if traffic is allowed over public network. By
+         default it is enabled.
+         You can further restrict to specific IPs by configuring :code:`<seealso
+         cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.PubSub.NamespaceUpdateParameterProperties.InboundIpRules"
+         />`. Known values are: "Enabled" and "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.eventgrid.models.PublicNetworkAccess
+        :keyword inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of
+         all IPs. Note: These are considered only if PublicNetworkAccess is enabled.
+        :paramtype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.identity = identity
+        self.sku = sku
+        self.topic_spaces_configuration = topic_spaces_configuration
+        self.public_network_access = public_network_access
+        self.inbound_ip_rules = inbound_ip_rules
 
 
 class NumberGreaterThanAdvancedFilter(AdvancedFilter):
@@ -2349,7 +3901,47 @@ class NumberGreaterThanAdvancedFilter(AdvancedFilter):
         "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, value: Optional[float] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, value: Optional[float] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        :keyword value: The filter value.
+        :paramtype value: float
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "NumberGreaterThan"
+        self.value = value
+
+
+class NumberGreaterThanFilter(Filter):
+    """NumberGreaterThan Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    :ivar value: The filter value.
+    :vartype value: float
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "value": {"key": "value", "type": "float"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, value: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -2389,7 +3981,47 @@ class NumberGreaterThanOrEqualsAdvancedFilter(AdvancedFilter):
         "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, value: Optional[float] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, value: Optional[float] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        :keyword value: The filter value.
+        :paramtype value: float
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "NumberGreaterThanOrEquals"
+        self.value = value
+
+
+class NumberGreaterThanOrEqualsFilter(Filter):
+    """NumberGreaterThanOrEquals Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    :ivar value: The filter value.
+    :vartype value: float
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "value": {"key": "value", "type": "float"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, value: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -2429,7 +4061,47 @@ class NumberInAdvancedFilter(AdvancedFilter):
         "values": {"key": "values", "type": "[float]"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, values: Optional[List[float]] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[float]] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        :keyword values: The set of filter values.
+        :paramtype values: list[float]
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "NumberIn"
+        self.values = values
+
+
+class NumberInFilter(Filter):
+    """NumberIn Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    :ivar values: The set of filter values.
+    :vartype values: list[float]
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "values": {"key": "values", "type": "[float]"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[float]] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -2469,7 +4141,47 @@ class NumberInRangeAdvancedFilter(AdvancedFilter):
         "values": {"key": "values", "type": "[[float]]"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, values: Optional[List[List[float]]] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[List[float]]] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        :keyword values: The set of filter values.
+        :paramtype values: list[list[float]]
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "NumberInRange"
+        self.values = values
+
+
+class NumberInRangeFilter(Filter):
+    """NumberInRange Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    :ivar values: The set of filter values.
+    :vartype values: list[list[float]]
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "values": {"key": "values", "type": "[[float]]"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[List[float]]] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -2509,7 +4221,47 @@ class NumberLessThanAdvancedFilter(AdvancedFilter):
         "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, value: Optional[float] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, value: Optional[float] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        :keyword value: The filter value.
+        :paramtype value: float
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "NumberLessThan"
+        self.value = value
+
+
+class NumberLessThanFilter(Filter):
+    """NumberLessThan Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    :ivar value: The filter value.
+    :vartype value: float
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "value": {"key": "value", "type": "float"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, value: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -2549,7 +4301,47 @@ class NumberLessThanOrEqualsAdvancedFilter(AdvancedFilter):
         "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, value: Optional[float] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, value: Optional[float] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        :keyword value: The filter value.
+        :paramtype value: float
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "NumberLessThanOrEquals"
+        self.value = value
+
+
+class NumberLessThanOrEqualsFilter(Filter):
+    """NumberLessThanOrEquals Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    :ivar value: The filter value.
+    :vartype value: float
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "value": {"key": "value", "type": "float"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, value: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -2589,7 +4381,47 @@ class NumberNotInAdvancedFilter(AdvancedFilter):
         "values": {"key": "values", "type": "[float]"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, values: Optional[List[float]] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[float]] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        :keyword values: The set of filter values.
+        :paramtype values: list[float]
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "NumberNotIn"
+        self.values = values
+
+
+class NumberNotInFilter(Filter):
+    """NumberNotIn Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    :ivar values: The set of filter values.
+    :vartype values: list[float]
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "values": {"key": "values", "type": "[float]"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[float]] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -2629,7 +4461,47 @@ class NumberNotInRangeAdvancedFilter(AdvancedFilter):
         "values": {"key": "values", "type": "[[float]]"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, values: Optional[List[List[float]]] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[List[float]]] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        :keyword values: The set of filter values.
+        :paramtype values: list[list[float]]
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "NumberNotInRange"
+        self.values = values
+
+
+class NumberNotInRangeFilter(Filter):
+    """NumberNotInRange Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    :ivar values: The set of filter values.
+    :vartype values: list[list[float]]
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "values": {"key": "values", "type": "[[float]]"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[List[float]]] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -2673,8 +4545,8 @@ class Operation(_serialization.Model):
         origin: Optional[str] = None,
         is_data_action: Optional[bool] = None,
         properties: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the operation.
         :paramtype name: str
@@ -2723,8 +4595,8 @@ class OperationInfo(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Name of the provider.
         :paramtype provider: str
@@ -2753,7 +4625,7 @@ class OperationsListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A collection of operations.
         :paramtype value: list[~azure.mgmt.eventgrid.models.Operation]
@@ -2792,8 +4664,8 @@ class Partner(_serialization.Model):
         partner_registration_immutable_id: Optional[str] = None,
         partner_name: Optional[str] = None,
         authorization_expiration_time_in_utc: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword partner_registration_immutable_id: The immutableId of the corresponding partner
          registration.
@@ -2836,8 +4708,8 @@ class PartnerAuthorization(_serialization.Model):
         *,
         default_maximum_expiration_time_in_days: Optional[int] = None,
         authorized_partners_list: Optional[List["_models.Partner"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword default_maximum_expiration_time_in_days: Time used to validate the authorization
          expiration time for each authorized partner. If DefaultMaximumExpirationTimeInDays is
@@ -2901,8 +4773,8 @@ class PartnerConfiguration(Resource):
         tags: Optional[Dict[str, str]] = None,
         partner_authorization: Optional["_models.PartnerAuthorization"] = None,
         provisioning_state: Optional[Union[str, "_models.PartnerConfigurationProvisioningState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Location of the resource.
         :paramtype location: str
@@ -2938,8 +4810,12 @@ class PartnerConfigurationsListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PartnerConfiguration"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.PartnerConfiguration"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: A collection of partner configurations.
         :paramtype value: list[~azure.mgmt.eventgrid.models.PartnerConfiguration]
@@ -2974,8 +4850,8 @@ class PartnerConfigurationUpdateParameters(_serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         default_maximum_expiration_time_in_days: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Tags of the partner configuration resource.
         :paramtype tags: dict[str, str]
@@ -2986,6 +4862,256 @@ class PartnerConfigurationUpdateParameters(_serialization.Model):
         super().__init__(**kwargs)
         self.tags = tags
         self.default_maximum_expiration_time_in_days = default_maximum_expiration_time_in_days
+
+
+class PartnerDestination(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """Event Grid Partner Destination.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    :ivar location: Location of the resource. Required.
+    :vartype location: str
+    :ivar tags: Tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar system_data: The system metadata relating to Partner Destination resource.
+    :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar partner_registration_immutable_id: The immutable Id of the corresponding partner
+     registration.
+    :vartype partner_registration_immutable_id: str
+    :ivar endpoint_service_context: Endpoint context associated with this partner destination.
+    :vartype endpoint_service_context: str
+    :ivar expiration_time_if_not_activated_utc: Expiration time of the partner destination. If this
+     timer expires and the partner destination was never activated,
+     the partner destination and corresponding channel are deleted.
+    :vartype expiration_time_if_not_activated_utc: ~datetime.datetime
+    :ivar provisioning_state: Provisioning state of the partner destination. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed", and
+     "IdleDueToMirroredChannelResourceDeletion".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.eventgrid.models.PartnerDestinationProvisioningState
+    :ivar activation_state: Activation state of the partner destination. Known values are:
+     "NeverActivated" and "Activated".
+    :vartype activation_state: str or
+     ~azure.mgmt.eventgrid.models.PartnerDestinationActivationState
+    :ivar endpoint_base_url: Endpoint Base URL of the partner destination.
+    :vartype endpoint_base_url: str
+    :ivar message_for_activation: Context or helpful message that can be used during the approval
+     process.
+    :vartype message_for_activation: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "partner_registration_immutable_id": {"key": "properties.partnerRegistrationImmutableId", "type": "str"},
+        "endpoint_service_context": {"key": "properties.endpointServiceContext", "type": "str"},
+        "expiration_time_if_not_activated_utc": {
+            "key": "properties.expirationTimeIfNotActivatedUtc",
+            "type": "iso-8601",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "activation_state": {"key": "properties.activationState", "type": "str"},
+        "endpoint_base_url": {"key": "properties.endpointBaseUrl", "type": "str"},
+        "message_for_activation": {"key": "properties.messageForActivation", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        partner_registration_immutable_id: Optional[str] = None,
+        endpoint_service_context: Optional[str] = None,
+        expiration_time_if_not_activated_utc: Optional[datetime.datetime] = None,
+        activation_state: Optional[Union[str, "_models.PartnerDestinationActivationState"]] = None,
+        endpoint_base_url: Optional[str] = None,
+        message_for_activation: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: Location of the resource. Required.
+        :paramtype location: str
+        :keyword tags: Tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword partner_registration_immutable_id: The immutable Id of the corresponding partner
+         registration.
+        :paramtype partner_registration_immutable_id: str
+        :keyword endpoint_service_context: Endpoint context associated with this partner destination.
+        :paramtype endpoint_service_context: str
+        :keyword expiration_time_if_not_activated_utc: Expiration time of the partner destination. If
+         this timer expires and the partner destination was never activated,
+         the partner destination and corresponding channel are deleted.
+        :paramtype expiration_time_if_not_activated_utc: ~datetime.datetime
+        :keyword activation_state: Activation state of the partner destination. Known values are:
+         "NeverActivated" and "Activated".
+        :paramtype activation_state: str or
+         ~azure.mgmt.eventgrid.models.PartnerDestinationActivationState
+        :keyword endpoint_base_url: Endpoint Base URL of the partner destination.
+        :paramtype endpoint_base_url: str
+        :keyword message_for_activation: Context or helpful message that can be used during the
+         approval process.
+        :paramtype message_for_activation: str
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
+        self.system_data = None
+        self.partner_registration_immutable_id = partner_registration_immutable_id
+        self.endpoint_service_context = endpoint_service_context
+        self.expiration_time_if_not_activated_utc = expiration_time_if_not_activated_utc
+        self.provisioning_state = None
+        self.activation_state = activation_state
+        self.endpoint_base_url = endpoint_base_url
+        self.message_for_activation = message_for_activation
+
+
+class PartnerDestinationInfo(_serialization.Model):
+    """Properties of the corresponding partner destination of a Channel.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    WebhookPartnerDestinationInfo
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar azure_subscription_id: Azure subscription ID of the subscriber. The partner destination
+     associated with the channel will be
+     created under this Azure subscription.
+    :vartype azure_subscription_id: str
+    :ivar resource_group_name: Azure Resource Group of the subscriber. The partner destination
+     associated with the channel will be
+     created under this resource group.
+    :vartype resource_group_name: str
+    :ivar name: Name of the partner destination associated with the channel.
+    :vartype name: str
+    :ivar endpoint_type: Type of the endpoint for the partner destination. Required. "WebHook"
+    :vartype endpoint_type: str or ~azure.mgmt.eventgrid.models.PartnerEndpointType
+    :ivar endpoint_service_context: Additional context of the partner destination endpoint.
+    :vartype endpoint_service_context: str
+    :ivar resource_move_change_history: Change history of the resource move.
+    :vartype resource_move_change_history:
+     list[~azure.mgmt.eventgrid.models.ResourceMoveChangeHistory]
+    """
+
+    _validation = {
+        "endpoint_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "azure_subscription_id": {"key": "azureSubscriptionId", "type": "str"},
+        "resource_group_name": {"key": "resourceGroupName", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "endpoint_type": {"key": "endpointType", "type": "str"},
+        "endpoint_service_context": {"key": "endpointServiceContext", "type": "str"},
+        "resource_move_change_history": {"key": "resourceMoveChangeHistory", "type": "[ResourceMoveChangeHistory]"},
+    }
+
+    _subtype_map = {"endpoint_type": {"WebHook": "WebhookPartnerDestinationInfo"}}
+
+    def __init__(
+        self,
+        *,
+        azure_subscription_id: Optional[str] = None,
+        resource_group_name: Optional[str] = None,
+        name: Optional[str] = None,
+        endpoint_service_context: Optional[str] = None,
+        resource_move_change_history: Optional[List["_models.ResourceMoveChangeHistory"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword azure_subscription_id: Azure subscription ID of the subscriber. The partner
+         destination associated with the channel will be
+         created under this Azure subscription.
+        :paramtype azure_subscription_id: str
+        :keyword resource_group_name: Azure Resource Group of the subscriber. The partner destination
+         associated with the channel will be
+         created under this resource group.
+        :paramtype resource_group_name: str
+        :keyword name: Name of the partner destination associated with the channel.
+        :paramtype name: str
+        :keyword endpoint_service_context: Additional context of the partner destination endpoint.
+        :paramtype endpoint_service_context: str
+        :keyword resource_move_change_history: Change history of the resource move.
+        :paramtype resource_move_change_history:
+         list[~azure.mgmt.eventgrid.models.ResourceMoveChangeHistory]
+        """
+        super().__init__(**kwargs)
+        self.azure_subscription_id = azure_subscription_id
+        self.resource_group_name = resource_group_name
+        self.name = name
+        self.endpoint_type: Optional[str] = None
+        self.endpoint_service_context = endpoint_service_context
+        self.resource_move_change_history = resource_move_change_history
+
+
+class PartnerDestinationsListResult(_serialization.Model):
+    """Result of the List Partner Destinations operation.
+
+    :ivar value: A collection of partner destinations.
+    :vartype value: list[~azure.mgmt.eventgrid.models.PartnerDestination]
+    :ivar next_link: A link for the next page of partner destinations.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[PartnerDestination]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.PartnerDestination"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A collection of partner destinations.
+        :paramtype value: list[~azure.mgmt.eventgrid.models.PartnerDestination]
+        :keyword next_link: A link for the next page of partner destinations.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class PartnerDestinationUpdateParameters(_serialization.Model):
+    """Properties of the Partner Destination that can be updated.
+
+    :ivar tags: Tags of the Partner Destination resource.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Tags of the Partner Destination resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
 
 
 class PartnerDetails(_serialization.Model):
@@ -3015,8 +5141,8 @@ class PartnerDetails(_serialization.Model):
         description: Optional[str] = None,
         long_description: Optional[str] = None,
         setup_uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: This is short description about the partner. The length of this
          description should not exceed 256 characters.
@@ -3033,6 +5159,40 @@ class PartnerDetails(_serialization.Model):
         self.description = description
         self.long_description = long_description
         self.setup_uri = setup_uri
+
+
+class PartnerEventSubscriptionDestination(EventSubscriptionDestination):
+    """PartnerEventSubscriptionDestination.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
+     Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
+     "ServiceBusTopic", "AzureFunction", and "PartnerDestination".
+    :vartype endpoint_type: str or ~azure.mgmt.eventgrid.models.EndpointType
+    :ivar resource_id: The Azure Resource Id that represents the endpoint of a Partner Destination
+     of an event subscription.
+    :vartype resource_id: str
+    """
+
+    _validation = {
+        "endpoint_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "endpoint_type": {"key": "endpointType", "type": "str"},
+        "resource_id": {"key": "properties.resourceId", "type": "str"},
+    }
+
+    def __init__(self, *, resource_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword resource_id: The Azure Resource Id that represents the endpoint of a Partner
+         Destination of an event subscription.
+        :paramtype resource_id: str
+        """
+        super().__init__(**kwargs)
+        self.endpoint_type: str = "PartnerDestination"
+        self.resource_id = resource_id
 
 
 class PartnerNamespace(TrackedResource):  # pylint: disable=too-many-instance-attributes
@@ -3066,6 +5226,9 @@ class PartnerNamespace(TrackedResource):  # pylint: disable=too-many-instance-at
      format:
     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerRegistrations/{partnerRegistrationName}.
     :vartype partner_registration_fully_qualified_id: str
+    :ivar minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish to
+     this partner namespace. Known values are: "1.0", "1.1", and "1.2".
+    :vartype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
     :ivar endpoint: Endpoint for the partner namespace.
     :vartype endpoint: str
     :ivar public_network_access: This determines if traffic is allowed over public network. By
@@ -3117,6 +5280,7 @@ class PartnerNamespace(TrackedResource):  # pylint: disable=too-many-instance-at
             "key": "properties.partnerRegistrationFullyQualifiedId",
             "type": "str",
         },
+        "minimum_tls_version_allowed": {"key": "properties.minimumTlsVersionAllowed", "type": "str"},
         "endpoint": {"key": "properties.endpoint", "type": "str"},
         "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
         "inbound_ip_rules": {"key": "properties.inboundIpRules", "type": "[InboundIpRule]"},
@@ -3130,12 +5294,13 @@ class PartnerNamespace(TrackedResource):  # pylint: disable=too-many-instance-at
         location: str,
         tags: Optional[Dict[str, str]] = None,
         partner_registration_fully_qualified_id: Optional[str] = None,
+        minimum_tls_version_allowed: Optional[Union[str, "_models.TlsVersion"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         inbound_ip_rules: Optional[List["_models.InboundIpRule"]] = None,
         disable_local_auth: bool = False,
         partner_topic_routing_mode: Union[str, "_models.PartnerTopicRoutingMode"] = "SourceEventAttribute",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Location of the resource. Required.
         :paramtype location: str
@@ -3146,6 +5311,9 @@ class PartnerNamespace(TrackedResource):  # pylint: disable=too-many-instance-at
          format:
         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerRegistrations/{partnerRegistrationName}.
         :paramtype partner_registration_fully_qualified_id: str
+        :keyword minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish
+         to this partner namespace. Known values are: "1.0", "1.1", and "1.2".
+        :paramtype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
         :keyword public_network_access: This determines if traffic is allowed over public network. By
          default it is enabled.
          You can further restrict to specific IPs by configuring :code:`<seealso
@@ -3172,6 +5340,7 @@ class PartnerNamespace(TrackedResource):  # pylint: disable=too-many-instance-at
         self.private_endpoint_connections = None
         self.provisioning_state = None
         self.partner_registration_fully_qualified_id = partner_registration_fully_qualified_id
+        self.minimum_tls_version_allowed = minimum_tls_version_allowed
         self.endpoint = None
         self.public_network_access = public_network_access
         self.inbound_ip_rules = inbound_ip_rules
@@ -3196,7 +5365,7 @@ class PartnerNamespaceRegenerateKeyRequest(_serialization.Model):
         "key_name": {"key": "keyName", "type": "str"},
     }
 
-    def __init__(self, *, key_name: str, **kwargs):
+    def __init__(self, *, key_name: str, **kwargs: Any) -> None:
         """
         :keyword key_name: Key name to regenerate (key1 or key2). Required.
         :paramtype key_name: str
@@ -3219,7 +5388,7 @@ class PartnerNamespaceSharedAccessKeys(_serialization.Model):
         "key2": {"key": "key2", "type": "str"},
     }
 
-    def __init__(self, *, key1: Optional[str] = None, key2: Optional[str] = None, **kwargs):
+    def __init__(self, *, key1: Optional[str] = None, key2: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword key1: Shared access key1 for the partner namespace.
         :paramtype key1: str
@@ -3246,8 +5415,12 @@ class PartnerNamespacesListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PartnerNamespace"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.PartnerNamespace"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: A collection of partner namespaces.
         :paramtype value: list[~azure.mgmt.eventgrid.models.PartnerNamespace]
@@ -3273,6 +5446,9 @@ class PartnerNamespaceUpdateParameters(_serialization.Model):
     :ivar inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of all
      IPs. Note: These are considered only if PublicNetworkAccess is enabled.
     :vartype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+    :ivar minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish to
+     this domain. Known values are: "1.0", "1.1", and "1.2".
+    :vartype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
     :ivar disable_local_auth: This boolean is used to enable or disable local auth. Default value
      is false. When the property is set to true, only AAD token will be used to authenticate if user
      is allowed to publish to the partner namespace.
@@ -3283,6 +5459,7 @@ class PartnerNamespaceUpdateParameters(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
         "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
         "inbound_ip_rules": {"key": "properties.inboundIpRules", "type": "[InboundIpRule]"},
+        "minimum_tls_version_allowed": {"key": "properties.minimumTlsVersionAllowed", "type": "str"},
         "disable_local_auth": {"key": "properties.disableLocalAuth", "type": "bool"},
     }
 
@@ -3292,9 +5469,10 @@ class PartnerNamespaceUpdateParameters(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         inbound_ip_rules: Optional[List["_models.InboundIpRule"]] = None,
+        minimum_tls_version_allowed: Optional[Union[str, "_models.TlsVersion"]] = None,
         disable_local_auth: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Tags of the Partner Namespace.
         :paramtype tags: dict[str, str]
@@ -3307,6 +5485,9 @@ class PartnerNamespaceUpdateParameters(_serialization.Model):
         :keyword inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of
          all IPs. Note: These are considered only if PublicNetworkAccess is enabled.
         :paramtype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+        :keyword minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish
+         to this domain. Known values are: "1.0", "1.1", and "1.2".
+        :paramtype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
         :keyword disable_local_auth: This boolean is used to enable or disable local auth. Default
          value is false. When the property is set to true, only AAD token will be used to authenticate
          if user is allowed to publish to the partner namespace.
@@ -3316,6 +5497,7 @@ class PartnerNamespaceUpdateParameters(_serialization.Model):
         self.tags = tags
         self.public_network_access = public_network_access
         self.inbound_ip_rules = inbound_ip_rules
+        self.minimum_tls_version_allowed = minimum_tls_version_allowed
         self.disable_local_auth = disable_local_auth
 
 
@@ -3375,8 +5557,8 @@ class PartnerRegistration(TrackedResource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         partner_registration_immutable_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Location of the resource. Required.
         :paramtype location: str
@@ -3409,8 +5591,12 @@ class PartnerRegistrationsListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PartnerRegistration"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.PartnerRegistration"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: A collection of partner registrations.
         :paramtype value: list[~azure.mgmt.eventgrid.models.PartnerRegistration]
@@ -3433,7 +5619,7 @@ class PartnerRegistrationUpdateParameters(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Tags of the partner registration resource.
         :paramtype tags: dict[str, str]
@@ -3535,8 +5721,8 @@ class PartnerTopic(TrackedResource):  # pylint: disable=too-many-instance-attrib
         activation_state: Optional[Union[str, "_models.PartnerTopicActivationState"]] = None,
         partner_topic_friendly_description: Optional[str] = None,
         message_for_activation: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Location of the resource. Required.
         :paramtype location: str
@@ -3622,8 +5808,8 @@ class PartnerTopicInfo(_serialization.Model):
         name: Optional[str] = None,
         event_type_info: Optional["_models.EventTypeInfo"] = None,
         source: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword azure_subscription_id: Azure subscription ID of the subscriber. The partner topic
          associated with the channel will be
@@ -3669,8 +5855,8 @@ class PartnerTopicsListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PartnerTopic"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.PartnerTopic"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A collection of partner topics.
         :paramtype value: list[~azure.mgmt.eventgrid.models.PartnerTopic]
@@ -3697,8 +5883,8 @@ class PartnerTopicUpdateParameters(_serialization.Model):
     }
 
     def __init__(
-        self, *, tags: Optional[Dict[str, str]] = None, identity: Optional["_models.IdentityInfo"] = None, **kwargs
-    ):
+        self, *, tags: Optional[Dict[str, str]] = None, identity: Optional["_models.IdentityInfo"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Tags of the Partner Topic resource.
         :paramtype tags: dict[str, str]
@@ -3708,6 +5894,34 @@ class PartnerTopicUpdateParameters(_serialization.Model):
         super().__init__(**kwargs)
         self.tags = tags
         self.identity = identity
+
+
+class PartnerUpdateDestinationInfo(_serialization.Model):
+    """Properties of the corresponding partner destination of a Channel.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    WebhookUpdatePartnerDestinationInfo
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar endpoint_type: Type of the endpoint for the partner destination. Required. "WebHook"
+    :vartype endpoint_type: str or ~azure.mgmt.eventgrid.models.PartnerEndpointType
+    """
+
+    _validation = {
+        "endpoint_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "endpoint_type": {"key": "endpointType", "type": "str"},
+    }
+
+    _subtype_map = {"endpoint_type": {"WebHook": "WebhookUpdatePartnerDestinationInfo"}}
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.endpoint_type: Optional[str] = None
 
 
 class PartnerUpdateTopicInfo(_serialization.Model):
@@ -3721,13 +5935,130 @@ class PartnerUpdateTopicInfo(_serialization.Model):
         "event_type_info": {"key": "eventTypeInfo", "type": "EventTypeInfo"},
     }
 
-    def __init__(self, *, event_type_info: Optional["_models.EventTypeInfo"] = None, **kwargs):
+    def __init__(self, *, event_type_info: Optional["_models.EventTypeInfo"] = None, **kwargs: Any) -> None:
         """
         :keyword event_type_info: Event type info for the partner topic.
         :paramtype event_type_info: ~azure.mgmt.eventgrid.models.EventTypeInfo
         """
         super().__init__(**kwargs)
         self.event_type_info = event_type_info
+
+
+class PermissionBinding(Resource):
+    """The Permission binding resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    :ivar system_data: The system metadata relating to the PermissionBinding resource.
+    :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar description: Description for the Permission Binding resource.
+    :vartype description: str
+    :ivar topic_space_name: The name of the Topic Space resource that the permission is bound to.
+     The Topic space needs to be a resource under the same namespace the permission binding is a
+     part of.
+    :vartype topic_space_name: str
+    :ivar permission: The allowed permission. Known values are: "Publisher" and "Subscriber".
+    :vartype permission: str or ~azure.mgmt.eventgrid.models.PermissionType
+    :ivar client_group_name: The name of the client group resource that the permission is bound to.
+     The client group needs to be a resource under the same namespace the permission binding is a
+     part of.
+    :vartype client_group_name: str
+    :ivar provisioning_state: Provisioning state of the PermissionBinding resource. Known values
+     are: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed", and "Deleted".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.eventgrid.models.PermissionBindingProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "description": {"key": "properties.description", "type": "str"},
+        "topic_space_name": {"key": "properties.topicSpaceName", "type": "str"},
+        "permission": {"key": "properties.permission", "type": "str"},
+        "client_group_name": {"key": "properties.clientGroupName", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        topic_space_name: Optional[str] = None,
+        permission: Optional[Union[str, "_models.PermissionType"]] = None,
+        client_group_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: Description for the Permission Binding resource.
+        :paramtype description: str
+        :keyword topic_space_name: The name of the Topic Space resource that the permission is bound
+         to.
+         The Topic space needs to be a resource under the same namespace the permission binding is a
+         part of.
+        :paramtype topic_space_name: str
+        :keyword permission: The allowed permission. Known values are: "Publisher" and "Subscriber".
+        :paramtype permission: str or ~azure.mgmt.eventgrid.models.PermissionType
+        :keyword client_group_name: The name of the client group resource that the permission is bound
+         to.
+         The client group needs to be a resource under the same namespace the permission binding is a
+         part of.
+        :paramtype client_group_name: str
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.description = description
+        self.topic_space_name = topic_space_name
+        self.permission = permission
+        self.client_group_name = client_group_name
+        self.provisioning_state = None
+
+
+class PermissionBindingsListResult(_serialization.Model):
+    """Result of the List Permission Binding operation.
+
+    :ivar value: A collection of Permission Binding.
+    :vartype value: list[~azure.mgmt.eventgrid.models.PermissionBinding]
+    :ivar next_link: A link for the next page of Permission Binding.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[PermissionBinding]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.PermissionBinding"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A collection of Permission Binding.
+        :paramtype value: list[~azure.mgmt.eventgrid.models.PermissionBinding]
+        :keyword next_link: A link for the next page of Permission Binding.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class PrivateEndpoint(_serialization.Model):
@@ -3741,7 +6072,7 @@ class PrivateEndpoint(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: The ARM identifier for Private Endpoint.
         :paramtype id: str
@@ -3798,8 +6129,8 @@ class PrivateEndpointConnection(Resource):
         group_ids: Optional[List[str]] = None,
         private_link_service_connection_state: Optional["_models.ConnectionState"] = None,
         provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: The Private Endpoint resource for this Connection.
         :paramtype private_endpoint: ~azure.mgmt.eventgrid.models.PrivateEndpoint
@@ -3837,8 +6168,8 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         *,
         value: Optional[List["_models.PrivateEndpointConnection"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: A collection of private endpoint connection resources.
         :paramtype value: list[~azure.mgmt.eventgrid.models.PrivateEndpointConnection]
@@ -3889,8 +6220,8 @@ class PrivateLinkResource(_serialization.Model):
         display_name: Optional[str] = None,
         required_members: Optional[List[str]] = None,
         required_zone_names: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified identifier of the resource.
         :paramtype id: str
@@ -3932,8 +6263,12 @@ class PrivateLinkResourcesListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.PrivateLinkResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: A collection of private link resources.
         :paramtype value: list[~azure.mgmt.eventgrid.models.PrivateLinkResource]
@@ -3943,6 +6278,188 @@ class PrivateLinkResourcesListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class QueueInfo(_serialization.Model):
+    """Properties of the Queue info for event subscription.
+
+    :ivar receive_lock_duration_in_seconds: Maximum period in seconds in which once the message is
+     in received (by the client) state and waiting to be accepted, released or rejected.
+     If this time elapsed after a message has been received by the client and not transitioned into
+     accepted (not processed), released or rejected,
+     the message is available for redelivery. This is an optional field, where default is 60
+     seconds, minimum is 60 seconds and maximum is 300 seconds.
+    :vartype receive_lock_duration_in_seconds: int
+    :ivar max_delivery_count: The maximum delivery count of the events.
+    :vartype max_delivery_count: int
+    :ivar dead_letter_destination_with_resource_identity: The dead letter destination of the event
+     subscription. Any event that cannot be delivered to its' destination is sent to the dead letter
+     destination.
+     Uses the managed identity setup on the parent resource (namely, topic) to acquire the
+     authentication tokens being used during delivery / dead-lettering.
+    :vartype dead_letter_destination_with_resource_identity:
+     ~azure.mgmt.eventgrid.models.DeadLetterWithResourceIdentity
+    :ivar event_time_to_live: Time span duration in ISO 8601 format that determines how long
+     messages are available to the subscription from the time the message was published.
+     This duration value is expressed using the following format: \'P(n)Y(n)M(n)DT(n)H(n)M(n)S\',
+     where:
+
+     .. code-block::
+
+        - (n) is replaced by the value of each time element that follows the (n).
+        - P is the duration (or Period) designator and is always placed at the beginning of the
+     duration.
+        - Y is the year designator, and it follows the value for the number of years.
+        - M is the month designator, and it follows the value for the number of months.
+        - W is the week designator, and it follows the value for the number of weeks.
+        - D is the day designator, and it follows the value for the number of days.
+        - T is the time designator, and it precedes the time components.
+        - H is the hour designator, and it follows the value for the number of hours.
+        - M is the minute designator, and it follows the value for the number of minutes.
+        - S is the second designator, and it follows the value for the number of seconds.
+
+     This duration value cannot be set greater than the topic’s EventRetentionInDays. It is is an
+     optional field where its minimum value is 1 minute, and its maximum is determined
+     by topic’s EventRetentionInDays value. The followings are examples of valid values:
+
+     .. code-block::
+
+        - \'P0DT23H12M\' or \'PT23H12M\': for duration of 23 hours and 12 minutes.
+        - \'P1D\' or \'P1DT0H0M0S\': for duration of 1 day.
+    :vartype event_time_to_live: ~datetime.timedelta
+    """
+
+    _attribute_map = {
+        "receive_lock_duration_in_seconds": {"key": "receiveLockDurationInSeconds", "type": "int"},
+        "max_delivery_count": {"key": "maxDeliveryCount", "type": "int"},
+        "dead_letter_destination_with_resource_identity": {
+            "key": "deadLetterDestinationWithResourceIdentity",
+            "type": "DeadLetterWithResourceIdentity",
+        },
+        "event_time_to_live": {"key": "eventTimeToLive", "type": "duration"},
+    }
+
+    def __init__(
+        self,
+        *,
+        receive_lock_duration_in_seconds: Optional[int] = None,
+        max_delivery_count: Optional[int] = None,
+        dead_letter_destination_with_resource_identity: Optional["_models.DeadLetterWithResourceIdentity"] = None,
+        event_time_to_live: Optional[datetime.timedelta] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword receive_lock_duration_in_seconds: Maximum period in seconds in which once the message
+         is in received (by the client) state and waiting to be accepted, released or rejected.
+         If this time elapsed after a message has been received by the client and not transitioned into
+         accepted (not processed), released or rejected,
+         the message is available for redelivery. This is an optional field, where default is 60
+         seconds, minimum is 60 seconds and maximum is 300 seconds.
+        :paramtype receive_lock_duration_in_seconds: int
+        :keyword max_delivery_count: The maximum delivery count of the events.
+        :paramtype max_delivery_count: int
+        :keyword dead_letter_destination_with_resource_identity: The dead letter destination of the
+         event subscription. Any event that cannot be delivered to its' destination is sent to the dead
+         letter destination.
+         Uses the managed identity setup on the parent resource (namely, topic) to acquire the
+         authentication tokens being used during delivery / dead-lettering.
+        :paramtype dead_letter_destination_with_resource_identity:
+         ~azure.mgmt.eventgrid.models.DeadLetterWithResourceIdentity
+        :keyword event_time_to_live: Time span duration in ISO 8601 format that determines how long
+         messages are available to the subscription from the time the message was published.
+         This duration value is expressed using the following format: \'P(n)Y(n)M(n)DT(n)H(n)M(n)S\',
+         where:
+
+         .. code-block::
+
+            - (n) is replaced by the value of each time element that follows the (n).
+            - P is the duration (or Period) designator and is always placed at the beginning of the
+         duration.
+            - Y is the year designator, and it follows the value for the number of years.
+            - M is the month designator, and it follows the value for the number of months.
+            - W is the week designator, and it follows the value for the number of weeks.
+            - D is the day designator, and it follows the value for the number of days.
+            - T is the time designator, and it precedes the time components.
+            - H is the hour designator, and it follows the value for the number of hours.
+            - M is the minute designator, and it follows the value for the number of minutes.
+            - S is the second designator, and it follows the value for the number of seconds.
+
+         This duration value cannot be set greater than the topic’s EventRetentionInDays. It is is an
+         optional field where its minimum value is 1 minute, and its maximum is determined
+         by topic’s EventRetentionInDays value. The followings are examples of valid values:
+
+         .. code-block::
+
+            - \'P0DT23H12M\' or \'PT23H12M\': for duration of 23 hours and 12 minutes.
+            - \'P1D\' or \'P1DT0H0M0S\': for duration of 1 day.
+        :paramtype event_time_to_live: ~datetime.timedelta
+        """
+        super().__init__(**kwargs)
+        self.receive_lock_duration_in_seconds = receive_lock_duration_in_seconds
+        self.max_delivery_count = max_delivery_count
+        self.dead_letter_destination_with_resource_identity = dead_letter_destination_with_resource_identity
+        self.event_time_to_live = event_time_to_live
+
+
+class ResourceMoveChangeHistory(_serialization.Model):
+    """The change history of the resource move.
+
+    :ivar azure_subscription_id: Azure subscription ID of the resource.
+    :vartype azure_subscription_id: str
+    :ivar resource_group_name: Azure Resource Group of the resource.
+    :vartype resource_group_name: str
+    :ivar changed_time_utc: UTC timestamp of when the resource was changed.
+    :vartype changed_time_utc: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "azure_subscription_id": {"key": "azureSubscriptionId", "type": "str"},
+        "resource_group_name": {"key": "resourceGroupName", "type": "str"},
+        "changed_time_utc": {"key": "changedTimeUtc", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        azure_subscription_id: Optional[str] = None,
+        resource_group_name: Optional[str] = None,
+        changed_time_utc: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword azure_subscription_id: Azure subscription ID of the resource.
+        :paramtype azure_subscription_id: str
+        :keyword resource_group_name: Azure Resource Group of the resource.
+        :paramtype resource_group_name: str
+        :keyword changed_time_utc: UTC timestamp of when the resource was changed.
+        :paramtype changed_time_utc: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.azure_subscription_id = azure_subscription_id
+        self.resource_group_name = resource_group_name
+        self.changed_time_utc = changed_time_utc
+
+
+class ResourceSku(_serialization.Model):
+    """Describes an EventGrid Resource Sku.
+
+    :ivar name: The Sku name of the resource. The possible values are: Basic or Premium. Known
+     values are: "Basic" and "Premium".
+    :vartype name: str or ~azure.mgmt.eventgrid.models.Sku
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(self, *, name: Union[str, "_models.Sku"] = "Basic", **kwargs: Any) -> None:
+        """
+        :keyword name: The Sku name of the resource. The possible values are: Basic or Premium. Known
+         values are: "Basic" and "Premium".
+        :paramtype name: str or ~azure.mgmt.eventgrid.models.Sku
+        """
+        super().__init__(**kwargs)
+        self.name = name
 
 
 class RetryPolicy(_serialization.Model):
@@ -3959,7 +6476,9 @@ class RetryPolicy(_serialization.Model):
         "event_time_to_live_in_minutes": {"key": "eventTimeToLiveInMinutes", "type": "int"},
     }
 
-    def __init__(self, *, max_delivery_attempts: int = 30, event_time_to_live_in_minutes: int = 1440, **kwargs):
+    def __init__(
+        self, *, max_delivery_attempts: int = 30, event_time_to_live_in_minutes: int = 1440, **kwargs: Any
+    ) -> None:
         """
         :keyword max_delivery_attempts: Maximum number of delivery retry attempts for events.
         :paramtype max_delivery_attempts: int
@@ -3971,6 +6490,70 @@ class RetryPolicy(_serialization.Model):
         self.event_time_to_live_in_minutes = event_time_to_live_in_minutes
 
 
+class RoutingEnrichments(_serialization.Model):
+    """RoutingEnrichments.
+
+    :ivar static:
+    :vartype static: list[~azure.mgmt.eventgrid.models.StaticRoutingEnrichment]
+    :ivar dynamic:
+    :vartype dynamic: list[~azure.mgmt.eventgrid.models.DynamicRoutingEnrichment]
+    """
+
+    _attribute_map = {
+        "static": {"key": "static", "type": "[StaticRoutingEnrichment]"},
+        "dynamic": {"key": "dynamic", "type": "[DynamicRoutingEnrichment]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        static: Optional[List["_models.StaticRoutingEnrichment"]] = None,
+        dynamic: Optional[List["_models.DynamicRoutingEnrichment"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword static:
+        :paramtype static: list[~azure.mgmt.eventgrid.models.StaticRoutingEnrichment]
+        :keyword dynamic:
+        :paramtype dynamic: list[~azure.mgmt.eventgrid.models.DynamicRoutingEnrichment]
+        """
+        super().__init__(**kwargs)
+        self.static = static
+        self.dynamic = dynamic
+
+
+class RoutingIdentityInfo(_serialization.Model):
+    """Routing identity info for topic spaces configuration.
+
+    :ivar type: Known values are: "None", "SystemAssigned", and "UserAssigned".
+    :vartype type: str or ~azure.mgmt.eventgrid.models.RoutingIdentityType
+    :ivar user_assigned_identity:
+    :vartype user_assigned_identity: str
+    """
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identity": {"key": "userAssignedIdentity", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.RoutingIdentityType"]] = None,
+        user_assigned_identity: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Known values are: "None", "SystemAssigned", and "UserAssigned".
+        :paramtype type: str or ~azure.mgmt.eventgrid.models.RoutingIdentityType
+        :keyword user_assigned_identity:
+        :paramtype user_assigned_identity: str
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.user_assigned_identity = user_assigned_identity
+
+
 class ServiceBusQueueEventSubscriptionDestination(EventSubscriptionDestination):
     """Information about the service bus destination for an event subscription.
 
@@ -3978,7 +6561,7 @@ class ServiceBusQueueEventSubscriptionDestination(EventSubscriptionDestination):
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
-     "ServiceBusTopic", and "AzureFunction".
+     "ServiceBusTopic", "AzureFunction", and "PartnerDestination".
     :vartype endpoint_type: str or ~azure.mgmt.eventgrid.models.EndpointType
     :ivar resource_id: The Azure Resource Id that represents the endpoint of the Service Bus
      destination of an event subscription.
@@ -4006,8 +6589,8 @@ class ServiceBusQueueEventSubscriptionDestination(EventSubscriptionDestination):
         *,
         resource_id: Optional[str] = None,
         delivery_attribute_mappings: Optional[List["_models.DeliveryAttributeMapping"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: The Azure Resource Id that represents the endpoint of the Service Bus
          destination of an event subscription.
@@ -4029,7 +6612,7 @@ class ServiceBusTopicEventSubscriptionDestination(EventSubscriptionDestination):
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
-     "ServiceBusTopic", and "AzureFunction".
+     "ServiceBusTopic", "AzureFunction", and "PartnerDestination".
     :vartype endpoint_type: str or ~azure.mgmt.eventgrid.models.EndpointType
     :ivar resource_id: The Azure Resource Id that represents the endpoint of the Service Bus Topic
      destination of an event subscription.
@@ -4057,8 +6640,8 @@ class ServiceBusTopicEventSubscriptionDestination(EventSubscriptionDestination):
         *,
         resource_id: Optional[str] = None,
         delivery_attribute_mappings: Optional[List["_models.DeliveryAttributeMapping"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: The Azure Resource Id that represents the endpoint of the Service Bus
          Topic destination of an event subscription.
@@ -4100,7 +6683,9 @@ class StaticDeliveryAttributeMapping(DeliveryAttributeMapping):
         "is_secret": {"key": "properties.isSecret", "type": "bool"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, is_secret: bool = False, **kwargs):
+    def __init__(
+        self, *, name: Optional[str] = None, value: Optional[str] = None, is_secret: bool = False, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the delivery attribute or header.
         :paramtype name: str
@@ -4113,6 +6698,40 @@ class StaticDeliveryAttributeMapping(DeliveryAttributeMapping):
         self.type: str = "Static"
         self.value = value
         self.is_secret = is_secret
+
+
+class StaticRoutingEnrichment(_serialization.Model):
+    """StaticRoutingEnrichment.
+
+    :ivar key: Static routing enrichment key.
+    :vartype key: str
+    :ivar value_type: Static routing enrichment value type. For e.g. this property value can be
+     'String'. "String"
+    :vartype value_type: str or ~azure.mgmt.eventgrid.models.StaticRoutingEnrichmentType
+    """
+
+    _attribute_map = {
+        "key": {"key": "key", "type": "str"},
+        "value_type": {"key": "valueType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        key: Optional[str] = None,
+        value_type: Optional[Union[str, "_models.StaticRoutingEnrichmentType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword key: Static routing enrichment key.
+        :paramtype key: str
+        :keyword value_type: Static routing enrichment value type. For e.g. this property value can be
+         'String'. "String"
+        :paramtype value_type: str or ~azure.mgmt.eventgrid.models.StaticRoutingEnrichmentType
+        """
+        super().__init__(**kwargs)
+        self.key = key
+        self.value_type = value_type
 
 
 class StorageBlobDeadLetterDestination(DeadLetterDestination):
@@ -4141,7 +6760,9 @@ class StorageBlobDeadLetterDestination(DeadLetterDestination):
         "blob_container_name": {"key": "properties.blobContainerName", "type": "str"},
     }
 
-    def __init__(self, *, resource_id: Optional[str] = None, blob_container_name: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, resource_id: Optional[str] = None, blob_container_name: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: The Azure Resource ID of the storage account that is the destination of
          the deadletter events.
@@ -4163,7 +6784,7 @@ class StorageQueueEventSubscriptionDestination(EventSubscriptionDestination):
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
-     "ServiceBusTopic", and "AzureFunction".
+     "ServiceBusTopic", "AzureFunction", and "PartnerDestination".
     :vartype endpoint_type: str or ~azure.mgmt.eventgrid.models.EndpointType
     :ivar resource_id: The Azure Resource ID of the storage account that contains the queue that is
      the destination of an event subscription.
@@ -4172,6 +6793,8 @@ class StorageQueueEventSubscriptionDestination(EventSubscriptionDestination):
      of an event subscription.
     :vartype queue_name: str
     :ivar queue_message_time_to_live_in_seconds: Storage queue message time to live in seconds.
+     This value cannot be zero or negative with the exception of using -1 to indicate that the Time
+     To Live of the message is Infinite.
     :vartype queue_message_time_to_live_in_seconds: int
     """
 
@@ -4192,8 +6815,8 @@ class StorageQueueEventSubscriptionDestination(EventSubscriptionDestination):
         resource_id: Optional[str] = None,
         queue_name: Optional[str] = None,
         queue_message_time_to_live_in_seconds: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: The Azure Resource ID of the storage account that contains the queue that
          is the destination of an event subscription.
@@ -4202,6 +6825,8 @@ class StorageQueueEventSubscriptionDestination(EventSubscriptionDestination):
          destination of an event subscription.
         :paramtype queue_name: str
         :keyword queue_message_time_to_live_in_seconds: Storage queue message time to live in seconds.
+         This value cannot be zero or negative with the exception of using -1 to indicate that the Time
+         To Live of the message is Infinite.
         :paramtype queue_message_time_to_live_in_seconds: int
         """
         super().__init__(**kwargs)
@@ -4239,7 +6864,47 @@ class StringBeginsWithAdvancedFilter(AdvancedFilter):
         "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        :keyword values: The set of filter values.
+        :paramtype values: list[str]
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "StringBeginsWith"
+        self.values = values
+
+
+class StringBeginsWithFilter(Filter):
+    """StringBeginsWith Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    :ivar values: The set of filter values.
+    :vartype values: list[str]
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -4279,7 +6944,47 @@ class StringContainsAdvancedFilter(AdvancedFilter):
         "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        :keyword values: The set of filter values.
+        :paramtype values: list[str]
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "StringContains"
+        self.values = values
+
+
+class StringContainsFilter(Filter):
+    """StringContains Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    :ivar values: The set of filter values.
+    :vartype values: list[str]
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -4319,7 +7024,47 @@ class StringEndsWithAdvancedFilter(AdvancedFilter):
         "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        :keyword values: The set of filter values.
+        :paramtype values: list[str]
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "StringEndsWith"
+        self.values = values
+
+
+class StringEndsWithFilter(Filter):
+    """StringEndsWith Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    :ivar values: The set of filter values.
+    :vartype values: list[str]
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -4359,7 +7104,47 @@ class StringInAdvancedFilter(AdvancedFilter):
         "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        :keyword values: The set of filter values.
+        :paramtype values: list[str]
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "StringIn"
+        self.values = values
+
+
+class StringInFilter(Filter):
+    """StringIn Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    :ivar values: The set of filter values.
+    :vartype values: list[str]
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -4399,7 +7184,47 @@ class StringNotBeginsWithAdvancedFilter(AdvancedFilter):
         "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        :keyword values: The set of filter values.
+        :paramtype values: list[str]
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "StringNotBeginsWith"
+        self.values = values
+
+
+class StringNotBeginsWithFilter(Filter):
+    """StringNotBeginsWith Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    :ivar values: The set of filter values.
+    :vartype values: list[str]
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -4439,7 +7264,47 @@ class StringNotContainsAdvancedFilter(AdvancedFilter):
         "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        :keyword values: The set of filter values.
+        :paramtype values: list[str]
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "StringNotContains"
+        self.values = values
+
+
+class StringNotContainsFilter(Filter):
+    """StringNotContains Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    :ivar values: The set of filter values.
+    :vartype values: list[str]
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -4479,7 +7344,47 @@ class StringNotEndsWithAdvancedFilter(AdvancedFilter):
         "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        :keyword values: The set of filter values.
+        :paramtype values: list[str]
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "StringNotEndsWith"
+        self.values = values
+
+
+class StringNotEndsWithFilter(Filter):
+    """StringNotEndsWith Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    :ivar values: The set of filter values.
+    :vartype values: list[str]
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -4519,7 +7424,7 @@ class StringNotInAdvancedFilter(AdvancedFilter):
         "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword key: The field/property in the event based on which you want to filter.
         :paramtype key: str
@@ -4529,6 +7434,189 @@ class StringNotInAdvancedFilter(AdvancedFilter):
         super().__init__(key=key, **kwargs)
         self.operator_type: str = "StringNotIn"
         self.values = values
+
+
+class StringNotInFilter(Filter):
+    """StringNotIn Filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operator_type: The operator type used for filtering, e.g., NumberIn, StringContains,
+     BoolEquals and others. Required. Known values are: "NumberIn", "NumberNotIn", "NumberLessThan",
+     "NumberGreaterThan", "NumberLessThanOrEquals", "NumberGreaterThanOrEquals", "BoolEquals",
+     "StringIn", "StringNotIn", "StringBeginsWith", "StringEndsWith", "StringContains",
+     "NumberInRange", "NumberNotInRange", "StringNotBeginsWith", "StringNotEndsWith",
+     "StringNotContains", "IsNullOrUndefined", and "IsNotNull".
+    :vartype operator_type: str or ~azure.mgmt.eventgrid.models.FilterOperatorType
+    :ivar key: The field/property in the event based on which you want to filter.
+    :vartype key: str
+    :ivar values: The set of filter values.
+    :vartype values: list[str]
+    """
+
+    _validation = {
+        "operator_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "operator_type": {"key": "operatorType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, values: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: The field/property in the event based on which you want to filter.
+        :paramtype key: str
+        :keyword values: The set of filter values.
+        :paramtype values: list[str]
+        """
+        super().__init__(key=key, **kwargs)
+        self.operator_type: str = "StringNotIn"
+        self.values = values
+
+
+class Subscription(Resource):
+    """Event Subscription.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    :ivar system_data: The system metadata relating to Event Subscription resource.
+    :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar provisioning_state: Provisioning state of the event subscription. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed", "AwaitingManualAction",
+     "Deleted", "DeleteFailed", "CreateFailed", and "UpdatedFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.eventgrid.models.SubscriptionProvisioningState
+    :ivar delivery_configuration: Information about the delivery configuration of the event
+     subscription.
+    :vartype delivery_configuration: ~azure.mgmt.eventgrid.models.DeliveryConfiguration
+    :ivar event_delivery_schema: The event delivery schema for the event subscription.
+     "CloudEventSchemaV1_0"
+    :vartype event_delivery_schema: str or ~azure.mgmt.eventgrid.models.DeliverySchema
+    :ivar filters_configuration: Information about the filter for the event subscription.
+    :vartype filters_configuration: ~azure.mgmt.eventgrid.models.FiltersConfiguration
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "delivery_configuration": {"key": "properties.deliveryConfiguration", "type": "DeliveryConfiguration"},
+        "event_delivery_schema": {"key": "properties.eventDeliverySchema", "type": "str"},
+        "filters_configuration": {"key": "properties.filtersConfiguration", "type": "FiltersConfiguration"},
+    }
+
+    def __init__(
+        self,
+        *,
+        delivery_configuration: Optional["_models.DeliveryConfiguration"] = None,
+        event_delivery_schema: Optional[Union[str, "_models.DeliverySchema"]] = None,
+        filters_configuration: Optional["_models.FiltersConfiguration"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword delivery_configuration: Information about the delivery configuration of the event
+         subscription.
+        :paramtype delivery_configuration: ~azure.mgmt.eventgrid.models.DeliveryConfiguration
+        :keyword event_delivery_schema: The event delivery schema for the event subscription.
+         "CloudEventSchemaV1_0"
+        :paramtype event_delivery_schema: str or ~azure.mgmt.eventgrid.models.DeliverySchema
+        :keyword filters_configuration: Information about the filter for the event subscription.
+        :paramtype filters_configuration: ~azure.mgmt.eventgrid.models.FiltersConfiguration
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.provisioning_state = None
+        self.delivery_configuration = delivery_configuration
+        self.event_delivery_schema = event_delivery_schema
+        self.filters_configuration = filters_configuration
+
+
+class SubscriptionsListResult(_serialization.Model):
+    """Result of the List event subscriptions operation.
+
+    :ivar value: A collection of Subscriptions.
+    :vartype value: list[~azure.mgmt.eventgrid.models.Subscription]
+    :ivar next_link: A link for the next page of event subscriptions.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Subscription]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.Subscription"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A collection of Subscriptions.
+        :paramtype value: list[~azure.mgmt.eventgrid.models.Subscription]
+        :keyword next_link: A link for the next page of event subscriptions.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class SubscriptionUpdateParameters(_serialization.Model):
+    """Properties of the Event Subscription update.
+
+    :ivar delivery_configuration: Information about the delivery configuration of the event
+     subscription.
+    :vartype delivery_configuration: ~azure.mgmt.eventgrid.models.DeliveryConfiguration
+    :ivar event_delivery_schema: The event delivery schema for the event subscription.
+     "CloudEventSchemaV1_0"
+    :vartype event_delivery_schema: str or ~azure.mgmt.eventgrid.models.DeliverySchema
+    :ivar filters_configuration: Information about the filter for the event subscription.
+    :vartype filters_configuration: ~azure.mgmt.eventgrid.models.FiltersConfiguration
+    """
+
+    _attribute_map = {
+        "delivery_configuration": {"key": "properties.deliveryConfiguration", "type": "DeliveryConfiguration"},
+        "event_delivery_schema": {"key": "properties.eventDeliverySchema", "type": "str"},
+        "filters_configuration": {"key": "properties.filtersConfiguration", "type": "FiltersConfiguration"},
+    }
+
+    def __init__(
+        self,
+        *,
+        delivery_configuration: Optional["_models.DeliveryConfiguration"] = None,
+        event_delivery_schema: Optional[Union[str, "_models.DeliverySchema"]] = None,
+        filters_configuration: Optional["_models.FiltersConfiguration"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword delivery_configuration: Information about the delivery configuration of the event
+         subscription.
+        :paramtype delivery_configuration: ~azure.mgmt.eventgrid.models.DeliveryConfiguration
+        :keyword event_delivery_schema: The event delivery schema for the event subscription.
+         "CloudEventSchemaV1_0"
+        :paramtype event_delivery_schema: str or ~azure.mgmt.eventgrid.models.DeliverySchema
+        :keyword filters_configuration: Information about the filter for the event subscription.
+        :paramtype filters_configuration: ~azure.mgmt.eventgrid.models.FiltersConfiguration
+        """
+        super().__init__(**kwargs)
+        self.delivery_configuration = delivery_configuration
+        self.event_delivery_schema = event_delivery_schema
+        self.filters_configuration = filters_configuration
 
 
 class SystemData(_serialization.Model):
@@ -4568,8 +7656,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -4612,10 +7700,10 @@ class SystemTopic(TrackedResource):  # pylint: disable=too-many-instance-attribu
     :vartype location: str
     :ivar tags: Tags of the resource.
     :vartype tags: dict[str, str]
-    :ivar identity: Identity information for the resource.
-    :vartype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
     :ivar system_data: The system metadata relating to System Topic resource.
     :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar identity: Identity information for the resource.
+    :vartype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
     :ivar provisioning_state: Provisioning state of the system topic. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.eventgrid.models.ResourceProvisioningState
@@ -4643,8 +7731,8 @@ class SystemTopic(TrackedResource):  # pylint: disable=too-many-instance-attribu
         "type": {"key": "type", "type": "str"},
         "location": {"key": "location", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
-        "identity": {"key": "identity", "type": "IdentityInfo"},
         "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "IdentityInfo"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "source": {"key": "properties.source", "type": "str"},
         "topic_type": {"key": "properties.topicType", "type": "str"},
@@ -4659,8 +7747,8 @@ class SystemTopic(TrackedResource):  # pylint: disable=too-many-instance-attribu
         identity: Optional["_models.IdentityInfo"] = None,
         source: Optional[str] = None,
         topic_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Location of the resource. Required.
         :paramtype location: str
@@ -4674,8 +7762,8 @@ class SystemTopic(TrackedResource):  # pylint: disable=too-many-instance-attribu
         :paramtype topic_type: str
         """
         super().__init__(location=location, tags=tags, **kwargs)
-        self.identity = identity
         self.system_data = None
+        self.identity = identity
         self.provisioning_state = None
         self.source = source
         self.topic_type = topic_type
@@ -4697,8 +7785,8 @@ class SystemTopicsListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.SystemTopic"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.SystemTopic"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A collection of system Topics.
         :paramtype value: list[~azure.mgmt.eventgrid.models.SystemTopic]
@@ -4725,8 +7813,8 @@ class SystemTopicUpdateParameters(_serialization.Model):
     }
 
     def __init__(
-        self, *, tags: Optional[Dict[str, str]] = None, identity: Optional["_models.IdentityInfo"] = None, **kwargs
-    ):
+        self, *, tags: Optional[Dict[str, str]] = None, identity: Optional["_models.IdentityInfo"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Tags of the system topic.
         :paramtype tags: dict[str, str]
@@ -4755,8 +7843,14 @@ class Topic(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype location: str
     :ivar tags: Tags of the resource.
     :vartype tags: dict[str, str]
+    :ivar sku: The Sku pricing tier for the topic.
+    :vartype sku: ~azure.mgmt.eventgrid.models.ResourceSku
     :ivar identity: Identity information for the resource.
     :vartype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
+    :ivar kind: Kind of the resource. Known values are: "Azure" and "AzureArc".
+    :vartype kind: str or ~azure.mgmt.eventgrid.models.ResourceKind
+    :ivar extended_location: Extended location of the resource.
+    :vartype extended_location: ~azure.mgmt.eventgrid.models.ExtendedLocation
     :ivar system_data: The system metadata relating to Topic resource.
     :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
     :ivar private_endpoint_connections:
@@ -4767,6 +7861,13 @@ class Topic(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype provisioning_state: str or ~azure.mgmt.eventgrid.models.TopicProvisioningState
     :ivar endpoint: Endpoint for the topic.
     :vartype endpoint: str
+    :ivar event_type_info: Event Type Information for the user topic. This information is provided
+     by the publisher and can be used by the
+     subscriber to view different types of events that are published.
+    :vartype event_type_info: ~azure.mgmt.eventgrid.models.EventTypeInfo
+    :ivar minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish to
+     this topic. Known values are: "1.0", "1.1", and "1.2".
+    :vartype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
     :ivar input_schema: This determines the format that Event Grid should expect for incoming
      events published to the topic. Known values are: "EventGridSchema", "CustomEventSchema", and
      "CloudEventSchemaV1_0".
@@ -4813,7 +7914,10 @@ class Topic(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "type": {"key": "type", "type": "str"},
         "location": {"key": "location", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
         "identity": {"key": "identity", "type": "IdentityInfo"},
+        "kind": {"key": "kind", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
         "system_data": {"key": "systemData", "type": "SystemData"},
         "private_endpoint_connections": {
             "key": "properties.privateEndpointConnections",
@@ -4821,6 +7925,8 @@ class Topic(TrackedResource):  # pylint: disable=too-many-instance-attributes
         },
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "endpoint": {"key": "properties.endpoint", "type": "str"},
+        "event_type_info": {"key": "properties.eventTypeInfo", "type": "EventTypeInfo"},
+        "minimum_tls_version_allowed": {"key": "properties.minimumTlsVersionAllowed", "type": "str"},
         "input_schema": {"key": "properties.inputSchema", "type": "str"},
         "input_schema_mapping": {"key": "properties.inputSchemaMapping", "type": "InputSchemaMapping"},
         "metric_resource_id": {"key": "properties.metricResourceId", "type": "str"},
@@ -4835,22 +7941,40 @@ class Topic(TrackedResource):  # pylint: disable=too-many-instance-attributes
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
+        sku: Optional["_models.ResourceSku"] = None,
         identity: Optional["_models.IdentityInfo"] = None,
+        kind: Union[str, "_models.ResourceKind"] = "Azure",
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        event_type_info: Optional["_models.EventTypeInfo"] = None,
+        minimum_tls_version_allowed: Optional[Union[str, "_models.TlsVersion"]] = None,
         input_schema: Optional[Union[str, "_models.InputSchema"]] = None,
         input_schema_mapping: Optional["_models.InputSchemaMapping"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         inbound_ip_rules: Optional[List["_models.InboundIpRule"]] = None,
         disable_local_auth: bool = False,
         data_residency_boundary: Optional[Union[str, "_models.DataResidencyBoundary"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Location of the resource. Required.
         :paramtype location: str
         :keyword tags: Tags of the resource.
         :paramtype tags: dict[str, str]
+        :keyword sku: The Sku pricing tier for the topic.
+        :paramtype sku: ~azure.mgmt.eventgrid.models.ResourceSku
         :keyword identity: Identity information for the resource.
         :paramtype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
+        :keyword kind: Kind of the resource. Known values are: "Azure" and "AzureArc".
+        :paramtype kind: str or ~azure.mgmt.eventgrid.models.ResourceKind
+        :keyword extended_location: Extended location of the resource.
+        :paramtype extended_location: ~azure.mgmt.eventgrid.models.ExtendedLocation
+        :keyword event_type_info: Event Type Information for the user topic. This information is
+         provided by the publisher and can be used by the
+         subscriber to view different types of events that are published.
+        :paramtype event_type_info: ~azure.mgmt.eventgrid.models.EventTypeInfo
+        :keyword minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish
+         to this topic. Known values are: "1.0", "1.1", and "1.2".
+        :paramtype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
         :keyword input_schema: This determines the format that Event Grid should expect for incoming
          events published to the topic. Known values are: "EventGridSchema", "CustomEventSchema", and
          "CloudEventSchemaV1_0".
@@ -4877,11 +8001,16 @@ class Topic(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype data_residency_boundary: str or ~azure.mgmt.eventgrid.models.DataResidencyBoundary
         """
         super().__init__(location=location, tags=tags, **kwargs)
+        self.sku = sku
         self.identity = identity
+        self.kind = kind
+        self.extended_location = extended_location
         self.system_data = None
         self.private_endpoint_connections = None
         self.provisioning_state = None
         self.endpoint = None
+        self.event_type_info = event_type_info
+        self.minimum_tls_version_allowed = minimum_tls_version_allowed
         self.input_schema = input_schema
         self.input_schema_mapping = input_schema_mapping
         self.metric_resource_id = None
@@ -4908,13 +8037,36 @@ class TopicRegenerateKeyRequest(_serialization.Model):
         "key_name": {"key": "keyName", "type": "str"},
     }
 
-    def __init__(self, *, key_name: str, **kwargs):
+    def __init__(self, *, key_name: str, **kwargs: Any) -> None:
         """
         :keyword key_name: Key name to regenerate key1 or key2. Required.
         :paramtype key_name: str
         """
         super().__init__(**kwargs)
         self.key_name = key_name
+
+
+class TopicsConfiguration(_serialization.Model):
+    """Properties of the Topics Configuration.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar hostname: The hostname for the topics configuration. This is a read-only property.
+    :vartype hostname: str
+    """
+
+    _validation = {
+        "hostname": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "hostname": {"key": "hostname", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.hostname = None
 
 
 class TopicSharedAccessKeys(_serialization.Model):
@@ -4931,7 +8083,7 @@ class TopicSharedAccessKeys(_serialization.Model):
         "key2": {"key": "key2", "type": "str"},
     }
 
-    def __init__(self, *, key1: Optional[str] = None, key2: Optional[str] = None, **kwargs):
+    def __init__(self, *, key1: Optional[str] = None, key2: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword key1: Shared access key1 for the topic.
         :paramtype key1: str
@@ -4957,11 +8109,203 @@ class TopicsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Topic"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Topic"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A collection of Topics.
         :paramtype value: list[~azure.mgmt.eventgrid.models.Topic]
         :keyword next_link: A link for the next page of topics.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class TopicSpace(Resource):
+    """The Topic space resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    :ivar system_data: The system metadata relating to the TopicSpace resource.
+    :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
+    :ivar description: Description for the Topic Space resource.
+    :vartype description: str
+    :ivar topic_templates: The topic filters in the topic space.
+     Example: "topicTemplates": [
+                   "devices/foo/bar",
+                   "devices/topic1/+",
+                   "devices/${principal.name}/${principal.attributes.keyName}" ].
+    :vartype topic_templates: list[str]
+    :ivar provisioning_state: Provisioning state of the TopicSpace resource. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed", and "Deleted".
+    :vartype provisioning_state: str or ~azure.mgmt.eventgrid.models.TopicSpaceProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "description": {"key": "properties.description", "type": "str"},
+        "topic_templates": {"key": "properties.topicTemplates", "type": "[str]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self, *, description: Optional[str] = None, topic_templates: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: Description for the Topic Space resource.
+        :paramtype description: str
+        :keyword topic_templates: The topic filters in the topic space.
+         Example: "topicTemplates": [
+                       "devices/foo/bar",
+                       "devices/topic1/+",
+                       "devices/${principal.name}/${principal.attributes.keyName}" ].
+        :paramtype topic_templates: list[str]
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.description = description
+        self.topic_templates = topic_templates
+        self.provisioning_state = None
+
+
+class TopicSpacesConfiguration(_serialization.Model):
+    """Properties of the Topic Spaces Configuration.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar state: Indicate if Topic Spaces Configuration is enabled for the namespace. Default is
+     Disabled. Known values are: "Disabled" and "Enabled".
+    :vartype state: str or ~azure.mgmt.eventgrid.models.TopicSpacesConfigurationState
+    :ivar route_topic_resource_id: Fully qualified Azure Resource Id for the Event Grid Topic to
+     which events will be routed to from TopicSpaces under a namespace.
+     This property should be in the following format
+     '/subscriptions/{subId}/resourcegroups/{resourceGroupName}/providers/microsoft.EventGrid/topics/{topicName}'.
+     This topic should reside in the same region where namespace is located.
+    :vartype route_topic_resource_id: str
+    :ivar hostname: The endpoint for the topic spaces configuration. This is a read-only property.
+    :vartype hostname: str
+    :ivar routing_enrichments: Routing enrichments for topic spaces configuration.
+    :vartype routing_enrichments: ~azure.mgmt.eventgrid.models.RoutingEnrichments
+    :ivar client_authentication: Client authentication settings for topic spaces configuration.
+    :vartype client_authentication: ~azure.mgmt.eventgrid.models.ClientAuthenticationSettings
+    :ivar maximum_session_expiry_in_hours: The maximum session expiry in hours. The property
+     default value is 1 hour.
+     Min allowed value is 1 hour and max allowed value is 8 hours.
+    :vartype maximum_session_expiry_in_hours: int
+    :ivar maximum_client_sessions_per_authentication_name: The maximum number of sessions per
+     authentication name. The property default value is 1.
+     Min allowed value is 1 and max allowed value is 100.
+    :vartype maximum_client_sessions_per_authentication_name: int
+    :ivar routing_identity_info: Routing identity info for topic spaces configuration.
+    :vartype routing_identity_info: ~azure.mgmt.eventgrid.models.RoutingIdentityInfo
+    """
+
+    _validation = {
+        "hostname": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "state": {"key": "state", "type": "str"},
+        "route_topic_resource_id": {"key": "routeTopicResourceId", "type": "str"},
+        "hostname": {"key": "hostname", "type": "str"},
+        "routing_enrichments": {"key": "routingEnrichments", "type": "RoutingEnrichments"},
+        "client_authentication": {"key": "clientAuthentication", "type": "ClientAuthenticationSettings"},
+        "maximum_session_expiry_in_hours": {"key": "maximumSessionExpiryInHours", "type": "int"},
+        "maximum_client_sessions_per_authentication_name": {
+            "key": "maximumClientSessionsPerAuthenticationName",
+            "type": "int",
+        },
+        "routing_identity_info": {"key": "routingIdentityInfo", "type": "RoutingIdentityInfo"},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.TopicSpacesConfigurationState"]] = None,
+        route_topic_resource_id: Optional[str] = None,
+        routing_enrichments: Optional["_models.RoutingEnrichments"] = None,
+        client_authentication: Optional["_models.ClientAuthenticationSettings"] = None,
+        maximum_session_expiry_in_hours: Optional[int] = None,
+        maximum_client_sessions_per_authentication_name: Optional[int] = None,
+        routing_identity_info: Optional["_models.RoutingIdentityInfo"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword state: Indicate if Topic Spaces Configuration is enabled for the namespace. Default is
+         Disabled. Known values are: "Disabled" and "Enabled".
+        :paramtype state: str or ~azure.mgmt.eventgrid.models.TopicSpacesConfigurationState
+        :keyword route_topic_resource_id: Fully qualified Azure Resource Id for the Event Grid Topic to
+         which events will be routed to from TopicSpaces under a namespace.
+         This property should be in the following format
+         '/subscriptions/{subId}/resourcegroups/{resourceGroupName}/providers/microsoft.EventGrid/topics/{topicName}'.
+         This topic should reside in the same region where namespace is located.
+        :paramtype route_topic_resource_id: str
+        :keyword routing_enrichments: Routing enrichments for topic spaces configuration.
+        :paramtype routing_enrichments: ~azure.mgmt.eventgrid.models.RoutingEnrichments
+        :keyword client_authentication: Client authentication settings for topic spaces configuration.
+        :paramtype client_authentication: ~azure.mgmt.eventgrid.models.ClientAuthenticationSettings
+        :keyword maximum_session_expiry_in_hours: The maximum session expiry in hours. The property
+         default value is 1 hour.
+         Min allowed value is 1 hour and max allowed value is 8 hours.
+        :paramtype maximum_session_expiry_in_hours: int
+        :keyword maximum_client_sessions_per_authentication_name: The maximum number of sessions per
+         authentication name. The property default value is 1.
+         Min allowed value is 1 and max allowed value is 100.
+        :paramtype maximum_client_sessions_per_authentication_name: int
+        :keyword routing_identity_info: Routing identity info for topic spaces configuration.
+        :paramtype routing_identity_info: ~azure.mgmt.eventgrid.models.RoutingIdentityInfo
+        """
+        super().__init__(**kwargs)
+        self.state = state
+        self.route_topic_resource_id = route_topic_resource_id
+        self.hostname = None
+        self.routing_enrichments = routing_enrichments
+        self.client_authentication = client_authentication
+        self.maximum_session_expiry_in_hours = maximum_session_expiry_in_hours
+        self.maximum_client_sessions_per_authentication_name = maximum_client_sessions_per_authentication_name
+        self.routing_identity_info = routing_identity_info
+
+
+class TopicSpacesListResult(_serialization.Model):
+    """Result of the List Topic Space operation.
+
+    :ivar value: A collection of Topic Space.
+    :vartype value: list[~azure.mgmt.eventgrid.models.TopicSpace]
+    :ivar next_link: A link for the next page of Topic Space.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[TopicSpace]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.TopicSpace"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A collection of Topic Space.
+        :paramtype value: list[~azure.mgmt.eventgrid.models.TopicSpace]
+        :keyword next_link: A link for the next page of Topic Space.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -4999,6 +8343,9 @@ class TopicTypeInfo(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar supported_scopes_for_source: Supported source scopes.
     :vartype supported_scopes_for_source: list[str or
      ~azure.mgmt.eventgrid.models.TopicTypeSourceScope]
+    :ivar are_regional_and_global_sources_supported: Flag to indicate that a topic type can support
+     both regional or global system topics.
+    :vartype are_regional_and_global_sources_supported: bool
     """
 
     _validation = {
@@ -5019,6 +8366,10 @@ class TopicTypeInfo(Resource):  # pylint: disable=too-many-instance-attributes
         "supported_locations": {"key": "properties.supportedLocations", "type": "[str]"},
         "source_resource_format": {"key": "properties.sourceResourceFormat", "type": "str"},
         "supported_scopes_for_source": {"key": "properties.supportedScopesForSource", "type": "[str]"},
+        "are_regional_and_global_sources_supported": {
+            "key": "properties.areRegionalAndGlobalSourcesSupported",
+            "type": "bool",
+        },
     }
 
     def __init__(
@@ -5032,8 +8383,9 @@ class TopicTypeInfo(Resource):  # pylint: disable=too-many-instance-attributes
         supported_locations: Optional[List[str]] = None,
         source_resource_format: Optional[str] = None,
         supported_scopes_for_source: Optional[List[Union[str, "_models.TopicTypeSourceScope"]]] = None,
-        **kwargs
-    ):
+        are_regional_and_global_sources_supported: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Namespace of the provider of the topic type.
         :paramtype provider: str
@@ -5054,6 +8406,9 @@ class TopicTypeInfo(Resource):  # pylint: disable=too-many-instance-attributes
         :keyword supported_scopes_for_source: Supported source scopes.
         :paramtype supported_scopes_for_source: list[str or
          ~azure.mgmt.eventgrid.models.TopicTypeSourceScope]
+        :keyword are_regional_and_global_sources_supported: Flag to indicate that a topic type can
+         support both regional or global system topics.
+        :paramtype are_regional_and_global_sources_supported: bool
         """
         super().__init__(**kwargs)
         self.provider = provider
@@ -5064,6 +8419,7 @@ class TopicTypeInfo(Resource):  # pylint: disable=too-many-instance-attributes
         self.supported_locations = supported_locations
         self.source_resource_format = source_resource_format
         self.supported_scopes_for_source = supported_scopes_for_source
+        self.are_regional_and_global_sources_supported = are_regional_and_global_sources_supported
 
 
 class TopicTypesListResult(_serialization.Model):
@@ -5077,7 +8433,7 @@ class TopicTypesListResult(_serialization.Model):
         "value": {"key": "value", "type": "[TopicTypeInfo]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.TopicTypeInfo"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.TopicTypeInfo"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A collection of topic types.
         :paramtype value: list[~azure.mgmt.eventgrid.models.TopicTypeInfo]
@@ -5093,6 +8449,8 @@ class TopicUpdateParameters(_serialization.Model):
     :vartype tags: dict[str, str]
     :ivar identity: Topic resource identity information.
     :vartype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
+    :ivar sku: The Sku pricing tier for the topic.
+    :vartype sku: ~azure.mgmt.eventgrid.models.ResourceSku
     :ivar public_network_access: This determines if traffic is allowed over public network. By
      default it is enabled.
      You can further restrict to specific IPs by configuring :code:`<seealso
@@ -5102,6 +8460,9 @@ class TopicUpdateParameters(_serialization.Model):
     :ivar inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of all
      IPs. Note: These are considered only if PublicNetworkAccess is enabled.
     :vartype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+    :ivar minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish to
+     this domain. Known values are: "1.0", "1.1", and "1.2".
+    :vartype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
     :ivar disable_local_auth: This boolean is used to enable or disable local auth. Default value
      is false. When the property is set to true, only AAD token will be used to authenticate if user
      is allowed to publish to the topic.
@@ -5109,15 +8470,20 @@ class TopicUpdateParameters(_serialization.Model):
     :ivar data_residency_boundary: The data residency boundary for the topic. Known values are:
      "WithinGeopair" and "WithinRegion".
     :vartype data_residency_boundary: str or ~azure.mgmt.eventgrid.models.DataResidencyBoundary
+    :ivar event_type_info: The eventTypeInfo for the topic.
+    :vartype event_type_info: ~azure.mgmt.eventgrid.models.EventTypeInfo
     """
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
         "identity": {"key": "identity", "type": "IdentityInfo"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
         "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
         "inbound_ip_rules": {"key": "properties.inboundIpRules", "type": "[InboundIpRule]"},
+        "minimum_tls_version_allowed": {"key": "properties.minimumTlsVersionAllowed", "type": "str"},
         "disable_local_auth": {"key": "properties.disableLocalAuth", "type": "bool"},
         "data_residency_boundary": {"key": "properties.dataResidencyBoundary", "type": "str"},
+        "event_type_info": {"key": "properties.eventTypeInfo", "type": "EventTypeInfo"},
     }
 
     def __init__(
@@ -5125,17 +8491,22 @@ class TopicUpdateParameters(_serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.IdentityInfo"] = None,
+        sku: Optional["_models.ResourceSku"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         inbound_ip_rules: Optional[List["_models.InboundIpRule"]] = None,
+        minimum_tls_version_allowed: Optional[Union[str, "_models.TlsVersion"]] = None,
         disable_local_auth: Optional[bool] = None,
         data_residency_boundary: Optional[Union[str, "_models.DataResidencyBoundary"]] = None,
-        **kwargs
-    ):
+        event_type_info: Optional["_models.EventTypeInfo"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Tags of the Topic resource.
         :paramtype tags: dict[str, str]
         :keyword identity: Topic resource identity information.
         :paramtype identity: ~azure.mgmt.eventgrid.models.IdentityInfo
+        :keyword sku: The Sku pricing tier for the topic.
+        :paramtype sku: ~azure.mgmt.eventgrid.models.ResourceSku
         :keyword public_network_access: This determines if traffic is allowed over public network. By
          default it is enabled.
          You can further restrict to specific IPs by configuring :code:`<seealso
@@ -5145,6 +8516,9 @@ class TopicUpdateParameters(_serialization.Model):
         :keyword inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of
          all IPs. Note: These are considered only if PublicNetworkAccess is enabled.
         :paramtype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+        :keyword minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish
+         to this domain. Known values are: "1.0", "1.1", and "1.2".
+        :paramtype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
         :keyword disable_local_auth: This boolean is used to enable or disable local auth. Default
          value is false. When the property is set to true, only AAD token will be used to authenticate
          if user is allowed to publish to the topic.
@@ -5152,14 +8526,101 @@ class TopicUpdateParameters(_serialization.Model):
         :keyword data_residency_boundary: The data residency boundary for the topic. Known values are:
          "WithinGeopair" and "WithinRegion".
         :paramtype data_residency_boundary: str or ~azure.mgmt.eventgrid.models.DataResidencyBoundary
+        :keyword event_type_info: The eventTypeInfo for the topic.
+        :paramtype event_type_info: ~azure.mgmt.eventgrid.models.EventTypeInfo
         """
         super().__init__(**kwargs)
         self.tags = tags
         self.identity = identity
+        self.sku = sku
         self.public_network_access = public_network_access
         self.inbound_ip_rules = inbound_ip_rules
+        self.minimum_tls_version_allowed = minimum_tls_version_allowed
         self.disable_local_auth = disable_local_auth
         self.data_residency_boundary = data_residency_boundary
+        self.event_type_info = event_type_info
+
+
+class UpdateTopicSpacesConfigurationInfo(_serialization.Model):
+    """Properties of the topic spaces configuration info of a namespace.
+
+    :ivar state: Indicate if Topic Spaces Configuration is enabled for the namespace. Default is
+     Disabled. Known values are: "Disabled" and "Enabled".
+    :vartype state: str or ~azure.mgmt.eventgrid.models.TopicSpacesConfigurationState
+    :ivar route_topic_resource_id: This property is used to specify custom topic to which events
+     will be routed to from topic spaces configuration under namespace.
+    :vartype route_topic_resource_id: str
+    :ivar routing_enrichments: Routing enrichments for topic spaces configuration.
+    :vartype routing_enrichments: ~azure.mgmt.eventgrid.models.RoutingEnrichments
+    :ivar client_authentication: Client authentication settings for topic spaces configuration.
+    :vartype client_authentication: ~azure.mgmt.eventgrid.models.ClientAuthenticationSettings
+    :ivar maximum_session_expiry_in_hours: The maximum session expiry in hours. The property
+     default value is 1 hour.
+     Min allowed value is 1 hour and max allowed value is 8 hours.
+    :vartype maximum_session_expiry_in_hours: int
+    :ivar maximum_client_sessions_per_authentication_name: The maximum number of sessions per
+     authentication name. The property default value is 1.
+     Min allowed value is 1 and max allowed value is 100.
+    :vartype maximum_client_sessions_per_authentication_name: int
+    :ivar routing_identity_info: Routing identity info for topic spaces configuration.
+    :vartype routing_identity_info: ~azure.mgmt.eventgrid.models.RoutingIdentityInfo
+    """
+
+    _attribute_map = {
+        "state": {"key": "state", "type": "str"},
+        "route_topic_resource_id": {"key": "routeTopicResourceId", "type": "str"},
+        "routing_enrichments": {"key": "routingEnrichments", "type": "RoutingEnrichments"},
+        "client_authentication": {"key": "clientAuthentication", "type": "ClientAuthenticationSettings"},
+        "maximum_session_expiry_in_hours": {"key": "maximumSessionExpiryInHours", "type": "int"},
+        "maximum_client_sessions_per_authentication_name": {
+            "key": "maximumClientSessionsPerAuthenticationName",
+            "type": "int",
+        },
+        "routing_identity_info": {"key": "routingIdentityInfo", "type": "RoutingIdentityInfo"},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.TopicSpacesConfigurationState"]] = None,
+        route_topic_resource_id: Optional[str] = None,
+        routing_enrichments: Optional["_models.RoutingEnrichments"] = None,
+        client_authentication: Optional["_models.ClientAuthenticationSettings"] = None,
+        maximum_session_expiry_in_hours: Optional[int] = None,
+        maximum_client_sessions_per_authentication_name: Optional[int] = None,
+        routing_identity_info: Optional["_models.RoutingIdentityInfo"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword state: Indicate if Topic Spaces Configuration is enabled for the namespace. Default is
+         Disabled. Known values are: "Disabled" and "Enabled".
+        :paramtype state: str or ~azure.mgmt.eventgrid.models.TopicSpacesConfigurationState
+        :keyword route_topic_resource_id: This property is used to specify custom topic to which events
+         will be routed to from topic spaces configuration under namespace.
+        :paramtype route_topic_resource_id: str
+        :keyword routing_enrichments: Routing enrichments for topic spaces configuration.
+        :paramtype routing_enrichments: ~azure.mgmt.eventgrid.models.RoutingEnrichments
+        :keyword client_authentication: Client authentication settings for topic spaces configuration.
+        :paramtype client_authentication: ~azure.mgmt.eventgrid.models.ClientAuthenticationSettings
+        :keyword maximum_session_expiry_in_hours: The maximum session expiry in hours. The property
+         default value is 1 hour.
+         Min allowed value is 1 hour and max allowed value is 8 hours.
+        :paramtype maximum_session_expiry_in_hours: int
+        :keyword maximum_client_sessions_per_authentication_name: The maximum number of sessions per
+         authentication name. The property default value is 1.
+         Min allowed value is 1 and max allowed value is 100.
+        :paramtype maximum_client_sessions_per_authentication_name: int
+        :keyword routing_identity_info: Routing identity info for topic spaces configuration.
+        :paramtype routing_identity_info: ~azure.mgmt.eventgrid.models.RoutingIdentityInfo
+        """
+        super().__init__(**kwargs)
+        self.state = state
+        self.route_topic_resource_id = route_topic_resource_id
+        self.routing_enrichments = routing_enrichments
+        self.client_authentication = client_authentication
+        self.maximum_session_expiry_in_hours = maximum_session_expiry_in_hours
+        self.maximum_client_sessions_per_authentication_name = maximum_client_sessions_per_authentication_name
+        self.routing_identity_info = routing_identity_info
 
 
 class UserIdentityProperties(_serialization.Model):
@@ -5176,7 +8637,7 @@ class UserIdentityProperties(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, *, principal_id: Optional[str] = None, client_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, principal_id: Optional[str] = None, client_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword principal_id: The principal id of user assigned identity.
         :paramtype principal_id: str
@@ -5209,6 +8670,8 @@ class VerifiedPartner(Resource):
     :vartype partner_display_name: str
     :ivar partner_topic_details: Details of the partner topic scenario.
     :vartype partner_topic_details: ~azure.mgmt.eventgrid.models.PartnerDetails
+    :ivar partner_destination_details: Details of the partner destination scenario.
+    :vartype partner_destination_details: ~azure.mgmt.eventgrid.models.PartnerDetails
     :ivar provisioning_state: Provisioning state of the verified partner. Known values are:
      "Creating", "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
     :vartype provisioning_state: str or
@@ -5231,6 +8694,7 @@ class VerifiedPartner(Resource):
         "organization_name": {"key": "properties.organizationName", "type": "str"},
         "partner_display_name": {"key": "properties.partnerDisplayName", "type": "str"},
         "partner_topic_details": {"key": "properties.partnerTopicDetails", "type": "PartnerDetails"},
+        "partner_destination_details": {"key": "properties.partnerDestinationDetails", "type": "PartnerDetails"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
@@ -5241,9 +8705,10 @@ class VerifiedPartner(Resource):
         organization_name: Optional[str] = None,
         partner_display_name: Optional[str] = None,
         partner_topic_details: Optional["_models.PartnerDetails"] = None,
+        partner_destination_details: Optional["_models.PartnerDetails"] = None,
         provisioning_state: Optional[Union[str, "_models.VerifiedPartnerProvisioningState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword partner_registration_immutable_id: ImmutableId of the corresponding partner
          registration.
@@ -5254,6 +8719,8 @@ class VerifiedPartner(Resource):
         :paramtype partner_display_name: str
         :keyword partner_topic_details: Details of the partner topic scenario.
         :paramtype partner_topic_details: ~azure.mgmt.eventgrid.models.PartnerDetails
+        :keyword partner_destination_details: Details of the partner destination scenario.
+        :paramtype partner_destination_details: ~azure.mgmt.eventgrid.models.PartnerDetails
         :keyword provisioning_state: Provisioning state of the verified partner. Known values are:
          "Creating", "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
         :paramtype provisioning_state: str or
@@ -5265,6 +8732,7 @@ class VerifiedPartner(Resource):
         self.organization_name = organization_name
         self.partner_display_name = partner_display_name
         self.partner_topic_details = partner_topic_details
+        self.partner_destination_details = partner_destination_details
         self.provisioning_state = provisioning_state
 
 
@@ -5283,8 +8751,8 @@ class VerifiedPartnersListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.VerifiedPartner"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.VerifiedPartner"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A collection of verified partners.
         :paramtype value: list[~azure.mgmt.eventgrid.models.VerifiedPartner]
@@ -5305,7 +8773,7 @@ class WebHookEventSubscriptionDestination(EventSubscriptionDestination):
 
     :ivar endpoint_type: Type of the endpoint for the event subscription destination. Required.
      Known values are: "WebHook", "EventHub", "StorageQueue", "HybridConnection", "ServiceBusQueue",
-     "ServiceBusTopic", and "AzureFunction".
+     "ServiceBusTopic", "AzureFunction", and "PartnerDestination".
     :vartype endpoint_type: str or ~azure.mgmt.eventgrid.models.EndpointType
     :ivar endpoint_url: The URL that represents the endpoint of the destination of an event
      subscription.
@@ -5326,6 +8794,9 @@ class WebHookEventSubscriptionDestination(EventSubscriptionDestination):
     :ivar delivery_attribute_mappings: Delivery attribute details.
     :vartype delivery_attribute_mappings:
      list[~azure.mgmt.eventgrid.models.DeliveryAttributeMapping]
+    :ivar minimum_tls_version_allowed: Minimum TLS version that should be supported by webhook
+     endpoint. Known values are: "1.0", "1.1", and "1.2".
+    :vartype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
     """
 
     _validation = {
@@ -5348,6 +8819,7 @@ class WebHookEventSubscriptionDestination(EventSubscriptionDestination):
             "key": "properties.deliveryAttributeMappings",
             "type": "[DeliveryAttributeMapping]",
         },
+        "minimum_tls_version_allowed": {"key": "properties.minimumTlsVersionAllowed", "type": "str"},
     }
 
     def __init__(
@@ -5359,8 +8831,9 @@ class WebHookEventSubscriptionDestination(EventSubscriptionDestination):
         azure_active_directory_tenant_id: Optional[str] = None,
         azure_active_directory_application_id_or_uri: Optional[str] = None,
         delivery_attribute_mappings: Optional[List["_models.DeliveryAttributeMapping"]] = None,
-        **kwargs
-    ):
+        minimum_tls_version_allowed: Optional[Union[str, "_models.TlsVersion"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword endpoint_url: The URL that represents the endpoint of the destination of an event
          subscription.
@@ -5379,6 +8852,9 @@ class WebHookEventSubscriptionDestination(EventSubscriptionDestination):
         :keyword delivery_attribute_mappings: Delivery attribute details.
         :paramtype delivery_attribute_mappings:
          list[~azure.mgmt.eventgrid.models.DeliveryAttributeMapping]
+        :keyword minimum_tls_version_allowed: Minimum TLS version that should be supported by webhook
+         endpoint. Known values are: "1.0", "1.1", and "1.2".
+        :paramtype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
         """
         super().__init__(**kwargs)
         self.endpoint_type: str = "WebHook"
@@ -5389,3 +8865,151 @@ class WebHookEventSubscriptionDestination(EventSubscriptionDestination):
         self.azure_active_directory_tenant_id = azure_active_directory_tenant_id
         self.azure_active_directory_application_id_or_uri = azure_active_directory_application_id_or_uri
         self.delivery_attribute_mappings = delivery_attribute_mappings
+        self.minimum_tls_version_allowed = minimum_tls_version_allowed
+
+
+class WebhookPartnerDestinationInfo(PartnerDestinationInfo):
+    """Information about the WebHook of the partner destination.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar azure_subscription_id: Azure subscription ID of the subscriber. The partner destination
+     associated with the channel will be
+     created under this Azure subscription.
+    :vartype azure_subscription_id: str
+    :ivar resource_group_name: Azure Resource Group of the subscriber. The partner destination
+     associated with the channel will be
+     created under this resource group.
+    :vartype resource_group_name: str
+    :ivar name: Name of the partner destination associated with the channel.
+    :vartype name: str
+    :ivar endpoint_type: Type of the endpoint for the partner destination. Required. "WebHook"
+    :vartype endpoint_type: str or ~azure.mgmt.eventgrid.models.PartnerEndpointType
+    :ivar endpoint_service_context: Additional context of the partner destination endpoint.
+    :vartype endpoint_service_context: str
+    :ivar resource_move_change_history: Change history of the resource move.
+    :vartype resource_move_change_history:
+     list[~azure.mgmt.eventgrid.models.ResourceMoveChangeHistory]
+    :ivar endpoint_url: The URL that represents the endpoint of the partner destination.
+    :vartype endpoint_url: str
+    :ivar endpoint_base_url: The base URL that represents the endpoint of the partner destination.
+    :vartype endpoint_base_url: str
+    :ivar client_authentication: Partner client authentication.
+    :vartype client_authentication: ~azure.mgmt.eventgrid.models.PartnerClientAuthentication
+    """
+
+    _validation = {
+        "endpoint_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "azure_subscription_id": {"key": "azureSubscriptionId", "type": "str"},
+        "resource_group_name": {"key": "resourceGroupName", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "endpoint_type": {"key": "endpointType", "type": "str"},
+        "endpoint_service_context": {"key": "endpointServiceContext", "type": "str"},
+        "resource_move_change_history": {"key": "resourceMoveChangeHistory", "type": "[ResourceMoveChangeHistory]"},
+        "endpoint_url": {"key": "properties.endpointUrl", "type": "str"},
+        "endpoint_base_url": {"key": "properties.endpointBaseUrl", "type": "str"},
+        "client_authentication": {"key": "properties.clientAuthentication", "type": "PartnerClientAuthentication"},
+    }
+
+    def __init__(
+        self,
+        *,
+        azure_subscription_id: Optional[str] = None,
+        resource_group_name: Optional[str] = None,
+        name: Optional[str] = None,
+        endpoint_service_context: Optional[str] = None,
+        resource_move_change_history: Optional[List["_models.ResourceMoveChangeHistory"]] = None,
+        endpoint_url: Optional[str] = None,
+        endpoint_base_url: Optional[str] = None,
+        client_authentication: Optional["_models.PartnerClientAuthentication"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword azure_subscription_id: Azure subscription ID of the subscriber. The partner
+         destination associated with the channel will be
+         created under this Azure subscription.
+        :paramtype azure_subscription_id: str
+        :keyword resource_group_name: Azure Resource Group of the subscriber. The partner destination
+         associated with the channel will be
+         created under this resource group.
+        :paramtype resource_group_name: str
+        :keyword name: Name of the partner destination associated with the channel.
+        :paramtype name: str
+        :keyword endpoint_service_context: Additional context of the partner destination endpoint.
+        :paramtype endpoint_service_context: str
+        :keyword resource_move_change_history: Change history of the resource move.
+        :paramtype resource_move_change_history:
+         list[~azure.mgmt.eventgrid.models.ResourceMoveChangeHistory]
+        :keyword endpoint_url: The URL that represents the endpoint of the partner destination.
+        :paramtype endpoint_url: str
+        :keyword endpoint_base_url: The base URL that represents the endpoint of the partner
+         destination.
+        :paramtype endpoint_base_url: str
+        :keyword client_authentication: Partner client authentication.
+        :paramtype client_authentication: ~azure.mgmt.eventgrid.models.PartnerClientAuthentication
+        """
+        super().__init__(
+            azure_subscription_id=azure_subscription_id,
+            resource_group_name=resource_group_name,
+            name=name,
+            endpoint_service_context=endpoint_service_context,
+            resource_move_change_history=resource_move_change_history,
+            **kwargs
+        )
+        self.endpoint_type: str = "WebHook"
+        self.endpoint_url = endpoint_url
+        self.endpoint_base_url = endpoint_base_url
+        self.client_authentication = client_authentication
+
+
+class WebhookUpdatePartnerDestinationInfo(PartnerUpdateDestinationInfo):
+    """Information about the update of the WebHook of the partner destination.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar endpoint_type: Type of the endpoint for the partner destination. Required. "WebHook"
+    :vartype endpoint_type: str or ~azure.mgmt.eventgrid.models.PartnerEndpointType
+    :ivar endpoint_url: The URL that represents the endpoint of the partner destination.
+    :vartype endpoint_url: str
+    :ivar endpoint_base_url: The base URL that represents the endpoint of the partner destination.
+    :vartype endpoint_base_url: str
+    :ivar client_authentication: Partner client authentication.
+    :vartype client_authentication: ~azure.mgmt.eventgrid.models.PartnerClientAuthentication
+    """
+
+    _validation = {
+        "endpoint_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "endpoint_type": {"key": "endpointType", "type": "str"},
+        "endpoint_url": {"key": "properties.endpointUrl", "type": "str"},
+        "endpoint_base_url": {"key": "properties.endpointBaseUrl", "type": "str"},
+        "client_authentication": {"key": "properties.clientAuthentication", "type": "PartnerClientAuthentication"},
+    }
+
+    def __init__(
+        self,
+        *,
+        endpoint_url: Optional[str] = None,
+        endpoint_base_url: Optional[str] = None,
+        client_authentication: Optional["_models.PartnerClientAuthentication"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword endpoint_url: The URL that represents the endpoint of the partner destination.
+        :paramtype endpoint_url: str
+        :keyword endpoint_base_url: The base URL that represents the endpoint of the partner
+         destination.
+        :paramtype endpoint_base_url: str
+        :keyword client_authentication: Partner client authentication.
+        :paramtype client_authentication: ~azure.mgmt.eventgrid.models.PartnerClientAuthentication
+        """
+        super().__init__(**kwargs)
+        self.endpoint_type: str = "WebHook"
+        self.endpoint_url = endpoint_url
+        self.endpoint_base_url = endpoint_base_url
+        self.client_authentication = client_authentication

@@ -163,6 +163,34 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
         assert layout.tables[2].row_count == 24
         assert layout.tables[2].column_count == 5
 
+    @pytest.mark.live_test_only
+    @skip_flaky_test
+    @FormRecognizerPreparer()
+    @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
+    def test_layout_url_annotations(self, client):
+        poller = client.begin_analyze_document_from_url("prebuilt-layout", self.annotations_url_jpg)
+        layout = poller.result()
+        assert len(layout.pages) > 0
+        assert len(layout.pages[0].annotations) > 0
+        assert layout.pages[0].annotations[0].kind == "check"
+        assert layout.pages[0].annotations[0].polygon
+        assert layout.pages[0].annotations[0].confidence > 0.5
+
+    @pytest.mark.live_test_only
+    @skip_flaky_test
+    @FormRecognizerPreparer()
+    @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
+    def test_layout_url_barcode(self, client):
+        poller = client.begin_analyze_document_from_url("prebuilt-layout", self.barcode_url_tif)
+        layout = poller.result()
+        assert len(layout.pages) > 0
+        assert len(layout.pages[0].barcodes) == 2
+        assert layout.pages[0].barcodes[0].kind == "Code39"
+        assert layout.pages[0].barcodes[0].polygon
+        assert layout.pages[0].barcodes[0].confidence > 0.8
+
     @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()

@@ -475,6 +475,17 @@
             "metadata": {
                 "description": "Whether to set up materialization store"
             }
+        },
+        "enable_data_isolation": {
+            "type": "string",
+            "defaultValue": "false",
+            "allowedValues": [
+                "false",
+                "true"
+            ],
+            "metadata": {
+                "description": "A flag to determine if workspace has data isolation enabled. The flag can only be set at the creation phase, it can't be updated."
+            }
         }
     },
     "variables": {
@@ -650,7 +661,7 @@
         {
             "condition": "[variables('enablePE')]",
             "type": "Microsoft.MachineLearningServices/workspaces",
-            "apiVersion": "2022-12-01-preview",
+            "apiVersion": "2023-04-01-preview",
             "tags": "[parameters('tagValues')]",
             "name": "[parameters('workspaceName')]",
             "kind": "[parameters('kind')]",
@@ -692,7 +703,8 @@
                     },
                     "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
                     "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
-                }
+                },
+                "enableDataIsolation": "[parameters('enable_data_isolation')]"
             }
         },
         {
