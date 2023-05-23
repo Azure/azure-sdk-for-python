@@ -27,13 +27,13 @@ from ._version import VERSION   # pylint: disable=import-error
 
 __version__ = VERSION
 
-from ._schema_registry_json_encoder import JsonEncoder  # pylint: disable=import-error
+from ._schema_registry_json_encoder import JsonSchemaEncoder  # pylint: disable=import-error
 from ._message_protocol import MessageType, MessageContent  # pylint: disable=import-error
 from ._exceptions import InvalidContentError, InvalidSchemaError # pylint: disable=import-error
 
 
 __all__ = [
-    "JsonEncoder",
+    "JsonSchemaEncoder",
     "MessageType",
     "MessageContent",
     "InvalidContentError",

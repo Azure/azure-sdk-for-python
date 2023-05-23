@@ -31,7 +31,7 @@ import os
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonEncoder
+from azure.schemaregistry.encoder.jsonschemaencoder import JsonSchemaEncoder
 
 EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
@@ -84,7 +84,7 @@ eventhub_producer = EventHubProducerClient.from_connection_string(
 )
 
 # create a AvroEncoder instance
-json_encoder = JsonEncoder(
+json_encoder = JsonSchemaEncoder(
     client=SchemaRegistryClient(
         fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
         credential=DefaultAzureCredential()
