@@ -4,7 +4,11 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from azure.appconfiguration.provider import load, AzureAppConfigurationKeyVaultOptions, SettingSelector
+from azure.appconfiguration.provider import (
+    load,
+    AzureAppConfigurationKeyVaultOptions,
+    SettingSelector
+)
 import os
 from sample_utilities import get_authority, get_audience, get_credential
 

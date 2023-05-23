@@ -18,7 +18,6 @@ from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from util import print_configuration_setting, get_connection_string
 
-
 async def main():
     CONNECTION_STRING = get_connection_string()
 
@@ -26,7 +25,10 @@ async def main():
     client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
 
     config_setting = ConfigurationSetting(
-        key="MyKey", value="my value", content_type="my content type", tags={"my tag": "my tag value"}
+        key="MyKey",
+        value="my value",
+        content_type="my content type",
+        tags={"my tag": "my tag value"}
     )
     returned_config_setting = await client.set_configuration_setting(config_setting)
 
@@ -42,7 +44,6 @@ async def main():
     await client.delete_configuration_setting(
         key="MyKey",
     )
-
 
 if __name__ == "__main__":
     asyncio.run(main())

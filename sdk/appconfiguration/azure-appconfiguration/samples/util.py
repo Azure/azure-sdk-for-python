@@ -9,7 +9,6 @@
 import os
 import sys
 
-
 def print_configuration_setting(config_setting):
     if not config_setting:
         return
@@ -25,10 +24,9 @@ def print_configuration_setting(config_setting):
     if config_setting.etag:
         print("etag: " + config_setting.etag)
 
-
 def get_connection_string():
     try:
-        CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+        CONNECTION_STRING = os.environ['APPCONFIGURATION_CONNECTION_STRING']
         return CONNECTION_STRING
 
     except KeyError:

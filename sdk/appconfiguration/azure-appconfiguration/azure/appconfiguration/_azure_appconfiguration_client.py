@@ -68,8 +68,12 @@ class AzureAppConfigurationClient:
 
         self._credential_scopes = base_url.strip("/") + "/.default"
 
-        self._config = AzureAppConfigurationConfiguration(base_url, credential_scopes=self._credential_scopes, **kwargs)
-        self._config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
+        self._config = AzureAppConfigurationConfiguration(
+            base_url, credential_scopes=self._credential_scopes, **kwargs
+        )
+        self._config.user_agent_policy = UserAgentPolicy(
+            base_user_agent=USER_AGENT, **kwargs
+        )
         self._sync_token_policy = SyncTokenPolicy()
 
         pipeline = kwargs.get("pipeline")
@@ -80,7 +84,9 @@ class AzureAppConfigurationClient:
                 credential=credential, aad_mode=aad_mode, base_url=base_url, **kwargs
             )
 
-        self._impl = AzureAppConfiguration(base_url, pipeline=pipeline, credential_scopes=self._credential_scopes)
+        self._impl = AzureAppConfiguration(
+            base_url, pipeline=pipeline, credential_scopes=self._credential_scopes
+        )
 
     @classmethod
     def from_connection_string(cls, connection_string: str, **kwargs) -> "AzureAppConfigurationClient":
@@ -102,7 +108,7 @@ class AzureAppConfigurationClient:
         """
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
         return cls(
-            credential=AppConfigConnectionStringCredential(connection_string),  # type: ignore
+            credential=AppConfigConnectionStringCredential(connection_string), # type: ignore
             base_url=base_url,
             **kwargs
         )
@@ -187,7 +193,9 @@ class AzureAppConfigurationClient:
                 label=label_filter,
                 key=key_filter,
                 select=select,
-                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
+                cls=lambda objs: [
+                    ConfigurationSetting._from_generated(x) for x in objs
+                ],
                 error_map=error_map,
                 **kwargs
             )
@@ -354,7 +362,9 @@ class AzureAppConfigurationClient:
                 key=key_value.key,  # type: ignore
                 label=key_value.label,
                 if_match=prep_if_match(configuration_setting.etag, match_condition),
-                if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
+                if_none_match=prep_if_none_match(
+                    configuration_setting.etag, match_condition
+                ),
                 headers=custom_headers,
                 error_map=error_map,
             )
@@ -366,7 +376,9 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
-    def delete_configuration_setting(self, key: str, label: Optional[str] = None, **kwargs) -> ConfigurationSetting:
+    def delete_configuration_setting(
+        self, key: str, label: Optional[str] = None, **kwargs
+    ) -> ConfigurationSetting:
         """Delete a ConfigurationSetting if it exists
 
         :param key: key used to identify the ConfigurationSetting
@@ -465,7 +477,9 @@ class AzureAppConfigurationClient:
                 label=label_filter,
                 key=key_filter,
                 select=select,
-                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
+                cls=lambda objs: [
+                    ConfigurationSetting._from_generated(x) for x in objs
+                ],
                 error_map=error_map,
                 **kwargs
             )
@@ -521,7 +535,9 @@ class AzureAppConfigurationClient:
                     key=configuration_setting.key,
                     label=configuration_setting.label,
                     if_match=prep_if_match(configuration_setting.etag, match_condition),
-                    if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
+                    if_none_match=prep_if_none_match(
+                        configuration_setting.etag, match_condition
+                    ),
                     error_map=error_map,
                     **kwargs
                 )
@@ -530,7 +546,9 @@ class AzureAppConfigurationClient:
                     key=configuration_setting.key,
                     label=configuration_setting.label,
                     if_match=prep_if_match(configuration_setting.etag, match_condition),
-                    if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
+                    if_none_match=prep_if_none_match(
+                        configuration_setting.etag, match_condition
+                    ),
                     error_map=error_map,
                     **kwargs
                 )

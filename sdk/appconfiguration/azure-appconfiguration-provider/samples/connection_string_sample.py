@@ -4,7 +4,10 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from azure.appconfiguration.provider import load, SettingSelector
+from azure.appconfiguration.provider import (
+    load,
+    SettingSelector
+)
 import os
 
 connection_string = os.environ.get("AZURE_APPCONFIG_CONNECTION_STRING")

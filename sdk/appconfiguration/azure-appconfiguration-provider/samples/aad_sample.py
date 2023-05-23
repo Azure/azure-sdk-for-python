@@ -4,7 +4,10 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from azure.appconfiguration.provider import load, SettingSelector
+from azure.appconfiguration.provider import (
+    load,
+    SettingSelector
+)
 import os
 from sample_utilities import get_authority, get_audience, get_credential
 
