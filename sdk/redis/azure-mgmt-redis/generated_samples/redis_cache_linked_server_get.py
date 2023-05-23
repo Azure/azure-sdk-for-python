@@ -14,7 +14,7 @@ from azure.mgmt.redis import RedisManagementClient
     pip install azure-identity
     pip install azure-mgmt-redis
 # USAGE
-    python linked_server_delete.py
+    python redis_cache_linked_server_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,14 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.linked_server.begin_delete(
+    response = client.linked_server.get(
         resource_group_name="rg1",
         name="cache1",
         linked_server_name="cache2",
-    ).result()
+    )
     print(response)
 
 
-# x-ms-original-file: specification/redis/resource-manager/Microsoft.Cache/stable/2022-06-01/examples/RedisCacheLinkedServer_Delete.json
+# x-ms-original-file: specification/redis/resource-manager/Microsoft.Cache/stable/2023-04-01/examples/RedisCacheLinkedServer_Get.json
 if __name__ == "__main__":
     main()
