@@ -6,8 +6,8 @@ stages:
       ServiceDirectory: openai
       CloudConfig:
         Public:
-          SubscriptionConfigurations:
-            - $(python-openai-test-config)
+          SubscriptionConfiguration: $(python-openai-test-config)
+      SupportedClouds: 'Public'
       EnvVars:
         AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
         AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
