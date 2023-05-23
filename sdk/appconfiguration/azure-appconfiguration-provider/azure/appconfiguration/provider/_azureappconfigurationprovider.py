@@ -109,9 +109,6 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     endpoint: Optional[str] = kwargs.pop("endpoint", None)
     credential: Optional["TokenCredential"] = kwargs.pop("credential", None)
     connection_string: Optional[str] = kwargs.pop("connection_string", None)
-    key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
-    selects: List[SettingSelector] = kwargs.pop("selects", [SettingSelector(key_filter="*", label_filter=EMPTY_LABEL)])
-    trim_prefixes: List[str] = kwargs.pop("trim_prefixes", [])
 
     # Update endpoint and credential if specified positionally.
     if len(args) > 2:
@@ -129,14 +126,6 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
 
     if (endpoint or credential) and connection_string:
         raise ValueError("Please pass either endpoint and credential, or a connection string.")
-
-    provider = _buildprovider(connection_string, endpoint, credential, key_vault_options, **kwargs)
-    provider._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
-
-    for select in selects:
-        configurations = provider._client.list_configuration_settings(
-            key_filter=select.key_filter, label_filter=select.label_filter
-        )
 
     provider = _buildprovider(connection_string, endpoint, credential, **kwargs)
     provider._load_all()
@@ -181,7 +170,6 @@ def _buildprovider(
     connection_string: Optional[str],
     endpoint: Optional[str],
     credential: Optional["TokenCredential"],
-    key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions],
     **kwargs
 ) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
@@ -204,10 +192,12 @@ def _buildprovider(
 
 
 def _resolve_keyvault_reference(
-    config, key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions], provider: "AzureAppConfigurationProvider"
+    config, provider: "AzureAppConfigurationProvider"
 ) -> str:
     if provider._key_vault_options is None:
-        raise ValueError("Key Vault options must be set to resolve Key Vault references.")
+        raise ValueError(
+            "Key Vault options must be set to resolve Key Vault references."
+        )
 
     if config.secret_id is None:
         raise ValueError("Key Vault reference must have a uri value.")
@@ -223,7 +213,9 @@ def _resolve_keyvault_reference(
     credential = vault_config.pop("credential", provider._key_vault_options.credential)
 
     if referenced_client is None and credential is not None:
-        referenced_client = SecretClient(vault_url=vault_url, credential=credential, **vault_config)
+        referenced_client = SecretClient(
+            vault_url=vault_url, credential=credential, **vault_config
+        )
         provider._secret_clients[vault_url] = referenced_client
 
     if referenced_client:
