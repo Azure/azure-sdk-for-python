@@ -525,6 +525,7 @@ class Component(
             result.name = ANONYMOUS_COMPONENT_NAME
         else:
             result.name = self.name
+            result.properties.properties["client_component_hash"] = self._get_component_hash(keys_to_omit=["version"])
         return result
 
     def _to_dict(self) -> Dict:
