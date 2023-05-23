@@ -157,7 +157,7 @@ class _LocalDeploymentHelper(object):
         endpoint_name: str,
         deployment: OnlineDeployment,
         local_endpoint_mode: LocalEndpointMode,
-        local_enable_gpu: bool,
+        local_enable_gpu: Optional[bool] = False,
         endpoint_metadata: Optional[dict] = None,
         deployment_metadata: Optional[dict] = None,
     ):

@@ -132,7 +132,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             if local:
                 if local_enable_gpu:
                     try:
-                        subprocess.check_output("nvidia-smi")
+                        subprocess.run("nvidia-smi")
                     except Exception:
                         raise LocalDeploymentGPUNotAvailable(
                             msg=(
