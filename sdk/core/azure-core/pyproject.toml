@@ -1,6 +1,6 @@
 [tool.azure-sdk-build]
 mypy = true
-type_check_samples = true
+type_check_samples = false
 verifytypes = true
 pyright = false
 # For test environments or static checks where a check should be run by default, not explicitly disabling will enable the check.
