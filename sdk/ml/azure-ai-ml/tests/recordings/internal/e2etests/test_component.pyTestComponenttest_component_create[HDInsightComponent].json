@@ -1,0 +1,385 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/04f2b80e-58a5-0955-05ff-a1ee33a3a2b3/versions?api-version=2023-04-01\u0026hash=2bd996bed0da4993de4d23cf8eab6fd1e530c1b8af03f53513794376315d9848\u0026hashVersion=202208",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.8.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.12 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 23 May 2023 03:45:49 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-adfeaed6d9ce0e86fdc60a31c26f0ea9-2f5cfcd484bddb78-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-eastus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "31e4f099-d4cd-4e94-9461-ab77fb5115dd",
+        "x-ms-ratelimit-remaining-subscription-reads": "11985",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "JAPANEAST:20230523T034550Z:31e4f099-d4cd-4e94-9461-ab77fb5115dd",
+        "x-request-time": "0.039"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/04f2b80e-58a5-0955-05ff-a1ee33a3a2b3/versions/1",
+            "name": "1",
+            "type": "Microsoft.MachineLearningServices/workspaces/codes/versions",
+            "properties": {
+              "description": null,
+              "tags": {},
+              "properties": {
+                "hash_sha256": "2bd996bed0da4993de4d23cf8eab6fd1e530c1b8af03f53513794376315d9848",
+                "hash_version": "202208"
+              },
+              "isArchived": false,
+              "isAnonymous": false,
+              "codeUri": "https://amltest5899420437.blob.core.windows.net:443/0bdd51b6-c-6188aaf7-0207-565b-a04b-8ca7d11efb57/hdi-component",
+              "provisioningState": "Succeeded"
+            },
+            "systemData": {
+              "createdAt": "2023-05-19T10:02:43.6575372\u002B00:00",
+              "createdBy": "Chenyang Zhang",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-05-19T10:02:43.6575372\u002B00:00",
+              "lastModifiedBy": "Chenyang Zhang",
+              "lastModifiedByType": "User"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/04f2b80e-58a5-0955-05ff-a1ee33a3a2b3/versions/1?api-version=2023-04-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.8.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.12 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 23 May 2023 03:45:50 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-b812b8e9b730de7aaea49f5c708e98b0-b28aeedf09038fd6-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-eastus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "b2861900-5da0-49a3-8c8d-b45364875e61",
+        "x-ms-ratelimit-remaining-subscription-reads": "11984",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "JAPANEAST:20230523T034550Z:b2861900-5da0-49a3-8c8d-b45364875e61",
+        "x-request-time": "0.031"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/04f2b80e-58a5-0955-05ff-a1ee33a3a2b3/versions/1",
+        "name": "1",
+        "type": "Microsoft.MachineLearningServices/workspaces/codes/versions",
+        "properties": {
+          "description": null,
+          "tags": {},
+          "properties": {
+            "hash_sha256": "0000000000000",
+            "hash_version": "0000000000000"
+          },
+          "isArchived": false,
+          "isAnonymous": false,
+          "codeUri": "https://amltest5899420437.blob.core.windows.net:443/0bdd51b6-c-6188aaf7-0207-565b-a04b-8ca7d11efb57/hdi-component",
+          "provisioningState": "Succeeded"
+        },
+        "systemData": {
+          "createdAt": "2023-05-19T10:02:43.6575372\u002B00:00",
+          "createdBy": "Chenyang Zhang",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-05-19T10:02:43.6575372\u002B00:00",
+          "lastModifiedBy": "Chenyang Zhang",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_728115587314/versions/0.0.1?api-version=2022-10-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "1567",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/1.8.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.12 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "description": "Train a Spark ML model using an HDInsight Spark cluster",
+          "properties": {
+            "client_component_hash": "e76908eb-21ba-4cbb-3d7a-836df943afd3"
+          },
+          "tags": {
+            "HDInsight": "",
+            "Sample": "",
+            "contact": "Microsoft Coporation \u003Cxxx@microsoft.com\u003E",
+            "helpDocument": "https://aka.ms/hdinsight-modules"
+          },
+          "isAnonymous": false,
+          "isArchived": false,
+          "componentSpec": {
+            "name": "test_728115587314",
+            "description": "Train a Spark ML model using an HDInsight Spark cluster",
+            "tags": {
+              "HDInsight": "",
+              "Sample": "",
+              "contact": "Microsoft Coporation \u003Cxxx@microsoft.com\u003E",
+              "helpDocument": "https://aka.ms/hdinsight-modules"
+            },
+            "version": "0.0.1",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/HDInsightComponent.json",
+            "display_name": "Train in Spark",
+            "inputs": {
+              "input_path": {
+                "type": "path",
+                "description": "Iris csv file",
+                "optional": false
+              },
+              "regularization_rate": {
+                "type": "float",
+                "optional": true,
+                "default": "0.01",
+                "description": "Regularization rate when training with logistic regression"
+              }
+            },
+            "outputs": {
+              "output_path": {
+                "type": "path",
+                "description": "The output path to save the trained model to"
+              }
+            },
+            "type": "HDInsightComponent",
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/04f2b80e-58a5-0955-05ff-a1ee33a3a2b3/versions/1",
+            "hdinsight": {
+              "file": "train-spark.py",
+              "args": "--input_path {inputs.input_path} [--regularization_rate {inputs.regularization_rate}] --output_path {outputs.output_path}"
+            },
+            "_source": "YAML.COMPONENT"
+          }
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "2448",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 23 May 2023 03:45:52 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_728115587314/versions/0.0.1?api-version=2022-10-01",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-51bf8536dd64f5787bde47635329c2a1-4769c6a063544c93-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-eastus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "1e99e9aa-f092-4cfe-83fe-b0169ea93aad",
+        "x-ms-ratelimit-remaining-subscription-writes": "1195",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "JAPANEAST:20230523T034553Z:1e99e9aa-f092-4cfe-83fe-b0169ea93aad",
+        "x-request-time": "0.332"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_728115587314/versions/0.0.1",
+        "name": "0.0.1",
+        "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
+        "properties": {
+          "description": null,
+          "tags": {
+            "HDInsight": "",
+            "Sample": "",
+            "contact": "Microsoft Coporation \u003Cxxx@microsoft.com\u003E",
+            "helpDocument": "https://aka.ms/hdinsight-modules"
+          },
+          "properties": {
+            "client_component_hash": "e76908eb-21ba-4cbb-3d7a-836df943afd3"
+          },
+          "isArchived": false,
+          "isAnonymous": false,
+          "componentSpec": {
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/HDInsightComponent.json",
+            "name": "test_728115587314",
+            "version": "0.0.1",
+            "display_name": "Train in Spark",
+            "is_deterministic": "True",
+            "type": "HDInsightComponent",
+            "description": "Train a Spark ML model using an HDInsight Spark cluster",
+            "tags": {
+              "HDInsight": "",
+              "Sample": "",
+              "contact": "Microsoft Coporation \u003Cxxx@microsoft.com\u003E",
+              "helpDocument": "https://aka.ms/hdinsight-modules"
+            },
+            "inputs": {
+              "input_path": {
+                "type": "path",
+                "optional": "False",
+                "description": "Iris csv file"
+              },
+              "regularization_rate": {
+                "type": "Float",
+                "optional": "True",
+                "default": "0.01",
+                "description": "Regularization rate when training with logistic regression"
+              }
+            },
+            "outputs": {
+              "output_path": {
+                "type": "path",
+                "description": "The output path to save the trained model to"
+              }
+            },
+            "hdinsight": {
+              "args": "--input_path {inputs.input_path} [--regularization_rate {inputs.regularization_rate}] --output_path {outputs.output_path}",
+              "file": "train-spark.py"
+            },
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/04f2b80e-58a5-0955-05ff-a1ee33a3a2b3/versions/1"
+          }
+        },
+        "systemData": {
+          "createdAt": "2023-05-23T03:45:53.138784\u002B00:00",
+          "createdBy": "Chenyang Zhang",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-05-23T03:45:53.2136365\u002B00:00",
+          "lastModifiedBy": "Chenyang Zhang",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_728115587314/versions/0.0.1?api-version=2022-10-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.8.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.12 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 23 May 2023 03:45:53 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-c304a413ea585e8f079796914fa78fc1-6eff70f2985008fa-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-eastus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "c5ed7865-096d-468c-9ea1-012910cd87b7",
+        "x-ms-ratelimit-remaining-subscription-reads": "11985",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "JAPANEAST:20230523T034553Z:c5ed7865-096d-468c-9ea1-012910cd87b7",
+        "x-request-time": "0.064"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_728115587314/versions/0.0.1",
+        "name": "0.0.1",
+        "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
+        "properties": {
+          "description": null,
+          "tags": {
+            "HDInsight": "",
+            "Sample": "",
+            "contact": "Microsoft Coporation \u003Cxxx@microsoft.com\u003E",
+            "helpDocument": "https://aka.ms/hdinsight-modules"
+          },
+          "properties": {
+            "client_component_hash": "e76908eb-21ba-4cbb-3d7a-836df943afd3"
+          },
+          "isArchived": false,
+          "isAnonymous": false,
+          "componentSpec": {
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/HDInsightComponent.json",
+            "name": "test_728115587314",
+            "version": "0.0.1",
+            "display_name": "Train in Spark",
+            "is_deterministic": "True",
+            "type": "HDInsightComponent",
+            "description": "Train a Spark ML model using an HDInsight Spark cluster",
+            "tags": {
+              "HDInsight": "",
+              "Sample": "",
+              "contact": "Microsoft Coporation \u003Cxxx@microsoft.com\u003E",
+              "helpDocument": "https://aka.ms/hdinsight-modules"
+            },
+            "inputs": {
+              "input_path": {
+                "type": "path",
+                "optional": "False",
+                "description": "Iris csv file"
+              },
+              "regularization_rate": {
+                "type": "Float",
+                "optional": "True",
+                "default": "0.01",
+                "description": "Regularization rate when training with logistic regression"
+              }
+            },
+            "outputs": {
+              "output_path": {
+                "type": "path",
+                "description": "The output path to save the trained model to"
+              }
+            },
+            "hdinsight": {
+              "args": "--input_path {inputs.input_path} [--regularization_rate {inputs.regularization_rate}] --output_path {outputs.output_path}",
+              "file": "train-spark.py"
+            },
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/04f2b80e-58a5-0955-05ff-a1ee33a3a2b3/versions/1"
+          }
+        },
+        "systemData": {
+          "createdAt": "2023-05-23T03:45:53.138784\u002B00:00",
+          "createdBy": "Chenyang Zhang",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-05-23T03:45:53.2136365\u002B00:00",
+          "lastModifiedBy": "Chenyang Zhang",
+          "lastModifiedByType": "User"
+        }
+      }
+    }
+  ],
+  "Variables": {
+    "component_name": "test_728115587314"
+  }
+}

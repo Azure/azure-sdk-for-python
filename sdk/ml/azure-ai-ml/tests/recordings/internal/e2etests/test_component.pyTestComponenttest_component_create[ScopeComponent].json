@@ -1,0 +1,380 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/38d3bdd3-3972-0aff-771f-c9e322379b4f/versions?api-version=2023-04-01\u0026hash=cb14f9d6e8f5e64260f29f1d9a05cf823600068d9f905a56541590cdb0abd50b\u0026hashVersion=202208",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.8.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.12 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 23 May 2023 03:45:44 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-a17ad6a687e1493975888f2ec6b479c7-fe5bb87ef938cddb-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-eastus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "4d1d2318-2ee2-4398-b117-2ab9ba4cd9bf",
+        "x-ms-ratelimit-remaining-subscription-reads": "11988",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "JAPANEAST:20230523T034544Z:4d1d2318-2ee2-4398-b117-2ab9ba4cd9bf",
+        "x-request-time": "0.037"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/38d3bdd3-3972-0aff-771f-c9e322379b4f/versions/1",
+            "name": "1",
+            "type": "Microsoft.MachineLearningServices/workspaces/codes/versions",
+            "properties": {
+              "description": null,
+              "tags": {},
+              "properties": {
+                "hash_sha256": "cb14f9d6e8f5e64260f29f1d9a05cf823600068d9f905a56541590cdb0abd50b",
+                "hash_version": "202208"
+              },
+              "isArchived": false,
+              "isAnonymous": false,
+              "codeUri": "https://amltest5899420437.blob.core.windows.net:443/0bdd51b6-c-9e35036f-c01b-5d59-9c7d-c8d2011cf96a/scope-component",
+              "provisioningState": "Succeeded"
+            },
+            "systemData": {
+              "createdAt": "2023-05-19T10:01:51.6725254\u002B00:00",
+              "createdBy": "Chenyang Zhang",
+              "createdByType": "User",
+              "lastModifiedAt": "2023-05-19T10:01:51.6725254\u002B00:00",
+              "lastModifiedBy": "Chenyang Zhang",
+              "lastModifiedByType": "User"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/38d3bdd3-3972-0aff-771f-c9e322379b4f/versions/1?api-version=2023-04-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.8.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.12 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 23 May 2023 03:45:44 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-b3bee9ab22bf51be865858dc98984ec9-19ff6d87c4e493a7-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-eastus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "88921fa4-a977-460d-b8d7-fca065ed5ff1",
+        "x-ms-ratelimit-remaining-subscription-reads": "11987",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "JAPANEAST:20230523T034545Z:88921fa4-a977-460d-b8d7-fca065ed5ff1",
+        "x-request-time": "0.030"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/38d3bdd3-3972-0aff-771f-c9e322379b4f/versions/1",
+        "name": "1",
+        "type": "Microsoft.MachineLearningServices/workspaces/codes/versions",
+        "properties": {
+          "description": null,
+          "tags": {},
+          "properties": {
+            "hash_sha256": "0000000000000",
+            "hash_version": "0000000000000"
+          },
+          "isArchived": false,
+          "isAnonymous": false,
+          "codeUri": "https://amltest5899420437.blob.core.windows.net:443/0bdd51b6-c-9e35036f-c01b-5d59-9c7d-c8d2011cf96a/scope-component",
+          "provisioningState": "Succeeded"
+        },
+        "systemData": {
+          "createdAt": "2023-05-19T10:01:51.6725254\u002B00:00",
+          "createdBy": "Chenyang Zhang",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-05-19T10:01:51.6725254\u002B00:00",
+          "lastModifiedBy": "Chenyang Zhang",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_205920012416/versions/0.0.1?api-version=2022-10-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "1334",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/1.8.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.12 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "description": "Convert adls test data to SS format",
+          "properties": {
+            "client_component_hash": "adbb2d8b-7fb7-5747-07c3-9a90f2400096"
+          },
+          "tags": {
+            "org": "bing",
+            "project": "relevance"
+          },
+          "isAnonymous": false,
+          "isArchived": false,
+          "componentSpec": {
+            "name": "test_205920012416",
+            "description": "Convert adls test data to SS format",
+            "tags": {
+              "org": "bing",
+              "project": "relevance"
+            },
+            "version": "0.0.1",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/ScopeComponent.json",
+            "display_name": "Convert Text to StructureStream",
+            "is_deterministic": true,
+            "inputs": {
+              "TextData": {
+                "type": [
+                  "AnyFile",
+                  "AnyDirectory"
+                ],
+                "description": "text file on ADLS storage"
+              },
+              "ExtractionClause": {
+                "type": "string",
+                "description": "the extraction clause, something like \u0022column1:string, column2:int\u0022"
+              }
+            },
+            "outputs": {
+              "SSPath": {
+                "type": "CosmosStructuredStream",
+                "description": "the converted structured stream"
+              }
+            },
+            "type": "ScopeComponent",
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/38d3bdd3-3972-0aff-771f-c9e322379b4f/versions/1",
+            "scope": {
+              "script": "convert2ss.script",
+              "args": "Output_SSPath {outputs.SSPath} Input_TextData {inputs.TextData} ExtractionClause {inputs.ExtractionClause}"
+            },
+            "_source": "YAML.COMPONENT"
+          }
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "2279",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 23 May 2023 03:45:46 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_205920012416/versions/0.0.1?api-version=2022-10-01",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-e450e6b5cd933c31bc617600c6e7e8d1-5ed98119abb90e55-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-eastus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "3925d7da-513e-47f8-be89-8b9f922a7644",
+        "x-ms-ratelimit-remaining-subscription-writes": "1196",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "JAPANEAST:20230523T034547Z:3925d7da-513e-47f8-be89-8b9f922a7644",
+        "x-request-time": "0.330"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_205920012416/versions/0.0.1",
+        "name": "0.0.1",
+        "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
+        "properties": {
+          "description": null,
+          "tags": {
+            "org": "bing",
+            "project": "relevance"
+          },
+          "properties": {
+            "client_component_hash": "adbb2d8b-7fb7-5747-07c3-9a90f2400096"
+          },
+          "isArchived": false,
+          "isAnonymous": false,
+          "componentSpec": {
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/ScopeComponent.json",
+            "name": "test_205920012416",
+            "version": "0.0.1",
+            "display_name": "Convert Text to StructureStream",
+            "is_deterministic": "True",
+            "type": "ScopeComponent",
+            "description": "Convert adls test data to SS format",
+            "tags": {
+              "org": "bing",
+              "project": "relevance"
+            },
+            "inputs": {
+              "TextData": {
+                "type": [
+                  "AnyFile",
+                  "AnyDirectory"
+                ],
+                "optional": "False",
+                "description": "text file on ADLS storage",
+                "is_resource": "False"
+              },
+              "ExtractionClause": {
+                "type": "String",
+                "optional": "False",
+                "description": "the extraction clause, something like \u0022column1:string, column2:int\u0022"
+              }
+            },
+            "outputs": {
+              "SSPath": {
+                "type": "CosmosStructuredStream",
+                "description": "the converted structured stream"
+              }
+            },
+            "scope": {
+              "args": "Input_TextData {inputs.TextData} Output_SSPath {outputs.SSPath} ExtractionClause {inputs.ExtractionClause}",
+              "script": "convert2ss.script"
+            },
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/38d3bdd3-3972-0aff-771f-c9e322379b4f/versions/1"
+          }
+        },
+        "systemData": {
+          "createdAt": "2023-05-23T03:45:47.4713169\u002B00:00",
+          "createdBy": "Chenyang Zhang",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-05-23T03:45:47.539584\u002B00:00",
+          "lastModifiedBy": "Chenyang Zhang",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_205920012416/versions/0.0.1?api-version=2022-10-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.8.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.12 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 23 May 2023 03:45:47 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-ba14015773c0bb71fde654023d26b933-b4d3e6538a75c057-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-eastus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "88539fb6-9108-4a0f-8fd6-442a4ad3541f",
+        "x-ms-ratelimit-remaining-subscription-reads": "11988",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "JAPANEAST:20230523T034548Z:88539fb6-9108-4a0f-8fd6-442a4ad3541f",
+        "x-request-time": "0.065"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/test_205920012416/versions/0.0.1",
+        "name": "0.0.1",
+        "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
+        "properties": {
+          "description": null,
+          "tags": {
+            "org": "bing",
+            "project": "relevance"
+          },
+          "properties": {
+            "client_component_hash": "adbb2d8b-7fb7-5747-07c3-9a90f2400096"
+          },
+          "isArchived": false,
+          "isAnonymous": false,
+          "componentSpec": {
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/ScopeComponent.json",
+            "name": "test_205920012416",
+            "version": "0.0.1",
+            "display_name": "Convert Text to StructureStream",
+            "is_deterministic": "True",
+            "type": "ScopeComponent",
+            "description": "Convert adls test data to SS format",
+            "tags": {
+              "org": "bing",
+              "project": "relevance"
+            },
+            "inputs": {
+              "TextData": {
+                "type": [
+                  "AnyFile",
+                  "AnyDirectory"
+                ],
+                "optional": "False",
+                "description": "text file on ADLS storage",
+                "is_resource": "False"
+              },
+              "ExtractionClause": {
+                "type": "String",
+                "optional": "False",
+                "description": "the extraction clause, something like \u0022column1:string, column2:int\u0022"
+              }
+            },
+            "outputs": {
+              "SSPath": {
+                "type": "CosmosStructuredStream",
+                "description": "the converted structured stream"
+              }
+            },
+            "scope": {
+              "args": "Input_TextData {inputs.TextData} Output_SSPath {outputs.SSPath} ExtractionClause {inputs.ExtractionClause}",
+              "script": "convert2ss.script"
+            },
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/38d3bdd3-3972-0aff-771f-c9e322379b4f/versions/1"
+          }
+        },
+        "systemData": {
+          "createdAt": "2023-05-23T03:45:47.4713169\u002B00:00",
+          "createdBy": "Chenyang Zhang",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-05-23T03:45:47.539584\u002B00:00",
+          "lastModifiedBy": "Chenyang Zhang",
+          "lastModifiedByType": "User"
+        }
+      }
+    }
+  ],
+  "Variables": {
+    "component_name": "test_205920012416"
+  }
+}
