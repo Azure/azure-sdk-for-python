@@ -67,15 +67,7 @@ def login(
     if api_type:
         openai.api_type = api_type
 
-    # API version is not configured by env var in openai yet
-    # PR: https://github.com/openai/openai-python/pull/438
-    openai.api_version = os.environ.get(
-        "OPENAI_API_VERSION",
-        ("2023-03-15-preview" if api_type in ("azure", "azure_ad", "azuread") else None),
-    )
-
     if api_version:
-        # should we default api version?
         openai.api_version = api_version
 
     if hasattr(api_key, "get_token"):
