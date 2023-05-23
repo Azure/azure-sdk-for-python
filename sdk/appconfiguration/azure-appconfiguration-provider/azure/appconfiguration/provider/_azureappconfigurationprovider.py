@@ -265,6 +265,13 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         self._min_backoff: Optional[int] = kwargs.pop("min_backoff", 30)
         self._max_backoff: Optional[int] = kwargs.pop("min_backoff", 600)
 
+    def drefresh(self, func):
+
+        def refresh_wrapper(*args, **kwargs):
+            self.refresh()
+            return func(*args, **kwargs)
+        return refresh_wrapper
+
     def refresh(self, **kwargs) -> None:
         if self._refresh_options is None or len(self._refresh_options._refresh_registrations) == 0:
             logging.debug("Refresh called but no refresh options set.")
