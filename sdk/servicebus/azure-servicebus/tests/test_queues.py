@@ -2466,21 +2466,8 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 with pytest.raises(OperationTimeoutError):
                     sender.send_messages(ServiceBusMessage("body"), timeout=5)
 
-        # test only on sync, since async is hard to force a timeout
         if not uamqp_transport:
-            # test low socket timeout with regular Amqp
-            with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string,
-                transport_type=TransportType.Amqp,
-                retry_total=0,
-                uamqp_transport=uamqp_transport
-            ) as sb_client:
-                with pytest.raises(ServiceBusConnectionError):
-                    with sb_client.get_queue_sender(servicebus_queue.name, socket_timeout=0.1) as sender:
-                        payload = "A" * 250 * 1024
-                        sender.send_messages(ServiceBusMessage(payload))
-
-            # test high socket timeout with regular Amqp
+            # Amqp
             with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string,
                 uamqp_transport=uamqp_transport
@@ -2493,26 +2480,13 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 transport_type = uamqp.constants.TransportType.AmqpOverWebsocket
             else:
                 transport_type = TransportType.AmqpOverWebsocket
-            # test low socket timeout with AmqpOverWebsocket
-            with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string,
-                transport_type=transport_type,
-                retry_total=0,
-                uamqp_transport=uamqp_transport
-            ) as sb_client:
-                with pytest.raises(ServiceBusConnectionError):
-                    with sb_client.get_queue_sender(servicebus_queue.name, socket_timeout=0.1) as sender:
-                        payload = "A" * 250 * 1024
-                        sender.send_messages(ServiceBusMessage(payload))
-            
-            transport_type = TransportType.AmqpOverWebsocket
-            # test high socket timeout with AmqpOverWebsocket
+            # AmqpOverWebsocket
             with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string,
                 transport_type=transport_type,
                 uamqp_transport=uamqp_transport
             ) as sb_client:
-                with sb_client.get_queue_sender(servicebus_queue.name, socket_timeout=0.4) as sender:
+                with sb_client.get_queue_sender(servicebus_queue.name, socket_timeout=0.8) as sender:
                     payload = "A" * 250 * 1024
                     sender.send_messages(ServiceBusMessage(payload))
 

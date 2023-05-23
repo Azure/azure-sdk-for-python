@@ -243,9 +243,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         # Since we use `sock.settimeout()` in the transport for reading/writing, that acts as a
         # "block with timeout" when we pass in a timeout value. If `wait` is float value, then
         # timeout was set during socket init.
-        if isinstance(wait, float) or wait is False:
+        if wait is not True:    # wait is float/int/False
             new_frame = self._transport.receive_frame(**kwargs)
-        else: # wait is True
+        else:
             with self._transport.block():
                 new_frame = self._transport.receive_frame(**kwargs)
         return self._process_incoming_frame(*new_frame)
