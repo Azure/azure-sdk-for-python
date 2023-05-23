@@ -39,14 +39,14 @@ stages:
         ${{ if eq(service, 'azure-keyvault-administration') }}:
           ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
             # Test azure-keyvault-administration on Managed HSM for weekly tests only
-            AdditionalMatrixConfigs:
-              - Name: keyvault_hsm_matrix_addons
+            MatrixConfigs:
+              - Name: keyvault_admin_weekly_matrix
                 Path: sdk/keyvault/azure-keyvault-keys/platform-matrix.json
                 Selection: sparse
                 GenerateVMJobs: true
           # For nightly tests, don't run live azure-keyvault-administration jobs since they require Managed HSM
           MatrixConfigs:
-            - Name: keyvault_admin_matrix
+            - Name: keyvault_admin_nightly_matrix
               Path: sdk/keyvault/azure-keyvault-administration/platform-matrix.json
               Selection: sparse
               GenerateVMJobs: true
