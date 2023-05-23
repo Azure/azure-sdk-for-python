@@ -387,7 +387,7 @@ class ComponentOperations(_ScopeDependentOperations):
         except ResourceNotFoundError as e:
             logger.info(f"Failed to get component version, {e}")
         except Exception as e:
-            logger.error(f"Failed to compare and set client_component_hash, {e}")
+            logger.error(f"Failed to compare client_component_hash, {e}")
 
         try:
             if self._registry_name:
