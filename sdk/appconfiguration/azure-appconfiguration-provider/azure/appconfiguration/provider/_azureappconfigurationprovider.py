@@ -7,6 +7,7 @@ import os
 import json
 import random
 from datetime import datetime, timedelta
+import logging
 from typing import (
     Any,
     Dict,
@@ -48,6 +49,7 @@ if TYPE_CHECKING:
 
 JSON = Union[str, Mapping[str, Any]]  # pylint: disable=unsubscriptable-object
 
+logger = logging.getLogger(__name__)
 
 @overload
 def load(
@@ -290,15 +292,17 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             self._refresh_options is None
             or len(self._refresh_options._refresh_registrations) == 0
         ):
+            logging.debug("Refresh called but no refresh options set.")
             return
 
         if datetime.now() < self._next_refresh_time:
+            logging.debug("Refresh called but refresh interval not elapsed.")
             return
 
         refresh_all = False
 
         for registration in self._refresh_options._refresh_registrations:
-            if registration.refresh_all == True:
+            if registration.refresh_all:
                 updated_sentinel = self._client.get_configuration_setting(
                     key=registration.key_filter,
                     label=registration.label_filter,
@@ -307,6 +311,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                 if registration.etag == updated_sentinel.etag:
                     continue
                 else:
+                    logging.debug("Refresh all triggered by key: %s label %s.".format(registration.key_filter, registration.label_filter))
                     refresh_all = True
                     break
 
@@ -315,6 +320,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             self._next_refresh_time = datetime.now() + timedelta(
                 seconds=self._refresh_options.refresh_interval
             )
+            self._attempts = 1
             return
 
         # Only update individual keys if the refresh_all didn't trigger
@@ -323,7 +329,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
 
         try:
             for registration in updated_registrations:
-                if registration.refresh_all == False:
+                if not registration.refresh_all:
                     updated_sentinel = self._client.get_configuration_setting(
                         key=registration.key_filter,
                         label=registration.label_filter,
@@ -336,21 +342,23 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                         updated_dict[
                             self._proccess_key_name(updated_sentinel)
                         ] = self._proccess_key_value(updated_sentinel)
+                        logging.debug("Refresh triggered for key: %s label: %s", registration.key_filter, registration.label_filter)
 
             self._dict = updated_dict
             self._refresh_options._refresh_registrations = updated_registrations
             self._next_refresh_time = datetime.now() + timedelta(
                 seconds=self._refresh_options._refresh_interval
             )
-            self._attempts = 1
         except Exception as error:
-            error.message = "An error occurred while checking for configuration updates. \
-                {} attempts have been made.\n {}".format(self._attempts, error.message)
+            logging.warning("An error occurred while checking for configuration updates. \
+                {} attempts have been made.\n {}".format(self._attempts, error.message))
             # Refresh All or None, any failure will trigger a backoff
             self._next_refresh_time = datetime.now() + timedelta(
                 microseconds=self._calculate_backoff()
             )
             self._attempts += 1
+            return
+        self._attempts = 1
 
     def _load_all(self, **kwargs):
         dict = {}
