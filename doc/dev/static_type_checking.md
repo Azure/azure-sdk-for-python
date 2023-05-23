@@ -185,7 +185,7 @@ mypy is currently pinned to version [1.0.0](https://pypi.org/project/mypy/1.0.0/
 
 To run mypy on your library, run the tox mypy env at the package level:
 
-`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox run -e mypy -c ../../../eng/tox/tox.ini --root sdk/textanalytics/azure-ai-textanalytics`
+`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox run -e mypy -c ../../../eng/tox/tox.ini --root .`
 
 If you don't want to use `tox` you can also install and run mypy on its own:
 
