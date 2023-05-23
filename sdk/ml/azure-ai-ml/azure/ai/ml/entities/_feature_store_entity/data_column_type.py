@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 
 from enum import Enum
-from typing import Any
 
 from azure.core import CaseInsensitiveEnumMeta
 
@@ -20,7 +19,3 @@ class DataColumnType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BINARY = "binary"
     DATETIME = "datetime"
     BOOLEAN = "boolean"
-
-    @classmethod
-    def _missing_(cls, value: object) -> Any:
-        return super()._missing_(value)
