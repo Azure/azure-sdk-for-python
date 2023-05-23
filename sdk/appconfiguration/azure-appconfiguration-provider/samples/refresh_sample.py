@@ -31,7 +31,7 @@ print(config["message"])
 print(config["my_json"]["key"])
 
 # Updating the configuration setting
-configuration_setting.value="Hello World Updated!"
+configuration_setting.value = "Hello World Updated!"
 
 client.set_configuration_setting(configuration_setting=configuration_setting)
 

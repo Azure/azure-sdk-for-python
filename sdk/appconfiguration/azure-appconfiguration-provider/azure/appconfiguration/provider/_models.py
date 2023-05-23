@@ -56,9 +56,7 @@ class SettingSelector:
 
 
 class RefreshRegistrations:
-    def __init__(
-        self, key_filter: str, label_filter: Optional[str], refresh_all: Optional[bool]
-    ):
+    def __init__(self, key_filter: str, label_filter: Optional[str], refresh_all: Optional[bool]):
         self.key_filter = key_filter
         self.label_filter = label_filter
         self.refresh_all = refresh_all
@@ -72,12 +70,6 @@ class AzureAppConfigurationRefreshOptions:
         self.callback = None
 
     def register(
-        self,
-        *,
-        key_filter: str,
-        label_filter: Optional[str] = EMPTY_LABEL,
-        refresh_all: Optional[bool] = False
+        self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL, refresh_all: Optional[bool] = False
     ):
-        self._refresh_registrations.append(
-            RefreshRegistrations(key_filter, label_filter, refresh_all)
-        )
+        self._refresh_registrations.append(RefreshRegistrations(key_filter, label_filter, refresh_all))
