@@ -10,18 +10,13 @@
 import shutil
 import sys
 import logging
-import ast
 import os
-import textwrap
-import io
+import tarfile
 import glob
 import zipfile
 import fnmatch
 import subprocess
 import re
-
-from packaging.specifiers import SpecifierSet
-from pkg_resources import Requirement, parse_version
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -50,19 +45,27 @@ def get_pip_list_output():
     return collected_output
 
 
-def unzip_sdist_to_directory(containing_folder):
-    # grab the first one
-    path_to_zip_file = glob.glob(os.path.join(containing_folder, "*.zip"))[0]
-    return unzip_file_to_directory(path_to_zip_file, containing_folder)
+def unzip_sdist_to_directory(containing_folder: str) -> str:
+    zips = glob.glob(os.path.join(containing_folder, "*.zip"))
+
+    if zips:
+        return unzip_file_to_directory(zips[0], containing_folder)
+    else:
+        tars = glob.glob(os.path.join(containing_folder, "*.tar.gz"))
+        return unzip_file_to_directory(tars[0], containing_folder)
 
 
-def unzip_file_to_directory(path_to_zip_file, extract_location):
-    # unzip file in given path
-    # dump into given path
-    with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
-        zip_ref.extractall(extract_location)
-        extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
-        return os.path.join(extract_location, extracted_dir)
+def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
+    if path_to_zip_file.endswith(".zip"):
+        with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
+            zip_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
+            return os.path.join(extract_location, extracted_dir)
+    else:
+        # .tar.gz -> .tar
+        with tarfile.open(path_to_zip_file) as tar_ref:
+            tar_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(path_to_zip_file).replace(".tar.gz", "")
 
 
 def move_and_rename(source_location):
@@ -85,7 +88,7 @@ def find_sdist(dist_dir, pkg_name, pkg_version):
         logging.error("Package name cannot be empty to find sdist")
         return
 
-    pkg_name_format = "{0}-{1}.zip".format(pkg_name, pkg_version)
+    pkg_name_format = "{0}-{1}.tar.gz".format(pkg_name, pkg_version)
     packages = []
     for root, dirnames, filenames in os.walk(dist_dir):
         for filename in fnmatch.filter(filenames, pkg_name_format):

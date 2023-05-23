@@ -169,7 +169,7 @@ def create_package(
         )
     if enable_sdist:
         run_logged(
-            [sys.executable, "setup.py", "sdist", "--format", "zip", "-d", dist],
+            [sys.executable, "setup.py", "sdist", "-d", dist],
             prefix="create_sdist",
             cwd=setup_directory_or_file,
         )

@@ -1,7 +1,7 @@
 $Language = "python"
 $LanguageDisplayName = "Python"
 $PackageRepository = "PyPI"
-$packagePattern = "*.zip"
+$packagePattern = "*.tar.gz"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/main/_data/releases/latest/python-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
 $GithubUri = "https://github.com/Azure/azure-sdk-for-python"
@@ -130,7 +130,7 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
 # Stage and Upload Docs to blob Storage
 function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
 {
-  $PublishedDocs = Get-ChildItem "$DocLocation" | Where-Object -FilterScript {$_.Name.EndsWith(".zip")}
+  $PublishedDocs = Get-ChildItem "$DocLocation" | Where-Object -FilterScript {$_.Name.EndsWith(".tar.gz")}
 
   foreach ($Item in $PublishedDocs)
   {
@@ -140,6 +140,18 @@ function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
     $VersionFileLocation = Join-Path -Path $UnzippedDocumentationPath -ChildPath "version.txt"
 
     Expand-Archive -Force -Path $ZippedDocumentationPath -DestinationPath $UnzippedDocumentationPath
+
+    if (!(Test-Path $UnzippedDocumentationPath)) {
+      New-Item -Path $UnzippedDocumentationPath -ItemType Directory
+    }
+
+    Write-Host "tar -zxvf $ZippedDocumentationPath -C $UnzippedDocumentationPath"
+    tar -zxvf $ZippedDocumentationPath -C $UnzippedDocumentationPath
+
+    if ($LASTEXITCODE -ne 0) {
+      Write-Error "tar failed with exit code $LASTEXITCODE."
+      exit $LASTEXITCODE
+    }
 
     $Version = $(Get-Content $VersionFileLocation).Trim()
 
