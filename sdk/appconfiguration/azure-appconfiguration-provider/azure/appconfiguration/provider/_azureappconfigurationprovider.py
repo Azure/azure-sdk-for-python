@@ -311,7 +311,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                 if registration.etag == updated_sentinel.etag:
                     continue
                 else:
-                    logging.debug("Refresh all triggered by key: %s label %s.".format(registration.key_filter, registration.label_filter))
+                    logging.debug("Refresh all triggered by key: %s label %s.", registration.key_filter, registration.label_filter)
                     refresh_all = True
                     break
 
@@ -352,10 +352,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         except Exception as error:
             if hasattr(error, 'message'):
                 logging.warning("An error occurred while checking for configuration updates. \
-                    {} attempts have been made.\n {}".format(self._attempts, error.message))
+                    %s attempts have been made.\n %r", self._attempts, error.message)
             else:
                 logging.warning("An error occurred while checking for configuration updates. \
-                    {} attempts have been made.\n {}".format(self._attempts, error))
+                    %s attempts have been made.\n %r", self._attempts, error)
             # Refresh All or None, any failure will trigger a backoff
             self._next_refresh_time = datetime.now() + timedelta(
                 microseconds=self._calculate_backoff()
@@ -390,9 +390,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             if config.key.startswith(trim):
                 trimmed_key = config.key[len(trim) :]
                 break
-        if isinstance(config, FeatureFlagConfigurationSetting):
-            if trimmed_key.startswith(FEATURE_FLAG_PREFIX):
-                return trimmed_key[len(FEATURE_FLAG_PREFIX) :]
+        if isinstance(config, FeatureFlagConfigurationSetting) and trimmed_key.startswith(FEATURE_FLAG_PREFIX):
+            return trimmed_key[len(FEATURE_FLAG_PREFIX) :]
         return trimmed_key
 
     def _proccess_key_value(self, config):
