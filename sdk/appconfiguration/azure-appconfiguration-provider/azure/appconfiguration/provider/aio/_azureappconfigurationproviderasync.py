@@ -17,7 +17,7 @@ from .._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_PREFIX,
     EMPTY_LABEL,
-    RequestTracingDisabledEnvironmentVariable,
+    REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE,
 )
 from .._azureappconfigurationprovider import _is_json_content_type, _get_correlation_context
 from .._user_agent import USER_AGENT
@@ -154,7 +154,7 @@ def _buildprovider(
     # pylint:disable=protected-access
     provider = AzureAppConfigurationProvider()
     headers = kwargs.pop("headers", {})
-    if os.environ.get(RequestTracingDisabledEnvironmentVariable, default="").lower() != "true":
+    if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() != "true":
         headers["Correlation-Context"] = _get_correlation_context(key_vault_options)
 
     useragent = USER_AGENT
