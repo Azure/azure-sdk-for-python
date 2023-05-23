@@ -840,7 +840,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
             return False
         return True
 
-    def _message_received(self, delivery_id, message):
+    def _message_received(self, frame, message):
         """Callback run on receipt of every message. If there is
         a user-defined callback, this will be called.
         Additionally if the client is retrieving messages for a batch
@@ -853,7 +853,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         if self._message_received_callback:
             self._message_received_callback(message)
         if not self._streaming_receive:
-            self._received_messages.put((delivery_id, message))
+            self._received_messages.put((frame, message))
 
     def _receive_message_batch_impl(
         self, max_batch_size=None, on_message_received=None, timeout=0

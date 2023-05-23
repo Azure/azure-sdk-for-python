@@ -226,15 +226,15 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     @staticmethod
     async def enhanced_message_received_async(
         receiver: "ServiceBusReceiver",
-        delivery_id: int,
+        frame: "AttachFrame",
         message: "Message"
     ) -> None:
         # pylint: disable=protected-access
         receiver._handler._last_activity_timestamp = time.time()
         if receiver._receive_context.is_set():
-            receiver._handler._received_messages.put((delivery_id, message))
+            receiver._handler._received_messages.put((frame, message))
         else:
-            await receiver._handler.settle_messages_async(delivery_id, 'released')
+            await receiver._handler.settle_messages_async(frame[1], 'released')
 
     @staticmethod
     def set_handler_message_received_async(receiver: "ServiceBusReceiver") -> None:
