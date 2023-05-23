@@ -33,24 +33,38 @@ from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubProducerClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.schemaregistry.aio import SchemaRegistryClient
-from azure.schemaregistry.encoder.avroencoder.aio import AvroEncoder
+from azure.schemaregistry.encoder.jsonschemaencoder.aio import JsonSchemaEncoder
 
 EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ['SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE']
 GROUP_NAME = os.environ['SCHEMAREGISTRY_GROUP']
 
-SCHEMA_STRING = """
-{"namespace": "example.avro",
- "type": "record",
- "name": "User",
- "fields": [
-     {"name": "name", "type": "string"},
-     {"name": "favorite_number",  "type": ["int", "null"]},
-     {"name": "favorite_color", "type": ["string", "null"]}
- ]
-}"""
+SCHEMA_JSON = {
+    "$id": "https://example.com/person.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Person",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "Person's name."
+        },
+        "favorite_color": {
+            "type": "string",
+            "description": "Favorite color."
+        },
+        "favorite_number": {
+            "description": "Favorite number.",
+            "type": "integer",
+        }
+    }
+}
+
+import json
+SCHEMA_STRING = json.dumps(SCHEMA_JSON)
+
 
 # create an EventHubProducerClient instance
 eventhub_producer = EventHubProducerClient.from_connection_string(
@@ -60,7 +74,7 @@ eventhub_producer = EventHubProducerClient.from_connection_string(
 # create a AvroEncoder instance
 azure_credential = DefaultAzureCredential()
 # create a AvroEncoder instance
-avro_encoder = AvroEncoder(
+json_schema_encoder = JsonSchemaEncoder(
     client=SchemaRegistryClient(
         fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
         credential=azure_credential
@@ -85,8 +99,8 @@ async def send_event_data_batch(producer, encoder):
 
 async def main():
 
-    await send_event_data_batch(eventhub_producer, avro_encoder)
-    await avro_encoder.close()
+    await send_event_data_batch(eventhub_producer, json_schema_encoder)
+    await json_schema_encoder.close()
     await azure_credential.close()
     await eventhub_producer.close()
 

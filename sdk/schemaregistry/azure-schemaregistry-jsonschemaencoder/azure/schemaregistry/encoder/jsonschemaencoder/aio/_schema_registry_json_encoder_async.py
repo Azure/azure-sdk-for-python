@@ -34,7 +34,7 @@ from .._utils import (  # pylint: disable=import-error
     decode_content,
     MessageType,
 )
-from ._exceptions import (  # pylint: disable=import-error
+from .._exceptions import (  # pylint: disable=import-error
     InvalidSchemaError,
 )
 from ._async_lru import alru_cache  # pylint: disable=import-error
@@ -246,7 +246,7 @@ class JsonSchemaEncoder(object):
             )
         return create_message_content(
             content=content,
-            raw_input_schema=raw_input_schema,
+            schema=schema_dict,
             schema_id=schema_id,
             message_type=message_type,
             validate=self._validate,
