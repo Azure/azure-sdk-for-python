@@ -217,7 +217,7 @@ Note that pyright requires that node is installed. The command-line [wrapper pac
 
 To run pyright on your library, run the tox pyright env at the package level:
 
-`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox run -e pyright -c ../../../eng/tox/tox.ini --root sdk/textanalytics/azure-ai-textanalytics`
+`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox run -e pyright -c ../../../eng/tox/tox.ini --root .`
 
 If you don't want to use `tox` you can also install and run pyright on its own:
 
