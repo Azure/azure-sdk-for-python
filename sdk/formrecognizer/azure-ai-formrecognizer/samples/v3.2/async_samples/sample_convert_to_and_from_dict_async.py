@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -69,9 +67,9 @@ async def convert_to_and_from_dict_async():
 
     # use the model as normal
     print("----Converted from dictionary AnalyzeResult----")
-    print("Model ID: '{}'".format(model.model_id))
-    print("Number of pages analyzed {}".format(len(model.pages)))
-    print("API version used: {}".format(model.api_version))
+    print(f"Model ID: '{model.model_id}'")
+    print(f"Number of pages analyzed {len(model.pages)}")
+    print(f"API version used: {model.api_version}")
 
     print("----------------------------------------")
 

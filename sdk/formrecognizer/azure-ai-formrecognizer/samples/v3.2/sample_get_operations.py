@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -40,35 +38,35 @@ def sample_get_operations():
 
     print("The following document model operations exist under my resource:")
     for operation in operations:
-        print("\nOperation ID: {}".format(operation.operation_id))
-        print("Operation kind: {}".format(operation.kind))
-        print("Operation status: {}".format(operation.status))
-        print("Operation percent completed: {}".format(operation.percent_completed))
-        print("Operation created on: {}".format(operation.created_on))
-        print("Operation last updated on: {}".format(operation.last_updated_on))
-        print("Resource location of successful operation: {}".format(operation.resource_location))
+        print(f"\nOperation ID: {operation.operation_id}")
+        print(f"Operation kind: {operation.kind}")
+        print(f"Operation status: {operation.status}")
+        print(f"Operation percent completed: {operation.percent_completed}")
+        print(f"Operation created on: {operation.created_on}")
+        print(f"Operation last updated on: {operation.last_updated_on}")
+        print(f"Resource location of successful operation: {operation.resource_location}")
     # [END list_operations]
 
     # [START get_operation]
     # Get an operation by ID
     if operations:
-        print("\nGetting operation info by ID: {}".format(operations[0].operation_id))
+        print(f"\nGetting operation info by ID: {operations[0].operation_id}")
         operation_info = document_model_admin_client.get_operation(operations[0].operation_id)
         if operation_info.status == "succeeded":
-            print("My {} operation is completed.".format(operation_info.kind))
+            print(f"My {operation_info.kind} operation is completed.")
             result = operation_info.result
             if result is not None:
                 if operation_info.kind == "documentClassifierBuild":
                     print(f"Classifier ID: {result.classifier_id}")
                 else:
-                    print("Model ID: {}".format(result.model_id))
+                    print(f"Model ID: {result.model_id}")
         elif operation_info.status == "failed":
-            print("My {} operation failed.".format(operation_info.kind))
+            print(f"My {operation_info.kind} operation failed.")
             error = operation_info.error
             if error is not None:
-                print("{}: {}".format(error.code, error.message))
+                print(f"{error.code}: {error.message}")
         else:
-            print("My operation status is {}".format(operation_info.status))
+            print(f"My operation status is {operation_info.status}")
     else:
         print("No operations found.")
     # [END get_operation]

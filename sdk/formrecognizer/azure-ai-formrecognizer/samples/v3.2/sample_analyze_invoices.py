@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -53,7 +51,7 @@ def analyze_invoice():
     invoices = poller.result()
 
     for idx, invoice in enumerate(invoices.documents):
-        print("--------Analyzing invoice #{}--------".format(idx + 1))
+        print(f"--------Analyzing invoice #{idx + 1}--------")
         vendor_name = invoice.fields.get("VendorName")
         if vendor_name:
             print(
@@ -171,7 +169,7 @@ def analyze_invoice():
             )
         print("Invoice items:")
         for idx, item in enumerate(invoice.fields.get("Items").value):
-            print("...Item #{}".format(idx + 1))
+            print(f"...Item #{idx + 1}")
             item_description = item.value.get("Description")
             if item_description:
                 print(
@@ -217,7 +215,7 @@ def analyze_invoice():
             tax = item.value.get("Tax")
             if tax:
                 print(
-                    "......Tax: {} has confidence: {}".format(tax.value, tax.confidence)
+                    f"......Tax: {tax.value} has confidence: {tax.confidence}"
                 )
             amount = item.value.get("Amount")
             if amount:

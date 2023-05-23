@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -26,12 +24,12 @@ import os
 def format_bounding_region(bounding_regions):
     if not bounding_regions:
         return "N/A"
-    return ", ".join("Page #{}: {}".format(region.page_number, format_polygon(region.polygon)) for region in bounding_regions)
+    return ", ".join(f"Page #{region.page_number}: {format_polygon(region.polygon)}" for region in bounding_regions)
 
 def format_polygon(polygon):
     if not polygon:
         return "N/A"
-    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in polygon])
+    return ", ".join([f"[{p.x}, {p.y}]" for p in polygon])
 
 
 def analyze_general_documents():
@@ -85,7 +83,7 @@ def analyze_general_documents():
                 )
 
     for page in result.pages:
-        print("----Analyzing document from page #{}----".format(page.page_number))
+        print(f"----Analyzing document from page #{page.page_number}----")
         print(
             "Page has width: {} and height: {}, measured with unit: {}".format(
                 page.width, page.height, page.unit

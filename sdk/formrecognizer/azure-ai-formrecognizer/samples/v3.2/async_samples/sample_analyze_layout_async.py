@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -32,7 +30,7 @@ import asyncio
 def format_polygon(polygon):
     if not polygon:
         return "N/A"
-    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in polygon])
+    return ", ".join([f"[{p.x}, {p.y}]" for p in polygon])
 
 
 async def analyze_layout_async():
@@ -70,7 +68,7 @@ async def analyze_layout_async():
         )
 
     for idx, page in enumerate(result.pages):
-        print("----Analyzing layout from page #{}----".format(idx + 1))
+        print(f"----Analyzing layout from page #{idx + 1}----")
         print(
             "Page has width: {} and height: {}, measured with unit: {}".format(
                 page.width, page.height, page.unit

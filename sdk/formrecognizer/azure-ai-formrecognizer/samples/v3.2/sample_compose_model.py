@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -81,13 +79,13 @@ def sample_compose_model():
     model = poller.result()
 
     print("Office Supplies Composed Model Info:")
-    print("Model ID: {}".format(model.model_id))
-    print("Description: {}".format(model.description))
-    print("Model created on: {}\n".format(model.created_on))
-    print("Model expires on: {}\n".format(model.expires_on))
+    print(f"Model ID: {model.model_id}")
+    print(f"Description: {model.description}")
+    print(f"Model created on: {model.created_on}\n")
+    print(f"Model expires on: {model.expires_on}\n")
     print("Doc types the model can recognize:")
     for name, doc_type in model.doc_types.items():
-        print("\nDoc Type: '{}' which has the following fields:".format(name))
+        print(f"\nDoc Type: '{name}' which has the following fields:")
         for field_name, field in doc_type.field_schema.items():
             print("Field: '{}' has type '{}' and confidence score {}".format(
                 field_name, field["type"], doc_type.field_confidence[field_name]

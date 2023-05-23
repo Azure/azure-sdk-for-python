@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -52,7 +50,7 @@ def sample_manage_models():
 
     print("We have the following 'ready' models with IDs and descriptions:")
     for model in models:
-        print("{} | {}".format(model.model_id, model.description))
+        print(f"{model.model_id} | {model.description}")
     # [END list_document_models]
 
     # let's build a model to use for this sample
@@ -61,10 +59,10 @@ def sample_manage_models():
 
     # [START get_document_model]
     my_model = document_model_admin_client.get_document_model(model_id=model.model_id)
-    print("\nModel ID: {}".format(my_model.model_id))
-    print("Description: {}".format(my_model.description))
-    print("Model created on: {}".format(my_model.created_on))
-    print("Model expires on: {}".format(my_model.expires_on))
+    print(f"\nModel ID: {my_model.model_id}")
+    print(f"Description: {my_model.description}")
+    print(f"Model created on: {my_model.created_on}")
+    print(f"Model expires on: {my_model.expires_on}")
     # [END get_document_model]
 
     # Finally, we will delete this model by ID
@@ -74,7 +72,7 @@ def sample_manage_models():
     try:
         document_model_admin_client.get_document_model(model_id=my_model.model_id)
     except ResourceNotFoundError:
-        print("Successfully deleted model with ID {}".format(my_model.model_id))
+        print(f"Successfully deleted model with ID {my_model.model_id}")
     # [END delete_document_model]
 
 

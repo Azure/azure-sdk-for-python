@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -59,13 +57,13 @@ async def sample_copy_model_to_async(custom_model_id):
         )
         copied_over_model = await poller.result()
 
-    print("Model ID: {}".format(copied_over_model.model_id))
-    print("Description: {}".format(copied_over_model.description))
-    print("Model created on: {}\n".format(copied_over_model.created_on))
-    print("Model expires on: {}".format(copied_over_model.expires_on))
+    print(f"Model ID: {copied_over_model.model_id}")
+    print(f"Description: {copied_over_model.description}")
+    print(f"Model created on: {copied_over_model.created_on}\n")
+    print(f"Model expires on: {copied_over_model.expires_on}")
     print("Doc types the model can recognize:")
     for name, doc_type in copied_over_model.doc_types.items():
-        print("\nDoc Type: '{}' which has the following fields:".format(name))
+        print(f"\nDoc Type: '{name}' which has the following fields:")
         for field_name, field in doc_type.field_schema.items():
             print("Field: '{}' has type '{}' and confidence score {}".format(
                 field_name, field["type"], doc_type.field_confidence[field_name]

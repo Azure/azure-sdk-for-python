@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -66,14 +64,14 @@ def sample_manage_classifiers():
 
     print("We have the following 'ready' models with IDs and descriptions:")
     for classifier in classifiers:
-        print("{} | {}".format(classifier.classifier_id, classifier.description))
+        print(f"{classifier.classifier_id} | {classifier.description}")
     # [END list_document_classifiers]
 
     # [START get_document_classifier]
     my_classifier = document_model_admin_client.get_document_classifier(classifier_id=classifier_model.classifier_id)
-    print("\nClassifier ID: {}".format(my_classifier.classifier_id))
-    print("Description: {}".format(my_classifier.description))
-    print("Classifier created on: {}".format(my_classifier.created_on))
+    print(f"\nClassifier ID: {my_classifier.classifier_id}")
+    print(f"Description: {my_classifier.description}")
+    print(f"Classifier created on: {my_classifier.created_on}")
     # [END get_document_classifier]
 
     # Finally, we will delete this classifier by ID
@@ -83,7 +81,7 @@ def sample_manage_classifiers():
     try:
         document_model_admin_client.get_document_classifier(classifier_id=my_classifier.classifier_id)
     except ResourceNotFoundError:
-        print("Successfully deleted classifier with ID {}".format(my_classifier.classifier_id))
+        print(f"Successfully deleted classifier with ID {my_classifier.classifier_id}")
     # [END delete_document_classifier]
 
 

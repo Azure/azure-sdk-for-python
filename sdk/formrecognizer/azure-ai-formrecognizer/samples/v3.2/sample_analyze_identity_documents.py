@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -52,7 +50,7 @@ def analyze_identity_documents():
     id_documents = poller.result()
 
     for idx, id_document in enumerate(id_documents.documents):
-        print("--------Analyzing ID document #{}--------".format(idx + 1))
+        print(f"--------Analyzing ID document #{idx + 1}--------")
         first_name = id_document.fields.get("FirstName")
         if first_name:
             print(
@@ -77,7 +75,7 @@ def analyze_identity_documents():
         dob = id_document.fields.get("DateOfBirth")
         if dob:
             print(
-                "Date of Birth: {} has confidence: {}".format(dob.value, dob.confidence)
+                f"Date of Birth: {dob.value} has confidence: {dob.confidence}"
             )
         doe = id_document.fields.get("DateOfExpiration")
         if doe:
@@ -88,7 +86,7 @@ def analyze_identity_documents():
             )
         sex = id_document.fields.get("Sex")
         if sex:
-            print("Sex: {} has confidence: {}".format(sex.value, sex.confidence))
+            print(f"Sex: {sex.value} has confidence: {sex.confidence}")
         address = id_document.fields.get("Address")
         if address:
             print(
@@ -106,7 +104,7 @@ def analyze_identity_documents():
         region = id_document.fields.get("Region")
         if region:
             print(
-                "Region: {} has confidence: {}".format(region.value, region.confidence)
+                f"Region: {region.value} has confidence: {region.confidence}"
             )
 
 

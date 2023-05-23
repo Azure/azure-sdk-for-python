@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -26,12 +24,12 @@ import os
 def format_bounding_region(bounding_regions):
     if not bounding_regions:
         return "N/A"
-    return ", ".join("Page #{}: {}".format(region.page_number, format_polygon(region.polygon)) for region in bounding_regions)
+    return ", ".join(f"Page #{region.page_number}: {format_polygon(region.polygon)}" for region in bounding_regions)
 
 def format_polygon(polygon):
     if not polygon:
         return "N/A"
-    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in polygon])
+    return ", ".join([f"[{p.x}, {p.y}]" for p in polygon])
 
 def analyze_read():
     path_to_sample_documents = os.path.abspath(
@@ -60,7 +58,7 @@ def analyze_read():
 
     print("----Languages detected in the document----")
     for language in result.languages:
-        print("Language code: '{}' with confidence {}".format(language.locale, language.confidence))
+        print(f"Language code: '{language.locale}' with confidence {language.confidence}")
 
     print("----Styles detected in the document----")
     for style in result.styles:
@@ -72,7 +70,7 @@ def analyze_read():
             print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
 
     for page in result.pages:
-        print("----Analyzing document from page #{}----".format(page.page_number))
+        print(f"----Analyzing document from page #{page.page_number}----")
         print(
             "Page has width: {} and height: {}, measured with unit: {}".format(
                 page.width, page.height, page.unit
@@ -107,10 +105,10 @@ def analyze_read():
             )
 
     if len(result.paragraphs) > 0:
-        print("----Detected #{} paragraphs in the document----".format(len(result.paragraphs)))
+        print(f"----Detected #{len(result.paragraphs)} paragraphs in the document----")
         for paragraph in result.paragraphs:
-            print("Found paragraph with role: '{}' within {} bounding region".format(paragraph.role, format_bounding_region(paragraph.bounding_regions)))
-            print("...with content: '{}'".format(paragraph.content))
+            print(f"Found paragraph with role: '{paragraph.role}' within {format_bounding_region(paragraph.bounding_regions)} bounding region")
+            print(f"...with content: '{paragraph.content}'")
 
     print("----------------------------------------")
 

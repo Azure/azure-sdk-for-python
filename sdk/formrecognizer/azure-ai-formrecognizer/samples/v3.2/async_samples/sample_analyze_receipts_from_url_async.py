@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -47,7 +45,7 @@ async def analyze_receipts_from_url_async():
         receipts = await poller.result()
 
     for idx, receipt in enumerate(receipts.documents):
-        print("--------Analysis of receipt #{}--------".format(idx + 1))
+        print(f"--------Analysis of receipt #{idx + 1}--------")
         print("Receipt type: {}".format(receipt.doc_type or "N/A"))
         merchant_name = receipt.fields.get("MerchantName")
         if merchant_name:
@@ -66,7 +64,7 @@ async def analyze_receipts_from_url_async():
         if receipt.fields.get("Items"):
             print("Receipt items:")
             for idx, item in enumerate(receipt.fields.get("Items").value):
-                print("...Item #{}".format(idx + 1))
+                print(f"...Item #{idx + 1}")
                 item_description = item.value.get("Description")
                 if item_description:
                     print(
@@ -104,13 +102,13 @@ async def analyze_receipts_from_url_async():
             )
         tax = receipt.fields.get("TotalTax")
         if tax:
-            print("Total tax: {} has confidence: {}".format(tax.value, tax.confidence))
+            print(f"Total tax: {tax.value} has confidence: {tax.confidence}")
         tip = receipt.fields.get("Tip")
         if tip:
-            print("Tip: {} has confidence: {}".format(tip.value, tip.confidence))
+            print(f"Tip: {tip.value} has confidence: {tip.confidence}")
         total = receipt.fields.get("Total")
         if total:
-            print("Total: {} has confidence: {}".format(total.value, total.confidence))
+            print(f"Total: {total.value} has confidence: {total.confidence}")
         print("--------------------------------------")
     # [END analyze_receipts_from_url_async]
 

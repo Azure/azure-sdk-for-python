@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -58,7 +56,7 @@ async def analyze_tax_us_w2_async():
         w2s = await poller.result()
 
     for idx, w2 in enumerate(w2s.documents):
-        print("--------Analyzing US Tax W-2 Form #{}--------".format(idx + 1))
+        print(f"--------Analyzing US Tax W-2 Form #{idx + 1}--------")
         form_variant = w2.fields.get("W2FormVariant")
         if form_variant:
             print(

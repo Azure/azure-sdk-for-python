@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -52,7 +50,7 @@ def analyze_business_card():
     business_cards = poller.result()
 
     for idx, business_card in enumerate(business_cards.documents):
-        print("--------Analyzing business card #{}--------".format(idx + 1))
+        print(f"--------Analyzing business card #{idx + 1}--------")
         contact_names = business_card.fields.get("ContactNames")
         if contact_names:
             for contact_name in contact_names.value:
@@ -100,7 +98,7 @@ def analyze_business_card():
         if emails:
             for email in emails.value:
                 print(
-                    "Email: {} has confidence: {}".format(email.value, email.confidence)
+                    f"Email: {email.value} has confidence: {email.confidence}"
                 )
         websites = business_card.fields.get("Websites")
         if websites:

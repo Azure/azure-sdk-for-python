@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -103,7 +101,7 @@ def get_elements_with_spans():
                     )
                     lines.extend(get_lines(table.spans, get_page(region.page_number, result.pages)))
 
-            print("Found # {} lines in the table".format(len(lines)))
+            print(f"Found # {len(lines)} lines in the table")
             for line in lines:
                 print(
                     "...Line '{}' is within bounding polygon: '{}'".format(
@@ -130,7 +128,7 @@ def get_elements_with_spans():
             for style in styles:
                 if style.is_handwritten:
                     print(
-                        "...handwritten with confidence {}".format(style.confidence)
+                        f"...handwritten with confidence {style.confidence}"
                     )
     print("----------------------------------------")
 
