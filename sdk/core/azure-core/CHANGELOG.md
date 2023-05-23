@@ -5,6 +5,7 @@
 ### Features Added
 
 - Added support to use sync credentials in `AsyncBearerTokenCredentialPolicy`. #30381
+- Added "prefix" parameter to AzureKeyCredentialPolicy #29901
 
 ### Breaking Changes
 
