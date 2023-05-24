@@ -1,1 +1,1 @@
-# Azure OpenAI companion package for Python
+# Azure OpenAI testing placeholder

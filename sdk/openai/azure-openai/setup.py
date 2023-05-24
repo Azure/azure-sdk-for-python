@@ -3,12 +3,7 @@ import os
 from io import open
 import re
 
-# example setup.py Feel free to copy the entire "azure-template" folder into a package folder named
-# with "azure-<yourpackagename>". Ensure that the below arguments to setup() are updated to reflect
-# your package.
-
-# this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING all the way
-# up from python 2.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
+# azure openai testing package
 
 PACKAGE_NAME = "azure-openai"
 PACKAGE_PPRINT_NAME = "Azure OpenAI"
