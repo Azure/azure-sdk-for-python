@@ -892,12 +892,12 @@ class TestAppConfigurationClient(AppConfigTestCase):
         assert len(created_snapshot.filters) == 1
         assert created_snapshot.filters[0].key == KEY
         assert created_snapshot.filters[0].label == LABEL
-        
+
         received_snapshot = self.client.get_snapshot(name=snapshot_name)
         self._assert_snapshots(received_snapshot, created_snapshot)
-        
+
         self.tear_down()
-    
+
     @pytest.mark.skip(reason="The snapshot feature is only supported in the dogfood version now")
     @app_config_decorator
     @recorded_by_proxy
@@ -908,24 +908,24 @@ class TestAppConfigurationClient(AppConfigTestCase):
         response = self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
         created_snapshot = response.result()
         assert created_snapshot.status == "ready"
-        
+
         archived_snapshot = self.client.archive_snapshot(name=snapshot_name)
         assert archived_snapshot.status == "archived"
-        
+
         recovered_snapshot = self.client.recover_snapshot(name=snapshot_name)
         assert recovered_snapshot.status == "ready"
-        
+
         self.tear_down()
-    
+
     @pytest.mark.skip(reason="The snapshot feature is only supported in the dogfood version now")
     @app_config_decorator
     @recorded_by_proxy
     def test_list_snapshots(self, appconfiguration_connection_string):
         self.set_up(appconfiguration_connection_string)
-        
+
         result = self.client.list_snapshots()
         initial_snapshots = len(list(result))
-        
+
         snapshot_name1 = self.get_resource_name("snapshot1")
         snapshot_name2 = self.get_resource_name("snapshot2")
         filters1 = [{"key": KEY, "label": None}]
@@ -936,12 +936,12 @@ class TestAppConfigurationClient(AppConfigTestCase):
         response2 = self.client.begin_create_snapshot(name=snapshot_name2, filters=filters2)
         created_snapshot2 = response2.result()
         assert created_snapshot2.status == "ready"
-        
+
         result = self.client.list_snapshots()
         assert len(list(result)) == initial_snapshots + 2
-        
+
         self.tear_down()
-    
+
     @pytest.mark.skip(reason="The snapshot feature is only supported in the dogfood version now")
     @app_config_decorator
     @recorded_by_proxy
@@ -952,10 +952,10 @@ class TestAppConfigurationClient(AppConfigTestCase):
         response = self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
         created_snapshot = response.result()
         assert created_snapshot.status == "ready"
-        
+
         items = self.client.list_snapshot_configuration_settings(snapshot_name)
         assert len(list(items)) == 1
-        
+
         self.tear_down()
 
 

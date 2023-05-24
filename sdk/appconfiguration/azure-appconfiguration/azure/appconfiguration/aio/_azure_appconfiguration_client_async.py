@@ -582,12 +582,7 @@ class AzureAppConfigurationClient:
         )
         error_map = {401: ClientAuthenticationError, 412: ResourceExistsError}
         try:
-            return await self._impl.begin_create_snapshot(
-                name=name,
-                entity=snapshot,
-                error_map=error_map,
-                **kwargs
-            )
+            return await self._impl.begin_create_snapshot(name=name, entity=snapshot, error_map=error_map, **kwargs)
         except HttpResponseError as error:
             e = error_map[error.status_code]
             raise e(message=error.message, response=error.response)
@@ -686,13 +681,7 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace_async
-    async def get_snapshot(
-        self,
-        name: str,
-        *,
-        fields: Optional[List[str]] = None,
-        **kwargs
-    ) -> Snapshot:
+    async def get_snapshot(self, name: str, *, fields: Optional[List[str]] = None, **kwargs) -> Snapshot:
         """Get a configuration setting snapshot.
 
         :param name: The name of the configuration setting snapshot to retrieve.
@@ -704,13 +693,7 @@ class AzureAppConfigurationClient:
         """
         error_map = {401: ClientAuthenticationError}
         try:
-            return await self._impl.get_snapshot(
-                name=name,
-                if_match=None,
-                if_none_match=None,
-                select=fields,
-                **kwargs
-            )
+            return await self._impl.get_snapshot(name=name, if_match=None, if_none_match=None, select=fields, **kwargs)
         except HttpResponseError as error:
             e = error_map[error.status_code]
             raise e(message=error.message, response=error.response)
@@ -738,12 +721,7 @@ class AzureAppConfigurationClient:
         """
         error_map = {401: ClientAuthenticationError}
         try:
-            return self._impl.get_snapshots(  # type: ignore
-                name=name,
-                select=fields,
-                status=status,
-                **kwargs
-            )
+            return self._impl.get_snapshots(name=name, select=fields, status=status, **kwargs)  # type: ignore
         except HttpResponseError as error:
             e = error_map[error.status_code]
             raise e(message=error.message, response=error.response)
@@ -771,9 +749,7 @@ class AzureAppConfigurationClient:
             return self._impl.get_key_values(  # type: ignore
                 select=select,
                 snapshot=name,
-                cls=lambda objs: [
-                    ConfigurationSetting._from_generated(x) for x in objs
-                ],
+                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                 error_map=error_map,
                 **kwargs
             )
