@@ -11,8 +11,8 @@
 ### Other Changes
 
 * Updated to use AZURE_APP_CONFIGURATION_TRACING_DISABLED environment variable to disable tracing.
-* Changed default max retry to 2 from 3.
-* Changed default retry backoff max to 1 from 2.
+* Changed the maximum number of retries to 2 from the default of 3 retries.
+* Changed the maximum back off time between retries to 1 minute from the default of 2 minutes.
 
 ## 1.0.0 (2023-03-09)
 
