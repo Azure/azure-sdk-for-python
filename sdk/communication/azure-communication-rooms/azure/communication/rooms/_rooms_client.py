@@ -207,7 +207,7 @@ class RoomsClient(object):
 
         """
         return self._rooms_service_client.rooms.list(
-            cls=lambda rooms: [CommunicationRoom(r) for r in rooms]
+            cls=lambda rooms: [CommunicationRoom(r) for r in rooms],
             **kwargs
         )
 

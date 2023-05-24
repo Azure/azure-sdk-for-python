@@ -103,7 +103,11 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             # instrumentation libraries are being used.
             self._context_tokens.append(context.attach(context.set_value(_SUPPRESS_HTTP_INSTRUMENTATION_KEY, True)))
 
-        current_tracer = self.get_current_tracer()
+        current_tracer = trace.get_tracer(
+            __name__,
+            __version__,
+            schema_url=OpenTelemetrySchema.get_schema_url(self._schema_version),
+        )
 
         links = kwargs.pop("links", None)
         if links:

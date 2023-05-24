@@ -26,12 +26,12 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
     """Monitor Management Client.
 
     :ivar metrics: MetricsOperations operations
-    :vartype metrics: $(python-base-namespace).v2021_05_01.operations.MetricsOperations
+    :vartype metrics: azure.mgmt.monitor.v2021_05_01.operations.MetricsOperations
     :ivar metric_definitions: MetricDefinitionsOperations operations
     :vartype metric_definitions:
-     $(python-base-namespace).v2021_05_01.operations.MetricDefinitionsOperations
+     azure.mgmt.monitor.v2021_05_01.operations.MetricDefinitionsOperations
     :ivar operations: Operations operations
-    :vartype operations: $(python-base-namespace).v2021_05_01.operations.Operations
+    :vartype operations: azure.mgmt.monitor.v2021_05_01.operations.Operations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
