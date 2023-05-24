@@ -437,19 +437,23 @@ class Command(BaseNode):
         job_tier: Optional[str] = None,
         priority: Optional[str] = None,
     ) -> Sweep:
-        """Turns the command into a sweep node with extra sweep run setting. The command component in the current Command
-        node will be used as its trial component. A command node can sweep multiple times, and the generated sweep
-        node will share the same trial component.
+        """Turns the command into a sweep node with extra sweep run setting. The command component
+        in the current Command node will be used as its trial component. A command node can sweep
+        multiple times, and the generated sweep node will share the same trial component.
 
-        :param primary_metric: The primary metric of the sweep objective - e.g. AUC (Area Under the Curve). The metric must be logged while running the trial component.
+        :param primary_metric: The primary metric of the sweep objective - e.g. AUC (Area Under the Curve).
+        The metric must be logged while running the trial component.
         :type primary_metric: str
         :param goal: The goal of the Sweep objective. Accepted values are "minimize" or "maximize".
         :type goal: str
-        :param sampling_algorithm: The sampling algorithm to use inside the search space. Defaults to "random". Acceptable values are "random", "grid", or "bayesian".
+        :param sampling_algorithm: The sampling algorithm to use inside the search space. Defaults to "random".
+        Acceptable values are "random", "grid", or "bayesian".
         :type sampling_algorithm: str
-        :param compute: The target compute to run the node on. If not specified, the current node's compute will be used.
+        :param compute: The target compute to run the node on. If not specified, the current node's compute
+        will be used.
         :type compute: str
-        :param max_total_trials: The maximum number of trials to run. This value will overwrite value in CommandJob.limits if specified.
+        :param max_total_trials: The maximum number of trials to run. This value will overwrite value in
+        CommandJob.limits if specified.
         :type max_total_trials: int
         :param max_concurrent_trials: The maximum number of concurrent trials for the Sweep job.
         :type max_concurrent_trials: int
@@ -459,8 +463,10 @@ class Command(BaseNode):
         :type timeout: int
         :param trial_timeout: The Sweep Job trial timeout value in seconds.
         :type trial_timeout: int
-        :param early_termination_policy: The early termination policy of the sweep node. Acceptable values are "bandit", "median_stopping", or "truncation_selection".
-        :type early_termination_policy: Union[~azure.ai.ml.sweep.BanditPolicy, ~azure.ai.ml.sweep.TruncationSelectionPolicy, ~azure.ai.ml.sweep.MedianStoppingPolicy, str]
+        :param early_termination_policy: The early termination policy of the sweep node. Acceptable
+        values are "bandit", "median_stopping", or "truncation_selection".
+        :type early_termination_policy: Union[~azure.ai.ml.sweep.BanditPolicy,
+        ~azure.ai.ml.sweep.TruncationSelectionPolicy, ~azure.ai.ml.sweep.MedianStoppingPolicy, str]
         :param identity: The identity that the training job will use while running on compute.
         :type identity: Union[
             ~azure.ai.ml.ManagedIdentityConfiguration,
@@ -468,9 +474,11 @@ class Command(BaseNode):
             ~azure.ai.ml.UserIdentityConfiguration]
         :param queue_settings: The queue settings for the job.
         :type queue_settings: ~azure.ai.ml.entities.QueueSettings
-        :param job_tier: **Experimental** The job tier. Accepted values are "Spot", "Basic", "Standard", or "Premium".
+        :param job_tier: **Experimental** The job tier. Accepted values are "Spot", "Basic",
+        "Standard", or "Premium".
         :type job_tier: str
-        :param priority: **Experimental** The compute priority. Accepted values are "low", "medium", and "high".
+        :param priority: **Experimental** The compute priority. Accepted values are "low",
+        "medium", and "high".
         :type priority: str
         :return: A Sweep node with the component from current Command node as its trial component.
         :rtype: ~azure.ai.ml.entities.Sweep
