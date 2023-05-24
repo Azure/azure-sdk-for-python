@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------
 import binascii
 from typing import Any, Dict, List, Mapping, Optional, Union
-from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential
@@ -29,6 +28,7 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotModifiedError,
 )
+from azure.core.utils import CaseInsensitiveDict
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from ._azure_appconfiguration_credential import AppConfigConnectionStringCredential
