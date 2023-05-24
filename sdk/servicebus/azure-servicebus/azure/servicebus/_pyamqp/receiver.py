@@ -117,5 +117,8 @@ class ReceiverLink(Link):
     ):
         if self._is_closed:
             raise ValueError("Link already closed.")
+        # import time
+        # print(f"start {time.time()}")
         self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable)
-        self._wait_for_response(wait)
+        # self._wait_for_response(wait)
+        # print(f"start {time.time()}")
