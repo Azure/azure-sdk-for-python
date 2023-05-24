@@ -15,10 +15,10 @@ When updating the codebase, please note the following guidelines for creating us
 
 ##### Accuracy 
 
-- No broken links are allowed in reference documentation, and all links must be location/language neutral (e.g. no /en-us/ in links)
-- Docstring details should be aligned with type hints 
-- Any code snippets should be defined in the samples directory in this folder so that they are tested during every CI run
-- Constructors (`def __init__`) should return None, per [PEP 484 standards](https://peps.python.org/pep-0484/#the-meaning-of-annotations)
+- No broken links are allowed in reference documentation, and all links must be location/language neutral (e.g. no /en-us/ in links).
+- Docstring details should be aligned with type hints.
+- Any code snippets should be defined in the samples directory in this folder so that they are tested during every CI run.
+- Constructors (`def __init__`) should return None, per [PEP 484 standards](https://peps.python.org/pep-0484/#the-meaning-of-annotations).
 
  
 ##### Completeness 
@@ -27,33 +27,19 @@ When updating the codebase, please note the following guidelines for creating us
 
     ```markdown
     .. admonition:: Additional Note 
-    
        :class: note 
-    
        This is a note admonition. 
     
-      
-    
     .. admonition:: Warning 
-    
        :class: warning 
-    
        This is a warning admonition. 
     
-      
-    
     .. admonition:: Important 
-    
        :class: danger 
-    
        This is an important admonition. 
     
-      
-    
     .. admonition:: Information 
-    
        :class: info 
-    
        This is an informational admonition. 
     ```
  
@@ -88,6 +74,11 @@ When updating the codebase, please note the following guidelines for creating us
 ##### Coverage 
 
 - AzureML v2 is working to get 95% documentation coverage of the entire codebase. ALL new code that you write or existing code that you edit must include a docstring following all of the guidelines. This will be enforced via the interrogate Python package in CI in the future. In the meantime, you can use [interrogate](https://interrogate.readthedocs.io/en/latest/) locally to keep yourself honest. 
+
+```bash
+$ pip install interrogate
+$ interrogate -vv [PATH TO REPO/MODULE/FILE]
+```
 
  
 
