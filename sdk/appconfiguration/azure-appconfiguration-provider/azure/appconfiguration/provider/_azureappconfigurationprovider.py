@@ -157,15 +157,15 @@ def _get_headers(key_vault_options: Optional[AzureAppConfigurationKeyVaultOption
         ):
             correlation_context += ",UsesKeyVault"
         host_type = ""
-        if os.environ.get(AzureFunctionEnvironmentVariable) is not None:
+        if AzureFunctionEnvironmentVariable in os.environ:
             host_type = "AzureFunction"
-        elif os.environ.get(AzureWebAppEnvironmentVariable) is not None:
+        elif AzureWebAppEnvironmentVariable in os.environ:
             host_type = "AzureWebApp"
-        elif os.environ.get(ContainerAppEnvironmentVariable) is not None:
+        elif ContainerAppEnvironmentVariable in os.environ:
             host_type = "ContainerApp"
-        elif os.environ.get(KubernetesEnvironmentVariable) is not None:
+        elif KubernetesEnvironmentVariable in os.environ:
             host_type = "Kubernetes"
-        elif os.environ.get(ServiceFabricEnvironmentVariable) is not None:
+        elif ServiceFabricEnvironmentVariable in os.environ:
             host_type = "ServiceFabric"
         if host_type:
             correlation_context += ",Host=" + host_type
