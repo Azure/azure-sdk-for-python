@@ -75,8 +75,8 @@ class ReceiverLink(Link):
             delivery_state = await self._process_incoming_message(self._first_frame, message)
             if not frame[4] and delivery_state:  # settled
                 await self._outgoing_disposition(
-                    first=frame[1],
-                    last=frame[1],
+                    first=self._first_frame[1],
+                    last=self._first_frame[1],
                     settled=True,
                     state=delivery_state,
                     batchable=None
