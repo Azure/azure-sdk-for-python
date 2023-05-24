@@ -183,7 +183,8 @@ class JsonSchemaEncoder(object):
         self,
         content: Mapping[str, Any],
         *,
-        schema: str,
+        schema: Optional[str] = None,
+        schema_id: Optional[str] = None,
         message_type: Optional[Type[MessageType]] = None,
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
@@ -203,8 +204,11 @@ class JsonSchemaEncoder(object):
         :param content: The content to be encoded.
         :type content: Mapping[str, Any]
         :keyword schema: The schema used to encode the content. Required if `generate_schema` was not passed in during
-         JsonSchemaEncoder construction.
-        :paramtype schema: str
+         JsonSchemaEncoder construction or `schema_id` was not passed in.
+        :paramtype schema: str or None
+        :keyword schema_id: The schema ID to a registered schema to be used. Required if `generate_schema` was not
+         passed in during JsonSchemaEncoder construction or `schema` was not passed in.
+        :paramtype schema_id: str or None
         :keyword message_type: The message class to construct the message. Must be a subtype of the
          azure.schemaregistry.encoder.jsonschemaencoder.MessageType protocol.
         :paramtype message_type: Type[MessageType] or None
@@ -219,11 +223,15 @@ class JsonSchemaEncoder(object):
 
         if not self._schema_group:
             raise TypeError("'group_name' in constructor cannot be None, if encoding.")
-        if not schema and not self._generate_schema:
-            raise TypeError("'schema' is required if 'generate_schema' callable was not passed to constructor.")
+        if not schema and not self._generate_schema and not schema_id:
+            raise TypeError("""One of 'schema' or 'schema_id' is """
+                            """required if 'generate_schema' callable was not passed to constructor.""")
 
         if schema:
             schema_dict = json.loads(schema)
+        elif schema_id:
+            # TODO: get schema from schema id
+            pass
         else:
             try:
                 schema_dict = self._generate_schema(content)
