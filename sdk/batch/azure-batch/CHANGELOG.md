@@ -1,5 +1,20 @@
 # Release History
 
+## 14.0.0 (2023-05-24)
+
+### Features Added
+  - Added boolean property `enableAcceleratedNetworking` to `NetworkConfiguration`. 
+    -  This property determines whether this pool should enable accelerated networking, with default value as False. 
+    - Whether this feature can be enabled is also related to whether an operating system/VM instance is supported, which is described in [AcceleratedNetworking Limitations and constraints](https://learn.microsoft.com/en-us/azure/virtual-network/accelerated-networking-overview?tabs=redhat#limitations-and-constraints). 
+  - Added boolean property `enableAutomaticUpgrade` to `VMExtension`. 
+    -  This property determines whether the extension should be automatically upgraded by the platform if there is a newer version of the extension available. 
+
+
+### Breaking Changes
+- Removed lifetime statistics API. This API is no longer supported. 
+    - Removed `job.get_all_lifetime_statistics` API. 
+    - Removed `pool.get_all_lifetime_statistics` API. 
+  
 ## 13.0.1 (Unreleased)
 
 ### Features Added
