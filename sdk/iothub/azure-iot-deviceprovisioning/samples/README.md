@@ -28,6 +28,13 @@ pip install azure-iot-deviceprovisioning
 
 ## Samples
 
+- [Client Initialization and Credentials]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioning/dps_service_sample_client_authentication.py)--> ([async version]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioning/dps_service_sample_client_authentication_async.py)-->):
+    - Connection string authentication
+    - Using AzureNamedKey credentials
+    - Using AzureSasCredential authentication
+    - Using custom Active Directory credentials
+    - Using Default Azure Credentials
+
 - [Device Registration States]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioning/dps_service_sample_device_registration.py)--> ([async version]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioning/dps_service_sample_device_registration_async.py)-->):
     - Create a basic enrollment group
     - Register a device (Requires device SDK)

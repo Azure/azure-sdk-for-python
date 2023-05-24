@@ -139,7 +139,7 @@ class DeviceProvisioningClient(
         cs_args = parse_connection_string(connection_string)
         for k in ["hostname", "sharedaccesskeyname", "sharedaccesskey"]:
             if not cs_args.get(k):
-                raise ValueError("IoT DPS connection string has missing property: {k}")
+                raise ValueError(f"IoT DPS connection string has missing property: {k}")
 
         host_name, shared_access_key_name, shared_access_key = (
             cs_args["hostname"],

@@ -73,6 +73,29 @@ connection_string = "Hostname=https;SharedAccessKeyName=xxxx;SharedAccessKey=xxx
 client = DeviceProvisioningClient.from_connection_string(connection_string=connection_string)
 ```
 
+#### Using SAS Credentials
+A client instance can also be initialized with an `AzureNamedKeyCredential` using individual components of a DPS resource's Shared Access Policy, as well as an `AzureSasCredential` using a SAS token generated from the policy components and the DPS endpoint string.
+
+```python
+from azure.iot.deviceprovisioning import DeviceProvisioningClient
+from azure.iot.deviceprovisioning import generate_sas_token
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+
+dps_endpoint = "https://my-dps.azure-device-provisioning.net/"
+policy_name = "<access_policy_name>"
+policy_key = "<access_policy_primary_key>"
+
+
+# AzureNamedKeyCredential
+credential = AzureNamedKeyCredential(name=policy_name, key=policy_key)
+
+# AzureSasCredential
+sas_token = generate_sas_token(dps_endpoint, policy_name, policy_key)
+credential = AzureSasCredential(signature=sas_token)
+
+client = DeviceProvisioningClient(endpoint=dps_endpoint, credential=credential)
+```
+
 ### Async Clients 
 This library includes a complete async API supported on Python 3.5+. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
@@ -105,20 +128,23 @@ from azure.iot.deviceprovisioning import DeviceProvisioningClient
 # Initialize client
 client = DeviceProvisioningClient.from_connection_string(connection_string="<connection_string>")
 
-# Construct initial twin with desired properties of {"key": "value"}
+# Construct initial twin with desired properties of {"key": "value"} and a tag of {"env": "Development"}
 initial_twin = {
     "properties": {
         "desired": {
             "key": "value"
         }
+    },
+    "tags": {
+        "env": "Development"
     }
 }
 
 # Create a symmetric key individual enrollment with initial twin
-client.individual_enrollments.create_or_update(
+client.individual_enrollment.create_or_update(
     id="<enrollment_id>",
     enrollment = {
-        "registrationId": "<enrollment_id>"
+        "registrationId": "<enrollment_id>",
         "attestation": {
             "type": "symmetricKey",
         },
@@ -143,15 +169,15 @@ reprovision_policy = {
 }
 
 # Create a symmetric key individual enrollment with reprovisioning policy
-client.individual_enrollments.create_or_update(
+client.individual_enrollment.create_or_update(
     id="<enrollment_id>",
     enrollment = {
-        "registrationId": "<enrollment_id>"
+        "registrationId": "<enrollment_id>",
         "attestation": {
             "type": "symmetricKey",
         },
         "deviceId": "<device_id>",
-        "reprovision_policy": reprovision_policy
+        "reprovisionPolicy": reprovision_policy
     }
 )
 ```
@@ -237,6 +263,48 @@ state = client.device_registration_state.get(
 
 
 ## Troubleshooting
+
+
+### Connection String errors
+If you see an error message that states `IoT DPS connection string has missing property: [property]`, it indicates that your connection string is not formed correctly.
+
+Please ensure your connection string is semicolon-delimited, and contains the following properties: `hostname`, `sharedaccesskeyname`, and `sharedaccesskey`.
+
+### Standard HTTPResponse errors
+The client methods in this SDK raise an [HttpResponseError](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core#httpresponseerror) on request failure.
+The HttpResponseError raised by the Azure IoT Hub Device Provisioning client library includes detailed error response information that provides useful insights into what went wrong and includes corrective actions to fix common issues.
+
+This error information can be found inside the `message` property of the `HttpResponseError` instance.
+
+Here is an example of how to catch and handle these errors:
+
+```python
+try:
+    client.individual_enrollment.create_or_update(
+        id="<enrollment_id>",
+        enrollment = {
+            "registrationId": "<enrollment_id>",
+            "attestation": {
+                "type": "symmetricKey",
+            },
+        }
+    )
+except HttpResponseError as error:
+    # handle the error here
+    if error.status_code == 409:
+        pass
+```
+
+- `HTTP 400` errors indicate a malformed or bad request. Verify that your inputs are of the correct type and that you have provided all required properties.
+
+- `HTTP 401` errors indicate problems authenticating. Check the exception message or logs for more information.
+
+- `HTTP 403` errors indicate that the provided user credentials are not authorized to perform a specific operation on this Device Provisioning Service resource. 
+This can also occur if you have incorrectly generated a SAS credential. Verify your credentials and ensure access to your DPS resource.
+
+- `HTTP 409` errors indicate a resource conflict. This can occurr if:
+  - You are trying to create an object that already exists
+  - You are updating an object using a `create_or_update_` method without providing an `eTag` / `if-match` value
 
 ## Next steps
 
