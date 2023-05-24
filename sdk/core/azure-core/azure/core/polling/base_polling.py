@@ -199,7 +199,7 @@ class OperationResourcePolling(LongRunningOperation):
         self._location_url = None
         self._lro_options = lro_options or {}
 
-    def can_poll(self, pipeline_response):
+    def can_poll(self, pipeline_response: "PipelineResponseType"):
         """Answer if this polling method could be used."""
         response = pipeline_response.http_response
         return self._operation_location_header in response.headers
