@@ -1814,17 +1814,17 @@ class ManagedHsmProperties(_serialization.Model):  # pylint: disable=too-many-in
     :ivar hsm_uri: The URI of the managed hsm pool for performing operations on keys.
     :vartype hsm_uri: str
     :ivar enable_soft_delete: Property to specify whether the 'soft delete' functionality is
-     enabled for this managed HSM pool. If it's not set to any value(true or false) when creating
-     new managed HSM pool, it will be set to true by default. Once set to true, it cannot be
-     reverted to false.
+     enabled for this managed HSM pool. Soft delete is enabled by default for all managed HSMs and
+     is immutable.
     :vartype enable_soft_delete: bool
-    :ivar soft_delete_retention_in_days: softDelete data retention days. It accepts >=7 and <=90.
+    :ivar soft_delete_retention_in_days: Soft deleted data retention days. When you delete an HSM
+     or a key, it will remain recoverable for the configured retention period or for a default
+     period of 90 days. It accepts values between 7 and 90.
     :vartype soft_delete_retention_in_days: int
     :ivar enable_purge_protection: Property specifying whether protection against purge is enabled
      for this managed HSM pool. Setting this property to true activates protection against purge for
      this managed HSM pool and its content - only the Managed HSM service may initiate a hard,
-     irrecoverable deletion. The setting is effective only if soft delete is also enabled. Enabling
-     this functionality is irreversible.
+     irrecoverable deletion. Enabling this functionality is irreversible.
     :vartype enable_purge_protection: bool
     :ivar create_mode: The create mode to indicate whether the resource is being created or is
      being recovered from a deleted resource. Known values are: "recover" and "default".
@@ -1843,8 +1843,8 @@ class ManagedHsmProperties(_serialization.Model):  # pylint: disable=too-many-in
      managed hsm pool.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.keyvault.v2023_02_01.models.MHSMPrivateEndpointConnectionItem]
-    :ivar public_network_access: Control permission for data plane traffic coming from public
-     networks while private endpoint is enabled. Known values are: "Enabled" and "Disabled".
+    :ivar public_network_access: Control permission to the managed HSM from public networks. Known
+     values are: "Enabled" and "Disabled".
     :vartype public_network_access: str or
      ~azure.mgmt.keyvault.v2023_02_01.models.PublicNetworkAccess
     :ivar scheduled_purge_date: The scheduled purge date in UTC.
@@ -1895,7 +1895,7 @@ class ManagedHsmProperties(_serialization.Model):  # pylint: disable=too-many-in
         create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
         network_acls: Optional["_models.MHSMNetworkRuleSet"] = None,
         regions: Optional[List["_models.MHSMGeoReplicatedRegion"]] = None,
-        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
+        public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
         **kwargs: Any
     ) -> None:
         """
@@ -1906,18 +1906,17 @@ class ManagedHsmProperties(_serialization.Model):  # pylint: disable=too-many-in
          hsm pool.
         :paramtype initial_admin_object_ids: list[str]
         :keyword enable_soft_delete: Property to specify whether the 'soft delete' functionality is
-         enabled for this managed HSM pool. If it's not set to any value(true or false) when creating
-         new managed HSM pool, it will be set to true by default. Once set to true, it cannot be
-         reverted to false.
+         enabled for this managed HSM pool. Soft delete is enabled by default for all managed HSMs and
+         is immutable.
         :paramtype enable_soft_delete: bool
-        :keyword soft_delete_retention_in_days: softDelete data retention days. It accepts >=7 and
-         <=90.
+        :keyword soft_delete_retention_in_days: Soft deleted data retention days. When you delete an
+         HSM or a key, it will remain recoverable for the configured retention period or for a default
+         period of 90 days. It accepts values between 7 and 90.
         :paramtype soft_delete_retention_in_days: int
         :keyword enable_purge_protection: Property specifying whether protection against purge is
          enabled for this managed HSM pool. Setting this property to true activates protection against
          purge for this managed HSM pool and its content - only the Managed HSM service may initiate a
-         hard, irrecoverable deletion. The setting is effective only if soft delete is also enabled.
-         Enabling this functionality is irreversible.
+         hard, irrecoverable deletion. Enabling this functionality is irreversible.
         :paramtype enable_purge_protection: bool
         :keyword create_mode: The create mode to indicate whether the resource is being created or is
          being recovered from a deleted resource. Known values are: "recover" and "default".
@@ -1927,8 +1926,8 @@ class ManagedHsmProperties(_serialization.Model):  # pylint: disable=too-many-in
         :paramtype network_acls: ~azure.mgmt.keyvault.v2023_02_01.models.MHSMNetworkRuleSet
         :keyword regions: List of all regions associated with the managed hsm pool.
         :paramtype regions: list[~azure.mgmt.keyvault.v2023_02_01.models.MHSMGeoReplicatedRegion]
-        :keyword public_network_access: Control permission for data plane traffic coming from public
-         networks while private endpoint is enabled. Known values are: "Enabled" and "Disabled".
+        :keyword public_network_access: Control permission to the managed HSM from public networks.
+         Known values are: "Enabled" and "Disabled".
         :paramtype public_network_access: str or
          ~azure.mgmt.keyvault.v2023_02_01.models.PublicNetworkAccess
         """
@@ -2022,8 +2021,8 @@ class ManagedHsmSku(_serialization.Model):
 
     :ivar family: SKU Family of the managed HSM Pool. Required. "B"
     :vartype family: str or ~azure.mgmt.keyvault.v2023_02_01.models.ManagedHsmSkuFamily
-    :ivar name: SKU of the managed HSM Pool. Required. Known values are: "Standard_B1" and
-     "Custom_B32".
+    :ivar name: SKU of the managed HSM Pool. Required. Known values are: "Standard_B1",
+     "Custom_B32", and "Custom_B6".
     :vartype name: str or ~azure.mgmt.keyvault.v2023_02_01.models.ManagedHsmSkuName
     """
 
@@ -2047,8 +2046,8 @@ class ManagedHsmSku(_serialization.Model):
         """
         :keyword family: SKU Family of the managed HSM Pool. Required. "B"
         :paramtype family: str or ~azure.mgmt.keyvault.v2023_02_01.models.ManagedHsmSkuFamily
-        :keyword name: SKU of the managed HSM Pool. Required. Known values are: "Standard_B1" and
-         "Custom_B32".
+        :keyword name: SKU of the managed HSM Pool. Required. Known values are: "Standard_B1",
+         "Custom_B32", and "Custom_B6".
         :paramtype name: str or ~azure.mgmt.keyvault.v2023_02_01.models.ManagedHsmSkuName
         """
         super().__init__(**kwargs)
@@ -3660,7 +3659,7 @@ class Sku(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar family: SKU family name. Required. "A"
+    :ivar family: SKU family name. "A"
     :vartype family: str or ~azure.mgmt.keyvault.v2023_02_01.models.SkuFamily
     :ivar name: SKU name to specify whether the key vault is a standard vault or a premium vault.
      Required. Known values are: "standard" and "premium".
@@ -3678,10 +3677,10 @@ class Sku(_serialization.Model):
     }
 
     def __init__(
-        self, *, family: Union[str, "_models.SkuFamily"], name: Union[str, "_models.SkuName"], **kwargs: Any
+        self, *, family: Union[str, "_models.SkuFamily"] = "A", name: Union[str, "_models.SkuName"], **kwargs: Any
     ) -> None:
         """
-        :keyword family: SKU family name. Required. "A"
+        :keyword family: SKU family name. "A"
         :paramtype family: str or ~azure.mgmt.keyvault.v2023_02_01.models.SkuFamily
         :keyword name: SKU name to specify whether the key vault is a standard vault or a premium
          vault. Required. Known values are: "standard" and "premium".

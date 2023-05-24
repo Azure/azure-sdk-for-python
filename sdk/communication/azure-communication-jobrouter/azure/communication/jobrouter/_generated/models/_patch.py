@@ -57,6 +57,8 @@ class RouterJob(RouterJobGenerated):
         labels: Optional[Dict[str, Union[int, float, str, bool, None]]] = None,
         tags: Optional[Dict[str, Union[int, float, str, bool, None]]] = None,
         notes: Dict[Union[str, datetime], str] = None,
+        unavailable_for_matching: Optional[bool] = None,
+        scheduled_time_utc: Optional[Union[str, datetime]] = None,
         **kwargs
     ):
         if notes:
@@ -71,18 +73,25 @@ class RouterJob(RouterJobGenerated):
                     datetime_as_str: str = _datetime_as_isostr(k)  # pylint:disable=protected-access
                     notes.pop(k)
                     notes[datetime_as_str] = v
+
+        if isinstance(scheduled_time_utc, str):
+            scheduled_time_utc = _convert_str_to_datetime(scheduled_time_utc)  # pylint:disable=protected-access
+
         super().__init__(
-            channel_reference = channel_reference,
-            channel_id = channel_id,
-            classification_policy_id = classification_policy_id,
-            queue_id = queue_id,
-            priority = priority,
-            disposition_code = disposition_code,
-            requested_worker_selectors = requested_worker_selectors,
-            notes = notes,
-            labels = labels,
-            tags = tags,
-            **kwargs)
+            channel_reference=channel_reference,
+            channel_id=channel_id,
+            classification_policy_id=classification_policy_id,
+            queue_id=queue_id,
+            priority=priority,
+            disposition_code=disposition_code,
+            requested_worker_selectors=requested_worker_selectors,
+            notes=notes,
+            labels=labels,
+            tags=tags,
+            unavailable_for_matching=unavailable_for_matching,
+            scheduled_time_utc=scheduled_time_utc,
+            **kwargs
+        )
 
 
 class RouterWorker(RouterWorkerGenerated):
@@ -102,13 +111,14 @@ class RouterWorker(RouterWorkerGenerated):
                 if not isinstance(v, (MutableMapping, JSON, type(None))):
                     raise ValueError("tags only accept 'QueueAssignment', 'JSON' and 'NoneType' as values.")
         super().__init__(
-            queue_assignments = queue_assignments,
-            total_capacity = total_capacity,
-            labels = labels,
-            tags = tags,
-            channel_configurations = channel_configurations,
-            available_for_offers = available_for_offers,
-            **kwargs)
+            queue_assignments=queue_assignments,
+            total_capacity=total_capacity,
+            labels=labels,
+            tags=tags,
+            channel_configurations=channel_configurations,
+            available_for_offers=available_for_offers,
+            **kwargs
+        )
 
 
 __all__: List[str] = [

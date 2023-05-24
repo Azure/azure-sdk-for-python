@@ -9,6 +9,7 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     NotificationSetting,
     EmailMonitoringAlertNotificationSettings,
+    EmailNotificationEnableType,
 )
 
 
@@ -31,7 +32,9 @@ class AlertNotification(RestTranslatableMixin):
         self,
     ) -> EmailMonitoringAlertNotificationSettings:
         return EmailMonitoringAlertNotificationSettings(
-            email_notification_setting=NotificationSetting(emails=self.emails)
+            email_notification_setting=NotificationSetting(
+                emails=self.emails, email_on=[EmailNotificationEnableType.JOB_FAILED]
+            )
         )
 
     @classmethod
