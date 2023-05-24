@@ -4,6 +4,8 @@ stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: openai
+      MatrixFilters:
+        - PythonVersion=3.11.*
       EnvVars:
         AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
         AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)

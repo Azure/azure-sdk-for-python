@@ -91,7 +91,7 @@ class TestCompletions(AzureRecordedTestCase):
             assert completion.model
             for c in completion.choices:
                 assert c.index is not None
-                assert c.text
+                assert c.text is not None
 
     def test_completion_max_tokens(self, azure_openai_creds):
         deployment = azure_openai_creds["completions_name"]

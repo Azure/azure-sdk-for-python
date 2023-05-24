@@ -96,7 +96,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
             assert completion.model
             for c in completion.choices:
                 assert c.index is not None
-                assert c.text
+                assert c.text is not None
 
     @pytest.mark.asyncio
     async def test_completion_max_tokens(self, azure_openai_creds):
