@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
-from typing import Any, Dict, List, Mapping, Optional, Union
+from typing import Any, Dict, List, Literal, Mapping, Optional, Union
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials_async import AsyncTokenCredential
@@ -547,7 +547,7 @@ class AzureAppConfigurationClient:
         name: str,
         filters: List[Dict[str, str]],
         *,
-        composition_type: Optional[str] = None,
+        composition_type: Optional[Literal["all", "group_by_key"]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
@@ -560,7 +560,7 @@ class AzureAppConfigurationClient:
             included in the snapshot. Each filter should be in format {"key": <value>, "label": <value>},
             and key field value is required.
         :type filters: list[dict[str, str]]
-        :keyword str composition_type: The composition type describes how the key-values within the
+        :keyword Literal["all", "group_by_key"] composition_type: The composition type describes how the key-values within the
             snapshot are composed. The 'all' composition type includes all key-values. The 'group_by_key'
             composition type ensures there are no two key-values containing the same key. Known values are:
             "all" and "group_by_key".
