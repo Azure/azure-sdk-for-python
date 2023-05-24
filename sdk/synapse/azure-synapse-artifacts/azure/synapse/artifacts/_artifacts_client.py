@@ -110,7 +110,7 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
     def __init__(self, credential: "TokenCredential", endpoint: str, **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = ArtifactsClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
-        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -185,5 +185,5 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details) -> None:
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

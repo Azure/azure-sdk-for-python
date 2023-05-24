@@ -70,6 +70,7 @@ from .._generated.models import (
     FreshnessScoringFunction,
     FreshnessScoringParameters,
     GetIndexStatisticsResult,
+    HnswParameters,
     ImageAnalysisSkill,
     ImageAnalysisSkillLanguage,
     ImageDetail,
@@ -169,6 +170,8 @@ from .._generated.models import (
     UniqueTokenFilter,
     WebApiSkill,
     VisualFeature,
+    VectorSearch,
+    VectorSearchAlgorithmConfiguration,
     WordDelimiterTokenFilter,
 )
 from ._models import (
@@ -245,6 +248,7 @@ __all__ = (
     "FreshnessScoringFunction",
     "FreshnessScoringParameters",
     "GetIndexStatisticsResult",
+    "HnswParameters",
     "ImageAnalysisSkill",
     "ImageAnalysisSkillLanguage",
     "ImageDetail",
@@ -356,6 +360,8 @@ __all__ = (
     "UaxUrlEmailTokenizer",
     "UniqueTokenFilter",
     "VisualFeature",
+    "VectorSearch",
+    "VectorSearchAlgorithmConfiguration",
     "WebApiSkill",
     "WordDelimiterTokenFilter",
     "SearchFieldDataType",

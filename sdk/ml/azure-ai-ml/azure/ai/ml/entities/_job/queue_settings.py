@@ -41,8 +41,8 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
 
     def _to_rest_object(self) -> RestQueueSettings:
         self._validate()
-        job_tier = JobTierNames.ENTITY_TO_REST.get(self.job_tier, None) if self.job_tier else None
-        priority = JobPriorityValues.ENTITY_TO_REST.get(self.priority, None) if self.priority else None
+        job_tier = JobTierNames.ENTITY_TO_REST.get(self.job_tier.lower(), None) if self.job_tier else None
+        priority = JobPriorityValues.ENTITY_TO_REST.get(self.priority.lower(), None) if self.priority else None
         return RestQueueSettings(job_tier=job_tier, priority=priority)
 
     @classmethod
@@ -72,7 +72,7 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
                     error_type=ValidationErrorType.INVALID_VALUE,
                 )
             valid_keys = list(enum_class.ENTITY_TO_REST.keys())
-            if value and value not in valid_keys:
+            if value and value.lower() not in valid_keys:
                 msg = f"{key} should be one of {valid_keys}, but received '{value}'."
                 raise ValidationException(
                     message=msg,

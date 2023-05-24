@@ -94,6 +94,13 @@ class ConnectorOffer(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SMALL = "Small"
 
 
+class ContinuousTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to indicate type of Continuous backup tier."""
+
+    CONTINUOUS7_DAYS = "Continuous7Days"
+    CONTINUOUS30_DAYS = "Continuous30Days"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -273,6 +280,7 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+    SECURED_BY_PERIMETER = "SecuredByPerimeter"
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -24,10 +24,10 @@ class AppConfigTestCase(AzureRecordedTestCase):
     def create_aad_client(self, appconfiguration_endpoint_string):
         cred = self.get_credential(AzureAppConfigurationClient)
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
-    
+
     def create_client(self, appconfiguration_connection_string):
         return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-    
+
     def create_config_setting(self):
         return ConfigurationSetting(
             key=KEY,
@@ -36,7 +36,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             content_type=TEST_CONTENT_TYPE,
             tags={"tag1": "tag1", "tag2": "tag2"},
         )
-    
+
     def create_config_setting_no_label(self):
         return ConfigurationSetting(
             key=KEY,
@@ -45,21 +45,15 @@ class AppConfigTestCase(AzureRecordedTestCase):
             content_type=TEST_CONTENT_TYPE,
             tags={"tag1": "tag1", "tag2": "tag2"},
         )
-   
+
     def add_for_test(self, client, config_setting):
         key = config_setting.key
         label = config_setting.label
-        exist = bool(
-            list(
-                client.list_configuration_settings(
-                    key_filter=key, label_filter=label
-                )
-            )
-        )
+        exist = bool(list(client.list_configuration_settings(key_filter=key, label_filter=label)))
         if exist:
             client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
         return client.add_configuration_setting(config_setting)
-    
+
     def set_up(self, appconfiguration_string, is_aad=False):
         if is_aad:
             self.client = self.create_aad_client(appconfiguration_string)
@@ -67,7 +61,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             self.client = self.create_client(appconfiguration_string)
         self.add_for_test(self.client, self.create_config_setting())
         self.add_for_test(self.client, self.create_config_setting_no_label())
-    
+
     def tear_down(self):
         if self.client is not None:
             config_settings = self.client.list_configuration_settings()
@@ -78,6 +72,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
 
     def _order_dict(self, d):
         from collections import OrderedDict
+
         new = OrderedDict()
         for k, v in d.items():
             new[k] = str(v)
