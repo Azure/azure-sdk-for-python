@@ -245,11 +245,6 @@ class InternalComponent(Component):
             yield code
             return
 
-        def get_additional_include_file_name():
-            if self._source_path is not None:
-                return Path(self._source_path).with_suffix(InternalAdditionalIncludes.get_suffix()).name
-            return None
-
         self._additional_includes.resolve()
 
         # file dependency in code will be read during internal environment resolution
@@ -262,7 +257,7 @@ class InternalComponent(Component):
         tmp_code_dir = self._additional_includes.code.absolute()
         rebased_ignore_file = ComponentIgnoreFile(
             tmp_code_dir,
-            additional_includes_file_name=get_additional_include_file_name(),
+            additional_includes_file_name=self._additional_includes.get_config_file_name(),
         )
         # Use the snapshot id in ml-components as code name to enable anonymous
         # component reuse from ml-component runs.

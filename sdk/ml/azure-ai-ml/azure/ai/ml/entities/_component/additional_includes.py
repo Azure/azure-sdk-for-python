@@ -12,8 +12,6 @@ from multiprocessing import cpu_count
 from pathlib import Path
 from typing import List, Optional, Union
 
-import yaml
-
 from azure.ai.ml.constants._common import AzureDevopsArtifactsType
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
 
@@ -41,16 +39,18 @@ class AdditionalIncludes:
     def __init__(self, *, code_path: Union[None, str], base_path: Path, configs: List[Union[str, dict]] = None):
         self._base_path = base_path
         self._code_path = code_path
-        self._configs = configs if configs else []
+        self._origin_configs = configs
 
         self._tmp_code_path = None
-        self._includes = None
         # artifact validation is done on loading now, so need a private variable to store the result
-        self._artifact_validate_result = None
+        self._artifact_validation_result = None
 
     @property
-    def additional_includes(self):
-        return self._configs
+    def origin_configs(self):
+        """The origin additional include configs.
+        Artifact additional include configs haven't been resolved in this property.
+        """
+        return self._origin_configs or []
 
     @property
     def code_path(self) -> Union[None, Path]:
@@ -71,37 +71,33 @@ class AdditionalIncludes:
 
     @property
     def with_includes(self):
-        return len(self.includes) != 0 or not self.artifact_validate_result.passed
+        return len(self.includes) != 0 or not self.validate_artifact_additional_includes().passed
 
     @property
     def is_artifact_includes(self):
-        try:
-            return any(
-                map(
-                    lambda x: isinstance(x, dict) and x.get("type", None) == AzureDevopsArtifactsType.ARTIFACT,
-                    self.additional_includes,
-                )
+        return any(
+            map(
+                lambda x: isinstance(x, dict) and x.get("type", None) == AzureDevopsArtifactsType.ARTIFACT,
+                self.origin_configs,
             )
-        except Exception:  # pylint: disable=broad-except
-            return False
+        )
 
     @property
     def includes(self):
-        if self._includes is None:
-            if self.is_artifact_includes:
-                self._includes = self._load_artifact_additional_includes()
-            else:
-                self._includes = self.additional_includes if self.additional_includes else []
-        return self._includes
+        """The resolved additional include configs.
+        Artifact additional include configs have been resolved in this property.
+        """
+        if self.is_artifact_includes:
+            return self._load_artifact_additional_includes()
+        return self.origin_configs
 
-    @property
-    def artifact_validate_result(self):
+    def validate_artifact_additional_includes(self):
         if not self.is_artifact_includes:
             return _ValidationResultBuilder.success()
-        if self._artifact_validate_result is None:
+        if self._artifact_validation_result is None:
             # artifact validation is done on loading now, so trigger it here
             self._load_artifact_additional_includes()
-        return self._artifact_validate_result
+        return self._artifact_validation_result
 
     @classmethod
     def merge_local_path_to_additional_includes(cls, local_path, config_info, conflict_files):
@@ -127,6 +123,7 @@ class AdditionalIncludes:
 
     def _resolve_additional_include_config(self, additional_include_config):
         result = []
+        validation_result = _ValidationResultBuilder.success()
         if (
             isinstance(additional_include_config, dict)
             and additional_include_config.get("type") == AzureDevopsArtifactsType.ARTIFACT
@@ -141,14 +138,14 @@ class AdditionalIncludes:
                     )
                     result.append((os.path.join(artifact_path, item), config_info))
             except Exception as e:  # pylint: disable=broad-except
-                self.artifact_validate_result.append_error(message=e.args[0])
+                validation_result.append_error(message=e.args[0])
         elif isinstance(additional_include_config, str):
             result.append((additional_include_config, additional_include_config))
         else:
-            self.artifact_validate_result.append_error(
+            validation_result.append_error(
                 message=f"Unexpected format in additional_includes, {additional_include_config}"
             )
-        return result
+        return result, validation_result
 
     @staticmethod
     def _copy(src: Path, dst: Path, *, ignore_file=None) -> None:
@@ -229,22 +226,13 @@ class AdditionalIncludes:
         :return additional_includes: Path list of additional_includes
         :rtype additional_includes: List[str]
         """
-        self._artifact_validate_result = _ValidationResultBuilder.success()
+        all_validation_result = _ValidationResultBuilder.success()
         additional_includes, conflict_files = [], {}
 
         # Load the artifacts config from additional_includes
         # pylint: disable=no-member
-        if self.additional_includes:
-            additional_includes_configs = self.additional_includes
-        elif (
-            hasattr(self, "additional_includes_file_path")
-            and self.additional_includes_file_path.exists()
-            and self.additional_includes_file_path.suffix == self.get_suffix()
-            and self.additional_includes_file_path.is_file()
-        ):
-            with open(self.additional_includes_file_path) as f:
-                additional_includes_configs = yaml.safe_load(f)
-                additional_includes_configs = additional_includes_configs.get(self.get_config_key(), [])
+        if self.origin_configs:
+            additional_includes_configs = self.origin_configs
         else:
             return additional_includes
 
@@ -258,14 +246,18 @@ class AdditionalIncludes:
             and is_private_preview_enabled()
         ):
             with ThreadPoolExecutor(max_workers=num_threads) as executor:
-                for result in executor.map(self._resolve_additional_include_config, additional_includes_configs):
+                for result, validation_result in executor.map(
+                    self._resolve_additional_include_config, additional_includes_configs
+                ):
+                    all_validation_result.merge_with(validation_result)
                     for local_path, config_info in result:
                         additional_includes.append(local_path)
                         self.merge_local_path_to_additional_includes(
                             local_path=local_path, config_info=config_info, conflict_files=conflict_files
                         )
         else:
-            for result in map(self._resolve_additional_include_config, additional_includes_configs):
+            for result, validation_result in map(self._resolve_additional_include_config, additional_includes_configs):
+                all_validation_result.merge_with(validation_result)
                 for local_path, config_info in result:
                     additional_includes.append(local_path)
                     self.merge_local_path_to_additional_includes(
@@ -275,14 +267,16 @@ class AdditionalIncludes:
         # Check the file conflict in local path and artifact package.
         conflict_files = {k: v for k, v in conflict_files.items() if len(v) > 1}
         if conflict_files:
-            self.artifact_validate_result.append_error(
+            all_validation_result.append_error(
                 message=f"There are conflict files in additional include: {conflict_files}"
             )
+        self._artifact_validation_result = all_validation_result
         return additional_includes
 
     def validate(self) -> MutableValidationResult:
+        # use a new validation result to merge artifact validation result to avoid updating the original one
         validation_result = _ValidationResultBuilder.success()
-        validation_result.merge_with(self.artifact_validate_result)
+        validation_result.merge_with(self.validate_artifact_additional_includes())
         if not self.with_includes:
             return validation_result
         for additional_include in self.includes:
@@ -320,6 +314,9 @@ class AdditionalIncludes:
                     validation_result.append_error(message=error_msg)
         return validation_result
 
+    def get_config_file_name(self):  # pylint: disable=no-self-use
+        return None
+
     def _resolve_code(self, tmp_folder_path):
         """Resolve code when additional includes is specified.
 
@@ -334,9 +331,7 @@ class AdditionalIncludes:
                 root_ignore_file = ComponentIgnoreFile(
                     Path(self.code_path).parent,
                     skip_ignore_file=True,
-                    additional_includes_file_name=self.additional_includes_file_path.name
-                    if hasattr(self, "additional_includes_file_path")
-                    else None,
+                    additional_includes_file_name=self.get_config_file_name(),
                 )
                 self._copy(
                     Path(self.code_path),
@@ -347,9 +342,7 @@ class AdditionalIncludes:
                 # current implementation of ignore file is based on absolute path, so it cannot be shared
                 root_ignore_file = ComponentIgnoreFile(
                     self.code_path,
-                    additional_includes_file_name=self.additional_includes_file_path.name
-                    if hasattr(self, "additional_includes_file_path")
-                    else None,
+                    additional_includes_file_name=self.get_config_file_name(),
                 )
                 self._copy(self.code_path, tmp_folder_path, ignore_file=root_ignore_file)
         else:
