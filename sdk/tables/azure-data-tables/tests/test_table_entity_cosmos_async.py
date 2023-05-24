@@ -452,6 +452,22 @@ class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
+    async def test_delete_entity_with_empty_keys(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            with pytest.raises(HttpResponseError) as exc:
+                entity, _ = await self._insert_random_entity(pk="")
+            assert "PartitionKey/RowKey cannot be empty" in str(exc.value)
+            # self.table.delete_entity(entity)
+            with pytest.raises(HttpResponseError) as exc:
+                entity, _ = await self._insert_random_entity(rk="")
+            assert "PartitionKey/RowKey cannot be empty" in str(exc.value)
+            # self.table.delete_entity(partition_key=entity['PartitionKey'], row_key="")
+        finally:
+            await self._tear_down()
+
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_get_entity_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")

@@ -67,7 +67,10 @@ def normalize_headers(headers):
 
 
 def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argument
-    raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
+    try:
+        raw_metadata = {k: v for k, v in response.http_response.headers.items() if k.startswith("x-ms-meta-")}
+    except AttributeError:
+        raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
     return {k[10:]: v for k, v in raw_metadata.items()}
 
 
@@ -81,6 +84,10 @@ def return_headers_and_deserialized(response, deserialized, response_headers):  
 
 def return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
     return response.http_response.location_mode, deserialized
+
+
+def return_raw_deserialized(response, *_):
+    return response.http_response.location_mode, response.context[ContentDecodePolicy.CONTEXT_NAME]
 
 
 def process_storage_error(storage_error):   # pylint:disable=too-many-statements
@@ -160,11 +167,11 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
 
     # Error message should include all the error properties
     try:
-        error_message += "\nErrorCode:{}".format(error_code.value)
+        error_message += f"\nErrorCode:{error_code.value}"
     except AttributeError:
-        error_message += "\nErrorCode:{}".format(error_code)
+        error_message += f"\nErrorCode:{error_code}"
     for name, info in additional_data.items():
-        error_message += "\n{}:{}".format(name, info)
+        error_message += f"\n{name}:{info}"
 
     # No need to create an instance if it has already been serialized by the generated layer
     if serialized:

@@ -10,6 +10,7 @@ from test_utilities.utils import assert_final_job_status, get_automl_job_propert
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.automl import ColumnTransformer, regression
+from azure.ai.ml.entities import QueueSettings
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.tabular.regression_job import RegressionJob
 from azure.ai.ml.operations._run_history_constants import JobStatus
@@ -17,10 +18,7 @@ from azure.ai.ml.operations._run_history_constants import JobStatus
 
 @pytest.mark.automl_test
 @pytest.mark.usefixtures("recorded_test")
-@pytest.mark.skipif(
-    condition=not is_live(),
-    reason="Datasets downloaded by test are too large to record reliably"
-)
+@pytest.mark.skipif(condition=not is_live(), reason="Datasets downloaded by test are too large to record reliably")
 class TestAutoMLRegression(AzureRecordedTestCase):
     def get_regression_task(
         self, dataset: Tuple[Input, str], experiment_name: str, add_validation: bool = False
@@ -105,7 +103,7 @@ class TestAutoMLRegression(AzureRecordedTestCase):
         created_job = client.jobs.create_or_update(regression_task)
         assert_final_job_status(created_job, client, RegressionJob, JobStatus.FAILED)
 
-    def test_regression_with_training_settings(
+    def test_regression_with_training_settings_serverless(
         self,
         machinedata_dataset: Tuple[Input, str],
         client: MLClient,
@@ -114,6 +112,8 @@ class TestAutoMLRegression(AzureRecordedTestCase):
         regression_task = self.get_regression_task(
             machinedata_dataset, "DPv2-regression-training-settings", add_validation=True
         )
+        regression_task.compute = None
+        regression_task.queue_settings = QueueSettings(job_tier="standard")
         # Featurization set to auto by default
         # Set training
         blocked_models = ["ElasticNet", "XGBoostRegressor", "LightGBM"]

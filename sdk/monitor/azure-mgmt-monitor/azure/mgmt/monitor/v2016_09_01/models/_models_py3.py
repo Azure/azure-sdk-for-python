@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -31,7 +31,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -63,7 +63,7 @@ class LocalizableString(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, *, value: str, localized_value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: str, localized_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: the invariant value. Required.
         :paramtype value: str
@@ -87,7 +87,7 @@ class LogSettings(_serialization.Model):
     :ivar enabled: a value indicating whether this log is enabled. Required.
     :vartype enabled: bool
     :ivar retention_policy: the retention policy for this log.
-    :vartype retention_policy: ~$(python-base-namespace).v2016_09_01.models.RetentionPolicy
+    :vartype retention_policy: ~azure.mgmt.monitor.v2016_09_01.models.RetentionPolicy
     """
 
     _validation = {
@@ -106,8 +106,8 @@ class LogSettings(_serialization.Model):
         enabled: bool,
         category: Optional[str] = None,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword category: Name of a Diagnostic Log category for a resource type this setting is
          applied to. To obtain the list of Diagnostic Log categories for a resource, first perform a GET
@@ -116,7 +116,7 @@ class LogSettings(_serialization.Model):
         :keyword enabled: a value indicating whether this log is enabled. Required.
         :paramtype enabled: bool
         :keyword retention_policy: the retention policy for this log.
-        :paramtype retention_policy: ~$(python-base-namespace).v2016_09_01.models.RetentionPolicy
+        :paramtype retention_policy: ~azure.mgmt.monitor.v2016_09_01.models.RetentionPolicy
         """
         super().__init__(**kwargs)
         self.category = category
@@ -135,13 +135,13 @@ class Metric(_serialization.Model):
     :vartype type: str
     :ivar name: the name and the display name of the metric, i.e. it is localizable string.
      Required.
-    :vartype name: ~$(python-base-namespace).v2016_09_01.models.LocalizableString
+    :vartype name: ~azure.mgmt.monitor.v2016_09_01.models.LocalizableString
     :ivar unit: the unit of the metric. Required. Known values are: "Count", "Bytes", "Seconds",
      "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
      "Cores", "MilliCores", "NanoCores", and "BitsPerSecond".
-    :vartype unit: str or ~$(python-base-namespace).v2016_09_01.models.Unit
+    :vartype unit: str or ~azure.mgmt.monitor.v2016_09_01.models.Unit
     :ivar data: Array of data points representing the metric values. Required.
-    :vartype data: list[~$(python-base-namespace).v2016_09_01.models.MetricValue]
+    :vartype data: list[~azure.mgmt.monitor.v2016_09_01.models.MetricValue]
     """
 
     _validation = {
@@ -166,8 +166,8 @@ class Metric(_serialization.Model):
         data: List["_models.MetricValue"],
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: the id, resourceId, of the metric.
         :paramtype id: str
@@ -175,13 +175,13 @@ class Metric(_serialization.Model):
         :paramtype type: str
         :keyword name: the name and the display name of the metric, i.e. it is localizable string.
          Required.
-        :paramtype name: ~$(python-base-namespace).v2016_09_01.models.LocalizableString
+        :paramtype name: ~azure.mgmt.monitor.v2016_09_01.models.LocalizableString
         :keyword unit: the unit of the metric. Required. Known values are: "Count", "Bytes", "Seconds",
          "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
          "Cores", "MilliCores", "NanoCores", and "BitsPerSecond".
-        :paramtype unit: str or ~$(python-base-namespace).v2016_09_01.models.Unit
+        :paramtype unit: str or ~azure.mgmt.monitor.v2016_09_01.models.Unit
         :keyword data: Array of data points representing the metric values. Required.
-        :paramtype data: list[~$(python-base-namespace).v2016_09_01.models.MetricValue]
+        :paramtype data: list[~azure.mgmt.monitor.v2016_09_01.models.MetricValue]
         """
         super().__init__(**kwargs)
         self.id = id
@@ -197,7 +197,7 @@ class MetricCollection(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: the value of the collection. Required.
-    :vartype value: list[~$(python-base-namespace).v2016_09_01.models.Metric]
+    :vartype value: list[~azure.mgmt.monitor.v2016_09_01.models.Metric]
     """
 
     _validation = {
@@ -208,10 +208,10 @@ class MetricCollection(_serialization.Model):
         "value": {"key": "value", "type": "[Metric]"},
     }
 
-    def __init__(self, *, value: List["_models.Metric"], **kwargs):
+    def __init__(self, *, value: List["_models.Metric"], **kwargs: Any) -> None:
         """
         :keyword value: the value of the collection. Required.
-        :paramtype value: list[~$(python-base-namespace).v2016_09_01.models.Metric]
+        :paramtype value: list[~azure.mgmt.monitor.v2016_09_01.models.Metric]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -227,7 +227,7 @@ class MetricSettings(_serialization.Model):
     :ivar enabled: a value indicating whether this timegrain is enabled. Required.
     :vartype enabled: bool
     :ivar retention_policy: the retention policy for this timegrain.
-    :vartype retention_policy: ~$(python-base-namespace).v2016_09_01.models.RetentionPolicy
+    :vartype retention_policy: ~azure.mgmt.monitor.v2016_09_01.models.RetentionPolicy
     """
 
     _validation = {
@@ -247,15 +247,15 @@ class MetricSettings(_serialization.Model):
         time_grain: datetime.timedelta,
         enabled: bool,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword time_grain: the timegrain of the metric in ISO8601 format. Required.
         :paramtype time_grain: ~datetime.timedelta
         :keyword enabled: a value indicating whether this timegrain is enabled. Required.
         :paramtype enabled: bool
         :keyword retention_policy: the retention policy for this timegrain.
-        :paramtype retention_policy: ~$(python-base-namespace).v2016_09_01.models.RetentionPolicy
+        :paramtype retention_policy: ~azure.mgmt.monitor.v2016_09_01.models.RetentionPolicy
         """
         super().__init__(**kwargs)
         self.time_grain = time_grain
@@ -305,8 +305,8 @@ class MetricValue(_serialization.Model):
         maximum: Optional[float] = None,
         total: Optional[float] = None,
         count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword time_stamp: the timestamp for the metric value in ISO 8601 format. Required.
         :paramtype time_stamp: ~datetime.datetime
@@ -365,7 +365,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -402,7 +402,7 @@ class RetentionPolicy(_serialization.Model):
         "days": {"key": "days", "type": "int"},
     }
 
-    def __init__(self, *, enabled: bool, days: int, **kwargs):
+    def __init__(self, *, enabled: bool, days: int, **kwargs: Any) -> None:
         """
         :keyword enabled: a value indicating whether the retention policy is enabled. Required.
         :paramtype enabled: bool
@@ -443,9 +443,9 @@ class ServiceDiagnosticSettingsResource(Resource):  # pylint: disable=too-many-i
      authorization rule.
     :vartype event_hub_authorization_rule_id: str
     :ivar metrics: the list of metric settings.
-    :vartype metrics: list[~$(python-base-namespace).v2016_09_01.models.MetricSettings]
+    :vartype metrics: list[~azure.mgmt.monitor.v2016_09_01.models.MetricSettings]
     :ivar logs: the list of logs settings.
-    :vartype logs: list[~$(python-base-namespace).v2016_09_01.models.LogSettings]
+    :vartype logs: list[~azure.mgmt.monitor.v2016_09_01.models.LogSettings]
     :ivar workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
      Analytics workspace to which you would like to send Diagnostic Logs. Example:
      /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
@@ -484,8 +484,8 @@ class ServiceDiagnosticSettingsResource(Resource):  # pylint: disable=too-many-i
         metrics: Optional[List["_models.MetricSettings"]] = None,
         logs: Optional[List["_models.LogSettings"]] = None,
         workspace_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -502,9 +502,9 @@ class ServiceDiagnosticSettingsResource(Resource):  # pylint: disable=too-many-i
          authorization rule.
         :paramtype event_hub_authorization_rule_id: str
         :keyword metrics: the list of metric settings.
-        :paramtype metrics: list[~$(python-base-namespace).v2016_09_01.models.MetricSettings]
+        :paramtype metrics: list[~azure.mgmt.monitor.v2016_09_01.models.MetricSettings]
         :keyword logs: the list of logs settings.
-        :paramtype logs: list[~$(python-base-namespace).v2016_09_01.models.LogSettings]
+        :paramtype logs: list[~azure.mgmt.monitor.v2016_09_01.models.LogSettings]
         :keyword workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
          Analytics workspace to which you would like to send Diagnostic Logs. Example:
          /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
@@ -535,9 +535,9 @@ class ServiceDiagnosticSettingsResourcePatch(_serialization.Model):
      authorization rule.
     :vartype event_hub_authorization_rule_id: str
     :ivar metrics: the list of metric settings.
-    :vartype metrics: list[~$(python-base-namespace).v2016_09_01.models.MetricSettings]
+    :vartype metrics: list[~azure.mgmt.monitor.v2016_09_01.models.MetricSettings]
     :ivar logs: the list of logs settings.
-    :vartype logs: list[~$(python-base-namespace).v2016_09_01.models.LogSettings]
+    :vartype logs: list[~azure.mgmt.monitor.v2016_09_01.models.LogSettings]
     :ivar workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
      Analytics workspace to which you would like to send Diagnostic Logs. Example:
      /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
@@ -564,8 +564,8 @@ class ServiceDiagnosticSettingsResourcePatch(_serialization.Model):
         metrics: Optional[List["_models.MetricSettings"]] = None,
         logs: Optional[List["_models.LogSettings"]] = None,
         workspace_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -580,9 +580,9 @@ class ServiceDiagnosticSettingsResourcePatch(_serialization.Model):
          authorization rule.
         :paramtype event_hub_authorization_rule_id: str
         :keyword metrics: the list of metric settings.
-        :paramtype metrics: list[~$(python-base-namespace).v2016_09_01.models.MetricSettings]
+        :paramtype metrics: list[~azure.mgmt.monitor.v2016_09_01.models.MetricSettings]
         :keyword logs: the list of logs settings.
-        :paramtype logs: list[~$(python-base-namespace).v2016_09_01.models.LogSettings]
+        :paramtype logs: list[~azure.mgmt.monitor.v2016_09_01.models.LogSettings]
         :keyword workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
          Analytics workspace to which you would like to send Diagnostic Logs. Example:
          /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.

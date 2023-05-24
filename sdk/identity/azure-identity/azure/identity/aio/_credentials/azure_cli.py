@@ -3,9 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-import sys
 import os
-from typing import List
+import shutil
+import sys
+from typing import List, Any, Optional
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken
@@ -16,6 +17,7 @@ from ..._credentials.azure_cli import (
     AzureCliCredential as _SyncAzureCliCredential,
     CLI_NOT_FOUND,
     COMMAND_LINE,
+    EXECUTABLE_NAME,
     get_safe_working_dir,
     NOT_LOGGED_IN,
     parse_token,
@@ -33,14 +35,31 @@ class AzureCliCredential(AsyncContextManager):
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
+    :keyword int process_timeout: Seconds to wait for the Azure CLI process to respond. Defaults to 10 seconds.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_azure_cli_credential_async]
+            :end-before: [END create_azure_cli_credential_async]
+            :language: python
+            :dedent: 4
+            :caption: Create an AzureCliCredential.
     """
-    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: List[str] = None):
+    def __init__(
+        self,
+        *,
+        tenant_id: str = "",
+        additionally_allowed_tenants: Optional[List[str]] = None,
+        process_timeout: int = 10
+    ) -> None:
 
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
+        self._process_timeout = process_timeout
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -69,7 +88,7 @@ class AzureCliCredential(AsyncContextManager):
 
         if tenant:
             command += " --tenant " + tenant
-        output = await _run_command(command)
+        output = await _run_command(command, self._process_timeout)
 
         token = parse_token(output)
         if not token:
@@ -81,11 +100,15 @@ class AzureCliCredential(AsyncContextManager):
 
         return token
 
-    async def close(self):
+    async def close(self) -> None:
         """Calling this method is unnecessary"""
 
 
-async def _run_command(command: str) -> str:
+async def _run_command(command: str, timeout: int) -> str:
+    # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
+    if shutil.which(EXECUTABLE_NAME) is None:
+        raise CredentialUnavailableError(message=CLI_NOT_FOUND)
+
     if sys.platform.startswith("win"):
         args = ("cmd", "/c " + command)
     else:
@@ -101,11 +124,11 @@ async def _run_command(command: str) -> str:
             cwd=working_directory,
             env=dict(os.environ, AZURE_CORE_NO_COLOR="true")
         )
-        stdout_b, stderr_b = await asyncio.wait_for(proc.communicate(), 10)
+        stdout_b, stderr_b = await asyncio.wait_for(proc.communicate(), timeout)
         output = stdout_b.decode()
         stderr = stderr_b.decode()
     except OSError as ex:
-        # failed to execute 'cmd' or '/bin/sh'; CLI may or may not be installed
+        # failed to execute 'cmd' or '/bin/sh'
         error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))
         raise error from ex
     except asyncio.TimeoutError as ex:
@@ -115,6 +138,7 @@ async def _run_command(command: str) -> str:
     if proc.returncode == 0:
         return output
 
+    # Fallback check in case the executable is not found while executing subprocess.
     if proc.returncode == 127 or stderr.startswith("'az' is not recognized"):
         raise CredentialUnavailableError(CLI_NOT_FOUND)
 

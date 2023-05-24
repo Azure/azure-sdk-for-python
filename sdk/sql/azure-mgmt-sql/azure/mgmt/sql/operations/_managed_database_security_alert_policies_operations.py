@@ -232,8 +232,9 @@ class ManagedDatabaseSecurityAlertPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -345,8 +346,8 @@ class ManagedDatabaseSecurityAlertPoliciesOperations:
         :type database_name: str
         :param security_alert_policy_name: The name of the security alert policy. "Default" Required.
         :type security_alert_policy_name: str or ~azure.mgmt.sql.models.SecurityAlertPolicyName
-        :param parameters: The database security alert policy. Is either a model type or a IO type.
-         Required.
+        :param parameters: The database security alert policy. Is either a
+         ManagedDatabaseSecurityAlertPolicy type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ManagedDatabaseSecurityAlertPolicy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -398,8 +399,9 @@ class ManagedDatabaseSecurityAlertPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -492,8 +494,9 @@ class ManagedDatabaseSecurityAlertPoliciesOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 

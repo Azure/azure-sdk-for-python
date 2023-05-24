@@ -1,14 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2022-01-11-preview2",
+      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2022-12-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "131",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
@@ -27,15 +27,15 @@
         "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-12-01",
         "Content-Length": "0",
         "Date": "sanitized",
-        "Location": "/availablePhoneNumbers/searchResults/21b9a178-8679-4baf-9d3a-d6f0088a2d72?api-version=2022-01-11-preview2",
+        "Location": "/availablePhoneNumbers/searchResults/b26819db-052e-453f-976f-8b78648000e6?api-version=2022-12-01",
         "MS-CV": "sanitized",
-        "operation-id": "search_21b9a178-8679-4baf-9d3a-d6f0088a2d72",
-        "Operation-Location": "/phoneNumbers/operations/search_21b9a178-8679-4baf-9d3a-d6f0088a2d72?api-version=2022-01-11-preview2",
-        "search-id": "21b9a178-8679-4baf-9d3a-d6f0088a2d72",
+        "operation-id": "search_b26819db-052e-453f-976f-8b78648000e6",
+        "Operation-Location": "/phoneNumbers/operations/search_b26819db-052e-453f-976f-8b78648000e6?api-version=2022-12-01",
+        "search-id": "b26819db-052e-453f-976f-8b78648000e6",
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "2430ms"
+        "X-Processing-Time": "1400ms"
       },
       "ResponseBody": null
     }

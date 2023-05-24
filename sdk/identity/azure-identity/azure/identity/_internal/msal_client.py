@@ -3,25 +3,20 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import threading
-from typing import Any, Dict, Optional, Union, TYPE_CHECKING
+from typing import Any, Dict, Optional, Union
 import six
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.pipeline import PipelineResponse
 from .pipeline import build_pipeline
 
-if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpResponse
-
-    RequestData = Union[Dict[str, str], str]
-
-
+RequestData = Union[Dict[str, str], str]
 _POST = ["POST"]
 
 
-class MsalResponse(object):
+class MsalResponse:
     """Wraps HttpResponse according to msal.oauth2cli.http"""
 
     def __init__(self, response: PipelineResponse) -> None:
@@ -56,11 +51,10 @@ class MsalResponse(object):
         raise ClientAuthenticationError(message=message, response=self._response.http_response)
 
 
-class MsalClient(object):  # pylint:disable=client-accepts-api-version-keyword
+class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
     """Wraps Pipeline according to msal.oauth2cli.http"""
 
-    def __init__(self, **kwargs):  # pylint:disable=missing-client-constructor-parameter-credential
-        # type: (**Any) -> None
+    def __init__(self, **kwargs: Any) -> None:  # pylint:disable=missing-client-constructor-parameter-credential
         self._local = threading.local()
         self._pipeline = build_pipeline(**kwargs)
 
@@ -71,12 +65,18 @@ class MsalClient(object):  # pylint:disable=client-accepts-api-version-keyword
     def __exit__(self, *args):
         self._pipeline.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self.__exit__()
 
-    def post(self, url, params=None, data=None, headers=None, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Optional[Dict[str, str]], RequestData, Optional[Dict[str, str]], **Any) -> MsalResponse
+    def post(
+            self,
+            url: str,
+            params: Optional[Dict[str, str]] = None,
+            data: Optional[RequestData] = None,
+            headers: Optional[Dict[str, str]] = None,
+            **kwargs: Any
+    ) -> MsalResponse:
+        # pylint:disable=unused-argument
         request = HttpRequest("POST", url, headers=headers)
         if params:
             request.format_parameters(params)
@@ -94,8 +94,14 @@ class MsalClient(object):  # pylint:disable=client-accepts-api-version-keyword
         self._store_auth_error(response)
         return MsalResponse(response)
 
-    def get(self, url, params=None, headers=None, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], **Any) -> MsalResponse
+    def get(
+            self,
+            url: str,
+            params: Optional[Dict[str, str]] = None,
+            headers: Optional[Dict[str, str]] = None,
+            **kwargs: Any
+    ) -> MsalResponse:
+        # pylint:disable=unused-argument
         request = HttpRequest("GET", url, headers=headers)
         if params:
             request.format_parameters(params)
@@ -103,16 +109,14 @@ class MsalClient(object):  # pylint:disable=client-accepts-api-version-keyword
         self._store_auth_error(response)
         return MsalResponse(response)
 
-    def get_error_response(self, msal_result):
-        # type: (dict) -> Optional[HttpResponse]
+    def get_error_response(self, msal_result: Dict) -> Optional[HttpResponse]:
         """Get the HTTP response associated with an MSAL error"""
         error_code, response = getattr(self._local, "error", (None, None))
         if response and error_code == msal_result.get("error"):
             return response
         return None
 
-    def _store_auth_error(self, response):
-        # type: (PipelineResponse) -> None
+    def _store_auth_error(self, response: PipelineResponse) -> None:
         if response.http_response.status_code >= 400:
             # if the body doesn't contain "error", this isn't an OAuth 2 error, i.e. this isn't a
             # response to an auth request, so no credential will want to include it with an exception

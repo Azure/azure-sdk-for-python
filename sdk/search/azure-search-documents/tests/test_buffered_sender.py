@@ -2,11 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-try:
-    from unittest import mock
-except ImportError:
-    import mock
-
+from unittest import mock
 import pytest
 from azure.search.documents import (
     SearchIndexingBufferedSender,
@@ -17,7 +13,7 @@ from azure.search.documents.models import IndexingResult
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
-class TestSearchBatchingClient(object):
+class TestSearchBatchingClient:
     def test_search_indexing_buffered_sender_kwargs(self):
         with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, window=100) as client:
             assert client._batch_action_count == 512

@@ -5,7 +5,12 @@ This Checkpoint Store package works as a plug-in package to `EventHubConsumerCli
 
 Please note that this is an async library, for sync version of the Azure EventHubs Checkpoint Store client library, please refer to [azure-eventhub-checkpointstoreblob](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub-checkpointstoreblob).
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/) | [Package (PyPi)](https://pypi.org/project/azure-eventhub-checkpointstoreblob-aio/) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/latest/azure.eventhub.aio.html#azure.eventhub.aio.CheckpointStore) | [Azure Eventhubs documentation](https://docs.microsoft.com/azure/event-hubs/) | [Azure Storage documentation](https://docs.microsoft.com/azure/storage/)
+[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/)
+| [Package (PyPi)](https://pypi.org/project/azure-eventhub-checkpointstoreblob-aio/)
+| [Package (Conda)](https://anaconda.org/microsoft/azure-eventhub/)
+| [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/latest/azure.eventhub.aio.html#azure.eventhub.aio.CheckpointStore)
+| [Azure Eventhubs documentation](https://docs.microsoft.com/azure/event-hubs/)
+| [Azure Storage documentation](https://docs.microsoft.com/azure/storage/)
 
 ## _Disclaimer_
 

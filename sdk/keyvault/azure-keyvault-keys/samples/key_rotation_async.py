@@ -45,7 +45,7 @@ async def run_sample():
     # First, create a key
     key_name = "rotation-sample-key-async"
     key = await client.create_rsa_key(key_name)
-    print("\nCreated a key; new version is {}".format(key.properties.version))
+    print(f"\nCreated a key; new version is {key.properties.version}")
 
     # Set the key's automated rotation policy to rotate the key two months after the key was created.
     # If you pass an empty KeyRotationPolicy() as the `policy` parameter, the rotation policy will be set to the
@@ -64,9 +64,7 @@ async def run_sample():
     assert policy_action, "The specified action should exist in the key rotation policy"
     assert policy_action.time_after_create == "P2M", "The action should have the specified time_after_create"
     assert policy_action.time_before_expiry is None, "The action shouldn't have a time_before_expiry"
-    print(
-        "\nCreated a new key rotation policy: {} after {}".format(policy_action.action, policy_action.time_after_create)
-    )
+    print(f"\nCreated a new key rotation policy: {policy_action.action} after {policy_action.time_after_create}")
 
     # Get the key's current rotation policy
     current_policy = await client.get_key_rotation_policy(key_name)
@@ -74,7 +72,7 @@ async def run_sample():
     for i in range(len(current_policy.lifetime_actions)):
         if current_policy.lifetime_actions[i].action == KeyRotationPolicyAction.rotate:
             policy_action = current_policy.lifetime_actions[i]
-    print("\nCurrent rotation policy: {} after {}".format(policy_action.action, policy_action.time_after_create))
+    print(f"\nCurrent rotation policy: {policy_action.action} after {policy_action.time_after_create}")
 
     # Update the key's automated rotation policy to notify 10 days before the key expires
     new_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.notify, time_before_expiry="P10D")]
@@ -93,11 +91,11 @@ async def run_sample():
     assert notify_action, "The specified action should exist in the key rotation policy"
     assert notify_action.time_after_create is None, "The action shouldn't have a time_after_create"
     assert notify_action.time_before_expiry == "P10D", "The action should have the specified time_before_expiry"
-    print("\nNew policy action: {} {} before expiry".format(notify_action.action, notify_action.time_before_expiry))
+    print(f"\nNew policy action: {notify_action.action} {notify_action.time_before_expiry} before expiry")
 
     # Finally, you can rotate a key on-demand by creating a new version of the key
     rotated_key = await client.rotate_key(key_name)
-    print("\nRotated the key on-demand; new version is {}".format(rotated_key.properties.version))
+    print(f"\nRotated the key on-demand; new version is {rotated_key.properties.version}")
 
     # To clean up, delete the key
     await client.delete_key(key_name)

@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import pytest
 
 from azure.ai.ml import Input, MLClient, dsl, load_component
@@ -10,10 +11,7 @@ tests_root_dir = Path(__file__).parent.parent.parent
 components_dir = tests_root_dir / "test_configs/components/"
 
 
-@pytest.mark.usefixtures(
-    "enable_pipeline_private_preview_features",
-    "enable_private_preview_schema_features"
-)
+@pytest.mark.usefixtures("enable_pipeline_private_preview_features", "enable_private_preview_schema_features")
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
@@ -35,16 +33,18 @@ class TestDSLPipeline:
         pipeline_job.jobs["pipeline_no_arg"]._source_path = __file__
 
         validation_result: ValidationResult = mock_machinelearning_client.components.validate(
-            pipeline_job.jobs["pipeline_no_arg"]
+            pipeline_job.jobs["pipeline_no_arg"],
+            # skip remote validation for unit test as it requires a valid workspace to fetch the location
+            skip_remote_validation=True,
         )
         assert not validation_result.passed
         assert validation_result.error_messages == {
-            "inputs.component_in_path": 'Parameter type unknown, '
-                                        'please add type annotation or specify input default value.',
+            "inputs.component_in_path": "Parameter type unknown, "
+            "please add type annotation or specify input default value.",
         }
 
         assert mock_machinelearning_client.jobs.validate(pipeline_job).error_messages == {
-            'jobs.pipeline_no_arg.inputs.component_in_path': 'Parameter type unknown, please add type annotation'
-                                                             ' or specify input default value.',
-            'jobs.pipeline_no_arg.jobs.microsoftsamples_command_component_basic.compute': 'Compute not set'
+            "jobs.pipeline_no_arg.inputs.component_in_path": "Parameter type unknown, please add type annotation"
+            " or specify input default value.",
+            "jobs.pipeline_no_arg.jobs.microsoftsamples_command_component_basic.compute": "Compute not set",
         }

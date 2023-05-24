@@ -32,10 +32,70 @@ def main():
     response = client.caches.begin_create_or_update(
         resource_group_name="scgroup",
         cache_name="sc1",
+        cache={
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/scgroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity1": {}
+                },
+            },
+            "location": "westus",
+            "properties": {
+                "cacheSizeGB": 3072,
+                "directoryServicesSettings": {
+                    "activeDirectory": {
+                        "cacheNetBiosName": "contosoSmb",
+                        "credentials": {"password": "<password>", "username": "consotoAdmin"},
+                        "domainName": "contosoAd.contoso.local",
+                        "domainNetBiosName": "contosoAd",
+                        "primaryDnsIpAddress": "192.0.2.10",
+                        "secondaryDnsIpAddress": "192.0.2.11",
+                    },
+                    "usernameDownload": {
+                        "credentials": {
+                            "bindDn": "cn=ldapadmin,dc=contosoad,dc=contoso,dc=local",
+                            "bindPassword": "<bindPassword>",
+                        },
+                        "extendedGroups": True,
+                        "ldapBaseDN": "dc=contosoad,dc=contoso,dc=local",
+                        "ldapServer": "192.0.2.12",
+                        "usernameSource": "LDAP",
+                    },
+                },
+                "encryptionSettings": {
+                    "keyEncryptionKey": {
+                        "keyUrl": "https://keyvault-cmk.vault.azure.net/keys/key2047/test",
+                        "sourceVault": {
+                            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/scgroup/providers/Microsoft.KeyVault/vaults/keyvault-cmk"
+                        },
+                    }
+                },
+                "securitySettings": {
+                    "accessPolicies": [
+                        {
+                            "accessRules": [
+                                {
+                                    "access": "rw",
+                                    "rootSquash": False,
+                                    "scope": "default",
+                                    "submountAccess": True,
+                                    "suid": False,
+                                }
+                            ],
+                            "name": "default",
+                        }
+                    ]
+                },
+                "subnet": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/scgroup/providers/Microsoft.Network/virtualNetworks/scvnet/subnets/sub1",
+                "upgradeSettings": {"scheduledTime": "2022-04-26T18:25:43.511Z", "upgradeScheduleEnabled": True},
+            },
+            "sku": {"name": "Standard_2G"},
+            "tags": {"Dept": "Contoso"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2022-05-01/examples/Caches_CreateOrUpdate.json
+# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2023-01-01/examples/Caches_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

@@ -121,7 +121,9 @@ You must specify use_cache=True in the preparer decorator""".format(
             if self._use_cache and aggregate_cache_key in AbstractPreparer._resource_cache:
                 _logger.debug("Using cached resource for %s", self.__class__.__name__)
                 with self._cache_lock:
+                    new_kwargs = kwargs
                     resource_name, kwargs, _ = AbstractPreparer._resource_cache[aggregate_cache_key]
+                    kwargs.update(new_kwargs)
             else:
                 resource_name, kwargs = self._prepare_create_resource(test_class_instance, **kwargs)
 

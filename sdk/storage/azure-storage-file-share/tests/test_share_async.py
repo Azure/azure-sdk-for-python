@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 
 import pytest
 import requests
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.storage.fileshare import (
     AccessPolicy,
@@ -30,6 +30,7 @@ from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
+TEST_INTENT = "backup"
 # ------------------------------------------------------------------------------
 
 
@@ -84,6 +85,25 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert created
         await self._delete_shares(share.share_name)
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_create_share_with_oauth_fails(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        token_credential = self.generate_oauth_token()
+
+        self._setup(storage_account_name, storage_account_key)
+        share_name = self.get_resource_name(TEST_SHARE_PREFIX)
+
+        # Act
+        with pytest.raises(ValueError):
+            share = ShareClient(
+                self.account_url(storage_account_name, "file"),
+                share_name=share_name,
+                credential=token_credential,
+                file_request_intent=TEST_INTENT
+            )
 
     @FileSharePreparer()
     @recorded_by_proxy_async

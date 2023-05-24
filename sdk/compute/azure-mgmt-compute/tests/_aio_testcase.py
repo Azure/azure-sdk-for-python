@@ -13,12 +13,17 @@ class AzureMgmtAsyncTestCase(AzureMgmtTestCase):
     def event_loop(self):
         return asyncio.get_event_loop()
 
+    def mock_completed_future(self, result=None):
+        future = asyncio.Future()
+        future.set_result = result
+        return future
+
     def create_mgmt_aio_client(self, client, **kwargs):
         if self.is_live:
             from azure.identity.aio import DefaultAzureCredential
             credential = DefaultAzureCredential()
         else:
-            credential = Mock(get_token=asyncio.coroutine(lambda _: AccessToken("fake-token", 0)))
+            credential = Mock(get_token=lambda _: self.mock_completed_future(AccessToken("fake-token", 0)))
         return client(
             credential=credential,
             subscription_id=self.settings.SUBSCRIPTION_ID

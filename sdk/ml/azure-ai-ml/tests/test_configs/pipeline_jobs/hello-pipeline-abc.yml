@@ -8,16 +8,16 @@ inputs:
 jobs:
   a:
     command: echo hello ${{inputs.hello_string}}
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
     inputs:
       hello_string: ${{parent.inputs.hello_string_top_level_input}}
   b:
     command: echo "world" >> ${{outputs.world_output}}/world.txt
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
     outputs:
       world_output:
   c:
     command: echo ${{inputs.world_input}}/world.txt
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
     inputs:
       world_input: ${{parent.jobs.b.outputs.world_output}}

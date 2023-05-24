@@ -47,7 +47,7 @@ def create_alias():
     # [START create_alias]
     alias = SearchAlias(name = alias_name, indexes = [index_name])
     result = client.create_alias(alias)
-    # [END create_index]
+    # [END create_alias]
 
 def get_alias():
     # [START get_alias]

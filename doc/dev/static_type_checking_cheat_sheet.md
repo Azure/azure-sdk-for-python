@@ -50,14 +50,30 @@ class KeyCredential:
         ...
 ```
 
-- Do provide type annotations for all instance variables on a model. You can do this by typing the parameters in the 
-  `__init__` or by adding type hints directly to the instance variables.
+- Do provide type annotations for all public instance variables on a model. Do this by adding class-level type hints
+per [PEP526](https://peps.python.org/pep-0526/).
 
 ```python
 class Tree:
+    """Represents a tree.
 
-    def __init__(self, *, location: str, num_branches: int) -> None:
-        self.kind: typing.Literal["oak"] = "oak"
+    :param str location: The location for the tree.
+    :param int num_branches: The number of branches on the tree
+    :param str kind: The kind of tree.
+    
+    Note: :ivar: docstrings are redundant since these vars/types are captured below
+    """
+
+    location: str
+    """A description of the location of the tree."""
+    num_branches: int
+    """Number of branches on tree."""
+    kind: str = "oak"
+    """The kind of tree."""
+
+    def __init__(self, *, location: str, num_branches: int, kind: Optional[str] = None) -> None:
+        if kind: 
+            self.kind = kind
         self.location = location
         self.num_branches = num_branches
 ```
@@ -146,6 +162,24 @@ def foo(
     bar: str = None,
 ) -> None:
     ...
+```
+
+- Do use `Optional` if a parameter can be typed as `Any` or `None`. `Optional[Any]`, or `Union[Any, None]`, is __not__ equal to `Any`.
+
+```python
+from typing import Optional, Any
+
+# Yes
+def foo(
+    bar: Optional[Any] = None,
+) -> None:
+    bar.append(1)  # error caught at type checking time: Item "None" of "Optional[Any]" has no attribute "append"
+
+# No
+def foo(
+    bar: Any = None,
+) -> None:
+    bar.append(1)  # error caught at runtime: AttributeError: 'NoneType' object has no attribute 'append'
 ```
 
 ### Collections

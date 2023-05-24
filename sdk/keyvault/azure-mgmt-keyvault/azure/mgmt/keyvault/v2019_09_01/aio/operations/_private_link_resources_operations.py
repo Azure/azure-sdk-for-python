@@ -8,7 +8,14 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, Optional, TypeVar
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -19,8 +26,10 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._private_link_resources_operations import build_list_by_vault_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class PrivateLinkResourcesOperations:
     """
@@ -41,66 +50,65 @@ class PrivateLinkResourcesOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace_async
     async def list_by_vault(
-        self,
-        resource_group_name: str,
-        vault_name: str,
-        **kwargs: Any
+        self, resource_group_name: str, vault_name: str, **kwargs: Any
     ) -> _models.PrivateLinkResourceListResult:
         """Gets the private link resources supported for the key vault.
 
-        :param resource_group_name: Name of the resource group that contains the key vault.
+        :param resource_group_name: Name of the resource group that contains the key vault. Required.
         :type resource_group_name: str
-        :param vault_name: The name of the key vault.
+        :param vault_name: The name of the key vault. Required.
         :type vault_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateLinkResourceListResult, or the result of cls(response)
+        :return: PrivateLinkResourceListResult or the result of cls(response)
         :rtype: ~azure.mgmt.keyvault.v2019_09_01.models.PrivateLinkResourceListResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2019-09-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PrivateLinkResourceListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-09-01"))
+        cls: ClsType[_models.PrivateLinkResourceListResult] = kwargs.pop("cls", None)
 
-        
         request = build_list_by_vault_request(
-            subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             vault_name=vault_name,
+            subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_by_vault.metadata['url'],
+            template_url=self.list_by_vault.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateLinkResourceListResult', pipeline_response)
+        deserialized = self._deserialize("PrivateLinkResourceListResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list_by_vault.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}/privateLinkResources"}  # type: ignore
-
+    list_by_vault.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}/privateLinkResources"
+    }

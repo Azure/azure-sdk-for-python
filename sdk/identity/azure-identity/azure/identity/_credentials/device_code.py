@@ -4,7 +4,7 @@
 # ------------------------------------
 from datetime import datetime
 import time
-from typing import Dict, Optional
+from typing import Dict, Optional, Callable, Any
 
 from azure.core.exceptions import ClientAuthenticationError
 
@@ -47,19 +47,38 @@ class DeviceCodeCredential(InteractiveCredential):
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
+    :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting
+        to authenticate. Setting this to true will completely disable both instance discovery and authority validation.
+        This functionality is intended for use in scenarios where the metadata endpoint cannot be reached, such as in
+        private clouds or Azure Stack. The process of instance discovery entails retrieving authority metadata from
+        https://login.microsoft.com/ to validate the authority. By setting this to **True**, the validation of the
+        authority is disabled. As a result, it is crucial to ensure that the configured authority host is valid and
+        trustworthy.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_device_code_credential]
+            :end-before: [END create_device_code_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create a DeviceCodeCredential.
     """
 
     def __init__(
             self,
             client_id: str = DEVELOPER_SIGN_ON_CLIENT_ID,
-            **kwargs
+            *,
+            timeout: Optional[int] = None,
+            prompt_callback: Optional[Callable[[str, str, datetime], None]] = None,
+            **kwargs: Any
     ) -> None:
-        self._timeout = kwargs.pop("timeout", None)  # type: Optional[int]
-        self._prompt_callback = kwargs.pop("prompt_callback", None)
+        self._timeout = timeout
+        self._prompt_callback = prompt_callback
         super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
-    def _request_token(self, *scopes: str, **kwargs) -> Dict:
+    def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:
         # MSAL requires scopes be a list
         scopes = list(scopes)  # type: ignore
 

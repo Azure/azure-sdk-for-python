@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -31,8 +31,12 @@ class ManagementLockListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ManagementLockObject"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.ManagementLockObject"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of locks.
         :paramtype value: list[~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject]
@@ -81,8 +85,8 @@ class ManagementLockObject(_serialization.Model):
         name: Optional[str] = None,
         level: Optional[Union[str, "_models.LockLevel"]] = None,
         notes: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the lock.
         :paramtype name: str

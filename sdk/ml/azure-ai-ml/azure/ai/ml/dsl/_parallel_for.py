@@ -15,9 +15,11 @@ def parallel_for(*, body, items, **kwargs):
             from azure.ai.ml.dsl import pipeline
             from mldesigner.dsl import parallel_for
 
+
             @pipeline
             def your_loop_body(input):
                 pass
+
 
             @pipeline
             def pipeline_with_parallel_for_node():
@@ -30,7 +32,7 @@ def parallel_for(*, body, items, **kwargs):
                     items=[
                         {"loop_body_input": 1},
                         {"loop_body_input": 2},
-                    ]
+                    ],
                 )
 
                 # collect aggregated output from loop body

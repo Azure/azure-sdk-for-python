@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class KeyVaultSecretStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of the Key Vault secret.
-    """
+    """Status of the Key Vault secret."""
 
     INITIALIZED = "Initialized"
     WAITING_ON_CERTIFICATE_ORDER = "WaitingOnCertificateOrder"

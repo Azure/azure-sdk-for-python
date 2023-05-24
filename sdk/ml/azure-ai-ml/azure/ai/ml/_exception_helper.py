@@ -275,7 +275,6 @@ def log_and_raise_error(error, debug=False, yaml_operation=False):
 
     if isinstance(error, SchemaValidationError):
         module_logger.debug(traceback.format_exc())
-
         try:
             formatted_error = format_create_validation_error(error.messages[0], yaml_operation=yaml_operation)
         except NotImplementedError:
@@ -288,11 +287,6 @@ def log_and_raise_error(error, debug=False, yaml_operation=False):
                 formatted_error = error
             else:
                 formatted_error = format_create_validation_error(error, yaml_operation=yaml_operation)
-            raise ValidationException(
-                message=formatted_error,
-                no_personal_data_message="",
-                error_type=error_type,
-            )
         except NotImplementedError:
             formatted_error = error
     else:

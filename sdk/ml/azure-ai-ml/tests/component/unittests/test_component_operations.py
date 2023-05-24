@@ -23,7 +23,7 @@ def mock_component_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2022_05_01: Mock,
-    mock_machinelearning_client: Mock
+    mock_machinelearning_client: Mock,
 ) -> ComponentOperations:
     yield ComponentOperations(
         operation_scope=mock_workspace_scope,
@@ -80,15 +80,13 @@ class TestComponentOperation:
         assert component._auto_increment_version
         with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing, patch(
             "azure.ai.ml.operations._component_operations.Component._from_rest_object", return_value=component
-        ) , patch(
-            "azure.ai.ml.operations._component_operations._get_next_version_from_container", return_value="version"
-        ) as mock_nextver:
+        ):
             mock_component_operation.create_or_update(component)
-            mock_nextver.assert_called_once()
+            mock_thing.assert_called_once()
 
         mock_component_operation._version_operation.create_or_update.assert_called_once_with(
             name=component.name,
-            version=mock_nextver.return_value,
+            version=mock_component_operation._container_operation.get().properties.next_version,
             body=component._to_rest_object(),
             resource_group_name=mock_component_operation._operation_scope.resource_group_name,
             workspace_name=mock_component_operation._operation_scope.workspace_name,

@@ -386,7 +386,6 @@ class DockerClient(object):
         conda_source_path: str,  # pylint: disable=unused-argument
         conda_yaml_contents: str,  # pylint: disable=unused-argument
     ) -> None:
-
         try:
             module_logger.info("\nBuilding Docker image from Dockerfile")
             first_line = True

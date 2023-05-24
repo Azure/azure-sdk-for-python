@@ -25,8 +25,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DataProtectionClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-    """Configuration for DataProtectionClient.
+class DataProtectionMgmtClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for DataProtectionMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -35,14 +35,14 @@ class DataProtectionClientConfiguration(Configuration):  # pylint: disable=too-m
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2022-12-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-01-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
-        super(DataProtectionClientConfiguration, self).__init__(**kwargs)
-        api_version: Literal["2022-12-01"] = kwargs.pop("api_version", "2022-12-01")
+        super(DataProtectionMgmtClientConfiguration, self).__init__(**kwargs)
+        api_version: Literal["2023-01-01"] = kwargs.pop("api_version", "2023-01-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

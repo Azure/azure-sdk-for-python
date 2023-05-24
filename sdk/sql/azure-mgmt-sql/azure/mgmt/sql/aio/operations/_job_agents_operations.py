@@ -129,8 +129,9 @@ class JobAgentsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -193,8 +194,9 @@ class JobAgentsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -263,8 +265,9 @@ class JobAgentsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -385,8 +388,8 @@ class JobAgentsOperations:
         :type server_name: str
         :param job_agent_name: The name of the job agent to be created or updated. Required.
         :type job_agent_name: str
-        :param parameters: The requested job agent resource state. Is either a model type or a IO type.
-         Required.
+        :param parameters: The requested job agent resource state. Is either a JobAgent type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.sql.models.JobAgent or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -487,8 +490,9 @@ class JobAgentsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -624,8 +628,9 @@ class JobAgentsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -743,7 +748,8 @@ class JobAgentsOperations:
         :type server_name: str
         :param job_agent_name: The name of the job agent to be updated. Required.
         :type job_agent_name: str
-        :param parameters: The update to the job agent. Is either a model type or a IO type. Required.
+        :param parameters: The update to the job agent. Is either a JobAgentUpdate type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.sql.models.JobAgentUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

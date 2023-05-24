@@ -51,4 +51,4 @@ command: >-
   $[[echo ${{inputs.component_in_folder}} &]]
   echo ${{outputs.component_out_folder}} > ${{outputs.component_out_folder}}/sample1.csv
 
-environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33

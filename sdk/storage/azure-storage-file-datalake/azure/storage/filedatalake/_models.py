@@ -138,6 +138,10 @@ class FileSystemPropertiesPaged(ContainerPropertiesPaged):
 class DirectoryProperties(DictMixin):
     """
     :ivar str name: name of the directory
+    :ivar str owner: The owner of the file or directory.
+    :ivar str group: The owning group of the file or directory.
+    :ivar str permissions: The permissions that are set for user, group, and other on the file or directory.
+        Each individual permission is in [r,w,x,-]{3} format.
     :ivar str etag: The ETag contains a value that you can use to perform operations
         conditionally.
     :ivar bool deleted: if the current directory marked as deleted
@@ -170,10 +174,19 @@ class DirectoryProperties(DictMixin):
         self.remaining_retention_days = None
         self.encryption_scope = kwargs.get('x-ms-encryption-scope')
 
+        # This is being passed directly not coming from headers
+        self.owner = kwargs.get('owner', None)
+        self.group = kwargs.get('group', None)
+        self.permissions = kwargs.get('permissions', None)
+
 
 class FileProperties(DictMixin):
     """
     :ivar str name: name of the file
+    :ivar str owner: The owner of the file or directory.
+    :ivar str group: The owning group of the file or directory.
+    :ivar str permissions: The permissions that are set for user, group, and other on the file or directory.
+        Each individual permission is in [r,w,x,-]{3} format.
     :ivar str etag: The ETag contains a value that you can use to perform operations
         conditionally.
     :ivar bool deleted: if the current file marked as deleted
@@ -192,6 +205,7 @@ class FileProperties(DictMixin):
     :ivar int size: size of the file
     :ivar int remaining_retention_days: The number of days that the file will be retained
         before being permanently deleted by the service.
+    :ivar str encryption_context: Specifies the encryption context to set on the file.
     :var ~azure.storage.filedatalake.ContentSettings content_settings:
     """
 
@@ -210,6 +224,12 @@ class FileProperties(DictMixin):
         self.content_settings = ContentSettings(**kwargs)
         self.encryption_scope = kwargs.get('x-ms-encryption-scope')
 
+        # This is being passed directly not coming from headers
+        self.encryption_context = kwargs.get('encryption_context')
+        self.owner = kwargs.get('owner', None)
+        self.group = kwargs.get('group', None)
+        self.permissions = kwargs.get('permissions', None)
+
 
 class PathProperties(DictMixin):
     """Path properties listed by get_paths api.
@@ -217,11 +237,8 @@ class PathProperties(DictMixin):
     :ivar str name: The full path for a file or directory.
     :ivar str owner: The owner of the file or directory.
     :ivar str group: The owning group of the file or directory.
-    :ivar str permissions: Sets POSIX access permissions for the file
-         owner, the file owning group, and others. Each class may be granted
-         read, write, or execute permission.  The sticky bit is also supported.
-         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-         supported.
+    :ivar str permissions: The permissions that are set for user, group, and other on the file or directory.
+        Each individual permission is in [r,w,x,-]{3} format.
     :ivar datetime last_modified:  A datetime object representing the last time the directory/file was modified.
     :ivar bool is_directory: Is the path a directory or not.
     :ivar str etag: The ETag contains a value that you can use to perform operations
@@ -234,6 +251,7 @@ class PathProperties(DictMixin):
         scope can be created using the Management API and referenced here by name. If a default
         encryption scope has been defined at the file system, this value will override it if the
         file system level scope is configured to allow overrides. Otherwise an error will be raised.
+    :ivar str encryption_context: Specifies the encryption context to set on the file.
     """
 
     def __init__(self, **kwargs):
@@ -248,6 +266,7 @@ class PathProperties(DictMixin):
         self.creation_time = kwargs.get('creation_time', None)
         self.expiry_time = kwargs.get('expiry_time', None)
         self.encryption_scope = kwargs.get('x-ms-encryption-scope', None)
+        self.encryption_context = kwargs.get('x-ms-encryption-context', None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -263,6 +282,7 @@ class PathProperties(DictMixin):
         path_prop.creation_time = _filetime_to_datetime(generated.creation_time)
         path_prop.expiry_time = _filetime_to_datetime(generated.expiry_time)
         path_prop.encryption_scope = generated.encryption_scope
+        path_prop.encryption_context = generated.encryption_context
         return path_prop
 
 

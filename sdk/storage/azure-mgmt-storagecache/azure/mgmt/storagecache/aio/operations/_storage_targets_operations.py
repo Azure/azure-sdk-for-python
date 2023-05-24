@@ -37,6 +37,7 @@ from ...operations._storage_targets_operations import (
     build_dns_refresh_request,
     build_get_request,
     build_list_by_cache_request,
+    build_restore_defaults_request,
 )
 
 if sys.version_info >= (3, 8):
@@ -80,7 +81,7 @@ class StorageTargetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -108,8 +109,15 @@ class StorageTargetsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, response_headers)
 
     _dns_refresh_initial.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/storageTargets/{storageTargetName}/dnsRefresh"
@@ -143,7 +151,7 @@ class StorageTargetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -208,7 +216,7 @@ class StorageTargetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.StorageTargetsResult] = kwargs.pop("cls", None)
@@ -300,7 +308,7 @@ class StorageTargetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -329,8 +337,15 @@ class StorageTargetsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, response_headers)
 
     _delete_initial.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/storageTargets/{storageTargetName}"
@@ -376,7 +391,7 @@ class StorageTargetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -449,7 +464,7 @@ class StorageTargetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.StorageTarget] = kwargs.pop("cls", None)
@@ -493,7 +508,7 @@ class StorageTargetsOperations:
         resource_group_name: str,
         cache_name: str,
         storage_target_name: str,
-        storagetarget: Optional[Union[_models.StorageTarget, IO]] = None,
+        storagetarget: Union[_models.StorageTarget, IO],
         **kwargs: Any
     ) -> Optional[_models.StorageTarget]:
         error_map = {
@@ -507,7 +522,7 @@ class StorageTargetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -519,10 +534,7 @@ class StorageTargetsOperations:
         if isinstance(storagetarget, (IO, bytes)):
             _content = storagetarget
         else:
-            if storagetarget is not None:
-                _json = self._serialize.body(storagetarget, "StorageTarget")
-            else:
-                _json = None
+            _json = self._serialize.body(storagetarget, "StorageTarget")
 
         request = build_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -572,7 +584,7 @@ class StorageTargetsOperations:
         resource_group_name: str,
         cache_name: str,
         storage_target_name: str,
-        storagetarget: Optional[_models.StorageTarget] = None,
+        storagetarget: _models.StorageTarget,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -588,8 +600,7 @@ class StorageTargetsOperations:
         :type cache_name: str
         :param storage_target_name: Name of Storage Target. Required.
         :type storage_target_name: str
-        :param storagetarget: Object containing the definition of a Storage Target. Default value is
-         None.
+        :param storagetarget: Object containing the definition of a Storage Target. Required.
         :type storagetarget: ~azure.mgmt.storagecache.models.StorageTarget
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -614,7 +625,7 @@ class StorageTargetsOperations:
         resource_group_name: str,
         cache_name: str,
         storage_target_name: str,
-        storagetarget: Optional[IO] = None,
+        storagetarget: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -630,8 +641,7 @@ class StorageTargetsOperations:
         :type cache_name: str
         :param storage_target_name: Name of Storage Target. Required.
         :type storage_target_name: str
-        :param storagetarget: Object containing the definition of a Storage Target. Default value is
-         None.
+        :param storagetarget: Object containing the definition of a Storage Target. Required.
         :type storagetarget: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -656,7 +666,7 @@ class StorageTargetsOperations:
         resource_group_name: str,
         cache_name: str,
         storage_target_name: str,
-        storagetarget: Optional[Union[_models.StorageTarget, IO]] = None,
+        storagetarget: Union[_models.StorageTarget, IO],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StorageTarget]:
         """Create or update a Storage Target. This operation is allowed at any time, but if the Cache is
@@ -671,7 +681,7 @@ class StorageTargetsOperations:
         :param storage_target_name: Name of Storage Target. Required.
         :type storage_target_name: str
         :param storagetarget: Object containing the definition of a Storage Target. Is either a model
-         type or a IO type. Default value is None.
+         type or a IO type. Required.
         :type storagetarget: ~azure.mgmt.storagecache.models.StorageTarget or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -692,7 +702,7 @@ class StorageTargetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -738,4 +748,133 @@ class StorageTargetsOperations:
 
     begin_create_or_update.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/storageTargets/{storageTargetName}"
+    }
+
+    async def _restore_defaults_initial(  # pylint: disable=inconsistent-return-statements
+        self, resource_group_name: str, cache_name: str, storage_target_name: str, **kwargs: Any
+    ) -> None:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2023-01-01"] = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        request = build_restore_defaults_request(
+            resource_group_name=resource_group_name,
+            cache_name=cache_name,
+            storage_target_name=storage_target_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self._restore_defaults_initial.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    _restore_defaults_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/storageTargets/{storageTargetName}/restoreDefaults"
+    }
+
+    @distributed_trace_async
+    async def begin_restore_defaults(
+        self, resource_group_name: str, cache_name: str, storage_target_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Tells a storage target to restore its settings to their default values.
+
+        :param resource_group_name: Target resource group. Required.
+        :type resource_group_name: str
+        :param cache_name: Name of Cache. Length of name must not be greater than 80 and chars must be
+         from the [-0-9a-zA-Z_] char class. Required.
+        :type cache_name: str
+        :param storage_target_name: Name of Storage Target. Required.
+        :type storage_target_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2023-01-01"] = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._restore_defaults_initial(  # type: ignore
+                resource_group_name=resource_group_name,
+                cache_name=cache_name,
+                storage_target_name=storage_target_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    begin_restore_defaults.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageCache/caches/{cacheName}/storageTargets/{storageTargetName}/restoreDefaults"
     }

@@ -110,8 +110,8 @@ class ExposureControlOperations:
 
         :param location_id: The location identifier. Required.
         :type location_id: str
-        :param exposure_control_request: The exposure control request. Is either a model type or a IO
-         type. Required.
+        :param exposure_control_request: The exposure control request. Is either a
+         ExposureControlRequest type or a IO type. Required.
         :type exposure_control_request: ~azure.mgmt.datafactory.models.ExposureControlRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -132,11 +132,11 @@ class ExposureControlOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ExposureControlResponse]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ExposureControlResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -158,9 +158,9 @@ class ExposureControlOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -177,7 +177,9 @@ class ExposureControlOperations:
 
         return deserialized
 
-    get_feature_value.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.DataFactory/locations/{locationId}/getFeatureValue"}  # type: ignore
+    get_feature_value.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.DataFactory/locations/{locationId}/getFeatureValue"
+    }
 
     @overload
     async def get_feature_value_by_factory(
@@ -247,8 +249,8 @@ class ExposureControlOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param exposure_control_request: The exposure control request. Is either a model type or a IO
-         type. Required.
+        :param exposure_control_request: The exposure control request. Is either a
+         ExposureControlRequest type or a IO type. Required.
         :type exposure_control_request: ~azure.mgmt.datafactory.models.ExposureControlRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -269,11 +271,11 @@ class ExposureControlOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ExposureControlResponse]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ExposureControlResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -296,9 +298,9 @@ class ExposureControlOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -315,7 +317,9 @@ class ExposureControlOperations:
 
         return deserialized
 
-    get_feature_value_by_factory.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/getFeatureValue"}  # type: ignore
+    get_feature_value_by_factory.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/getFeatureValue"
+    }
 
     @overload
     async def query_feature_values_by_factory(
@@ -389,7 +393,7 @@ class ExposureControlOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param exposure_control_batch_request: The exposure control request for list of features. Is
-         either a model type or a IO type. Required.
+         either a ExposureControlBatchRequest type or a IO type. Required.
         :type exposure_control_batch_request:
          ~azure.mgmt.datafactory.models.ExposureControlBatchRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -411,11 +415,11 @@ class ExposureControlOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2018-06-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2018-06-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ExposureControlBatchResponse]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ExposureControlBatchResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -438,9 +442,9 @@ class ExposureControlOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -457,4 +461,6 @@ class ExposureControlOperations:
 
         return deserialized
 
-    query_feature_values_by_factory.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/queryFeaturesValue"}  # type: ignore
+    query_feature_values_by_factory.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/queryFeaturesValue"
+    }

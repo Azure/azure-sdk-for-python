@@ -18,7 +18,7 @@ objective:
 trial:
   command: python ./sweep_script.py --lr {search_space.lr} --conv_size {search_space.conv_size} --dropout_rate ${{search_space.dropout_rate}}
   code: ../python
-  environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+  environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
 compute: azureml:testCompute
 limits:
   max_total_trials: 2

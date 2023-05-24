@@ -26,9 +26,11 @@ from ._models_py3 import CalculateRefundRequestProperties
 from ._models_py3 import CalculateRefundResponse
 from ._models_py3 import Catalog
 from ._models_py3 import CatalogMsrp
+from ._models_py3 import CatalogsResult
 from ._models_py3 import ChangeDirectoryRequest
 from ._models_py3 import ChangeDirectoryResponse
 from ._models_py3 import ChangeDirectoryResult
+from ._models_py3 import Commitment
 from ._models_py3 import CreateGenericQuotaRequestParameters
 from ._models_py3 import CurrentQuotaLimit
 from ._models_py3 import CurrentQuotaLimitBase
@@ -53,6 +55,7 @@ from ._models_py3 import Patch
 from ._models_py3 import PatchPropertiesRenewProperties
 from ._models_py3 import PaymentDetail
 from ._models_py3 import Price
+from ._models_py3 import ProxyResource
 from ._models_py3 import PurchaseRequest
 from ._models_py3 import PurchaseRequestPropertiesReservedResourceProperties
 from ._models_py3 import QuotaLimits
@@ -93,7 +96,11 @@ from ._models_py3 import ReservationUtilizationAggregates
 from ._models_py3 import ReservationsListResult
 from ._models_py3 import ReservationsProperties
 from ._models_py3 import ReservationsPropertiesUtilization
+from ._models_py3 import Resource
 from ._models_py3 import ResourceName
+from ._models_py3 import SavingsPlanPurchaseRequest
+from ._models_py3 import SavingsPlanToPurchaseCalculateExchange
+from ._models_py3 import SavingsPlanToPurchaseExchange
 from ._models_py3 import ScopeProperties
 from ._models_py3 import ServiceError
 from ._models_py3 import ServiceErrorDetail
@@ -107,7 +114,9 @@ from ._models_py3 import SubscriptionScopeProperties
 from ._models_py3 import SystemData
 
 from ._azure_reservation_api_enums import AppliedScopeType
+from ._azure_reservation_api_enums import BillingPlan
 from ._azure_reservation_api_enums import CalculateExchangeOperationResultStatus
+from ._azure_reservation_api_enums import CommitmentGrain
 from ._azure_reservation_api_enums import CreatedByType
 from ._azure_reservation_api_enums import DisplayProvisioningState
 from ._azure_reservation_api_enums import ErrorResponseCode
@@ -123,6 +132,7 @@ from ._azure_reservation_api_enums import ReservationStatusCode
 from ._azure_reservation_api_enums import ReservationTerm
 from ._azure_reservation_api_enums import ReservedResourceType
 from ._azure_reservation_api_enums import ResourceType
+from ._azure_reservation_api_enums import SavingsPlanTerm
 from ._azure_reservation_api_enums import UserFriendlyAppliedScopeType
 from ._azure_reservation_api_enums import UserFriendlyRenewState
 from ._patch import __all__ as _patch_all
@@ -150,9 +160,11 @@ __all__ = [
     "CalculateRefundResponse",
     "Catalog",
     "CatalogMsrp",
+    "CatalogsResult",
     "ChangeDirectoryRequest",
     "ChangeDirectoryResponse",
     "ChangeDirectoryResult",
+    "Commitment",
     "CreateGenericQuotaRequestParameters",
     "CurrentQuotaLimit",
     "CurrentQuotaLimitBase",
@@ -177,6 +189,7 @@ __all__ = [
     "PatchPropertiesRenewProperties",
     "PaymentDetail",
     "Price",
+    "ProxyResource",
     "PurchaseRequest",
     "PurchaseRequestPropertiesReservedResourceProperties",
     "QuotaLimits",
@@ -217,7 +230,11 @@ __all__ = [
     "ReservationsListResult",
     "ReservationsProperties",
     "ReservationsPropertiesUtilization",
+    "Resource",
     "ResourceName",
+    "SavingsPlanPurchaseRequest",
+    "SavingsPlanToPurchaseCalculateExchange",
+    "SavingsPlanToPurchaseExchange",
     "ScopeProperties",
     "ServiceError",
     "ServiceErrorDetail",
@@ -230,7 +247,9 @@ __all__ = [
     "SubscriptionScopeProperties",
     "SystemData",
     "AppliedScopeType",
+    "BillingPlan",
     "CalculateExchangeOperationResultStatus",
+    "CommitmentGrain",
     "CreatedByType",
     "DisplayProvisioningState",
     "ErrorResponseCode",
@@ -246,6 +265,7 @@ __all__ = [
     "ReservationTerm",
     "ReservedResourceType",
     "ResourceType",
+    "SavingsPlanTerm",
     "UserFriendlyAppliedScopeType",
     "UserFriendlyRenewState",
 ]

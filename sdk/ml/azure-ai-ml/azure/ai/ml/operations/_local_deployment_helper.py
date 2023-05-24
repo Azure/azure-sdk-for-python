@@ -19,6 +19,7 @@ from azure.ai.ml._local_endpoints.docker_client import (
     get_deployment_json_from_container,
     get_status_from_container,
 )
+from azure.ai.ml._local_endpoints.mdc_config_resolver import MdcConfigResolver
 from azure.ai.ml._local_endpoints.validators.code_validator import get_code_configuration_artifacts
 from azure.ai.ml._local_endpoints.validators.environment_validator import get_environment_artifacts
 from azure.ai.ml._local_endpoints.validators.model_validator import get_model_artifacts
@@ -37,8 +38,7 @@ module_logger = logging.getLogger(__name__)
 class _LocalDeploymentHelper(object):
     """A helper class to interact with Azure ML endpoints locally.
 
-    Use this helper to manage Azure ML endpoints locally, e.g. create,
-    invoke, show, list, delete.
+    Use this helper to manage Azure ML endpoints locally, e.g. create, invoke, show, list, delete.
     """
 
     def __init__(
@@ -260,6 +260,17 @@ class _LocalDeploymentHelper(object):
             **image_context.environment,
             **user_environment_variables,
         }
+
+        volumes = {}
+        volumes.update(image_context.volumes)
+
+        if deployment.data_collector:
+            mdc_config = MdcConfigResolver(deployment.data_collector)
+            mdc_config.write_file(deployment_directory_path)
+
+            environment_variables.update(mdc_config.environment_variables)
+            volumes.update(mdc_config.volumes)
+
         # Determine whether we need to use local context or downloaded context
         build_directory = downloaded_build_context if downloaded_build_context else deployment_directory
         self._docker_client.create_deployment(
@@ -271,7 +282,7 @@ class _LocalDeploymentHelper(object):
             dockerfile_path=None if is_byoc else dockerfile.local_path,
             conda_source_path=yaml_env_conda_file_path,
             conda_yaml_contents=yaml_env_conda_file_contents,
-            volumes=image_context.volumes,
+            volumes=volumes,
             environment=environment_variables,
             azureml_port=inference_config.scoring_route.port if is_byoc else LocalEndpointConstants.DOCKER_PORT,
             local_endpoint_mode=local_endpoint_mode,
@@ -280,8 +291,7 @@ class _LocalDeploymentHelper(object):
 
 
 def _convert_container_to_deployment(container: "docker.models.containers.Container") -> OnlineDeployment:
-    """Converts provided Container for local deployment to OnlineDeployment
-    entity.
+    """Converts provided Container for local deployment to OnlineDeployment entity.
 
     :param container: Container for a local deployment.
     :type container: docker.models.containers.Container

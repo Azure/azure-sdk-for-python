@@ -157,3 +157,39 @@ class ServicePrincipalCredentials(WorkspaceConnectionCredentials):
             and self.client_secret == other.client_secret
             and self.tenant_id == other.tenant_id
         )
+
+
+class AccessKeyCredentials(WorkspaceConnectionCredentials):
+    """Access Key Credentials.
+
+    :param access_key_id: access key id
+    :type access_key_id: str
+    :param secret_access_key: secret access key
+    :type secret_access_key: str
+    """
+
+    def __init__(
+        self,
+        *,
+        access_key_id: str,
+        secret_access_key: str,
+    ):
+        super().__init__()
+        self.type = ConnectionAuthType.ACCESS_KEY
+        self.access_key_id = access_key_id
+        self.secret_access_key = secret_access_key
+
+    def _to_rest_object(self) -> UsernamePassword:
+        return UsernamePassword(username=self.access_key_id, password=self.secret_access_key)
+
+    @classmethod
+    def _from_rest_object(cls, obj: UsernamePassword) -> "AccessKeyCredentials":
+        return cls(
+            access_key_id=obj.username if obj.username else None,
+            secret_access_key=obj.password if obj.password else None,
+        )
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, AccessKeyCredentials):
+            return NotImplemented
+        return self.access_key_id == other.access_key_id and self.secret_access_key == other.secret_access_key

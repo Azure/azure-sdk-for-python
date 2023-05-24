@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,22 +7,24 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from .. import _serialization
 
-from ._data_lake_store_account_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class CapabilityInformation(msrest.serialization.Model):
+class CapabilityInformation(_serialization.Model):
     """Subscription-level properties and limits for Data Lake Store.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar subscription_id: The subscription credentials that uniquely identifies the subscription.
     :vartype subscription_id: str
-    :ivar state: The subscription state. Possible values include: "Registered", "Suspended",
-     "Deleted", "Unregistered", "Warned".
+    :ivar state: The subscription state. Known values are: "Registered", "Suspended", "Deleted",
+     "Unregistered", and "Warned".
     :vartype state: str or ~azure.mgmt.datalake.store.models.SubscriptionState
     :ivar max_account_count: The maximum supported number of accounts under this subscription.
     :vartype max_account_count: int
@@ -32,26 +35,24 @@ class CapabilityInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'subscription_id': {'readonly': True},
-        'state': {'readonly': True},
-        'max_account_count': {'readonly': True},
-        'account_count': {'readonly': True},
-        'migration_state': {'readonly': True},
+        "subscription_id": {"readonly": True},
+        "state": {"readonly": True},
+        "max_account_count": {"readonly": True},
+        "account_count": {"readonly": True},
+        "migration_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'max_account_count': {'key': 'maxAccountCount', 'type': 'int'},
-        'account_count': {'key': 'accountCount', 'type': 'int'},
-        'migration_state': {'key': 'migrationState', 'type': 'bool'},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "max_account_count": {"key": "maxAccountCount", "type": "int"},
+        "account_count": {"key": "accountCount", "type": "int"},
+        "migration_state": {"key": "migrationState", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CapabilityInformation, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.subscription_id = None
         self.state = None
         self.max_account_count = None
@@ -59,109 +60,115 @@ class CapabilityInformation(msrest.serialization.Model):
         self.migration_state = None
 
 
-class CheckNameAvailabilityParameters(msrest.serialization.Model):
+class CheckNameAvailabilityParameters(_serialization.Model):
     """Data Lake Store account name availability check parameters.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The Data Lake Store name to check availability for.
-    :type name: str
-    :ivar type: Required. The resource type. Note: This should not be set by the user, as the
-     constant value is Microsoft.DataLakeStore/accounts. Default value:
-     "Microsoft.DataLakeStore/accounts".
-    :vartype type: str
+    :ivar name: The Data Lake Store name to check availability for. Required.
+    :vartype name: str
+    :ivar type: The resource type. Note: This should not be set by the user, as the constant value
+     is Microsoft.DataLakeStore/accounts. Required. "Microsoft.DataLakeStore/accounts"
+    :vartype type: str or ~azure.mgmt.datalake.store.models.CheckNameAvailabilityParametersType
     """
 
     _validation = {
-        'name': {'required': True},
-        'type': {'required': True, 'constant': True},
+        "name": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    type = "Microsoft.DataLakeStore/accounts"
-
     def __init__(
-        self,
-        *,
-        name: str,
-        **kwargs
-    ):
-        super(CheckNameAvailabilityParameters, self).__init__(**kwargs)
+        self, *, name: str, type: Union[str, "_models.CheckNameAvailabilityParametersType"], **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The Data Lake Store name to check availability for. Required.
+        :paramtype name: str
+        :keyword type: The resource type. Note: This should not be set by the user, as the constant
+         value is Microsoft.DataLakeStore/accounts. Required. "Microsoft.DataLakeStore/accounts"
+        :paramtype type: str or ~azure.mgmt.datalake.store.models.CheckNameAvailabilityParametersType
+        """
+        super().__init__(**kwargs)
         self.name = name
+        self.type = type
 
 
-class CreateDataLakeStoreAccountParameters(msrest.serialization.Model):
+class CreateDataLakeStoreAccountParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """CreateDataLakeStoreAccountParameters.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :param identity: The Key Vault encryption identity, if any.
-    :type identity: ~azure.mgmt.datalake.store.models.EncryptionIdentity
-    :param default_group: The default owner group for all new folders and files created in the Data
+    :ivar location: The resource location. Required.
+    :vartype location: str
+    :ivar tags: The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: The Key Vault encryption identity, if any.
+    :vartype identity: ~azure.mgmt.datalake.store.models.EncryptionIdentity
+    :ivar default_group: The default owner group for all new folders and files created in the Data
      Lake Store account.
-    :type default_group: str
-    :param encryption_config: The Key Vault encryption configuration.
-    :type encryption_config: ~azure.mgmt.datalake.store.models.EncryptionConfig
-    :param encryption_state: The current state of encryption for this Data Lake Store account.
-     Possible values include: "Enabled", "Disabled".
-    :type encryption_state: str or ~azure.mgmt.datalake.store.models.EncryptionState
-    :param firewall_rules: The list of firewall rules associated with this Data Lake Store account.
-    :type firewall_rules:
+    :vartype default_group: str
+    :ivar encryption_config: The Key Vault encryption configuration.
+    :vartype encryption_config: ~azure.mgmt.datalake.store.models.EncryptionConfig
+    :ivar encryption_state: The current state of encryption for this Data Lake Store account. Known
+     values are: "Enabled" and "Disabled".
+    :vartype encryption_state: str or ~azure.mgmt.datalake.store.models.EncryptionState
+    :ivar firewall_rules: The list of firewall rules associated with this Data Lake Store account.
+    :vartype firewall_rules:
      list[~azure.mgmt.datalake.store.models.CreateFirewallRuleWithAccountParameters]
-    :param virtual_network_rules: The list of virtual network rules associated with this Data Lake
+    :ivar virtual_network_rules: The list of virtual network rules associated with this Data Lake
      Store account.
-    :type virtual_network_rules:
+    :vartype virtual_network_rules:
      list[~azure.mgmt.datalake.store.models.CreateVirtualNetworkRuleWithAccountParameters]
-    :param firewall_state: The current state of the IP address firewall for this Data Lake Store
-     account. Possible values include: "Enabled", "Disabled".
-    :type firewall_state: str or ~azure.mgmt.datalake.store.models.FirewallState
-    :param firewall_allow_azure_ips: The current state of allowing or disallowing IPs originating
-     within Azure through the firewall. If the firewall is disabled, this is not enforced. Possible
-     values include: "Enabled", "Disabled".
-    :type firewall_allow_azure_ips: str or
+    :ivar firewall_state: The current state of the IP address firewall for this Data Lake Store
+     account. Known values are: "Enabled" and "Disabled".
+    :vartype firewall_state: str or ~azure.mgmt.datalake.store.models.FirewallState
+    :ivar firewall_allow_azure_ips: The current state of allowing or disallowing IPs originating
+     within Azure through the firewall. If the firewall is disabled, this is not enforced. Known
+     values are: "Enabled" and "Disabled".
+    :vartype firewall_allow_azure_ips: str or
      ~azure.mgmt.datalake.store.models.FirewallAllowAzureIpsState
-    :param trusted_id_providers: The list of trusted identity providers associated with this Data
+    :ivar trusted_id_providers: The list of trusted identity providers associated with this Data
      Lake Store account.
-    :type trusted_id_providers:
+    :vartype trusted_id_providers:
      list[~azure.mgmt.datalake.store.models.CreateTrustedIdProviderWithAccountParameters]
-    :param trusted_id_provider_state: The current state of the trusted identity provider feature
-     for this Data Lake Store account. Possible values include: "Enabled", "Disabled".
-    :type trusted_id_provider_state: str or
+    :ivar trusted_id_provider_state: The current state of the trusted identity provider feature for
+     this Data Lake Store account. Known values are: "Enabled" and "Disabled".
+    :vartype trusted_id_provider_state: str or
      ~azure.mgmt.datalake.store.models.TrustedIdProviderState
-    :param new_tier: The commitment tier to use for next month. Possible values include:
-     "Consumption", "Commitment_1TB", "Commitment_10TB", "Commitment_100TB", "Commitment_500TB",
-     "Commitment_1PB", "Commitment_5PB".
-    :type new_tier: str or ~azure.mgmt.datalake.store.models.TierType
+    :ivar new_tier: The commitment tier to use for next month. Known values are: "Consumption",
+     "Commitment_1TB", "Commitment_10TB", "Commitment_100TB", "Commitment_500TB", "Commitment_1PB",
+     and "Commitment_5PB".
+    :vartype new_tier: str or ~azure.mgmt.datalake.store.models.TierType
     """
 
     _validation = {
-        'location': {'required': True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'EncryptionIdentity'},
-        'default_group': {'key': 'properties.defaultGroup', 'type': 'str'},
-        'encryption_config': {'key': 'properties.encryptionConfig', 'type': 'EncryptionConfig'},
-        'encryption_state': {'key': 'properties.encryptionState', 'type': 'str'},
-        'firewall_rules': {'key': 'properties.firewallRules', 'type': '[CreateFirewallRuleWithAccountParameters]'},
-        'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[CreateVirtualNetworkRuleWithAccountParameters]'},
-        'firewall_state': {'key': 'properties.firewallState', 'type': 'str'},
-        'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'str'},
-        'trusted_id_providers': {'key': 'properties.trustedIdProviders', 'type': '[CreateTrustedIdProviderWithAccountParameters]'},
-        'trusted_id_provider_state': {'key': 'properties.trustedIdProviderState', 'type': 'str'},
-        'new_tier': {'key': 'properties.newTier', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "EncryptionIdentity"},
+        "default_group": {"key": "properties.defaultGroup", "type": "str"},
+        "encryption_config": {"key": "properties.encryptionConfig", "type": "EncryptionConfig"},
+        "encryption_state": {"key": "properties.encryptionState", "type": "str"},
+        "firewall_rules": {"key": "properties.firewallRules", "type": "[CreateFirewallRuleWithAccountParameters]"},
+        "virtual_network_rules": {
+            "key": "properties.virtualNetworkRules",
+            "type": "[CreateVirtualNetworkRuleWithAccountParameters]",
+        },
+        "firewall_state": {"key": "properties.firewallState", "type": "str"},
+        "firewall_allow_azure_ips": {"key": "properties.firewallAllowAzureIps", "type": "str"},
+        "trusted_id_providers": {
+            "key": "properties.trustedIdProviders",
+            "type": "[CreateTrustedIdProviderWithAccountParameters]",
+        },
+        "trusted_id_provider_state": {"key": "properties.trustedIdProviderState", "type": "str"},
+        "new_tier": {"key": "properties.newTier", "type": "str"},
     }
 
     def __init__(
@@ -169,20 +176,64 @@ class CreateDataLakeStoreAccountParameters(msrest.serialization.Model):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["EncryptionIdentity"] = None,
+        identity: Optional["_models.EncryptionIdentity"] = None,
         default_group: Optional[str] = None,
-        encryption_config: Optional["EncryptionConfig"] = None,
-        encryption_state: Optional[Union[str, "EncryptionState"]] = None,
-        firewall_rules: Optional[List["CreateFirewallRuleWithAccountParameters"]] = None,
-        virtual_network_rules: Optional[List["CreateVirtualNetworkRuleWithAccountParameters"]] = None,
-        firewall_state: Optional[Union[str, "FirewallState"]] = None,
-        firewall_allow_azure_ips: Optional[Union[str, "FirewallAllowAzureIpsState"]] = None,
-        trusted_id_providers: Optional[List["CreateTrustedIdProviderWithAccountParameters"]] = None,
-        trusted_id_provider_state: Optional[Union[str, "TrustedIdProviderState"]] = None,
-        new_tier: Optional[Union[str, "TierType"]] = None,
-        **kwargs
-    ):
-        super(CreateDataLakeStoreAccountParameters, self).__init__(**kwargs)
+        encryption_config: Optional["_models.EncryptionConfig"] = None,
+        encryption_state: Optional[Union[str, "_models.EncryptionState"]] = None,
+        firewall_rules: Optional[List["_models.CreateFirewallRuleWithAccountParameters"]] = None,
+        virtual_network_rules: Optional[List["_models.CreateVirtualNetworkRuleWithAccountParameters"]] = None,
+        firewall_state: Optional[Union[str, "_models.FirewallState"]] = None,
+        firewall_allow_azure_ips: Optional[Union[str, "_models.FirewallAllowAzureIpsState"]] = None,
+        trusted_id_providers: Optional[List["_models.CreateTrustedIdProviderWithAccountParameters"]] = None,
+        trusted_id_provider_state: Optional[Union[str, "_models.TrustedIdProviderState"]] = None,
+        new_tier: Optional[Union[str, "_models.TierType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: The resource location. Required.
+        :paramtype location: str
+        :keyword tags: The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword identity: The Key Vault encryption identity, if any.
+        :paramtype identity: ~azure.mgmt.datalake.store.models.EncryptionIdentity
+        :keyword default_group: The default owner group for all new folders and files created in the
+         Data Lake Store account.
+        :paramtype default_group: str
+        :keyword encryption_config: The Key Vault encryption configuration.
+        :paramtype encryption_config: ~azure.mgmt.datalake.store.models.EncryptionConfig
+        :keyword encryption_state: The current state of encryption for this Data Lake Store account.
+         Known values are: "Enabled" and "Disabled".
+        :paramtype encryption_state: str or ~azure.mgmt.datalake.store.models.EncryptionState
+        :keyword firewall_rules: The list of firewall rules associated with this Data Lake Store
+         account.
+        :paramtype firewall_rules:
+         list[~azure.mgmt.datalake.store.models.CreateFirewallRuleWithAccountParameters]
+        :keyword virtual_network_rules: The list of virtual network rules associated with this Data
+         Lake Store account.
+        :paramtype virtual_network_rules:
+         list[~azure.mgmt.datalake.store.models.CreateVirtualNetworkRuleWithAccountParameters]
+        :keyword firewall_state: The current state of the IP address firewall for this Data Lake Store
+         account. Known values are: "Enabled" and "Disabled".
+        :paramtype firewall_state: str or ~azure.mgmt.datalake.store.models.FirewallState
+        :keyword firewall_allow_azure_ips: The current state of allowing or disallowing IPs originating
+         within Azure through the firewall. If the firewall is disabled, this is not enforced. Known
+         values are: "Enabled" and "Disabled".
+        :paramtype firewall_allow_azure_ips: str or
+         ~azure.mgmt.datalake.store.models.FirewallAllowAzureIpsState
+        :keyword trusted_id_providers: The list of trusted identity providers associated with this Data
+         Lake Store account.
+        :paramtype trusted_id_providers:
+         list[~azure.mgmt.datalake.store.models.CreateTrustedIdProviderWithAccountParameters]
+        :keyword trusted_id_provider_state: The current state of the trusted identity provider feature
+         for this Data Lake Store account. Known values are: "Enabled" and "Disabled".
+        :paramtype trusted_id_provider_state: str or
+         ~azure.mgmt.datalake.store.models.TrustedIdProviderState
+        :keyword new_tier: The commitment tier to use for next month. Known values are: "Consumption",
+         "Commitment_1TB", "Commitment_10TB", "Commitment_100TB", "Commitment_500TB", "Commitment_1PB",
+         and "Commitment_5PB".
+        :paramtype new_tier: str or ~azure.mgmt.datalake.store.models.TierType
+        """
+        super().__init__(**kwargs)
         self.location = location
         self.tags = tags
         self.identity = identity
@@ -198,203 +249,208 @@ class CreateDataLakeStoreAccountParameters(msrest.serialization.Model):
         self.new_tier = new_tier
 
 
-class CreateFirewallRuleWithAccountParameters(msrest.serialization.Model):
+class CreateFirewallRuleWithAccountParameters(_serialization.Model):
     """The parameters used to create a new firewall rule while creating a new Data Lake Store account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The unique name of the firewall rule to create.
-    :type name: str
-    :param start_ip_address: Required. The start IP address for the firewall rule. This can be
-     either ipv4 or ipv6. Start and End should be in the same protocol.
-    :type start_ip_address: str
-    :param end_ip_address: Required. The end IP address for the firewall rule. This can be either
-     ipv4 or ipv6. Start and End should be in the same protocol.
-    :type end_ip_address: str
+    :ivar name: The unique name of the firewall rule to create. Required.
+    :vartype name: str
+    :ivar start_ip_address: The start IP address for the firewall rule. This can be either ipv4 or
+     ipv6. Start and End should be in the same protocol. Required.
+    :vartype start_ip_address: str
+    :ivar end_ip_address: The end IP address for the firewall rule. This can be either ipv4 or
+     ipv6. Start and End should be in the same protocol. Required.
+    :vartype end_ip_address: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'start_ip_address': {'required': True},
-        'end_ip_address': {'required': True},
+        "name": {"required": True},
+        "start_ip_address": {"required": True},
+        "end_ip_address": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
-        'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "start_ip_address": {"key": "properties.startIpAddress", "type": "str"},
+        "end_ip_address": {"key": "properties.endIpAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        start_ip_address: str,
-        end_ip_address: str,
-        **kwargs
-    ):
-        super(CreateFirewallRuleWithAccountParameters, self).__init__(**kwargs)
+    def __init__(self, *, name: str, start_ip_address: str, end_ip_address: str, **kwargs: Any) -> None:
+        """
+        :keyword name: The unique name of the firewall rule to create. Required.
+        :paramtype name: str
+        :keyword start_ip_address: The start IP address for the firewall rule. This can be either ipv4
+         or ipv6. Start and End should be in the same protocol. Required.
+        :paramtype start_ip_address: str
+        :keyword end_ip_address: The end IP address for the firewall rule. This can be either ipv4 or
+         ipv6. Start and End should be in the same protocol. Required.
+        :paramtype end_ip_address: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address
 
 
-class CreateOrUpdateFirewallRuleParameters(msrest.serialization.Model):
+class CreateOrUpdateFirewallRuleParameters(_serialization.Model):
     """The parameters used to create a new firewall rule.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start_ip_address: Required. The start IP address for the firewall rule. This can be
-     either ipv4 or ipv6. Start and End should be in the same protocol.
-    :type start_ip_address: str
-    :param end_ip_address: Required. The end IP address for the firewall rule. This can be either
-     ipv4 or ipv6. Start and End should be in the same protocol.
-    :type end_ip_address: str
+    :ivar start_ip_address: The start IP address for the firewall rule. This can be either ipv4 or
+     ipv6. Start and End should be in the same protocol. Required.
+    :vartype start_ip_address: str
+    :ivar end_ip_address: The end IP address for the firewall rule. This can be either ipv4 or
+     ipv6. Start and End should be in the same protocol. Required.
+    :vartype end_ip_address: str
     """
 
     _validation = {
-        'start_ip_address': {'required': True},
-        'end_ip_address': {'required': True},
+        "start_ip_address": {"required": True},
+        "end_ip_address": {"required": True},
     }
 
     _attribute_map = {
-        'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
-        'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
+        "start_ip_address": {"key": "properties.startIpAddress", "type": "str"},
+        "end_ip_address": {"key": "properties.endIpAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        start_ip_address: str,
-        end_ip_address: str,
-        **kwargs
-    ):
-        super(CreateOrUpdateFirewallRuleParameters, self).__init__(**kwargs)
+    def __init__(self, *, start_ip_address: str, end_ip_address: str, **kwargs: Any) -> None:
+        """
+        :keyword start_ip_address: The start IP address for the firewall rule. This can be either ipv4
+         or ipv6. Start and End should be in the same protocol. Required.
+        :paramtype start_ip_address: str
+        :keyword end_ip_address: The end IP address for the firewall rule. This can be either ipv4 or
+         ipv6. Start and End should be in the same protocol. Required.
+        :paramtype end_ip_address: str
+        """
+        super().__init__(**kwargs)
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address
 
 
-class CreateOrUpdateTrustedIdProviderParameters(msrest.serialization.Model):
+class CreateOrUpdateTrustedIdProviderParameters(_serialization.Model):
     """The parameters used to create a new trusted identity provider.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id_provider: Required. The URL of this trusted identity provider.
-    :type id_provider: str
+    :ivar id_provider: The URL of this trusted identity provider. Required.
+    :vartype id_provider: str
     """
 
     _validation = {
-        'id_provider': {'required': True},
+        "id_provider": {"required": True},
     }
 
     _attribute_map = {
-        'id_provider': {'key': 'properties.idProvider', 'type': 'str'},
+        "id_provider": {"key": "properties.idProvider", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id_provider: str,
-        **kwargs
-    ):
-        super(CreateOrUpdateTrustedIdProviderParameters, self).__init__(**kwargs)
+    def __init__(self, *, id_provider: str, **kwargs: Any) -> None:
+        """
+        :keyword id_provider: The URL of this trusted identity provider. Required.
+        :paramtype id_provider: str
+        """
+        super().__init__(**kwargs)
         self.id_provider = id_provider
 
 
-class CreateOrUpdateVirtualNetworkRuleParameters(msrest.serialization.Model):
+class CreateOrUpdateVirtualNetworkRuleParameters(_serialization.Model):
     """The parameters used to create a new virtual network rule.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param subnet_id: Required. The resource identifier for the subnet.
-    :type subnet_id: str
+    :ivar subnet_id: The resource identifier for the subnet. Required.
+    :vartype subnet_id: str
     """
 
     _validation = {
-        'subnet_id': {'required': True},
+        "subnet_id": {"required": True},
     }
 
     _attribute_map = {
-        'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
+        "subnet_id": {"key": "properties.subnetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        subnet_id: str,
-        **kwargs
-    ):
-        super(CreateOrUpdateVirtualNetworkRuleParameters, self).__init__(**kwargs)
+    def __init__(self, *, subnet_id: str, **kwargs: Any) -> None:
+        """
+        :keyword subnet_id: The resource identifier for the subnet. Required.
+        :paramtype subnet_id: str
+        """
+        super().__init__(**kwargs)
         self.subnet_id = subnet_id
 
 
-class CreateTrustedIdProviderWithAccountParameters(msrest.serialization.Model):
-    """The parameters used to create a new trusted identity provider while creating a new Data Lake Store account.
+class CreateTrustedIdProviderWithAccountParameters(_serialization.Model):
+    """The parameters used to create a new trusted identity provider while creating a new Data Lake
+    Store account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The unique name of the trusted identity provider to create.
-    :type name: str
-    :param id_provider: Required. The URL of this trusted identity provider.
-    :type id_provider: str
+    :ivar name: The unique name of the trusted identity provider to create. Required.
+    :vartype name: str
+    :ivar id_provider: The URL of this trusted identity provider. Required.
+    :vartype id_provider: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'id_provider': {'required': True},
+        "name": {"required": True},
+        "id_provider": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id_provider': {'key': 'properties.idProvider', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "id_provider": {"key": "properties.idProvider", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        id_provider: str,
-        **kwargs
-    ):
-        super(CreateTrustedIdProviderWithAccountParameters, self).__init__(**kwargs)
+    def __init__(self, *, name: str, id_provider: str, **kwargs: Any) -> None:
+        """
+        :keyword name: The unique name of the trusted identity provider to create. Required.
+        :paramtype name: str
+        :keyword id_provider: The URL of this trusted identity provider. Required.
+        :paramtype id_provider: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.id_provider = id_provider
 
 
-class CreateVirtualNetworkRuleWithAccountParameters(msrest.serialization.Model):
-    """The parameters used to create a new virtual network rule while creating a new Data Lake Store account.
+class CreateVirtualNetworkRuleWithAccountParameters(_serialization.Model):
+    """The parameters used to create a new virtual network rule while creating a new Data Lake Store
+    account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The unique name of the virtual network rule to create.
-    :type name: str
-    :param subnet_id: Required. The resource identifier for the subnet.
-    :type subnet_id: str
+    :ivar name: The unique name of the virtual network rule to create. Required.
+    :vartype name: str
+    :ivar subnet_id: The resource identifier for the subnet. Required.
+    :vartype subnet_id: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'subnet_id': {'required': True},
+        "name": {"required": True},
+        "subnet_id": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "subnet_id": {"key": "properties.subnetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        subnet_id: str,
-        **kwargs
-    ):
-        super(CreateVirtualNetworkRuleWithAccountParameters, self).__init__(**kwargs)
+    def __init__(self, *, name: str, subnet_id: str, **kwargs: Any) -> None:
+        """
+        :keyword name: The unique name of the virtual network rule to create. Required.
+        :paramtype name: str
+        :keyword subnet_id: The resource identifier for the subnet. Required.
+        :paramtype subnet_id: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.subnet_id = subnet_id
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """The resource model definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -407,31 +463,29 @@ class Resource(msrest.serialization.Model):
     :vartype type: str
     :ivar location: The resource location.
     :vartype location: str
-    :ivar tags: A set of tags. The resource tags.
+    :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'tags': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "tags": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -439,7 +493,7 @@ class Resource(msrest.serialization.Model):
         self.tags = None
 
 
-class DataLakeStoreAccount(Resource):
+class DataLakeStoreAccount(Resource):  # pylint: disable=too-many-instance-attributes
     """Data Lake Store account information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -452,18 +506,18 @@ class DataLakeStoreAccount(Resource):
     :vartype type: str
     :ivar location: The resource location.
     :vartype location: str
-    :ivar tags: A set of tags. The resource tags.
+    :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: The Key Vault encryption identity, if any.
     :vartype identity: ~azure.mgmt.datalake.store.models.EncryptionIdentity
     :ivar account_id: The unique identifier associated with this Data Lake Store account.
     :vartype account_id: str
-    :ivar provisioning_state: The provisioning status of the Data Lake Store account. Possible
-     values include: "Failed", "Creating", "Running", "Succeeded", "Patching", "Suspending",
-     "Resuming", "Deleting", "Deleted", "Undeleting", "Canceled".
+    :ivar provisioning_state: The provisioning status of the Data Lake Store account. Known values
+     are: "Failed", "Creating", "Running", "Succeeded", "Patching", "Suspending", "Resuming",
+     "Deleting", "Deleted", "Undeleting", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus
-    :ivar state: The state of the Data Lake Store account. Possible values include: "Active",
+    :ivar state: The state of the Data Lake Store account. Known values are: "Active" and
      "Suspended".
     :vartype state: str or ~azure.mgmt.datalake.store.models.DataLakeStoreAccountState
     :ivar creation_time: The account creation time.
@@ -477,11 +531,11 @@ class DataLakeStoreAccount(Resource):
     :vartype default_group: str
     :ivar encryption_config: The Key Vault encryption configuration.
     :vartype encryption_config: ~azure.mgmt.datalake.store.models.EncryptionConfig
-    :ivar encryption_state: The current state of encryption for this Data Lake Store account.
-     Possible values include: "Enabled", "Disabled".
+    :ivar encryption_state: The current state of encryption for this Data Lake Store account. Known
+     values are: "Enabled" and "Disabled".
     :vartype encryption_state: str or ~azure.mgmt.datalake.store.models.EncryptionState
     :ivar encryption_provisioning_state: The current state of encryption provisioning for this Data
-     Lake Store account. Possible values include: "Creating", "Succeeded".
+     Lake Store account. Known values are: "Creating" and "Succeeded".
     :vartype encryption_provisioning_state: str or
      ~azure.mgmt.datalake.store.models.EncryptionProvisioningState
     :ivar firewall_rules: The list of firewall rules associated with this Data Lake Store account.
@@ -490,89 +544,87 @@ class DataLakeStoreAccount(Resource):
      Store account.
     :vartype virtual_network_rules: list[~azure.mgmt.datalake.store.models.VirtualNetworkRule]
     :ivar firewall_state: The current state of the IP address firewall for this Data Lake Store
-     account. Possible values include: "Enabled", "Disabled".
+     account. Known values are: "Enabled" and "Disabled".
     :vartype firewall_state: str or ~azure.mgmt.datalake.store.models.FirewallState
     :ivar firewall_allow_azure_ips: The current state of allowing or disallowing IPs originating
-     within Azure through the firewall. If the firewall is disabled, this is not enforced. Possible
-     values include: "Enabled", "Disabled".
+     within Azure through the firewall. If the firewall is disabled, this is not enforced. Known
+     values are: "Enabled" and "Disabled".
     :vartype firewall_allow_azure_ips: str or
      ~azure.mgmt.datalake.store.models.FirewallAllowAzureIpsState
     :ivar trusted_id_providers: The list of trusted identity providers associated with this Data
      Lake Store account.
     :vartype trusted_id_providers: list[~azure.mgmt.datalake.store.models.TrustedIdProvider]
     :ivar trusted_id_provider_state: The current state of the trusted identity provider feature for
-     this Data Lake Store account. Possible values include: "Enabled", "Disabled".
+     this Data Lake Store account. Known values are: "Enabled" and "Disabled".
     :vartype trusted_id_provider_state: str or
      ~azure.mgmt.datalake.store.models.TrustedIdProviderState
-    :ivar new_tier: The commitment tier to use for next month. Possible values include:
-     "Consumption", "Commitment_1TB", "Commitment_10TB", "Commitment_100TB", "Commitment_500TB",
-     "Commitment_1PB", "Commitment_5PB".
+    :ivar new_tier: The commitment tier to use for next month. Known values are: "Consumption",
+     "Commitment_1TB", "Commitment_10TB", "Commitment_100TB", "Commitment_500TB", "Commitment_1PB",
+     and "Commitment_5PB".
     :vartype new_tier: str or ~azure.mgmt.datalake.store.models.TierType
-    :ivar current_tier: The commitment tier in use for the current month. Possible values include:
+    :ivar current_tier: The commitment tier in use for the current month. Known values are:
      "Consumption", "Commitment_1TB", "Commitment_10TB", "Commitment_100TB", "Commitment_500TB",
-     "Commitment_1PB", "Commitment_5PB".
+     "Commitment_1PB", and "Commitment_5PB".
     :vartype current_tier: str or ~azure.mgmt.datalake.store.models.TierType
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'tags': {'readonly': True},
-        'identity': {'readonly': True},
-        'account_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'state': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'endpoint': {'readonly': True},
-        'default_group': {'readonly': True},
-        'encryption_config': {'readonly': True},
-        'encryption_state': {'readonly': True},
-        'encryption_provisioning_state': {'readonly': True},
-        'firewall_rules': {'readonly': True},
-        'virtual_network_rules': {'readonly': True},
-        'firewall_state': {'readonly': True},
-        'firewall_allow_azure_ips': {'readonly': True},
-        'trusted_id_providers': {'readonly': True},
-        'trusted_id_provider_state': {'readonly': True},
-        'new_tier': {'readonly': True},
-        'current_tier': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "tags": {"readonly": True},
+        "identity": {"readonly": True},
+        "account_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "state": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "endpoint": {"readonly": True},
+        "default_group": {"readonly": True},
+        "encryption_config": {"readonly": True},
+        "encryption_state": {"readonly": True},
+        "encryption_provisioning_state": {"readonly": True},
+        "firewall_rules": {"readonly": True},
+        "virtual_network_rules": {"readonly": True},
+        "firewall_state": {"readonly": True},
+        "firewall_allow_azure_ips": {"readonly": True},
+        "trusted_id_providers": {"readonly": True},
+        "trusted_id_provider_state": {"readonly": True},
+        "new_tier": {"readonly": True},
+        "current_tier": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'EncryptionIdentity'},
-        'account_id': {'key': 'properties.accountId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
-        'default_group': {'key': 'properties.defaultGroup', 'type': 'str'},
-        'encryption_config': {'key': 'properties.encryptionConfig', 'type': 'EncryptionConfig'},
-        'encryption_state': {'key': 'properties.encryptionState', 'type': 'str'},
-        'encryption_provisioning_state': {'key': 'properties.encryptionProvisioningState', 'type': 'str'},
-        'firewall_rules': {'key': 'properties.firewallRules', 'type': '[FirewallRule]'},
-        'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
-        'firewall_state': {'key': 'properties.firewallState', 'type': 'str'},
-        'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'str'},
-        'trusted_id_providers': {'key': 'properties.trustedIdProviders', 'type': '[TrustedIdProvider]'},
-        'trusted_id_provider_state': {'key': 'properties.trustedIdProviderState', 'type': 'str'},
-        'new_tier': {'key': 'properties.newTier', 'type': 'str'},
-        'current_tier': {'key': 'properties.currentTier', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "EncryptionIdentity"},
+        "account_id": {"key": "properties.accountId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "endpoint": {"key": "properties.endpoint", "type": "str"},
+        "default_group": {"key": "properties.defaultGroup", "type": "str"},
+        "encryption_config": {"key": "properties.encryptionConfig", "type": "EncryptionConfig"},
+        "encryption_state": {"key": "properties.encryptionState", "type": "str"},
+        "encryption_provisioning_state": {"key": "properties.encryptionProvisioningState", "type": "str"},
+        "firewall_rules": {"key": "properties.firewallRules", "type": "[FirewallRule]"},
+        "virtual_network_rules": {"key": "properties.virtualNetworkRules", "type": "[VirtualNetworkRule]"},
+        "firewall_state": {"key": "properties.firewallState", "type": "str"},
+        "firewall_allow_azure_ips": {"key": "properties.firewallAllowAzureIps", "type": "str"},
+        "trusted_id_providers": {"key": "properties.trustedIdProviders", "type": "[TrustedIdProvider]"},
+        "trusted_id_provider_state": {"key": "properties.trustedIdProviderState", "type": "str"},
+        "new_tier": {"key": "properties.newTier", "type": "str"},
+        "current_tier": {"key": "properties.currentTier", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataLakeStoreAccount, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-locals
+        """ """
+        super().__init__(**kwargs)
         self.identity = None
         self.account_id = None
         self.provisioning_state = None
@@ -594,7 +646,7 @@ class DataLakeStoreAccount(Resource):
         self.current_tier = None
 
 
-class DataLakeStoreAccountBasic(Resource):
+class DataLakeStoreAccountBasic(Resource):  # pylint: disable=too-many-instance-attributes
     """Basic Data Lake Store account information, returned on list calls.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -607,16 +659,16 @@ class DataLakeStoreAccountBasic(Resource):
     :vartype type: str
     :ivar location: The resource location.
     :vartype location: str
-    :ivar tags: A set of tags. The resource tags.
+    :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
     :ivar account_id: The unique identifier associated with this Data Lake Store account.
     :vartype account_id: str
-    :ivar provisioning_state: The provisioning status of the Data Lake Store account. Possible
-     values include: "Failed", "Creating", "Running", "Succeeded", "Patching", "Suspending",
-     "Resuming", "Deleting", "Deleted", "Undeleting", "Canceled".
+    :ivar provisioning_state: The provisioning status of the Data Lake Store account. Known values
+     are: "Failed", "Creating", "Running", "Succeeded", "Patching", "Suspending", "Resuming",
+     "Deleting", "Deleted", "Undeleting", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus
-    :ivar state: The state of the Data Lake Store account. Possible values include: "Active",
+    :ivar state: The state of the Data Lake Store account. Known values are: "Active" and
      "Suspended".
     :vartype state: str or ~azure.mgmt.datalake.store.models.DataLakeStoreAccountState
     :ivar creation_time: The account creation time.
@@ -628,38 +680,36 @@ class DataLakeStoreAccountBasic(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'tags': {'readonly': True},
-        'account_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'state': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'endpoint': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "tags": {"readonly": True},
+        "account_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "state": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "endpoint": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'account_id': {'key': 'properties.accountId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "account_id": {"key": "properties.accountId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "endpoint": {"key": "properties.endpoint", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataLakeStoreAccountBasic, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.account_id = None
         self.provisioning_state = None
         self.state = None
@@ -668,7 +718,7 @@ class DataLakeStoreAccountBasic(Resource):
         self.endpoint = None
 
 
-class DataLakeStoreAccountListResult(msrest.serialization.Model):
+class DataLakeStoreAccountListResult(_serialization.Model):
     """Data Lake Store account list information response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -680,37 +730,36 @@ class DataLakeStoreAccountListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DataLakeStoreAccountBasic]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DataLakeStoreAccountBasic]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataLakeStoreAccountListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class DataLakeStoreAccountPropertiesBasic(msrest.serialization.Model):
-    """The basic account specific properties that are associated with an underlying Data Lake Store account.
+class DataLakeStoreAccountPropertiesBasic(_serialization.Model):
+    """The basic account specific properties that are associated with an underlying Data Lake Store
+    account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar account_id: The unique identifier associated with this Data Lake Store account.
     :vartype account_id: str
-    :ivar provisioning_state: The provisioning status of the Data Lake Store account. Possible
-     values include: "Failed", "Creating", "Running", "Succeeded", "Patching", "Suspending",
-     "Resuming", "Deleting", "Deleted", "Undeleting", "Canceled".
+    :ivar provisioning_state: The provisioning status of the Data Lake Store account. Known values
+     are: "Failed", "Creating", "Running", "Succeeded", "Patching", "Suspending", "Resuming",
+     "Deleting", "Deleted", "Undeleting", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus
-    :ivar state: The state of the Data Lake Store account. Possible values include: "Active",
+    :ivar state: The state of the Data Lake Store account. Known values are: "Active" and
      "Suspended".
     :vartype state: str or ~azure.mgmt.datalake.store.models.DataLakeStoreAccountState
     :ivar creation_time: The account creation time.
@@ -722,28 +771,26 @@ class DataLakeStoreAccountPropertiesBasic(msrest.serialization.Model):
     """
 
     _validation = {
-        'account_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'state': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'endpoint': {'readonly': True},
+        "account_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "state": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "endpoint": {"readonly": True},
     }
 
     _attribute_map = {
-        'account_id': {'key': 'accountId', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
-        'endpoint': {'key': 'endpoint', 'type': 'str'},
+        "account_id": {"key": "accountId", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "creation_time": {"key": "creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "lastModifiedTime", "type": "iso-8601"},
+        "endpoint": {"key": "endpoint", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataLakeStoreAccountPropertiesBasic, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.account_id = None
         self.provisioning_state = None
         self.state = None
@@ -752,19 +799,21 @@ class DataLakeStoreAccountPropertiesBasic(msrest.serialization.Model):
         self.endpoint = None
 
 
-class DataLakeStoreAccountProperties(DataLakeStoreAccountPropertiesBasic):
+class DataLakeStoreAccountProperties(
+    DataLakeStoreAccountPropertiesBasic
+):  # pylint: disable=too-many-instance-attributes
     """Data Lake Store account properties information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar account_id: The unique identifier associated with this Data Lake Store account.
     :vartype account_id: str
-    :ivar provisioning_state: The provisioning status of the Data Lake Store account. Possible
-     values include: "Failed", "Creating", "Running", "Succeeded", "Patching", "Suspending",
-     "Resuming", "Deleting", "Deleted", "Undeleting", "Canceled".
+    :ivar provisioning_state: The provisioning status of the Data Lake Store account. Known values
+     are: "Failed", "Creating", "Running", "Succeeded", "Patching", "Suspending", "Resuming",
+     "Deleting", "Deleted", "Undeleting", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus
-    :ivar state: The state of the Data Lake Store account. Possible values include: "Active",
+    :ivar state: The state of the Data Lake Store account. Known values are: "Active" and
      "Suspended".
     :vartype state: str or ~azure.mgmt.datalake.store.models.DataLakeStoreAccountState
     :ivar creation_time: The account creation time.
@@ -778,11 +827,11 @@ class DataLakeStoreAccountProperties(DataLakeStoreAccountPropertiesBasic):
     :vartype default_group: str
     :ivar encryption_config: The Key Vault encryption configuration.
     :vartype encryption_config: ~azure.mgmt.datalake.store.models.EncryptionConfig
-    :ivar encryption_state: The current state of encryption for this Data Lake Store account.
-     Possible values include: "Enabled", "Disabled".
+    :ivar encryption_state: The current state of encryption for this Data Lake Store account. Known
+     values are: "Enabled" and "Disabled".
     :vartype encryption_state: str or ~azure.mgmt.datalake.store.models.EncryptionState
     :ivar encryption_provisioning_state: The current state of encryption provisioning for this Data
-     Lake Store account. Possible values include: "Creating", "Succeeded".
+     Lake Store account. Known values are: "Creating" and "Succeeded".
     :vartype encryption_provisioning_state: str or
      ~azure.mgmt.datalake.store.models.EncryptionProvisioningState
     :ivar firewall_rules: The list of firewall rules associated with this Data Lake Store account.
@@ -791,77 +840,75 @@ class DataLakeStoreAccountProperties(DataLakeStoreAccountPropertiesBasic):
      Store account.
     :vartype virtual_network_rules: list[~azure.mgmt.datalake.store.models.VirtualNetworkRule]
     :ivar firewall_state: The current state of the IP address firewall for this Data Lake Store
-     account. Possible values include: "Enabled", "Disabled".
+     account. Known values are: "Enabled" and "Disabled".
     :vartype firewall_state: str or ~azure.mgmt.datalake.store.models.FirewallState
     :ivar firewall_allow_azure_ips: The current state of allowing or disallowing IPs originating
-     within Azure through the firewall. If the firewall is disabled, this is not enforced. Possible
-     values include: "Enabled", "Disabled".
+     within Azure through the firewall. If the firewall is disabled, this is not enforced. Known
+     values are: "Enabled" and "Disabled".
     :vartype firewall_allow_azure_ips: str or
      ~azure.mgmt.datalake.store.models.FirewallAllowAzureIpsState
     :ivar trusted_id_providers: The list of trusted identity providers associated with this Data
      Lake Store account.
     :vartype trusted_id_providers: list[~azure.mgmt.datalake.store.models.TrustedIdProvider]
     :ivar trusted_id_provider_state: The current state of the trusted identity provider feature for
-     this Data Lake Store account. Possible values include: "Enabled", "Disabled".
+     this Data Lake Store account. Known values are: "Enabled" and "Disabled".
     :vartype trusted_id_provider_state: str or
      ~azure.mgmt.datalake.store.models.TrustedIdProviderState
-    :ivar new_tier: The commitment tier to use for next month. Possible values include:
-     "Consumption", "Commitment_1TB", "Commitment_10TB", "Commitment_100TB", "Commitment_500TB",
-     "Commitment_1PB", "Commitment_5PB".
+    :ivar new_tier: The commitment tier to use for next month. Known values are: "Consumption",
+     "Commitment_1TB", "Commitment_10TB", "Commitment_100TB", "Commitment_500TB", "Commitment_1PB",
+     and "Commitment_5PB".
     :vartype new_tier: str or ~azure.mgmt.datalake.store.models.TierType
-    :ivar current_tier: The commitment tier in use for the current month. Possible values include:
+    :ivar current_tier: The commitment tier in use for the current month. Known values are:
      "Consumption", "Commitment_1TB", "Commitment_10TB", "Commitment_100TB", "Commitment_500TB",
-     "Commitment_1PB", "Commitment_5PB".
+     "Commitment_1PB", and "Commitment_5PB".
     :vartype current_tier: str or ~azure.mgmt.datalake.store.models.TierType
     """
 
     _validation = {
-        'account_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'state': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'endpoint': {'readonly': True},
-        'default_group': {'readonly': True},
-        'encryption_config': {'readonly': True},
-        'encryption_state': {'readonly': True},
-        'encryption_provisioning_state': {'readonly': True},
-        'firewall_rules': {'readonly': True},
-        'virtual_network_rules': {'readonly': True},
-        'firewall_state': {'readonly': True},
-        'firewall_allow_azure_ips': {'readonly': True},
-        'trusted_id_providers': {'readonly': True},
-        'trusted_id_provider_state': {'readonly': True},
-        'new_tier': {'readonly': True},
-        'current_tier': {'readonly': True},
+        "account_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "state": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "endpoint": {"readonly": True},
+        "default_group": {"readonly": True},
+        "encryption_config": {"readonly": True},
+        "encryption_state": {"readonly": True},
+        "encryption_provisioning_state": {"readonly": True},
+        "firewall_rules": {"readonly": True},
+        "virtual_network_rules": {"readonly": True},
+        "firewall_state": {"readonly": True},
+        "firewall_allow_azure_ips": {"readonly": True},
+        "trusted_id_providers": {"readonly": True},
+        "trusted_id_provider_state": {"readonly": True},
+        "new_tier": {"readonly": True},
+        "current_tier": {"readonly": True},
     }
 
     _attribute_map = {
-        'account_id': {'key': 'accountId', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
-        'endpoint': {'key': 'endpoint', 'type': 'str'},
-        'default_group': {'key': 'defaultGroup', 'type': 'str'},
-        'encryption_config': {'key': 'encryptionConfig', 'type': 'EncryptionConfig'},
-        'encryption_state': {'key': 'encryptionState', 'type': 'str'},
-        'encryption_provisioning_state': {'key': 'encryptionProvisioningState', 'type': 'str'},
-        'firewall_rules': {'key': 'firewallRules', 'type': '[FirewallRule]'},
-        'virtual_network_rules': {'key': 'virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
-        'firewall_state': {'key': 'firewallState', 'type': 'str'},
-        'firewall_allow_azure_ips': {'key': 'firewallAllowAzureIps', 'type': 'str'},
-        'trusted_id_providers': {'key': 'trustedIdProviders', 'type': '[TrustedIdProvider]'},
-        'trusted_id_provider_state': {'key': 'trustedIdProviderState', 'type': 'str'},
-        'new_tier': {'key': 'newTier', 'type': 'str'},
-        'current_tier': {'key': 'currentTier', 'type': 'str'},
+        "account_id": {"key": "accountId", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "creation_time": {"key": "creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "lastModifiedTime", "type": "iso-8601"},
+        "endpoint": {"key": "endpoint", "type": "str"},
+        "default_group": {"key": "defaultGroup", "type": "str"},
+        "encryption_config": {"key": "encryptionConfig", "type": "EncryptionConfig"},
+        "encryption_state": {"key": "encryptionState", "type": "str"},
+        "encryption_provisioning_state": {"key": "encryptionProvisioningState", "type": "str"},
+        "firewall_rules": {"key": "firewallRules", "type": "[FirewallRule]"},
+        "virtual_network_rules": {"key": "virtualNetworkRules", "type": "[VirtualNetworkRule]"},
+        "firewall_state": {"key": "firewallState", "type": "str"},
+        "firewall_allow_azure_ips": {"key": "firewallAllowAzureIps", "type": "str"},
+        "trusted_id_providers": {"key": "trustedIdProviders", "type": "[TrustedIdProvider]"},
+        "trusted_id_provider_state": {"key": "trustedIdProviderState", "type": "str"},
+        "new_tier": {"key": "newTier", "type": "str"},
+        "current_tier": {"key": "currentTier", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataLakeStoreAccountProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.default_group = None
         self.encryption_config = None
         self.encryption_state = None
@@ -876,50 +923,59 @@ class DataLakeStoreAccountProperties(DataLakeStoreAccountPropertiesBasic):
         self.current_tier = None
 
 
-class EncryptionConfig(msrest.serialization.Model):
+class EncryptionConfig(_serialization.Model):
     """The encryption configuration for the account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The type of encryption configuration being used. Currently the only
-     supported types are 'UserManaged' and 'ServiceManaged'. Possible values include: "UserManaged",
+    :ivar type: The type of encryption configuration being used. Currently the only supported types
+     are 'UserManaged' and 'ServiceManaged'. Required. Known values are: "UserManaged" and
      "ServiceManaged".
-    :type type: str or ~azure.mgmt.datalake.store.models.EncryptionConfigType
-    :param key_vault_meta_info: The Key Vault information for connecting to user managed encryption
+    :vartype type: str or ~azure.mgmt.datalake.store.models.EncryptionConfigType
+    :ivar key_vault_meta_info: The Key Vault information for connecting to user managed encryption
      keys.
-    :type key_vault_meta_info: ~azure.mgmt.datalake.store.models.KeyVaultMetaInfo
+    :vartype key_vault_meta_info: ~azure.mgmt.datalake.store.models.KeyVaultMetaInfo
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'key_vault_meta_info': {'key': 'keyVaultMetaInfo', 'type': 'KeyVaultMetaInfo'},
+        "type": {"key": "type", "type": "str"},
+        "key_vault_meta_info": {"key": "keyVaultMetaInfo", "type": "KeyVaultMetaInfo"},
     }
 
     def __init__(
         self,
         *,
-        type: Union[str, "EncryptionConfigType"],
-        key_vault_meta_info: Optional["KeyVaultMetaInfo"] = None,
-        **kwargs
-    ):
-        super(EncryptionConfig, self).__init__(**kwargs)
+        type: Union[str, "_models.EncryptionConfigType"],
+        key_vault_meta_info: Optional["_models.KeyVaultMetaInfo"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: The type of encryption configuration being used. Currently the only supported
+         types are 'UserManaged' and 'ServiceManaged'. Required. Known values are: "UserManaged" and
+         "ServiceManaged".
+        :paramtype type: str or ~azure.mgmt.datalake.store.models.EncryptionConfigType
+        :keyword key_vault_meta_info: The Key Vault information for connecting to user managed
+         encryption keys.
+        :paramtype key_vault_meta_info: ~azure.mgmt.datalake.store.models.KeyVaultMetaInfo
+        """
+        super().__init__(**kwargs)
         self.type = type
         self.key_vault_meta_info = key_vault_meta_info
 
 
-class EncryptionIdentity(msrest.serialization.Model):
+class EncryptionIdentity(_serialization.Model):
     """The encryption identity properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of encryption being used. Currently the only supported type is
-     'SystemAssigned'. Default value: "SystemAssigned".
+    :ivar type: The type of encryption being used. Currently the only supported type is
+     'SystemAssigned'. Required. Default value is "SystemAssigned".
     :vartype type: str
     :ivar principal_id: The principal identifier associated with the encryption.
     :vartype principal_id: str
@@ -928,29 +984,27 @@ class EncryptionIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "type": {"required": True, "constant": True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
     type = "SystemAssigned"
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(EncryptionIdentity, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
 
 
-class SubResource(msrest.serialization.Model):
+class SubResource(_serialization.Model):
     """The resource model definition for a nested resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -964,22 +1018,20 @@ class SubResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SubResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1005,31 +1057,29 @@ class FirewallRule(SubResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'start_ip_address': {'readonly': True},
-        'end_ip_address': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "start_ip_address": {"readonly": True},
+        "end_ip_address": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
-        'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "start_ip_address": {"key": "properties.startIpAddress", "type": "str"},
+        "end_ip_address": {"key": "properties.endIpAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(FirewallRule, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.start_ip_address = None
         self.end_ip_address = None
 
 
-class FirewallRuleListResult(msrest.serialization.Model):
+class FirewallRuleListResult(_serialization.Model):
     """Data Lake Store firewall rule list information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1041,65 +1091,67 @@ class FirewallRuleListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[FirewallRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[FirewallRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(FirewallRuleListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class KeyVaultMetaInfo(msrest.serialization.Model):
+class KeyVaultMetaInfo(_serialization.Model):
     """Metadata information used by account encryption.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_vault_resource_id: Required. The resource identifier for the user managed Key Vault
-     being used to encrypt.
-    :type key_vault_resource_id: str
-    :param encryption_key_name: Required. The name of the user managed encryption key.
-    :type encryption_key_name: str
-    :param encryption_key_version: Required. The version of the user managed encryption key.
-    :type encryption_key_version: str
+    :ivar key_vault_resource_id: The resource identifier for the user managed Key Vault being used
+     to encrypt. Required.
+    :vartype key_vault_resource_id: str
+    :ivar encryption_key_name: The name of the user managed encryption key. Required.
+    :vartype encryption_key_name: str
+    :ivar encryption_key_version: The version of the user managed encryption key. Required.
+    :vartype encryption_key_version: str
     """
 
     _validation = {
-        'key_vault_resource_id': {'required': True},
-        'encryption_key_name': {'required': True},
-        'encryption_key_version': {'required': True},
+        "key_vault_resource_id": {"required": True},
+        "encryption_key_name": {"required": True},
+        "encryption_key_version": {"required": True},
     }
 
     _attribute_map = {
-        'key_vault_resource_id': {'key': 'keyVaultResourceId', 'type': 'str'},
-        'encryption_key_name': {'key': 'encryptionKeyName', 'type': 'str'},
-        'encryption_key_version': {'key': 'encryptionKeyVersion', 'type': 'str'},
+        "key_vault_resource_id": {"key": "keyVaultResourceId", "type": "str"},
+        "encryption_key_name": {"key": "encryptionKeyName", "type": "str"},
+        "encryption_key_version": {"key": "encryptionKeyVersion", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        key_vault_resource_id: str,
-        encryption_key_name: str,
-        encryption_key_version: str,
-        **kwargs
-    ):
-        super(KeyVaultMetaInfo, self).__init__(**kwargs)
+        self, *, key_vault_resource_id: str, encryption_key_name: str, encryption_key_version: str, **kwargs: Any
+    ) -> None:
+        """
+        :keyword key_vault_resource_id: The resource identifier for the user managed Key Vault being
+         used to encrypt. Required.
+        :paramtype key_vault_resource_id: str
+        :keyword encryption_key_name: The name of the user managed encryption key. Required.
+        :paramtype encryption_key_name: str
+        :keyword encryption_key_version: The version of the user managed encryption key. Required.
+        :paramtype encryption_key_version: str
+        """
+        super().__init__(**kwargs)
         self.key_vault_resource_id = key_vault_resource_id
         self.encryption_key_name = encryption_key_name
         self.encryption_key_version = encryption_key_version
 
 
-class NameAvailabilityInformation(msrest.serialization.Model):
+class NameAvailabilityInformation(_serialization.Model):
     """Data Lake Store account name availability result information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1116,65 +1168,62 @@ class NameAvailabilityInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'name_available': {'readonly': True},
-        'reason': {'readonly': True},
-        'message': {'readonly': True},
+        "name_available": {"readonly": True},
+        "reason": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(NameAvailabilityInformation, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.name_available = None
         self.reason = None
         self.message = None
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """An available operation for Data Lake Store.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar name: The name of the operation.
     :vartype name: str
-    :param display: The display information for the operation.
-    :type display: ~azure.mgmt.datalake.store.models.OperationDisplay
-    :ivar origin: The intended executor of the operation. Possible values include: "user",
-     "system", "user,system".
+    :ivar display: The display information for the operation.
+    :vartype display: ~azure.mgmt.datalake.store.models.OperationDisplay
+    :ivar origin: The intended executor of the operation. Known values are: "user", "system", and
+     "user,system".
     :vartype origin: str or ~azure.mgmt.datalake.store.models.OperationOrigin
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'origin': {'readonly': True},
+        "name": {"readonly": True},
+        "origin": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        display: Optional["OperationDisplay"] = None,
-        **kwargs
-    ):
-        super(Operation, self).__init__(**kwargs)
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
+        """
+        :keyword display: The display information for the operation.
+        :paramtype display: ~azure.mgmt.datalake.store.models.OperationDisplay
+        """
+        super().__init__(**kwargs)
         self.name = None
         self.display = display
         self.origin = None
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The display information for a particular operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1190,31 +1239,29 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OperationDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
         self.description = None
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """The list of available operations for Data Lake Store.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1226,20 +1273,18 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -1260,28 +1305,26 @@ class TrustedIdProvider(SubResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'id_provider': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "id_provider": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'id_provider': {'key': 'properties.idProvider', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "id_provider": {"key": "properties.idProvider", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TrustedIdProvider, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id_provider = None
 
 
-class TrustedIdProviderListResult(msrest.serialization.Model):
+class TrustedIdProviderListResult(_serialization.Model):
     """Data Lake Store trusted identity provider list information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1293,78 +1336,82 @@ class TrustedIdProviderListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[TrustedIdProvider]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[TrustedIdProvider]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TrustedIdProviderListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class UpdateDataLakeStoreAccountParameters(msrest.serialization.Model):
+class UpdateDataLakeStoreAccountParameters(_serialization.Model):
     """Data Lake Store account information to update.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param default_group: The default owner group for all new folders and files created in the Data
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar default_group: The default owner group for all new folders and files created in the Data
      Lake Store account.
-    :type default_group: str
-    :param encryption_config: Used for rotation of user managed Key Vault keys. Can only be used to
+    :vartype default_group: str
+    :ivar encryption_config: Used for rotation of user managed Key Vault keys. Can only be used to
      rotate a user managed encryption Key Vault key.
-    :type encryption_config: ~azure.mgmt.datalake.store.models.UpdateEncryptionConfig
-    :param firewall_rules: The list of firewall rules associated with this Data Lake Store account.
-    :type firewall_rules:
+    :vartype encryption_config: ~azure.mgmt.datalake.store.models.UpdateEncryptionConfig
+    :ivar firewall_rules: The list of firewall rules associated with this Data Lake Store account.
+    :vartype firewall_rules:
      list[~azure.mgmt.datalake.store.models.UpdateFirewallRuleWithAccountParameters]
-    :param virtual_network_rules: The list of virtual network rules associated with this Data Lake
+    :ivar virtual_network_rules: The list of virtual network rules associated with this Data Lake
      Store account.
-    :type virtual_network_rules:
+    :vartype virtual_network_rules:
      list[~azure.mgmt.datalake.store.models.UpdateVirtualNetworkRuleWithAccountParameters]
-    :param firewall_state: The current state of the IP address firewall for this Data Lake Store
+    :ivar firewall_state: The current state of the IP address firewall for this Data Lake Store
      account. Disabling the firewall does not remove existing rules, they will just be ignored until
-     the firewall is re-enabled. Possible values include: "Enabled", "Disabled".
-    :type firewall_state: str or ~azure.mgmt.datalake.store.models.FirewallState
-    :param firewall_allow_azure_ips: The current state of allowing or disallowing IPs originating
-     within Azure through the firewall. If the firewall is disabled, this is not enforced. Possible
-     values include: "Enabled", "Disabled".
-    :type firewall_allow_azure_ips: str or
+     the firewall is re-enabled. Known values are: "Enabled" and "Disabled".
+    :vartype firewall_state: str or ~azure.mgmt.datalake.store.models.FirewallState
+    :ivar firewall_allow_azure_ips: The current state of allowing or disallowing IPs originating
+     within Azure through the firewall. If the firewall is disabled, this is not enforced. Known
+     values are: "Enabled" and "Disabled".
+    :vartype firewall_allow_azure_ips: str or
      ~azure.mgmt.datalake.store.models.FirewallAllowAzureIpsState
-    :param trusted_id_providers: The list of trusted identity providers associated with this Data
+    :ivar trusted_id_providers: The list of trusted identity providers associated with this Data
      Lake Store account.
-    :type trusted_id_providers:
+    :vartype trusted_id_providers:
      list[~azure.mgmt.datalake.store.models.UpdateTrustedIdProviderWithAccountParameters]
-    :param trusted_id_provider_state: The current state of the trusted identity provider feature
-     for this Data Lake Store account. Disabling trusted identity provider functionality does not
-     remove the providers, they will just be ignored until this feature is re-enabled. Possible
-     values include: "Enabled", "Disabled".
-    :type trusted_id_provider_state: str or
+    :ivar trusted_id_provider_state: The current state of the trusted identity provider feature for
+     this Data Lake Store account. Disabling trusted identity provider functionality does not remove
+     the providers, they will just be ignored until this feature is re-enabled. Known values are:
+     "Enabled" and "Disabled".
+    :vartype trusted_id_provider_state: str or
      ~azure.mgmt.datalake.store.models.TrustedIdProviderState
-    :param new_tier: The commitment tier to use for next month. Possible values include:
-     "Consumption", "Commitment_1TB", "Commitment_10TB", "Commitment_100TB", "Commitment_500TB",
-     "Commitment_1PB", "Commitment_5PB".
-    :type new_tier: str or ~azure.mgmt.datalake.store.models.TierType
+    :ivar new_tier: The commitment tier to use for next month. Known values are: "Consumption",
+     "Commitment_1TB", "Commitment_10TB", "Commitment_100TB", "Commitment_500TB", "Commitment_1PB",
+     and "Commitment_5PB".
+    :vartype new_tier: str or ~azure.mgmt.datalake.store.models.TierType
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'default_group': {'key': 'properties.defaultGroup', 'type': 'str'},
-        'encryption_config': {'key': 'properties.encryptionConfig', 'type': 'UpdateEncryptionConfig'},
-        'firewall_rules': {'key': 'properties.firewallRules', 'type': '[UpdateFirewallRuleWithAccountParameters]'},
-        'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[UpdateVirtualNetworkRuleWithAccountParameters]'},
-        'firewall_state': {'key': 'properties.firewallState', 'type': 'str'},
-        'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'str'},
-        'trusted_id_providers': {'key': 'properties.trustedIdProviders', 'type': '[UpdateTrustedIdProviderWithAccountParameters]'},
-        'trusted_id_provider_state': {'key': 'properties.trustedIdProviderState', 'type': 'str'},
-        'new_tier': {'key': 'properties.newTier', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "default_group": {"key": "properties.defaultGroup", "type": "str"},
+        "encryption_config": {"key": "properties.encryptionConfig", "type": "UpdateEncryptionConfig"},
+        "firewall_rules": {"key": "properties.firewallRules", "type": "[UpdateFirewallRuleWithAccountParameters]"},
+        "virtual_network_rules": {
+            "key": "properties.virtualNetworkRules",
+            "type": "[UpdateVirtualNetworkRuleWithAccountParameters]",
+        },
+        "firewall_state": {"key": "properties.firewallState", "type": "str"},
+        "firewall_allow_azure_ips": {"key": "properties.firewallAllowAzureIps", "type": "str"},
+        "trusted_id_providers": {
+            "key": "properties.trustedIdProviders",
+            "type": "[UpdateTrustedIdProviderWithAccountParameters]",
+        },
+        "trusted_id_provider_state": {"key": "properties.trustedIdProviderState", "type": "str"},
+        "new_tier": {"key": "properties.newTier", "type": "str"},
     }
 
     def __init__(
@@ -1372,17 +1419,58 @@ class UpdateDataLakeStoreAccountParameters(msrest.serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         default_group: Optional[str] = None,
-        encryption_config: Optional["UpdateEncryptionConfig"] = None,
-        firewall_rules: Optional[List["UpdateFirewallRuleWithAccountParameters"]] = None,
-        virtual_network_rules: Optional[List["UpdateVirtualNetworkRuleWithAccountParameters"]] = None,
-        firewall_state: Optional[Union[str, "FirewallState"]] = None,
-        firewall_allow_azure_ips: Optional[Union[str, "FirewallAllowAzureIpsState"]] = None,
-        trusted_id_providers: Optional[List["UpdateTrustedIdProviderWithAccountParameters"]] = None,
-        trusted_id_provider_state: Optional[Union[str, "TrustedIdProviderState"]] = None,
-        new_tier: Optional[Union[str, "TierType"]] = None,
-        **kwargs
-    ):
-        super(UpdateDataLakeStoreAccountParameters, self).__init__(**kwargs)
+        encryption_config: Optional["_models.UpdateEncryptionConfig"] = None,
+        firewall_rules: Optional[List["_models.UpdateFirewallRuleWithAccountParameters"]] = None,
+        virtual_network_rules: Optional[List["_models.UpdateVirtualNetworkRuleWithAccountParameters"]] = None,
+        firewall_state: Optional[Union[str, "_models.FirewallState"]] = None,
+        firewall_allow_azure_ips: Optional[Union[str, "_models.FirewallAllowAzureIpsState"]] = None,
+        trusted_id_providers: Optional[List["_models.UpdateTrustedIdProviderWithAccountParameters"]] = None,
+        trusted_id_provider_state: Optional[Union[str, "_models.TrustedIdProviderState"]] = None,
+        new_tier: Optional[Union[str, "_models.TierType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword default_group: The default owner group for all new folders and files created in the
+         Data Lake Store account.
+        :paramtype default_group: str
+        :keyword encryption_config: Used for rotation of user managed Key Vault keys. Can only be used
+         to rotate a user managed encryption Key Vault key.
+        :paramtype encryption_config: ~azure.mgmt.datalake.store.models.UpdateEncryptionConfig
+        :keyword firewall_rules: The list of firewall rules associated with this Data Lake Store
+         account.
+        :paramtype firewall_rules:
+         list[~azure.mgmt.datalake.store.models.UpdateFirewallRuleWithAccountParameters]
+        :keyword virtual_network_rules: The list of virtual network rules associated with this Data
+         Lake Store account.
+        :paramtype virtual_network_rules:
+         list[~azure.mgmt.datalake.store.models.UpdateVirtualNetworkRuleWithAccountParameters]
+        :keyword firewall_state: The current state of the IP address firewall for this Data Lake Store
+         account. Disabling the firewall does not remove existing rules, they will just be ignored until
+         the firewall is re-enabled. Known values are: "Enabled" and "Disabled".
+        :paramtype firewall_state: str or ~azure.mgmt.datalake.store.models.FirewallState
+        :keyword firewall_allow_azure_ips: The current state of allowing or disallowing IPs originating
+         within Azure through the firewall. If the firewall is disabled, this is not enforced. Known
+         values are: "Enabled" and "Disabled".
+        :paramtype firewall_allow_azure_ips: str or
+         ~azure.mgmt.datalake.store.models.FirewallAllowAzureIpsState
+        :keyword trusted_id_providers: The list of trusted identity providers associated with this Data
+         Lake Store account.
+        :paramtype trusted_id_providers:
+         list[~azure.mgmt.datalake.store.models.UpdateTrustedIdProviderWithAccountParameters]
+        :keyword trusted_id_provider_state: The current state of the trusted identity provider feature
+         for this Data Lake Store account. Disabling trusted identity provider functionality does not
+         remove the providers, they will just be ignored until this feature is re-enabled. Known values
+         are: "Enabled" and "Disabled".
+        :paramtype trusted_id_provider_state: str or
+         ~azure.mgmt.datalake.store.models.TrustedIdProviderState
+        :keyword new_tier: The commitment tier to use for next month. Known values are: "Consumption",
+         "Commitment_1TB", "Commitment_10TB", "Commitment_100TB", "Commitment_500TB", "Commitment_1PB",
+         and "Commitment_5PB".
+        :paramtype new_tier: str or ~azure.mgmt.datalake.store.models.TierType
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.default_group = default_group
         self.encryption_config = encryption_config
@@ -1395,229 +1483,238 @@ class UpdateDataLakeStoreAccountParameters(msrest.serialization.Model):
         self.new_tier = new_tier
 
 
-class UpdateEncryptionConfig(msrest.serialization.Model):
+class UpdateEncryptionConfig(_serialization.Model):
     """The encryption configuration used to update a user managed Key Vault key.
 
-    :param key_vault_meta_info: The updated Key Vault key to use in user managed key rotation.
-    :type key_vault_meta_info: ~azure.mgmt.datalake.store.models.UpdateKeyVaultMetaInfo
+    :ivar key_vault_meta_info: The updated Key Vault key to use in user managed key rotation.
+    :vartype key_vault_meta_info: ~azure.mgmt.datalake.store.models.UpdateKeyVaultMetaInfo
     """
 
     _attribute_map = {
-        'key_vault_meta_info': {'key': 'keyVaultMetaInfo', 'type': 'UpdateKeyVaultMetaInfo'},
+        "key_vault_meta_info": {"key": "keyVaultMetaInfo", "type": "UpdateKeyVaultMetaInfo"},
     }
 
     def __init__(
-        self,
-        *,
-        key_vault_meta_info: Optional["UpdateKeyVaultMetaInfo"] = None,
-        **kwargs
-    ):
-        super(UpdateEncryptionConfig, self).__init__(**kwargs)
+        self, *, key_vault_meta_info: Optional["_models.UpdateKeyVaultMetaInfo"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword key_vault_meta_info: The updated Key Vault key to use in user managed key rotation.
+        :paramtype key_vault_meta_info: ~azure.mgmt.datalake.store.models.UpdateKeyVaultMetaInfo
+        """
+        super().__init__(**kwargs)
         self.key_vault_meta_info = key_vault_meta_info
 
 
-class UpdateFirewallRuleParameters(msrest.serialization.Model):
+class UpdateFirewallRuleParameters(_serialization.Model):
     """The parameters used to update a firewall rule.
 
-    :param start_ip_address: The start IP address for the firewall rule. This can be either ipv4 or
+    :ivar start_ip_address: The start IP address for the firewall rule. This can be either ipv4 or
      ipv6. Start and End should be in the same protocol.
-    :type start_ip_address: str
-    :param end_ip_address: The end IP address for the firewall rule. This can be either ipv4 or
+    :vartype start_ip_address: str
+    :ivar end_ip_address: The end IP address for the firewall rule. This can be either ipv4 or
      ipv6. Start and End should be in the same protocol.
-    :type end_ip_address: str
+    :vartype end_ip_address: str
     """
 
     _attribute_map = {
-        'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
-        'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
+        "start_ip_address": {"key": "properties.startIpAddress", "type": "str"},
+        "end_ip_address": {"key": "properties.endIpAddress", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        start_ip_address: Optional[str] = None,
-        end_ip_address: Optional[str] = None,
-        **kwargs
-    ):
-        super(UpdateFirewallRuleParameters, self).__init__(**kwargs)
+        self, *, start_ip_address: Optional[str] = None, end_ip_address: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword start_ip_address: The start IP address for the firewall rule. This can be either ipv4
+         or ipv6. Start and End should be in the same protocol.
+        :paramtype start_ip_address: str
+        :keyword end_ip_address: The end IP address for the firewall rule. This can be either ipv4 or
+         ipv6. Start and End should be in the same protocol.
+        :paramtype end_ip_address: str
+        """
+        super().__init__(**kwargs)
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address
 
 
-class UpdateFirewallRuleWithAccountParameters(msrest.serialization.Model):
+class UpdateFirewallRuleWithAccountParameters(_serialization.Model):
     """The parameters used to update a firewall rule while updating a Data Lake Store account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The unique name of the firewall rule to update.
-    :type name: str
-    :param start_ip_address: The start IP address for the firewall rule. This can be either ipv4 or
+    :ivar name: The unique name of the firewall rule to update. Required.
+    :vartype name: str
+    :ivar start_ip_address: The start IP address for the firewall rule. This can be either ipv4 or
      ipv6. Start and End should be in the same protocol.
-    :type start_ip_address: str
-    :param end_ip_address: The end IP address for the firewall rule. This can be either ipv4 or
+    :vartype start_ip_address: str
+    :ivar end_ip_address: The end IP address for the firewall rule. This can be either ipv4 or
      ipv6. Start and End should be in the same protocol.
-    :type end_ip_address: str
+    :vartype end_ip_address: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
-        'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "start_ip_address": {"key": "properties.startIpAddress", "type": "str"},
+        "end_ip_address": {"key": "properties.endIpAddress", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name: str,
-        start_ip_address: Optional[str] = None,
-        end_ip_address: Optional[str] = None,
-        **kwargs
-    ):
-        super(UpdateFirewallRuleWithAccountParameters, self).__init__(**kwargs)
+        self, *, name: str, start_ip_address: Optional[str] = None, end_ip_address: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The unique name of the firewall rule to update. Required.
+        :paramtype name: str
+        :keyword start_ip_address: The start IP address for the firewall rule. This can be either ipv4
+         or ipv6. Start and End should be in the same protocol.
+        :paramtype start_ip_address: str
+        :keyword end_ip_address: The end IP address for the firewall rule. This can be either ipv4 or
+         ipv6. Start and End should be in the same protocol.
+        :paramtype end_ip_address: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address
 
 
-class UpdateKeyVaultMetaInfo(msrest.serialization.Model):
+class UpdateKeyVaultMetaInfo(_serialization.Model):
     """The Key Vault update information used for user managed key rotation.
 
-    :param encryption_key_version: The version of the user managed encryption key to update through
+    :ivar encryption_key_version: The version of the user managed encryption key to update through
      a key rotation.
-    :type encryption_key_version: str
+    :vartype encryption_key_version: str
     """
 
     _attribute_map = {
-        'encryption_key_version': {'key': 'encryptionKeyVersion', 'type': 'str'},
+        "encryption_key_version": {"key": "encryptionKeyVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        encryption_key_version: Optional[str] = None,
-        **kwargs
-    ):
-        super(UpdateKeyVaultMetaInfo, self).__init__(**kwargs)
+    def __init__(self, *, encryption_key_version: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword encryption_key_version: The version of the user managed encryption key to update
+         through a key rotation.
+        :paramtype encryption_key_version: str
+        """
+        super().__init__(**kwargs)
         self.encryption_key_version = encryption_key_version
 
 
-class UpdateTrustedIdProviderParameters(msrest.serialization.Model):
+class UpdateTrustedIdProviderParameters(_serialization.Model):
     """The parameters used to update a trusted identity provider.
 
-    :param id_provider: The URL of this trusted identity provider.
-    :type id_provider: str
+    :ivar id_provider: The URL of this trusted identity provider.
+    :vartype id_provider: str
     """
 
     _attribute_map = {
-        'id_provider': {'key': 'properties.idProvider', 'type': 'str'},
+        "id_provider": {"key": "properties.idProvider", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id_provider: Optional[str] = None,
-        **kwargs
-    ):
-        super(UpdateTrustedIdProviderParameters, self).__init__(**kwargs)
+    def __init__(self, *, id_provider: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword id_provider: The URL of this trusted identity provider.
+        :paramtype id_provider: str
+        """
+        super().__init__(**kwargs)
         self.id_provider = id_provider
 
 
-class UpdateTrustedIdProviderWithAccountParameters(msrest.serialization.Model):
-    """The parameters used to update a trusted identity provider while updating a Data Lake Store account.
+class UpdateTrustedIdProviderWithAccountParameters(_serialization.Model):
+    """The parameters used to update a trusted identity provider while updating a Data Lake Store
+    account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The unique name of the trusted identity provider to update.
-    :type name: str
-    :param id_provider: The URL of this trusted identity provider.
-    :type id_provider: str
+    :ivar name: The unique name of the trusted identity provider to update. Required.
+    :vartype name: str
+    :ivar id_provider: The URL of this trusted identity provider.
+    :vartype id_provider: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id_provider': {'key': 'properties.idProvider', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "id_provider": {"key": "properties.idProvider", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        id_provider: Optional[str] = None,
-        **kwargs
-    ):
-        super(UpdateTrustedIdProviderWithAccountParameters, self).__init__(**kwargs)
+    def __init__(self, *, name: str, id_provider: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: The unique name of the trusted identity provider to update. Required.
+        :paramtype name: str
+        :keyword id_provider: The URL of this trusted identity provider.
+        :paramtype id_provider: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.id_provider = id_provider
 
 
-class UpdateVirtualNetworkRuleParameters(msrest.serialization.Model):
+class UpdateVirtualNetworkRuleParameters(_serialization.Model):
     """The parameters used to update a virtual network rule.
 
-    :param subnet_id: The resource identifier for the subnet.
-    :type subnet_id: str
+    :ivar subnet_id: The resource identifier for the subnet.
+    :vartype subnet_id: str
     """
 
     _attribute_map = {
-        'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
+        "subnet_id": {"key": "properties.subnetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        subnet_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(UpdateVirtualNetworkRuleParameters, self).__init__(**kwargs)
+    def __init__(self, *, subnet_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword subnet_id: The resource identifier for the subnet.
+        :paramtype subnet_id: str
+        """
+        super().__init__(**kwargs)
         self.subnet_id = subnet_id
 
 
-class UpdateVirtualNetworkRuleWithAccountParameters(msrest.serialization.Model):
+class UpdateVirtualNetworkRuleWithAccountParameters(_serialization.Model):
     """The parameters used to update a virtual network rule while updating a Data Lake Store account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The unique name of the virtual network rule to update.
-    :type name: str
-    :param subnet_id: The resource identifier for the subnet.
-    :type subnet_id: str
+    :ivar name: The unique name of the virtual network rule to update. Required.
+    :vartype name: str
+    :ivar subnet_id: The resource identifier for the subnet.
+    :vartype subnet_id: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "subnet_id": {"key": "properties.subnetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        subnet_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(UpdateVirtualNetworkRuleWithAccountParameters, self).__init__(**kwargs)
+    def __init__(self, *, name: str, subnet_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: The unique name of the virtual network rule to update. Required.
+        :paramtype name: str
+        :keyword subnet_id: The resource identifier for the subnet.
+        :paramtype subnet_id: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.subnet_id = subnet_id
 
 
-class Usage(msrest.serialization.Model):
+class Usage(_serialization.Model):
     """Describes the Resource Usage.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar unit: Gets the unit of measurement. Possible values include: "Count", "Bytes", "Seconds",
-     "Percent", "CountsPerSecond", "BytesPerSecond".
+    :ivar unit: Gets the unit of measurement. Known values are: "Count", "Bytes", "Seconds",
+     "Percent", "CountsPerSecond", and "BytesPerSecond".
     :vartype unit: str or ~azure.mgmt.datalake.store.models.UsageUnit
     :ivar id: Resource identifier.
     :vartype id: str
@@ -1630,26 +1727,24 @@ class Usage(msrest.serialization.Model):
     """
 
     _validation = {
-        'unit': {'readonly': True},
-        'id': {'readonly': True},
-        'current_value': {'readonly': True},
-        'limit': {'readonly': True},
-        'name': {'readonly': True},
+        "unit": {"readonly": True},
+        "id": {"readonly": True},
+        "current_value": {"readonly": True},
+        "limit": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'unit': {'key': 'unit', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'int'},
-        'limit': {'key': 'limit', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'UsageName'},
+        "unit": {"key": "unit", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "limit": {"key": "limit", "type": "int"},
+        "name": {"key": "name", "type": "UsageName"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Usage, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.unit = None
         self.id = None
         self.current_value = None
@@ -1657,28 +1752,27 @@ class Usage(msrest.serialization.Model):
         self.name = None
 
 
-class UsageListResult(msrest.serialization.Model):
+class UsageListResult(_serialization.Model):
     """The response from the List Usages operation.
 
-    :param value: Gets or sets the list of Storage Resource Usages.
-    :type value: list[~azure.mgmt.datalake.store.models.Usage]
+    :ivar value: Gets or sets the list of Storage Resource Usages.
+    :vartype value: list[~azure.mgmt.datalake.store.models.Usage]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Usage]'},
+        "value": {"key": "value", "type": "[Usage]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Usage"]] = None,
-        **kwargs
-    ):
-        super(UsageListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: Gets or sets the list of Storage Resource Usages.
+        :paramtype value: list[~azure.mgmt.datalake.store.models.Usage]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class UsageName(msrest.serialization.Model):
+class UsageName(_serialization.Model):
     """The usage names that can be used.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1690,20 +1784,18 @@ class UsageName(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'localized_value': {'readonly': True},
+        "value": {"readonly": True},
+        "localized_value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(UsageName, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.localized_value = None
 
@@ -1724,28 +1816,26 @@ class VirtualNetworkRule(SubResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'subnet_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "subnet_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "subnet_id": {"key": "properties.subnetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(VirtualNetworkRule, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.subnet_id = None
 
 
-class VirtualNetworkRuleListResult(msrest.serialization.Model):
+class VirtualNetworkRuleListResult(_serialization.Model):
     """Data Lake Store virtual network rule list information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1757,19 +1847,17 @@ class VirtualNetworkRuleListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetworkRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualNetworkRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(VirtualNetworkRuleListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None

@@ -457,6 +457,9 @@ def generate_container_sas(
         using this shared access signature.
     :keyword str encryption_scope:
         Specifies the encryption scope for a request made so that all write operations will be service encrypted.
+    :keyword str correlation_id:
+        The correlation id to correlate the storage audit logs with the audit logs used by the principal
+        generating and distributing the SAS. This can only be used when generating a SAS with delegation key.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
 
@@ -558,7 +561,10 @@ def generate_blob_sas(
         For example, specifying ip=168.1.5.65 or ip=168.1.5.60-168.1.5.70 on the SAS
         restricts the request to those IP addresses.
     :keyword str version_id:
-        An optional blob version ID. This parameter is only for versioning enabled account
+        An optional blob version ID. This parameter is only applicable for versioning-enabled
+        Storage accounts. Note that the 'versionid' query parameter is not included in the output
+        SAS. Therefore, please provide the 'version_id' parameter to any APIs when using the output
+        SAS to operate on a specific version.
 
         .. versionadded:: 12.4.0
             This keyword argument was introduced in API version '2019-12-12'.
@@ -581,6 +587,9 @@ def generate_blob_sas(
         using this shared access signature.
     :keyword str encryption_scope:
         Specifies the encryption scope for a request made so that all write operations will be service encrypted.
+    :keyword str correlation_id:
+        The correlation id to correlate the storage audit logs with the audit logs used by the principal
+        generating and distributing the SAS. This can only be used when generating a SAS with delegation key.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """

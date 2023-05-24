@@ -1,0 +1,9 @@
+[tool.azure-sdk-build]
+mypy = true
+type_check_samples = false
+verifytypes = true
+pyright = false
+# For test environments or static checks where a check should be run by default, not explicitly disabling will enable the check.
+# pylint is enabled by default, so there is no reason for a pylint = true in every pyproject.toml.
+#
+# For newly added checks that are not enabled by default, packages should opt IN by "<check> = true".

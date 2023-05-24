@@ -1,6 +1,6 @@
 # Release History
 
-## 4.7.0b1 (Unreleased)
+## 4.8.0b2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,28 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.8.0b1 (2023-05-16)
+
+### Bugs Fixed
+- Token requests made during AD FS authentication no longer specify an erroneous "adfs" tenant ID
+  ([#29888](https://github.com/Azure/azure-sdk-for-python/issues/29888))
+
+## 4.7.0 (2023-03-16)
+
+### Features Added
+- Added support for service API version `7.4`
+- Clients each have a `send_request` method that can be used to send custom requests using the
+  client's existing pipeline ([#25172](https://github.com/Azure/azure-sdk-for-python/issues/25172))
+
+### Bugs Fixed
+- The type hints for `KeyVaultCertificate.cer` and `DeletedCertificate.cer` are now
+  `Optional[bytearray]` instead of `Optional[bytes]`
+  ([#28959](https://github.com/Azure/azure-sdk-for-python/issues/28959))
+
+### Other Changes
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+- Key Vault API version `7.4` is now the default
 - Updated minimum `azure-core` version to 1.24.0
 - Dropped `msrest` requirement
 - Added requirement for `isodate>=0.6.1` (`isodate` was required by `msrest`)

@@ -6,6 +6,7 @@
 
 import asyncio
 import os
+import tempfile
 import time
 import uuid
 from datetime import datetime, timedelta
@@ -143,18 +144,6 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             self.sleep(6)
             props = await blob.get_blob_properties()
         return props
-
-    async def _enable_soft_delete(self):
-        delete_retention_policy = RetentionPolicy(enabled=True, days=2)
-        await self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
-
-        # wait until the policy has gone into effect
-        if self.is_live:
-            time.sleep(40)
-
-    async def _disable_soft_delete(self):
-        delete_retention_policy = RetentionPolicy(enabled=False)
-        await self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
     def _assert_blob_is_soft_deleted(self, blob):
         assert blob.deleted
@@ -1421,259 +1410,235 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_soft_delete_blob_without_snapshots(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
+        storage_account_name = kwargs.pop("soft_delete_storage_account_name")
+        storage_account_key = kwargs.pop("soft_delete_storage_account_key")
 
-        try:
-            # Arrange
-            await self._setup(storage_account_name, storage_account_key)
-            await self._enable_soft_delete()
-            blob_name = await self._create_block_blob()
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = await self._create_block_blob()
 
-            container = self.bsc.get_container_client(self.container_name)
-            blob = container.get_blob_client(blob_name)
+        container = self.bsc.get_container_client(self.container_name)
+        blob = container.get_blob_client(blob_name)
 
-            # Soft delete the blob
-            await blob.delete_blob()
-            blob_list = []
-            async for b in container.list_blobs(include='deleted'):
-                blob_list.append(b)
+        # Soft delete the blob
+        await blob.delete_blob()
+        blob_list = []
+        async for b in container.list_blobs(include='deleted'):
+            blob_list.append(b)
 
-            # Assert
-            assert len(blob_list) == 1
-            self._assert_blob_is_soft_deleted(blob_list[0])
+        # Assert
+        assert len(blob_list) == 1
+        self._assert_blob_is_soft_deleted(blob_list[0])
 
 
-            # list_blobs should not list soft deleted blobs if Include(deleted=True) is not specified
-            blob_list = []
-            async for b in container.list_blobs():
-                blob_list.append(b)
+        # list_blobs should not list soft deleted blobs if Include(deleted=True) is not specified
+        blob_list = []
+        async for b in container.list_blobs():
+            blob_list.append(b)
 
-            # Assert
-            assert len(blob_list) == 0
+        # Assert
+        assert len(blob_list) == 0
 
-            # Restore blob with undelete
-            await blob.undelete_blob()
-            blob_list = []
-            async for b in container.list_blobs(include='deleted'):
-                blob_list.append(b)
+        # Restore blob with undelete
+        await blob.undelete_blob()
+        blob_list = []
+        async for b in container.list_blobs(include='deleted'):
+            blob_list.append(b)
 
-            # Assert
-            assert len(blob_list) == 1
-            self._assert_blob_not_soft_deleted(blob_list[0])
-
-        finally:
-            await self._disable_soft_delete()
+        # Assert
+        assert len(blob_list) == 1
+        self._assert_blob_not_soft_deleted(blob_list[0])
 
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_soft_delete_single_blob_snapshot(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
+        storage_account_name = kwargs.pop("soft_delete_storage_account_name")
+        storage_account_key = kwargs.pop("soft_delete_storage_account_key")
 
-        try:
-            # Arrange
-            await self._setup(storage_account_name, storage_account_key)
-            await self._enable_soft_delete()
-            blob_name = await self._create_block_blob()
-            blob = self.bsc.get_blob_client(self.container_name, blob_name)
-            blob_snapshot_1 = await blob.create_snapshot()
-            blob_snapshot_2 = await blob.create_snapshot()
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = await self._create_block_blob()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob_snapshot_1 = await blob.create_snapshot()
+        blob_snapshot_2 = await blob.create_snapshot()
 
-            # Soft delete blob_snapshot_1
-            snapshot_1 = self.bsc.get_blob_client(
-                self.container_name, blob_name, snapshot=blob_snapshot_1)
-            await snapshot_1.delete_blob()
+        # Soft delete blob_snapshot_1
+        snapshot_1 = self.bsc.get_blob_client(
+            self.container_name, blob_name, snapshot=blob_snapshot_1)
+        await snapshot_1.delete_blob()
 
-            with pytest.raises(ValueError):
-                await snapshot_1.delete_blob(delete_snapshots='only')
+        with pytest.raises(ValueError):
+            await snapshot_1.delete_blob(delete_snapshots='only')
 
-            container = self.bsc.get_container_client(self.container_name)
-            blob_list = []
-            async for b in container.list_blobs(include=["snapshots", "deleted"]):
-                blob_list.append(b)
+        container = self.bsc.get_container_client(self.container_name)
+        blob_list = []
+        async for b in container.list_blobs(include=["snapshots", "deleted"]):
+            blob_list.append(b)
 
-            # Assert
-            assert len(blob_list) == 3
-            for listedblob in blob_list:
-                if listedblob.snapshot == blob_snapshot_1['snapshot']:
-                    self._assert_blob_is_soft_deleted(listedblob)
-                else:
-                    self._assert_blob_not_soft_deleted(listedblob)
+        # Assert
+        assert len(blob_list) == 3
+        for listedblob in blob_list:
+            if listedblob.snapshot == blob_snapshot_1['snapshot']:
+                self._assert_blob_is_soft_deleted(listedblob)
+            else:
+                self._assert_blob_not_soft_deleted(listedblob)
 
-            # list_blobs should not list soft deleted blob snapshots if Include(deleted=True) is not specified
-            blob_list = []
-            async for b in container.list_blobs(include='snapshots'):
-                blob_list.append(b)
+        # list_blobs should not list soft deleted blob snapshots if Include(deleted=True) is not specified
+        blob_list = []
+        async for b in container.list_blobs(include='snapshots'):
+            blob_list.append(b)
 
-            # Assert
-            assert len(blob_list) == 2
+        # Assert
+        assert len(blob_list) == 2
 
-            # Restore snapshot with undelete
-            await blob.undelete_blob()
-            blob_list = []
-            async for b in container.list_blobs(include=["snapshots", "deleted"]):
-                blob_list.append(b)
+        # Restore snapshot with undelete
+        await blob.undelete_blob()
+        blob_list = []
+        async for b in container.list_blobs(include=["snapshots", "deleted"]):
+            blob_list.append(b)
 
-            # Assert
-            assert len(blob_list) == 3
-            for blob in blob_list:
-                self._assert_blob_not_soft_deleted(blob)
-        finally:
-            await self._disable_soft_delete()
+        # Assert
+        assert len(blob_list) == 3
+        for blob in blob_list:
+            self._assert_blob_not_soft_deleted(blob)
 
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_soft_delete_only_snapshots_of_blob(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
+        storage_account_name = kwargs.pop("soft_delete_storage_account_name")
+        storage_account_key = kwargs.pop("soft_delete_storage_account_key")
 
-        try:
-            # Arrange
-            await self._setup(storage_account_name, storage_account_key)
-            await self._enable_soft_delete()
-            blob_name = await self._create_block_blob()
-            blob = self.bsc.get_blob_client(self.container_name, blob_name)
-            blob_snapshot_1 = await blob.create_snapshot()
-            blob_snapshot_2 = await blob.create_snapshot()
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = await self._create_block_blob()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob_snapshot_1 = await blob.create_snapshot()
+        blob_snapshot_2 = await blob.create_snapshot()
 
-            # Soft delete all snapshots
-            await blob.delete_blob(delete_snapshots='only')
-            container = self.bsc.get_container_client(self.container_name)
-            blob_list = []
-            async for b in container.list_blobs(include=["snapshots", "deleted"]):
-                blob_list.append(b)
+        # Soft delete all snapshots
+        await blob.delete_blob(delete_snapshots='only')
+        container = self.bsc.get_container_client(self.container_name)
+        blob_list = []
+        async for b in container.list_blobs(include=["snapshots", "deleted"]):
+            blob_list.append(b)
 
-            # Assert
-            assert len(blob_list) == 3
-            for listedblob in blob_list:
-                if listedblob.snapshot == blob_snapshot_1['snapshot']:
-                    self._assert_blob_is_soft_deleted(listedblob)
-                elif listedblob.snapshot == blob_snapshot_2['snapshot']:
-                    self._assert_blob_is_soft_deleted(listedblob)
-                else:
-                    self._assert_blob_not_soft_deleted(listedblob)
+        # Assert
+        assert len(blob_list) == 3
+        for listedblob in blob_list:
+            if listedblob.snapshot == blob_snapshot_1['snapshot']:
+                self._assert_blob_is_soft_deleted(listedblob)
+            elif listedblob.snapshot == blob_snapshot_2['snapshot']:
+                self._assert_blob_is_soft_deleted(listedblob)
+            else:
+                self._assert_blob_not_soft_deleted(listedblob)
 
-            # list_blobs should not list soft deleted blob snapshots if Include(deleted=True) is not specified
-            blob_list = []
-            async for b in container.list_blobs(include="snapshots"):
-                blob_list.append(b)
+        # list_blobs should not list soft deleted blob snapshots if Include(deleted=True) is not specified
+        blob_list = []
+        async for b in container.list_blobs(include="snapshots"):
+            blob_list.append(b)
 
-            # Assert
-            assert len(blob_list) == 1
+        # Assert
+        assert len(blob_list) == 1
 
-            # Restore snapshots with undelete
-            await blob.undelete_blob()
-            blob_list = []
-            async for b in container.list_blobs(include=["snapshots", "deleted"]):
-                blob_list.append(b)
+        # Restore snapshots with undelete
+        await blob.undelete_blob()
+        blob_list = []
+        async for b in container.list_blobs(include=["snapshots", "deleted"]):
+            blob_list.append(b)
 
-            # Assert
-            assert len(blob_list) == 3
-            for blob in blob_list:
-                self._assert_blob_not_soft_deleted(blob)
-
-        finally:
-            await self._disable_soft_delete()
+        # Assert
+        assert len(blob_list) == 3
+        for blob in blob_list:
+            self._assert_blob_not_soft_deleted(blob)
 
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_soft_delete_blob_including_all_snapshots(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
+        storage_account_name = kwargs.pop("soft_delete_storage_account_name")
+        storage_account_key = kwargs.pop("soft_delete_storage_account_key")
 
-        try:
-            # Arrange
-            await self._setup(storage_account_name, storage_account_key)
-            await self._enable_soft_delete()
-            blob_name = await self._create_block_blob()
-            blob = self.bsc.get_blob_client(self.container_name, blob_name)
-            blob_snapshot_1 = await blob.create_snapshot()
-            blob_snapshot_2 = await blob.create_snapshot()
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = await self._create_block_blob()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob_snapshot_1 = await blob.create_snapshot()
+        blob_snapshot_2 = await blob.create_snapshot()
 
-            # Soft delete blob and all snapshots
-            await blob.delete_blob(delete_snapshots='include')
-            container = self.bsc.get_container_client(self.container_name)
-            blob_list = []
-            async for b in container.list_blobs(include=["snapshots", "deleted"]):
-                blob_list.append(b)
+        # Soft delete blob and all snapshots
+        await blob.delete_blob(delete_snapshots='include')
+        container = self.bsc.get_container_client(self.container_name)
+        blob_list = []
+        async for b in container.list_blobs(include=["snapshots", "deleted"]):
+            blob_list.append(b)
 
-            # Assert
-            assert len(blob_list) == 3
-            for listedblob in blob_list:
-                self._assert_blob_is_soft_deleted(listedblob)
+        # Assert
+        assert len(blob_list) == 3
+        for listedblob in blob_list:
+            self._assert_blob_is_soft_deleted(listedblob)
 
-            # list_blobs should not list soft deleted blob snapshots if Include(deleted=True) is not specified
-            blob_list = []
-            async for b in container.list_blobs(include=["snapshots"]):
-                blob_list.append(b)
+        # list_blobs should not list soft deleted blob snapshots if Include(deleted=True) is not specified
+        blob_list = []
+        async for b in container.list_blobs(include=["snapshots"]):
+            blob_list.append(b)
 
-            # Assert
-            assert len(blob_list) == 0
+        # Assert
+        assert len(blob_list) == 0
 
-            # Restore blob and snapshots with undelete
-            await blob.undelete_blob()
-            blob_list = []
-            async for b in container.list_blobs(include=["snapshots", "deleted"]):
-                blob_list.append(b)
+        # Restore blob and snapshots with undelete
+        await blob.undelete_blob()
+        blob_list = []
+        async for b in container.list_blobs(include=["snapshots", "deleted"]):
+            blob_list.append(b)
 
-            # Assert
-            assert len(blob_list) == 3
-            for blob in blob_list:
-                self._assert_blob_not_soft_deleted(blob)
-
-        finally:
-            await self._disable_soft_delete()
+        # Assert
+        assert len(blob_list) == 3
+        for blob in blob_list:
+            self._assert_blob_not_soft_deleted(blob)
 
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_soft_delete_with_leased_blob(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
+        storage_account_name = kwargs.pop("soft_delete_storage_account_name")
+        storage_account_key = kwargs.pop("soft_delete_storage_account_key")
 
-        try:
-            # Arrange
-            await self._setup(storage_account_name, storage_account_key)
-            await self._enable_soft_delete()
-            blob_name = await self._create_block_blob()
-            blob = self.bsc.get_blob_client(self.container_name, blob_name)
-            lease = await blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = await self._create_block_blob()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        lease = await blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
-            # Soft delete the blob without lease_id should fail
-            with pytest.raises(HttpResponseError):
-                await blob.delete_blob()
+        # Soft delete the blob without lease_id should fail
+        with pytest.raises(HttpResponseError):
+            await blob.delete_blob()
 
-            # Soft delete the blob
-            await blob.delete_blob(lease=lease)
-            container = self.bsc.get_container_client(self.container_name)
-            blob_list = []
-            async for b in container.list_blobs(include="deleted"):
-                blob_list.append(b)
+        # Soft delete the blob
+        await blob.delete_blob(lease=lease)
+        container = self.bsc.get_container_client(self.container_name)
+        blob_list = []
+        async for b in container.list_blobs(include="deleted"):
+            blob_list.append(b)
 
-            # Assert
-            assert len(blob_list) == 1
-            self._assert_blob_is_soft_deleted(blob_list[0])
+        # Assert
+        assert len(blob_list) == 1
+        self._assert_blob_is_soft_deleted(blob_list[0])
 
-            # list_blobs should not list soft deleted blobs if Include(deleted=True) is not specified
-            blob_list = []
-            async for b in container.list_blobs():
-                blob_list.append(b)
+        # list_blobs should not list soft deleted blobs if Include(deleted=True) is not specified
+        blob_list = []
+        async for b in container.list_blobs():
+            blob_list.append(b)
 
-            # Assert
-            assert len(blob_list) == 0
+        # Assert
+        assert len(blob_list) == 0
 
-            # Restore blob with undelete, this also gets rid of the lease
-            await blob.undelete_blob()
-            blob_list = []
-            async for b in container.list_blobs(include="deleted"):
-                blob_list.append(b)
+        # Restore blob with undelete, this also gets rid of the lease
+        await blob.undelete_blob()
+        blob_list = []
+        async for b in container.list_blobs(include="deleted"):
+            blob_list.append(b)
 
-            # Assert
-            assert len(blob_list) == 1
-            self._assert_blob_not_soft_deleted(blob_list[0])
-
-        finally:
-            await self._disable_soft_delete()
+        # Assert
+        assert len(blob_list) == 1
+        self._assert_blob_not_soft_deleted(blob_list[0])
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1994,7 +1959,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         lease = await blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
         resp = await blob.upload_blob(b'hello 2', length=7, lease=lease)
-        self.sleep(17)
+        self.sleep(20)
 
         # Assert
         with pytest.raises(HttpResponseError):
@@ -2708,16 +2673,14 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         blob = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
-        file_path = 'download_to_file_with_sas.temp.{}.dat'.format(str(uuid.uuid4()))
 
         # Act
-        await download_blob_from_url(blob.url, file_path)
-
-        # Assert
-        with open(file_path, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            await download_blob_from_url(blob.url, temp_file)
+            temp_file.seek(0)
+            # Assert
+            actual = temp_file.read()
             assert data == actual
-        self._teardown(file_path)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -2728,18 +2691,13 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         data = b'123' * 1024
         source_blob = await self._create_blob(data=data)
-        file_path = 'to_file_with_credential.temp.{}.dat'.format(str(uuid.uuid4()))
 
         # Act
-        await download_blob_from_url(
-            source_blob.url, file_path,
-            credential=storage_account_key)
-
-        # Assert
-        with open(file_path, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            await download_blob_from_url(source_blob.url, temp_file, credential=storage_account_key)
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert data == actual
-        self._teardown(file_path)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -2750,19 +2708,14 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         data = b'123' * 1024
         source_blob = await self._create_blob(data=data)
-        file_path = 'download_to_stream_with_credential.temp.{}.dat'.format(str(uuid.uuid4()))
 
         # Act
-        with open(file_path, 'wb') as stream:
-            await download_blob_from_url(
-                source_blob.url, stream,
-                credential=storage_account_key)
-
-        # Assert
-        with open(file_path, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            await download_blob_from_url(source_blob.url, temp_file, credential=storage_account_key)
+            temp_file.seek(0)
+            # Assert
+            actual = temp_file.read()
             assert data == actual
-        self._teardown(file_path)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -2773,21 +2726,21 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         data = b'123' * 1024
         source_blob = await self._create_blob(data=data)
-        file_path = 'file_with_existing_file.temp.{}.dat'.format(str(uuid.uuid4()))
 
         # Act
-        await download_blob_from_url(
-            source_blob.url, file_path,
-            credential=storage_account_key)
+        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            await download_blob_from_url(source_blob.url, temp_file.name, credential=storage_account_key, overwrite=True)
 
-        with pytest.raises(ValueError):
-            await download_blob_from_url(source_blob.url, file_path)
+            with pytest.raises(ValueError):
+                await download_blob_from_url(source_blob.url, temp_file.name)
 
-        # Assert
-        with open(file_path, 'rb') as stream:
-            actual = stream.read()
+            # Assert
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert data == actual
-        self._teardown(file_path)
+
+            temp_file.close()
+            os.unlink(temp_file.name)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -2947,22 +2900,19 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
         data = b'123' * 1024
-        file_path = 'url_file_with_credential.async.{}.dat'.format(str(uuid.uuid4()))
-        with open(file_path, 'wb') as stream:
-            stream.write(data)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        with open(file_path, 'rb'):
-            uploaded = await upload_blob_to_url(
-                blob.url, data, credential=storage_account_key)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            uploaded = await upload_blob_to_url(blob.url, data, credential=storage_account_key)
 
-        # Assert
-        assert uploaded is not None
-        content = await (await blob.download_blob()).readall()
-        assert data == content
-        self._teardown(file_path)
+            # Assert
+            assert uploaded is not None
+            content = await (await blob.download_blob()).readall()
+            assert data == content
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -3195,5 +3145,31 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         assert await blob_client.exists()
         assert (await blob_client.get_blob_properties()).size == 0
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_download_properties(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+
+        blob_name = self.get_resource_name("utcontainer")
+        blob_data = 'abc'
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob.upload_blob(blob_data)
+
+        # Assert
+        stream = await blob.download_blob(encoding='utf-8')
+        props = stream.properties
+        data = await stream.readall()
+
+        assert data is not None
+        assert data == blob_data
+        assert props['creation_time'] is not None
+        assert props['content_settings'] is not None
+        assert props['size'] == len(blob_data)
 
 # ------------------------------------------------------------------------------

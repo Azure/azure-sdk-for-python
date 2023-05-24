@@ -3,33 +3,25 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
-
+from typing import Type, Union
 from ._generated.models import AutocompleteRequest, SearchRequest, SuggestRequest
 
-if TYPE_CHECKING:
-    # pylint:disable=unused-import
-    from typing import Any, List, Type, Union
 
+class _QueryBase:
 
-class _QueryBase(object):
-
-    _request_type = (
+    _request_type: Union[Type[AutocompleteRequest], Type[SearchRequest], Type[SuggestRequest]] = (
         None
-    )  # type: Union[Type[AutocompleteRequest], Type[SearchRequest], Type[SuggestRequest]]
+    )
 
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
+    def __init__(self, **kwargs) -> None:
         self._request = self._request_type(**kwargs)  # pylint:disable=not-callable
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         return "<{} [{}]>".format(self.__class__.__name__, self._request.search_text)[
             :1024
         ]
 
-    def filter(self, expression):
-        # type: (str) -> None
+    def filter(self, expression: str) -> None:
         """Add a `filter` expression for the search results.
 
         :param expression: An ODate expression of for the query filter.
@@ -58,12 +50,11 @@ class SearchQuery(_QueryBase):
 
     __doc__ = SearchRequest.__doc__
 
-    def order_by(self, *fields):
-        # type: (*str) -> None
+    def order_by(self, *fields: str) -> None:
         """Update the `orderby` property for the search results.
 
-        :param fields: An list of fields for the query result to be ordered by.
-        :type expression: str
+        :param fields: A list of fields for the query result to be ordered by.
+        :type fields: str
         :raises: ValueError
         """
         if not fields:
@@ -71,12 +62,11 @@ class SearchQuery(_QueryBase):
 
         self._request.order_by = ",".join(fields)
 
-    def select(self, *fields):
-        # type: (*str) -> None
+    def select(self, *fields: str) -> None:
         """Update the `select` property for the search results.
 
-        :param fields: An list of fields for the query result to return.
-        :type expression: str
+        :param fields: A list of fields for the query result to return.
+        :type fields: str
         :raises: ValueError
         """
         if not fields:
@@ -97,12 +87,11 @@ class SuggestQuery(_QueryBase):
 
     __doc__ = SuggestRequest.__doc__
 
-    def select(self, *fields):
-        # type: (*str) -> None
+    def select(self, *fields: str) -> None:
         """Update the `select` property for the search results.
 
-        :param fields: An list of fields for the query result to return.
-        :type expression: str
+        :param fields: A list of fields for the query result to return.
+        :type fields: str
         :raises: ValueError
         """
         if not fields:

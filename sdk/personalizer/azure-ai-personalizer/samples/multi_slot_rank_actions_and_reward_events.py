@@ -22,13 +22,13 @@ from azure.core.credentials import AzureKeyCredential
 
 def main():
     try:
-        endpoint = os.environ['PERSONALIZER_ENDPOINT_MULTI_SLOT']
+        endpoint = os.environ["PERSONALIZER_ENDPOINT_MULTI_SLOT"]
     except KeyError:
         print("PERSONALIZER_ENDPOINT_MULTI_SLOT must be set.")
         sys.exit(1)
 
     try:
-        api_key = os.environ['PERSONALIZER_API_KEY_MULTI_SLOT']
+        api_key = os.environ["PERSONALIZER_API_KEY_MULTI_SLOT"]
     except KeyError:
         print("PERSONALIZER_API_KEY_MULTI_SLOT must be set.")
         sys.exit(1)
@@ -71,17 +71,14 @@ def main():
     }
     print("Sending multi-slot rank request")
     rank_response = client.rank_multi_slot(request)
-    print("Rank returned response with event id {} and recommended the following:"
-          .format(rank_response.get("eventId")))
+    print("Rank returned response with event id {} and recommended the following:".format(rank_response.get("eventId")))
     for slot in rank_response.get("slots"):
         print("Action: {} for slot: {}".format(slot.get("rewardActionId"), slot.get("id")))
 
     # The event response will be determined by how the user interacted with the action that was presented to them.
     # Let us say that they like the action presented to them for the Main Article slot. So we associate a reward of 1.
     print("Sending reward event for Main Article slot")
-    client.reward_multi_slot(
-        rank_response.get("eventId"),
-        {"reward": [{"slotId": "Main Article", "value": 1.0}]})
+    client.reward_multi_slot(rank_response.get("eventId"), {"reward": [{"slotId": "Main Article", "value": 1.0}]})
     print("Completed sending reward response")
 
 

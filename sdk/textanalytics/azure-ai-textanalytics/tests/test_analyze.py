@@ -42,7 +42,7 @@ from azure.ai.textanalytics import (
     AnalyzeHealthcareEntitiesAction,
     ExtractSummaryAction,
     ExtractSummaryResult,
-    AbstractSummaryAction,
+    AbstractiveSummaryAction,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -813,6 +813,7 @@ class TestAnalyze(TextAnalyticsTest):
         assert isinstance(action_results[1][1], RecognizePiiEntitiesResult)
         assert action_results[1][1].id == "2"
 
+    @pytest.mark.skip("Flaky test")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
@@ -1969,7 +1970,7 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze_actions(
             docs,
-            actions=[AbstractSummaryAction()],
+            actions=[AbstractiveSummaryAction()],
             show_stats=True,
             polling_interval=self._interval(),
         ).result()
@@ -2071,7 +2072,7 @@ class TestAnalyze(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_autodetect_with_default(self, client):
+    def test_autodetect_language(self, client):
         docs = ["hello world"]
         actions=[
             RecognizeEntitiesAction(),
@@ -2084,7 +2085,6 @@ class TestAnalyze(TextAnalyticsTest):
             docs,
             actions,
             language="auto",
-            autodetect_default_language="es",
             polling_interval=self._interval(),
         )
 

@@ -7,7 +7,9 @@
 # --------------------------------------------------------------------------
 
 import pytest
+import datetime
 from devtools_testutils.aio import recorded_by_proxy_async
+from azure.core.serialization import _datetime_as_isostr  # pylint:disable=protected-access
 from _router_test_case_async import (
     AsyncRouterRecordedTestCase
 )
@@ -273,6 +275,18 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
             router_job = await router_client.get_job(job_id = identifier)
             assert router_job.job_status == RouterJobStatus.QUEUED
 
+    async def validate_job_is_scheduled(
+            self,
+            identifier,
+            **kwargs
+    ):
+        router_client: RouterClient = self.create_client()
+
+        async with router_client:
+            router_job = await router_client.get_job(job_id = identifier)
+            assert router_job.job_status == RouterJobStatus.SCHEDULED
+
+
     async def validate_job_is_cancelled(
             self,
             identifier,
@@ -334,6 +348,65 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
                 Exception,
                 job_identifier)
 
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
+    @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
+    @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
+    async def test_create_scheduled_job(self, **kwargs):
+        recorded_variables = kwargs.pop('variables', {})
+        scheduled_time = datetime.datetime.utcnow() + datetime.timedelta(0, 30)
+        scheduled_time_utc = recorded_variables.setdefault("scheduled_time_utc", _datetime_as_isostr(scheduled_time))
+
+        job_identifier = "tst_create_sch_job_async"
+        router_client: RouterClient = self.create_client()
+
+        async with router_client:
+            router_job: RouterJob = RouterJob(
+                channel_id = job_channel_ids[0],
+                channel_reference = job_channel_references[0],
+                queue_id = self.get_job_queue_id(),
+                priority = job_priority,
+                requested_worker_selectors = job_requested_worker_selectors,
+                labels = job_labels,
+                tags = job_tags,
+                notes = job_notes,
+                scheduled_time_utc = recorded_variables["scheduled_time_utc"],
+                unavailable_for_matching = True
+            )
+
+            router_job = await router_client.create_job(
+                job_id = job_identifier,
+                router_job = router_job
+            )
+
+            # add for cleanup
+            self.job_ids[self._testMethodName] = [job_identifier]
+
+            assert router_job is not None
+            RouterJobValidator.validate_job(
+                router_job,
+                identifier = job_identifier,
+                channel_reference = job_channel_references[0],
+                channel_id = job_channel_ids[0],
+                queue_id = self.get_job_queue_id(),
+                priority = job_priority,
+                requested_worker_selectors = job_requested_worker_selectors,
+                labels = job_labels,
+                tags = job_tags,
+                notes = job_notes,
+                scheduled_time_utc = recorded_variables["scheduled_time_utc"],
+                unavailable_for_matching = True
+            )
+
+            assert router_job.job_status == RouterJobStatus.PENDING_SCHEDULE
+
+            await self._poll_until_no_exception(
+                self.validate_job_is_scheduled,
+                Exception,
+                job_identifier)
+
+            return recorded_variables
     @RouterPreparersAsync.router_test_decorator_async
     @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
@@ -974,4 +1047,107 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
 
             # all job_queues created were listed
             assert job_count == 0
+
+
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
+    @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
+    @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
+    @RouterPreparersAsync.after_test_execute_async('clean_up')
+    async def test_list_sch_jobs(self, **kwargs):
+        recorded_variables = kwargs.pop('variables', {})
+        scheduled_time = datetime.datetime.utcnow() + datetime.timedelta(0, 30)
+        scheduled_time_utc = recorded_variables.setdefault("scheduled_time_utc", _datetime_as_isostr(scheduled_time))
+
+        router_client: RouterClient = self.create_client()
+        job_identifiers = ["tst_list_sch_job_1_async", "tst_list_sch_job_2_async"]
+
+        created_job_response = {}
+        job_count = len(job_identifiers)
+        self.job_ids[self._testMethodName] = []
+
+        async with router_client:
+            for identifier in job_identifiers:
+                router_job: RouterJob = RouterJob(
+                    channel_reference = job_channel_references[0],
+                    channel_id = job_channel_ids[0],
+                    queue_id = self.get_job_queue_id(),
+                    priority = job_priority,
+                    requested_worker_selectors = job_requested_worker_selectors,
+                    labels = job_labels,
+                    tags = job_tags,
+                    notes = job_notes,
+                    scheduled_time_utc = recorded_variables["scheduled_time_utc"],
+                    unavailable_for_matching = True
+                )
+
+                router_job = await router_client.create_job(
+                    job_id = identifier,
+                    router_job = router_job
+                )
+
+                # add for cleanup
+                self.job_ids[self._testMethodName].append(identifier)
+
+                assert router_job is not None
+
+                RouterJobValidator.validate_job(
+                    router_job,
+                    identifier = identifier,
+                    channel_reference = job_channel_references[0],
+                    channel_id = job_channel_ids[0],
+                    queue_id = self.get_job_queue_id(),
+                    priority = job_priority,
+                    requested_worker_selectors = job_requested_worker_selectors,
+                    labels = job_labels,
+                    tags = job_tags,
+                    notes = job_notes,
+                    scheduled_time_utc = recorded_variables["scheduled_time_utc"],
+                    unavailable_for_matching = True
+                )
+
+                await self._poll_until_no_exception(
+                    self.validate_job_is_scheduled,
+                    Exception,
+                    identifier)
+
+                created_job_response[router_job.id] = router_job
+
+            router_jobs = router_client.list_jobs(
+                results_per_page = 2,
+                status = JobStateSelector.SCHEDULED,
+                queue_id = self.get_job_queue_id(),
+                scheduled_before = recorded_variables["scheduled_time_utc"],
+                channel_id = job_channel_ids[0],
+            )
+
+            async for router_job_page in router_jobs.by_page():
+                list_of_jobs = [i async for i in router_job_page]
+                assert len(list_of_jobs) <= 2
+
+                for j_item in list_of_jobs:
+                    response_at_creation = created_job_response.get(j_item.router_job.id, None)
+
+                    if not response_at_creation:
+                        continue
+
+                    RouterJobValidator.validate_job(
+                        j_item.router_job,
+                        identifier = response_at_creation.id,
+                        channel_reference = response_at_creation.channel_reference,
+                        channel_id = response_at_creation.channel_id,
+                        queue_id = response_at_creation.queue_id,
+                        priority = response_at_creation.priority,
+                        requested_worker_selectors = response_at_creation.requested_worker_selectors,
+                        labels = response_at_creation.labels,
+                        tags = response_at_creation.tags,
+                        notes = response_at_creation.notes,
+                        scheduled_time_utc = recorded_variables["scheduled_time_utc"],
+                        unavailable_for_matching = True
+                    )
+                    job_count -= 1
+
+            # all job_queues created were listed
+            assert job_count == 0
+            return recorded_variables
 

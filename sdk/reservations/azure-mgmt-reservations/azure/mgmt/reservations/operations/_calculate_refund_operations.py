@@ -43,7 +43,7 @@ def build_post_request(reservation_order_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+    api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -144,8 +144,8 @@ class CalculateRefundOperations:
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param body: Information needed for calculating refund of a reservation. Is either a model type
-         or a IO type. Required.
+        :param body: Information needed for calculating refund of a reservation. Is either a
+         CalculateRefundRequest type or a IO type. Required.
         :type body: ~azure.mgmt.reservations.models.CalculateRefundRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -166,7 +166,7 @@ class CalculateRefundOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CalculateRefundResponse] = kwargs.pop("cls", None)
 

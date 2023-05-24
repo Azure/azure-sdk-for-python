@@ -5,11 +5,12 @@
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from ._sweep import SweepJobSchema
+from ._data_import import DataImportSchema
 from .assets.code_asset import AnonymousCodeAssetSchema, CodeAssetSchema
 from .assets.data import DataSchema
 from .assets.environment import AnonymousEnvironmentSchema, EnvironmentSchema
 from .assets.model import ModelSchema
-from .assets.workspace_model_reference import WorkspaceModelReferenceSchema
+from .assets.workspace_asset_reference import WorkspaceAssetReferenceSchema
 from .component import CommandComponentSchema
 from .core.fields import (
     ArmStr,
@@ -52,5 +53,6 @@ __all__ = [
     "AnonymousCodeAssetSchema",
     "ExperimentalField",
     "RegistryStr",
-    "WorkspaceModelReferenceSchema",
+    "WorkspaceAssetReferenceSchema",
+    "DataImportSchema",
 ]

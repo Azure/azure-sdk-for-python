@@ -15,7 +15,6 @@ module_logger = logging.getLogger(__name__)
 
 class OversizeDataConfigSchema(metaclass=PatchedSchemaMeta):
     path = fields.Str()
-    client_id = fields.Str()
 
     # pylint: disable=unused-argument,no-self-use
     @validates("path")

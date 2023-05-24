@@ -46,18 +46,15 @@ def get_enum_value(value):
         return value
 
 
-def _from_entity_binary(value):
-    # type: (str) -> EntityProperty
+def _from_entity_binary(value: str) -> bytes:
     return _decode_base64_to_bytes(value)
 
 
-def _from_entity_int32(value):
-    # type: (str) -> int
+def _from_entity_int32(value: str) -> int:
     return int(value)
 
 
-def _from_entity_int64(value):
-    # type: (str) -> EntityProperty
+def _from_entity_int64(value: str) -> EntityProperty:
     return EntityProperty(int(value), EdmType.INT64)
 
 
@@ -101,8 +98,7 @@ def _from_entity_guid(value):
     return UUID(value)
 
 
-def _from_entity_str(value):
-    # type: (Union[str, bytes]) -> str
+def _from_entity_str(value: Union[str, bytes]) -> str:
     if isinstance(value, six.binary_type):
         return value.decode('utf-8')
     return value
@@ -229,7 +225,7 @@ def _extract_etag(response):
 def _extract_continuation_token(continuation_token):
     """Extract list entity continuation headers from token.
 
-    :param dict(str,str) continuation_token: The listing continuation token.
+    :param Dict(str,str) continuation_token: The listing continuation token.
     :returns: The next partition key and next row key in a tuple
     :rtype: (str,str)
     """
@@ -262,8 +258,7 @@ def _return_context_and_deserialized(
     return response.context['location_mode'], deserialized, response_headers
 
 
-def _trim_service_metadata(metadata, content=None):
-    # type: (Dict[str, str], Optional[Dict[str, Any]]) -> Dict[str, Any]
+def _trim_service_metadata(metadata: Dict[str, str], content: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     result = {
         "date": metadata.pop("date", None),
         "etag": metadata.pop("etag", None),

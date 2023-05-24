@@ -33,10 +33,30 @@ def main():
         resource_group_name="scgroup",
         cache_name="sc1",
         storage_target_name="st1",
+        storagetarget={
+            "properties": {
+                "junctions": [
+                    {
+                        "namespacePath": "/path/on/cache",
+                        "nfsAccessPolicy": "default",
+                        "nfsExport": "exp1",
+                        "targetPath": "/path/on/exp1",
+                    },
+                    {
+                        "namespacePath": "/path2/on/cache",
+                        "nfsAccessPolicy": "rootSquash",
+                        "nfsExport": "exp2",
+                        "targetPath": "/path2/on/exp2",
+                    },
+                ],
+                "nfs3": {"target": "10.0.44.44", "usageModel": "READ_ONLY", "verificationTimer": 30},
+                "targetType": "nfs3",
+            }
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2022-05-01/examples/StorageTargets_CreateOrUpdate.json
+# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2023-01-01/examples/StorageTargets_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

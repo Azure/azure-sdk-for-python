@@ -8,10 +8,19 @@ from azure.identity._enums import RegionalAuthority
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
+import msal
 import pytest
 from six.moves.urllib_parse import urlparse
 
-from helpers import build_aad_response, get_discovery_response, mock_response, msal_validating_transport, Request
+from helpers import (
+    build_aad_response,
+    build_id_token,
+    get_discovery_response,
+    id_token_claims,
+    mock_response,
+    msal_validating_transport,
+    Request
+)
 
 try:
     from unittest.mock import Mock, patch
@@ -136,7 +145,10 @@ def test_regional_authority():
 
         assert mock_confidential_client.call_count == 1
         _, kwargs = mock_confidential_client.call_args
-        assert kwargs["azure_region"] == region.value
+        if region == RegionalAuthority.AUTO_DISCOVER_REGION:
+            assert kwargs["azure_region"] == msal.ConfidentialClientApplication.ATTEMPT_REGION_DISCOVERY
+        else:
+            assert kwargs["azure_region"] == region.value
 
 
 def test_token_cache():
@@ -270,3 +282,53 @@ def test_multitenant_authentication_not_allowed():
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
         token = credential.get_token("scope", tenant_id="un" + expected_tenant)
         assert token.token == expected_token
+
+
+def test_client_capabilities():
+    """The credential should configure MSAL for capability CP1 unless AZURE_IDENTITY_DISABLE_CP1 is set"""
+
+    transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
+
+    credential = ClientSecretCredential("tenant-id", "client-id", "client-secret", transport=transport)
+    with patch("msal.ConfidentialClientApplication") as ConfidentialClientApplication:
+        credential._get_app()
+
+    assert ConfidentialClientApplication.call_count == 1
+    _, kwargs = ConfidentialClientApplication.call_args
+    assert kwargs["client_capabilities"] == ["CP1"]
+
+    credential = ClientSecretCredential("tenant-id", "client-id", "client-secret", transport=transport)
+    with patch.dict("os.environ", {"AZURE_IDENTITY_DISABLE_CP1": "true"}):
+        with patch("msal.ConfidentialClientApplication") as ConfidentialClientApplication:
+            credential._get_app()
+
+    assert ConfidentialClientApplication.call_count == 1
+    _, kwargs = ConfidentialClientApplication.call_args
+    assert kwargs["client_capabilities"] is None
+
+
+def test_claims_challenge():
+    """get_token should pass any claims challenge to MSAL token acquisition APIs"""
+
+    msal_acquire_token_result = dict(
+        build_aad_response(access_token="**", id_token=build_id_token()),
+        id_token_claims=id_token_claims("issuer", "subject", "audience", upn="upn"),
+    )
+    expected_claims = '{"access_token": {"essential": "true"}}'
+
+    transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
+    credential = ClientSecretCredential("tenant-id", "client-id", "client-secret", transport=transport)
+    with patch.object(ClientSecretCredential, "_get_app") as get_mock_app:
+        msal_app = get_mock_app()
+        msal_app.acquire_token_silent_with_error.return_value = None
+        msal_app.acquire_token_for_client.return_value = msal_acquire_token_result
+
+        credential.get_token("scope", claims=expected_claims)
+
+        assert msal_app.acquire_token_silent_with_error.call_count == 1
+        args, kwargs = msal_app.acquire_token_silent_with_error.call_args
+        assert kwargs["claims_challenge"] == expected_claims
+
+        assert msal_app.acquire_token_for_client.call_count == 1
+        args, kwargs = msal_app.acquire_token_for_client.call_args
+        assert kwargs["claims_challenge"] == expected_claims

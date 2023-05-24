@@ -28,7 +28,7 @@ command: >-
   --score_output {outputs.score_output}
 environment:
   docker:
-    image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20220714.v1
+    image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:20230227.v1
   conda:
     conda_dependencies:
       name: project_environment

@@ -6,10 +6,11 @@
 
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Forecasting as RestForecasting
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ForecastingPrimaryMetrics, JobBase, TaskType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Forecasting as RestForecasting
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ForecastingPrimaryMetrics, JobBase, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
+from azure.ai.ml.constants import TabularTrainingMode
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
@@ -351,7 +352,70 @@ class ForecastingJob(AutoMLTabular):
         ensemble_model_download_timeout: Optional[int] = None,
         allowed_training_algorithms: Optional[List[str]] = None,
         blocked_training_algorithms: Optional[List[str]] = None,
+        training_mode: Optional[Union[str, TabularTrainingMode]] = None,
     ) -> None:
+        """
+        The method to configure forecast training related settings.
+
+        :param enable_onnx_compatible_models:
+            Whether to enable or disable enforcing the ONNX-compatible models.
+            The default is False. For more information about Open Neural Network Exchange (ONNX) and Azure Machine
+            Learning, see this `article <https://docs.microsoft.com/azure/machine-learning/concept-onnx>`__.
+        :type: bool or None
+        :param enable_dnn_training:
+            Whether to include DNN based models during model selection.
+            However, the default is True for DNN NLP tasks, and it's False for all other AutoML tasks.
+        :type: bool or None
+        :param enable_model_explainability:
+            Whether to enable explaining the best AutoML model at the end of all AutoML training iterations.
+            For more information, see `Interpretability: model explanations in automated machine learning
+            <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
+            , defaults to None
+        :type: bool or None
+        :param enable_stack_ensemble:
+            Whether to enable/disable StackEnsemble iteration.
+            If `enable_onnx_compatible_models` flag is being set, then StackEnsemble iteration will be disabled.
+            Similarly, for Timeseries tasks, StackEnsemble iteration will be disabled by default, to avoid risks of
+            overfitting due to small training set used in fitting the meta learner.
+            For more information about ensembles, see `Ensemble configuration
+            <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
+            , defaults to None
+        :type: bool or None
+        :param enable_vote_ensemble:
+            Whether to enable/disable VotingEnsemble iteration.
+            For more information about ensembles, see `Ensemble configuration
+            <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
+            , defaults to None
+        :type: bool or None
+        :param stack_ensemble_settings:
+            Settings for StackEnsemble iteration, defaults to None
+        :type: StackEnsembleSettings or None
+        :param ensemble_model_download_timeout:
+            During VotingEnsemble and StackEnsemble model generation,
+            multiple fitted models from the previous child runs are downloaded. Configure this parameter with a
+            higher value than 300 secs, if more time is needed, defaults to None
+        :type: int or None
+        :param allowed_training_algorithms:
+            A list of model names to search for an experiment. If not specified,
+            then all models supported for the task are used minus any specified in ``blocked_training_algorithms``
+            or deprecated TensorFlow models, defaults to None
+        :type: list(str) or None
+        :param blocked_training_algorithms:
+            A list of algorithms to ignore for an experiment, defaults to None
+        :type: list(str) or None
+        :param training_mode:
+            [Experimental] The training mode to use.
+            The possible values are-
+
+            * distributed- enables distributed training for supported algorithms.
+
+            * non_distributed- disables distributed training.
+
+            * auto- Currently, it is same as non_distributed. In future, this might change.
+
+            Note: This parameter is in public preview and may change in future.
+        :type: azure.ai.ml.constants.TabularTrainingMode, str or None
+        """
         super().set_training(
             enable_onnx_compatible_models=enable_onnx_compatible_models,
             enable_dnn_training=enable_dnn_training,
@@ -362,6 +426,7 @@ class ForecastingJob(AutoMLTabular):
             ensemble_model_download_timeout=ensemble_model_download_timeout,
             allowed_training_algorithms=allowed_training_algorithms,
             blocked_training_algorithms=blocked_training_algorithms,
+            training_mode=training_mode,
         )
 
         # Disable stack ensemble by default, since it is currently not supported for forecasting tasks
@@ -404,6 +469,7 @@ class ForecastingJob(AutoMLTabular):
             resources=self.resources,
             task_details=forecasting_task,
             identity=self.identity._to_job_rest_object() if self.identity else None,
+            queue_settings=self.queue_settings,
         )
 
         result = JobBase(properties=properties)
@@ -432,6 +498,7 @@ class ForecastingJob(AutoMLTabular):
             "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
             if properties.identity
             else None,
+            "queue_settings": properties.queue_settings,
         }
 
         forecasting_job = cls(

@@ -1,0 +1,219 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?api-version=2022-12-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.9.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Apr 2023 03:42:17 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-bd8afbcf8030749cf659b6254dbed012-59b1f705347796f5-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-test-westus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "1c10e97e-5a23-47cd-8b40-ad42c8e5d83c",
+        "x-ms-ratelimit-remaining-subscription-reads": "11995",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "JAPANEAST:20230414T034217Z:1c10e97e-5a23-47cd-8b40-ad42c8e5d83c",
+        "x-request-time": "0.012"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/AmlComponentNotebook/providers/Microsoft.MachineLearningServices/workspaces/00000",
+        "name": "00000",
+        "type": "Microsoft.MachineLearningServices/workspaces",
+        "location": "centraluseuap",
+        "tags": {
+          "createdByToolkit": "sdk-v1-1.48.0"
+        },
+        "etag": null,
+        "properties": {
+          "friendlyName": "00000",
+          "description": "",
+          "storageAccount": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/AmlComponentNotebook/providers/Microsoft.Storage/storageAccounts/sdknotebstoragee77090213",
+          "keyVault": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/AmlComponentNotebook/providers/Microsoft.Keyvault/vaults/sdknotebkeyvaultdcfbd491",
+          "applicationInsights": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/AmlComponentNotebook/providers/Microsoft.insights/components/sdknotebinsightsc4309c5c",
+          "hbiWorkspace": false,
+          "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+          "imageBuildCompute": null,
+          "provisioningState": "Succeeded",
+          "v1LegacyMode": false,
+          "softDeleteEnabled": false,
+          "containerRegistry": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/AmlComponentNotebook/providers/Microsoft.ContainerRegistry/registries/7f206fe8725b47a780401b9d73c77f3e",
+          "creationTime": "2022-12-05T16:07:10.8695835Z",
+          "notebookInfo": {
+            "resourceId": "85298684df504dd3ae24fb0b835419de",
+            "fqdn": "ml-sdk-noteb-centraluseuap-7f206fe8-725b-47a7-8040-1b9d73c77f3e.centraluseuap.notebooks.azure.net",
+            "isPrivateLinkEnabled": false,
+            "notebookPreparationError": null
+          },
+          "storageHnsEnabled": false,
+          "workspaceId": "7f206fe8-725b-47a7-8040-1b9d73c77f3e",
+          "linkedModelInventoryArmId": null,
+          "privateLinkCount": 0,
+          "publicNetworkAccess": "Enabled",
+          "discoveryUrl": "https://master.api.azureml-test.ms/discovery",
+          "mlFlowTrackingUri": "azureml://master.api.azureml-test.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/AmlComponentNotebook/providers/Microsoft.MachineLearningServices/workspaces/00000",
+          "sdkTelemetryAppInsightsKey": "e31c22bb-e424-4992-a495-6519750e273a",
+          "sasGetterUri": ""
+        },
+        "identity": {
+          "type": "SystemAssigned",
+          "principalId": "e814b5b8-f731-47db-bd29-4cd5b5d37a40",
+          "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47"
+        },
+        "kind": "Default",
+        "sku": {
+          "name": "Basic",
+          "tier": "Basic"
+        },
+        "systemData": {
+          "createdAt": "2022-12-05T16:07:10.8695835Z",
+          "createdBy": "38db1e0d-0eab-4d80-91ef-8ac385645110",
+          "createdByType": "Application",
+          "lastModifiedAt": "2022-12-05T16:07:10.8695835Z",
+          "lastModifiedBy": "38db1e0d-0eab-4d80-91ef-8ac385645110",
+          "lastModifiedByType": "Application"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/Microsoft.Resources/deployments/00000/validate?api-version=2020-06-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "1511",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-mgmt-resource/15.0.0 Python/3.9.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "template": {
+            "resources": [
+              {
+                "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
+                "name": "00000/azureml_anonymous/0.0.1",
+                "location": "centraluseuap",
+                "apiversion": "2023-03-01-preview",
+                "properties": {
+                  "description": "This is the basic command component",
+                  "properties": {},
+                  "tags": {
+                    "tag": "tagvalue",
+                    "owner": "sdkteam"
+                  },
+                  "isAnonymous": false,
+                  "isArchived": false,
+                  "componentSpec": {
+                    "command": "echo Hello World \u0026 echo $[[${{inputs.component_in_number}}]] \u0026 echo ${{inputs.component_in_path}} \u0026 echo ${{outputs.component_out_path}} \u003E ${{outputs.component_out_path}}/component_in_number \u0026 echo ${{inputs.non_existent}} \u0026 echo ${{outputs.non_existent}}",
+                    "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+                    "description": "This is the basic command component",
+                    "tags": {
+                      "tag": "tagvalue",
+                      "owner": "sdkteam"
+                    },
+                    "version": "0.0.1",
+                    "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json",
+                    "display_name": "CommandComponentBasic",
+                    "is_deterministic": true,
+                    "inputs": {
+                      "component_in_number": {
+                        "type": "number",
+                        "optional": true,
+                        "default": "10.99",
+                        "description": "A number"
+                      },
+                      "component_in_path": {
+                        "type": "uri_folder",
+                        "description": "A path"
+                      }
+                    },
+                    "outputs": {
+                      "component_out_path": {
+                        "type": "uri_folder"
+                      }
+                    },
+                    "type": "command",
+                    "_source": "YAML.COMPONENT"
+                  }
+                }
+              }
+            ],
+            "contentVersion": "1.0.0.0",
+            "parameters": {},
+            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#"
+          },
+          "mode": "Incremental"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Apr 2023 03:42:22 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "691bf974-404b-4f89-8dde-8293a2332221",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-routing-request-id": "JAPANEAST:20230414T034223Z:691bf974-404b-4f89-8dde-8293a2332221"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Resources/deployments/00000",
+        "name": "00000",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "templateHash": "798694343879920685",
+          "parameters": {},
+          "mode": "Incremental",
+          "provisioningState": "Succeeded",
+          "timestamp": "0001-01-01T00:00:00Z",
+          "duration": "PT0S",
+          "correlationId": "691bf974-404b-4f89-8dde-8293a2332221",
+          "providers": [
+            {
+              "namespace": "Microsoft.MachineLearningServices",
+              "resourceTypes": [
+                {
+                  "resourceType": "workspaces/components/versions",
+                  "locations": [
+                    "centraluseuap"
+                  ]
+                }
+              ]
+            }
+          ],
+          "dependencies": [],
+          "validatedResources": [
+            {
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/0.0.1"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import os
 from devtools_testutils import AzureRecordedTestCase, is_live
+
 from azure.communication.identity._shared.utils import parse_connection_str
 from msal import PublicClientApplication
 

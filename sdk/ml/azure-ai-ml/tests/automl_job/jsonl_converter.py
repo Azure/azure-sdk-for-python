@@ -54,7 +54,6 @@ def convert_mask_to_polygon(
     simplified_contours = []
 
     for contour in contours:
-
         # Iteratively reduce polygon points, if necessary
         if max_polygon_points is not None:
             simplify_factor = 0
@@ -73,7 +72,6 @@ def convert_mask_to_polygon(
 
 
 def _normalize_contour(contours, image_shape):
-
     height, width = image_shape[0], image_shape[1]
 
     for contour in contours:
@@ -84,7 +82,6 @@ def _normalize_contour(contours, image_shape):
 
 
 def binarise_mask(mask_fname):
-
     mask = Image.open(mask_fname)
     mask = np.array(mask)
     # instances are encoded as different colors
@@ -98,7 +95,6 @@ def binarise_mask(mask_fname):
 
 
 def parsing_mask(mask_fname):
-
     # For this particular dataset, initially each mask was merged (based on binary mask of each object)
     # in the order of the bounding boxes described in the corresponding PASCAL VOC annotation file.
     # Therefore, we have to extract each binary mask which is in the order of objects in the annotation file.
@@ -106,7 +102,6 @@ def parsing_mask(mask_fname):
     binary_masks = binarise_mask(mask_fname)
     polygons = []
     for bi_mask in binary_masks:
-
         if len(bi_mask.shape) == 2:
             bi_mask = bi_mask[np.newaxis, :]
         polygon = convert_mask_to_polygon(bi_mask)
@@ -116,7 +111,6 @@ def parsing_mask(mask_fname):
 
 
 def convert_mask_in_VOC_to_jsonl(base_dir, remote_path, training_mltable_path, validation_mltable_path):
-
     src_images = base_dir
     train_validation_ratio = 5
 

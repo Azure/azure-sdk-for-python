@@ -1,0 +1,112 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+
+display_name: invalid_pipeline_with_do_while_node
+experiment_name: invalid_pipeline_with_do_while_node
+type: pipeline
+
+inputs:
+  job_in_path:
+    type: uri_file
+    path: ./pipeline.py
+  job_in_number: 3
+
+outputs:
+  output_in_number:
+    mode: upload
+  output_in_path:
+    mode: upload
+
+settings:
+  default_datastore: azureml:workspaceblobstore
+  default_compute: azureml:cpu-cluster
+  continue_on_step_failure: false
+  force_rerun: true
+
+jobs:
+  invalid_condition_body:
+    type: pipeline
+    inputs:
+      job_in_number: ${{parent.inputs.job_in_number}}
+      job_in_number_1: ${{parent.inputs.job_in_number}}
+      job_in_path: ${{parent.inputs.job_in_path}}
+    component: ./components/do_while_body_pipeline_component.yml
+  invalid_condition:
+    type: do_while
+    body: ${{parent.jobs.invalid_condition_body}}
+    limits:
+      max_iteration_count: 5
+    condition: false
+    mapping:
+      output_in_number:
+        - job_in_number
+        - job_in_number_1
+      output_in_path: job_in_path
+
+  empty_mapping_body:
+    type: pipeline
+    component: ./components/do_while_body_pipeline_component.yml
+    inputs:
+      job_in_number: ${{parent.inputs.job_in_number}}
+      job_in_number_1: ${{parent.inputs.job_in_number}}
+      job_in_path: ${{parent.inputs.job_in_path}}
+  empty_mapping:
+    type: do_while
+    body: ${{parent.jobs.empty_mapping_body}}
+    limits:
+      max_iteration_count: 5
+    condition: is_number_larger_than_zero
+
+  out_of_range_body:
+    type: pipeline
+    inputs:
+      job_in_number: ${{parent.inputs.job_in_number}}
+      job_in_number_1: ${{parent.inputs.job_in_number}}
+      job_in_path: ${{parent.inputs.job_in_path}}
+    component: ./components/do_while_body_pipeline_component.yml
+  out_of_range_max_iteration_count:
+    type: do_while
+    body: ${{parent.jobs.out_of_range_body}}
+    limits:
+      max_iteration_count: 1001
+    condition: is_number_larger_than_zero
+    mapping:
+      output_in_number:
+        - job_in_number
+        - job_in_number_1
+      output_in_path: job_in_path
+
+  empty_max_iteration_body:
+    type: pipeline
+    inputs:
+      job_in_number: ${{parent.inputs.job_in_number}}
+      job_in_number_1: ${{parent.inputs.job_in_number}}
+      job_in_path: ${{parent.inputs.job_in_path}}
+    component: ./components/do_while_body_pipeline_component.yml
+  empty_max_iteration_count:
+    type: do_while
+    body: ${{parent.jobs.empty_max_iteration_body}}
+    condition: is_number_larger_than_zero
+    mapping:
+      output_in_number:
+        - job_in_number
+        - job_in_number_1
+      output_in_path: job_in_path
+
+  invalid_max_iteration_body:
+    type: pipeline
+    inputs:
+      job_in_number: ${{parent.inputs.job_in_number}}
+      job_in_number_1: ${{parent.inputs.job_in_number}}
+      job_in_path: ${{parent.inputs.job_in_path}}
+    component: ./components/do_while_body_pipeline_component.yml
+  invalid_max_iteration_count:
+    type: do_while
+    body: ${{parent.jobs.invalid_max_iteration_body}}
+    limits:
+      max_iteration_count: ${{parent.inputs.job_in_number}}
+    condition: is_number_larger_than_zero
+    mapping:
+      output_in_number:
+        - job_in_number
+        - job_in_number_1
+      output_in_path: job_in_path

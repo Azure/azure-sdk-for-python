@@ -55,12 +55,27 @@ def main():
                         "sku": {"name": "Standard_B1ls"},
                     }
                 ],
+                "savingsPlansToPurchase": [
+                    {
+                        "properties": {
+                            "appliedScopeProperties": {
+                                "resourceGroupId": "/subscriptions/10000000-0000-0000-0000-000000000000/resourceGroups/testrg"
+                            },
+                            "appliedScopeType": "Single",
+                            "billingScopeId": "/subscriptions/10000000-0000-0000-0000-000000000000",
+                            "commitment": {"amount": 15.23, "currencyCode": "USD", "grain": "Hourly"},
+                            "displayName": "ComputeSavingsPlan",
+                            "term": "P1Y",
+                        },
+                        "sku": {"name": "Compute_Savings_Plan"},
+                    }
+                ],
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/reservations/resource-manager/Microsoft.Capacity/stable/2022-03-01/examples/CalculateExchange.json
+# x-ms-original-file: specification/reservations/resource-manager/Microsoft.Capacity/stable/2022-11-01/examples/CalculateExchange.json
 if __name__ == "__main__":
     main()

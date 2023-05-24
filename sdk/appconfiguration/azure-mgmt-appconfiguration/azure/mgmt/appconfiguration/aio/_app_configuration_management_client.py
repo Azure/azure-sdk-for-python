@@ -11,17 +11,15 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
+from .._serialization import Deserializer, Serializer
 from ._configuration import AppConfigurationManagementClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):
@@ -42,9 +40,9 @@ class AppConfigurationManagementClient(MultiApiClientMixin, _SDKClient):
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The Microsoft Azure subscription ID.
+    :param subscription_id: The Microsoft Azure subscription ID. Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -55,12 +53,11 @@ class AppConfigurationManagementClient(MultiApiClientMixin, _SDKClient):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2022-05-01'
+    DEFAULT_API_VERSION = '2023-03-01'
     _PROFILE_TAG = "azure.mgmt.appconfiguration.AppConfigurationManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
-            'replicas': '2022-03-01-preview',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -72,7 +69,7 @@ class AppConfigurationManagementClient(MultiApiClientMixin, _SDKClient):
         api_version: Optional[str] = None,
         base_url: str = "https://management.azure.com",
         profile: KnownProfiles = KnownProfiles.default,
-        **kwargs  # type: Any
+        **kwargs: Any
     ) -> None:
         self._config = AppConfigurationManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
@@ -91,12 +88,16 @@ class AppConfigurationManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-03-01-preview: :mod:`v2022_03_01_preview.models<azure.mgmt.appconfiguration.v2022_03_01_preview.models>`
            * 2022-05-01: :mod:`v2022_05_01.models<azure.mgmt.appconfiguration.v2022_05_01.models>`
+           * 2023-03-01: :mod:`v2023_03_01.models<azure.mgmt.appconfiguration.v2023_03_01.models>`
         """
         if api_version == '2022-03-01-preview':
             from ..v2022_03_01_preview import models
             return models
         elif api_version == '2022-05-01':
             from ..v2022_05_01 import models
+            return models
+        elif api_version == '2023-03-01':
+            from ..v2023_03_01 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -106,14 +107,18 @@ class AppConfigurationManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-03-01-preview: :class:`ConfigurationStoresOperations<azure.mgmt.appconfiguration.v2022_03_01_preview.aio.operations.ConfigurationStoresOperations>`
            * 2022-05-01: :class:`ConfigurationStoresOperations<azure.mgmt.appconfiguration.v2022_05_01.aio.operations.ConfigurationStoresOperations>`
+           * 2023-03-01: :class:`ConfigurationStoresOperations<azure.mgmt.appconfiguration.v2023_03_01.aio.operations.ConfigurationStoresOperations>`
         """
         api_version = self._get_api_version('configuration_stores')
         if api_version == '2022-03-01-preview':
             from ..v2022_03_01_preview.aio.operations import ConfigurationStoresOperations as OperationClass
         elif api_version == '2022-05-01':
             from ..v2022_05_01.aio.operations import ConfigurationStoresOperations as OperationClass
+        elif api_version == '2023-03-01':
+            from ..v2023_03_01.aio.operations import ConfigurationStoresOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'configuration_stores'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -122,14 +127,18 @@ class AppConfigurationManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-03-01-preview: :class:`KeyValuesOperations<azure.mgmt.appconfiguration.v2022_03_01_preview.aio.operations.KeyValuesOperations>`
            * 2022-05-01: :class:`KeyValuesOperations<azure.mgmt.appconfiguration.v2022_05_01.aio.operations.KeyValuesOperations>`
+           * 2023-03-01: :class:`KeyValuesOperations<azure.mgmt.appconfiguration.v2023_03_01.aio.operations.KeyValuesOperations>`
         """
         api_version = self._get_api_version('key_values')
         if api_version == '2022-03-01-preview':
             from ..v2022_03_01_preview.aio.operations import KeyValuesOperations as OperationClass
         elif api_version == '2022-05-01':
             from ..v2022_05_01.aio.operations import KeyValuesOperations as OperationClass
+        elif api_version == '2023-03-01':
+            from ..v2023_03_01.aio.operations import KeyValuesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'key_values'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -138,14 +147,18 @@ class AppConfigurationManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-03-01-preview: :class:`Operations<azure.mgmt.appconfiguration.v2022_03_01_preview.aio.operations.Operations>`
            * 2022-05-01: :class:`Operations<azure.mgmt.appconfiguration.v2022_05_01.aio.operations.Operations>`
+           * 2023-03-01: :class:`Operations<azure.mgmt.appconfiguration.v2023_03_01.aio.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2022-03-01-preview':
             from ..v2022_03_01_preview.aio.operations import Operations as OperationClass
         elif api_version == '2022-05-01':
             from ..v2022_05_01.aio.operations import Operations as OperationClass
+        elif api_version == '2023-03-01':
+            from ..v2023_03_01.aio.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -154,14 +167,18 @@ class AppConfigurationManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-03-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.appconfiguration.v2022_03_01_preview.aio.operations.PrivateEndpointConnectionsOperations>`
            * 2022-05-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.appconfiguration.v2022_05_01.aio.operations.PrivateEndpointConnectionsOperations>`
+           * 2023-03-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.appconfiguration.v2023_03_01.aio.operations.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
         if api_version == '2022-03-01-preview':
             from ..v2022_03_01_preview.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
         elif api_version == '2022-05-01':
             from ..v2022_05_01.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2023-03-01':
+            from ..v2023_03_01.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -170,14 +187,18 @@ class AppConfigurationManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-03-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.appconfiguration.v2022_03_01_preview.aio.operations.PrivateLinkResourcesOperations>`
            * 2022-05-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.appconfiguration.v2022_05_01.aio.operations.PrivateLinkResourcesOperations>`
+           * 2023-03-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.appconfiguration.v2023_03_01.aio.operations.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
         if api_version == '2022-03-01-preview':
             from ..v2022_03_01_preview.aio.operations import PrivateLinkResourcesOperations as OperationClass
         elif api_version == '2022-05-01':
             from ..v2022_05_01.aio.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2023-03-01':
+            from ..v2023_03_01.aio.operations import PrivateLinkResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -185,12 +206,16 @@ class AppConfigurationManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2022-03-01-preview: :class:`ReplicasOperations<azure.mgmt.appconfiguration.v2022_03_01_preview.aio.operations.ReplicasOperations>`
+           * 2023-03-01: :class:`ReplicasOperations<azure.mgmt.appconfiguration.v2023_03_01.aio.operations.ReplicasOperations>`
         """
         api_version = self._get_api_version('replicas')
         if api_version == '2022-03-01-preview':
             from ..v2022_03_01_preview.aio.operations import ReplicasOperations as OperationClass
+        elif api_version == '2023-03-01':
+            from ..v2023_03_01.aio.operations import ReplicasOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'replicas'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     async def close(self):

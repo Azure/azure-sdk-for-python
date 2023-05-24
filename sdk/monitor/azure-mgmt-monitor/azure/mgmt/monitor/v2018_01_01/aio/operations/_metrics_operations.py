@@ -38,7 +38,7 @@ class MetricsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2018_01_01.aio.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2018_01_01.aio.MonitorManagementClient`'s
         :attr:`metrics` attribute.
     """
 
@@ -106,13 +106,13 @@ class MetricsOperations:
         :param result_type: Reduces the set of data collected. The syntax allowed depends on the
          operation. See the operation's description for details. Known values are: "Data" and
          "Metadata". Default value is None.
-        :type result_type: str or ~$(python-base-namespace).v2018_01_01.models.ResultType
+        :type result_type: str or ~azure.mgmt.monitor.v2018_01_01.models.ResultType
         :param metricnamespace: Metric namespace to query metric definitions for. Default value is
          None.
         :type metricnamespace: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Response or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2018_01_01.models.Response
+        :rtype: ~azure.mgmt.monitor.v2018_01_01.models.Response
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -126,8 +126,8 @@ class MetricsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Response]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))
+        cls: ClsType[_models.Response] = kwargs.pop("cls", None)
 
         request = build_list_request(
             resource_uri=resource_uri,
@@ -146,10 +146,11 @@ class MetricsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -166,4 +167,4 @@ class MetricsOperations:
 
         return deserialized
 
-    list.metadata = {"url": "/{resourceUri}/providers/Microsoft.Insights/metrics"}  # type: ignore
+    list.metadata = {"url": "/{resourceUri}/providers/Microsoft.Insights/metrics"}

@@ -63,6 +63,8 @@ jobs:
     - template: ../variables/globals.yml
     - name: PROXY_URL
       value: "http://localhost:5000"
+    - name: TEST_PROXY_FOLDER
+      value: $(Build.SourcesDirectory)/../.tmp_code_path/azure-sdk-for-python
 
     # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
     steps:
@@ -80,8 +82,9 @@ jobs:
           artifactName: 'packages'
           targetPath: $(Build.ArtifactStagingDirectory)
 
-      - script: |
-          pip install -r eng/regression_tools.txt
+      - pwsh: |
+          mkdir -p $(TEST_PROXY_FOLDER)
+          python -m pip install -r eng/regression_tools.txt
         displayName: 'Prep Environment'
 
       - template: /eng/common/testproxy/test-proxy-tool.yml

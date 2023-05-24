@@ -9,8 +9,7 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
-    ConnectionAuthType,
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ManagedIdentityAuthTypeWorkspaceConnectionProperties,
     NoneAuthTypeWorkspaceConnectionProperties,
     PATAuthTypeWorkspaceConnectionProperties,
@@ -18,8 +17,12 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     ServicePrincipalAuthTypeWorkspaceConnectionProperties,
     UsernamePasswordAuthTypeWorkspaceConnectionProperties,
 )
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    ConnectionAuthType,
+    AccessKeyAuthTypeWorkspaceConnectionProperties,
 )
 from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
 from azure.ai.ml._utils._experimental import experimental
@@ -31,6 +34,7 @@ from azure.ai.ml.entities._credentials import (
     SasTokenConfiguration,
     ServicePrincipalConfiguration,
     UsernamePasswordConfiguration,
+    AccessKeyConfiguration,
 )
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
@@ -39,23 +43,26 @@ from azure.ai.ml.entities._util import load_from_dict
 
 @experimental
 class WorkspaceConnection(Resource):
-    """Azure ML workspace connection provides a secure way to store
-    authentication and configuration information needed to connect and interact
-    with the external resources.
+    """Azure ML workspace connection provides a secure way to store authentication and configuration information needed
+    to connect and interact with the external resources.
 
     :param name: Name of the workspace connection.
     :type name: str
     :param target: The URL or ARM resource ID of the external resource.
     :type target: str
+    :param expiryTime: The expiry time of the workspace connection secret
+    :type expiryTime: str
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: Union[
         ~azure.ai.ml.entities.PatTokenConfiguration, ~azure.ai.ml.entities.SasTokenConfiguration,
         ~azure.ai.ml.entities.UsernamePasswordConfiguration, ~azure.ai.ml.entities.ManagedIdentityConfiguration
-        ~azure.ai.ml.entities.ServicePrincipalConfiguration
+        ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.AccessKeyConfiguration
         ]
     :param type: The category of external resource for this connection.
-    :type type: The type of workspace connection, possible values are:
-        ["git", "python_feed", "container_registry", "feature_store"]
+    :type type: The type of workspace connection, possible values are: [
+        "git", "python_feed", "container_registry", "feature_store", "s3", "snowflake",
+         "azure_sql_db", "azure_synapse_analytics", "azure_my_sql_db", "azure_postgres_db"
+          ]
     """
 
     def __init__(
@@ -70,20 +77,22 @@ class WorkspaceConnection(Resource):
             UsernamePasswordConfiguration,
             ManagedIdentityConfiguration,
             ServicePrincipalConfiguration,
+            AccessKeyConfiguration,
         ],
+        expiryTime: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
         **kwargs,
     ):
         self.type = type
         self._target = target
+        self._expiryTime = expiryTime
         self._credentials = credentials
         self._metadata = json.loads(json.dumps(metadata))
         super().__init__(**kwargs)
 
     @property
     def type(self) -> str:
-        """Type of the workspace connection, supported are 'git', 'python_feed'
-        and 'container_registry'.
+        """Type of the workspace connection, supported are 'git', 'python_feed' and 'container_registry'.
 
         :return: Type of the job.
         :rtype: str
@@ -95,6 +104,15 @@ class WorkspaceConnection(Resource):
         if not value:
             return
         self._type = camel_to_snake(value)
+
+    @property
+    def expiryTime(self) -> str:
+        """Secret expiry time for workspace connection.
+
+        :return: Secret expiry time for workspace connection.
+        :rtype: str
+        """
+        return self._expiryTime
 
     @property
     def target(self) -> str:
@@ -114,6 +132,7 @@ class WorkspaceConnection(Resource):
         UsernamePasswordConfiguration,
         ManagedIdentityConfiguration,
         ServicePrincipalConfiguration,
+        AccessKeyConfiguration,
     ]:
         """Credentials for workspace connection.
 
@@ -124,6 +143,7 @@ class WorkspaceConnection(Resource):
             UsernamePasswordCredentialsConfiguration,
             ManagedIdentityConfiguration,
             ServicePrincipalCredentialsConfiguration,
+            AccessKeyCredentialsConfiguration,
         ]
         """
         return self._credentials
@@ -192,7 +212,8 @@ class WorkspaceConnection(Resource):
             credentials = ManagedIdentityConfiguration._from_workspace_connection_rest_object(properties.credentials)
         if properties.auth_type == ConnectionAuthType.USERNAME_PASSWORD:
             credentials = UsernamePasswordConfiguration._from_workspace_connection_rest_object(properties.credentials)
-
+        if properties.auth_type == ConnectionAuthType.ACCESS_KEY:
+            credentials = AccessKeyConfiguration._from_workspace_connection_rest_object(properties.credentials)
         if properties.auth_type == ConnectionAuthType.SERVICE_PRINCIPAL:
             credentials = ServicePrincipalConfiguration._from_workspace_connection_rest_object(properties.credentials)
 
@@ -200,10 +221,11 @@ class WorkspaceConnection(Resource):
             id=rest_obj.id,
             name=rest_obj.name,
             target=properties.target,
+            expiryTime=properties.expiry_time,
             creation_context=SystemData._from_rest_object(rest_obj.system_data) if rest_obj.system_data else None,
             type=camel_to_snake(properties.category),
             credentials=credentials,
-            metadata=properties.metadata,
+            metadata=properties.metadata if hasattr(properties, "metadata") else None,
         )
 
         return workspace_connection
@@ -221,6 +243,8 @@ class WorkspaceConnection(Resource):
             workspace_connection_properties_class = ManagedIdentityAuthTypeWorkspaceConnectionProperties
         elif auth_type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD):
             workspace_connection_properties_class = UsernamePasswordAuthTypeWorkspaceConnectionProperties
+        elif auth_type == camel_to_snake(ConnectionAuthType.ACCESS_KEY):
+            workspace_connection_properties_class = AccessKeyAuthTypeWorkspaceConnectionProperties
         elif auth_type == camel_to_snake(ConnectionAuthType.SAS):
             workspace_connection_properties_class = SASAuthTypeWorkspaceConnectionProperties
         elif auth_type == camel_to_snake(ConnectionAuthType.SERVICE_PRINCIPAL):
@@ -232,6 +256,7 @@ class WorkspaceConnection(Resource):
             target=self.target,
             credentials=self.credentials._to_workspace_connection_rest_object(),
             metadata=self.metadata,
+            expiry_time=self.expiryTime,
             # auth_type=auth_type,
             category=_snake_to_camel(self.type),
         )

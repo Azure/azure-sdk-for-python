@@ -74,26 +74,26 @@ def _build_auth(credential):
 def _build_connection_policy(kwargs):
     # type: (Dict[str, Any]) -> ConnectionPolicy
     # pylint: disable=protected-access
-    policy = kwargs.pop('connection_policy', None) or ConnectionPolicy()
+    policy = kwargs.pop('connection_policy', ConnectionPolicy())
 
     # Connection config
-    policy.RequestTimeout = kwargs.pop('request_timeout', None) or \
-        kwargs.pop('connection_timeout', None) or \
-        policy.RequestTimeout
-    policy.ConnectionMode = kwargs.pop('connection_mode', None) or policy.ConnectionMode
-    policy.ProxyConfiguration = kwargs.pop('proxy_config', None) or policy.ProxyConfiguration
-    policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery') \
-        if 'enable_endpoint_discovery' in kwargs.keys() else policy.EnableEndpointDiscovery
-    policy.PreferredLocations = kwargs.pop('preferred_locations', None) or policy.PreferredLocations
-    policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', None) or \
-        policy.UseMultipleWriteLocations
+    # `request_timeout` is supported as a legacy parameter later replaced by `connection_timeout`
+    if 'request_timeout' in kwargs:
+        policy.RequestTimeout = kwargs.pop('request_timeout') / 1000.0
+    else:
+        policy.RequestTimeout = kwargs.pop('connection_timeout', policy.RequestTimeout)
+    policy.ConnectionMode = kwargs.pop('connection_mode', policy.ConnectionMode)
+    policy.ProxyConfiguration = kwargs.pop('proxy_config', policy.ProxyConfiguration)
+    policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', policy.EnableEndpointDiscovery)
+    policy.PreferredLocations = kwargs.pop('preferred_locations', policy.PreferredLocations)
+    policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', policy.UseMultipleWriteLocations)
 
     # SSL config
     verify = kwargs.pop('connection_verify', None)
     policy.DisableSSLVerification = not bool(verify if verify is not None else True)
-    ssl = kwargs.pop('ssl_config', None) or policy.SSLConfiguration
+    ssl = kwargs.pop('ssl_config', policy.SSLConfiguration)
     if ssl:
-        ssl.SSLCertFile = kwargs.pop('connection_cert', None) or ssl.SSLCertFile
+        ssl.SSLCertFile = kwargs.pop('connection_cert', ssl.SSLCertFile)
         ssl.SSLCaCerts = verify or ssl.SSLCaCerts
         policy.SSLConfiguration = ssl
 
@@ -139,8 +139,9 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     :param credential: Can be the account key, or a dictionary of resource tokens.
     :type credential: Union[str, Dict[str, str], ~azure.core.credentials.TokenCredential]
     :param str consistency_level: Consistency level to use for the session. The default value is None (Account level).
+        More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels
     :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
-    :keyword int request_timeout: The HTTP request timeout in milliseconds.
+    :keyword int connection_timeout: The HTTP request timeout in seconds.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
     :keyword proxy_config: Connection proxy configuration.
     :paramtype proxy_config: ~azure.cosmos.ProxyConfiguration
@@ -159,6 +160,10 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
         geo-replicated database accounts. (Default: True)
     :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
+    :keyword bool enable_diagnostics_logging: Enable the CosmosHttpLogging policy.
+        Must be used along with a logger to work.
+    :keyword ~logging.Logger logger: Logger to be used for collecting request diagnostics. Can be passed in at client
+        level (to log all requests) or at a single request level. Requests will be logged at INFO level.
 
     .. admonition:: Example:
 

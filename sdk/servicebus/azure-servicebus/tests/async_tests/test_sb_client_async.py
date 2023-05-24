@@ -4,12 +4,17 @@
 # license information.
 #--------------------------------------------------------------------------
 
-
 import logging
+import sys
 import time
+import asyncio
 import pytest
+import hmac
+import hashlib
+import base64
+from urllib.parse import quote as url_parse_quote
 
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, AccessToken
 from azure.mgmt.servicebus.models import AccessRights
 from azure.servicebus.aio import ServiceBusClient, ServiceBusSender, ServiceBusReceiver
 from azure.servicebus import ServiceBusMessage
@@ -17,9 +22,10 @@ from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredenti
 from azure.servicebus.exceptions import (
     ServiceBusError,
     ServiceBusAuthenticationError,
-    ServiceBusAuthorizationError
+    ServiceBusAuthorizationError,
+    ServiceBusConnectionError
 )
-from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer, 
     ServiceBusTopicPreparer, 
@@ -28,25 +34,31 @@ from servicebus_preparer import (
     ServiceBusQueueAuthorizationRulePreparer,
     CachedServiceBusQueuePreparer,
     CachedServiceBusTopicPreparer,
-    CachedServiceBusSubscriptionPreparer
+    CachedServiceBusSubscriptionPreparer,
+    CachedServiceBusResourceGroupPreparer,
+    SERVICEBUS_ENDPOINT_SUFFIX
 )
-from utilities import get_logger
+from utilities import get_logger, uamqp_transport as get_uamqp_transport, ArgPasserAsync
+
+uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 
 _logger = get_logger(logging.DEBUG)
 
-class ServiceBusClientAsyncTests(AzureMgmtTestCase):
+class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
 
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    async def test_sb_client_bad_credentials_async(self, servicebus_namespace, servicebus_queue, **kwargs):
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_sb_client_bad_credentials_async(self, uamqp_transport, *, servicebus_namespace, servicebus_queue, **kwargs):
         client = ServiceBusClient(
-            fully_qualified_namespace=servicebus_namespace.name + '.servicebus.windows.net',
+            fully_qualified_namespace=f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}",
             credential=ServiceBusSharedKeyCredential('invalid', 'invalid'),
-            logging_enable=False)
+            logging_enable=False, uamqp_transport=uamqp_transport)
         async with client:
             with pytest.raises(ServiceBusAuthenticationError):
                 async with client.get_queue_sender(servicebus_queue.name) as sender:
@@ -55,12 +67,14 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    async def test_sb_client_bad_namespace_async(self, **kwargs):
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_sb_client_bad_namespace_async(self, uamqp_transport, **kwargs):
 
         client = ServiceBusClient(
-            fully_qualified_namespace='invalid.servicebus.windows.net',
+            fully_qualified_namespace=f'invalid{SERVICEBUS_ENDPOINT_SUFFIX}',
             credential=ServiceBusSharedKeyCredential('invalid', 'invalid'),
-            logging_enable=False)
+            logging_enable=False, uamqp_transport=uamqp_transport)
         async with client:
             with pytest.raises(ServiceBusError):
                 async with client.get_queue_sender('invalidqueue') as sender:
@@ -69,12 +83,21 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_sb_client_bad_entity_async(self):
-        fake_str = "Endpoint=sb://mock.servicebus.windows.net/;" \
-                   "SharedAccessKeyName=mock;SharedAccessKey=mock;EntityPath=mockentity"
-        fake_client = ServiceBusClient.from_connection_string(fake_str)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_sb_client_bad_entity_async(self, uamqp_transport, *, servicebus_namespace_connection_string=None, **kwargs):
+        client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string, uamqp_transport=uamqp_transport)
+
+        async with client:
+            with pytest.raises(ServiceBusAuthenticationError):
+                async with client.get_queue_sender("invalid") as sender:
+                    await sender.send_messages(ServiceBusMessage("test"))
+
+        fake_str = f"Endpoint=sb://mock{SERVICEBUS_ENDPOINT_SUFFIX}/;" \
+                   f"SharedAccessKeyName=mock;SharedAccessKey=mock;EntityPath=mockentity"
+        fake_client = ServiceBusClient.from_connection_string(fake_str, uamqp_transport=uamqp_transport)
 
         with pytest.raises(ValueError):
             fake_client.get_queue_sender('queue')
@@ -93,8 +116,8 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
         fake_client.get_topic_sender('mockentity')
         fake_client.get_subscription_receiver('mockentity', 'subscription')
 
-        fake_str = "Endpoint=sb://mock.servicebus.windows.net/;" \
-                   "SharedAccessKeyName=mock;SharedAccessKey=mock"
+        fake_str = f"Endpoint=sb://mock{SERVICEBUS_ENDPOINT_SUFFIX}/;" \
+                   f"SharedAccessKeyName=mock;SharedAccessKey=mock"
         fake_client = ServiceBusClient.from_connection_string(fake_str)
         fake_client.get_queue_sender('queue')
         fake_client.get_queue_receiver('queue')
@@ -104,12 +127,14 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @ServiceBusNamespaceAuthorizationRulePreparer(name_prefix='servicebustest', access_rights=[AccessRights.listen])
-    async def test_sb_client_readonly_credentials(self, servicebus_authorization_rule_connection_string, servicebus_queue, **kwargs):
-        client = ServiceBusClient.from_connection_string(servicebus_authorization_rule_connection_string)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_sb_client_readonly_credentials(self, uamqp_transport, *, servicebus_authorization_rule_connection_string=None, servicebus_queue=None, **kwargs):
+        client = ServiceBusClient.from_connection_string(servicebus_authorization_rule_connection_string, uamqp_transport=uamqp_transport)
 
         async with client:
             async with client.get_queue_receiver(servicebus_queue.name) as receiver:
@@ -122,12 +147,14 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @ServiceBusNamespaceAuthorizationRulePreparer(name_prefix='servicebustest', access_rights=[AccessRights.send])
-    async def test_sb_client_writeonly_credentials_async(self, servicebus_authorization_rule_connection_string, servicebus_queue, **kwargs):
-        client = ServiceBusClient.from_connection_string(servicebus_authorization_rule_connection_string)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_sb_client_writeonly_credentials_async(self, uamqp_transport, *, servicebus_authorization_rule_connection_string=None, servicebus_queue=None, **kwargs):
+        client = ServiceBusClient.from_connection_string(servicebus_authorization_rule_connection_string, uamqp_transport=uamqp_transport)
 
         async with client:
             with pytest.raises(ServiceBusError):
@@ -143,13 +170,15 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer()
+    @CachedServiceBusResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
     @CachedServiceBusSubscriptionPreparer(name_prefix='servicebustest')
-    async def test_async_sb_client_close_spawned_handlers(self, servicebus_namespace_connection_string, servicebus_queue, servicebus_topic, servicebus_subscription, **kwargs):
-        client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_async_sb_client_close_spawned_handlers(self, uamqp_transport, *, servicebus_namespace_connection_string, servicebus_queue, servicebus_topic, servicebus_subscription, **kwargs):
+        client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string, uamqp_transport=uamqp_transport)
 
         await client.close()
 
@@ -233,15 +262,17 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusNamespaceAuthorizationRulePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest_qone', parameter_name='wrong_queue', dead_lettering_on_message_expiration=True)
     @ServiceBusQueuePreparer(name_prefix='servicebustest_qtwo', dead_lettering_on_message_expiration=True)
     @ServiceBusQueueAuthorizationRulePreparer(name_prefix='servicebustest_qtwo')
-    async def test_sb_client_incorrect_queue_conn_str_async(self, servicebus_queue_authorization_rule_connection_string, servicebus_queue, wrong_queue, **kwargs):
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_sb_client_incorrect_queue_conn_str_async(self, uamqp_transport, *, servicebus_queue_authorization_rule_connection_string, servicebus_queue, wrong_queue, **kwargs):
         
-        client = ServiceBusClient.from_connection_string(servicebus_queue_authorization_rule_connection_string)
+        client = ServiceBusClient.from_connection_string(servicebus_queue_authorization_rule_connection_string, uamqp_transport=uamqp_transport)
         async with client:
             # Validate that the wrong sender/receiver queues with the right credentials fail.
             with pytest.raises(ValueError):
@@ -289,66 +320,112 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer()
+    @CachedServiceBusResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
     async def test_client_sas_credential_async(self,
-                                   servicebus_queue,
-                                   servicebus_namespace,
-                                   servicebus_namespace_key_name,
-                                   servicebus_namespace_primary_key,
-                                   servicebus_namespace_connection_string,
+                                   uamqp_transport,
+                                   *,
+                                   servicebus_queue=None,
+                                   servicebus_namespace=None,
+                                   servicebus_namespace_key_name=None,
+                                   servicebus_namespace_primary_key=None,
+                                   servicebus_namespace_connection_string=None,
                                    **kwargs):
         # This should "just work" to validate known-good.
         credential = ServiceBusSharedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
-        hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
+        hostname = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         auth_uri = "sb://{}/{}".format(hostname, servicebus_queue.name)
         token = (await credential.get_token(auth_uri)).token
 
         # Finally let's do it with SAS token + conn str
-        token_conn_str = "Endpoint=sb://{}/;SharedAccessSignature={};".format(hostname, token.decode())
+        token_conn_str = "Endpoint=sb://{}/;SharedAccessSignature={};".format(hostname, token)
 
-        client = ServiceBusClient.from_connection_string(token_conn_str)
+        client = ServiceBusClient.from_connection_string(token_conn_str, uamqp_transport=uamqp_transport)
         async with client:
             assert len(client._handlers) == 0
             async with client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
 
+        def generate_sas_token(uri, sas_name, sas_value, token_ttl):
+            """Performs the signing and encoding needed to generate a sas token from a sas key."""
+            sas = sas_value.encode('utf-8')
+            expiry = str(int(time.time() + token_ttl))
+            string_to_sign = (uri + '\n' + expiry).encode('utf-8')
+            signed_hmac_sha256 = hmac.HMAC(sas, string_to_sign, hashlib.sha256)
+            signature = url_parse_quote(base64.b64encode(signed_hmac_sha256.digest()))
+            return 'SharedAccessSignature sr={}&sig={}&se={}&skn={}'.format(uri, signature, expiry, sas_name)
+
+        class CustomizedSASCredential(object):
+            def __init__(self, token, expiry):
+                """
+                :param str token: The token string
+                :param float expiry: The epoch timestamp
+                """
+                self.token = token
+                self.expiry = expiry
+                self.token_type = b"servicebus.windows.net:sastoken"
+
+            async def get_token(self, *scopes, **kwargs):
+                """
+                This method is automatically called when token is about to expire.
+                """
+                return AccessToken(self.token, self.expiry)
+
+        token_ttl = 5  # seconds
+        sas_token = generate_sas_token(
+            auth_uri, servicebus_namespace_key_name, servicebus_namespace_primary_key, token_ttl
+        )
+        credential=CustomizedSASCredential(sas_token, time.time() + token_ttl)
+
+        async with ServiceBusClient(hostname, credential, uamqp_transport=uamqp_transport) as client:
+            sender = client.get_queue_sender(queue_name=servicebus_queue.name)
+            await asyncio.sleep(10)
+            with pytest.raises(ServiceBusAuthenticationError):
+                async with sender:
+                    message = ServiceBusMessage("Single Message")
+                    await sender.send_messages(message)
+
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer()
+    @CachedServiceBusResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
     async def test_client_credential_async(self,
-                                   servicebus_queue,
-                                   servicebus_namespace,
-                                   servicebus_namespace_key_name,
-                                   servicebus_namespace_primary_key,
-                                   servicebus_namespace_connection_string,
+                                   uamqp_transport,
+                                   *,
+                                   servicebus_queue=None,
+                                   servicebus_namespace=None,
+                                   servicebus_namespace_key_name=None,
+                                   servicebus_namespace_primary_key=None,
+                                   servicebus_namespace_connection_string=None,
                                    **kwargs):
         # This should "just work" to validate known-good.
         credential = ServiceBusSharedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
-        hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
+        hostname = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
 
-        client = ServiceBusClient(hostname, credential)
+        client = ServiceBusClient(hostname, credential, uamqp_transport=uamqp_transport)
         async with client:
             assert len(client._handlers) == 0
             async with client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
 
-        hostname = "sb://{}.servicebus.windows.net".format(servicebus_namespace.name)
+        hostname = f"sb://{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
 
-        client = ServiceBusClient(hostname, credential)
+        client = ServiceBusClient(hostname, credential, uamqp_transport=uamqp_transport)
         async with client:
             assert len(client._handlers) == 0
             async with client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
 
-        hostname = "https://{}.servicebus.windows.net \
-        ".format(servicebus_namespace.name)
+        hostname = f"https://{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
 
-        client = ServiceBusClient(hostname, credential)
+        client = ServiceBusClient(hostname, credential, uamqp_transport=uamqp_transport)
         async with client:
             assert len(client._handlers) == 0
             async with client.get_queue_sender(servicebus_queue.name) as sender:
@@ -357,25 +434,29 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer()
+    @CachedServiceBusResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
     async def test_client_azure_sas_credential_async(self,
-                                   servicebus_queue,
-                                   servicebus_namespace,
-                                   servicebus_namespace_key_name,
-                                   servicebus_namespace_primary_key,
-                                   servicebus_namespace_connection_string,
+                                   uamqp_transport,
+                                   *,
+                                   servicebus_queue=None,
+                                   servicebus_namespace=None,
+                                   servicebus_namespace_key_name=None,
+                                   servicebus_namespace_primary_key=None,
+                                   servicebus_namespace_connection_string=None,
                                    **kwargs):
         # This should "just work" to validate known-good.
         credential = ServiceBusSharedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
-        hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
+        hostname = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         auth_uri = "sb://{}/{}".format(hostname, servicebus_queue.name)
-        token = (await credential.get_token(auth_uri)).token.decode()
+        token = (await credential.get_token(auth_uri)).token
 
         credential = AzureSasCredential(token)
 
-        client = ServiceBusClient(hostname, credential)
+        client = ServiceBusClient(hostname, credential, uamqp_transport=uamqp_transport)
         async with client:
             assert len(client._handlers) == 0
             async with client.get_queue_sender(servicebus_queue.name) as sender:
@@ -384,20 +465,24 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer()
+    @CachedServiceBusResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
-    async def test_client_named_key_credential_async(self,
-                                   servicebus_queue,
-                                   servicebus_namespace,
-                                   servicebus_namespace_key_name,
-                                   servicebus_namespace_primary_key,
-                                   servicebus_namespace_connection_string,
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_azure_named_key_credential_async(self,
+                                   uamqp_transport,
+                                   *,
+                                   servicebus_queue=None,
+                                   servicebus_namespace=None,
+                                   servicebus_namespace_key_name=None,
+                                   servicebus_namespace_primary_key=None,
+                                   servicebus_namespace_connection_string=None,
                                    **kwargs):
-        hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
+        hostname = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = AzureNamedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
 
-        client = ServiceBusClient(hostname, credential)
+        client = ServiceBusClient(hostname, credential, uamqp_transport=uamqp_transport)
         async with client:
             async with client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
@@ -414,14 +499,16 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
             async with client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
 
-    async def test_backoff_fixed_retry(self):
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    def test_backoff_fixed_retry(self, uamqp_transport):
         client = ServiceBusClient(
             'fake.host.com',
             'fake_eh',
-            retry_mode='fixed'
+            retry_mode='fixed',
+            uamqp_transport=uamqp_transport
         )
         # queue sender
-        sender = await client.get_queue_sender('fake_name')
+        sender = client.get_queue_sender('fake_name')
         backoff = client._config.retry_backoff_factor
         start_time = time.time()
         sender._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
@@ -432,7 +519,7 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
         assert sleep_time_fixed < backoff * (2 ** 1)
 
         # topic sender
-        sender = await client.get_topic_sender('fake_name')
+        sender = client.get_topic_sender('fake_name')
         backoff = client._config.retry_backoff_factor
         start_time = time.time()
         sender._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
@@ -440,7 +527,7 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
         assert sleep_time_fixed < backoff * (2 ** 1)
 
         # queue receiver 
-        receiver = await client.get_queue_receiver('fake_name')
+        receiver = client.get_queue_receiver('fake_name')
         backoff = client._config.retry_backoff_factor
         start_time = time.time()
         receiver._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
@@ -448,86 +535,102 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
         assert sleep_time_fixed < backoff * (2 ** 1)
 
         # subscription receiver 
-        receiver = await client.get_subscription_receiver('fake_topic', 'fake_sub')
+        receiver = client.get_subscription_receiver('fake_topic', 'fake_sub')
         backoff = client._config.retry_backoff_factor
         start_time = time.time()
         receiver._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
         sleep_time_fixed = time.time() - start_time
         assert sleep_time_fixed < backoff * (2 ** 1)
 
-    async def test_custom_client_id_queue_sender_async(self, **kwargs):
-        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    async def test_custom_client_id_queue_sender_async(self, uamqp_transport, **kwargs):
+        servicebus_connection_str = f'Endpoint=sb://resourcename{SERVICEBUS_ENDPOINT_SUFFIX}/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
         queue_name = "queue_name"
         custom_id = "my_custom_id"
-        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str, uamqp_transport=uamqp_transport)
         async with servicebus_client:
             queue_sender = servicebus_client.get_queue_sender(queue_name=queue_name, client_identifier=custom_id)
             assert queue_sender.client_identifier is not None
             assert queue_sender.client_identifier == custom_id
 
-    async def test_default_client_id_queue_sender(self, **kwargs):
-        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    async def test_default_client_id_queue_sender(self, uamqp_transport, **kwargs):
+        servicebus_connection_str = f'Endpoint=sb://resourcename{SERVICEBUS_ENDPOINT_SUFFIX}/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
         queue_name = "queue_name"
-        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str, uamqp_transport=uamqp_transport)
         async with servicebus_client:
             queue_sender = servicebus_client.get_queue_sender(queue_name=queue_name)
             assert queue_sender.client_identifier is not None
             assert "SBSender" in queue_sender.client_identifier
 
-    async def test_custom_client_id_queue_receiver(self, **kwargs):
-        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    async def test_custom_client_id_queue_receiver(self, uamqp_transport, **kwargs):
+        servicebus_connection_str = f'Endpoint=sb://resourcename{SERVICEBUS_ENDPOINT_SUFFIX}/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
         queue_name = "queue_name"
         custom_id = "my_custom_id"
-        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str, uamqp_transport=uamqp_transport)
         async with servicebus_client:
             queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name, client_identifier=custom_id)
             assert queue_receiver.client_identifier is not None
             assert queue_receiver.client_identifier == custom_id
 
-    async def test_default_client_id_queue_receiver(self, **kwargs):
-        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    async def test_default_client_id_queue_receiver(self, uamqp_transport, **kwargs):
+        servicebus_connection_str = f'Endpoint=sb://resourcename{SERVICEBUS_ENDPOINT_SUFFIX}/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
         queue_name = "queue_name"
-        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str, uamqp_transport=uamqp_transport)
         async with servicebus_client:
             queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name)
             assert queue_receiver.client_identifier is not None
             assert "SBReceiver" in queue_receiver.client_identifier
 
-    async def test_custom_client_id_topic_sender(self, **kwargs):
-        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    async def test_custom_client_id_topic_sender(self, uamqp_transport, **kwargs):
+        servicebus_connection_str = f'Endpoint=sb://resourcename{SERVICEBUS_ENDPOINT_SUFFIX}/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
         custom_id = "my_custom_id"
         topic_name = "topic_name"
-        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str, uamqp_transport=uamqp_transport)
         async with servicebus_client:
             topic_sender = servicebus_client.get_topic_sender(topic_name=topic_name, client_identifier=custom_id)
             assert topic_sender.client_identifier is not None
             assert topic_sender.client_identifier == custom_id
 
-    async def test_default_client_id_topic_sender(self, **kwargs):
-        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    async def test_default_client_id_topic_sender(self, uamqp_transport, **kwargs):
+        servicebus_connection_str = f'Endpoint=sb://resourcename{SERVICEBUS_ENDPOINT_SUFFIX}/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
         topic_name = "topic_name"
-        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str, uamqp_transport=uamqp_transport)
         async with servicebus_client:
             topic_sender = servicebus_client.get_topic_sender(topic_name=topic_name)
             assert topic_sender.client_identifier is not None
             assert "SBSender" in topic_sender.client_identifier
 
-    async def test_default_client_id_subscription_receiver(self, **kwargs):
-        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    async def test_default_client_id_subscription_receiver(self, uamqp_transport, **kwargs):
+        servicebus_connection_str = f'Endpoint=sb://resourcename{SERVICEBUS_ENDPOINT_SUFFIX}/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
         topic_name = "topic_name"
         sub_name = "sub_name"
-        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str, uamqp_transport=uamqp_transport)
         async with servicebus_client:
             subscription_receiver = servicebus_client.get_subscription_receiver(topic_name, sub_name)
             assert subscription_receiver.client_identifier is not None
             assert "SBReceiver" in subscription_receiver.client_identifier
 
-    async def test_custom_client_id_subscription_receiver(self, **kwargs):
-        servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    async def test_custom_client_id_subscription_receiver(self, uamqp_transport, **kwargs):
+        servicebus_connection_str = f'Endpoint=sb://resourcename{SERVICEBUS_ENDPOINT_SUFFIX}/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
         custom_id = "my_custom_id"
         topic_name = "topic_name"
         sub_name = "sub_name"
-        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+        servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str, uamqp_transport=uamqp_transport)
         async with servicebus_client:
             subscription_receiver = servicebus_client.get_subscription_receiver(topic_name, sub_name, client_identifier=custom_id)
             assert subscription_receiver.client_identifier is not None
@@ -535,22 +638,54 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
 
     @pytest.mark.asyncio
     @pytest.mark.liveTest
-    @CachedResourceGroupPreparer()
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
-    async def test_connection_verify_exception_async(self,
-                                   servicebus_queue,
-                                   servicebus_namespace,
-                                   servicebus_namespace_key_name,
-                                   servicebus_namespace_primary_key,
-                                   servicebus_namespace_connection_string,
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_custom_endpoint_connection_verify_exception_async(self,
+                                   uamqp_transport,
+                                   *,
+                                   servicebus_queue=None,
+                                   servicebus_namespace=None,
+                                   servicebus_namespace_key_name=None,
+                                   servicebus_namespace_primary_key=None,
+                                   servicebus_namespace_connection_string=None,
                                    **kwargs):
-        hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
+        hostname = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = AzureNamedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
 
-        client = ServiceBusClient(hostname, credential, connection_verify="cacert.pem")
+        client = ServiceBusClient(hostname, credential, connection_verify="cacert.pem", uamqp_transport=uamqp_transport)
         async with client:
             with pytest.raises(ServiceBusError):
                 async with client.get_queue_sender(servicebus_queue.name) as sender:
                     await sender.send_messages(ServiceBusMessage("foo"))
 
+        # Skipping on OSX uamqp - it's raising an Authentication/TimeoutError
+        if not uamqp_transport or not sys.platform.startswith('darwin'):
+            fake_addr = "fakeaddress.com:1111"
+            client = ServiceBusClient(
+                hostname,
+                credential,
+                custom_endpoint_address=fake_addr,
+                retry_total=0,
+                uamqp_transport=uamqp_transport
+            )
+            async with client:
+                with pytest.raises(ServiceBusConnectionError):
+                    async with client.get_queue_sender(servicebus_queue.name) as sender:
+                        await sender.send_messages(ServiceBusMessage("foo"))
+
+            client = ServiceBusClient(
+                hostname,
+                credential,
+                custom_endpoint_address=fake_addr,
+                connection_verify="cacert.pem",
+                retry_total=0,
+                uamqp_transport=uamqp_transport,
+            )
+            async with client:
+                with pytest.raises(ServiceBusError):
+                    async with client.get_queue_sender(servicebus_queue.name) as sender:
+                        await sender.send_messages(ServiceBusMessage("foo"))

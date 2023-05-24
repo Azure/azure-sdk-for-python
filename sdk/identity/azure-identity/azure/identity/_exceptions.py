@@ -20,8 +20,13 @@ class AuthenticationRequiredError(CredentialUnavailableError):
     method.
     """
 
-    def __init__(self, scopes, message=None, claims=None, **kwargs):
-        # type: (Iterable[str], Optional[str], Optional[str], **Any) -> None
+    def __init__(
+            self,
+            scopes: Iterable[str],
+            message: Optional[str] = None,
+            claims: Optional[str] = None,
+            **kwargs: Any
+    ) -> None:
         self._claims = claims
         self._scopes = scopes
         if not message:
@@ -29,13 +34,11 @@ class AuthenticationRequiredError(CredentialUnavailableError):
         super(AuthenticationRequiredError, self).__init__(message=message, **kwargs)
 
     @property
-    def scopes(self):
-        # type: () -> Iterable[str]
+    def scopes(self) -> Iterable[str]:
         """Scopes requested during the failed authentication"""
         return self._scopes
 
     @property
-    def claims(self):
-        # type: () -> Optional[str]
+    def claims(self) -> Optional[str]:
         """Additional claims required in the next authentication"""
         return self._claims

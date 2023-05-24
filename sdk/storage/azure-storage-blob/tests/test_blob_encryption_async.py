@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import tempfile
 from io import StringIO, BytesIO
 from json import loads
 from math import ceil
@@ -61,13 +62,6 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
             container = self.bsc.get_container_client(self.container_name)
             try:
                 await container.create_container()
-            except:
-                pass
-
-    def _teardown(self, file_name):
-        if path.isfile(file_name):
-            try:
-                remove(file_name)
             except:
                 pass
 
@@ -616,16 +610,13 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
             with pytest.raises(ValueError):
                 await blob.upload_blob(stream, length=512, blob_type=service)
 
-            file_name = 'strict_mode_async.temp.dat'
-            with open(file_name, 'wb') as stream:
-                stream.write(content)
-            with open(file_name, 'rb') as stream:
+            with tempfile.TemporaryFile() as temp_file:
+                temp_file.write(content)
+                temp_file.seek(0)
                 with pytest.raises(ValueError):
-                    await blob.upload_blob(stream, blob_type=service)
-
-            with pytest.raises(ValueError):
-                await blob.upload_blob('To encrypt', blob_type=service)
-            self._teardown(file_name)
+                    await blob.upload_blob(temp_file, blob_type=service)
+                with pytest.raises(ValueError):
+                    await blob.upload_blob('To encrypt', blob_type=service)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -769,14 +760,11 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         stream = BytesIO(self.bytes)
         await self._create_blob_from_star(BlobType.BlockBlob, "blob2", self.bytes, stream)
 
-        file_name = 'block_star_async.temp.dat'
-        with open(file_name, 'wb') as stream:
-            stream.write(self.bytes)
-        with open(file_name, 'rb') as stream:
-            await self._create_blob_from_star(BlobType.BlockBlob, "blob3", self.bytes, stream)
-
-        await self._create_blob_from_star(BlobType.BlockBlob, "blob4", b'To encrypt', 'To encrypt')
-        self._teardown(file_name)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(self.bytes)
+            temp_file.seek(0)
+            await self._create_blob_from_star(BlobType.BlockBlob, "blob3", self.bytes, temp_file)
+            await self._create_blob_from_star(BlobType.BlockBlob, "blob4", b'To encrypt', 'To encrypt')
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -791,13 +779,10 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         stream = BytesIO(content)
         await self._create_blob_from_star(BlobType.PageBlob, "blob2", content, stream, length=512)
 
-        file_name = 'page_star_async.temp.dat'
-        with open(file_name, 'wb') as stream:
-            stream.write(content)
-
-        with open(file_name, 'rb') as stream:
-            await self._create_blob_from_star(BlobType.PageBlob, "blob3", content, stream)
-        self._teardown(file_name)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(content)
+            temp_file.seek(0)
+            await self._create_blob_from_star(BlobType.PageBlob, "blob3", content, temp_file)
 
     async def _create_blob_from_star(self, blob_type, blob_name, content, data, **kwargs):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)

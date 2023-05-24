@@ -5,12 +5,12 @@
 # ------------------------------------
 import pytest
 import six
-
 from azure.containerregistry import (
     RepositoryProperties,
     ArtifactManifestProperties,
     ArtifactTagProperties,
 )
+from azure.containerregistry.aio import ContainerRegistryClient
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ClientAuthenticationError
@@ -80,10 +80,10 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
             assert client._credential is None
 
-            properties = await client.get_repository_properties("library/alpine")
+            properties = await client.get_repository_properties(HELLO_WORLD)
 
             assert isinstance(properties, RepositoryProperties)
-            assert properties.name == "library/alpine"
+            assert properties.name == HELLO_WORLD
 
     @acr_preparer()
     @recorded_by_proxy_async
@@ -95,7 +95,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             assert client._credential is None
 
             count = 0
-            async for manifest in client.list_manifest_properties("library/alpine"):
+            async for manifest in client.list_manifest_properties(HELLO_WORLD):
                 assert isinstance(manifest, ArtifactManifestProperties)
                 count += 1
             assert count > 0
@@ -109,11 +109,11 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
             assert client._credential is None
 
-            registry_artifact = await client.get_manifest_properties("library/alpine", "latest")
+            registry_artifact = await client.get_manifest_properties(HELLO_WORLD, "latest")
 
             assert isinstance(registry_artifact, ArtifactManifestProperties)
             assert "latest" in registry_artifact.tags
-            assert registry_artifact.repository_name == "library/alpine"
+            assert registry_artifact.repository_name == HELLO_WORLD
 
     @acr_preparer()
     @recorded_by_proxy_async
@@ -125,7 +125,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             assert client._credential is None
 
             count = 0
-            async for tag in client.list_tag_properties("library/alpine"):
+            async for tag in client.list_tag_properties(HELLO_WORLD):
                 count += 1
                 assert isinstance(tag, ArtifactTagProperties)
             assert count > 0
@@ -140,7 +140,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             assert client._credential is None
 
             with pytest.raises(ClientAuthenticationError):
-                await client.delete_repository("library/hello-world")
+                await client.delete_repository(HELLO_WORLD)
 
     @acr_preparer()
     @recorded_by_proxy_async
@@ -152,7 +152,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             assert client._credential is None
 
             with pytest.raises(ClientAuthenticationError):
-                await client.delete_tag("library/hello-world", "latest")
+                await client.delete_tag(HELLO_WORLD, "latest")
 
     @acr_preparer()
     @recorded_by_proxy_async
@@ -164,7 +164,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             assert client._credential is None
 
             with pytest.raises(ClientAuthenticationError):
-                await client.delete_manifest("library/hello-world", "latest")
+                await client.delete_manifest(HELLO_WORLD, "latest")
 
     @acr_preparer()
     @recorded_by_proxy_async
@@ -201,3 +201,22 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
             with pytest.raises(ClientAuthenticationError):
                 await client.update_manifest_properties(HELLO_WORLD, "latest", properties, can_delete=True)
+
+
+@pytest.mark.asyncio
+async def test_set_api_version():
+    containerregistry_endpoint="https://fake_url.azurecr.io"
+    
+    async with ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com") as client:
+        assert client._client._config.api_version == "2021-07-01"
+    
+    async with ContainerRegistryClient(
+        endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15-preview"
+    ) as client:
+        assert client._client._config.api_version == "2019-08-15-preview"
+    
+    with pytest.raises(ValueError):
+        async with ContainerRegistryClient(
+            endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15"
+        ) as client:
+            pass

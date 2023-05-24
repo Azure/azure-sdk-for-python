@@ -5,15 +5,12 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from flask import (
-    Response,
-    Blueprint,
-    request
-)
+from flask import Response, Blueprint, request
 
-headers_api = Blueprint('headers_api', __name__)
+headers_api = Blueprint("headers_api", __name__)
 
-@headers_api.route("/case-insensitive", methods=['GET'])
+
+@headers_api.route("/case-insensitive", methods=["GET"])
 def case_insensitive():
     return Response(
         status=200,
@@ -21,38 +18,33 @@ def case_insensitive():
             "lowercase-header": "lowercase",
             "ALLCAPS-HEADER": "ALLCAPS",
             "CamelCase-Header": "camelCase",
-        }
+        },
     )
 
-@headers_api.route("/empty", methods=['GET'])
+
+@headers_api.route("/empty", methods=["GET"])
 def empty():
-    return Response(
-        status=200,
-        headers={}
-    )
+    return Response(status=200, headers={})
 
-@headers_api.route("/duplicate/numbers", methods=['GET'])
+
+@headers_api.route("/duplicate/numbers", methods=["GET"])
 def duplicate_numbers():
-    return Response(
-        status=200,
-        headers=[("a", "123"), ("a", "456"), ("b", "789")]
-    )
+    return Response(status=200, headers=[("a", "123"), ("a", "456"), ("b", "789")])
 
-@headers_api.route("/duplicate/case-insensitive", methods=['GET'])
+
+@headers_api.route("/duplicate/case-insensitive", methods=["GET"])
 def duplicate_case_insensitive():
     return Response(
-        status=200,
-        headers=[("Duplicate-Header", "one"), ("Duplicate-Header", "two"), ("duplicate-header", "three")]
+        status=200, headers=[("Duplicate-Header", "one"), ("Duplicate-Header", "two"), ("duplicate-header", "three")]
     )
 
-@headers_api.route("/duplicate/commas", methods=['GET'])
+
+@headers_api.route("/duplicate/commas", methods=["GET"])
 def duplicate_commas():
-    return Response(
-        status=200,
-        headers=[("Set-Cookie", "a,  b"), ("Set-Cookie", "c")]
-    )
+    return Response(status=200, headers=[("Set-Cookie", "a,  b"), ("Set-Cookie", "c")])
 
-@headers_api.route("/ordered", methods=['GET'])
+
+@headers_api.route("/ordered", methods=["GET"])
 def ordered():
     return Response(
         status=200,

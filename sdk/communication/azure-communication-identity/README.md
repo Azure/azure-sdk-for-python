@@ -2,7 +2,11 @@
 
 Azure Communication Identity client package is intended to be used to setup the basics for opening a way to use Azure Communication Service offerings. This package helps to create identity user tokens to be used by other client packages such as chat, calling, sms.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-identity) | [Package (Pypi)](https://pypi.org/project/azure-communication-identity/) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-identity) | [Product documentation](https://docs.microsoft.com/azure/communication-services/quickstarts/access-tokens?pivots=programming-language-python)
+[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-identity)
+| [Package (Pypi)](https://pypi.org/project/azure-communication-identity/)
+| [Package (Conda)](https://anaconda.org/microsoft/azure-communication/)
+| [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-identity)
+| [Product documentation](https://docs.microsoft.com/azure/communication-services/quickstarts/access-tokens?pivots=programming-language-python)
 
 ## _Disclaimer_
 

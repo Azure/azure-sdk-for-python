@@ -2,14 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
+from typing import Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     BayesianSamplingAlgorithm as RestBayesianSamplingAlgorithm,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.models import GridSamplingAlgorithm as RestGridSamplingAlgorithm
-from azure.ai.ml._restclient.v2022_02_01_preview.models import RandomSamplingAlgorithm as RestRandomSamplingAlgorithm
-from azure.ai.ml._restclient.v2022_02_01_preview.models import SamplingAlgorithm as RestSamplingAlgorithm
-from azure.ai.ml._restclient.v2022_02_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import GridSamplingAlgorithm as RestGridSamplingAlgorithm
+from azure.ai.ml._restclient.v2023_04_01_preview.models import RandomSamplingAlgorithm as RestRandomSamplingAlgorithm
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SamplingAlgorithm as RestSamplingAlgorithm
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SamplingAlgorithmType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -37,25 +38,37 @@ class SamplingAlgorithm(ABC, RestTranslatableMixin):
 
 class RandomSamplingAlgorithm(SamplingAlgorithm):
     """Random Sampling Algorithm.
+
     :ivar type: Specifies the type of sampling algorithm. Set automatically to "random" for this class.
     :vartype type: str
+    :param logbase: A positive number or e in string format to be used as base for log
+        based random sampling.
+    :type logbase: Union[float, str]
+    :param rule: The specific type of random algorithm. Possible values include: "random",
+        "sobol".
+    :type rule: str
+    :param seed: An integer to use as the seed for random number generation.
+    :type seed: int
     """
 
     def __init__(
         self,
         *,
-        rule=None,
-        seed=None,
+        rule: str = None,
+        seed: int = None,
+        logbase: Union[float, str] = None,
     ) -> None:
         super().__init__()
         self.type = SamplingAlgorithmType.RANDOM.lower()
         self.rule = rule
         self.seed = seed
+        self.logbase = logbase
 
     def _to_rest_object(self) -> RestRandomSamplingAlgorithm:
         return RestRandomSamplingAlgorithm(
             rule=self.rule,
             seed=self.seed,
+            logbase=self.logbase,
         )
 
     @classmethod
@@ -63,11 +76,13 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
         return cls(
             rule=obj.rule,
             seed=obj.seed,
+            logbase=obj.logbase,
         )
 
 
 class GridSamplingAlgorithm(SamplingAlgorithm):
     """Grid Sampling Algorithm.
+
     :ivar type: Specifies the type of sampling algorithm. Set automatically to "grid" for this class.
     :vartype type: str
     """
@@ -88,6 +103,7 @@ class GridSamplingAlgorithm(SamplingAlgorithm):
 
 class BayesianSamplingAlgorithm(SamplingAlgorithm):
     """Bayesian Sampling Algorithm.
+
     :ivar type: Specifies the type of sampling algorithm. Set automatically to "bayesian" for this class.
     :vartype type: str
     """

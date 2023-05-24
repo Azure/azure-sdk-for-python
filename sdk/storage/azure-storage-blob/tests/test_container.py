@@ -884,7 +884,7 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         # Assert
         lease.break_lease(lease_break_period=5)
-        self.sleep(6)
+        self.sleep(8)
         with pytest.raises(HttpResponseError):
             container.delete_container(lease=lease)
 

@@ -33,7 +33,7 @@ class TestEnvironmentSchema:
         assert environment.version == "1"
         assert dummy_environment_name == environment.name
 
-        assert "mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04" == environment.image
+        assert "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04" == environment.image
 
         assert environment.conda_file["name"] == "example-environment"
         assert not environment._is_anonymous
@@ -54,7 +54,7 @@ class TestEnvironmentSchema:
 
         assert environment._is_anonymous
 
-        assert "mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04" == environment.image
+        assert "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04" == environment.image
         assert environment.conda_file["name"] == "example-environment"
 
     @patch("builtins.print")
@@ -100,7 +100,7 @@ class TestEnvironmentSchema:
         yml_path = "./tests/test_configs/environment/environment_docker_inference.yml"
         environment = load_environment(yml_path)
 
-        assert "mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04" == environment.image
+        assert "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04" == environment.image
         assert environment.conda_file["name"] == "example-environment"
 
         assert 5001 == environment.inference_config.scoring_route.port

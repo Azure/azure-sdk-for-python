@@ -16,6 +16,13 @@
         "description": "The subscription ID to which the application and resources belong."
       }
     },
+    "serviceBusEndpointSuffix": {
+      "type": "string",
+      "defaultValue": ".servicebus.windows.net",
+      "metadata": {
+          "description": "The url suffix to use when creating eventhubs connection strings."
+      }
+    },
     "tenantId": {
       "type": "string",
       "defaultValue": "[subscription().tenantId]",
@@ -199,7 +206,7 @@
     },
     "SERVICEBUS_FULLY_QUALIFIED_NAMESPACE": {
       "type": "string",
-      "value": "[concat(variables('serviceBusNamespace'), '.servicebus.windows.net')]"
+      "value": "[concat(variables('serviceBusNamespace'), parameters('serviceBusEndpointSuffix'))]"
     },
     "SERVICEBUS_TOPIC_NAME": {
       "type": "string",
@@ -236,6 +243,14 @@
     "SERVICEBUS_SESSION_QUEUE_SAS_KEY":{
       "type": "string",
       "value": "[listkeys(variables('sessionQueueAuthorizationRuleName'), variables('sbVersion')).primaryKey]"
+    },
+    "RESOURCE_REGION": {
+      "type": "string",
+      "value": "[parameters('location')]"
+    },
+    "SERVICEBUS_ENDPOINT_SUFFIX": {
+      "type": "string",
+      "value": "[parameters('serviceBusEndpointSuffix')]"
     }
   }
 }

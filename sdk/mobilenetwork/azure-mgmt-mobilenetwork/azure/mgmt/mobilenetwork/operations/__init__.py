@@ -11,12 +11,10 @@ from ._data_networks_operations import DataNetworksOperations
 from ._mobile_networks_operations import MobileNetworksOperations
 from ._operations import Operations
 from ._packet_core_control_planes_operations import PacketCoreControlPlanesOperations
-from ._packet_core_control_plane_operations import PacketCoreControlPlaneOperations
 from ._packet_core_control_plane_versions_operations import PacketCoreControlPlaneVersionsOperations
 from ._packet_core_data_planes_operations import PacketCoreDataPlanesOperations
 from ._services_operations import ServicesOperations
 from ._sims_operations import SimsOperations
-from ._sim_operations import SimOperations
 from ._sim_groups_operations import SimGroupsOperations
 from ._sim_policies_operations import SimPoliciesOperations
 from ._sites_operations import SitesOperations
@@ -32,12 +30,10 @@ __all__ = [
     "MobileNetworksOperations",
     "Operations",
     "PacketCoreControlPlanesOperations",
-    "PacketCoreControlPlaneOperations",
     "PacketCoreControlPlaneVersionsOperations",
     "PacketCoreDataPlanesOperations",
     "ServicesOperations",
     "SimsOperations",
-    "SimOperations",
     "SimGroupsOperations",
     "SimPoliciesOperations",
     "SitesOperations",

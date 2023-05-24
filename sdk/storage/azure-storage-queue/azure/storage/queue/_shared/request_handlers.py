@@ -11,6 +11,7 @@ from typing import (  # pylint: disable=unused-import
 
 import logging
 from os import fstat
+import stat
 from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
 
 import isodate
@@ -41,10 +42,9 @@ def serialize_iso(attr):
         if utc.tm_year > 9999 or utc.tm_year < 1:
             raise OverflowError("Hit max or min date")
 
-        date = (
-            f"{utc.tm_year:04}-{utc.tm_mon:02}-{utc.tm_mday:02}"
-            f"T{utc.tm_hour:02}:{utc.tm_min:02}:{utc.tm_sec:02}"
-        )
+        date = "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}".format(
+            utc.tm_year, utc.tm_mon, utc.tm_mday,
+            utc.tm_hour, utc.tm_min, utc.tm_sec)
         return date + 'Z'
     except (ValueError, OverflowError) as err:
         msg = "Unable to serialize datetime object."
@@ -71,7 +71,11 @@ def get_length(data):
             pass
         else:
             try:
-                return fstat(fileno).st_size
+                mode = fstat(fileno).st_mode
+                if stat.S_ISREG(mode) or stat.S_ISLNK(mode):
+                    #st_size only meaningful if regular file or symlink, other types
+                    # e.g. sockets may return misleading sizes like 0
+                    return fstat(fileno).st_size
             except OSError:
                 # Not a valid fileno, may be possible requests returned
                 # a socket number?

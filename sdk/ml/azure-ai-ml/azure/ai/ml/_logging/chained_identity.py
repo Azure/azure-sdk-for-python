@@ -14,8 +14,7 @@ _PRINT_STACK = os.environ.get("_AZUREML_TRACE_STACK", False)
 
 
 class ChainedIdentity(object):
-    """A mixin that provides structured, chained logging for objects and
-    contexts."""
+    """A mixin that provides structured, chained logging for objects and contexts."""
 
     DELIM = "#"
 

@@ -1,7 +1,7 @@
 # $schema: http://azureml/sdk-2-0/CommandJob.json
 
 command: pip freeze
-environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
 name: "test1"
 display_name: "test_display_name"
 compute: "azureml:cpu-cluster"

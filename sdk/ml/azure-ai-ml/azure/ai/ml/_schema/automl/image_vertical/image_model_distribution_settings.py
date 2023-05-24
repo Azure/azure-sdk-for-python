@@ -6,7 +6,7 @@
 
 from marshmallow import fields, post_dump, post_load, pre_load
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     LearningRateScheduler,
     ModelSize,
     StochasticOptimizer,
@@ -31,11 +31,6 @@ from azure.ai.ml._schema.core.fields import (
 )
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants._job.automl import (
-    ImageClassificationModelNames,
-    ImageInstanceSegmentationModelNames,
-    ImageObjectDetectionModelNames,
-)
 
 
 def get_choice_schema_of_type(cls, **kwargs):
@@ -79,9 +74,6 @@ INT_SEARCH_SPACE_DISTRIBUTION_FIELD = UnionField(
 STRING_SEARCH_SPACE_DISTRIBUTION_FIELD = get_choice_and_single_value_schema_of_type(DumpableStringField)
 BOOL_SEARCH_SPACE_DISTRIBUTION_FIELD = get_choice_and_single_value_schema_of_type(fields.Bool)
 
-classification_model_name_args = {"allowed_values": [o.value for o in ImageClassificationModelNames]}
-detection_model_name_args = {"allowed_values": [o.value for o in ImageObjectDetectionModelNames]}
-segmentation_model_name_args = {"allowed_values": [o.value for o in ImageInstanceSegmentationModelNames]}
 model_size_enum_args = {"allowed_values": [o.value for o in ModelSize], "casing_transform": camel_to_snake}
 learning_rate_scheduler_enum_args = {
     "allowed_values": [o.value for o in LearningRateScheduler],
@@ -93,15 +85,7 @@ validation_metric_enum_args = {
     "casing_transform": camel_to_snake,
 }
 
-CLASSIFICATION_MODEL_NAME_DISTRIBUTION_FIELD = get_choice_and_single_value_schema_of_type(
-    StringTransformedEnum, **classification_model_name_args
-)
-DETECTION_MODEL_NAME_DISTRIBUTION_FIELD = get_choice_and_single_value_schema_of_type(
-    StringTransformedEnum, **detection_model_name_args
-)
-SEGMENTATION_MODEL_NAME_DISTRIBUTION_FIELD = get_choice_and_single_value_schema_of_type(
-    StringTransformedEnum, **segmentation_model_name_args
-)
+
 MODEL_SIZE_DISTRIBUTION_FIELD = get_choice_and_single_value_schema_of_type(
     StringTransformedEnum, **model_size_enum_args
 )
@@ -145,7 +129,7 @@ class ImageModelDistributionSettingsSchema(metaclass=PatchedSchemaMeta):
 
 
 class ImageModelDistributionSettingsClassificationSchema(ImageModelDistributionSettingsSchema):
-    model_name = CLASSIFICATION_MODEL_NAME_DISTRIBUTION_FIELD
+    model_name = STRING_SEARCH_SPACE_DISTRIBUTION_FIELD
     training_crop_size = INT_SEARCH_SPACE_DISTRIBUTION_FIELD
     validation_crop_size = INT_SEARCH_SPACE_DISTRIBUTION_FIELD
     validation_resize_size = INT_SEARCH_SPACE_DISTRIBUTION_FIELD
@@ -223,8 +207,8 @@ class ImageModelDistributionSettingsDetectionCommonSchema(ImageModelDistribution
 
 
 class ImageModelDistributionSettingsObjectDetectionSchema(ImageModelDistributionSettingsDetectionCommonSchema):
-    model_name = DETECTION_MODEL_NAME_DISTRIBUTION_FIELD
+    model_name = STRING_SEARCH_SPACE_DISTRIBUTION_FIELD
 
 
 class ImageModelDistributionSettingsInstanceSegmentationSchema(ImageModelDistributionSettingsObjectDetectionSchema):
-    model_name = SEGMENTATION_MODEL_NAME_DISTRIBUTION_FIELD
+    model_name = STRING_SEARCH_SPACE_DISTRIBUTION_FIELD

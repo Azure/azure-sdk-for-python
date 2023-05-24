@@ -29,7 +29,7 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.packet_core_control_plane.begin_collect_diagnostics_package(
+    response = client.packet_core_control_planes.begin_collect_diagnostics_package(
         resource_group_name="rg1",
         packet_core_control_plane_name="TestPacketCoreCP",
         parameters={

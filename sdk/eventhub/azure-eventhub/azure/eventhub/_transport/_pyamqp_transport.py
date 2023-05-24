@@ -141,6 +141,20 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return Message(**message_dict)
 
     @staticmethod
+    def update_message_app_properties(message, key, value):
+        """
+        Adds the given key/value to the application properties of the message.
+        :param pyamqp.Message message: Message.
+        :param str key: Key to set in application properties.
+        :param str Value: Value to set for key in application properties.
+        :rtype: pyamqp.Message
+        """
+        if not message.application_properties:
+            message = message._replace(application_properties={})
+        message.application_properties.setdefault(key, value)
+        return message
+
+    @staticmethod
     def get_batch_message_encoded_size(message):
         """
         Gets the batch message encoded size given an underlying Message.
@@ -432,7 +446,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         if update_token:
             # update_token not actually needed by pyamqp
             # just using to detect wh
-            return JWTTokenAuth(auth_uri, auth_uri, get_token)
+            return JWTTokenAuth(auth_uri, auth_uri, get_token, token_type=token_type)
         return JWTTokenAuth(
             auth_uri,
             auth_uri,
@@ -473,7 +487,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         Return updated auth token.
         :param mgmt_auth: Auth.
         """
-        return mgmt_auth.get_token()
+        return mgmt_auth.get_token().token
 
     @staticmethod
     def mgmt_client_request(mgmt_client, mgmt_msg, **kwargs):
@@ -507,7 +521,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             return errors.AuthenticationException(
                 errors.ErrorCondition.UnauthorizedAccess,
                 description=f"""Management authentication failed. Status code: {status_code}, """
-                    """Description: {description!r}""",
+                    f"""Description: {description!r}""",
             )
         if status_code in [404]:
             return errors.AMQPConnectionError(

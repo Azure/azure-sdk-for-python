@@ -25,13 +25,18 @@ from azure.core.pipeline.transport import AioHttpTransport
 
 from ...management._generated.models import (
     QueueDescriptionFeed,
+    QueueDescriptionEntryContent,
     TopicDescriptionEntry,
+    TopicDescriptionEntryContent,
     QueueDescriptionEntry,
     SubscriptionDescriptionFeed,
     SubscriptionDescriptionEntry,
+    SubscriptionDescriptionEntryContent,
     RuleDescriptionEntry,
     RuleDescriptionFeed,
+    RuleDescriptionEntryContent,
     NamespacePropertiesEntry,
+    NamespacePropertiesEntryContent,
     CreateTopicBody,
     CreateTopicBodyContent,
     TopicDescriptionFeed,
@@ -53,10 +58,10 @@ from ...aio._base_handler_async import (
     ServiceBusSharedKeyCredential,
     ServiceBusSASTokenCredential,
 )
-from ...management._generated.aio._configuration_async import (
+from ...management._generated.aio._configuration import (
     ServiceBusManagementClientConfiguration,
 )
-from ...management._generated.aio._service_bus_management_client_async import (
+from ...management._generated.aio import (
     ServiceBusManagementClient as ServiceBusManagementClientImpl,
 )
 from ...management import _constants as constants
@@ -114,15 +119,23 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         api_version: Union[str, ApiVersion] = DEFAULT_VERSION,
         **kwargs: Any
     ) -> None:
-
         self.fully_qualified_namespace = fully_qualified_namespace
         self._api_version = api_version
         self._credential = credential
         self._endpoint = "https://" + fully_qualified_namespace
-        self._config = ServiceBusManagementClientConfiguration(self._endpoint, **kwargs)
+        self._config = ServiceBusManagementClientConfiguration(
+            self._endpoint,
+            credential=self._credential,
+            api_version=api_version,
+            **kwargs
+        )
         self._pipeline = self._build_pipeline()
         self._impl = ServiceBusManagementClientImpl(
-            endpoint=fully_qualified_namespace, pipeline=self._pipeline
+            endpoint=fully_qualified_namespace,
+            credential=self._credential,
+            pipeline=self._pipeline,
+            api_version=api_version,
+            **kwargs
         )
 
     async def __aenter__(self) -> "ServiceBusAdministrationClient":
@@ -169,9 +182,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         with _handle_response_error():
             element = cast(
                 ElementTree,
-                await self._impl.entity.get(
-                    entity_name, enrich=enrich, api_version=self._api_version, **kwargs
-                ),
+                await self._impl.entity.get(entity_name, enrich=enrich, **kwargs),
             )
         return element
 
@@ -188,11 +199,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             element = cast(
                 ElementTree,
                 await self._impl.subscription.get(
-                    topic_name,
-                    subscription_name,
-                    enrich=enrich,
-                    api_version=self._api_version,
-                    **kwargs
+                    topic_name, subscription_name, enrich=enrich, **kwargs
                 ),
             )
         return element
@@ -208,12 +215,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             element = cast(
                 ElementTree,
                 await self._impl.rule.get(
-                    topic_name,
-                    subscription_name,
-                    rule_name,
-                    enrich=False,
-                    api_version=self._api_version,
-                    **kwargs
+                    topic_name, subscription_name, rule_name, enrich=False, **kwargs
                 ),
             )
         return element
@@ -223,7 +225,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         kwargs["headers"] = kwargs.get("headers", {})
 
         async def _populate_header_within_kwargs(uri, header):
-            token = (await self._credential.get_token(uri)).token.decode()
+            token = (await self._credential.get_token(uri)).token
             if not isinstance(
                 self._credential,
                 (ServiceBusSASTokenCredential, ServiceBusSharedKeyCredential),
@@ -439,14 +441,14 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             entry_ele = cast(
                 ElementTree,
                 await self._impl.entity.put(
-                    queue_name,  # type: ignore
-                    request_body,
-                    api_version=self._api_version,
-                    **kwargs
+                    queue_name, request_body, **kwargs  # type: ignore
                 ),
             )
 
         entry = QueueDescriptionEntry.deserialize(entry_ele)
+        # Need to cast from Optional[QueueDescriptionEntryContent] to QueueDescriptionEntryContent
+        # since we know for certain that `entry.content` will not be None here.
+        entry.content = cast(QueueDescriptionEntryContent, entry.content)
         result = QueueProperties._from_internal_entity(
             queue_name, entry.content.queue_description
         )
@@ -482,11 +484,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         await self._create_forward_to_header_tokens(to_update, kwargs)
         with _handle_response_error():
             await self._impl.entity.put(
-                queue.name,  # type: ignore
-                request_body,
-                api_version=self._api_version,
-                if_match="*",
-                **kwargs
+                queue.name, request_body, if_match="*", **kwargs  # type: ignore
             )
 
     async def delete_queue(self, queue_name: str, **kwargs: Any) -> None:
@@ -501,9 +499,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         if not queue_name:
             raise ValueError("queue_name must not be None or empty")
         with _handle_response_error():
-            await self._impl.entity.delete(
-                queue_name, api_version=self._api_version, **kwargs
-            )
+            await self._impl.entity.delete(queue_name, **kwargs)
 
     def list_queues(self, **kwargs: Any) -> AsyncItemPaged[QueueProperties]:
         """List the queues of a ServiceBus namespace.
@@ -524,7 +520,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_QUEUES),
-            api_version=self._api_version,
             **kwargs
         )
         return AsyncItemPaged(get_next, extract_data)
@@ -550,7 +545,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_QUEUES),
-            api_version=self._api_version,
             **kwargs
         )
         return AsyncItemPaged(get_next, extract_data)
@@ -571,7 +565,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return topic_description
 
     async def get_topic_runtime_properties(
-        self, topic_name: str, **kwargs
+        self, topic_name: str, **kwargs: Any
     ) -> TopicRuntimeProperties:
         """Get the runtime information of a topic.
 
@@ -694,13 +688,13 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             entry_ele = cast(
                 ElementTree,
                 await self._impl.entity.put(
-                    topic_name,  # type: ignore
-                    request_body,
-                    api_version=self._api_version,
-                    **kwargs
+                    topic_name, request_body, **kwargs  # type: ignore
                 ),
             )
         entry = TopicDescriptionEntry.deserialize(entry_ele)
+        # Need to cast from Optional[TopicDescriptionEntryContent] to TopicDescriptionEntryContent
+        # since we know for certain that `entry.content` will not be None here.
+        entry.content = cast(TopicDescriptionEntryContent, entry.content)
         result = TopicProperties._from_internal_entity(
             topic_name, entry.content.topic_description
         )
@@ -735,11 +729,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
             await self._impl.entity.put(
-                topic.name,  # type: ignore
-                request_body,
-                api_version=self._api_version,
-                if_match="*",
-                **kwargs
+                topic.name, request_body, if_match="*", **kwargs  # type: ignore
             )
 
     async def delete_topic(self, topic_name: str, **kwargs: Any) -> None:
@@ -750,9 +740,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
         _validate_entity_name_type(topic_name)
 
-        await self._impl.entity.delete(
-            topic_name, api_version=self._api_version, **kwargs
-        )
+        await self._impl.entity.delete(topic_name, **kwargs)
 
     def list_topics(self, **kwargs: Any) -> AsyncItemPaged[TopicProperties]:
         """List the topics of a ServiceBus namespace.
@@ -773,7 +761,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_TOPICS),
-            api_version=self._api_version,
             **kwargs
         )
         return AsyncItemPaged(get_next, extract_data)
@@ -799,7 +786,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_TOPICS),
-            api_version=self._api_version,
             **kwargs
         )
         return AsyncItemPaged(get_next, extract_data)
@@ -824,7 +810,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 )
             )
         subscription = SubscriptionProperties._from_internal_entity(
-            entry.title, entry.content.subscription_description
+            subscription_name, entry.content.subscription_description
         )
         return subscription
 
@@ -848,7 +834,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 )
             )
         subscription = SubscriptionRuntimeProperties._from_internal_entity(
-            entry.title, entry.content.subscription_description
+            subscription_name, entry.content.subscription_description
         )
         return subscription
 
@@ -960,12 +946,14 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                     topic_name,
                     subscription_name,  # type: ignore
                     request_body,
-                    api_version=self._api_version,
                     **kwargs
                 ),
             )
 
         entry = SubscriptionDescriptionEntry.deserialize(entry_ele)
+        # Need to cast from Optional[SubscriptionDescriptionEntryContent] to SubscriptionDescriptionEntryContent
+        # since we know for certain that `entry.content` will not be None here.
+        entry.content = cast(SubscriptionDescriptionEntryContent, entry.content)
         result = SubscriptionProperties._from_internal_entity(
             subscription_name, entry.content.subscription_description
         )
@@ -1010,12 +998,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         await self._create_forward_to_header_tokens(to_update, kwargs)
         with _handle_response_error():
             await self._impl.subscription.put(
-                topic_name,
-                subscription.name,
-                request_body,
-                api_version=self._api_version,
-                if_match="*",
-                **kwargs
+                topic_name, subscription.name, request_body, if_match="*", **kwargs
             )
 
     async def delete_subscription(
@@ -1030,9 +1013,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
 
-        await self._impl.subscription.delete(
-            topic_name, subscription_name, api_version=self._api_version, **kwargs
-        )
+        await self._impl.subscription.delete(topic_name, subscription_name, **kwargs)
 
     def list_subscriptions(
         self, topic_name: str, **kwargs: Any
@@ -1057,7 +1038,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_subscriptions, topic_name),
-            api_version=self._api_version,
             **kwargs
         )
         return AsyncItemPaged(get_next, extract_data)
@@ -1085,7 +1065,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_subscriptions, topic_name),
-            api_version=self._api_version,
             **kwargs
         )
         return AsyncItemPaged(get_next, extract_data)
@@ -1170,10 +1149,12 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 subscription_name,  # type: ignore
                 rule_name,
                 request_body,
-                api_version=self._api_version,
                 **kwargs
             )
         entry = RuleDescriptionEntry.deserialize(entry_ele)
+        # Need to cast from Optional[RuleDescriptionEntryContent] to RuleDescriptionEntryContent
+        # since we know for certain that `entry.content` will not be None here.
+        entry.content = cast(RuleDescriptionEntryContent, entry.content)
         result = RuleProperties._from_internal_entity(
             rule_name, entry.content.rule_description
         )
@@ -1223,7 +1204,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 subscription_name,
                 rule.name,
                 request_body,
-                api_version=self._api_version,
                 if_match="*",
                 **kwargs
             )
@@ -1243,13 +1223,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             topic_name, subscription_name, rule_name
         )
 
-        await self._impl.rule.delete(
-            topic_name,
-            subscription_name,
-            rule_name,
-            api_version=self._api_version,
-            **kwargs
-        )
+        await self._impl.rule.delete(topic_name, subscription_name, rule_name, **kwargs)
 
     def list_rules(
         self, topic_name: str, subscription_name: str, **kwargs: Any
@@ -1281,7 +1255,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_rules, topic_name, subscription_name),
-            api_version=self._api_version,
             **kwargs
         )
         return AsyncItemPaged(get_next, extract_data)
@@ -1291,10 +1264,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.NamespaceProperties
         """
-        entry_el = await self._impl.namespace.get(
-            api_version=self._api_version, **kwargs
-        )
+        entry_el = await self._impl.namespace.get(**kwargs)
         namespace_entry = NamespacePropertiesEntry.deserialize(entry_el)
+        namespace_entry.content = cast(
+            NamespacePropertiesEntryContent, namespace_entry.content
+        )
         return NamespaceProperties._from_internal_entity(
             namespace_entry.title, namespace_entry.content.namespace_properties
         )

@@ -102,7 +102,7 @@ class TestParallelComponentEntity:
                 "--output ${{outputs.scored_result}}",
                 "code": parse_local_path("../python", yaml_component_version.base_path),
                 "entry_script": "score.py",
-                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 "type": "run_function",
             },
         }

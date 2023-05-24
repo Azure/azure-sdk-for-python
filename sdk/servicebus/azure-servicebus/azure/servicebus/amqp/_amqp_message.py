@@ -5,18 +5,14 @@
 # -------------------------------------------------------------------------
 
 from __future__ import annotations
-import time
-import uuid
-from datetime import datetime
 import warnings
-from typing import Optional, Any, Tuple, cast, Mapping, Union, Dict, List
+from typing import Optional, Any, cast, Mapping, Dict, Union, List, Iterable, Tuple, TYPE_CHECKING
 
-from msrest.serialization import TZ_UTC
-import uamqp
+from ._amqp_utils import normalized_data_body, normalized_sequence_body
+from ._constants import AmqpMessageBodyType
 
-from ._constants import AMQP_MESSAGE_BODY_TYPE_MAP, AmqpMessageBodyType
-from .._common.constants import MAX_DURATION_VALUE, MAX_ABSOLUTE_EXPIRY_TIME
-
+if TYPE_CHECKING:
+    import uuid
 
 class DictMixin(object):
     def __setitem__(self, key: str, item: Any) -> None:
@@ -75,7 +71,6 @@ class AmqpAnnotatedMessage(object):
     access to low-level AMQP message sections. There should be one and only one of either data_body, sequence_body
     or value_body being set as the body of the AmqpAnnotatedMessage; if more than one body is set, `ValueError` will
     be raised.
-
     Please refer to the AMQP spec:
     http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format
     for more information on the message format.
@@ -112,12 +107,15 @@ class AmqpAnnotatedMessage(object):
         delivery_annotations: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> None:
-        self._message = kwargs.pop("message", None)
         self._encoding = kwargs.pop("encoding", "UTF-8")
+        self._data_body: Optional[Union[str, bytes, List[Union[str, bytes]]]] = None
+        self._sequence_body: Optional[List[Any]] = None
+        self._value_body: Any = None
 
         # internal usage only for service bus received message
-        if self._message:
-            self._from_amqp_message(self._message)
+        message = kwargs.pop("message", None)
+        if message:
+            self._from_amqp_message(message)
             return
 
         # manually constructed AMQPAnnotatedMessage
@@ -128,37 +126,41 @@ class AmqpAnnotatedMessage(object):
                 "or value_body being set as the body of the AmqpAnnotatedMessage."
             )
 
-        self._body = None
-        self._body_type = None
+        self._body_type: AmqpMessageBodyType = None # type: ignore
         if "data_body" in kwargs:
-            self._body = kwargs.get("data_body")
-            self._body_type = uamqp.MessageBodyType.Data
+            self._data_body = normalized_data_body(kwargs.get("data_body"))
+            self._body_type = AmqpMessageBodyType.DATA
         elif "sequence_body" in kwargs:
-            self._body = kwargs.get("sequence_body")
-            self._body_type = uamqp.MessageBodyType.Sequence
+            self._sequence_body = normalized_sequence_body(kwargs.get("sequence_body"))
+            self._body_type = AmqpMessageBodyType.SEQUENCE
         elif "value_body" in kwargs:
-            self._body = kwargs.get("value_body")
-            self._body_type = uamqp.MessageBodyType.Value
+            self._value_body = kwargs.get("value_body")
+            self._body_type = AmqpMessageBodyType.VALUE
 
-        self._message = uamqp.message.Message(body=self._body, body_type=self._body_type)
         header_dict = cast(Mapping, header)
         self._header = AmqpMessageHeader(**header_dict) if header else None
         self._footer = footer
         properties_dict = cast(Mapping, properties)
         self._properties = AmqpMessageProperties(**properties_dict) if properties else None
-        self._application_properties = application_properties
-        self._annotations = annotations
-        self._delivery_annotations = delivery_annotations
+        self._application_properties = cast(Optional[Dict[Union[str, bytes], Any]], application_properties)
+        self._annotations = cast(Optional[Dict[Union[str, bytes], Any]], annotations)
+        self._delivery_annotations = cast(Optional[Dict[Union[str, bytes], Any]], delivery_annotations)
 
     def __str__(self) -> str:
-        return str(self._message)
+        if self._body_type == AmqpMessageBodyType.DATA: # pylint:disable=no-else-return
+            return "".join(d.decode(self._encoding) for d in cast(Iterable[bytes], self._data_body))
+        elif self._body_type == AmqpMessageBodyType.SEQUENCE:
+            return str(self._sequence_body)
+        elif self._body_type == AmqpMessageBodyType.VALUE:
+            return str(self._value_body)
+        return ""
 
     def __repr__(self) -> str:
         # pylint: disable=bare-except
         message_repr = "body={}".format(
             str(self)
         )
-        message_repr += ", body_type={}".format(self.body_type)
+        message_repr += ", body_type={}".format(self._body_type.value)
         try:
             message_repr += ", header={}".format(self.header)
         except:
@@ -186,7 +188,6 @@ class AmqpAnnotatedMessage(object):
         return "AmqpAnnotatedMessage({})".format(message_repr)[:1024]
 
     def _from_amqp_message(self, message):
-        # populate the properties from an uamqp message
         self._properties = AmqpMessageProperties(
             message_id=message.properties.message_id,
             user_id=message.properties.user_id,
@@ -204,126 +205,52 @@ class AmqpAnnotatedMessage(object):
         ) if message.properties else None
         self._header = AmqpMessageHeader(
             delivery_count=message.header.delivery_count,
-            time_to_live=message.header.time_to_live,
+            time_to_live=message.header.ttl,
             first_acquirer=message.header.first_acquirer,
             durable=message.header.durable,
             priority=message.header.priority
         ) if message.header else None
         self._footer = message.footer
-        self._annotations = message.annotations
+        self._annotations = message.message_annotations
         self._delivery_annotations = message.delivery_annotations
         self._application_properties = message.application_properties
-
-    def _to_outgoing_amqp_message(self):
-        message_header = None
-        ttl_set = False
-        if self.header:
-            message_header = uamqp.message.MessageHeader()
-            message_header.delivery_count = self.header.delivery_count
-            message_header.time_to_live = self.header.time_to_live
-            message_header.first_acquirer = self.header.first_acquirer
-            message_header.durable = self.header.durable
-            message_header.priority = self.header.priority
-            if self.header.time_to_live and self.header.time_to_live != MAX_DURATION_VALUE:
-                ttl_set = True
-                creation_time_from_ttl = int(time.mktime(datetime.now(TZ_UTC).timetuple()) * 1000)
-                absolute_expiry_time_from_ttl = int(min(
-                    MAX_ABSOLUTE_EXPIRY_TIME,
-                    creation_time_from_ttl + self.header.time_to_live
-                ))
-
-        message_properties = None
-        if self.properties:
-            creation_time = None
-            absolute_expiry_time = None
-            if ttl_set:
-                creation_time = creation_time_from_ttl
-                absolute_expiry_time = absolute_expiry_time_from_ttl
-            else:
-                if self.properties.creation_time:
-                    creation_time = int(self.properties.creation_time)
-                if self.properties.absolute_expiry_time:
-                    absolute_expiry_time = int(self.properties.absolute_expiry_time)
-
-            message_properties = uamqp.message.MessageProperties(
-                message_id=self.properties.message_id,
-                user_id=self.properties.user_id,
-                to=self.properties.to,
-                subject=self.properties.subject,
-                reply_to=self.properties.reply_to,
-                correlation_id=self.properties.correlation_id,
-                content_type=self.properties.content_type,
-                content_encoding=self.properties.content_encoding,
-                creation_time=creation_time,
-                absolute_expiry_time=absolute_expiry_time,
-                group_id=self.properties.group_id,
-                group_sequence=self.properties.group_sequence,
-                reply_to_group_id=self.properties.reply_to_group_id,
-                encoding=self._encoding
-            )
-        elif ttl_set:
-            message_properties = uamqp.message.MessageProperties(
-                creation_time=creation_time_from_ttl if ttl_set else None,
-                absolute_expiry_time=absolute_expiry_time_from_ttl if ttl_set else None,
-            )
-
-        amqp_body = self._message._body  # pylint: disable=protected-access
-        if isinstance(amqp_body, uamqp.message.DataBody):
-            amqp_body_type = uamqp.MessageBodyType.Data
-            amqp_body = list(amqp_body.data)
-        elif isinstance(amqp_body, uamqp.message.SequenceBody):
-            amqp_body_type = uamqp.MessageBodyType.Sequence
-            amqp_body = list(amqp_body.data)
+        if message.data:
+            self._data_body = cast(Iterable, list(message.data))
+            self._body_type = AmqpMessageBodyType.DATA
+        elif message.sequence:
+            self._sequence_body = cast(Iterable, list(message.sequence))
+            self._body_type = AmqpMessageBodyType.SEQUENCE
         else:
-            # amqp_body is type of uamqp.message.ValueBody
-            amqp_body_type = uamqp.MessageBodyType.Value
-            amqp_body = amqp_body.data
-
-        return uamqp.message.Message(
-            body=amqp_body,
-            body_type=amqp_body_type,
-            header=message_header,
-            properties=message_properties,
-            application_properties=self.application_properties,
-            annotations=self.annotations,
-            delivery_annotations=self.delivery_annotations,
-            footer=self.footer
-        )
-
-    def _to_outgoing_message(self, message_type):
-        # convert to an outgoing ServiceBusMessage
-        return message_type(body=None, message=self._to_outgoing_amqp_message(), raw_amqp_message=self)
+            self._value_body = message.value
+            self._body_type = AmqpMessageBodyType.VALUE
 
     @property
     def body(self) -> Any:
         """The body of the Message. The format may vary depending on the body type:
-        For :class:`azure.servicebus.amqp.AmqpMessageBodyType.DATA<azure.servicebus.amqp.AmqpMessageBodyType.DATA>`,
-        the body could be bytes or Iterable[bytes].
-        For
-        :class:`azure.servicebus.amqp.AmqpMessageBodyType.SEQUENCE<azure.servicebus.amqp.AmqpMessageBodyType.SEQUENCE>`,
-        the body could be List or Iterable[List].
-        For :class:`azure.servicebus.amqp.AmqpMessageBodyType.VALUE<azure.servicebus.amqp.AmqpMessageBodyType.VALUE>`,
-        the body could be any type.
-
+        For ~azure.servicebus.AmqpMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
+        For ~azure.servicebus.AmqpMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
+        For ~azure.servicebus.AmqpMessageBodyType.VALUE, the body could be any type.
         :rtype: Any
         """
-        return self._message.get_data()
+        if self._body_type == AmqpMessageBodyType.DATA: # pylint:disable=no-else-return
+            return (i for i in cast(Iterable, self._data_body))
+        elif self._body_type == AmqpMessageBodyType.SEQUENCE:
+            return (i for i in cast(Iterable, self._sequence_body))
+        elif self._body_type == AmqpMessageBodyType.VALUE:
+            return self._value_body
+        return None
 
     @property
     def body_type(self) -> AmqpMessageBodyType:
         """The body type of the underlying AMQP message.
-
-        :rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
+        rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
         """
-        return AMQP_MESSAGE_BODY_TYPE_MAP.get(
-            self._message._body.type, AmqpMessageBodyType.VALUE  # pylint: disable=protected-access
-        )
+        return self._body_type
 
     @property
     def properties(self) -> Optional[AmqpMessageProperties]:
         """
         Properties to add to the message.
-
         :rtype: Optional[~azure.servicebus.amqp.AmqpMessageProperties]
         """
         return self._properties
@@ -333,20 +260,20 @@ class AmqpAnnotatedMessage(object):
         self._properties = value
 
     @property
-    def application_properties(self) -> Optional[Dict]:
+    def application_properties(self) -> Optional[Dict[Union[str, bytes], Any]]:
         """
         Service specific application properties.
 
-        :rtype: Optional[dict]
+        :rtype: Optional[Dict]
         """
         return self._application_properties
 
     @application_properties.setter
-    def application_properties(self, value: Dict) -> None:
+    def application_properties(self, value: Optional[Dict[Union[str, bytes], Any]]) -> None:
         self._application_properties = value
 
     @property
-    def annotations(self) -> Optional[Dict]:
+    def annotations(self) -> Optional[Dict[Union[str, bytes], Any]]:
         """
         Service specific message annotations.
 
@@ -355,11 +282,11 @@ class AmqpAnnotatedMessage(object):
         return self._annotations
 
     @annotations.setter
-    def annotations(self, value: Dict) -> None:
+    def annotations(self, value: Optional[Dict[Union[str, bytes], Any]]) -> None:
         self._annotations = value
 
     @property
-    def delivery_annotations(self) -> Optional[Dict]:
+    def delivery_annotations(self) -> Optional[Dict[Union[str, bytes], Any]]:
         """
         Delivery-specific non-standard properties at the head of the message.
         Delivery annotations convey information from the sending peer to the receiving peer.
@@ -369,14 +296,13 @@ class AmqpAnnotatedMessage(object):
         return self._delivery_annotations
 
     @delivery_annotations.setter
-    def delivery_annotations(self, value: Dict) -> None:
+    def delivery_annotations(self, value: Optional[Dict[Union[str, bytes], Any]]) -> None:
         self._delivery_annotations = value
 
     @property
     def header(self) -> Optional[AmqpMessageHeader]:
         """
         The message header.
-
         :rtype: Optional[~azure.servicebus.amqp.AmqpMessageHeader]
         """
         return self._header
@@ -386,7 +312,7 @@ class AmqpAnnotatedMessage(object):
         self._header = value
 
     @property
-    def footer(self) -> Optional[Dict]:
+    def footer(self) -> Optional[Dict[Any, Any]]:
         """
         The message footer.
 
@@ -395,7 +321,7 @@ class AmqpAnnotatedMessage(object):
         return self._footer
 
     @footer.setter
-    def footer(self, value: Dict) -> None:
+    def footer(self, value: Optional[Dict[Any, Any]]) -> None:
         self._footer = value
 
 
@@ -404,7 +330,6 @@ class AmqpMessageHeader(DictMixin):
     The Message header. This is only used on received message, and not
     set on messages being sent. The properties set on any given message
     will depend on the Service and not all messages will have all properties.
-
     Please refer to the AMQP spec:
     http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header
     for more information on the message header.
@@ -436,7 +361,6 @@ class AmqpMessageHeader(DictMixin):
     :keyword priority: This field contains the relative message priority. Higher numbers indicate higher
      priority messages. Messages with higher priorities MAY be delivered before those with lower priorities.
     :paramtype priority: Optional[int]
-
     :ivar delivery_count: The number of unsuccessful previous attempts to deliver
      this message. If this value is non-zero it can be taken as an indication that the
      delivery might be a duplicate. On first delivery, the value is zero. It is
@@ -490,13 +414,12 @@ class AmqpMessageProperties(DictMixin):
     The properties that are actually used will depend on the service implementation.
     Not all received messages will have all properties, and not all properties
     will be utilized on a sent message.
-
     Please refer to the AMQP spec:
     http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-properties
     for more information on the message properties.
 
     :keyword message_id: Message-id, if set, uniquely identifies a message within the message system.
-     The message producer is usually responsible for setting the message-id in such a way that it
+     The message sender is usually responsible for setting the message-id in such a way that it
      is assured to be globally unique. A broker MAY discard a message as a duplicate if the value
      of the message-id matches that of a previously received message sent to the same node.
     :paramtype message_id: Optional[Union[str, bytes, uuid.UUID]]
@@ -527,9 +450,8 @@ class AmqpMessageProperties(DictMixin):
     :keyword reply_to_group_id: This is a client-specific id that is used so that client can send replies
      to this message to a specific group.
     :paramtype reply_to_group_id: Optional[Union[str, bytes]]
-
     :ivar message_id: Message-id, if set, uniquely identifies a message within the message system.
-     The message producer is usually responsible for setting the message-id in such a way that it
+     The message sender is usually responsible for setting the message-id in such a way that it
      is assured to be globally unique. A broker MAY discard a message as a duplicate if the value
      of the message-id matches that of a previously received message sent to the same node.
     :vartype message_id: Optional[Union[str, bytes, uuid.UUID]]
@@ -564,7 +486,7 @@ class AmqpMessageProperties(DictMixin):
     def __init__(
         self,
         *,
-        message_id: Optional[Union[str, bytes, uuid.UUID]] = None,
+        message_id: Optional[Union[str, bytes, "uuid.UUID"]] = None,
         user_id: Optional[Union[str, bytes]] = None,
         to: Optional[Union[str, bytes]] = None,
         subject: Optional[Union[str, bytes]] = None,

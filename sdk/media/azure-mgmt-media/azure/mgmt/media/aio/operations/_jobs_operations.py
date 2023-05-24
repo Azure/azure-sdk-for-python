@@ -98,7 +98,7 @@ class JobsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+        api_version: Literal["2022-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-07-01"))
         cls: ClsType[_models.JobCollection] = kwargs.pop("cls", None)
 
         error_map = {
@@ -195,7 +195,7 @@ class JobsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+        api_version: Literal["2022-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-07-01"))
         cls: ClsType[_models.Job] = kwargs.pop("cls", None)
 
         request = build_get_request(
@@ -350,7 +350,7 @@ class JobsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+        api_version: Literal["2022-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-07-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Job] = kwargs.pop("cls", None)
 
@@ -434,7 +434,7 @@ class JobsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+        api_version: Literal["2022-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-07-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
@@ -591,7 +591,7 @@ class JobsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+        api_version: Literal["2022-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-07-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Job] = kwargs.pop("cls", None)
 
@@ -675,7 +675,7 @@ class JobsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+        api_version: Literal["2022-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-07-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_cancel_job_request(

@@ -1,5 +1,13 @@
 # Azure Event Hubs client library for Python (conda)
 
+## 2023.03.01
+
+### Packages included
+
+- azure-eventhub-5.11.1
+- azure-eventhub-checkpointstoreblob-1.1.4
+- azure-eventhub-checkpointstoreblob-aio-1.1.4
+
 ## 2022.12.01
 
 ### Packages included

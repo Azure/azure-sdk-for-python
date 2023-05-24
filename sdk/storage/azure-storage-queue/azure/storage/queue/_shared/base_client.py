@@ -6,10 +6,12 @@
 import logging
 import uuid
 from typing import (  # pylint: disable=unused-import
-    Optional,
     Any,
+    Dict,
+    Optional,
     Tuple,
-    TYPE_CHECKING
+    TYPE_CHECKING,
+    Union,
 )
 
 try:
@@ -18,45 +20,42 @@ except ImportError:
     from urlparse import parse_qs  # type: ignore
     from urllib2 import quote  # type: ignore
 
-import six
-
 from azure.core.configuration import Configuration
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport, HttpTransport
 from azure.core.pipeline.policies import (
-    RedirectPolicy,
-    ContentDecodePolicy,
+    AzureSasCredentialPolicy,
     BearerTokenCredentialPolicy,
-    ProxyPolicy,
+    ContentDecodePolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
+    ProxyPolicy,
+    RedirectPolicy,
     UserAgentPolicy,
-    AzureSasCredentialPolicy
 )
 
-from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
+from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, SERVICE_HOST_BASE, STORAGE_OAUTH_SCOPE
 from .models import LocationMode
 from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
 from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .policies import (
-    StorageHeadersPolicy,
+    ExponentialRetry,
+    QueueMessagePolicy,
     StorageContentValidation,
+    StorageHeadersPolicy,
+    StorageHosts,
+    StorageLoggingPolicy,
     StorageRequestHook,
     StorageResponseHook,
-    StorageLoggingPolicy,
-    StorageHosts,
-    QueueMessagePolicy,
-    ExponentialRetry,
 )
 from .._version import VERSION
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-
 
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
@@ -65,6 +64,7 @@ _SERVICE_PARAMS = {
     "file": {"primary": "FILEENDPOINT", "secondary": "FILESECONDARYENDPOINT"},
     "dfs": {"primary": "BLOBENDPOINT", "secondary": "BLOBENDPOINT"},
 }
+
 
 class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
@@ -207,11 +207,11 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         if sas_token and isinstance(credential, AzureSasCredential):
             raise ValueError(
                 "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
-        if sas_token and not credential:
-            query_str += sas_token
-        elif is_credential_sastoken(credential):
+        if is_credential_sastoken(credential):
             query_str += credential.lstrip("?")
             credential = None
+        elif sas_token:
+            query_str += sas_token
         return query_str.rstrip("?&"), credential
 
     def _create_pipeline(self, credential, **kwargs):
@@ -342,7 +342,7 @@ class TransportWrapper(HttpTransport):
 
 
 def _format_shared_key_credential(account_name, credential):
-    if isinstance(credential, six.string_types):
+    if isinstance(credential, str):
         if not account_name:
             raise ValueError("Unable to determine account name for shared key credential.")
         credential = {"account_name": account_name, "account_key": credential}
@@ -452,7 +452,7 @@ def parse_query(query_str):
 
 
 def is_credential_sastoken(credential):
-    if not credential or not isinstance(credential, six.string_types):
+    if not credential or not isinstance(credential, str):
         return False
 
     sas_values = QueryStringConstants.to_list()

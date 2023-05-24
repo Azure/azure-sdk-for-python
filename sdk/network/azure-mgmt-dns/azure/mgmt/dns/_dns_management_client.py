@@ -9,21 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from msrest import Deserializer, Serializer
 
 from ._configuration import DnsManagementClientConfiguration
+from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -43,9 +40,9 @@ class DnsManagementClient(MultiApiClientMixin, _SDKClient):
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Specifies the Azure subscription ID, which uniquely identifies the Microsoft Azure subscription.
+    :param subscription_id: Specifies the Azure subscription ID, which uniquely identifies the Microsoft Azure subscription. Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -67,15 +64,13 @@ class DnsManagementClient(MultiApiClientMixin, _SDKClient):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        api_version=None, # type: Optional[str]
-        base_url=None,  # type: Optional[str]
-        profile=KnownProfiles.default, # type: KnownProfiles
-        **kwargs  # type: Any
+        credential: "TokenCredential",
+        subscription_id: str,
+        api_version: Optional[str]=None,
+        base_url: str = "https://management.azure.com",
+        profile: KnownProfiles=KnownProfiles.default,
+        **kwargs: Any
     ):
-        if not base_url:
-            base_url = 'https://management.azure.com'
         self._config = DnsManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(DnsManagementClient, self).__init__(
@@ -117,6 +112,7 @@ class DnsManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2018_05_01.operations import DnsResourceReferenceOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'dns_resource_reference'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -136,6 +132,7 @@ class DnsManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2018_05_01.operations import RecordSetsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'record_sets'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -155,6 +152,7 @@ class DnsManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2018_05_01.operations import ZonesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'zones'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):

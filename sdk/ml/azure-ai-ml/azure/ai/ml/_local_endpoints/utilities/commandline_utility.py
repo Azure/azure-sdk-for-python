@@ -8,7 +8,7 @@ import subprocess
 import sys
 import time
 
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MLException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException
 
 
 def _print_command_results(test_passed, time_taken, output):
@@ -67,7 +67,7 @@ def run_cli_command(
                 return json.loads(exclude_warnings(output))
             except Exception:
                 msg = "Expected JSON, instead got: \n{}\n"
-                raise MLException(
+                raise MlException(
                     message=msg.format(output),
                     no_personal_data_message=msg.format("[something else]"),
                     target=ErrorTarget.LOCAL_ENDPOINT,
