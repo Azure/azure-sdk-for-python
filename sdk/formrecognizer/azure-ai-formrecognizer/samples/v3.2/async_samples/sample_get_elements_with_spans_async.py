@@ -85,7 +85,7 @@ async def get_elements_with_spans_async():
     # This example uses DocumentTable, but other elements that also have a `spans` or `span` field
     # can also be used to search for related elements, such as lines in this case.
     # To see an example for searching for words which have a `span` field, see
-    # `sample_get_words_on_document_line.py` under the samples v3.2_and_later directory.
+    # `sample_get_words_on_document_line.py` under the samples v3.2 directory.
     if result.tables is not None:
         for table_idx, table in enumerate(result.tables):
             print(
