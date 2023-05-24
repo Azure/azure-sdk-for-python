@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Union
 import json
 import hashlib
 import hmac
@@ -13,7 +13,6 @@ try:
 except ImportError:
     from urllib2 import quote  # type: ignore
 
-from azure.core.exceptions import raise_with_traceback
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
@@ -27,6 +26,10 @@ from ._generated.models import (
 
 if TYPE_CHECKING:
     from datetime import datetime
+    try:
+        from cloudevents import CloudEvent
+    except ImportError:
+        CloudEvent = Any
 
 def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
     # type: (str, str, datetime, Any) -> str
@@ -37,6 +40,7 @@ def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
     :param datetime.datetime expiration_date_utc: The expiration datetime in UTC for the signature.
     :keyword str api_version: The API Version to include in the signature.
      If not provided, the default API version will be used.
+    :return: The shared access signature string.
     :rtype: str
 
     .. admonition:: Example:
@@ -89,20 +93,29 @@ def _get_authentication_policy(credential, bearer_token_policy=BearerTokenCreden
         "The provided credential should be an instance of a TokenCredential, AzureSasCredential or AzureKeyCredential"
     )
 
+def _all_in_event(required, event):
+    """Checks if all the required properties are in the event
+    :param required: The required properties
+    :type required: tuple[str]
+    :param event: The event to check
+    :type event: dict[str, Any]
+    :return: Whether all the required properties are in the event
+    :rtype: bool
+    """
+    for prop in required:
+        yield prop in event
 
-def _is_cloud_event(event):
-    # type: (Any) -> bool
+def _is_cloud_event(event: Any) -> bool:
     required = ("id", "source", "specversion", "type")
     try:
-        return all([_ in event for _ in required]) and event["specversion"] == "1.0"
+        return all(_all_in_event(required, event)) and event["specversion"] == "1.0"
     except TypeError:
         return False
 
-def _is_eventgrid_event(event):
-    # type: (Any) -> bool
+def _is_eventgrid_event(event: Any) -> bool:
     required = ("subject", "eventType", "data", "dataVersion", "id", "eventTime")
     try:
-        return all([prop in event for prop in required])
+        return all(_all_in_event(required, event))
     except TypeError:
         return False
 
@@ -141,9 +154,13 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
         **kwargs
     )
 
-def _from_cncf_events(event):
+def _from_cncf_events(event: CloudEvent) -> Union[dict, CloudEvent]:
     """This takes in a CNCF cloudevent and returns a dictionary.
     If cloud events library is not installed, the event is returned back.
+    :param event: The event to be serialized
+    :type event: CloudEvent
+    :return: A dictionary representation of the event or the event
+    :rtype: dict or CloudEvent
     """
     try:
         from cloudevents.http import to_json
@@ -152,9 +169,9 @@ def _from_cncf_events(event):
         # means this is not a CNCF event
         return event
     except Exception as err: # pylint: disable=broad-except
-        msg = """Failed to serialize the event. Please ensure your
-        CloudEvents is correctly formatted (https://pypi.org/project/cloudevents/)"""
-        raise_with_traceback(ValueError, msg, err)
+        # msg = """Failed to serialize the event. Please ensure your
+        # CloudEvents is correctly formatted (https://pypi.org/project/cloudevents/)"""
+        raise err from ValueError
 
 
 def _build_request(endpoint, content_type, events, *, channel_name=None):
