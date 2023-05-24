@@ -124,7 +124,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
     async def test_completion_content_filter_prompt(self, azure_openai_creds):
         deployment = azure_openai_creds["completions_name"]
 
-        with pytest.raises(openai.error.APIError) as e:
+        with pytest.raises(openai.error.InvalidRequestError) as e:
             await openai.Completion.acreate(
                 prompt="How do I rob a bank?",
                 deployment_id=deployment,

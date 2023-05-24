@@ -47,9 +47,9 @@ def azure_openai_creds(environment_variables):
     openai.api_base = environment_variables.get(ENV_AZURE_OPENAI_ENDPOINT).rstrip("/")
     openai.api_type = "azure"
     openai.api_key = environment_variables.get(ENV_AZURE_OPENAI_KEY)
-    openai.api_version = environment_variables.get(ENV_AZURE_OPENAI_API_VERSION)
+    openai.api_version = ENV_AZURE_OPENAI_API_VERSION
     yield {
-        "completions_name": environment_variables.get(ENV_AZURE_OPENAI_COMPLETIONS_NAME),
-        "chat_completions_name": environment_variables.get(ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME),
-        "embeddings_name": environment_variables.get(ENV_AZURE_OPENAI_EMBEDDINGS_NAME),
+        "completions_name": ENV_AZURE_OPENAI_COMPLETIONS_NAME,
+        "chat_completions_name": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
+        "embeddings_name": ENV_AZURE_OPENAI_EMBEDDINGS_NAME,
     }
