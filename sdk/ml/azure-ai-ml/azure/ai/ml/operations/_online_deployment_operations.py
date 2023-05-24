@@ -84,9 +84,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         deployment: OnlineDeployment,
         *,
         local: bool = False,
-        local_enable_gpu: bool = False,
         vscode_debug: bool = False,
         skip_script_validation: bool = False,
+        local_enable_gpu: Optional[bool] = False,
         **kwargs,
     ) -> LROPoller[OnlineDeployment]:
         """Create or update a deployment.
@@ -95,10 +95,10 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :type deployment: ~azure.ai.ml.entities.OnlineDeployment
         :param local: Whether deployment should be created locally, defaults to False
         :type local: bool, optional
-        :param local_enable_gpu: enable local container to access gpu
-        :type local_enable_gpu: bool, optional
         :param vscode_debug: Whether to open VSCode instance to debug local deployment, defaults to False
         :type vscode_debug: bool, optional
+        :param local_enable_gpu: enable local container to access gpu
+        :type local_enable_gpu: bool, optional
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot
             be successfully validated. Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineDeployment assets

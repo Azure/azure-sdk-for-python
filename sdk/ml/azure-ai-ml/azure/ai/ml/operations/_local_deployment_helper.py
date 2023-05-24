@@ -51,7 +51,10 @@ class _LocalDeploymentHelper(object):
         self._environment_operations = operation_container.all_operations.get(AzureMLResourceType.ENVIRONMENT)
 
     def create_or_update(
-        self, deployment: OnlineDeployment, local_endpoint_mode: LocalEndpointMode, local_enable_gpu: bool
+        self,
+        deployment: OnlineDeployment,
+        local_endpoint_mode: LocalEndpointMode,
+        local_enable_gpu: Optional[bool] = False,
     ) -> OnlineDeployment:
         """Create or update an deployment locally using Docker.
 

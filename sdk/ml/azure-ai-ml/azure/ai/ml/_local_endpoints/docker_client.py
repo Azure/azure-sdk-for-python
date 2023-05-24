@@ -111,7 +111,7 @@ class DockerClient(object):
         azureml_port: int,
         local_endpoint_mode: LocalEndpointMode,
         prebuilt_image_name: Optional[str] = None,
-        local_enable_gpu: Optional[bool] = None,
+        local_enable_gpu: Optional[bool] = False,
     ) -> None:
         """Builds and runs an image from provided image context.
 
