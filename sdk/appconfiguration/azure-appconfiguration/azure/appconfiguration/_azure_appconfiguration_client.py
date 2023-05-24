@@ -59,7 +59,7 @@ class AzureAppConfigurationClient:
     """
 
     # pylint:disable=protected-access
-    def __init__(self, base_url: str, credential: TokenCredential, **kwargs) -> None:
+    def __init__(self, base_url: str, credential: TokenCredential, *, api_version: str = "1.0", **kwargs) -> None:
         try:
             if not base_url.lower().startswith("http"):
                 base_url = "https://" + base_url
@@ -88,7 +88,7 @@ class AzureAppConfigurationClient:
             )
 
         self._impl = AzureAppConfiguration(
-            base_url, pipeline=pipeline, credential_scopes=self._credential_scopes, api_version="1.0"
+            base_url, pipeline=pipeline, credential_scopes=self._credential_scopes, api_version=api_version
         )
 
     @classmethod

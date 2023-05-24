@@ -56,7 +56,7 @@ class AzureAppConfigurationClient:
 
     # pylint:disable=protected-access
 
-    def __init__(self, base_url: str, credential: AsyncTokenCredential, **kwargs) -> None:
+    def __init__(self, base_url: str, credential: AsyncTokenCredential, *, api_version: str = "1.0", **kwargs) -> None:
         try:
             if not base_url.lower().startswith("http"):
                 base_url = "https://" + base_url
@@ -81,8 +81,7 @@ class AzureAppConfigurationClient:
                 )
             else:
                 raise TypeError(
-                    "Please provide an instance from azure-identity "
-                    "or a class that implement the 'get_token protocol"
+                    "Please provide an instance from azure-identity or a class that implement the 'get_token' protocol"
                 )
         else:
             credential_policy = AppConfigRequestsCredentialsPolicy(credential) # type: ignore
@@ -93,7 +92,7 @@ class AzureAppConfigurationClient:
             authentication_policy=credential_policy,
             user_agent_policy=user_agent_policy,
             per_call_policies=self._sync_token_policy,
-            api_version="1.0",
+            api_version=api_version,
             **kwargs
         )
 
