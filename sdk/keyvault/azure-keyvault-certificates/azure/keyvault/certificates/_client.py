@@ -5,8 +5,10 @@
 # pylint:disable=too-many-lines,too-many-public-methods
 import base64
 from functools import partial
+from typing import TYPE_CHECKING, Any, List, Optional, Union, cast
 
 from azure.core.polling import LROPoller
+from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
@@ -22,16 +24,6 @@ from ._models import (
     CertificateOperation,
 )
 from ._polling import CreateCertificatePoller
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import
-    from typing import Any, List, Optional, Union
-    from azure.core.paging import ItemPaged
 
 
 NO_SAN_OR_SUBJECT = "You need to set either subject or one of the subject alternative names parameters in the policy"
@@ -135,7 +127,8 @@ class CertificateClient(KeyVaultClientBase):
         create_certificate_polling = CreateCertificatePoller(
             get_certificate_command=get_certificate_command, interval=polling_interval
         )
-        return LROPoller(command, create_certificate_operation, lambda *_: None, create_certificate_polling)
+        def no_op(*_, **__) -> Any: pass  # The deserialization callback is ignored based on polling implementation
+        return LROPoller(command, create_certificate_operation, no_op, create_certificate_polling)
 
     @distributed_trace
     def get_certificate(self, certificate_name: str, **kwargs) -> KeyVaultCertificate:
