@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 from pathlib import Path
+from typing import List, Union
 
 import yaml
 
@@ -10,6 +11,16 @@ from ...entities._component.additional_includes import AdditionalIncludes
 
 
 class InternalAdditionalIncludes(AdditionalIncludes):
+    def __init__(self, code_path: Union[None, str], yaml_path: Path, configs: List[Union[str, dict]] = None):
+        self._yaml_path = yaml_path
+        super(InternalAdditionalIncludes, self).__init__(
+            code_path=code_path, base_path=yaml_path.parent, configs=configs
+        )
+
+    @property
+    def yaml_path(self):
+        return self._yaml_path
+
     @property
     def includes(self):
         if not self.additional_includes_file_path.is_file():
@@ -46,5 +57,5 @@ class InternalAdditionalIncludes(AdditionalIncludes):
                     isinstance(additional_includes_configs, dict)
                     and self.get_config_key() in additional_includes_configs
                 )
-        except Exception:  # pylint: disable=broad-except
+        except (FileNotFoundError, yaml.YAMLError):
             return False

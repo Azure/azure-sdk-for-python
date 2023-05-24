@@ -5,10 +5,12 @@ import os
 import shutil
 import tempfile
 import zipfile
+from abc import abstractmethod
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import contextmanager
 from multiprocessing import cpu_count
 from pathlib import Path
-from typing import List, Union
+from typing import List, Optional, Union
 
 import yaml
 
@@ -36,10 +38,10 @@ class AdditionalIncludes:
     def get_suffix(cls):
         return cls.SUFFIX
 
-    def __init__(self, code_path: Union[None, str], yaml_path: str, additional_includes: List[Union[str, dict]] = None):
-        self._yaml_path = yaml_path
+    def __init__(self, *, code_path: Union[None, str], base_path: Path, configs: List[Union[str, dict]] = None):
+        self._base_path = base_path
         self._code_path = code_path
-        self._additional_includes = additional_includes if additional_includes else []
+        self._configs = configs if configs else []
 
         self._tmp_code_path = None
         self._includes = None
@@ -48,12 +50,15 @@ class AdditionalIncludes:
 
     @property
     def additional_includes(self):
-        return self._additional_includes
+        return self._configs
 
     @property
     def code_path(self) -> Union[None, Path]:
+        """The resolved code path based on base path, if code path is not specified, return None.
+        We shouldn't change this property name given it's referenced in mldesigner.
+        """
         if self._code_path is not None:
-            return (self.yaml_path.parent / self._code_path).resolve()
+            return (self.base_path / self._code_path).resolve()
         return self._code_path
 
     @property
@@ -61,19 +66,8 @@ class AdditionalIncludes:
         return self._tmp_code_path if self._tmp_code_path else self.code_path
 
     @property
-    def yaml_path(self) -> Path:
-        if self._yaml_path is None:
-            # if yaml path is not specified, take working directory as root folder and use a not created temp file name
-            return Path.cwd() / PLACEHOLDER_FILE_NAME
-        return Path(self._yaml_path)
-
-    @property
     def base_path(self) -> Path:
-        return self.yaml_path.parent
-
-    @property
-    def yaml_name(self) -> str:
-        return self.yaml_path.name
+        return self._base_path
 
     @property
     def with_includes(self):
@@ -297,17 +291,19 @@ class AdditionalIncludes:
             try:
                 src_path = include_path.resolve()
             except OSError:
-                error_msg = f"Failed to resolve additional include {additional_include} for {self.yaml_name}."
+                # no need to include potential yaml file name in error message as it will be covered by
+                # validation message construction.
+                error_msg = f"Failed to resolve additional include " f"{additional_include} based on {self.base_path}."
                 validation_result.append_error(message=error_msg)
                 continue
 
             if not src_path.exists() and not self._is_folder_to_compress(src_path):
-                error_msg = f"Unable to find additional include {additional_include} for {self.yaml_name}."
+                error_msg = f"Unable to find additional include {additional_include}"
                 validation_result.append_error(message=error_msg)
                 continue
 
             if len(src_path.parents) == 0:
-                error_msg = f"Root directory is not supported for additional includes for {self.yaml_name}."
+                error_msg = "Root directory is not supported for additional includes."
                 validation_result.append_error(message=error_msg)
                 continue
 
@@ -316,16 +312,11 @@ class AdditionalIncludes:
                 if dst_path.is_symlink():
                     # if destination path is symbolic link, check if it points to the same file/folder as source path
                     if dst_path.resolve() != src_path.resolve():
-                        error_msg = (
-                            f"A symbolic link already exists for additional include {additional_include} "
-                            f"for {self.yaml_name}."
-                        )
+                        error_msg = f"A symbolic link already exists for additional include {additional_include}."
                         validation_result.append_error(message=error_msg)
                         continue
                 elif dst_path.exists():
-                    error_msg = (
-                        f"A file already exists for additional include {additional_include} for " f"{self.yaml_name}."
-                    )
+                    error_msg = f"A file already exists for additional include {additional_include}."
                     validation_result.append_error(message=error_msg)
         return validation_result
 
@@ -348,7 +339,9 @@ class AdditionalIncludes:
                     else None,
                 )
                 self._copy(
-                    Path(self.code_path), tmp_folder_path / Path(self.code_path).name, ignore_file=root_ignore_file
+                    Path(self.code_path),
+                    tmp_folder_path / Path(self.code_path).name,
+                    ignore_file=root_ignore_file,
                 )
             else:
                 # current implementation of ignore file is based on absolute path, so it cannot be shared
@@ -361,7 +354,7 @@ class AdditionalIncludes:
                 self._copy(self.code_path, tmp_folder_path, ignore_file=root_ignore_file)
         else:
             root_ignore_file = ComponentIgnoreFile(
-                self.yaml_path.parent,
+                self.base_path,
             )
         return root_ignore_file
 
@@ -403,18 +396,77 @@ class AdditionalIncludes:
                 # early continue as the folder is compressed as a zip file
                 continue
 
-            if not src_path.exists():
-                raise ValueError(f"Unable to find additional include {additional_include} for {self.yaml_name}.")
-
+            # no need to check if src_path exists as it is already validated
             if src_path.is_file():
                 self._copy(src_path, dst_path, ignore_file=root_ignore_file)
-            if src_path.is_dir():
+            elif src_path.is_dir():
                 self._copy(
                     src_path,
                     dst_path,
                     # root ignore file on parent + ignore file on src_path
                     ignore_file=root_ignore_file.merge(src_path),
                 )
+            else:
+                raise ValueError(f"Unable to find additional include {additional_include}.")
 
         self._tmp_code_path = tmp_folder_path  # point code path to tmp folder
         return
+
+
+class AdditionalIncludesMixin:
+    def __init__(self):
+        self.__used_base_path = None
+        self.__used_additional_includes = None
+        self.__used_code_path = None
+        self.__obj: Optional[AdditionalIncludes] = None
+
+    @property
+    def _obj(self):
+        # reset obj if base path or additional includes changed
+        if self.__obj is not None and (
+            self.__used_base_path != self._get_base_path_for_additional_includes()
+            or self.__used_additional_includes != self._get_all_additional_includes_configs()
+            or self.__used_code_path != self._get_code_path_for_additional_includes()
+        ):
+            # cleanup previous obj
+            self.__obj.cleanup()
+            self.__obj = None
+
+        if self.__obj is None:
+            self.__used_base_path = self._get_base_path_for_additional_includes()
+            self.__used_additional_includes = self._get_all_additional_includes_configs()
+            self.__used_code_path = self._get_code_path_for_additional_includes()
+            self.__obj = AdditionalIncludes(
+                base_path=self._get_base_path_for_additional_includes(),
+                configs=self._get_all_additional_includes_configs(),
+                code_path=self._get_code_path_for_additional_includes(),
+            )
+        return self.__obj
+
+    @abstractmethod
+    def _get_base_path_for_additional_includes(self) -> Path:
+        """Get base path for additional includes."""
+
+    @abstractmethod
+    def _get_code_path_for_additional_includes(self) -> Optional[str]:
+        """Get code path for additional includes.
+        Additional includes are only supported for component types with code attribute. Original code path will be
+        merged with additional includes to form a new code path.
+        """
+
+    @abstractmethod
+    def _get_all_additional_includes_configs(self) -> List:
+        """Get all additional include configs."""
+
+    @contextmanager
+    def _resolve_additional_includes(self) -> Optional[Path]:
+        # merge code path with additional includes into a temp folder if additional includes is specified
+        self._obj.resolve()
+
+        yield self._obj.code.absolute() if self._obj.code else None
+
+        # cleanup temp folder if it's created
+        self._obj.cleanup()
+
+    def _validate_additional_includes(self):
+        return self._obj.validate()

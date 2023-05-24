@@ -99,12 +99,12 @@ class InternalComponent(Component):
         datatransfer: Optional[Dict] = None,
         **kwargs,
     ):
-        type, self._type_label = parse_name_label(type)
+        _type, self._type_label = parse_name_label(type)
         super().__init__(
             name=name,
             version=version,
             id=id,
-            type=type,
+            type=_type,
             description=description,
             tags=tags,
             properties=properties,
@@ -150,12 +150,13 @@ class InternalComponent(Component):
 
     @property
     def _additional_includes(self):
-        if self.__additional_includes is None:
+        # internal component should always have a source path
+        if self.__additional_includes is None and self._source_path is not None:
             # use property as `self._source_path` is set after __init__ now
             # `self._source_path` is not None when enter this function
             self.__additional_includes = InternalAdditionalIncludes(
                 code_path=self.code,
-                yaml_path=self._source_path,
+                yaml_path=Path(self._source_path),
             )
         return self.__additional_includes
 

@@ -29,14 +29,14 @@ from ..._utils.utils import get_all_data_binding_expressions, parse_args_descrip
 from ...entities._assets import Code
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
 from .._validation import MutableValidationResult
-from .additional_includes import AdditionalIncludes
+from .additional_includes import AdditionalIncludesMixin
 from .component import Component
 from .ignore_file import ComponentIgnoreFile
 
 # pylint: disable=protected-access
 
 
-class CommandComponent(Component, ParameterizedCommand):
+class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin):
     """Command component version, used to define a command component.
 
     :param name: Name of the component.
@@ -144,21 +144,20 @@ class CommandComponent(Component, ParameterizedCommand):
             )
         self.instance_count = instance_count
         self.additional_includes = additional_includes or []
-        self.__additional_includes_obj = None
 
-    @property
-    def _additional_includes_obj(self):
-        if (
-            self.__additional_includes_obj is None
-            and self.additional_includes
-            and isinstance(self.additional_includes, list)
-        ):
-            # use property as `self._source_path` is set after __init__ now
-            # `self._source_path` is not None when enter this function
-            self.__additional_includes_obj = AdditionalIncludes(
-                code_path=self.code, yaml_path=self._source_path, additional_includes=self.additional_includes
-            )
-        return self.__additional_includes_obj
+    def _get_base_path_for_additional_includes(self) -> Path:
+        return Path(self.base_path)
+
+    def _get_code_path_for_additional_includes(self) -> Optional[str]:
+        if self.code is not None and isinstance(self.code, str):
+            # directly return code given it will be validated in self._validate_additional_includes
+            return self.code
+
+        # self.code won't be a Code object, or it will fail schema validation according to CodeFields
+        return None
+
+    def _get_all_additional_includes_configs(self) -> List:
+        return self.additional_includes or []
 
     @property
     def instance_count(self) -> int:
@@ -213,8 +212,7 @@ class CommandComponent(Component, ParameterizedCommand):
 
     def _customized_validate(self):
         validation_result = super(CommandComponent, self)._customized_validate()
-        if self._additional_includes_obj and self._additional_includes_obj.with_includes:
-            validation_result.merge_with(self._additional_includes_obj.validate())
+        validation_result.merge_with(self._validate_additional_includes())
         validation_result.merge_with(self._validate_command())
         validation_result.merge_with(self._validate_early_available_output())
         return validation_result
@@ -283,27 +281,12 @@ class CommandComponent(Component, ParameterizedCommand):
             yield code
             return
 
-        if self._additional_includes_obj is not None:
-            self._additional_includes_obj.resolve()
-
-            # use absolute path in case temp folder & work dir are in different drive
-            tmp_code_dir = (
-                self._additional_includes_obj.code.absolute()
-                if self._additional_includes_obj.code
-                else self._additional_includes_obj.yaml_path.absolute()
-            )
-            rebased_ignore_file = ComponentIgnoreFile(
-                tmp_code_dir,
-            )
-
-            yield Code(
-                base_path=self._base_path,
-                path=tmp_code_dir,
-                ignore_file=rebased_ignore_file,
-            )
-
-            self._additional_includes_obj.cleanup()
-        elif self.code is not None:
-            yield code
-        else:
-            yield None
+        with self._resolve_additional_includes() as tmp_code_dir:
+            if tmp_code_dir is None:
+                yield None
+            else:
+                yield Code(
+                    base_path=self._base_path,
+                    path=tmp_code_dir,
+                    ignore_file=ComponentIgnoreFile(tmp_code_dir),
+                )

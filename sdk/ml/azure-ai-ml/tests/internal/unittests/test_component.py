@@ -754,17 +754,20 @@ class TestComponent:
     @pytest.mark.parametrize(
         "yaml_path,expected_error_msg_prefix",
         [
-            (
+            pytest.param(
                 "helloworld_invalid_additional_includes_root_directory.yml",
                 "Root directory is not supported for additional includes",
+                id="root_as_additional_includes",
             ),
-            (
+            pytest.param(
                 "helloworld_invalid_additional_includes_existing_file.yml",
                 "A file already exists for additional include",
+                id="file_already_exists",
             ),
-            (
+            pytest.param(
                 "helloworld_invalid_additional_includes_zip_file_not_found.yml",
                 "Unable to find additional include ../additional_includes/assets/LICENSE.zip",
+                id="zip_file_not_found",
             ),
         ],
     )
