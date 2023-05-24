@@ -302,7 +302,7 @@ except HttpResponseError as error:
 - `HTTP 403` errors indicate that the provided user credentials are not authorized to perform a specific operation on this Device Provisioning Service resource. 
 This can also occur if you have incorrectly generated a SAS credential. Verify your credentials and ensure access to your DPS resource.
 
-- `HTTP 409` errors indicate a resource conflict. This can occurr if:
+- `HTTP 409` errors indicate a resource conflict. This can occur if:
   - You are trying to create an object that already exists
   - You are updating an object using a `create_or_update_` method without providing an `eTag` / `if-match` value
 
