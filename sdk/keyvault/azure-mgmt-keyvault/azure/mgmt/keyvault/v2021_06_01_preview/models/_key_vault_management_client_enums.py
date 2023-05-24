@@ -154,6 +154,7 @@ class ManagedHsmSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     STANDARD_B1 = "Standard_B1"
     CUSTOM_B32 = "Custom_B32"
+    CUSTOM_B6 = "Custom_B6"
 
 
 class NetworkRuleAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -216,9 +217,7 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Control permission for data plane traffic coming from public networks while private endpoint is
-    enabled.
-    """
+    """Control permission to the managed HSM from public networks."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
