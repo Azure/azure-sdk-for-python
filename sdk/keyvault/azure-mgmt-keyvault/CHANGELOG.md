@@ -1,5 +1,9 @@
 # Release History
 
+## 0.0.0 (it should be stable) (2023-06-16)
+
+
+
 ## 10.2.1 (2023-04-03)
 
 ### Bugs Fixed

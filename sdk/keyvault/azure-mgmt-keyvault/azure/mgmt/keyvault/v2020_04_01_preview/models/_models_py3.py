@@ -977,17 +977,17 @@ class ManagedHsmProperties(_serialization.Model):
     :ivar hsm_uri: The URI of the managed hsm pool for performing operations on keys.
     :vartype hsm_uri: str
     :ivar enable_soft_delete: Property to specify whether the 'soft delete' functionality is
-     enabled for this managed HSM pool. If it's not set to any value(true or false) when creating
-     new managed HSM pool, it will be set to true by default. Once set to true, it cannot be
-     reverted to false.
+     enabled for this managed HSM pool. Soft delete is enabled by default for all managed HSMs and
+     is immutable.
     :vartype enable_soft_delete: bool
-    :ivar soft_delete_retention_in_days: softDelete data retention days. It accepts >=7 and <=90.
+    :ivar soft_delete_retention_in_days: Soft deleted data retention days. When you delete an HSM
+     or a key, it will remain recoverable for the configured retention period or for a default
+     period of 90 days. It accepts values between 7 and 90.
     :vartype soft_delete_retention_in_days: int
     :ivar enable_purge_protection: Property specifying whether protection against purge is enabled
      for this managed HSM pool. Setting this property to true activates protection against purge for
      this managed HSM pool and its content - only the Managed HSM service may initiate a hard,
-     irrecoverable deletion. The setting is effective only if soft delete is also enabled. Enabling
-     this functionality is irreversible.
+     irrecoverable deletion. Enabling this functionality is irreversible.
     :vartype enable_purge_protection: bool
     :ivar create_mode: The create mode to indicate whether the resource is being created or is
      being recovered from a deleted resource. Known values are: "recover" and "default".
@@ -1037,18 +1037,17 @@ class ManagedHsmProperties(_serialization.Model):
          hsm pool.
         :paramtype initial_admin_object_ids: list[str]
         :keyword enable_soft_delete: Property to specify whether the 'soft delete' functionality is
-         enabled for this managed HSM pool. If it's not set to any value(true or false) when creating
-         new managed HSM pool, it will be set to true by default. Once set to true, it cannot be
-         reverted to false.
+         enabled for this managed HSM pool. Soft delete is enabled by default for all managed HSMs and
+         is immutable.
         :paramtype enable_soft_delete: bool
-        :keyword soft_delete_retention_in_days: softDelete data retention days. It accepts >=7 and
-         <=90.
+        :keyword soft_delete_retention_in_days: Soft deleted data retention days. When you delete an
+         HSM or a key, it will remain recoverable for the configured retention period or for a default
+         period of 90 days. It accepts values between 7 and 90.
         :paramtype soft_delete_retention_in_days: int
         :keyword enable_purge_protection: Property specifying whether protection against purge is
          enabled for this managed HSM pool. Setting this property to true activates protection against
          purge for this managed HSM pool and its content - only the Managed HSM service may initiate a
-         hard, irrecoverable deletion. The setting is effective only if soft delete is also enabled.
-         Enabling this functionality is irreversible.
+         hard, irrecoverable deletion. Enabling this functionality is irreversible.
         :paramtype enable_purge_protection: bool
         :keyword create_mode: The create mode to indicate whether the resource is being created or is
          being recovered from a deleted resource. Known values are: "recover" and "default".
