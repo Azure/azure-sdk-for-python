@@ -33,35 +33,46 @@ def main():
         resource_group_name="examplerg",
         environment_name="testcontainerenv",
         environment_envelope={
-            "kind": "serverless",
             "location": "East US",
             "properties": {
                 "appLogsConfiguration": {"logAnalyticsConfiguration": {"customerId": "string", "sharedKey": "string"}},
                 "customDomainConfiguration": {
-                    "certificatePassword": "private key password",
+                    "certificatePassword": "1234",
                     "certificateValue": "Y2VydA==",
                     "dnsSuffix": "www.my-name.com",
                 },
                 "daprAIConnectionString": "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://northcentralus-0.in.applicationinsights.azure.com/",
                 "vnetConfiguration": {
-                    "outboundSettings": {
-                        "outBoundType": "UserDefinedRouting",
-                        "virtualNetworkApplianceIp": "192.168.1.20",
-                    }
+                    "infrastructureSubnetId": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/RGName/providers/Microsoft.Network/virtualNetworks/VNetName/subnets/subnetName1"
                 },
                 "workloadProfiles": [
-                    {"maximumCount": 12, "minimumCount": 3, "workloadProfileType": "GeneralPurpose"},
-                    {"maximumCount": 6, "minimumCount": 3, "workloadProfileType": "MemoryOptimized"},
-                    {"maximumCount": 6, "minimumCount": 3, "workloadProfileType": "ComputeOptimized"},
+                    {
+                        "maximumCount": 12,
+                        "minimumCount": 3,
+                        "name": "My-GP-01",
+                        "workloadProfileType": "GeneralPurpose",
+                    },
+                    {
+                        "maximumCount": 6,
+                        "minimumCount": 3,
+                        "name": "My-MO-01",
+                        "workloadProfileType": "MemoryOptimized",
+                    },
+                    {
+                        "maximumCount": 6,
+                        "minimumCount": 3,
+                        "name": "My-CO-01",
+                        "workloadProfileType": "ComputeOptimized",
+                    },
+                    {"name": "My-consumption-01", "workloadProfileType": "Consumption"},
                 ],
                 "zoneRedundant": True,
             },
-            "sku": {"name": "Premium"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2022-10-01/examples/ManagedEnvironments_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2022-11-01-preview/examples/ManagedEnvironments_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

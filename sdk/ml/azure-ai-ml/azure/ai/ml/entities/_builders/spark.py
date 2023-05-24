@@ -5,6 +5,7 @@
 
 import copy
 import logging
+import re
 from enum import Enum
 from os import PathLike, path
 from pathlib import Path
@@ -520,10 +521,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
                 message=SPARK_ENVIRONMENT_WARNING_MESSAGE,
             )
         result.merge_with(self._validate_entry_exist(raise_error=False))
-        try:
-            self._validate_fields()
-        except ValidationException as e:
-            result.append_error(yaml_path="*", message=str(e))
+        result.merge_with(self._validate_fields())
         return result
 
     def _validate_entry_exist(self, raise_error=False) -> MutableValidationResult:
@@ -562,14 +560,42 @@ class Spark(BaseNode, SparkJobEntryMixin):
                     )
         return validation_result.try_raise(error_target=self._get_validation_error_target(), raise_error=raise_error)
 
-    def _validate_fields(self) -> None:
-        _validate_compute_or_resources(self.compute, self.resources)
-        _validate_input_output_mode(self.inputs, self.outputs)
-        _validate_spark_configurations(self)
-        self._validate_entry()
+    def _validate_fields(self) -> MutableValidationResult:
+        validation_result = self._create_empty_validation_result()
+        try:
+            _validate_compute_or_resources(self.compute, self.resources)
+        except ValidationException as e:
+            validation_result.append_error(message=str(e), yaml_path="resources")
+            validation_result.append_error(message=str(e), yaml_path="compute")
+
+        try:
+            _validate_input_output_mode(self.inputs, self.outputs)
+        except ValidationException as e:
+            msg = str(e)
+            m = re.match(r"(Input|Output) '(\w+)'", msg)
+            if m:
+                io_type, io_name = m.groups()
+                if io_type == "Input":
+                    validation_result.append_error(message=msg, yaml_path=f"inputs.{io_name}")
+                else:
+                    validation_result.append_error(message=msg, yaml_path=f"outputs.{io_name}")
+
+        try:
+            _validate_spark_configurations(self)
+        except ValidationException as e:
+            validation_result.append_error(message=str(e), yaml_path="conf")
+
+        try:
+            self._validate_entry()
+        except ValidationException as e:
+            validation_result.append_error(message=str(e), yaml_path="entry")
 
         if self.args:
-            validate_inputs_for_args(self.args, self.inputs)
+            try:
+                validate_inputs_for_args(self.args, self.inputs)
+            except ValidationException as e:
+                validation_result.append_error(message=str(e), yaml_path="args")
+        return validation_result
 
     def __call__(self, *args, **kwargs) -> "Spark":
         """Call Spark as a function will return a new instance each time."""

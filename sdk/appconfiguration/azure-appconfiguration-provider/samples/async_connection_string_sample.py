@@ -8,6 +8,7 @@ from azure.appconfiguration.provider.aio import load
 from azure.appconfiguration.provider import SettingSelector
 import os
 
+
 async def main():
     connection_string = os.environ.get("AZURE_APPCONFIG_CONNECTION_STRING")
 
@@ -29,6 +30,7 @@ async def main():
 
     print("message found: " + str("message" in config))
     print("test.message found: " + str("test.message" in config))
+
 
 if __name__ == "__main__":
     asyncio.run(main())
