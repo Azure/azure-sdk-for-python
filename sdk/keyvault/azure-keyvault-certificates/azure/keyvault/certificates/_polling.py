@@ -4,7 +4,7 @@
 # ------------------------------------
 import logging
 import time
-from typing import TYPE_CHECKING, Any, Callable, Optional, Union
+from typing import Any, Callable, Optional, Union
 
 from azure.core.polling import PollingMethod
 from azure.keyvault.certificates._models import KeyVaultCertificate, CertificateOperation

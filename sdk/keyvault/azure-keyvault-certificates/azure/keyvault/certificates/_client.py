@@ -5,7 +5,7 @@
 # pylint:disable=too-many-lines,too-many-public-methods
 import base64
 from functools import partial
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import Any, List, Optional, Union
 
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
@@ -127,7 +127,8 @@ class CertificateClient(KeyVaultClientBase):
         create_certificate_polling = CreateCertificatePoller(
             get_certificate_command=get_certificate_command, interval=polling_interval
         )
-        def no_op(*_, **__) -> Any: pass  # The deserialization callback is ignored based on polling implementation
+        def no_op(*_, **__) -> Any:  # The deserialization callback is ignored based on polling implementation
+            pass
         return LROPoller(command, create_certificate_operation, no_op, create_certificate_polling)
 
     @distributed_trace
@@ -547,7 +548,7 @@ class CertificateClient(KeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def list_deleted_certificates(self, **kwargs) -> "ItemPaged[DeletedCertificate]":
+    def list_deleted_certificates(self, **kwargs) -> ItemPaged[DeletedCertificate]:
         """Lists the currently-recoverable deleted certificates. Possible only if vault is soft-delete enabled.
 
         Requires certificates/get/list permission. Retrieves the certificates in the current vault which are in a
@@ -586,7 +587,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_properties_of_certificates(self, **kwargs) -> "ItemPaged[CertificateProperties]":
+    def list_properties_of_certificates(self, **kwargs) -> ItemPaged[CertificateProperties]:
         """List identifiers and properties of all certificates in the vault.
 
         Requires certificates/list permission.
@@ -625,7 +626,7 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def list_properties_of_certificate_versions(
         self, certificate_name: str, **kwargs
-    ) -> "ItemPaged[CertificateProperties]":
+    ) -> ItemPaged[CertificateProperties]:
         """List the identifiers and properties of a certificate's versions.
 
         Requires certificates/list permission.
@@ -1014,7 +1015,7 @@ class CertificateClient(KeyVaultClientBase):
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
-    def list_properties_of_issuers(self, **kwargs) -> "ItemPaged[IssuerProperties]":
+    def list_properties_of_issuers(self, **kwargs) -> ItemPaged[IssuerProperties]:
         """Lists properties of the certificate issuers for the key vault.
 
         Requires the certificates/manageissuers/getissuers permission.
