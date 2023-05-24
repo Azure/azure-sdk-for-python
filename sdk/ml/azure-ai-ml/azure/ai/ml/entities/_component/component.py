@@ -38,7 +38,7 @@ from ...entities._system_data import SystemData
 from ...entities._util import find_type_in_override
 from ...entities._validation import MutableValidationResult, RemoteValidatableMixin, SchemaValidatableMixin
 from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
-from .code import ComponentIgnoreFile
+from .ignore_file import ComponentIgnoreFile
 
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name

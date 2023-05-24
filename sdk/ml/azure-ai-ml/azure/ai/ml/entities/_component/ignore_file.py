@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from pathlib import Path
-from typing import List, Union, Optional
+from typing import List, Optional, Union
 
 from azure.ai.ml._utils._asset_utils import IgnoreFile, get_ignore_file
 

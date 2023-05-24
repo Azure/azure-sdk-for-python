@@ -3,13 +3,10 @@
 # ---------------------------------------------------------
 
 from pathlib import Path
+
 import yaml
 
-from ...entities._component._additional_includes import (
-    AdditionalIncludes,
-    ADDITIONAL_INCLUDES_KEY,
-    ADDITIONAL_INCLUDES_SUFFIX,
-)
+from ...entities._component.additional_includes import AdditionalIncludes
 
 
 class InternalAdditionalIncludes(AdditionalIncludes):
@@ -34,7 +31,7 @@ class InternalAdditionalIncludes(AdditionalIncludes):
 
     @property
     def additional_includes_file_path(self) -> Path:
-        return self.yaml_path.with_suffix(ADDITIONAL_INCLUDES_SUFFIX)
+        return self.yaml_path.with_suffix(self.get_suffix())
 
     @property
     def base_path(self) -> Path:
@@ -47,7 +44,7 @@ class InternalAdditionalIncludes(AdditionalIncludes):
                 additional_includes_configs = yaml.safe_load(f)
                 return (
                     isinstance(additional_includes_configs, dict)
-                    and ADDITIONAL_INCLUDES_KEY in additional_includes_configs
+                    and self.get_config_key() in additional_includes_configs
                 )
         except Exception:  # pylint: disable=broad-except
             return False

@@ -18,13 +18,13 @@ from ..._utils._arm_id_utils import parse_name_label
 from ..._utils._asset_utils import IgnoreFile
 from ...entities import Component
 from ...entities._assets import Code
-from ...entities._component.code import ComponentIgnoreFile
+from ...entities._component.ignore_file import ComponentIgnoreFile
 from ...entities._job.distribution import DistributionConfiguration
 from ...entities._system_data import SystemData
 from ...entities._util import convert_ordered_dict_to_dict
 from ...entities._validation import MutableValidationResult
 from .._schema.component import InternalComponentSchema
-from ._additional_includes import ADDITIONAL_INCLUDES_SUFFIX, InternalAdditionalIncludes
+from ._additional_includes import InternalAdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
 from ._merkle_tree import create_merkletree
 from .code import InternalCode
@@ -168,7 +168,7 @@ class InternalComponent(Component):
         # if the code is not local path, no need for additional includes
         code = Path(self.code) if self.code is not None else Path(self._source_path).parent
         if code.exists() and self._additional_includes.with_includes:
-            validation_result.merge_with(self._additional_includes._validate())
+            validation_result.merge_with(self._additional_includes.validate())
             # resolving additional includes & update self._base_path can be dangerous,
             # so we just skip path validation if additional_includes is used
             # note that there will still be runtime error in submission or execution
@@ -246,7 +246,7 @@ class InternalComponent(Component):
 
         def get_additional_include_file_name():
             if self._source_path is not None:
-                return Path(self._source_path).with_suffix(ADDITIONAL_INCLUDES_SUFFIX).name
+                return Path(self._source_path).with_suffix(InternalAdditionalIncludes.get_suffix()).name
             return None
 
         self._additional_includes.resolve()

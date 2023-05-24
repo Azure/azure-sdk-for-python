@@ -19,14 +19,23 @@ from ..._utils._artifact_utils import ArtifactCache
 from ..._utils._asset_utils import IgnoreFile, traverse_directory
 from ..._utils.utils import is_concurrent_component_registration_enabled, is_private_preview_enabled
 from ...entities._util import _general_copy
-from .code import ComponentIgnoreFile
+from .ignore_file import ComponentIgnoreFile
 
 PLACEHOLDER_FILE_NAME = "_placeholder_spec.yaml"
-ADDITIONAL_INCLUDES_KEY = "additional_includes"
-ADDITIONAL_INCLUDES_SUFFIX = ".additional_includes"
 
 
 class AdditionalIncludes:
+    CONFIG_KEY = "additional_includes"
+    SUFFIX = ".additional_includes"
+
+    @classmethod
+    def get_config_key(cls):
+        return cls.CONFIG_KEY
+
+    @classmethod
+    def get_suffix(cls):
+        return cls.SUFFIX
+
     def __init__(self, code_path: Union[None, str], yaml_path: str, additional_includes: List[Union[str, dict]] = None):
         self._yaml_path = yaml_path
         self._code_path = code_path
@@ -236,12 +245,12 @@ class AdditionalIncludes:
         elif (
             hasattr(self, "additional_includes_file_path")
             and self.additional_includes_file_path.exists()
-            and self.additional_includes_file_path.suffix == ADDITIONAL_INCLUDES_SUFFIX
+            and self.additional_includes_file_path.suffix == self.get_suffix()
             and self.additional_includes_file_path.is_file()
         ):
             with open(self.additional_includes_file_path) as f:
                 additional_includes_configs = yaml.safe_load(f)
-                additional_includes_configs = additional_includes_configs.get(ADDITIONAL_INCLUDES_KEY, [])
+                additional_includes_configs = additional_includes_configs.get(self.get_config_key(), [])
         else:
             return additional_includes
 
@@ -277,7 +286,7 @@ class AdditionalIncludes:
             )
         return additional_includes
 
-    def _validate(self) -> MutableValidationResult:
+    def validate(self) -> MutableValidationResult:
         validation_result = _ValidationResultBuilder.success()
         validation_result.merge_with(self.artifact_validate_result)
         if not self.with_includes:

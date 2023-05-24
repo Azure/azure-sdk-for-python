@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from pathlib import Path
-from typing import Dict, Optional, Union, List
 from contextlib import contextmanager
+from pathlib import Path
+from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -16,23 +16,22 @@ from azure.ai.ml.entities._job.distribution import (
     DistributionConfiguration,
     MpiDistribution,
     PyTorchDistribution,
-    TensorFlowDistribution,
     RayDistribution,
+    TensorFlowDistribution,
 )
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
-from .code import ComponentIgnoreFile
-from ._additional_includes import AdditionalIncludes
-
-from ...entities._assets import Code
 from ..._restclient.v2022_10_01.models import ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
+from ...entities._assets import Code
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
 from .._validation import MutableValidationResult
+from .additional_includes import AdditionalIncludes
 from .component import Component
+from .ignore_file import ComponentIgnoreFile
 
 # pylint: disable=protected-access
 
@@ -215,7 +214,7 @@ class CommandComponent(Component, ParameterizedCommand):
     def _customized_validate(self):
         validation_result = super(CommandComponent, self)._customized_validate()
         if self._additional_includes_obj and self._additional_includes_obj.with_includes:
-            validation_result.merge_with(self._additional_includes_obj._validate())
+            validation_result.merge_with(self._additional_includes_obj.validate())
         validation_result.merge_with(self._validate_command())
         validation_result.merge_with(self._validate_early_available_output())
         return validation_result
