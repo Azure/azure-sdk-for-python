@@ -153,9 +153,7 @@ def _buildprovider(
 ) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
     provider = AzureAppConfigurationProvider()
-    headers = kwargs.pop("headers", {})
-    if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() != "true":
-        headers["Correlation-Context"] = _get_correlation_context(key_vault_options)
+    headers = _get_header(key_vault_options, kwargs)
 
     useragent = USER_AGENT
 

@@ -148,26 +148,29 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     return provider
 
 
-def _get_correlation_context(key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions]) -> str:
-    correlation_context = "RequestType=Startup"
-    if key_vault_options and (
-        key_vault_options.credential or key_vault_options.client_configs or key_vault_options.secret_resolver
-    ):
-        correlation_context += ",UsesKeyVault"
-    host_type = ""
-    if os.environ.get(AzureFunctionEnvironmentVariable) is not None:
-        host_type = "AzureFunction"
-    elif os.environ.get(AzureWebAppEnvironmentVariable) is not None:
-        host_type = "AzureWebApp"
-    elif os.environ.get(ContainerAppEnvironmentVariable) is not None:
-        host_type = "ContainerApp"
-    elif os.environ.get(KubernetesEnvironmentVariable) is not None:
-        host_type = "Kubernetes"
-    elif os.environ.get(ServiceFabricEnvironmentVariable) is not None:
-        host_type = "ServiceFabric"
-    if host_type:
-        correlation_context += ",Host=" + host_type
-    return correlation_context
+def _get_header(key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions], **kwargs) -> str:
+    headers = kwargs.pop("headers", {})
+    if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() != "true":    
+        correlation_context = "RequestType=Startup"
+        if key_vault_options and (
+            key_vault_options.credential or key_vault_options.client_configs or key_vault_options.secret_resolver
+        ):
+            correlation_context += ",UsesKeyVault"
+        host_type = ""
+        if os.environ.get(AzureFunctionEnvironmentVariable) is not None:
+            host_type = "AzureFunction"
+        elif os.environ.get(AzureWebAppEnvironmentVariable) is not None:
+            host_type = "AzureWebApp"
+        elif os.environ.get(ContainerAppEnvironmentVariable) is not None:
+            host_type = "ContainerApp"
+        elif os.environ.get(KubernetesEnvironmentVariable) is not None:
+            host_type = "Kubernetes"
+        elif os.environ.get(ServiceFabricEnvironmentVariable) is not None:
+            host_type = "ServiceFabric"
+        if host_type:
+            correlation_context += ",Host=" + host_type
+        headers["Correlation-Context"] = correlation_context
+    return headers
 
 
 def _buildprovider(
@@ -179,10 +182,7 @@ def _buildprovider(
 ) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
     provider = AzureAppConfigurationProvider()
-    headers = kwargs.pop("headers", {})
-
-    if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, "").lower() != "true":
-        headers["Correlation-Context"] = _get_correlation_context(key_vault_options)
+    headers = _get_header(key_vault_options, kwargs)
 
     useragent = USER_AGENT
 
