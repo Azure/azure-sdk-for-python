@@ -200,7 +200,13 @@ def _buildprovider(
         )
         return provider
     provider._client = AzureAppConfigurationClient(
-        endpoint, credential, user_agent=useragent, headers=headers, retry_backoff_max=retry_backoff_max, **kwargs
+        endpoint,
+        credential,
+        user_agent=useragent,
+        headers=headers,
+        retry_total=retry_total,
+        retry_backoff_max=retry_backoff_max,
+        **kwargs
     )
     return provider
 
