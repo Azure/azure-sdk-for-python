@@ -19,7 +19,7 @@ from .._constants import (
     EMPTY_LABEL,
     REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE,
 )
-from .._azureappconfigurationprovider import _is_json_content_type, _get_correlation_context
+from .._azureappconfigurationprovider import _is_json_content_type, _get_headers
 from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
@@ -153,7 +153,7 @@ def _buildprovider(
 ) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
     provider = AzureAppConfigurationProvider()
-    headers = _get_header(key_vault_options, kwargs)
+    headers = _get_headers(key_vault_options, kwargs)
 
     retry_total = kwargs.pop("retry_total", 2)
     retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
