@@ -558,7 +558,7 @@ class AzureAppConfigurationClient:
         name: str,
         filters: List[Dict[str, str]],
         *,
-        composition_type: Optional[Literal["all", "group_by_key"]] = None,
+        composition_type: Optional[Literal["key", "key_label"]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
@@ -571,10 +571,10 @@ class AzureAppConfigurationClient:
             included in the snapshot. Each filter should be in format {"key": <value>, "label": <value>},
             and key field value is required.
         :type filters: list[dict[str, str]]
-        :keyword Literal["all", "group_by_key"] composition_type: The composition type describes how the key-values
-            within the snapshot are composed. The 'all' composition type includes all key-values. The 'group_by_key'
-            composition type ensures there are no two key-values containing the same key. Known values are:
-            "all" and "group_by_key".
+        :keyword Literal["key", "key_label"] composition_type: The composition type describes how the key-values
+            within the snapshot are composed. Known values are: "key" and "key_label". The "key" composition type
+            ensures there are no two key-values containing the same key. The 'key_label' composition type ensures
+            there are no two key-values containing the same key and label.
         :keyword int retention_period: The amount of time, in seconds, that a snapshot will remain in the
             archived state before expiring. This property is only writable during the creation of a
             snapshot. If not specified, will set to 2592000(30 days). If specified, should be
