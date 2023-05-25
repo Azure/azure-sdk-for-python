@@ -3,7 +3,7 @@ from pathlib import Path
 import pydash
 import pytest
 from devtools_testutils import AzureRecordedTestCase
-from test_utilities.utils import cancel_job
+from test_utilities.utils import cancel_job, get_automl_job_properties
 
 from azure.ai.ml import Input, MLClient, automl, dsl, Output
 from azure.ai.ml.automl import (
@@ -277,6 +277,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 target_column_name="y",
                 primary_metric="accuracy",
                 featurization=NlpFeaturizationSettings(dataset_language="eng"),
+                properties=get_automl_job_properties()
             )
             text_classification_node.set_limits(max_concurrent_trials=1)
 
@@ -324,6 +325,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 validation_data=text_classification_multilabel_valid,
                 target_column_name="terms",
                 primary_metric="accuracy",
+                properties=get_automl_job_properties()
             )
             text_classification_multilabel_node.set_limits(max_concurrent_trials=1)
 
@@ -371,6 +373,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 validation_data=text_ner_valid,
                 target_column_name="label",
                 primary_metric="accuracy",
+                properties=get_automl_job_properties()
             )
             text_ner_node.set_limits(max_concurrent_trials=1)
 
@@ -415,6 +418,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 validation_data=image_multiclass_valid_data,
                 target_column_name="label",
                 primary_metric="Accuracy",
+                properties=get_automl_job_properties()
             )
             image_multiclass_node.set_limits(
                 timeout_minutes=60,
@@ -427,6 +431,10 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                     ),
                     SearchSpace(
                         model_name=Choice(["seresnext"]),
+                        learning_rate=Uniform(0.001, 0.01),
+                    ),
+                    SearchSpace(
+                        model_name=Choice(["microsoft/beit-base-patch16-224"]),
                         learning_rate=Uniform(0.001, 0.01),
                     ),
                 ]
@@ -489,6 +497,10 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                     "learning_rate": "uniform(0.001,0.01)",
                     "model_name": "choice('seresnext')",
                 },
+                {
+                    "learning_rate": "uniform(0.001,0.01)",
+                    "model_name": "choice('microsoft/beit-base-patch16-224')",
+                },
             ],
         }
 
@@ -503,6 +515,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 validation_data=image_multilabel_valid_data,
                 target_column_name="label",
                 primary_metric="iou",
+                properties=get_automl_job_properties()
             )
             image_multilabel_node.set_limits(
                 timeout_minutes=60,
@@ -515,6 +528,10 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                     ),
                     SearchSpace(
                         model_name=Choice(["seresnext"]),
+                        learning_rate=Uniform(0.001, 0.01),
+                    ),
+                    SearchSpace(
+                        model_name=Choice(["microsoft/beit-base-patch16-224"]),
                         learning_rate=Uniform(0.001, 0.01),
                     ),
                 ]
@@ -577,6 +594,10 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                     "model_name": "choice('seresnext')",
                     "learning_rate": "uniform(0.001,0.01)",
                 },
+                {
+                    "model_name": "choice('microsoft/beit-base-patch16-224')",
+                    "learning_rate": "uniform(0.001,0.01)",
+                },
             ],
         }
 
@@ -591,6 +612,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 validation_data=image_object_detection_valid_data,
                 target_column_name="label",
                 primary_metric="MeanAveragePrecision",
+                properties=get_automl_job_properties()
             )
 
             image_object_detection_node.extend_search_space(
@@ -602,6 +624,12 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                     ),
                     SearchSpace(
                         model_name=Choice(["fasterrcnn_resnet50_fpn"]),
+                        learning_rate=Uniform(0.0001, 0.001),
+                        optimizer=Choice(["sgd", "adam", "adamw"]),
+                        min_size=Choice([600, 800]),  # model-specific
+                    ),
+                    SearchSpace(
+                        model_name=Choice(["atss_r50_fpn_1x_coco"]),
                         learning_rate=Uniform(0.0001, 0.001),
                         optimizer=Choice(["sgd", "adam", "adamw"]),
                         min_size=Choice([600, 800]),  # model-specific
@@ -676,6 +704,12 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                     "model_name": "choice('fasterrcnn_resnet50_fpn')",
                     "optimizer": "choice('sgd','adam','adamw')",
                 },
+                {
+                    "learning_rate": "uniform(0.0001,0.001)",
+                    "min_size": "choice(600,800)",
+                    "model_name": "choice('atss_r50_fpn_1x_coco')",
+                    "optimizer": "choice('sgd','adam','adamw')",
+                },
             ],
         }
 
@@ -690,6 +724,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 target_column_name="label",
                 training_data=image_instance_segmentation_train_data,
                 validation_data=image_instance_segmentation_valid_data,
+                properties=get_automl_job_properties()
             )
             image_instance_segmentation_node.set_limits(
                 timeout_minutes=60,
@@ -699,6 +734,12 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 [
                     SearchSpace(
                         model_name=Choice(["maskrcnn_resnet50_fpn"]),
+                        learning_rate=Uniform(0.0001, 0.001),
+                        optimizer=Choice(["sgd", "adam", "adamw"]),
+                        min_size=Choice([600, 800]),
+                    ),
+                    SearchSpace(
+                        model_name=Choice(["mask_rcnn_swin-s-p4-w7_fpn_fp16_ms-crop-3x_coco"]),
                         learning_rate=Uniform(0.0001, 0.001),
                         optimizer=Choice(["sgd", "adam", "adamw"]),
                         min_size=Choice([600, 800]),
@@ -766,6 +807,12 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                     "model_name": "choice('maskrcnn_resnet50_fpn')",
                     "optimizer": "choice('sgd','adam','adamw')",
                     "min_size": "choice(600,800)",
+                },
+                {
+                    "learning_rate": "uniform(0.0001,0.001)",
+                    "model_name": "choice('mask_rcnn_swin-s-p4-w7_fpn_fp16_ms-crop-3x_coco')",
+                    "optimizer": "choice('sgd','adam','adamw')",
+                    "min_size": "choice(600,800)",
                 }
-            ],
+            ]
         }
