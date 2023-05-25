@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 
 PACKAGE_NAME = "azure-synapse-artifacts"
-PACKAGE_PPRINT_NAME = "Synapse Artifacts"
+PACKAGE_PPRINT_NAME = "Azure Synapse Artifacts"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
@@ -29,7 +29,7 @@ if not version:
 setup(
     name=PACKAGE_NAME,
     version=version,
-    description="Microsoft Synapse Artifacts Client Library for Python",
+    description="Microsoft {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",
     license="MIT License",

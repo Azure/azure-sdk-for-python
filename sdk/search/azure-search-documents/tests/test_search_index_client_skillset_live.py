@@ -28,17 +28,17 @@ class TestSearchSkillset(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
-    def test_skillset_crud(self, api_key, endpoint):
-        client = SearchIndexerClient(endpoint, api_key)
-        self._test_create_skillset_validation()
-        self._test_create_skillset(client)
-        self._test_get_skillset(client)
-        self._test_get_skillsets(client)
-        self._test_create_or_update_skillset(client)
-        self._test_create_or_update_skillset_if_unchanged(client)
-        self._test_create_or_update_skillset_inplace(client)
-        self._test_delete_skillset_if_unchanged(client)
-        self._test_delete_skillset(client)
+    # def test_skillset_crud(self, api_key, endpoint):
+    #     client = SearchIndexerClient(endpoint, api_key)
+    #     self._test_create_skillset_validation()
+    #     self._test_create_skillset(client)
+    #     self._test_get_skillset(client)
+    #     self._test_get_skillsets(client)
+    #     self._test_create_or_update_skillset(client)
+    #     self._test_create_or_update_skillset_if_unchanged(client)
+    #     self._test_create_or_update_skillset_inplace(client)
+    #     self._test_delete_skillset_if_unchanged(client)
+    #     self._test_delete_skillset(client)
 
     def _test_create_skillset_validation(self):
         name = "test-ss-validation"

@@ -6,7 +6,7 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import ConnectionCategory
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ConnectionCategory
 from azure.ai.ml._schema.core.fields import ArmStr, NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job import CreationContextSchema
@@ -43,6 +43,7 @@ class WorkspaceConnectionSchema(PathAwareSchema):
         required=True,
     )
     target = fields.Str()
+    expiryTime = fields.Str()
     credentials = UnionField(
         [
             NestedField(PatTokenConfigurationSchema),

@@ -80,7 +80,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
             assert client._credential is None
 
-            properties = client.get_repository_properties("library/hello-world")
+            properties = client.get_repository_properties(HELLO_WORLD)
 
             assert isinstance(properties, RepositoryProperties)
             assert properties.name == HELLO_WORLD
@@ -95,7 +95,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             assert client._credential is None
 
             count = 0
-            for manifest in client.list_manifest_properties("library/hello-world"):
+            for manifest in client.list_manifest_properties(HELLO_WORLD):
                 assert isinstance(manifest, ArtifactManifestProperties)
                 count += 1
             assert count > 0
@@ -109,11 +109,11 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
             assert client._credential is None
 
-            registry_artifact = client.get_manifest_properties("library/hello-world", "latest")
+            registry_artifact = client.get_manifest_properties(HELLO_WORLD, "latest")
 
             assert isinstance(registry_artifact, ArtifactManifestProperties)
             assert "latest" in registry_artifact.tags
-            assert registry_artifact.repository_name == "library/hello-world"
+            assert registry_artifact.repository_name == HELLO_WORLD
 
     @acr_preparer()
     @recorded_by_proxy
@@ -125,7 +125,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             assert client._credential is None
 
             count = 0
-            for tag in client.list_tag_properties("library/hello-world"):
+            for tag in client.list_tag_properties(HELLO_WORLD):
                 count += 1
                 assert isinstance(tag, ArtifactTagProperties)
             assert count > 0
@@ -140,7 +140,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             assert client._credential is None
 
             with pytest.raises(ClientAuthenticationError):
-                client.delete_repository("library/hello-world")
+                client.delete_repository(HELLO_WORLD)
 
     @acr_preparer()
     @recorded_by_proxy
@@ -152,7 +152,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             assert client._credential is None
 
             with pytest.raises(ClientAuthenticationError):
-                client.delete_tag("library/hello-world", "latest")
+                client.delete_tag(HELLO_WORLD, "latest")
 
     @acr_preparer()
     @recorded_by_proxy
@@ -164,7 +164,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             assert client._credential is None
 
             with pytest.raises(ClientAuthenticationError):
-                client.delete_manifest("library/hello-world", "latest")
+                client.delete_manifest(HELLO_WORLD, "latest")
 
     @acr_preparer()
     @recorded_by_proxy

@@ -47,6 +47,22 @@ class DeviceCodeCredential(InteractiveCredential):
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
+    :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting
+        to authenticate. Setting this to true will completely disable both instance discovery and authority validation.
+        This functionality is intended for use in scenarios where the metadata endpoint cannot be reached, such as in
+        private clouds or Azure Stack. The process of instance discovery entails retrieving authority metadata from
+        https://login.microsoft.com/ to validate the authority. By setting this to **True**, the validation of the
+        authority is disabled. As a result, it is crucial to ensure that the configured authority host is valid and
+        trustworthy.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_device_code_credential]
+            :end-before: [END create_device_code_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create a DeviceCodeCredential.
     """
 
     def __init__(

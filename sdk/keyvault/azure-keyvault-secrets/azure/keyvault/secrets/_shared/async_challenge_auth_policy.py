@@ -86,7 +86,13 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
 
         body = request.context.pop("key_vault_request_data", None)
         request.http_request.set_text_body(body)  # no-op when text is None
-        await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+
+        # The tenant parsed from AD FS challenges is "adfs"; we don't actually need a tenant for AD FS authentication
+        # For AD FS we skip cross-tenant authentication per https://github.com/Azure/azure-sdk-for-python/issues/28648
+        if challenge.tenant_id and challenge.tenant_id.lower().endswith("adfs"):
+            await self.authorize_request(request, scope)
+        else:
+            await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
 
         return True
 

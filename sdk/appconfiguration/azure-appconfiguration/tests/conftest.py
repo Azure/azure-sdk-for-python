@@ -27,10 +27,11 @@ import pytest
 import os
 from devtools_testutils import add_general_regex_sanitizer, test_proxy, set_bodiless_matcher
 
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     set_bodiless_matcher()
-    
+
     client_id = os.environ.get("APPCONFIGURATION_CLIENT_ID", "client-id")
     add_general_regex_sanitizer(regex=client_id, value="client-id")
     client_secret = os.environ.get("APPCONFIGURATION_CLIENT_SECRET", "client-secret")

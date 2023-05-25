@@ -1755,7 +1755,11 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         headers = base.GetHeaders(self, initial_headers, "patch", path, document_id, typ, options)
         # Patch will use WriteEndpoint since it uses PUT operation
         request_params = _request_object.RequestObject(typ, documents._OperationType.Patch)
-        result, self.last_response_headers = self.__Patch(path, request_params, operations, headers, **kwargs)
+        request_data = {}
+        if options.get("filterPredicate"):
+            request_data["condition"] = options.get("filterPredicate")
+        request_data["operations"] = operations
+        result, self.last_response_headers = self.__Patch(path, request_params, request_data, headers, **kwargs)
 
         # update session for request mutates data on server side
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
@@ -2372,12 +2376,12 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             **kwargs
         )
 
-    def __Patch(self, path, request_params, operations, req_headers, **kwargs):
+    def __Patch(self, path, request_params, request_data, req_headers, **kwargs):
         """Azure Cosmos 'PATCH' http request.
 
         :params str path:
         :params ~azure.cosmos.RequestObject request_params:
-        :params list operations:
+        :params dict request_data:
         :params dict req_headers:
 
         :return:
@@ -2394,7 +2398,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             connection_policy=self.connection_policy,
             pipeline_client=self.pipeline_client,
             request=request,
-            request_data=operations,
+            request_data=request_data,
             **kwargs
         )
 

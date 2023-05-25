@@ -1,5 +1,21 @@
 # Release History
 
+## 4.11.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 4.11.0 (2023-05-09)
+
+### Features Added
+
+- Added new enum values to `SystemEventNames` related to Storage Tasks, Azure Communication Services and Azure HealthcareApis.
+
 ## 4.10.0 (2023-04-11)
 
 ### Features Added

@@ -15,6 +15,7 @@ from azure.ai.ml.constants._common import (
     PROVIDER_RESOURCE_ID_WITH_VERSION,
     AzureMLResourceType,
 )
+from azure.ai.ml.constants._assets import IPProtectionLevel
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code, load_job
@@ -988,6 +989,9 @@ class TestComponent(AzureRecordedTestCase):
         # TODO(2037030): verify when backend ready
         # assert previous_dict == current_dict
 
+    @pytest.mark.skip(
+        reason="TODO (2349965): Message: User/tenant/subscription is not allowed to access registry UnsecureTest-hello-world"
+    )
     @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_ipp_component_create(self, ipp_registry_client: MLClient, randstr: Callable[[str], str]):
         component_path = "./tests/test_configs/components/component_ipp.yml"
@@ -1001,8 +1005,17 @@ class TestComponent(AzureRecordedTestCase):
         assert from_rest_component._intellectual_property
         assert from_rest_component._intellectual_property == command_component._intellectual_property
 
+        assert from_rest_component.inputs["training_data"]._intellectual_property
+        assert (
+            from_rest_component.inputs["training_data"]._intellectual_property
+            == command_component.inputs["training_data"]._intellectual_property
+        )
+
+        assert from_rest_component.inputs["base_model"]._intellectual_property
+        assert from_rest_component.inputs["base_model"]._intellectual_property.protection_level == IPProtectionLevel.ALL
+
         assert from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
-        print(type(from_rest_component.outputs["model_output_not_ipp"]._intellectual_property))
+
         assert (
             from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
             == command_component.outputs["model_output_not_ipp"]._intellectual_property

@@ -68,6 +68,7 @@ class ManagedOnlineDeploymentSchema(OnlineDeploymentSchema):
         allowed_values=[PublicNetworkAccess.ENABLED, PublicNetworkAccess.DISABLED]
     )
     private_network_connection = ExperimentalField(fields.Bool())
+    data_collector = NestedField(DataCollectorSchema)
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
