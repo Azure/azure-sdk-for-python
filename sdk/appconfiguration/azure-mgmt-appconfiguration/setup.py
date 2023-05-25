@@ -61,14 +61,12 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
-    packages=find_packages(
-        exclude=[
-            "tests",
-            # Exclude packages that will be covered by PEP420 or nspkg
-            "azure",
-            "azure.mgmt",
-        ]
-    ),
+    packages=find_packages(exclude=[
+        "tests",
+        # Exclude packages that will be covered by PEP420 or nspkg
+        "azure",
+        "azure.mgmt",
+    ]),
     include_package_data=True,
     package_data={
         "pytyped": ["py.typed"],
