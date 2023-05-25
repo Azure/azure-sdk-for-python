@@ -10,7 +10,7 @@ from azure.communication.phonenumbers._shared.utils_async import AsyncTimer
 
 call_count = 0
 
-def callback():
+async def callback():
     global call_count
     call_count += 1
 

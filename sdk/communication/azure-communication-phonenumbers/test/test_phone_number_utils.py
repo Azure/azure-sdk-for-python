@@ -12,13 +12,15 @@ from datetime import datetime, timezone
 from msrest.serialization import TZ_UTC
 from unittest import mock
 
+test_endpoint = "https://resource.azure.com/"
+
 def test_convert_datetime_to_utc_int():
     dt = datetime(2023, 1, 1, tzinfo=TZ_UTC)
     timestamp = _convert_datetime_to_utc_int(dt)
     assert timestamp == 1672531200
 
 def test_parse_connection_str_valid():
-    conn_str = 'endpoint=https://resource.azure.com/;accesskey=keyValue'
+    conn_str = f'endpoint={test_endpoint};accesskey=keyValue'
     endpoint, key = parse_connection_str(conn_str)
     assert endpoint == 'resource.azure.com'
     assert key == 'keyValue'
@@ -66,19 +68,17 @@ def test_create_access_token_invalid_format():
 def test_get_authentication_policy_bearer(mock_bearer):
     mock_credential = mock.MagicMock()
     mock_credential.get_token = mock.MagicMock()
-    endpoint = 'https://resource.azure.com/'
-    auth_policy = get_authentication_policy(endpoint, mock_credential)
+    auth_policy = get_authentication_policy(test_endpoint, mock_credential)
     assert isinstance(auth_policy, mock.MagicMock)
 
 @mock.patch('azure.communication.phonenumbers._shared.policy.HMACCredentialsPolicy', return_value=mock.MagicMock())
 def test_get_authentication_policy_hmac(mock_hmac):
-    endpoint = 'https://resource.azure.com/'
-    auth_policy = get_authentication_policy(endpoint, 'keyValue')
+    auth_policy = get_authentication_policy(test_endpoint, 'keyValue')
     assert isinstance(auth_policy, mock.MagicMock)
 
 def test_get_authentication_policy_no_credential():
     with pytest.raises(ValueError):
-        get_authentication_policy('https://resource.azure.com/', None)
+        get_authentication_policy(test_endpoint, None)
 
 def test_get_authentication_policy_unsupported_credential():
     unsupported_credential = mock.MagicMock()
