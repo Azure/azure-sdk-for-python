@@ -11,6 +11,7 @@
 
 ### Other Changes
 - Set the default `api_version` to "1.0".
+- Bumped minimum dependency on `azure-core` to `>=1.25.0`.
 
 ## 1.4.0 (2022-02-13)
 
