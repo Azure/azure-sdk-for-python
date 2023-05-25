@@ -9,6 +9,7 @@ It focuses on displaying the logic required to fetch an AAD access token and to 
 
 """
 
+import time
 import logging
 import redis
 from azure.identity import DefaultAzureCredential
@@ -46,6 +47,12 @@ def re_authentication():
     max_retry = 3
     for index in range(max_retry):
         try:
+            if _need_refreshing(token):
+                _LOGGER.info("Refreshing token...")
+                tmp_token = cred.get_token(scope)
+                if tmp_token:
+                    token = tmp_token
+                r.execute_command("AUTH", user_name, token.token)
             r.set("Az:key1", "value1")
             t = r.get("Az:key1")
             print(t)
@@ -63,6 +70,9 @@ def re_authentication():
             _LOGGER.info("Unknown failures.")
             break
 
+
+def _need_refreshing(token, refresh_offset=300):
+    return not token or token.expires_on - time.time() < refresh_offset
 
 if __name__ == '__main__':
     hello_world()

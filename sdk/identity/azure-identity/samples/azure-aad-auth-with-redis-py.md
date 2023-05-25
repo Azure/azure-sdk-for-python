@@ -81,6 +81,7 @@ When migrating your existing application code, you need to replace the password 
 Integrate the logic in your application code to fetch an Azure AD access token via the azure-identity library as shown below and replace it with the password configuring/retrieving logic in your application code.
 
 ```python
+import time
 import logging
 import redis
 from azure.identity import DefaultAzureCredential
@@ -96,13 +97,19 @@ def re_authentication():
     token = cred.get_token(scope)
     r = redis.Redis(host=host,
                     port=port,
-                    ssl=True,    # ssl connection is required.
+                    ssl=True,   # ssl connection is required.
                     username=user_name,
                     password=token.token,
                     decode_responses=True)
     max_retry = 3
     for index in range(max_retry):
         try:
+            if _need_refreshing(token):
+                _LOGGER.info("Refreshing token...")
+                tmp_token = cred.get_token(scope)
+                if tmp_token:
+                    token = tmp_token
+                r.execute_command("AUTH", user_name, token.token)
             r.set("Az:key1", "value1")
             t = r.get("Az:key1")
             print(t)
@@ -112,13 +119,17 @@ def re_authentication():
             token = cred.get_token(scope)
             r = redis.Redis(host=host,
                             port=port,
-                            ssl=True,    # ssl connection is required.
+                            ssl=True,   # ssl connection is required.
                             username=user_name,
                             password=token.token,
                             decode_responses=True)
         except Exception:
             _LOGGER.info("Unknown failures.")
             break
+
+
+def _need_refreshing(token, refresh_offset=300):
+    return not token or token.expires_on - time.time() < refresh_offset
 
 if __name__ == '__main__':
     re_authentication()
