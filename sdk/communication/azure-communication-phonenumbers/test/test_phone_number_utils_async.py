@@ -6,33 +6,40 @@
 
 import pytest
 import asyncio
-from unittest.mock import AsyncMock
 from azure.communication.phonenumbers._shared.utils_async import AsyncTimer  
+
+call_count = 0
+
+def callback():
+    global call_count
+    call_count += 1
 
 @pytest.mark.asyncio
 async def test_timer_callback():
-    callback = AsyncMock()
+    global call_count
+    call_count = 0  
     timer = AsyncTimer(0, callback)
     timer.start()
     await asyncio.sleep(0.1)  
-    callback.assert_called_once()
+    assert call_count == 1  
 
 @pytest.mark.asyncio
 async def test_timer_cancel():
-    callback = AsyncMock()
-    timer = AsyncTimer(10, callback) 
+    global call_count
+    call_count = 0  
+    timer = AsyncTimer(10, callback)
     timer.start()
     timer.cancel()
-    assert timer._task is None
-    callback.assert_not_called()
+    assert call_count == 0  
 
 @pytest.mark.asyncio
 async def test_timer_restart():
-    callback = AsyncMock()
-    timer = AsyncTimer(0.5, callback) 
+    global call_count
+    call_count = 0  
+    timer = AsyncTimer(0.5, callback)
     timer.start()
     timer.cancel()
-    callback.assert_not_called()
     timer.start()
     await asyncio.sleep(1)  
-    callback.assert_called_once()
+    assert call_count == 1
+

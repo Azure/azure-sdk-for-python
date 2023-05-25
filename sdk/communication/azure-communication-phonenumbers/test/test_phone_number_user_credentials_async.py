@@ -24,7 +24,6 @@ async def token_refresher(expiry_time_seconds=1000):
     new_token = await generate_test_token(expiry_time_seconds)
     return create_access_token(new_token)
 
-
 @pytest.mark.asyncio
 async def test_communication_token_credential_initialization():
     test_token = await generate_test_token()
