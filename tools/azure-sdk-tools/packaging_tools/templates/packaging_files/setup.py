@@ -61,13 +61,15 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
-    packages=find_packages(exclude=[
-        "tests",
-        # Exclude packages that will be covered by PEP420 or nspkg
-        {%- for nspkg_name in nspkg_names %}
-        "{{ nspkg_name }}",
-        {%- endfor %}
-    ]),
+    packages=find_packages(
+        exclude=[
+            "tests",
+            # Exclude packages that will be covered by PEP420 or nspkg
+            {%- for nspkg_name in nspkg_names %}
+            "{{ nspkg_name }}",
+            {%- endfor %}
+        ]
+    ),
     include_package_data=True,
     package_data={
         "pytyped": ["py.typed"],
