@@ -4,7 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
-from typing import Any, Dict, List, Literal, Mapping, Optional, Union
+import sys
+from typing import Any, Dict, List, Mapping, Optional, Union
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential
@@ -43,6 +44,10 @@ from ._utils import (
 )
 from ._sync_token import SyncTokenPolicy
 from ._user_agent import USER_AGENT
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 
 class AzureAppConfigurationClient:
@@ -566,8 +571,8 @@ class AzureAppConfigurationClient:
             included in the snapshot. Each filter should be in format {"key": <value>, "label": <value>},
             and key field value is required.
         :type filters: list[dict[str, str]]
-        :keyword Literal["all", "group_by_key"] composition_type: The composition type describes how the key-values within the
-            snapshot are composed. The 'all' composition type includes all key-values. The 'group_by_key'
+        :keyword Literal["all", "group_by_key"] composition_type: The composition type describes how the key-values
+            within the snapshot are composed. The 'all' composition type includes all key-values. The 'group_by_key'
             composition type ensures there are no two key-values containing the same key. Known values are:
             "all" and "group_by_key".
         :keyword int retention_period: The amount of time, in seconds, that a snapshot will remain in the
