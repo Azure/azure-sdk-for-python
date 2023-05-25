@@ -25,20 +25,15 @@ PLACEHOLDER_FILE_NAME = "_placeholder_spec.yaml"
 
 
 class AdditionalIncludes:
-    CONFIG_KEY = "additional_includes"
-    SUFFIX = ".additional_includes"
-
-    @classmethod
-    def get_config_key(cls):
-        return cls.CONFIG_KEY
-
-    @classmethod
-    def get_suffix(cls):
-        return cls.SUFFIX
-
-    def __init__(self, *, code_path: Union[None, str], base_path: Path, configs: List[Union[str, dict]] = None):
+    def __init__(
+        self,
+        *,
+        origin_code_path: Union[None, str],
+        base_path: Path,
+        configs: List[Union[str, dict]] = None,
+    ):
         self._base_path = base_path
-        self._code_path = code_path
+        self._origin_code_path = origin_code_path
         self._origin_configs = configs
 
         self._tmp_code_path = None
@@ -53,28 +48,28 @@ class AdditionalIncludes:
         return self._origin_configs or []
 
     @property
-    def code_path(self) -> Union[None, Path]:
+    def origin_code_path(self) -> Union[None, Path]:
         """The resolved code path based on base path, if code path is not specified, return None.
         We shouldn't change this property name given it's referenced in mldesigner.
         """
-        if self._code_path is not None:
-            return (self.base_path / self._code_path).resolve()
-        return self._code_path
-
-    @property
-    def code(self):
-        return self._tmp_code_path if self._tmp_code_path else self.code_path
+        if self._origin_code_path is None:
+            return None
+        if os.path.isabs(self._origin_code_path):
+            return Path(self._origin_code_path)
+        return (self.base_path / self._origin_code_path).resolve()
 
     @property
     def base_path(self) -> Path:
+        """Base path for origin code path and additional include configs."""
         return self._base_path
 
     @property
     def with_includes(self):
-        return len(self.includes) != 0 or not self.validate_artifact_additional_includes().passed
+        """Whether the additional include configs have been provided."""
+        return len(self.includes) != 0 or not self._validate_artifact_additional_includes().passed
 
     @property
-    def is_artifact_includes(self):
+    def _is_artifact_includes(self):
         return any(
             map(
                 lambda x: isinstance(x, dict) and x.get("type", None) == AzureDevopsArtifactsType.ARTIFACT,
@@ -87,12 +82,12 @@ class AdditionalIncludes:
         """The resolved additional include configs.
         Artifact additional include configs have been resolved in this property.
         """
-        if self.is_artifact_includes:
+        if self._is_artifact_includes:
             return self._load_artifact_additional_includes()
         return self.origin_configs
 
-    def validate_artifact_additional_includes(self):
-        if not self.is_artifact_includes:
+    def _validate_artifact_additional_includes(self):
+        if not self._is_artifact_includes:
             return _ValidationResultBuilder.success()
         if self._artifact_validation_result is None:
             # artifact validation is done on loading now, so trigger it here
@@ -100,7 +95,7 @@ class AdditionalIncludes:
         return self._artifact_validation_result
 
     @classmethod
-    def merge_local_path_to_additional_includes(cls, local_path, config_info, conflict_files):
+    def _merge_local_path_to_additional_includes(cls, local_path, config_info, conflict_files):
         file_name = Path(local_path).name
         conflicts = conflict_files.get(file_name, set())
         conflicts.add(config_info)
@@ -196,15 +191,6 @@ class AdditionalIncludes:
                 for path, _ in traverse_directory(root, files, str(folder_to_zip), "", ignore_file=ignore_file):
                     zf.write(path, os.path.relpath(path, folder_to_zip.parent))
 
-    def cleanup(self) -> None:
-        """Clean up potential tmp folder generated during resolve as it can be
-        very disk consuming."""
-        if not self._tmp_code_path:
-            return
-        if Path(self._tmp_code_path).is_dir():
-            shutil.rmtree(self._tmp_code_path)
-        self._tmp_code_path = None  # point code path back to real path
-
     def _load_artifact_additional_includes(self):
         """
         Load the additional includes by yaml format.
@@ -230,7 +216,6 @@ class AdditionalIncludes:
         additional_includes, conflict_files = [], {}
 
         # Load the artifacts config from additional_includes
-        # pylint: disable=no-member
         if self.origin_configs:
             additional_includes_configs = self.origin_configs
         else:
@@ -252,7 +237,7 @@ class AdditionalIncludes:
                     all_validation_result.merge_with(validation_result)
                     for local_path, config_info in result:
                         additional_includes.append(local_path)
-                        self.merge_local_path_to_additional_includes(
+                        self._merge_local_path_to_additional_includes(
                             local_path=local_path, config_info=config_info, conflict_files=conflict_files
                         )
         else:
@@ -260,7 +245,7 @@ class AdditionalIncludes:
                 all_validation_result.merge_with(validation_result)
                 for local_path, config_info in result:
                     additional_includes.append(local_path)
-                    self.merge_local_path_to_additional_includes(
+                    self._merge_local_path_to_additional_includes(
                         local_path=local_path, config_info=config_info, conflict_files=conflict_files
                     )
 
@@ -276,7 +261,7 @@ class AdditionalIncludes:
     def validate(self) -> MutableValidationResult:
         # use a new validation result to merge artifact validation result to avoid updating the original one
         validation_result = _ValidationResultBuilder.success()
-        validation_result.merge_with(self.validate_artifact_additional_includes())
+        validation_result.merge_with(self._validate_artifact_additional_includes())
         if not self.with_includes:
             return validation_result
         for additional_include in self.includes:
@@ -301,7 +286,7 @@ class AdditionalIncludes:
                 validation_result.append_error(message=error_msg)
                 continue
 
-            dst_path = Path(self.code_path) / src_path.name if self.code_path else None
+            dst_path = Path(self.origin_code_path) / src_path.name if self.origin_code_path else None
             if dst_path:
                 if dst_path.is_symlink():
                     # if destination path is symbolic link, check if it points to the same file/folder as source path
@@ -314,55 +299,47 @@ class AdditionalIncludes:
                     validation_result.append_error(message=error_msg)
         return validation_result
 
-    def get_config_file_name(self):  # pylint: disable=no-self-use
-        return None
-
-    def _resolve_code(self, tmp_folder_path):
-        """Resolve code when additional includes is specified.
-
-        create a tmp folder and copy all files under real code path to it.
-        """
-
+    def _copy_origin_code(self, target_path):
+        """Copy origin code to target path."""
         # code can be either file or folder, as additional includes exists, need to copy to temporary folder
-        # pylint: disable=no-member
-        if self.code_path:
-            if Path(self.code_path).is_file():
-                # use a dummy ignore file to save base path
-                root_ignore_file = ComponentIgnoreFile(
-                    Path(self.code_path).parent,
-                    skip_ignore_file=True,
-                    additional_includes_file_name=self.get_config_file_name(),
-                )
-                self._copy(
-                    Path(self.code_path),
-                    tmp_folder_path / Path(self.code_path).name,
-                    ignore_file=root_ignore_file,
-                )
-            else:
-                # current implementation of ignore file is based on absolute path, so it cannot be shared
-                root_ignore_file = ComponentIgnoreFile(
-                    self.code_path,
-                    additional_includes_file_name=self.get_config_file_name(),
-                )
-                self._copy(self.code_path, tmp_folder_path, ignore_file=root_ignore_file)
-        else:
-            root_ignore_file = ComponentIgnoreFile(
+        if self.origin_code_path is None:
+            # if additional include configs exist but no origin code path, return a dummy ignore file
+            return ComponentIgnoreFile(
                 self.base_path,
             )
+
+        if Path(self.origin_code_path).is_file():
+            # use a dummy ignore file to save base path
+            root_ignore_file = ComponentIgnoreFile(
+                Path(self.origin_code_path).parent,
+                skip_ignore_file=True,
+            )
+            self._copy(
+                Path(self.origin_code_path),
+                target_path / Path(self.origin_code_path).name,
+                ignore_file=root_ignore_file,
+            )
+        else:
+            # current implementation of ignore file is based on absolute path, so it cannot be shared
+            root_ignore_file = ComponentIgnoreFile(self.origin_code_path)
+            self._copy(self.origin_code_path, target_path, ignore_file=root_ignore_file)
         return root_ignore_file
 
-    def resolve(self) -> None:
-        """Resolve code and potential additional includes.
-
-        If no additional includes is specified, just return and use
-        original real code path; otherwise, create a tmp folder and copy
-        all files under real code path and additional includes to it.
+    @contextmanager
+    def resolve(self) -> Path:
+        """Merge code and potential additional includes into a temp folder and return the absolute path of it.
+        If no additional includes is specified, just return absolute path of original code path;
+        If no original code path is specified, just return None.
         """
         if not self.with_includes:
+            if self.origin_code_path is None:
+                yield None
+            else:
+                yield self.origin_code_path.absolute()
             return
 
         tmp_folder_path = Path(tempfile.mkdtemp())
-        root_ignore_file = self._resolve_code(tmp_folder_path)
+        root_ignore_file = self._copy_origin_code(tmp_folder_path)
 
         # resolve additional includes
         base_path = self.base_path
@@ -403,6 +380,10 @@ class AdditionalIncludes:
                 raise ValueError(f"Unable to find additional include {additional_include}.")
 
         self._tmp_code_path = tmp_folder_path  # point code path to tmp folder
+        yield tmp_folder_path.absolute()
+
+        # clean up tmp folder as it can be very disk space consuming
+        shutil.rmtree(tmp_folder_path, ignore_errors=True)
         return
 
 
@@ -414,25 +395,23 @@ class AdditionalIncludesMixin:
         self.__obj: Optional[AdditionalIncludes] = None
 
     @property
-    def _obj(self):
+    def _additional_includes(self) -> AdditionalIncludes:
         # reset obj if base path or additional includes changed
         if self.__obj is not None and (
             self.__used_base_path != self._get_base_path_for_additional_includes()
             or self.__used_additional_includes != self._get_all_additional_includes_configs()
-            or self.__used_code_path != self._get_code_path_for_additional_includes()
+            or self.__used_code_path != self._get_origin_code_path_for_additional_includes()
         ):
-            # cleanup previous obj
-            self.__obj.cleanup()
             self.__obj = None
 
         if self.__obj is None:
             self.__used_base_path = self._get_base_path_for_additional_includes()
             self.__used_additional_includes = self._get_all_additional_includes_configs()
-            self.__used_code_path = self._get_code_path_for_additional_includes()
+            self.__used_code_path = self._get_origin_code_path_for_additional_includes()
             self.__obj = AdditionalIncludes(
-                base_path=self._get_base_path_for_additional_includes(),
-                configs=self._get_all_additional_includes_configs(),
-                code_path=self._get_code_path_for_additional_includes(),
+                base_path=self.__used_base_path,
+                configs=self.__used_additional_includes,
+                origin_code_path=self.__used_code_path,
             )
         return self.__obj
 
@@ -441,10 +420,11 @@ class AdditionalIncludesMixin:
         """Get base path for additional includes."""
 
     @abstractmethod
-    def _get_code_path_for_additional_includes(self) -> Optional[str]:
-        """Get code path for additional includes.
-        Additional includes are only supported for component types with code attribute. Original code path will be
-        merged with additional includes to form a new code path.
+    def _get_origin_code_path_for_additional_includes(self) -> Optional[str]:
+        """Get origin code path.
+        Origin code path is either an absolute path or a relative path to base path.
+        Additional includes are only supported for component types with code attribute. Origin code path will be copied
+        to a temp folder along with additional includes to form a new code content.
         """
 
     @abstractmethod
@@ -454,12 +434,18 @@ class AdditionalIncludesMixin:
     @contextmanager
     def _resolve_additional_includes(self) -> Optional[Path]:
         # merge code path with additional includes into a temp folder if additional includes is specified
-        self._obj.resolve()
-
-        yield self._obj.code.absolute() if self._obj.code else None
-
-        # cleanup temp folder if it's created
-        self._obj.cleanup()
+        with self._additional_includes.resolve() as code_path:
+            yield code_path
 
     def _validate_additional_includes(self):
-        return self._obj.validate()
+        return self._additional_includes.validate()
+
+    def _involved_code_merging(self):
+        # Ignore additional includes if origin code is not a local path
+        if (
+            self._additional_includes.origin_code_path
+            and self._additional_includes.origin_code_path.exists()
+            and self._additional_includes.with_includes
+        ):
+            return True
+        return False

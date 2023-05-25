@@ -145,10 +145,11 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         self.instance_count = instance_count
         self.additional_includes = additional_includes or []
 
+    # region AdditionalIncludesMixin
     def _get_base_path_for_additional_includes(self) -> Path:
         return Path(self.base_path)
 
-    def _get_code_path_for_additional_includes(self) -> Optional[str]:
+    def _get_origin_code_path_for_additional_includes(self) -> Optional[str]:
         if self.code is not None and isinstance(self.code, str):
             # directly return code given it will be validated in self._validate_additional_includes
             return self.code
@@ -158,6 +159,8 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
 
     def _get_all_additional_includes_configs(self) -> List:
         return self.additional_includes or []
+
+    # endregion
 
     @property
     def instance_count(self) -> int:
@@ -206,6 +209,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
             return self.environment.id
         return self.environment
 
+    # region SchemaValidatableMixin
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return CommandComponentSchema(context=context)
@@ -253,6 +257,8 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
                     return False
         return True
 
+    # endregion
+
     @classmethod
     def _parse_args_description_from_docstring(cls, docstring):
         return parse_args_description_from_docstring(docstring)
@@ -272,21 +278,17 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         # if there is no local code, yield super()._resolve_local_code() and return early
         if self.code is not None:
             with super()._resolve_local_code() as code:
-                if not isinstance(code, Code) or code._is_remote:
+                if code is None or code._is_remote:
                     yield code
                     return
-
-        # This is forbidden by schema CodeFields for now so won't happen.
-        if isinstance(self.code, Code):
-            yield code
-            return
 
         with self._resolve_additional_includes() as tmp_code_dir:
             if tmp_code_dir is None:
                 yield None
-            else:
-                yield Code(
-                    base_path=self._base_path,
-                    path=tmp_code_dir,
-                    ignore_file=ComponentIgnoreFile(tmp_code_dir),
-                )
+                return
+
+            yield Code(
+                base_path=self._base_path,
+                path=tmp_code_dir,
+                ignore_file=ComponentIgnoreFile(tmp_code_dir),
+            )

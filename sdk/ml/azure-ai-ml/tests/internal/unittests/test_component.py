@@ -439,7 +439,7 @@ class TestComponent:
             assert ZipFile(code_path / "library.zip").namelist() == ["library/", "library/hello.py", "library/world.py"]
             assert (code_path / "library1" / "hello.py").is_file()
             assert (code_path / "library1" / "world.py").is_file()
-            assert not (code_path / "helloworld_additional_includes.additional_includes").exists()
+            assert code._ignore_file.is_file_excluded(code_path / "helloworld_additional_includes.additional_includes")
 
         assert not code_path.is_dir()
 
