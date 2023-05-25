@@ -3,6 +3,7 @@
 ## 1.4.1 (Unreleased)
 
 ### Features Added
+- Added support for `Snapshot` CRUD operations.
 
 ### Breaking Changes
 
