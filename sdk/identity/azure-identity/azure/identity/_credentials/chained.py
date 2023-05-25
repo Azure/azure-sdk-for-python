@@ -80,6 +80,11 @@ class ChainedTokenCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
         within_credential_chain.set(True)
+        
+        if self._successful_credential:
+            # Optimization for clients that embed ChainedTokenCredentials on subsequent requests
+            return self._successful_credential.get_token(*scopes, **kwargs)
+        
         history = []
         for credential in self.credentials:
             try:
