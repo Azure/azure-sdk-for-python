@@ -49,9 +49,10 @@ class DataColumn(RestTranslatableMixin):
         if isinstance(type, str):
             type = DataColumnType[type]
         elif not isinstance(type, DataColumnType):
+            msg = f"Type should be DataColumnType enum string or enum type, found {type}"
             raise ValidationException(
-                message=f"Data column type should be DataColumnType enum string or enum type, found {type}",
-                no_personal_data_message=f"Data column type should be DataColumnType enum string or enum type. found {type}",
+                message=msg,
+                no_personal_data_message=msg,
                 error_type=ValidationErrorType.INVALID_VALUE,
                 target=ErrorTarget.DATA,
                 error_category=ErrorCategory.USER_ERROR,
