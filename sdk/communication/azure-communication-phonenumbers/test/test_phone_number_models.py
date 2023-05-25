@@ -25,10 +25,9 @@ def test_phone_number_identifier():
     assert phone_num.properties["value"] == test_phone_number
 
 def test_unknown_identifier():
-    identifier = test_unknown_id
-    unknown = models.UnknownIdentifier(identifier)
+    unknown = models.UnknownIdentifier(test_unknown_id)
     assert unknown.kind == models.CommunicationIdentifierKind.UNKNOWN
-    assert unknown.raw_id == identifier
+    assert unknown.raw_id == test_unknown_id
     assert unknown.properties == {}
 
 def test_microsoft_teams_user_identifier():
@@ -94,11 +93,10 @@ def test_microsoft_bot_identifier_cloud_types():
         assert bot.properties["cloud"] == cloud
 
 def test_microsoft_bot_identifier_global():
-    bot_id = test_bot_id
-    bot = models.MicrosoftBotIdentifier(bot_id, is_resource_account_configured=False)
+    bot = models.MicrosoftBotIdentifier(test_bot_id, is_resource_account_configured=False)
     assert bot.kind == models.CommunicationIdentifierKind.MICROSOFT_BOT
-    assert bot.raw_id == f'{models.BOT_PREFIX}{bot_id}'
-    assert bot.properties["bot_id"] == bot_id
+    assert bot.raw_id == f'{models.BOT_PREFIX}{test_bot_id}'
+    assert bot.properties["bot_id"] == test_bot_id
     assert bot.properties["is_resource_account_configured"] == False
     assert bot.properties["cloud"] == models.CommunicationCloudEnvironment.PUBLIC
 
