@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import os
 import json
 from typing import Any, Dict, Iterable, Mapping, Optional, overload, List, Tuple, TYPE_CHECKING, Union
 
@@ -17,7 +16,6 @@ from .._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_PREFIX,
     EMPTY_LABEL,
-    REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE,
 )
 from .._azureappconfigurationprovider import _is_json_content_type, _get_headers
 from .._user_agent import USER_AGENT
