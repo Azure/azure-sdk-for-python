@@ -28,10 +28,15 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
         try:
             from yarl import URL
             from azure.core.pipeline.transport import AioHttpTransport
-            if isinstance(request.context.transport, AioHttpTransport) or \
-                isinstance(getattr(request.context.transport, "_transport", None), AioHttpTransport) or \
-                isinstance(getattr(getattr(request.context.transport, "_transport", None), "_transport", None),
-                            AioHttpTransport):
+
+            if (
+                isinstance(request.context.transport, AioHttpTransport)
+                or isinstance(getattr(request.context.transport, "_transport", None), AioHttpTransport)
+                or isinstance(
+                    getattr(getattr(request.context.transport, "_transport", None), "_transport", None),
+                    AioHttpTransport,
+                )
+            ):
                 query_url = str(URL(query_url))
         except (ImportError, TypeError):
             pass
@@ -40,27 +45,13 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
         utc_now = get_current_utc_time()
         if request.http_request.body is None:
             request.http_request.body = ""
-        content_digest = hashlib.sha256(
-            (request.http_request.body.encode("utf-8"))
-        ).digest()
+        content_digest = hashlib.sha256((request.http_request.body.encode("utf-8"))).digest()
         content_hash = base64.b64encode(content_digest).decode("utf-8")
 
-        string_to_sign = (
-            verb
-            + "\n"
-            + query_url
-            + "\n"
-            + utc_now
-            + ";"
-            + self._credentials.host
-            + ";"
-            + content_hash
-        )
+        string_to_sign = verb + "\n" + query_url + "\n" + utc_now + ";" + self._credentials.host + ";" + content_hash
 
         decoded_secret = base64.b64decode(self._credentials.secret)
-        digest = hmac.new(
-            decoded_secret, string_to_sign.encode("utf-8"), hashlib.sha256
-        ).digest()
+        digest = hmac.new(decoded_secret, string_to_sign.encode("utf-8"), hashlib.sha256).digest()
         signature = base64.b64encode(digest).decode("utf-8")
 
         signature_header = {

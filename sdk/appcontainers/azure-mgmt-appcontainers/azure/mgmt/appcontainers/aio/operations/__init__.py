@@ -14,6 +14,8 @@ from ._connected_environments_certificates_operations import ConnectedEnvironmen
 from ._connected_environments_dapr_components_operations import ConnectedEnvironmentsDaprComponentsOperations
 from ._connected_environments_storages_operations import ConnectedEnvironmentsStoragesOperations
 from ._container_apps_operations import ContainerAppsOperations
+from ._jobs_operations import JobsOperations
+from ._jobs_executions_operations import JobsExecutionsOperations
 from ._container_apps_revisions_operations import ContainerAppsRevisionsOperations
 from ._container_apps_revision_replicas_operations import ContainerAppsRevisionReplicasOperations
 from ._container_apps_diagnostics_operations import ContainerAppsDiagnosticsOperations
@@ -22,6 +24,7 @@ from ._managed_environments_diagnostics_operations import ManagedEnvironmentsDia
 from ._operations import Operations
 from ._managed_environments_operations import ManagedEnvironmentsOperations
 from ._certificates_operations import CertificatesOperations
+from ._managed_certificates_operations import ManagedCertificatesOperations
 from ._namespaces_operations import NamespacesOperations
 from ._dapr_components_operations import DaprComponentsOperations
 from ._managed_environments_storages_operations import ManagedEnvironmentsStoragesOperations
@@ -40,6 +43,8 @@ __all__ = [
     "ConnectedEnvironmentsDaprComponentsOperations",
     "ConnectedEnvironmentsStoragesOperations",
     "ContainerAppsOperations",
+    "JobsOperations",
+    "JobsExecutionsOperations",
     "ContainerAppsRevisionsOperations",
     "ContainerAppsRevisionReplicasOperations",
     "ContainerAppsDiagnosticsOperations",
@@ -48,6 +53,7 @@ __all__ = [
     "Operations",
     "ManagedEnvironmentsOperations",
     "CertificatesOperations",
+    "ManagedCertificatesOperations",
     "NamespacesOperations",
     "DaprComponentsOperations",
     "ManagedEnvironmentsStoragesOperations",

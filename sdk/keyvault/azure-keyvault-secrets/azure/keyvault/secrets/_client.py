@@ -7,7 +7,6 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._models import KeyVaultSecret, DeletedSecret, SecretProperties
 from ._shared import KeyVaultClientBase
-from ._shared.exceptions import error_map as _error_map
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
 
 try:
@@ -73,7 +72,6 @@ class SecretClient(KeyVaultClientBase):
             vault_base_url=self._vault_url,
             secret_name=name,
             secret_version=version or "",
-            error_map=_error_map,
             **kwargs
         )
         return KeyVaultSecret._from_secret_bundle(bundle)
@@ -129,7 +127,6 @@ class SecretClient(KeyVaultClientBase):
             vault_base_url=self.vault_url,
             secret_name=name,
             parameters=parameters,
-            error_map=_error_map,
             **kwargs
         )
         return KeyVaultSecret._from_secret_bundle(bundle)
@@ -188,7 +185,6 @@ class SecretClient(KeyVaultClientBase):
             name,
             secret_version=version or "",
             parameters=parameters,
-            error_map=_error_map,
             **kwargs
         )
         return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
@@ -215,7 +211,6 @@ class SecretClient(KeyVaultClientBase):
             self._vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
-            error_map=_error_map,
             **kwargs
         )
 
@@ -244,7 +239,6 @@ class SecretClient(KeyVaultClientBase):
             name,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
-            error_map=_error_map,
             **kwargs
         )
 
@@ -269,7 +263,7 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        backup_result = self._client.backup_secret(self.vault_url, name, error_map=_error_map, **kwargs)
+        backup_result = self._client.backup_secret(self.vault_url, name, **kwargs)
         return backup_result.value
 
     @distributed_trace
@@ -297,7 +291,6 @@ class SecretClient(KeyVaultClientBase):
         bundle = self._client.restore_secret(
             self.vault_url,
             parameters=self._models.SecretRestoreParameters(secret_bundle_backup=backup),
-            error_map=_error_map,
             **kwargs
         )
         return SecretProperties._from_secret_bundle(bundle)
@@ -335,7 +328,7 @@ class SecretClient(KeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         deleted_secret = DeletedSecret._from_deleted_secret_bundle(
-            self._client.delete_secret(self.vault_url, name, error_map=_error_map, **kwargs)
+            self._client.delete_secret(self.vault_url, name, **kwargs)
         )
 
         command = partial(self.get_deleted_secret, name=name, **kwargs)
@@ -369,7 +362,7 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        bundle = self._client.get_deleted_secret(self.vault_url, name, error_map=_error_map, **kwargs)
+        bundle = self._client.get_deleted_secret(self.vault_url, name, **kwargs)
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     @distributed_trace
@@ -394,7 +387,6 @@ class SecretClient(KeyVaultClientBase):
             self._vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedSecret._from_deleted_secret_item(x) for x in objs],
-            error_map=_error_map,
             **kwargs
         )
 
@@ -423,7 +415,7 @@ class SecretClient(KeyVaultClientBase):
                 secret_client.purge_deleted_secret("secret-name")
 
         """
-        self._client.purge_deleted_secret(self.vault_url, name, error_map=_error_map, **kwargs)
+        self._client.purge_deleted_secret(self.vault_url, name, **kwargs)
 
     @distributed_trace
     def begin_recover_deleted_secret(self, name: str, **kwargs) -> "LROPoller[SecretProperties]":
@@ -459,7 +451,7 @@ class SecretClient(KeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         recovered_secret = SecretProperties._from_secret_bundle(
-            self._client.recover_deleted_secret(self.vault_url, name, error_map=_error_map, **kwargs)
+            self._client.recover_deleted_secret(self.vault_url, name, **kwargs)
         )
 
         command = partial(self.get_secret, name=name, **kwargs)

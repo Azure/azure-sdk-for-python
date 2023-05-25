@@ -282,21 +282,21 @@ def get_credential_for_shared_cache_test(expected_refresh_token, expected_access
         return DefaultAzureCredential(_cache=cache, transport=transport, **exclude_other_credentials, **kwargs)
 
 
-def test_developer_credential_timeout():
+def test_process_timeout():
     """the credential should allow configuring a process timeout for Azure CLI and PowerShell by kwarg"""
 
     timeout = 42
 
     with patch(DefaultAzureCredential.__module__ + ".AzureCliCredential") as mock_cli_credential:
         with patch(DefaultAzureCredential.__module__ + ".AzurePowerShellCredential") as mock_pwsh_credential:
-            DefaultAzureCredential(developer_credential_timeout=timeout)
+            DefaultAzureCredential(process_timeout=timeout)
 
     for credential in (mock_cli_credential, mock_pwsh_credential):
         _, kwargs = credential.call_args
         assert "process_timeout" in kwargs
         assert kwargs["process_timeout"] == timeout
 
-def test_developer_credential_timeout():
+def test_process_timeout():
     """the credential should allow configuring a process timeout for Azure CLI and PowerShell by kwarg"""
 
     with patch(DefaultAzureCredential.__module__ + ".AzureCliCredential") as mock_cli_credential:

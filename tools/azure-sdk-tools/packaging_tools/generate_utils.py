@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import re
+from functools import wraps
 
 from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
@@ -25,6 +26,17 @@ _DPG_README = "README.md"
 
 def dpg_relative_folder(spec_folder: str) -> str:
     return ("../" * 4) + spec_folder + "/"
+
+
+def return_origin_path(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        current_path = os.getcwd()
+        result = func(*args, **kwargs)
+        os.chdir(current_path)
+        return result
+
+    return wrapper
 
 
 def get_package_names(sdk_folder):

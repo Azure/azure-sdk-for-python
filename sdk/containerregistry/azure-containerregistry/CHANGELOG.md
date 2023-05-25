@@ -1,5 +1,13 @@
 # Release History
 
+## 1.1.0 (2023-05-17)
+
+### Breaking Changes
+- Added sanity check for manifest size at download time - if manifest is bigger than 4MB, `ValueError` will be thrown.
+
+### Other Changes
+- Changed the digest validation exception type to `DigestValidationError` in `set/get manifest` and `upload/download blob` operations.
+
 ## 1.1.0b4 (2023-04-25)
 
 ### Features Added

@@ -28,7 +28,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/?comp=list\u0026include=\u0026se=end\u0026sp=l\u0026sv=2022-11-02\u0026ss=b\u0026srt=s\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.blob.core.windows.net/?comp=list\u0026include=\u0026se=end\u0026sp=l\u0026sv=2023-01-03\u0026ss=b\u0026srt=s\u0026sig=fake_token_value",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",

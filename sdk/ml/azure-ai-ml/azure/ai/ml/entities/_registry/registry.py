@@ -58,8 +58,8 @@ class Registry(Resource):
         :type public_network_access: str
         :param discovery_url: Backend service base url for the registry.
         :type discovery_url: str
-        :param intellectual_property_publisher: Intellectual property publisher.
-        :type intellectual_property_publisher: str
+        :param intellectual_property: **Experimental** Intellectual property publisher.
+        :type intellectual_property: ~azure.ai.ml.entities.IntellectualProperty
         :param managed_resource_group: Managed resource group created for the registry.
         :type managed_resource_group: str
         :param mlflow_registry_uri: Ml flow tracking uri for the registry.
