@@ -457,9 +457,9 @@ class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attri
      Required.
     :vartype filters: list[~azure.appconfiguration.models.ConfigurationSettingFilter]
     :ivar composition_type: The composition type describes how the key-values within the snapshot
-     are composed. The 'all' composition type includes all key-values. The 'group_by_key'
-     composition type ensures there are no two key-values containing the same key. Known values are:
-     "all" and "group_by_key".
+     are composed. The 'key' composition type ensures there are no two key-values containing the
+     same key. The 'key_label' composition type ensures there are no two key-values containing the
+     same key and label. Known values are: "key" and "key_label".
     :vartype composition_type: str or ~azure.appconfiguration.models.CompositionType
     :ivar created: The time that the snapshot was created.
     :vartype created: ~datetime.datetime
@@ -519,9 +519,9 @@ class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attri
          Required.
         :paramtype filters: list[~azure.appconfiguration.models.ConfigurationSettingFilter]
         :keyword composition_type: The composition type describes how the key-values within the
-         snapshot are composed. The 'all' composition type includes all key-values. The 'group_by_key'
-         composition type ensures there are no two key-values containing the same key. Known values are:
-         "all" and "group_by_key".
+         snapshot are composed. The 'key' composition type ensures there are no two key-values
+         containing the same key. The 'key_label' composition type ensures there are no two key-values
+         containing the same key and label. Known values are: "key" and "key_label".
         :paramtype composition_type: str or ~azure.appconfiguration.models.CompositionType
         :keyword retention_period: The amount of time, in seconds, that a snapshot will remain in the
          archived state before expiring. This property is only writable during the creation of a
