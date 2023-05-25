@@ -83,6 +83,8 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
 
         training_data = Input(type=AssetTypes.MLTABLE, path=train_path)
         validation_data = Input(type=AssetTypes.MLTABLE, path=val_path)
+        properties = get_automl_job_properties()
+        # properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/image_classification_pipeline/versions/0.0.5"
 
         # Make generic classification job
         image_classification_job = automl.image_classification(
@@ -92,7 +94,7 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
             primary_metric="accuracy",
             compute="gpu-cluster",
             experiment_name="image-e2e-tests",
-            properties=get_automl_job_properties(),
+            properties=properties
         )
 
         # Configure regular sweep job
@@ -117,6 +119,24 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
             early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
         )
 
+        # Configure component sweep job
+        image_classification_job_component_sweep = copy.deepcopy(image_classification_job)
+        image_classification_job_component_sweep.set_training_parameters(early_stopping=True, evaluation_frequency=1)
+        image_classification_job_component_sweep.extend_search_space(
+            [
+                SearchSpace(
+                    model_name=Choice(["microsoft/beit-base-patch16-224"]),
+                    learning_rate=Uniform(0.001, 0.01),
+                    number_of_epochs=Choice([15, 30]),
+                ),
+            ]
+        )
+        image_classification_job_component_sweep.set_limits(max_trials=1, max_concurrent_trials=1)
+        image_classification_job_component_sweep.set_sweep(
+            sampling_algorithm="Random",
+            early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
+        )
+
         # Configure AutoMode job
         image_classification_job_automode = copy.deepcopy(image_classification_job)
         # TODO: after shipping the AutoMode feature, do not set flag and call `set_limits()` instead of changing
@@ -127,10 +147,16 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
 
         # Trigger regular sweep and then AutoMode job
         submitted_job_sweep = client.jobs.create_or_update(image_classification_job_sweep)
+        submitted_job_component_sweep = client.jobs.create_or_update(image_classification_job_component_sweep)
         submitted_job_automode = client.jobs.create_or_update(image_classification_job_automode)
 
         # Assert completion of regular sweep job
         assert_final_job_status(submitted_job_sweep, client, ImageClassificationJob, JobStatus.COMPLETED, deadline=3600)
+
+        # Assert completion of component sweep job
+        assert_final_job_status(
+            submitted_job_component_sweep, client, ImageClassificationJob, JobStatus.COMPLETED, deadline=3600
+        )
 
         # Assert completion of Automode job
         assert_final_job_status(

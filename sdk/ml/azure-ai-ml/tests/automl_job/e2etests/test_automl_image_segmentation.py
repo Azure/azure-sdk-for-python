@@ -75,6 +75,9 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
         training_data = Input(type=AssetTypes.MLTABLE, path=train_path)
         validation_data = Input(type=AssetTypes.MLTABLE, path=val_path)
 
+        properties = get_automl_job_properties()
+        # properties["_pipeline_id_override"] = "azureml://registries/azmlft-dev-registry01/components/<IS component>"
+
         # Make generic segmentation job
         image_instance_segmentation_job = automl.image_instance_segmentation(
             compute="gpu-cluster",
@@ -83,7 +86,7 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
             validation_data=validation_data,
             target_column_name="label",
             primary_metric="MeanAveragePrecision",
-            properties=get_automl_job_properties(),
+            properties=properties,
         )
 
         # Configure regular sweep job
@@ -105,6 +108,24 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
             early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
         )
 
+        # Configure component sweep job
+        image_instance_segmentation_job_component_sweep = copy.deepcopy(image_instance_segmentation_job)
+        image_instance_segmentation_job_component_sweep.set_training_parameters(early_stopping=True, evaluation_frequency=1)
+        image_instance_segmentation_job_component_sweep.extend_search_space(
+            [
+                SearchSpace(
+                    model_name=Choice(["mask_rcnn_swin-s-p4-w7_fpn_fp16_ms-crop-3x_coco"]),
+                    learning_rate=Uniform(0.0001, 0.001),
+                    optimizer=Choice(["sgd", "adam", "adamw"]),
+                ),
+            ]
+        )
+        image_instance_segmentation_job_component_sweep.set_limits(max_trials=1, max_concurrent_trials=1)
+        image_instance_segmentation_job_component_sweep.set_sweep(
+            sampling_algorithm="Random",
+            early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
+        )
+
         # Configure AutoMode job
         image_instance_segmentation_job_automode = copy.deepcopy(image_instance_segmentation_job)
         # TODO: after shipping the AutoMode feature, do not set flag and call `set_limits()` instead of changing
@@ -115,11 +136,17 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
 
         # Trigger regular sweep and then AutoMode job
         submitted_job_sweep = client.jobs.create_or_update(image_instance_segmentation_job_sweep)
+        submitted_job_component_sweep = client.jobs.create_or_update(image_instance_segmentation_job_component_sweep)
         submitted_job_automode = client.jobs.create_or_update(image_instance_segmentation_job_automode)
 
         # Assert completion of regular sweep job
         assert_final_job_status(
             submitted_job_sweep, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600
+        )
+
+        # Assert completion of regular sweep job
+        assert_final_job_status(
+            submitted_job_component_sweep, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600
         )
 
         # Assert completion of Automode job
