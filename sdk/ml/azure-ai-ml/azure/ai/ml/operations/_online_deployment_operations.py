@@ -132,14 +132,14 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             if local:
                 if local_enable_gpu:
                     try:
-                        subprocess.run("nvidia-smi")
-                    except Exception:
+                        subprocess.run("nvidia-smi", check=True)
+                    except Exception as ex:
                         raise LocalDeploymentGPUNotAvailable(
                             msg=(
                                 "Nvidia GPU is not available in your local system."
                                 " Use nvidia-smi command to see the available GPU"
                             )
-                        )
+                        ) from ex
                 return self._local_deployment_helper.create_or_update(
                     deployment=deployment,
                     local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug),
