@@ -577,7 +577,6 @@ class AzureAppConfigurationClient:
         :return: A poller for create snapshot operation. Call `result()` on this object to wait for the
             operation to complete and get the created snapshot.
         :rtype: :class:`~azure.core.polling.AsyncLROPoller[~azure.appconfiguration.Snapshot]`
-        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceExistsError`
         """
         kv_list = []
         for kv_filter in filters:
@@ -585,12 +584,8 @@ class AzureAppConfigurationClient:
         snapshot = Snapshot(
             filters=kv_list, composition_type=composition_type, retention_period=retention_period, tags=tags
         )
-        error_map = {401: ClientAuthenticationError, 412: ResourceExistsError}
         try:
-            return await self._impl.begin_create_snapshot(name=name, entity=snapshot, error_map=error_map, **kwargs)
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
+            return await self._impl.begin_create_snapshot(name=name, entity=snapshot, **kwargs)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -613,30 +608,15 @@ class AzureAppConfigurationClient:
         :keyword str etag: Check if the Snapshot is changed. Set None to skip checking etag.
         :return: The Snapshot returned from the service.
         :rtype: :class:`~azure.appconfiguration.Snapshot`
-        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`, \
-        :class:`ResourceModifiedError` :class`ResourceNotModifiedError` :class`ResourceExistsError`
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
-        if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
         try:
             return await self._impl.update_snapshot(
                 name=name,
                 entity=SnapshotUpdateParameters(status=SnapshotStatus.ARCHIVED),
                 if_match=prep_if_match(etag, match_condition),
                 if_none_match=prep_if_none_match(etag, match_condition),
-                error_map=error_map,
                 **kwargs
             )
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -658,30 +638,15 @@ class AzureAppConfigurationClient:
         :keyword str etag: Check if the Snapshot is changed. Set None to skip checking etag.
         :return: The Snapshot returned from the service.
         :rtype: :class:`~azure.appconfiguration.Snapshot`
-        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`, \
-        :class:`ResourceModifiedError` :class`ResourceNotModifiedError` :class`ResourceExistsError`
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
-        if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
         try:
             return await self._impl.update_snapshot(
                 name=name,
                 entity=SnapshotUpdateParameters(status=SnapshotStatus.READY),
                 if_match=prep_if_match(etag, match_condition),
                 if_none_match=prep_if_none_match(etag, match_condition),
-                error_map=error_map,
                 **kwargs
             )
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -694,14 +659,9 @@ class AzureAppConfigurationClient:
         :keyword list[str] fields: Specify which fields to include in the results. Leave None to include all fields.
         :return: The Snapshot returned from the service.
         :rtype: :class:`~azure.appconfiguration.Snapshot`
-        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
         """
-        error_map = {401: ClientAuthenticationError}
         try:
             return await self._impl.get_snapshot(name=name, if_match=None, if_none_match=None, select=fields, **kwargs)
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -720,16 +680,11 @@ class AzureAppConfigurationClient:
         :keyword str name: Filter results based on snapshot name.
         :keyword list[str] fields: Specify which fields to include in the results. Leave None to include all fields.
         :keyword list[str] status: Filter results based on snapshot keys.
-        :return: An iterator of :class:`~azure.appconfiguration.models.Snapshot`
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.models.Snapshot]
-        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
+        :return: An iterator of :class:`~azure.appconfiguration.Snapshot`
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.Snapshot]
         """
-        error_map = {401: ClientAuthenticationError}
         try:
             return self._impl.get_snapshots(name=name, select=fields, status=status, **kwargs)  # type: ignore
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -743,24 +698,18 @@ class AzureAppConfigurationClient:
         :keyword list[str] fields: Specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: ~azure.core.paging.AsyncItemPaged[ConfigurationSetting]
-        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
         """
         select = kwargs.pop("fields", None)
         if select:
             select = ["locked" if x == "read_only" else x for x in select]
-        error_map = {401: ClientAuthenticationError}
 
         try:
             return self._impl.get_key_values(  # type: ignore
                 select=select,
                 snapshot=name,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
-                error_map=error_map,
                 **kwargs
             )
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
