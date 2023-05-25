@@ -1,5 +1,71 @@
 # Release History
 
+## 2.0.0 (2023-05-22)
+
+### Features Added
+
+  - Added operation JobsOperations.mark_devices_shipped
+  - Added operation group DataBoxManagementClientOperationsMixin
+  - Model CopyProgress has a new parameter actions
+  - Model CopyProgress has a new parameter error
+  - Model DataBoxDiskCopyProgress has a new parameter actions
+  - Model DataBoxDiskCopyProgress has a new parameter error
+  - Model DataBoxDiskJobDetails has a new parameter actions
+  - Model DataBoxDiskJobDetails has a new parameter data_center_code
+  - Model DataBoxDiskJobDetails has a new parameter datacenter_address
+  - Model DataBoxDiskJobDetails has a new parameter device_erasure_details
+  - Model DataBoxDiskJobDetails has a new parameter expected_data_size_in_tera_bytes
+  - Model DataBoxDiskJobDetails has a new parameter granular_copy_log_details
+  - Model DataBoxDiskJobDetails has a new parameter granular_copy_progress
+  - Model DataBoxDiskJobDetails has a new parameter last_mitigation_action_on_job
+  - Model DataBoxDiskJobDetails has a new parameter reverse_shipping_details
+  - Model DataBoxHeavyJobDetails has a new parameter actions
+  - Model DataBoxHeavyJobDetails has a new parameter data_center_code
+  - Model DataBoxHeavyJobDetails has a new parameter datacenter_address
+  - Model DataBoxHeavyJobDetails has a new parameter device_erasure_details
+  - Model DataBoxHeavyJobDetails has a new parameter expected_data_size_in_tera_bytes
+  - Model DataBoxHeavyJobDetails has a new parameter last_mitigation_action_on_job
+  - Model DataBoxHeavyJobDetails has a new parameter reverse_shipping_details
+  - Model DataBoxJobDetails has a new parameter actions
+  - Model DataBoxJobDetails has a new parameter data_center_code
+  - Model DataBoxJobDetails has a new parameter datacenter_address
+  - Model DataBoxJobDetails has a new parameter device_erasure_details
+  - Model DataBoxJobDetails has a new parameter expected_data_size_in_tera_bytes
+  - Model DataBoxJobDetails has a new parameter last_mitigation_action_on_job
+  - Model DataBoxJobDetails has a new parameter reverse_shipping_details
+  - Model DataImportDetails has a new parameter log_collection_level
+  - Model EncryptionPreferences has a new parameter hardware_encryption
+  - Model JobDetails has a new parameter actions
+  - Model JobDetails has a new parameter data_center_code
+  - Model JobDetails has a new parameter datacenter_address
+  - Model JobDetails has a new parameter device_erasure_details
+  - Model JobDetails has a new parameter expected_data_size_in_tera_bytes
+  - Model JobDetails has a new parameter last_mitigation_action_on_job
+  - Model JobDetails has a new parameter reverse_shipping_details
+  - Model JobResource has a new parameter reverse_shipping_details_update
+  - Model JobResource has a new parameter reverse_transport_preference_update
+  - Model JobResource has a new parameter system_data
+  - Model Preferences has a new parameter reverse_transport_preferences
+  - Model Preferences has a new parameter storage_account_access_tier_preferences
+  - Model RegionConfigurationRequest has a new parameter datacenter_address_request
+  - Model RegionConfigurationResponse has a new parameter datacenter_address_response
+  - Model ShippingAddress has a new parameter skip_address_validation
+  - Model ShippingAddress has a new parameter tax_identification_number
+  - Model SkuInformation has a new parameter countries_within_commerce_boundary
+  - Model TransportPreferences has a new parameter is_updated
+  - Model UpdateJobDetails has a new parameter preferences
+  - Model UpdateJobDetails has a new parameter return_to_customer_package_details
+  - Model UpdateJobDetails has a new parameter reverse_shipping_details
+
+### Breaking Changes
+
+  - Model DataBoxDiskJobDetails no longer has parameter expected_data_size_in_terabytes
+  - Model DataBoxHeavyJobDetails no longer has parameter expected_data_size_in_terabytes
+  - Model DataBoxJobDetails no longer has parameter expected_data_size_in_terabytes
+  - Model DiskScheduleAvailabilityRequest has a new required parameter expected_data_size_in_tera_bytes
+  - Model DiskScheduleAvailabilityRequest no longer has parameter expected_data_size_in_terabytes
+  - Model JobDetails no longer has parameter expected_data_size_in_terabytes
+
 ## 2.0.0b1 (2023-02-10)
 
 ### Features Added
