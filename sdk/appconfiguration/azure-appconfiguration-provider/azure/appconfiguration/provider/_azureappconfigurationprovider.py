@@ -150,7 +150,7 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
 
 def _get_headers(key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions], **kwargs) -> str:
     headers = kwargs.pop("headers", {})
-    if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() != "true":    
+    if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() != "true":
         correlation_context = "RequestType=Startup"
         if key_vault_options and (
             key_vault_options.credential or key_vault_options.client_configs or key_vault_options.secret_resolver
