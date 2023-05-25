@@ -5,66 +5,150 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from azure.communication.phonenumbers._shared.models import (
-    CommunicationIdentifierKind,
-    CommunicationCloudEnvironment,
-    CommunicationUserIdentifier,
-    PhoneNumberIdentifier,
-    UnknownIdentifier,
-    MicrosoftTeamsUserIdentifier,
-    identifier_from_raw_id
-)
-
+import azure.communication.phonenumbers._shared.models as models 
 
 def test_communication_user_identifier():
     id = "some_id"
-    comm_user = CommunicationUserIdentifier(id)
-    assert comm_user.kind == CommunicationIdentifierKind.COMMUNICATION_USER
+    comm_user = models.CommunicationUserIdentifier(id)
+    assert comm_user.kind == models.CommunicationIdentifierKind.COMMUNICATION_USER
     assert comm_user.raw_id == id
     assert comm_user.properties["id"] == id
 
-
 def test_phone_number_identifier():
     value = "+18001234567"
-    phone_num = PhoneNumberIdentifier(value)
-    assert phone_num.kind == CommunicationIdentifierKind.PHONE_NUMBER
+    phone_num = models.PhoneNumberIdentifier(value)
+    assert phone_num.kind == models.CommunicationIdentifierKind.PHONE_NUMBER
     assert phone_num.raw_id == f"4:{value}"
     assert phone_num.properties["value"] == value
 
-
 def test_unknown_identifier():
     identifier = "some_unknown_id"
-    unknown = UnknownIdentifier(identifier)
-    assert unknown.kind == CommunicationIdentifierKind.UNKNOWN
+    unknown = models.UnknownIdentifier(identifier)
+    assert unknown.kind == models.CommunicationIdentifierKind.UNKNOWN
     assert unknown.raw_id == identifier
     assert unknown.properties == {}
 
-
 def test_microsoft_teams_user_identifier():
     user_id = "some_user_id"
-    teams_user = MicrosoftTeamsUserIdentifier(user_id)
-    assert teams_user.kind == CommunicationIdentifierKind.MICROSOFT_TEAMS_USER
+    teams_user = models.MicrosoftTeamsUserIdentifier(user_id)
+    assert teams_user.kind == models.CommunicationIdentifierKind.MICROSOFT_TEAMS_USER
     assert teams_user.raw_id == f"8:orgid:{user_id}"
     assert teams_user.properties["user_id"] == user_id
     assert teams_user.properties["is_anonymous"] == False
-    assert teams_user.properties["cloud"] == CommunicationCloudEnvironment.PUBLIC
-
+    assert teams_user.properties["cloud"] == models.CommunicationCloudEnvironment.PUBLIC
 
 def test_identifier_from_raw_id_phone_number():
     value = "+123456789101"
     raw_id = f"4:{value}"
-    identifier = identifier_from_raw_id(raw_id)
-    assert isinstance(identifier, PhoneNumberIdentifier)
-
+    identifier = models.identifier_from_raw_id(raw_id)
+    assert isinstance(identifier, models.PhoneNumberIdentifier)
 
 def test_identifier_from_raw_id_teams_user():
     user_id = "some_user_id"
     raw_id = f"8:orgid:{user_id}"
-    identifier = identifier_from_raw_id(raw_id)
-    assert isinstance(identifier, MicrosoftTeamsUserIdentifier)
-
+    identifier = models.identifier_from_raw_id(raw_id)
+    assert isinstance(identifier, models.MicrosoftTeamsUserIdentifier)
 
 def test_identifier_from_raw_id_unknown():
     raw_id = "some_unknown_id"
-    identifier = identifier_from_raw_id(raw_id)
-    assert isinstance(identifier, UnknownIdentifier)
+    identifier = models.identifier_from_raw_id(raw_id)
+    assert isinstance(identifier, models.UnknownIdentifier)
+
+def test_microsoft_teams_user_identifier_anonymous():
+    user_id = "some_user_id"
+    teams_user = models.MicrosoftTeamsUserIdentifier(user_id, is_anonymous=True)
+    assert teams_user.kind == models.CommunicationIdentifierKind.MICROSOFT_TEAMS_USER
+    assert teams_user.raw_id == f'{models.TEAMS_USER_ANONYMOUS_PREFIX}{user_id}'
+    assert teams_user.properties["user_id"] == user_id
+    assert teams_user.properties["is_anonymous"] == True
+    assert teams_user.properties["cloud"] == models.CommunicationCloudEnvironment.PUBLIC
+
+def test_microsoft_teams_user_identifier_cloud_types():
+    user_id = "some_user_id"
+    for cloud, prefix in zip(
+        [models.CommunicationCloudEnvironment.DOD, models.CommunicationCloudEnvironment.GCCH],
+        [models.TEAMS_USER_DOD_CLOUD_PREFIX, models.TEAMS_USER_GCCH_CLOUD_PREFIX]
+    ):
+        teams_user = models.MicrosoftTeamsUserIdentifier(user_id, cloud=cloud)
+        assert teams_user.kind == models.CommunicationIdentifierKind.MICROSOFT_TEAMS_USER
+        assert teams_user.raw_id == f'{prefix}{user_id}'
+        assert teams_user.properties["user_id"] == user_id
+        assert teams_user.properties["is_anonymous"] == False
+        assert teams_user.properties["cloud"] == cloud
+
+def test_microsoft_bot_identifier():
+    bot_id = "some_bot_id"
+    bot = models.MicrosoftBotIdentifier(bot_id)
+    assert bot.kind == models.CommunicationIdentifierKind.MICROSOFT_BOT
+    assert bot.raw_id == f'{models.BOT_PUBLIC_CLOUD_PREFIX}{bot_id}'
+    assert bot.properties["bot_id"] == bot_id
+    assert bot.properties["is_resource_account_configured"] == True
+    assert bot.properties["cloud"] == models.CommunicationCloudEnvironment.PUBLIC
+
+def test_microsoft_bot_identifier_cloud_types():
+    bot_id = "some_bot_id"
+    for cloud, prefix in zip(
+        [models.CommunicationCloudEnvironment.DOD, models.CommunicationCloudEnvironment.GCCH],
+        [models.BOT_DOD_CLOUD_PREFIX, models.BOT_GCCH_CLOUD_PREFIX]
+    ):
+        bot = models.MicrosoftBotIdentifier(bot_id, cloud=cloud)
+        assert bot.kind == models.CommunicationIdentifierKind.MICROSOFT_BOT
+        assert bot.raw_id == f'{prefix}{bot_id}'
+        assert bot.properties["bot_id"] == bot_id
+        assert bot.properties["is_resource_account_configured"] == True
+        assert bot.properties["cloud"] == cloud
+
+def test_microsoft_bot_identifier_global():
+    bot_id = "some_bot_id"
+    bot = models.MicrosoftBotIdentifier(bot_id, is_resource_account_configured=False)
+    assert bot.kind == models.CommunicationIdentifierKind.MICROSOFT_BOT
+    assert bot.raw_id == f'{models.BOT_PREFIX}{bot_id}'
+    assert bot.properties["bot_id"] == bot_id
+    assert bot.properties["is_resource_account_configured"] == False
+    assert bot.properties["cloud"] == models.CommunicationCloudEnvironment.PUBLIC
+
+def test_microsoft_bot_identifier_global_cloud_types():
+    bot_id = "some_bot_id"
+    for cloud, prefix in zip(
+        [models.CommunicationCloudEnvironment.DOD, models.CommunicationCloudEnvironment.GCCH],
+        [models.BOT_DOD_CLOUD_GLOBAL_PREFIX, models.BOT_GCCH_CLOUD_GLOBAL_PREFIX]
+    ):
+        bot = models.MicrosoftBotIdentifier(bot_id, is_resource_account_configured=False, cloud=cloud)
+        assert bot.kind == models.CommunicationIdentifierKind.MICROSOFT_BOT
+        assert bot.raw_id == f'{prefix}{bot_id}'
+        assert bot.properties["bot_id"] == bot_id
+        assert bot.properties["is_resource_account_configured"] == False
+        assert bot.properties["cloud"] == cloud
+
+def test_identifier_from_raw_id_microsoft_bot():
+    bot_id = "some_bot_id"
+    raw_id = f"{models.BOT_PREFIX}{bot_id}"
+    identifier = models.identifier_from_raw_id(raw_id)
+    assert isinstance(identifier, models.MicrosoftBotIdentifier)
+
+def test_identifier_from_raw_id_microsoft_bot_returns_unknown():
+    bot_id = "some_bot_id"
+    raw_id = f"not_a_prefix:{bot_id}"
+    identifier = models.identifier_from_raw_id(raw_id)
+    assert isinstance(identifier, models.UnknownIdentifier)
+
+def test_identifier_from_raw_id_microsoft_bot_cloud_types():
+    bot_id = "some_bot_id"
+    for prefix in [models.BOT_GCCH_CLOUD_GLOBAL_PREFIX, models.BOT_PUBLIC_CLOUD_PREFIX, models.BOT_DOD_CLOUD_GLOBAL_PREFIX, models.BOT_GCCH_CLOUD_PREFIX, models.BOT_DOD_CLOUD_PREFIX]:
+        raw_id = f"{prefix}:{bot_id}"
+        identifier = models.identifier_from_raw_id(raw_id)
+        assert isinstance(identifier, models.MicrosoftBotIdentifier)
+
+def test_identifier_from_raw_id_microsoft_teams_user():
+    user_id = "some_user_id"
+    for prefix in [models.TEAMS_USER_ANONYMOUS_PREFIX, models.TEAMS_USER_PUBLIC_CLOUD_PREFIX, models.TEAMS_USER_DOD_CLOUD_PREFIX, models.TEAMS_USER_GCCH_CLOUD_PREFIX]:
+        raw_id = f"{prefix}:{user_id}"
+        identifier = models.identifier_from_raw_id(raw_id)
+        assert isinstance(identifier, models.MicrosoftTeamsUserIdentifier)
+
+def test_identifier_from_raw_id_communication_user():
+    id = "some_id"
+    for prefix in [models.ACS_USER_PREFIX, models.ACS_USER_DOD_CLOUD_PREFIX, models.ACS_USER_GCCH_CLOUD_PREFIX, models.SPOOL_USER_PREFIX]:
+        raw_id = f"{prefix}:{id}"
+        identifier = models.identifier_from_raw_id(raw_id)
+        assert isinstance(identifier, models.CommunicationUserIdentifier)
