@@ -48,12 +48,6 @@ ClsType = Optional[
     Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
 ]
 
-__all__ = [
-    "IndividualEnrollmentOperations",
-    "EnrollmentGroupOperations",
-    "DeviceRegistrationStateOperations",
-]
-
 
 def _extract_data_default(pipeline_response, **kwargs):
     response = pipeline_response.http_response
@@ -63,15 +57,6 @@ def _extract_data_default(pipeline_response, **kwargs):
     if cls:
         return cls(pipeline_response, cast(JSON, response_json), {})
     return continuation or None, cast(JSON, response_json)
-
-
-def patch_sdk():
-    """Do not remove from this file.
-
-    `patch_sdk` is a last resort escape hatch that allows you to do customizations
-    you can't accomplish using the techniques described in
-    https://aka.ms/azsdk/python/dpcodegen/python/customize
-    """
 
 
 class IndividualEnrollmentOperations(EnrollmentOperationsGenerated):
@@ -872,3 +857,19 @@ class DeviceRegistrationStateOperations(DeviceRegistrationStateOperationsGenerat
             return _extract_data_default(pipeline_response)
 
         return AsyncItemPaged(get_next=get_next, extract_data=_extract_data)
+
+
+__all__ = [
+    "IndividualEnrollmentOperations",
+    "EnrollmentGroupOperations",
+    "DeviceRegistrationStateOperations",
+]
+
+
+def patch_sdk():
+    """Do not remove from this file.
+
+    `patch_sdk` is a last resort escape hatch that allows you to do customizations
+    you can't accomplish using the techniques described in
+    https://aka.ms/azsdk/python/dpcodegen/python/customize
+    """
