@@ -138,7 +138,9 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
 
         # Configure regular sweep job
         image_classification_multilabel_job_component_sweep = copy.deepcopy(image_classification_multilabel_job)
-        image_classification_multilabel_job_component_sweep.set_training_parameters(early_stopping=True, evaluation_frequency=1)
+        image_classification_multilabel_job_component_sweep.set_training_parameters(
+            early_stopping=True, evaluation_frequency=1
+        )
         image_classification_multilabel_job_component_sweep.extend_search_space(
             [
                 SearchSpace(
@@ -165,7 +167,7 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
 
         # Trigger regular sweep and then AutoMode job
         submitted_job_sweep = client.jobs.create_or_update(image_classification_multilabel_job_sweep)
-        # submitted_job_component_sweep = client.jobs.create_or_update(image_classification_multilabel_job_component_sweep)
+        submitted_job_component_sweep = client.jobs.create_or_update(image_classification_multilabel_job_component_sweep)
         submitted_job_automode = client.jobs.create_or_update(image_classification_multilabel_job_automode)
 
         # Assert completion of regular sweep job
@@ -175,7 +177,11 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
 
         # Assert completion of regular sweep job
         assert_final_job_status(
-            submitted_jsubmitted_job_component_sweepob_sweep, client, ImageClassificationMultilabelJob, JobStatus.COMPLETED, deadline=3600
+            submitted_job_component_sweep,
+            client,
+            ImageClassificationMultilabelJob,
+            JobStatus.COMPLETED,
+            deadline=3600,
         )
 
         # Assert completion of Automode job

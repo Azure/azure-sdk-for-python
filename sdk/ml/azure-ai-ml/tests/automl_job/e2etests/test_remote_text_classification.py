@@ -25,13 +25,16 @@ class TestTextClassification(AzureRecordedTestCase):
         client: MLClient,
     ) -> None:
         training_data, validation_data, target_column_name = newsgroup
+        properties = get_automl_job_properties()
+        # properties['_pipeline_id_override'] = TODO
+
         job = text_classification(
             training_data=training_data,
             validation_data=validation_data,
             target_column_name=target_column_name,
             compute="gpu-cluster",
             experiment_name="DPv2-text-classification",
-            properties=get_automl_job_properties(),
+            properties=properties,
         )
         job.set_limits(timeout_minutes=60, max_concurrent_trials=1)
         job.set_featurization(dataset_language="eng")

@@ -25,12 +25,15 @@ class TestTextNer(AzureRecordedTestCase):
         client: MLClient,
     ) -> None:
         training_data, validation_data = conll
+        properties = get_automl_job_properties()
+        # properties['_pipeline_id_override'] = TODO
+
         job = text_ner(
             training_data=training_data,
             validation_data=validation_data,
             compute="gpu-cluster",
             experiment_name="DPv2-text-ner",
-            properties=get_automl_job_properties(),
+            properties=properties,
         )
         job.set_limits(timeout_minutes=60, max_concurrent_trials=1)
 

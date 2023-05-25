@@ -110,7 +110,9 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
 
         # Configure component sweep job
         image_instance_segmentation_job_component_sweep = copy.deepcopy(image_instance_segmentation_job)
-        image_instance_segmentation_job_component_sweep.set_training_parameters(early_stopping=True, evaluation_frequency=1)
+        image_instance_segmentation_job_component_sweep.set_training_parameters(
+            early_stopping=True, evaluation_frequency=1
+        )
         image_instance_segmentation_job_component_sweep.extend_search_space(
             [
                 SearchSpace(

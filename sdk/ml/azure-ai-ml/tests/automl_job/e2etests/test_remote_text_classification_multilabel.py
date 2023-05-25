@@ -23,13 +23,16 @@ class TestTextClassificationMultilabel(AzureRecordedTestCase):
         self, paper_categorization: Tuple[Input, Input, str], client: MLClient
     ) -> None:
         training_data, validation_data, target_column_name = paper_categorization
+        properties = get_automl_job_properties()
+        # properties['_pipeline_id_override'] = TODO
+
         job = text_classification_multilabel(
             training_data=training_data,
             validation_data=validation_data,
             target_column_name=target_column_name,
             compute="gpu-cluster",
             experiment_name="DPv2-text-classification-multilabel",
-            properties=get_automl_job_properties(),
+            properties=properties,
         )
         job.set_limits(timeout_minutes=60, max_concurrent_trials=1)
 
