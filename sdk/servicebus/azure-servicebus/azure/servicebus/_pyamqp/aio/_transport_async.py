@@ -423,14 +423,14 @@ class WebSocketTransportAsync(
         host,
         *,
         port=WEBSOCKET_PORT,
-        connect_timeout=CONNECT_TIMEOUT,
+        socket_timeout=CONNECT_TIMEOUT,
         ssl_opts=None,
         **kwargs
     ):
         self._read_buffer = BytesIO()
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else None
-        self.connect_timeout = connect_timeout
+        self.socket_timeout = socket_timeout
         self._custom_endpoint = kwargs.get("custom_endpoint")
         self.host, self.port = to_host_port(host, port)
         self.sock = None
@@ -485,7 +485,7 @@ class WebSocketTransportAsync(
 
             self.sock = await self.session.ws_connect(
                 url=url,
-                timeout=self.connect_timeout,    # timeout for connect
+                timeout=self.socket_timeout,    # timeout for connect
                 protocols=[AMQP_WS_SUBPROTOCOL],
                 autoclose=False,
                 proxy=http_proxy_host,
