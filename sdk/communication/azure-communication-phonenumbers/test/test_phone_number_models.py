@@ -139,3 +139,31 @@ def test_identifier_from_raw_id_communication_user():
         raw_id = f"{prefix}:{test_user_id}"
         identifier = models.identifier_from_raw_id(raw_id)
         assert isinstance(identifier, models.CommunicationUserIdentifier)
+
+def test_communication_user_identifier_equality():
+    user1 = models.CommunicationUserIdentifier(test_user_id)
+    user2 = models.CommunicationUserIdentifier(test_user_id)
+    user3 = models.CommunicationUserIdentifier(test_unknown_id)
+    assert user1 == user2
+    assert user1 != user3
+
+def test_phone_number_identifier_equality():
+    phone1 = models.PhoneNumberIdentifier(test_phone_number)
+    phone2 = models.PhoneNumberIdentifier(test_phone_number)
+    phone3 = models.PhoneNumberIdentifier("+0987654321")
+    assert phone1 == phone2
+    assert phone1 != phone3
+
+def test_microsoft_bot_identifier_equality():
+    bot1 = models.MicrosoftBotIdentifier(test_bot_id)
+    bot2 = models.MicrosoftBotIdentifier(test_bot_id)
+    bot3 = models.MicrosoftBotIdentifier(test_unknown_id)
+    assert bot1 == bot2
+    assert bot1 != bot3
+
+def test_microsoft_teams_user_identifier_equality():
+    user1 = models.MicrosoftTeamsUserIdentifier(test_user_id)
+    user2 = models.MicrosoftTeamsUserIdentifier(test_user_id)
+    user3 = models.MicrosoftTeamsUserIdentifier(test_unknown_id)
+    assert user1 == user2
+    assert user1 != user3
