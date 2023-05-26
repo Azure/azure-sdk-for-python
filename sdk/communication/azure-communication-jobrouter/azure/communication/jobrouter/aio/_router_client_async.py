@@ -35,6 +35,7 @@ from .._generated.models import (
     CancelJobRequest,
     CompleteJobRequest,
     CloseJobRequest,
+    DeclineJobOfferRequest,
     WorkerSelector,
     ChannelConfiguration,
     RouterWorker,
@@ -1201,6 +1202,12 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         :param offer_id: Id of the offer.
         :type offer_id: str
 
+        :keyword reoffer_time_utc: If the reoffer time is not provided, then this job will not be re-offered to the
+        worker who declined this job unless the worker is de-registered and re-registered.  If a reoffer time is
+        provided, then the job will be re-matched to eligible workers after the reoffer time.  The worker that declined
+        the job will also be eligible for the job at that time.
+        :paramtype reoffer_time_utc: Optional[Union[str, ~datetime.datetime]]
+
         :return: DeclineJobOfferResult
         :rtype: ~azure.communication.jobrouter.DeclineJobOfferResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -1220,9 +1227,14 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         if not offer_id:
             raise ValueError("offer_id cannot be None.")
 
+        decline_job_offer_request = DeclineJobOfferRequest(
+            reoffer_time_utc = kwargs.pop('reoffer_time_utc', None)
+        )
+
         return await self._client.job_router.decline_job_action(
             worker_id = worker_id,
             offer_id = offer_id,
+            decline_job_offer_request = decline_job_offer_request,
             # pylint:disable=protected-access
             cls = lambda http_response, deserialized_response, args: DeclineJobOfferResult(deserialized_response),
             **kwargs

@@ -852,6 +852,36 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment):
         self.label_selectors = label_selectors
 
 
+class DeclineJobOfferRequest(_serialization.Model):
+    """Request payload for declining offers.
+
+    :ivar reoffer_time_utc: If the reoffer time is not provided, then this job will not be
+     re-offered to the worker who declined this job unless
+     the worker is de-registered and re-registered.  If a reoffer time is provided, then the job
+     will be re-matched to
+     eligible workers after the reoffer time.  The worker that declined the job will also be
+     eligible for the job at that time.
+    :vartype reoffer_time_utc: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "reoffer_time_utc": {"key": "reofferTimeUtc", "type": "iso-8601"},
+    }
+
+    def __init__(self, *, reoffer_time_utc: Optional[datetime.datetime] = None, **kwargs: Any) -> None:
+        """
+        :keyword reoffer_time_utc: If the reoffer time is not provided, then this job will not be
+         re-offered to the worker who declined this job unless
+         the worker is de-registered and re-registered.  If a reoffer time is provided, then the job
+         will be re-matched to
+         eligible workers after the reoffer time.  The worker that declined the job will also be
+         eligible for the job at that time.
+        :paramtype reoffer_time_utc: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.reoffer_time_utc = reoffer_time_utc
+
+
 class RouterRule(_serialization.Model):
     """A rule of one of the following types:
 
