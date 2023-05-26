@@ -382,40 +382,6 @@ def build_and_install_dev_reqs(file: str, pkg_root: str) -> None:
     shutil.rmtree(os.path.join(pkg_root, ".tmp_whl_dir"))
 
 
-def build_temp_whl(package_name: str, version: str, whl_directory: str) -> str:
-    """Helper function to find where the built whl resides.
-
-    :param str package_name: the name of the package, e.g. azure-core
-    :param str version: the version used to build the whl
-    :param str whl_directory: the absolute path to the temp directory where the whls are built
-    :return: The absolute path to the whl built
-    """
-    if not os.path.exists(whl_directory):
-        logging.error("Whl directory is incorrect")
-        exit(1)
-
-    parsed_version = parse(version)
-
-    logging.info("Searching whl for package {0}-{1}".format(package_name, parsed_version.base_version))
-    whl_name_format = "{0}-{1}*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
-    whls = []
-    for root, dirnames, filenames in os.walk(whl_directory):
-        for filename in fnmatch.filter(filenames, whl_name_format):
-            whls.append(os.path.join(root, filename))
-
-    whls = [os.path.relpath(w, whl_directory) for w in whls]
-
-    if not whls:
-        logging.error(
-            "whl is not found in whl directory {0} for package {1}-{2}".format(
-                whl_directory, package_name, parsed_version.base_version
-            )
-        )
-        exit(1)
-
-    return whls[0]
-
-
 def build_whl_for_req(req: str, package_path: str) -> str:
     """Builds a whl from the dev_requirements file.
 
@@ -437,7 +403,7 @@ def build_whl_for_req(req: str, package_path: str) -> str:
         logging.info("Building wheel for package {}".format(parsed.name))
         create_package(req_pkg_path, temp_dir, enable_sdist=False)
 
-        whl_path = os.path.join(temp_dir, build_temp_whl(parsed.name, parsed.version, temp_dir))
+        whl_path = os.path.join(temp_dir, find_whl(temp_dir, parsed.name, parsed.version))
         logging.info("Wheel for package {0} is {1}".format(parsed.name, whl_path))
         logging.info("Replacing dev requirement. Old requirement:{0}, New requirement:{1}".format(req, whl_path))
         return whl_path
@@ -531,9 +497,9 @@ def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
 
     compatible_tags = get_interpreter_compatible_tags()
 
-    logging.info("Dumping visible tags and whls")
-    logging.info(compatible_tags)
-    logging.info(whls)
+    logging.debug("Dumping visible tags and whls")
+    logging.debug(compatible_tags)
+    logging.debug(whls)
 
     if whls:
         # grab the first whl that matches a tag from our compatible_tags list
