@@ -7,19 +7,15 @@
 # --------------------------------------------------------------------------
 from ._api_version import ApiVersion
 from ._auth import generate_sas_token
-from ._client import DeviceProvisioningClient
+from ._patch import DeviceProvisioningClient
 from ._version import VERSION
 
 __version__ = VERSION
 
-try:
-    from ._patch import __all__ as _patch_all
-    from ._patch import *  # pylint: disable=unused-wildcard-import
-except ImportError:
-    _patch_all = []
+
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = ["DeviceProvisioningClient", "ApiVersion", "generate_sas_token"]
-__all__.extend([p for p in _patch_all if p not in __all__])
+
 
 _patch_sdk()
