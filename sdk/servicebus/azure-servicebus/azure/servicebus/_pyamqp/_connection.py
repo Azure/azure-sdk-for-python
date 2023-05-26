@@ -19,10 +19,12 @@ from .performatives import OpenFrame, CloseFrame
 from .constants import (
     PORT,
     SECURE_PORT,
+    SOCKET_TIMEOUT,
     WEBSOCKET_PORT,
     MAX_CHANNELS,
     MAX_FRAME_SIZE_BYTES,
     HEADER_FRAME,
+    WS_TIMEOUT_INTERVAL,
     ConnectionState,
     EMPTY_FRAME,
     TransportType,
@@ -113,6 +115,14 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
         transport = kwargs.get("transport")
         self._transport_type = kwargs.pop("transport_type", TransportType.Amqp)
+        self._socket_timeout = kwargs.pop("socket_timeout", None)
+
+        if self._transport_type.value == TransportType.Amqp.value and self._socket_timeout is None:
+            self._socket_timeout = SOCKET_TIMEOUT
+        elif (self._transport_type.value == TransportType.AmqpOverWebsocket.value and 
+              self._socket_timeout is None):
+            self._socket_timeout = WS_TIMEOUT_INTERVAL
+            
         if transport:
             self._transport = transport
         elif "sasl_credential" in kwargs:

@@ -102,10 +102,10 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         self._socket_timeout = kwargs.pop("socket_timeout", None)
 
         if self._transport_type.value == TransportType.Amqp.value and self._socket_timeout is None:
-            self._socket_timeout = kwargs.pop("socket_timeout", SOCKET_TIMEOUT)
+            self._socket_timeout = SOCKET_TIMEOUT
         elif (self._transport_type.value == TransportType.AmqpOverWebsocket.value and 
               self._socket_timeout is None):
-            self._socket_timeout = kwargs.pop("socket_timeout", WS_TIMEOUT_INTERVAL)
+            self._socket_timeout = WS_TIMEOUT_INTERVAL
 
         if transport:
             self._transport = transport
