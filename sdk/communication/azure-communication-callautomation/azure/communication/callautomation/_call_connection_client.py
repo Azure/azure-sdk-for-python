@@ -79,30 +79,30 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         api_version: Optional[str] = None,
         **kwargs
     ) -> None:
-        if not credential:
-            raise ValueError("credential can not be None")
-        try:
-            if not endpoint.lower().startswith('http'):
-                endpoint = "https://" + endpoint
-        except AttributeError:
-            raise ValueError("Host URL must be a string")
-        parsed_url = urlparse(endpoint.rstrip('/'))
-        if not parsed_url.netloc:
-            raise ValueError(f"Invalid URL: {format(endpoint)}")
-        # self._client = AzureCommunicationCallAutomationService(
-        #     endpoint,
-        #     api_version=api_version or DEFAULT_VERSION,
-        #     authentication_policy=get_authentication_policy(
-        #         endpoint, credential),
-        #     sdk_moniker=SDK_MONIKER,
-        #     **kwargs)
-        
-        self._client = AzureCommunicationCallAutomationService(
-            endpoint=endpoint,
-            credential=credential,
-            api_version=api_version or DEFAULT_VERSION,
-            **kwargs
-        )
+        # check kwargs for call automation client. if null, check for credential otherwise dont.
+        call_automation_client = kwargs.get('_callautomation_client', None)
+        if call_automation_client is None:
+            if not credential:
+                raise ValueError("credential can not be None")
+            try:
+                if not endpoint.lower().startswith('http'):
+                    endpoint = "https://" + endpoint
+            except AttributeError:
+                raise ValueError("Host URL must be a string")
+            parsed_url = urlparse(endpoint.rstrip('/'))
+            if not parsed_url.netloc:
+                raise ValueError(f"Invalid URL: {format(endpoint)}")
+            self._client = AzureCommunicationCallAutomationService(
+                endpoint=endpoint,
+                credential=credential,
+                api_version=api_version or DEFAULT_VERSION,
+                authentication_policy=get_authentication_policy(
+                    endpoint, credential),
+                sdk_moniker=SDK_MONIKER,
+                **kwargs
+            )
+        else:
+            self._client = call_automation_client
 
         self._call_connection_id = call_connection_id
         self._call_connection_client = self._client.call_connection
@@ -300,7 +300,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace
     def play_media(
         self,
-        play_source: 'FileSource',
+        play_source: List['FileSource'],
         play_to: List['CommunicationIdentifier'],
         *,
         loop: Optional[bool] = False,
@@ -322,7 +322,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         play_request = PlayRequest(
-            play_source_info=play_source._to_generated(),#pylint:disable=protected-access
+            play_sources=[source._to_generated() for source in play_source],#pylint:disable=protected-access
             play_to=[serialize_identifier(identifier)
                      for identifier in play_to],
             play_options=PlayOptions(loop=loop),
@@ -334,7 +334,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace
     def play_media_to_all(
         self,
-        play_source: 'FileSource',
+        play_source: List['FileSource'],
         *,
         loop: Optional[bool] = False,
         operation_context: Optional[str] = None,

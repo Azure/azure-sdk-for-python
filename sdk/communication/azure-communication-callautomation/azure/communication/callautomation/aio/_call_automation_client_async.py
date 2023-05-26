@@ -100,6 +100,7 @@ class CallAutomationClient(object):
         self._client = AzureCommunicationCallAutomationService(
             endpoint,
             api_version=api_version or DEFAULT_VERSION,
+            credential=credential,
             authentication_policy=get_authentication_policy(
                 endpoint, credential, is_async=True),
             sdk_moniker=SDK_MONIKER,
@@ -175,7 +176,7 @@ class CallAutomationClient(object):
             source_caller_id_number=serialize_phone_identifier(
                 target_participant.source_caller_id_number) if target_participant.source_caller_id_number else None,
             source_display_name=target_participant.source_display_name,
-            source_identity=serialize_communication_user_identifier(
+            source=serialize_communication_user_identifier(
                 self.source_identity) if self.source_identity else None,
             operation_context=operation_context,
         )
@@ -225,7 +226,7 @@ class CallAutomationClient(object):
             source_caller_id_number=serialize_phone_identifier(
                 source_caller_id_number) if source_caller_id_number else None,
             source_display_name=source_display_name,
-            source_identity=serialize_identifier(
+            source=serialize_identifier(
                 self.source_identity) if self.source_identity else None,
             operation_context=operation_context,
         )
@@ -264,7 +265,7 @@ class CallAutomationClient(object):
         answer_call_request = AnswerCallRequest(
             incoming_call_context=incoming_call_context,
             callback_uri=callback_url,
-            answered_by_identifier=serialize_communication_user_identifier(
+            answered_by=serialize_communication_user_identifier(
                 self.source_identity) if self.source_identity else None,
             operation_context=operation_context
         )

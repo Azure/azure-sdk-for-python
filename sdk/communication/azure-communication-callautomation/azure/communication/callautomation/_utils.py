@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import Dict, Any, Union
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from ._shared.models import (
     CommunicationIdentifier,
     CommunicationUserIdentifier,
@@ -24,7 +24,7 @@ def get_repeatability_guid():
     return uuid.uuid4()
 
 def get_repeatability_timestamp():
-    return datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
+    return datetime.now(timezone.utc)
 
 def serialize_identifier(
         identifier:CommunicationIdentifier

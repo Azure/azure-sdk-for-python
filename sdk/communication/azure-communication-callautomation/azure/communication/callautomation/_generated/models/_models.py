@@ -1430,8 +1430,8 @@ class PlayRequest(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar play_source_info: The source of the audio to be played. Required.
-    :vartype play_source_info: ~azure.communication.callautomation.models.PlaySource
+    :ivar play_sources: The source of the audio to be played. Required.
+    :vartype play_sources: list[~azure.communication.callautomation.models.PlaySource]
     :ivar play_to: The list of call participants play provided audio to.
      Plays to everyone in the call when not provided.
     :vartype play_to: list[~azure.communication.callautomation.models.CommunicationIdentifierModel]
@@ -1442,11 +1442,11 @@ class PlayRequest(_serialization.Model):
     """
 
     _validation = {
-        "play_source_info": {"required": True},
+        "play_sources": {"required": True},
     }
 
     _attribute_map = {
-        "play_source_info": {"key": "playSourceInfo", "type": "PlaySource"},
+        "play_sources": {"key": "playSources", "type": "[PlaySource]"},
         "play_to": {"key": "playTo", "type": "[CommunicationIdentifierModel]"},
         "play_options": {"key": "playOptions", "type": "PlayOptions"},
         "operation_context": {"key": "operationContext", "type": "str"},
@@ -1455,15 +1455,15 @@ class PlayRequest(_serialization.Model):
     def __init__(
         self,
         *,
-        play_source_info: "_models.PlaySource",
+        play_sources: List["_models.PlaySource"],
         play_to: Optional[List["_models.CommunicationIdentifierModel"]] = None,
         play_options: Optional["_models.PlayOptions"] = None,
         operation_context: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword play_source_info: The source of the audio to be played. Required.
-        :paramtype play_source_info: ~azure.communication.callautomation.models.PlaySource
+        :keyword play_sources: The source of the audio to be played. Required.
+        :paramtype play_sources: list[~azure.communication.callautomation.models.PlaySource]
         :keyword play_to: The list of call participants play provided audio to.
          Plays to everyone in the call when not provided.
         :paramtype play_to:
@@ -1474,7 +1474,7 @@ class PlayRequest(_serialization.Model):
         :paramtype operation_context: str
         """
         super().__init__(**kwargs)
-        self.play_source_info = play_source_info
+        self.play_sources = play_sources
         self.play_to = play_to
         self.play_options = play_options
         self.operation_context = operation_context
@@ -1485,44 +1485,44 @@ class PlaySource(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar source_type: Defines the type of the play source. Required. "file"
-    :vartype source_type: str or ~azure.communication.callautomation.models.PlaySourceType
-    :ivar play_source_id: Defines the identifier to be used for caching related media.
-    :vartype play_source_id: str
-    :ivar file_source: Defines the file source info to be used for play.
-    :vartype file_source: ~azure.communication.callautomation.models.FileSource
+    :ivar kind: Defines the type of the play source. Required. "file"
+    :vartype kind: str or ~azure.communication.callautomation.models.PlaySourceType
+    :ivar play_source_cache_id: Defines the identifier to be used for caching related media.
+    :vartype play_source_cache_id: str
+    :ivar file: Defines the file source info to be used for play.
+    :vartype file: ~azure.communication.callautomation.models.FileSource
     """
 
     _validation = {
-        "source_type": {"required": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        "source_type": {"key": "sourceType", "type": "str"},
-        "play_source_id": {"key": "playSourceId", "type": "str"},
-        "file_source": {"key": "fileSource", "type": "FileSource"},
+        "kind": {"key": "kind", "type": "str"},
+        "play_source_cache_id": {"key": "playSourceCacheId", "type": "str"},
+        "file": {"key": "file", "type": "FileSource"},
     }
 
     def __init__(
         self,
         *,
-        source_type: Union[str, "_models.PlaySourceType"],
-        play_source_id: Optional[str] = None,
-        file_source: Optional["_models.FileSource"] = None,
+        kind: Union[str, "_models.PlaySourceType"],
+        play_source_cache_id: Optional[str] = None,
+        file: Optional["_models.FileSource"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword source_type: Defines the type of the play source. Required. "file"
-        :paramtype source_type: str or ~azure.communication.callautomation.models.PlaySourceType
-        :keyword play_source_id: Defines the identifier to be used for caching related media.
-        :paramtype play_source_id: str
-        :keyword file_source: Defines the file source info to be used for play.
-        :paramtype file_source: ~azure.communication.callautomation.models.FileSource
+        :keyword kind: Defines the type of the play source. Required. "file"
+        :paramtype kind: str or ~azure.communication.callautomation.models.PlaySourceType
+        :keyword play_source_cache_id: Defines the identifier to be used for caching related media.
+        :paramtype play_source_cache_id: str
+        :keyword file: Defines the file source info to be used for play.
+        :paramtype file: ~azure.communication.callautomation.models.FileSource
         """
         super().__init__(**kwargs)
-        self.source_type = source_type
-        self.play_source_id = play_source_id
-        self.file_source = file_source
+        self.kind = kind
+        self.play_source_cache_id = play_source_cache_id
+        self.file = file
 
 
 class RecognizeCanceled(_serialization.Model):

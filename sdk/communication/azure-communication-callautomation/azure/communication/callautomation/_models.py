@@ -167,7 +167,7 @@ class FileSource(object):
         self,
         url: str,
         *,
-        play_source_id: Optional[str] = None,
+        play_source_cache_id: Optional[str] = None,
         **kwargs
     ):
         """Media file source of URL to be played in action such as Play media.
@@ -179,14 +179,14 @@ class FileSource(object):
         """
         super().__init__(**kwargs)
         self.url = url
-        self.play_source_id = play_source_id
+        self.play_source_cache_id = play_source_cache_id
 
     def _to_generated(self):
         return PlaySourceInternal(
-                source_type=PlaySourceType.FILE,
-                file_source=FileSourceInternal(uri=self.url),
-                play_source_id=self.play_source_id
-            )
+            kind=PlaySourceType.FILE,
+            play_source_cache_id=self.play_source_cache_id,
+            file=FileSourceInternal(uri=self.url)
+        )
 
 class CallConnectionProperties(): # type: ignore # pylint: disable=too-many-instance-attributes
     """ Detailed properties of the call.

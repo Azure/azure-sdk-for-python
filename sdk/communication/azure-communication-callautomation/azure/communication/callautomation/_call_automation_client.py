@@ -93,19 +93,14 @@ class CallAutomationClient(object):
         parsed_url = urlparse(endpoint.rstrip('/'))
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {format(endpoint)}")
-
-        # self._client = AzureCommunicationCallAutomationService(
-        #     endpoint,
-        #     api_version=api_version or DEFAULT_VERSION,
-        #     authentication_policy=get_authentication_policy(
-        #         endpoint, credential),
-        #     sdk_moniker=SDK_MONIKER,
-        #     **kwargs)
         
         self._client = AzureCommunicationCallAutomationService(
             endpoint,
             api_version=api_version or DEFAULT_VERSION,
             credential=credential,
+            authentication_policy=get_authentication_policy(
+                 endpoint, credential),
+            sdk_moniker=SDK_MONIKER,
             **kwargs)
 
         self._call_recording_client = self._client.call_recording
@@ -178,15 +173,13 @@ class CallAutomationClient(object):
             source_caller_id_number=serialize_phone_identifier(
                 target_participant.source_caller_id_number) if target_participant.source_caller_id_number else None,
             source_display_name=target_participant.source_display_name,
-            source_identity=serialize_communication_user_identifier(
+            source=serialize_communication_user_identifier(
                 self.source_identity) if self.source_identity else None,
             operation_context=operation_context,
         )
 
         result = self._client.create_call(
             create_call_request=create_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
         return CallConnectionProperties._from_generated(# pylint:disable=protected-access
@@ -229,7 +222,7 @@ class CallAutomationClient(object):
             source_caller_id_number=serialize_phone_identifier(
                 source_caller_id_number) if source_caller_id_number else None,
             source_display_name=source_display_name,
-            source_identity=serialize_identifier(
+            source=serialize_identifier(
                 self.source_identity) if self.source_identity else None,
             operation_context=operation_context,
         )
@@ -269,7 +262,7 @@ class CallAutomationClient(object):
         answer_call_request = AnswerCallRequest(
             incoming_call_context=incoming_call_context,
             callback_uri=callback_url,
-            answered_by_identifier=serialize_communication_user_identifier(
+            answered_by=serialize_communication_user_identifier(
                 self.source_identity) if self.source_identity else None,
             operation_context=operation_context
         )

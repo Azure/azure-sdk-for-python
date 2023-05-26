@@ -47,42 +47,42 @@ class TestCallMediaClient(unittest.TestCase):
     def test_play(self):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
-        play_source = FileSource(url=self.url)
+        play_source = [FileSource(url=self.url)]
 
         self.call_connection_client.play_media(play_source=play_source, play_to=[self.target_user])
 
         expected_play_request = PlayRequest(
-            play_source_info=play_source._to_generated(),
+            play_sources=[x._to_generated() for x in play_source],
             play_to=[serialize_identifier(self.target_user)],
             play_options=PlayOptions(loop=False)
         )
         mock_play.assert_called_once()
         actual_play_request = mock_play.call_args[0][1]
 
-        self.assertEqual(expected_play_request.play_source_info.source_type, actual_play_request.play_source_info.source_type)
-        self.assertEqual(expected_play_request.play_source_info.file_source.uri, actual_play_request.play_source_info.file_source.uri)
-        self.assertEqual(expected_play_request.play_source_info.play_source_id, actual_play_request.play_source_info.play_source_id)
+        self.assertEqual(expected_play_request.play_sources[0].kind, actual_play_request.play_sources[0].kind)
+        self.assertEqual(expected_play_request.play_sources[0].file.uri, actual_play_request.play_sources[0].file.uri)
+        self.assertEqual(expected_play_request.play_sources[0].play_source_cache_id, actual_play_request.play_sources[0].play_source_cache_id)
         self.assertEqual(expected_play_request.play_to[0]['raw_id'], actual_play_request.play_to[0]['raw_id'])
         self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
 
     def test_play_to_all(self):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
-        play_source = FileSource(url=self.url)
+        play_source = [FileSource(url=self.url)]
 
         self.call_connection_client.play_media_to_all(play_source=play_source)
 
         expected_play_request = PlayRequest(
-            play_source_info=play_source._to_generated(),
+            play_sources=[x._to_generated() for x in play_source],
             play_to=[],
             play_options=PlayOptions(loop=False)
         )
         mock_play.assert_called_once()
         actual_play_request = mock_play.call_args[0][1]
 
-        self.assertEqual(expected_play_request.play_source_info.source_type, actual_play_request.play_source_info.source_type)
-        self.assertEqual(expected_play_request.play_source_info.file_source.uri, actual_play_request.play_source_info.file_source.uri)
-        self.assertEqual(expected_play_request.play_source_info.play_source_id, actual_play_request.play_source_info.play_source_id)
+        self.assertEqual(expected_play_request.play_sources[0].kind, actual_play_request.play_sources[0].kind)
+        self.assertEqual(expected_play_request.play_sources[0].file.uri, actual_play_request.play_sources[0].file.uri)
+        self.assertEqual(expected_play_request.play_sources[0].play_source_cache_id, actual_play_request.play_sources[0].play_source_cache_id)
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
 
@@ -132,8 +132,8 @@ class TestCallMediaClient(unittest.TestCase):
         )
 
         self.assertEqual(expected_recognize_request.recognize_input_type, actual_recognize_request.recognize_input_type)
-        self.assertEqual(expected_recognize_request.play_prompt.source_type, actual_recognize_request.play_prompt.source_type)
-        self.assertEqual(expected_recognize_request.play_prompt.file_source.uri, actual_recognize_request.play_prompt.file_source.uri)
+        self.assertEqual(expected_recognize_request.play_prompt.kind, actual_recognize_request.play_prompt.kind)
+        self.assertEqual(expected_recognize_request.play_prompt.file.uri, actual_recognize_request.play_prompt.file.uri)
         self.assertEqual(expected_recognize_request.interrupt_call_media_operation, actual_recognize_request.interrupt_call_media_operation)
         self.assertEqual(expected_recognize_request.operation_context, actual_recognize_request.operation_context)
         self.assertEqual(expected_recognize_request.recognize_options.target_participant, actual_recognize_request.recognize_options.target_participant)
