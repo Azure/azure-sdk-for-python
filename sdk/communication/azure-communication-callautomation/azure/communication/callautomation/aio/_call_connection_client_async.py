@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Optional, List, Union, Dict
+from typing import TYPE_CHECKING, Optional, List, Union
 from urllib.parse import urlparse
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -104,7 +104,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
                 **kwargs)
         else:
             self._client = call_automation_client
-            
+
         self._call_connection_id = call_connection_id
         self._call_connection_client = self._client.call_connection
         self._call_media_client = self._client.call_media

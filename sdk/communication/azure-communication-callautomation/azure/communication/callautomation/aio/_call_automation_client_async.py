@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Union, Optional, TYPE_CHECKING, AsyncIterable, Dict
+from typing import List, Union, Optional, TYPE_CHECKING, AsyncIterable
 from urllib.parse import urlparse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async

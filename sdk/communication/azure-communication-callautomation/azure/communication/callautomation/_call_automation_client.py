@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Union, Optional, TYPE_CHECKING, Iterable, Dict
+from typing import List, Union, Optional, TYPE_CHECKING, Iterable
 from urllib.parse import urlparse
 from azure.core.tracing.decorator import distributed_trace
 from ._version import SDK_MONIKER
@@ -93,7 +93,7 @@ class CallAutomationClient(object):
         parsed_url = urlparse(endpoint.rstrip('/'))
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {format(endpoint)}")
-        
+
         self._client = AzureCommunicationCallAutomationService(
             endpoint,
             api_version=api_version or DEFAULT_VERSION,
