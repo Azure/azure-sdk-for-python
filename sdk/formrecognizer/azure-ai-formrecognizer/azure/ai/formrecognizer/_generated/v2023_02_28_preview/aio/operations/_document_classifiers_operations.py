@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast
 
+from .....aio._async_polling import AsyncDocumentModelAdministrationClientLROPoller
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
@@ -104,7 +105,7 @@ class DocumentClassifiersOperations:
         self,
         build_request: _models.BuildDocumentClassifierRequest,
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncDocumentModelAdministrationClientLROPoller[None]:
         """Build document classifier.
 
         Builds a custom document classifier.
@@ -120,8 +121,9 @@ class DocumentClassifiersOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncDocumentModelAdministrationClientLROPoller that returns either
+         None or the result of cls(response)
+        :rtype: ~.....aio._async_polling.AsyncDocumentModelAdministrationClientLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -167,13 +169,13 @@ class DocumentClassifiersOperations:
         elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else: polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncDocumentModelAdministrationClientLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncDocumentModelAdministrationClientLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_build_classifier.metadata = {'url': "/documentClassifiers:build"}  # type: ignore
 

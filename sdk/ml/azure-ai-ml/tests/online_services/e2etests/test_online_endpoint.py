@@ -217,7 +217,6 @@ class TestOnlineEndpoint(AzureRecordedTestCase):
         endpoint_k8s_yaml_empty_model: str,
         client: MLClient,
     ) -> None:
-
         with pytest.raises(Exception) as e:
             endpoint = Endpoint.load(endpoint_k8s_yaml_empty_model)
             client.endpoints.begin_create(endpoint=endpoint, no_wait=False)

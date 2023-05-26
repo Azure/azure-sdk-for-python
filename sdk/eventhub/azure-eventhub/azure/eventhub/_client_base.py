@@ -455,12 +455,6 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             finally:
                 mgmt_client.close()
 
-    def _add_span_request_attributes(self, span):
-        span.add_attribute("component", "eventhubs")
-        span.add_attribute("az.namespace", "Microsoft.EventHub")
-        span.add_attribute("message_bus.destination", self._address.path)
-        span.add_attribute("peer.address", self._address.hostname)
-
     def _get_eventhub_properties(self) -> Dict[str, Any]:
         mgmt_msg = self._amqp_transport.build_message(
             application_properties={"name": self.eventhub_name}

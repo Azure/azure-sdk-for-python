@@ -9,7 +9,7 @@ from azure.core.exceptions import ResourceNotFoundError
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
+@pytest.mark.usefixtures("recorded_test", "mock_asset_name")
 @pytest.mark.production_experiences_test
 class TestBatchEndpoint(AzureRecordedTestCase):
     def test_batch_endpoint_create(self, client: MLClient, rand_batch_name: Callable[[], str]) -> None:
@@ -67,6 +67,7 @@ class TestBatchEndpoint(AzureRecordedTestCase):
 
         raise Exception(f"Batch endpoint {name} is supposed to be deleted.")
 
+    @pytest.mark.skip("TODO (2349930) SSL Certificate error")
     def test_batch_invoke(
         self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]
     ) -> None:
@@ -142,6 +143,7 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         )
         assert job
 
+    @pytest.mark.skip("TODO (2349930) SSL Certificate error")
     def test_batch_invoke_outputs(
         self,
         client: MLClient,

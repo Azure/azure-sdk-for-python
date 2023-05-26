@@ -5,7 +5,6 @@ from typing import Union
 
 import mock
 import pytest
-
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._utils._cache_utils import CachedNodeResolver
 from azure.ai.ml.entities import Component, PipelineJob
@@ -24,7 +23,7 @@ class TestCacheUtils:
     @staticmethod
     def _get_cache_path(component: Component, resolver: CachedNodeResolver) -> Path:
         in_memory_hash = resolver._get_in_memory_hash_for_component(component)
-        on_disk_hash = resolver._get_on_disk_hash_for_component(component=component, in_memory_hash=in_memory_hash)
+        on_disk_hash = resolver.calc_on_disk_hash_for_component(component=component, in_memory_hash=in_memory_hash)
         return resolver._get_on_disk_cache_path(on_disk_hash)
 
     @staticmethod

@@ -4,4 +4,4 @@ name: simple_pipeline_component
 jobs:
   node:
     type: command
-    component: azureml://registries/testFeed/components/simple_command_component/versions/1
+    component: ./component.yml

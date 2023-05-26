@@ -82,6 +82,7 @@ def skip_flaky_test(f):
             elif "InvalidImage" in error.message.casefold():
                 pytest.mark.skip("flaky service response: {}".format(error))
                 logger.debug("flaky service response: {}".format(error))
-            raise  # not a flaky test
+            else:
+                raise  # not a flaky test
 
     return wrapper

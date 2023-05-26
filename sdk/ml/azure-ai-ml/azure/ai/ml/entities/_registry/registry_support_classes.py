@@ -17,7 +17,6 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     SystemCreatedStorageAccount as RestSystemCreatedStorageAccount,
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models import UserCreatedAcrAccount as RestUserCreatedAcrAccount
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._registry import StorageAccountType
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -26,7 +25,6 @@ from .util import _make_rest_user_storage_from_id
 
 # This exists despite not being used by the schema validator because this entire
 # class is an output only value from the API.
-@experimental
 class SystemCreatedAcrAccount:
     def __init__(
         self,
@@ -88,7 +86,6 @@ class SystemCreatedAcrAccount:
             return None
 
 
-@experimental
 class SystemCreatedStorageAccount:
     def __init__(
         self,
@@ -125,7 +122,6 @@ class SystemCreatedStorageAccount:
 
 
 # Per-region information for registries.
-@experimental
 class RegistryRegionDetails:
     def __init__(
         self,
@@ -189,7 +185,6 @@ class RegistryRegionDetails:
             and hasattr(storage, "storage_account_type")
             and storage.storage_account_type is not None
         ):
-
             # We DO NOT want to set the arm_resource_id. The backend provides very
             # unhelpful errors if you provide an empty/null/invalid resource ID,
             # and ignores the value otherwise. It's better to avoid setting it in

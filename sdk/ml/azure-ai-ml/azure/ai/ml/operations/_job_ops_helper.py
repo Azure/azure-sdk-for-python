@@ -194,6 +194,23 @@ def stream_logs_until_completion(
     job_name = job_resource.name
     studio_endpoint = job_resource.properties.services.get("Studio", None)
     studio_endpoint = studio_endpoint.endpoint if studio_endpoint else None
+    # Feature store jobs should be linked to the Feature Store Workspace UI.
+    # Todo: Consolidate this logic to service side
+    if "FeatureStoreJobType" in job_resource.properties.properties:
+        url_format = (
+            "https://ml.azure.com/featureStore/{fs_name}/featureSets/{fset_name}/{fset_version}/matJobs/"
+            "jobs/{run_id}?wsid=/subscriptions/{fs_sub_id}/resourceGroups/{fs_rg_name}/providers/"
+            "Microsoft.MachineLearningServices/workspaces/{fs_name}"
+        )
+        studio_endpoint = url_format.format(
+            fs_name=job_resource.properties.properties["FeatureStoreName"],
+            fs_sub_id=run_operations._subscription_id,
+            fs_rg_name=run_operations._resource_group_name,
+            fset_name=job_resource.properties.properties["FeatureSetName"],
+            fset_version=job_resource.properties.properties["FeatureSetVersion"],
+            run_id=job_name,
+        )
+
     file_handle = sys.stdout
     ds_properties = None
     prefix = None

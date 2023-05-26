@@ -6,9 +6,6 @@ from typing import Callable
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live
-from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
-
 from azure.ai.ml import MLClient, MpiDistribution, load_component, load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
@@ -18,11 +15,14 @@ from azure.ai.ml.constants._common import (
     PROVIDER_RESOURCE_ID_WITH_VERSION,
     AzureMLResourceType,
 )
+from azure.ai.ml.constants._assets import IPProtectionLevel
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code, load_job
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
+from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
@@ -505,7 +505,6 @@ class TestComponent(AzureRecordedTestCase):
             client.components.create_or_update(command_component)
 
     @pytest.mark.disable_mock_code_hash
-    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_create_default_code(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # step2: test component without code
         component_name = randstr("component_name")
@@ -518,6 +517,7 @@ class TestComponent(AzureRecordedTestCase):
         component_resource2 = create_component(client, component_name, params_override=params_override)
 
         # the code arm id should be the same
+        assert component_resource1.code is None
         assert component_resource1.code == component_resource2.code
         assert component_resource2.description == description
         assert component_resource2.display_name == display_name
@@ -780,18 +780,6 @@ class TestComponent(AzureRecordedTestCase):
         component_resource = client.components.create_or_update(component)
         assert component_resource.version == "3"
 
-    def test_component_validate_via_schema(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        component_path = "./tests/test_configs/components/helloworld_component.yml"
-        component: CommandComponent = load_component(source=component_path)
-        component.name = None
-        component.command += " & echo ${{inputs.non_existent}} & echo ${{outputs.non_existent}}"
-        validation_result = client.components.validate(component)
-        assert validation_result.passed is False
-        assert validation_result.error_messages == {
-            "name": "Missing data for required field.",
-            "command": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
-        }
-
     @pytest.mark.skipif(
         condition=not is_live(),
         reason="registry test, may fail in playback mode during retrieving registry client",
@@ -1001,6 +989,9 @@ class TestComponent(AzureRecordedTestCase):
         # TODO(2037030): verify when backend ready
         # assert previous_dict == current_dict
 
+    @pytest.mark.skip(
+        reason="TODO (2349965): Message: User/tenant/subscription is not allowed to access registry UnsecureTest-hello-world"
+    )
     @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_ipp_component_create(self, ipp_registry_client: MLClient, randstr: Callable[[str], str]):
         component_path = "./tests/test_configs/components/component_ipp.yml"
@@ -1014,8 +1005,17 @@ class TestComponent(AzureRecordedTestCase):
         assert from_rest_component._intellectual_property
         assert from_rest_component._intellectual_property == command_component._intellectual_property
 
+        assert from_rest_component.inputs["training_data"]._intellectual_property
+        assert (
+            from_rest_component.inputs["training_data"]._intellectual_property
+            == command_component.inputs["training_data"]._intellectual_property
+        )
+
+        assert from_rest_component.inputs["base_model"]._intellectual_property
+        assert from_rest_component.inputs["base_model"]._intellectual_property.protection_level == IPProtectionLevel.ALL
+
         assert from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
-        print(type(from_rest_component.outputs["model_output_not_ipp"]._intellectual_property))
+
         assert (
             from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
             == command_component.outputs["model_output_not_ipp"]._intellectual_property

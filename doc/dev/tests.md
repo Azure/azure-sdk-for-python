@@ -123,20 +123,20 @@ If you have print statements in your tests for debugging you can add the `-s` fl
 
 ## Tox
 
-The Python SDK uses the [tox project](https://tox.readthedocs.io/en/latest/) to automate releases, run tests, run linters, and build our documentation. The `tox.ini` file is located at `azure-sdk-for-python/eng/tox/tox.ini` for reference. You do not need to make any changes to the tox file for tox to work with your project. Tox will create a directory (`.tox`) in the head of your branch. The first time you run tox commands it may take several moments, but subsequent runs will be quicker. To install tox run the following command from within your virtual environment.
-`(env) > pip install tox tox-monorepo`.
+The Python SDK uses the [tox project](https://tox.wiki/en/latest/) to automate releases, run tests, run linters, and build our documentation. The `tox.ini` file is located at `azure-sdk-for-python/eng/tox/tox.ini` for reference. You do not need to make any changes to the tox file for tox to work with your project. Tox will create a directory (`.tox`) in the head of your branch. The first time you run tox commands it may take several moments, but subsequent runs will be quicker. To install tox run the following command from within your virtual environment.
+`(env) > pip install tox<5`.
 
 To run a tox command from your directory use the following commands:
 ```cmd
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e sphinx
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e pylint
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e mypy
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e pyright
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e verifytypes
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e whl
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e sdist
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e samples
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e apistub
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e sphinx -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e pylint -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e mypy -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e pyright -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e verifytypes -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e whl -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e sdist -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e samples -c ../../../eng/tox/tox.ini --root . 
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e apistub -c ../../../eng/tox/tox.ini --root . 
 ```
 A quick description of the five commands above:
 * sphinx: documentation generation using the inline comments written in our code
@@ -147,7 +147,7 @@ A quick description of the five commands above:
 * whl: creates a whl package for installing our package
 * sdist: creates a zipped distribution of our files that the end user could install with pip
 * samples: runs all of the samples in the `samples` directory and verifies they are working correctly
-* apistub: runs the [apistubgenerator](https://github.com/Azure/azure-sdk-tools/tree/main/packages/python-packages/api-stub-generator) tool on your code
+* apistub: runs the [apistubgenerator](https://github.com/Azure/azure-sdk-tools/tree/main/packages/python-packages/apiview-stub-generator) tool on your code
 
 ## The `devtools_testutils` package
 
@@ -379,7 +379,7 @@ to the process of updating recordings.
 ##### Environment prerequisites
 
 - The targeted library is already migrated to use the test proxy.
-- Git version > 2.25.0 is to on the machine and in the path. Git is used by the script and test proxy.
+- Git version > 2.30.0 is to on the machine and in the path. Git is used by the script and test proxy.
 - Global [git config settings][git_setup] are configured for `user.name` and `user.email`.
   - These settings are also set with environment variables `GIT_COMMIT_OWNER` and `GIT_COMMIT_EMAIL`, respectively (in your environment or your local `.env` file).
 - Membership in the `azure-sdk-write` GitHub group.

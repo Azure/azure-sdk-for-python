@@ -10,6 +10,7 @@ from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, 
 
 from msrest import Serializer
 
+from ...._polling import DocumentModelAdministrationClientLROPoller
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
@@ -313,7 +314,7 @@ class DocumentClassifiersOperations:
         self,
         build_request: _models.BuildDocumentClassifierRequest,
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> DocumentModelAdministrationClientLROPoller[None]:
         """Build document classifier.
 
         Builds a custom document classifier.
@@ -329,8 +330,9 @@ class DocumentClassifiersOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of DocumentModelAdministrationClientLROPoller that returns either None or
+         the result of cls(response)
+        :rtype: ~...._polling.DocumentModelAdministrationClientLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -376,13 +378,13 @@ class DocumentClassifiersOperations:
         elif polling is False: polling_method = cast(PollingMethod, NoPolling())
         else: polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return DocumentModelAdministrationClientLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return DocumentModelAdministrationClientLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_build_classifier.metadata = {'url': "/documentClassifiers:build"}  # type: ignore
 

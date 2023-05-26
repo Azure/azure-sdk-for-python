@@ -22,7 +22,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
   try
   {
     Push-Location $RepoRoot
-    pip install "./tools/azure-sdk-tools[build]" -q -I
+    python -m pip install "./tools/azure-sdk-tools[build]" -q -I
     $allPkgPropLines = python (Join-path eng scripts get_package_properties.py) -s $searchPath
   }
   catch
@@ -252,8 +252,8 @@ function FallbackValidation
   try {
     $pipInstallOutput = ""
     if ($PackageSourceOverride) {
-      Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder --extra-index-url=$PackageSourceOverride"
-      $pipInstallOutput = pip `
+      Write-Host "python -m pip install $packageExpression --no-cache-dir --target $installTargetFolder --extra-index-url=$PackageSourceOverride"
+      $pipInstallOutput = python -m pip `
         install `
         $packageExpression `
         --no-cache-dir `
@@ -261,20 +261,20 @@ function FallbackValidation
         --extra-index-url=$PackageSourceOverride 2>&1
     }
     else {
-      Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
-      $pipInstallOutput = pip `
+      Write-Host "python -m pip install $packageExpression --no-cache-dir --target $installTargetFolder"
+      $pipInstallOutput = python -m pip `
         install `
         $packageExpression `
         --no-cache-dir `
         --target $installTargetFolder 2>&1
     }
     if ($LASTEXITCODE -ne 0) {
-      LogWarning "pip install failed for $packageExpression"
+      LogWarning "python -m pip install failed for $packageExpression"
       Write-Host $pipInstallOutput
       return $false
     }
   } catch {
-    LogWarning "pip install failed for $packageExpression with exception"
+    LogWarning "python -m pip install failed for $packageExpression with exception"
     LogWarning $_.Exception
     LogWarning $_.Exception.StackTrace
     return $false
@@ -343,6 +343,11 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSour
     if ($package.package_info.install_type -ne 'pypi') {
       Write-Host "Keeping package with install_type not 'pypi': $($package.package_info.name)"
       $outputPackages += $package
+      continue
+    }
+
+    if ($package.package_info.name.EndsWith("-nspkg")) {
+      Write-Host "Skipping $($package.package_info.name) because it's a namespace package."
       continue
     }
 
@@ -430,11 +435,15 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSour
   $remainingPackages = @()
   if ($Mode -eq 'preview') {
     $remainingPackages = $DocsMetadata.Where({
-      $_.VersionPreview.Trim() -and !$outputPackagesHash.ContainsKey($_.Package)
+      $_.VersionPreview.Trim() `
+      -and !$outputPackagesHash.ContainsKey($_.Package) `
+      -and !$_.Package.EndsWith("-nspkg")
     })
   } else {
     $remainingPackages = $DocsMetadata.Where({
-      $_.VersionGA.Trim() -and !$outputPackagesHash.ContainsKey($_.Package)
+      $_.VersionGA.Trim() `
+      -and !$outputPackagesHash.ContainsKey($_.Package) `
+      -and !$_.Package.EndsWith("-nspkg")
     })
   }
 
@@ -522,7 +531,7 @@ function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseD
   {
     $ReleaseDate = Get-Date -Format "yyyy-MM-dd"
   }
-  pip install "$RepoRoot/tools/azure-sdk-tools[build]" -q -I
+  python -m pip install "$RepoRoot/tools/azure-sdk-tools[build]" -q -I
   sdk_set_version --package-name $PackageName --new-version $Version `
   --service $ServiceDirectory --release-date $ReleaseDate --replace-latest-entry-title $ReplaceLatestEntryTitle
 }
@@ -573,7 +582,7 @@ function Import-Dev-Cert-python
   Write-Host "Python Trust Methodology"
 
   $pathToScript = Resolve-Path (Join-Path -Path $PSScriptRoot -ChildPath "../../scripts/devops_tasks/trust_proxy_cert.py")
-  python -m pip install requests
+  python -m python -m pip install requests
   python $pathToScript
 }
 

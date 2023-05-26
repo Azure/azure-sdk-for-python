@@ -21,10 +21,6 @@ steps:
     inputs:
       versionSpec: $(PythonVersion)
 
-  - script: |
-      python -m pip install -r eng/ci_tools.txt
-    displayName: 'Prep Environment'
-
   - pwsh: |
       mkdir $(Agent.BuildDirectory)/conda/
       mkdir $(Agent.BuildDirectory)/conda/output

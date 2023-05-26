@@ -124,6 +124,9 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COPY_START = "CopyStart"
     """Create a new disk by using a deep copy process, where the resource creation is considered
     #: complete only after all data has been copied from the source."""
+    IMPORT_ENUM = "Import"
+    """Create a disk by importing from a blob specified by a sourceUri in a storage account specified
+    #: by storageAccountId."""
 
 
 class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -524,6 +527,7 @@ class PublicIPAddressSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REGIONAL = "Regional"
     GLOBAL = "Global"
+    GLOBAL_ENUM = "Global"
 
 
 class PublicIPAllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):

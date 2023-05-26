@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._disks_operations import DisksOperations
-from ._snapshots_operations import SnapshotsOperations
+from ._operations import DisksOperations
+from ._operations import SnapshotsOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import

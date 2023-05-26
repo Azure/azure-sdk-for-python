@@ -74,7 +74,7 @@ class AzureAppConfigurationClient:
         if aad_mode:
             if hasattr(credential, "get_token"):
                 credential_policy = AsyncBearerTokenCredentialPolicy(
-                    credential, # type: ignore
+                    credential,  # type: ignore
                     credential_scopes,
                 )
             else:
@@ -83,7 +83,7 @@ class AzureAppConfigurationClient:
                     "or a class that implement the 'get_token protocol"
                 )
         else:
-            credential_policy = AppConfigRequestsCredentialsPolicy(credential) # type: ignore
+            credential_policy = AppConfigRequestsCredentialsPolicy(credential)  # type: ignore
 
         self._impl = AzureAppConfiguration(
             base_url,
@@ -115,7 +115,7 @@ class AzureAppConfigurationClient:
         """
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
         return cls(
-            credential=AppConfigConnectionStringCredential(connection_string), # type: ignore
+            credential=AppConfigConnectionStringCredential(connection_string),  # type: ignore
             base_url=base_url,
             **kwargs
         )
@@ -168,9 +168,7 @@ class AzureAppConfigurationClient:
                 label=label_filter,
                 key=key_filter,
                 select=select,
-                cls=lambda objs: [
-                    ConfigurationSetting._from_generated(x) for x in objs
-                ],
+                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                 error_map=error_map,
                 **kwargs
             )
@@ -245,9 +243,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace_async
     async def add_configuration_setting(
-        self,
-        configuration_setting: ConfigurationSetting,
-        **kwargs
+        self, configuration_setting: ConfigurationSetting, **kwargs
     ) -> ConfigurationSetting:
 
         """Add a ConfigurationSetting instance into the Azure App Configuration service.
@@ -350,9 +346,7 @@ class AzureAppConfigurationClient:
                 key=key_value.key,  # type: ignore
                 label=key_value.label,
                 if_match=prep_if_match(configuration_setting.etag, match_condition),
-                if_none_match=prep_if_none_match(
-                    etag, match_condition
-                ),
+                if_none_match=prep_if_none_match(etag, match_condition),
                 headers=custom_headers,
                 error_map=error_map,
             )
@@ -365,10 +359,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace_async
     async def delete_configuration_setting(
-        self,
-        key: str,
-        label: Optional[str] = None,
-        **kwargs
+        self, key: str, label: Optional[str] = None, **kwargs
     ) -> ConfigurationSetting:
         """Delete a ConfigurationSetting if it exists
 
@@ -471,9 +462,7 @@ class AzureAppConfigurationClient:
                 label=label_filter,
                 key=key_filter,
                 select=select,
-                cls=lambda objs: [
-                    ConfigurationSetting._from_generated(x) for x in objs
-                ],
+                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                 error_map=error_map,
                 **kwargs
             )
@@ -530,9 +519,7 @@ class AzureAppConfigurationClient:
                     key=configuration_setting.key,
                     label=configuration_setting.label,
                     if_match=prep_if_match(configuration_setting.etag, match_condition),
-                    if_none_match=prep_if_none_match(
-                        configuration_setting.etag, match_condition
-                    ),
+                    if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
                     error_map=error_map,
                     **kwargs
                 )
@@ -541,9 +528,7 @@ class AzureAppConfigurationClient:
                     key=configuration_setting.key,
                     label=configuration_setting.label,
                     if_match=prep_if_match(configuration_setting.etag, match_condition),
-                    if_none_match=prep_if_none_match(
-                        configuration_setting.etag, match_condition
-                    ),
+                    if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
                     error_map=error_map,
                     **kwargs
                 )

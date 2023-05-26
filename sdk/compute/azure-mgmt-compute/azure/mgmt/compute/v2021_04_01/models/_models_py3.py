@@ -1434,8 +1434,8 @@ class CreationData(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar create_option: This enumerates the possible sources of a disk's creation. Required. Known
-     values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", "Upload", and
-     "CopyStart".
+     values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", "Upload", "CopyStart",
+     and "Import".
     :vartype create_option: str or ~azure.mgmt.compute.v2021_04_01.models.DiskCreateOption
     :ivar storage_account_id: Required if createOption is Import. The Azure Resource Manager
      identifier of the storage account containing the blob to import as a disk.
@@ -1496,8 +1496,8 @@ class CreationData(_serialization.Model):
     ) -> None:
         """
         :keyword create_option: This enumerates the possible sources of a disk's creation. Required.
-         Known values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", "Upload", and
-         "CopyStart".
+         Known values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", "Upload",
+         "CopyStart", and "Import".
         :paramtype create_option: str or ~azure.mgmt.compute.v2021_04_01.models.DiskCreateOption
         :keyword storage_account_id: Required if createOption is Import. The Azure Resource Manager
          identifier of the storage account containing the blob to import as a disk.
@@ -6765,7 +6765,7 @@ class PublicIPAddressSku(_serialization.Model):
 
     :ivar name: Specify public IP sku name. Known values are: "Basic" and "Standard".
     :vartype name: str or ~azure.mgmt.compute.v2021_04_01.models.PublicIPAddressSkuName
-    :ivar tier: Specify public IP sku tier. Known values are: "Regional" and "Global".
+    :ivar tier: Specify public IP sku tier. Known values are: "Regional", "Global", and "Global".
     :vartype tier: str or ~azure.mgmt.compute.v2021_04_01.models.PublicIPAddressSkuTier
     """
 
@@ -6784,7 +6784,8 @@ class PublicIPAddressSku(_serialization.Model):
         """
         :keyword name: Specify public IP sku name. Known values are: "Basic" and "Standard".
         :paramtype name: str or ~azure.mgmt.compute.v2021_04_01.models.PublicIPAddressSkuName
-        :keyword tier: Specify public IP sku tier. Known values are: "Regional" and "Global".
+        :keyword tier: Specify public IP sku tier. Known values are: "Regional", "Global", and
+         "Global".
         :paramtype tier: str or ~azure.mgmt.compute.v2021_04_01.models.PublicIPAddressSkuTier
         """
         super().__init__(**kwargs)
