@@ -11,6 +11,8 @@
 
 ### Bugs Fixed
 
+- Improve error message when providing the wrong credential type for AzureKeyCredential  #30380
+
 ### Other Changes
 
 ## 1.26.4 (2023-04-06)
