@@ -572,7 +572,7 @@ class AzureAppConfigurationClient:
             included in the snapshot. Each filter should be in format {"key": <value>, "label": <value>},
             and key field value is required.
         :type filters: list[dict[str, str]]
-        :keyword Literal["key", "key_label"] composition_type: The composition type describes how the key-values
+        :keyword str composition_type: The composition type describes how the key-values
             within the snapshot are composed. Known values are: "key" and "key_label". The "key" composition type
             ensures there are no two key-values containing the same key. The 'key_label' composition type ensures
             there are no two key-values containing the same key and label.
