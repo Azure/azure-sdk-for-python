@@ -456,7 +456,7 @@ def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> str:
         logging.error("Package name cannot be empty to find sdist")
         return
 
-    pkg_name_format = "{0}-{1}.zip".format(pkg_name, pkg_version)
+    pkg_name_format = f"{pkg_name}-{pkg_version}.zip"
     pkg_name_format_alt = "${0}-{1}.tar.gz"
 
     packages = []
@@ -514,7 +514,7 @@ def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
         logging.error("Package name cannot be empty to find whl")
         return
 
-    pkg_name_format = "{0}-{1}*.whl".format(pkg_name.replace("-", "_"), pkg_version)
+    pkg_name_format = f"{pkg_name.replace('-', '_')}-{pkg_version}*.whl"
     whls = []
 
     # todo: replace with glob, we aren't using py2 anymore!
@@ -539,7 +539,7 @@ def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
         # grab the first whl that matches a tag from our compatible_tags list
         for whl in whls:
             if check_whl_against_tags(whl, compatible_tags):
-                logging.info("Found whl {}".format(whl))
+                logging.info(f"Found whl {whl}")
                 return whl
 
         # if whl is platform independent then there should only be one whl in filtered list
