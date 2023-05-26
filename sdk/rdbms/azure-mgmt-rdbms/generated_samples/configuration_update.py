@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.rdbms import MySQLManagementClient
+from azure.mgmt.rdbms import PostgreSQLManagementClient
 
 """
 # PREREQUISITES
@@ -24,7 +24,7 @@ from azure.mgmt.rdbms import MySQLManagementClient
 
 
 def main():
-    client = MySQLManagementClient(
+    client = PostgreSQLManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/Configurations/preview/2021-12-01-preview/examples/ConfigurationUpdate.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2023-03-01-preview/examples/ConfigurationUpdate.json
 if __name__ == "__main__":
     main()
