@@ -456,15 +456,15 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace_async
     async def start_continuous_dtmf_recognition(
         self,
-        target: 'CommunicationIdentifier',
+        target_participant: 'CommunicationIdentifier',
         *,
         operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
         """ Start continuous Dtmf recognition by subscribing to tones.
 
-        :param target: Target participant of continuous DTMF tone recognition.
-        :type target: ~azure.communication.callautomation.CommunicationIdentifier
+        :param target_participant: Target participant.
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
         :return: None
@@ -472,7 +472,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
-            target_participant=serialize_identifier(target),
+            target_participant=serialize_identifier(target_participant),
             operation_context=operation_context)
 
         await self._call_media_client.start_continuous_dtmf_recognition(
@@ -483,15 +483,15 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace_async
     async def stop_continuous_dtmf_recognition(
         self,
-        target: 'CommunicationIdentifier',
+        target_participant: 'CommunicationIdentifier',
         *,
         operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
         """Stop continuous Dtmf recognition by unsubscribing to tones.
 
-        :param target: Target participant of continuous DTMF tone recognition.
-        :type target: ~azure.communication.callautomation.CommunicationIdentifier
+        :param target_participant: Target participant.
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
         :return: None
@@ -499,7 +499,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
-            target_participant=serialize_identifier(target),
+            target_participant=serialize_identifier(target_participant),
             operation_context=operation_context)
 
         await self._call_media_client.stop_continuous_dtmf_recognition(
@@ -510,18 +510,18 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace_async
     async def send_dtmf(
         self,
-        target: 'CommunicationIdentifier',
         tones: List[Union[str, 'DtmfTone']],
+        target_participant: 'CommunicationIdentifier',
         *,
         operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
-        """Send dtmf tones to the call.
+        """Send Dtmf tones to the call.
 
-        :param target: Target participant of Send DTMF tone.
-        :type target: ~azure.communication.callautomation.CommunicationIdentifier
-        :param tones: The captured tones.
+        :param tones: List of tones to be sent to target participant.
         :type tones:list[str or ~azure.communication.callautomation.DtmfTone]
+        :param target_participant: Target participant.
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
         :return: None
@@ -529,8 +529,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         send_dtmf_request = SendDtmfRequest(
-            target_participant=serialize_identifier(target),
             tones=tones,
+            target_participant=serialize_identifier(target_participant),
             operation_context=operation_context)
 
         await self._call_media_client.send_dtmf(
