@@ -19,8 +19,8 @@ from ..._utils._arm_id_utils import parse_name_label
 from ..._utils._asset_utils import IgnoreFile
 from ...entities import Component
 from ...entities._assets import Code
-from ...entities._component.additional_includes import AdditionalIncludesMixin
-from ...entities._component.ignore_file import ComponentIgnoreFile
+from ...entities._component._additional_includes import AdditionalIncludesMixin
+from ...entities._component.code import ComponentIgnoreFile
 from ...entities._job.distribution import DistributionConfiguration
 from ...entities._system_data import SystemData
 from ...entities._util import convert_ordered_dict_to_dict
@@ -168,11 +168,11 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         # internal components must have a source path
         return self._read_additional_include_configs(Path(self._source_path))
 
-    def _get_base_path_for_additional_includes(self) -> Path:
+    def _get_base_path_for_code(self) -> Path:
         # internal components must have a source path
         return Path(self._source_path).parent
 
-    def _get_origin_code_path_for_additional_includes(self) -> Optional[str]:
+    def _get_origin_code_value(self) -> Union[str, PathLike, None]:
         return self.code or Path(".").as_posix()
 
     # endregion
@@ -184,15 +184,17 @@ class InternalComponent(Component, AdditionalIncludesMixin):
 
     def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(InternalComponent, self)._customized_validate()
+        validation_result.merge_with(self._validate_code(), "code")
         validation_result.merge_with(self._validate_additional_includes())
         # resolving additional includes & update self._base_path can be dangerous,
-        # so we just skip path validation if additional_includes is used
-        # note that there will still be runtime error on job submission or execution
+        # so we just skip path validation if additional includes is provided.
+        # note that there will still be client-side error on job submission (after code is resolved)
+        # if paths in environment are invalid
         if isinstance(self.environment, InternalEnvironment):
             validation_result.merge_with(
-                self.environment._validate(
+                self.environment.validate(
                     self._base_path,
-                    skip_path_validation=self._involved_code_merging(),
+                    skip_path_validation=self._with_additional_includes(),
                 ),
                 field_name="environment",
             )
@@ -244,25 +246,22 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         return snapshot_id
 
     @contextmanager
-    def _resolve_local_code(self) -> Optional[Code]:
-        """Try to create a Code object pointing to local code and yield it.
+    def _build_code(self) -> Optional[Code]:
+        """Create a Code object if necessary based on origin code value and yield it.
 
-        If there is no local code to upload, yield None. Otherwise, yield a Code object pointing to the code.
+        If built code is the same as its origin value, do nothing and yield None.
+        Otherwise, yield a Code object pointing to the code.
+        Will merge code path with additional includes into a temp folder if additional includes is specified.
+        For internal components, file dependencies in environment will be resolved based on the final code.
         """
-        # if there is no local code, yield super()._resolve_local_code() and return early
+        # if there is no local code, yield super()._build_code() and return early
         # an internal component always has a default local code of its base path
-        if self.code is not None:
-            with super()._resolve_local_code() as code:
-                if code is None or code._is_remote:
-                    yield code
-                    return
-
-        with self._resolve_additional_includes() as tmp_code_dir:
-            # this wouldn't happen as internal components have a default code
-            if tmp_code_dir is None:
-                yield None
+        if not self._with_local_code():
+            with super()._build_code() as code:
+                yield code
                 return
 
+        with self._merge_additional_includes() as tmp_code_dir:
             # use absolute path in case temp folder & work dir are in different drive
             tmp_code_dir = tmp_code_dir.absolute()
 
@@ -281,12 +280,12 @@ class InternalComponent(Component, AdditionalIncludesMixin):
             # Use the snapshot id in ml-components as code name to enable anonymous
             # component reuse from ml-component runs.
             # calculate snapshot id here instead of inside InternalCode to ensure that
-            # snapshot id is calculated based on the resolved code path
+            # snapshot id is calculated based on the built code path
             yield InternalCode(
                 name=self._get_snapshot_id(
                     # use absolute path in case temp folder & work dir are in different drive
                     tmp_code_dir,
-                    # this ignore-file should be rebased to the resolved code path
+                    # this ignore-file should be rebased to the built code path
                     rebased_ignore_file,
                 ),
                 version="1",

@@ -133,7 +133,7 @@ class TestCommandComponentEntity:
                 }
             )
             assert component._validate().passed, repr(component._validate())
-            with component._resolve_local_code() as code:
+            with component._build_code() as code:
                 code_path: Path = code.path
                 assert code_path.is_dir()
                 assert (code_path / "LICENSE").is_file()
@@ -255,7 +255,7 @@ class TestCommandComponentEntity:
         try:
             yaml_path = "./basic_component_code_current_folder.yml"
             component = load_component(yaml_path)
-            with component._resolve_local_code() as code:
+            with component._build_code() as code:
                 Path(code.path).resolve().name == "components"
         finally:
             os.chdir(old_cwd)
@@ -572,7 +572,7 @@ class TestCommandComponentEntity:
         ) as temp_dir:
             # resolve and test for ignore_file's is_file_excluded
             component.code = temp_dir
-            with component._resolve_local_code() as code:
+            with component._build_code() as code:
                 excluded = []
                 for root, _, files in os.walk(code.path):
                     for name in files:
@@ -660,7 +660,7 @@ class TestCommandComponentEntity:
         )
         component = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
-        with component._resolve_local_code() as code:
+        with component._build_code() as code:
             code_path: Path = code.path
             assert code_path.is_dir()
             assert (code_path / "LICENSE").is_file()
@@ -782,7 +782,7 @@ class TestCommandComponentEntity:
             component = load_component(source=yaml_path)
 
             # resolve and check snapshot directory
-            with component._resolve_local_code() as code:
+            with component._build_code() as code:
                 for file, content, check_func in test_files:
                     # original file is based on test_configs_dir, need to remove the leading
                     # "component_with_additional_includes" or "additional_includes" to get the relative path
@@ -808,7 +808,7 @@ class TestCommandComponentEntity:
         )
         component = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
-        with component._resolve_local_code() as code:
+        with component._build_code() as code:
             code_path = code.path
             # first folder
             assert (code_path / "library1" / "__init__.py").is_file()
@@ -830,7 +830,7 @@ class TestCommandComponentEntity:
         component = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
         # resolve
-        with component._resolve_local_code() as code:
+        with component._build_code() as code:
             code_path = code.path
             assert code_path.is_dir()
             if has_additional_includes:
@@ -858,7 +858,7 @@ class TestCommandComponentEntity:
             yaml_path = "./tests/test_configs/components/component_with_additional_includes/with_artifacts.yml"
             component = load_component(source=yaml_path)
             assert component._validate().passed, repr(component._validate())
-            with component._resolve_local_code() as code:
+            with component._build_code() as code:
                 code_path = code.path
                 assert code_path.is_dir()
                 for path in [
@@ -879,13 +879,10 @@ class TestCommandComponentEntity:
             component = load_component(source=yaml_path)
             validation_result = component._validate()
             assert validation_result.passed is False
-            assert "There are conflict files in additional include" in validation_result.error_messages["*"]
-            assert (
-                "test_additional_include:version_1 in component-sdk-test-feed" in validation_result.error_messages["*"]
-            )
-            assert (
-                "test_additional_include:version_3 in component-sdk-test-feed" in validation_result.error_messages["*"]
-            )
+            error_message = validation_result.error_messages["additional_includes"]
+            assert "There are conflict files in additional include" in error_message
+            assert "test_additional_include:version_1 in component-sdk-test-feed" in error_message
+            assert "test_additional_include:version_3 in component-sdk-test-feed" in error_message
 
     @pytest.mark.parametrize(
         "yaml_path,expected_error_msg_prefix",
@@ -913,4 +910,4 @@ class TestCommandComponentEntity:
         )
         validation_result = component._validate()
         assert validation_result.passed is False
-        assert validation_result.error_messages["*"].startswith(expected_error_msg_prefix)
+        assert validation_result.error_messages["additional_includes"].startswith(expected_error_msg_prefix)

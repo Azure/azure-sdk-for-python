@@ -49,6 +49,7 @@ from ..entities._builders import BaseNode
 from ..entities._builders.condition_node import ConditionNode
 from ..entities._builders.control_flow_node import LoopNode
 from ..entities._component.automl_component import AutoMLComponent
+from ..entities._component.code import ComponentCodeMixin
 from ..entities._component.pipeline_component import PipelineComponent
 from ..entities._job.pipeline._attr_dict import has_attr_safe
 from ._code_operations import CodeOperations
@@ -862,7 +863,8 @@ def _refine_component(component_func: types.FunctionType) -> Component:
 
 
 def _try_resolve_code_for_component(component: Component, get_arm_id_and_fill_back: Callable) -> None:
-    with component._resolve_local_code() as code:
-        if code is None:
-            return
-        component.code = get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)
+    if isinstance(component, ComponentCodeMixin):
+        with component._build_code() as code:
+            if code is None:
+                return
+            component.code = get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)

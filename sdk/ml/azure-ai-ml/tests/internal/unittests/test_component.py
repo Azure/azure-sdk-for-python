@@ -431,7 +431,7 @@ class TestComponent:
         component: InternalComponent = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
         # resolve
-        with component._resolve_local_code() as code:
+        with component._build_code() as code:
             code_path: Path = code.path
             assert code_path.is_dir()
             assert (code_path / "LICENSE").is_file()
@@ -602,7 +602,7 @@ class TestComponent:
             component: InternalComponent = load_component(source=yaml_path)
 
             # resolve and check snapshot directory
-            with component._resolve_local_code() as code:
+            with component._build_code() as code:
                 for file, content, check_func in test_files:
                     # original file is based on test_configs_dir, need to remove the leading
                     # "component_with_additional_includes" or "additional_includes" to get the relative path
@@ -628,7 +628,7 @@ class TestComponent:
         )
         component: InternalComponent = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
-        with component._resolve_local_code() as code:
+        with component._build_code() as code:
             code_path = code.path
             # first folder
             assert (code_path / "library1" / "__init__.py").is_file()
@@ -651,7 +651,7 @@ class TestComponent:
         component: InternalComponent = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
         # resolve
-        with component._resolve_local_code() as code:
+        with component._build_code() as code:
             code_path = code.path
             assert code_path.is_dir()
             if has_additional_includes:
@@ -686,7 +686,7 @@ class TestComponent:
 
         component: InternalComponent = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
-        with component._resolve_local_code():
+        with component._build_code():
             environment_rest_obj = component._to_rest_object().properties.component_spec["environment"]
             assert environment_rest_obj == {
                 "docker": {
@@ -708,7 +708,7 @@ class TestComponent:
 
         component: InternalComponent = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
-        with component._resolve_local_code():
+        with component._build_code():
             environment_rest_obj = component._to_rest_object().properties.component_spec["environment"]
             assert environment_rest_obj == {
                 "conda": {
@@ -722,7 +722,7 @@ class TestComponent:
             yaml_path = "./tests/test_configs/internal/component_with_additional_includes/with_artifacts.yml"
             component: InternalComponent = load_component(source=yaml_path)
             assert component._validate().passed, repr(component._validate())
-            with component._resolve_local_code() as code:
+            with component._build_code() as code:
                 code_path = code.path
                 assert code_path.is_dir()
                 for path in [
@@ -896,7 +896,7 @@ class TestComponent:
         component: InternalComponent = load_component(
             source=Path("./tests/test_configs/internal/component-reuse/") / relative_yaml_path
         )
-        with component._resolve_local_code() as code:
+        with component._build_code() as code:
             assert code.name == expected_snapshot_id
 
             code.name = expected_snapshot_id
@@ -921,7 +921,7 @@ class TestComponent:
             (code_pycache / "a.pyc").touch()
 
             # resolve and check snapshot directory
-            with component._resolve_local_code() as code:
+            with component._build_code() as code:
                 # ANONYMOUS_COMPONENT_TEST_PARAMS[0] is the test params for simple-command
                 assert code.name == ANONYMOUS_COMPONENT_TEST_PARAMS[0][1]
 

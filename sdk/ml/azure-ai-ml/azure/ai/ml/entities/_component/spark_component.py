@@ -17,10 +17,14 @@ from azure.ai.ml.entities._job.parameterized_spark import ParameterizedSpark
 from ..._schema import PathAwareSchema
 from .._job.spark_job_entry_mixin import SparkJobEntry, SparkJobEntryMixin
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
+from .._validation import MutableValidationResult
+from .code import ComponentCodeMixin
 from .component import Component
 
 
-class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pylint: disable=too-many-instance-attributes
+class SparkComponent(
+    Component, ParameterizedSpark, SparkJobEntryMixin, ComponentCodeMixin
+):  # pylint: disable=too-many-instance-attributes
     """Spark component version, used to define a spark component.
 
     :param code: The source code to run the job.
@@ -93,9 +97,6 @@ class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pyli
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
         kwargs[COMPONENT_TYPE] = NodeType.SPARK
-        # Set default base path
-        if "base_path" not in kwargs:
-            kwargs["base_path"] = Path(".")
 
         super().__init__(
             inputs=inputs,
@@ -103,7 +104,7 @@ class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pyli
             **kwargs,
         )
 
-        self.code = code
+        self.code: Union[str, os.PathLike] = code
         self.entry = entry
         self.py_files = py_files
         self.jars = jars
@@ -142,6 +143,17 @@ class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pyli
             "environment": (str, Environment),
             "code": (str, os.PathLike),
         }
+
+    def _get_origin_code_value(self) -> Union[str, os.PathLike, None]:
+        return self.code
+
+    def _get_base_path_for_code(self) -> Path:
+        return Path(self.base_path)
+
+    def _customized_validate(self) -> MutableValidationResult:
+        result = super()._customized_validate()
+        result.merge_with(self._validate_code(), field_name="code")
+        return result
 
     def _to_dict(self) -> Dict:
         """Dump the spark component content into a dictionary."""

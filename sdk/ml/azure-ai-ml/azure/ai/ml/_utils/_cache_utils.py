@@ -23,6 +23,7 @@ from azure.ai.ml._utils.utils import (
 from azure.ai.ml.constants._common import AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS, AzureMLResourceType
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
+from azure.ai.ml.entities._component.code import ComponentCodeMixin
 
 logger = logging.getLogger(__name__)
 
@@ -190,10 +191,13 @@ class CachedNodeResolver(object):
         # TODO: calculate hash without resolving additional includes (copy code to temp folder)
         # note that it's still thread-safe with current implementation, as only read operations are
         # done on the original code folder
-        with component._resolve_local_code() as code:  # pylint: disable=protected-access
-            if code is None or code._is_remote:  # pylint: disable=protected-access
-                return in_memory_hash
+        if not (
+            isinstance(component, ComponentCodeMixin)
+            and component._with_local_code()  # pylint: disable=protected-access
+        ):
+            return in_memory_hash
 
+        with component._build_code() as code:  # pylint: disable=protected-access
             if hasattr(code, "_upload_hash"):
                 content_hash = code._upload_hash  # pylint: disable=protected-access
             else:

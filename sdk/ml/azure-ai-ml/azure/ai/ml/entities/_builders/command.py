@@ -23,7 +23,6 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, LOCAL_COMPUTE_P
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._component.command_component import CommandComponent
-from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
@@ -37,8 +36,8 @@ from azure.ai.ml.entities._job.distribution import (
     DistributionConfiguration,
     MpiDistribution,
     PyTorchDistribution,
-    TensorFlowDistribution,
     RayDistribution,
+    TensorFlowDistribution,
 )
 from azure.ai.ml.entities._job.job_limits import CommandJobLimits
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
@@ -73,8 +72,8 @@ from ..._schema import PathAwareSchema
 from ..._schema.job.distribution import (
     MPIDistributionSchema,
     PyTorchDistributionSchema,
-    TensorFlowDistributionSchema,
     RayDistributionSchema,
+    TensorFlowDistributionSchema,
 )
 from .._util import (
     convert_ordered_dict_to_dict,
@@ -317,11 +316,13 @@ class Command(BaseNode):
     @property
     def command(self) -> Optional[str]:
         # the same as code
-        return self.component.command if hasattr(self.component, "command") else None
+        if not isinstance(self.component, CommandComponent):
+            return None
+        return self.component.command
 
     @command.setter
     def command(self, value: str) -> None:
-        if isinstance(self.component, Component):
+        if isinstance(self.component, CommandComponent):
             self.component.command = value
         else:
             msg = "Can't set command property for a registered component {}. Tried to set it to {}."
@@ -342,11 +343,13 @@ class Command(BaseNode):
         # you may check _AttrDict._is_arbitrary_attr for detailed logic for Arbitrary judgement),
         # then its value will be set to _AttrDict and be deserialized as {"shape": {}} instead of None,
         # which is invalid in schema validation.
-        return self.component.code if hasattr(self.component, "code") else None
+        if not isinstance(self.component, CommandComponent):
+            return None
+        return self.component.code
 
     @code.setter
     def code(self, value: str) -> None:
-        if isinstance(self.component, Component):
+        if isinstance(self.component, CommandComponent):
             self.component.code = value
         else:
             msg = "Can't set code property for a registered component {}"
@@ -387,7 +390,7 @@ class Command(BaseNode):
             self.resources.shm_size = shm_size
 
         # Save the resources to internal component as well, otherwise calling sweep() will loose the settings
-        if isinstance(self.component, Component):
+        if isinstance(self.component, CommandComponent):
             self.component.resources = self.resources
 
     def set_limits(self, *, timeout: int, **kwargs):  # pylint: disable=unused-argument
@@ -689,7 +692,7 @@ class Command(BaseNode):
 
     def __call__(self, *args, **kwargs) -> "Command":
         """Call Command as a function will return a new instance each time."""
-        if isinstance(self._component, Component):
+        if isinstance(self._component, CommandComponent):
             # call this to validate inputs
             node = self._component(*args, **kwargs)
             # merge inputs
@@ -723,8 +726,8 @@ class Command(BaseNode):
             return node
         msg = "Command can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(
-            message=msg.format(type(Component), self._component),
-            no_personal_data_message=msg.format(type(Component), "self._component"),
+            message=msg.format(type(CommandComponent), self._component),
+            no_personal_data_message=msg.format(type(CommandComponent), "self._component"),
             target=ErrorTarget.COMMAND_JOB,
             error_type=ValidationErrorType.INVALID_VALUE,
         )

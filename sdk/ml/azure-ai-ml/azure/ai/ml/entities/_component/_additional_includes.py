@@ -19,7 +19,8 @@ from ..._utils._artifact_utils import ArtifactCache
 from ..._utils._asset_utils import IgnoreFile, traverse_directory
 from ..._utils.utils import is_concurrent_component_registration_enabled, is_private_preview_enabled
 from ...entities._util import _general_copy
-from .ignore_file import ComponentIgnoreFile
+from .._assets import Code
+from .code import CodeType, ComponentCodeMixin, ComponentIgnoreFile
 
 PLACEHOLDER_FILE_NAME = "_placeholder_spec.yaml"
 
@@ -28,12 +29,12 @@ class AdditionalIncludes:
     def __init__(
         self,
         *,
-        origin_code_path: Union[None, str],
+        origin_code_value: Union[None, str],
         base_path: Path,
         configs: List[Union[str, dict]] = None,
     ):
         self._base_path = base_path
-        self._origin_code_path = origin_code_path
+        self._origin_code_value = origin_code_value
         self._origin_configs = configs
 
         self._tmp_code_path = None
@@ -48,15 +49,15 @@ class AdditionalIncludes:
         return self._origin_configs or []
 
     @property
-    def origin_code_path(self) -> Union[None, Path]:
-        """The resolved code path based on base path, if code path is not specified, return None.
+    def resolved_code_path(self) -> Union[None, Path]:
+        """The resolved origin code path based on base path, if code path is not specified, return None.
         We shouldn't change this property name given it's referenced in mldesigner.
         """
-        if self._origin_code_path is None:
+        if self._origin_code_value is None:
             return None
-        if os.path.isabs(self._origin_code_path):
-            return Path(self._origin_code_path)
-        return (self.base_path / self._origin_code_path).resolve()
+        if os.path.isabs(self._origin_code_value):
+            return Path(self._origin_code_value)
+        return (self.base_path / self._origin_code_value).resolve()
 
     @property
     def base_path(self) -> Path:
@@ -286,7 +287,7 @@ class AdditionalIncludes:
                 validation_result.append_error(message=error_msg)
                 continue
 
-            dst_path = Path(self.origin_code_path) / src_path.name if self.origin_code_path else None
+            dst_path = Path(self.resolved_code_path) / src_path.name if self.resolved_code_path else None
             if dst_path:
                 if dst_path.is_symlink():
                     # if destination path is symbolic link, check if it points to the same file/folder as source path
@@ -302,27 +303,27 @@ class AdditionalIncludes:
     def _copy_origin_code(self, target_path):
         """Copy origin code to target path."""
         # code can be either file or folder, as additional includes exists, need to copy to temporary folder
-        if self.origin_code_path is None:
+        if self.resolved_code_path is None:
             # if additional include configs exist but no origin code path, return a dummy ignore file
             return ComponentIgnoreFile(
                 self.base_path,
             )
 
-        if Path(self.origin_code_path).is_file():
+        if Path(self.resolved_code_path).is_file():
             # use a dummy ignore file to save base path
             root_ignore_file = ComponentIgnoreFile(
-                Path(self.origin_code_path).parent,
+                Path(self.resolved_code_path).parent,
                 skip_ignore_file=True,
             )
             self._copy(
-                Path(self.origin_code_path),
-                target_path / Path(self.origin_code_path).name,
+                Path(self.resolved_code_path),
+                target_path / Path(self.resolved_code_path).name,
                 ignore_file=root_ignore_file,
             )
         else:
             # current implementation of ignore file is based on absolute path, so it cannot be shared
-            root_ignore_file = ComponentIgnoreFile(self.origin_code_path)
-            self._copy(self.origin_code_path, target_path, ignore_file=root_ignore_file)
+            root_ignore_file = ComponentIgnoreFile(self.resolved_code_path)
+            self._copy(self.resolved_code_path, target_path, ignore_file=root_ignore_file)
         return root_ignore_file
 
     @contextmanager
@@ -332,10 +333,10 @@ class AdditionalIncludes:
         If no original code path is specified, just return None.
         """
         if not self.with_includes:
-            if self.origin_code_path is None:
+            if self.resolved_code_path is None:
                 yield None
             else:
-                yield self.origin_code_path.absolute()
+                yield self.resolved_code_path.absolute()
             return
 
         tmp_folder_path = Path(tempfile.mkdtemp())
@@ -387,65 +388,91 @@ class AdditionalIncludes:
         return
 
 
-class AdditionalIncludesMixin:
+class AdditionalIncludesMixin(ComponentCodeMixin):
     def __init__(self):
         self.__used_base_path = None
         self.__used_additional_includes = None
-        self.__used_code_path = None
+        self.__used_code_value = None
         self.__obj: Optional[AdditionalIncludes] = None
 
     @property
     def _additional_includes(self) -> AdditionalIncludes:
+        """Get additional includes object."""
         # reset obj if base path or additional includes changed
         if self.__obj is not None and (
-            self.__used_base_path != self._get_base_path_for_additional_includes()
+            self.__used_base_path != self._get_base_path_for_code()
             or self.__used_additional_includes != self._get_all_additional_includes_configs()
-            or self.__used_code_path != self._get_origin_code_path_for_additional_includes()
+            or self.__used_code_value != self._get_origin_code_value()
         ):
             self.__obj = None
 
         if self.__obj is None:
-            self.__used_base_path = self._get_base_path_for_additional_includes()
+            self.__used_base_path = self._get_base_path_for_code()
             self.__used_additional_includes = self._get_all_additional_includes_configs()
-            self.__used_code_path = self._get_origin_code_path_for_additional_includes()
+            self.__used_code_value = self._get_origin_code_value()
             self.__obj = AdditionalIncludes(
                 base_path=self.__used_base_path,
                 configs=self.__used_additional_includes,
-                origin_code_path=self.__used_code_path,
+                origin_code_value=self.__used_code_value,
             )
         return self.__obj
-
-    @abstractmethod
-    def _get_base_path_for_additional_includes(self) -> Path:
-        """Get base path for additional includes."""
-
-    @abstractmethod
-    def _get_origin_code_path_for_additional_includes(self) -> Optional[str]:
-        """Get origin code path.
-        Origin code path is either an absolute path or a relative path to base path.
-        Additional includes are only supported for component types with code attribute. Origin code path will be copied
-        to a temp folder along with additional includes to form a new code content.
-        """
 
     @abstractmethod
     def _get_all_additional_includes_configs(self) -> List:
         """Get all additional include configs."""
 
     @contextmanager
-    def _resolve_additional_includes(self) -> Optional[Path]:
+    def _merge_additional_includes(self) -> Optional[Path]:
+        """Copy both additional includes and origin code (if exists) to a temp folder and yield the path to it.
+
+        It's already called in self._build_code, so no need to call it again unless _build_code is overridden.
+        """
         # merge code path with additional includes into a temp folder if additional includes is specified
         with self._additional_includes.resolve() as code_path:
             yield code_path
 
     def _validate_additional_includes(self):
+        """Validate additional includes.
+
+        This is not called in _validate_code to allow passing different field names for validation results of code and
+        additional includes.
+        """
         return self._additional_includes.validate()
 
-    def _involved_code_merging(self):
+    def _with_additional_includes(self):
+        """Whether the component has additional includes."""
         # Ignore additional includes if origin code is not a local path
-        if (
-            self._additional_includes.origin_code_path
-            and self._additional_includes.origin_code_path.exists()
-            and self._additional_includes.with_includes
-        ):
-            return True
-        return False
+        return self._additional_includes.with_includes
+
+    def _get_code_type(self):
+        origin_code_value = self._get_origin_code_value()
+        if origin_code_value is None and self._additional_includes.with_includes:
+            return CodeType.LOCAL
+        return super()._get_code_type()
+
+    @contextmanager
+    def _build_code(self) -> Optional[Code]:
+        """Create a Code object if necessary based on origin code value and yield it.
+
+        If built code is the same as its origin value, do nothing and yield None.
+        Otherwise, yield a Code object pointing to the code.
+        Will merge code path with additional includes into a temp folder if additional includes is specified.
+        """
+        # if origin code is not a local path, ignore additional includes
+        # note that this condition will be True if origin code value is not a local path even if additional includes
+        # is specified; On the other hand, artifact additional includes will be treated as local code
+        if not self._with_local_code():
+            with super()._build_code() as code:
+                yield code
+                return
+
+        with self._merge_additional_includes() as tmp_code_dir:
+            if tmp_code_dir is None:
+                yield None
+                return
+
+            yield Code(
+                base_path=self._get_base_path_for_code(),
+                path=tmp_code_dir,
+                ignore_file=ComponentIgnoreFile(tmp_code_dir),
+            )

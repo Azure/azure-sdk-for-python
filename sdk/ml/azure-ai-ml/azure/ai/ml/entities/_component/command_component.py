@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from contextlib import contextmanager
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
@@ -26,12 +25,10 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 from ..._restclient.v2022_10_01.models import ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
-from ...entities._assets import Code
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
 from .._validation import MutableValidationResult
-from .additional_includes import AdditionalIncludesMixin
+from ._additional_includes import AdditionalIncludesMixin
 from .component import Component
-from .ignore_file import ComponentIgnoreFile
 
 # pylint: disable=protected-access
 
@@ -103,9 +100,6 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
         kwargs[COMPONENT_TYPE] = NodeType.COMMAND
-        # Set default base path
-        if "base_path" not in kwargs:
-            kwargs["base_path"] = Path(".")
 
         # Component backend doesn't support environment_variables yet,
         # this is to support the case of CommandComponent being the trial of
@@ -146,10 +140,11 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         self.additional_includes = additional_includes or []
 
     # region AdditionalIncludesMixin
-    def _get_base_path_for_additional_includes(self) -> Path:
+    def _get_base_path_for_code(self) -> Path:
+        # self.base_path has a default value of os.getcwd() defined in Resource
         return Path(self.base_path)
 
-    def _get_origin_code_path_for_additional_includes(self) -> Optional[str]:
+    def _get_origin_code_value(self) -> Union[str, os.PathLike, None]:
         if self.code is not None and isinstance(self.code, str):
             # directly return code given it will be validated in self._validate_additional_includes
             return self.code
@@ -216,7 +211,8 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
 
     def _customized_validate(self):
         validation_result = super(CommandComponent, self)._customized_validate()
-        validation_result.merge_with(self._validate_additional_includes())
+        validation_result.merge_with(self._validate_code(), field_name="code")
+        validation_result.merge_with(self._validate_additional_includes(), field_name="additional_includes")
         validation_result.merge_with(self._validate_command())
         validation_result.merge_with(self._validate_early_available_output())
         return validation_result
@@ -268,27 +264,3 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
             return self._to_yaml()
         except BaseException:  # pylint: disable=broad-except
             return super(CommandComponent, self).__str__()
-
-    @contextmanager
-    def _resolve_local_code(self) -> Optional[Code]:
-        """Try to create a Code object pointing to local code and yield it.
-
-        If there is no local code to upload, yield None. Otherwise, yield a Code object pointing to the code.
-        """
-        # if there is no local code, yield super()._resolve_local_code() and return early
-        if self.code is not None:
-            with super()._resolve_local_code() as code:
-                if code is None or code._is_remote:
-                    yield code
-                    return
-
-        with self._resolve_additional_includes() as tmp_code_dir:
-            if tmp_code_dir is None:
-                yield None
-                return
-
-            yield Code(
-                base_path=self._base_path,
-                path=tmp_code_dir,
-                ignore_file=ComponentIgnoreFile(tmp_code_dir),
-            )

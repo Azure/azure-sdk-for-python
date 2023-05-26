@@ -5,6 +5,7 @@
 import json
 import os
 import re
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 from marshmallow import Schema
@@ -21,10 +22,14 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 from ..._schema import PathAwareSchema
 from .._util import validate_attribute_type
+from .._validation import MutableValidationResult
+from .code import ComponentCodeMixin
 from .component import Component
 
 
-class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=too-many-instance-attributes
+class ParallelComponent(
+    Component, ParameterizedParallel, ComponentCodeMixin
+):  # pylint: disable=too-many-instance-attributes
     """Parallel component version, used to define a parallel component.
 
     :param name: Name of the component.
@@ -220,6 +225,21 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
             self.task = ParallelTask(environment=value)
         else:
             self.task.environment = value
+
+    # region CodeMixin
+    def _get_base_path_for_code(self) -> Path:
+        # base path has a default value of os.getcwd() defined in Resource
+        return Path(self.base_path)
+
+    def _get_origin_code_value(self) -> Union[str, os.PathLike, None]:
+        return self.code
+
+    # endregion
+
+    def _customized_validate(self) -> MutableValidationResult:
+        validation_result = super()._customized_validate()
+        validation_result.merge_with(self._validate_code(), field_name="code")
+        return validation_result
 
     @classmethod
     def _attr_type_map(cls) -> dict:

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from ...entities._component.additional_includes import AdditionalIncludes
+from ...entities._component._additional_includes import AdditionalIncludes
 
 
 class InternalAdditionalIncludes(AdditionalIncludes):
@@ -10,4 +10,4 @@ class InternalAdditionalIncludes(AdditionalIncludes):
 
     @property
     def code_path(self):
-        return self.origin_code_path
+        return self.resolved_code_path
