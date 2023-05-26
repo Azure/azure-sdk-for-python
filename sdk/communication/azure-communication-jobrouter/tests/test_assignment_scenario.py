@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from datetime import datetime
 import pytest
 from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import (
@@ -239,7 +240,8 @@ class TestAssignmentScenario(RouterRecordedTestCase):
         with pytest.raises(HttpResponseError) as sre:
             router_client.decline_job_offer(
                 worker_id = self.get_router_worker_id(),
-                offer_id = offer_id
+                offer_id = offer_id,
+                reoffer_time_utc = datetime.min
             )
         assert sre is not None
         
