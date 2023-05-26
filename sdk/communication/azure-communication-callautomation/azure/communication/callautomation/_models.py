@@ -160,8 +160,8 @@ class FileSource(object):
 
     :ivar url: Url for the audio file to be played.
     :vartype url: str
-    :ivar play_source_id: source id of the play media.
-    :vartype play_source_id: str
+    :ivar play_source_cache_id: source id of the play media.
+    :vartype play_source_cache_id: str
     """
     def __init__(
         self,
@@ -174,8 +174,8 @@ class FileSource(object):
 
         :param url: Url for the audio file to be played.
         :type url: str
-        :keyword play_source_id: source id of the play media.
-        :paramtype play_source_id: str
+        :keyword play_source_cache_id: source id of the play media.
+        :paramtype play_source_cache_id: str
         """
         super().__init__(**kwargs)
         self.url = url

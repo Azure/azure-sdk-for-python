@@ -68,9 +68,9 @@ class CallAutomationClient(object):
      or ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: Azure Communication Call Automation API version.
     :paramtype api_version: str
-    :keyword source_identity: ACS User Identity to be used when the call is created or answered.
+    :keyword source: ACS User Identity to be used when the call is created or answered.
      If not provided, service will generate one.
-    :paramtype source_identity: ~azure.communication.callautomation.CommunicationUserIdentifier
+    :paramtype source: ~azure.communication.callautomation.CommunicationUserIdentifier
     """
     def __init__(
             self,
@@ -78,7 +78,7 @@ class CallAutomationClient(object):
             credential: Union['TokenCredential', 'AzureKeyCredential'],
             *,
             api_version: Optional[str] = None,
-            source_identity: Optional['CommunicationUserIdentifier'] = None,
+            source: Optional['CommunicationUserIdentifier'] = None,
             **kwargs
     ) -> None:
         if not credential:
@@ -105,7 +105,7 @@ class CallAutomationClient(object):
 
         self._call_recording_client = self._client.call_recording
         self._downloader = ContentDownloader(self._call_recording_client)
-        self.source_identity = source_identity
+        self.source = source
 
     @classmethod
     def from_connection_string(
@@ -174,7 +174,7 @@ class CallAutomationClient(object):
                 target_participant.source_caller_id_number) if target_participant.source_caller_id_number else None,
             source_display_name=target_participant.source_display_name,
             source=serialize_communication_user_identifier(
-                self.source_identity) if self.source_identity else None,
+                self.source) if self.source else None,
             operation_context=operation_context,
         )
 
@@ -223,7 +223,7 @@ class CallAutomationClient(object):
                 source_caller_id_number) if source_caller_id_number else None,
             source_display_name=source_display_name,
             source=serialize_identifier(
-                self.source_identity) if self.source_identity else None,
+                self.source) if self.source else None,
             operation_context=operation_context,
         )
 
@@ -263,7 +263,7 @@ class CallAutomationClient(object):
             incoming_call_context=incoming_call_context,
             callback_uri=callback_url,
             answered_by=serialize_communication_user_identifier(
-                self.source_identity) if self.source_identity else None,
+                self.source) if self.source else None,
             operation_context=operation_context
         )
 

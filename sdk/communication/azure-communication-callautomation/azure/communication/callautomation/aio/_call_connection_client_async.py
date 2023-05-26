@@ -304,7 +304,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace_async
     async def play_media(
         self,
-        play_source: 'FileSource',
+        play_sources: List['FileSource'],
         play_to: List['CommunicationIdentifier'],
         *,
         loop: Optional[bool] = False,
@@ -313,8 +313,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     ) -> None:
         """Play media to specific participant(s) in the call.
 
-        :param play_source: A PlaySource representing the source to play.
-        :type play_source: ~azure.communication.callautomation.FileSource
+        :param play_sources: A list of PlaySources representing the sources to play.
+        :type play_sources: List[~azure.communication.callautomation.FileSource]
         :param play_to: The targets to play media to.
         :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
         :keyword loop: if the media should be repeated until cancelled.
@@ -326,7 +326,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         play_request = PlayRequest(
-            play_sources=[source._to_generated() for source in play_source],#pylint:disable=protected-access
+            play_sources=[play_source._to_generated() for play_source in play_sources],#pylint:disable=protected-access
             play_to=[serialize_identifier(identifier)
                      for identifier in play_to],
             play_options=PlayOptions(loop=loop),
@@ -338,7 +338,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace_async
     async def play_media_to_all(
         self,
-        play_source: 'FileSource',
+        play_sources: List['FileSource'],
         *,
         loop: Optional[bool] = False,
         operation_context: Optional[str] = None,
@@ -346,8 +346,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     ) -> None:
         """Play media to all participants in the call.
 
-        :param play_source: A PlaySource representing the source to play.
-        :type play_source: ~azure.communication.callautomation.FileSource
+        :param play_sources: A list of PlaySources representing the sources to play.
+        :type play_sources: List[~azure.communication.callautomation.FileSource]
         :keyword loop: if the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
@@ -356,7 +356,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        await self.play_media(play_source=play_source, play_to=[],
+        await self.play_media(play_sources=play_sources, play_to=[],
                               loop=loop,
                               operation_context=operation_context,
                               **kwargs)

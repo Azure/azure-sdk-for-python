@@ -42,8 +42,8 @@ class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase)
             print('TEST SCENARIO: _play_media_in_a_call')
             caller = self.identity_client.create_user()
             target = self.identity_client.create_user()
-            call_automation_client_caller = CallAutomationClient.from_connection_string(self.connection_str, source_identity=caller) # for creating call
-            call_automation_client_target = CallAutomationClient.from_connection_string(self.connection_str, source_identity=target) # answering call, all other actions
+            call_automation_client_caller = CallAutomationClient.from_connection_string(self.connection_str, source=caller) # for creating call
+            call_automation_client_target = CallAutomationClient.from_connection_string(self.connection_str, source=target) # answering call, all other actions
             unique_id = self.service_bus_with_new_call(caller, target)
 
             # create a call
@@ -94,10 +94,10 @@ class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase)
 
             # play media to all participants
             caller_call_connection = CallConnectionClient.from_connection_string(self.connection_str, create_call_result.call_connection_id)
-            file_source = [FileSource(url=play_source_uri)]
+            file_source = FileSource(url=play_source_uri)
 
             caller_call_connection.play_media_to_all(
-                play_source=file_source,
+                play_sources=[file_source]
             )
 
             # check for PlayCompleted event

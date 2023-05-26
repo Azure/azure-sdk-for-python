@@ -41,8 +41,8 @@ class CallAutomationClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTest
             print('TEST SCENARIO: _create_VOIP_call_and_answer_then_hangup')
             caller = self.identity_client.create_user()
             target = self.identity_client.create_user()
-            call_automation_client_caller = CallAutomationClient.from_connection_string(self.connection_str, source_identity=caller) # for creating call
-            call_automation_client_target = CallAutomationClient.from_connection_string(self.connection_str, source_identity=target) # answering call, all other actions
+            call_automation_client_caller = CallAutomationClient.from_connection_string(self.connection_str, source=caller) # for creating call
+            call_automation_client_target = CallAutomationClient.from_connection_string(self.connection_str, source=target) # answering call, all other actions
             unique_id = self.service_bus_with_new_call(caller, target)
 
             # create a call
