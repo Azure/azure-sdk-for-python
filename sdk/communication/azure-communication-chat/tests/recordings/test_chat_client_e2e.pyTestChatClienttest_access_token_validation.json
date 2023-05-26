@@ -1,0 +1,76 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/chat/threads?api-version=2021-09-07",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "44",
+        "Content-Type": "application/json",
+        "repeatability-request-id": "c4b493f0-5b36-4757-9f5d-8e9cceec80d7",
+        "User-Agent": "azsdk-python-communication-chat/1.2.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "topic": "test topic1",
+        "participants": []
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-03-07, 2021-04-05-preview6, 2021-09-07, 2023-04-01-preview, 2023-07-01-preview",
+        "Content-Length": "256",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 26 May 2023 19:12:55 GMT",
+        "MS-CV": "xGBNYHbHd06zE8H5459zyw.0",
+        "Strict-Transport-Security": "max-age=2592000",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Processing-Time": "762ms"
+      },
+      "ResponseBody": {
+        "chatThread": {
+          "id": "sanitized",
+          "topic": "test topic1",
+          "createdOn": "2023-05-26T19:12:54Z",
+          "createdByCommunicationIdentifier": {
+            "rawId": "8:acs:f9f2b2e8-d898-41dd-9017-c3a2be9f63a8_00000018-f95c-0cc4-0d8b-08482200b259",
+            "communicationUser": {
+              "id": "sanitized"
+            }
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/chat/threads?api-version=2021-09-07",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-communication-chat/1.2.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-03-07, 2021-04-05-preview6, 2021-09-07, 2023-04-01-preview, 2023-07-01-preview",
+        "Content-Length": "52",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 26 May 2023 19:12:55 GMT",
+        "MS-CV": "s1PVBYSqpEKpvrDOfgXkGg.0",
+        "Strict-Transport-Security": "max-age=2592000",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Processing-Time": "95ms"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "sanitized",
+            "topic": "test topic1"
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}
