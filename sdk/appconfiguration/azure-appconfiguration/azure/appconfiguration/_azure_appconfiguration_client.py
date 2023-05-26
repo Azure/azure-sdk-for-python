@@ -44,6 +44,7 @@ from ._utils import (
 )
 from ._sync_token import SyncTokenPolicy
 from ._user_agent import USER_AGENT
+
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
 else:
@@ -57,14 +58,14 @@ class AzureAppConfigurationClient:
     :param credential: An object which can provide secrets for the app configuration service
     :type credential: :class:`~azure.appconfiguration.AppConfigConnectionStringCredential`
         or :class:`~azure.core.credentials.TokenCredential`
-    :keyword api_version: Api Version. Default value is "1.0". Note that overriding this default
+    :keyword api_version: Api Version. Default value is "2022-11-01-preview". Note that overriding this default
         value may result in unsupported behavior.
     :paramtype api_version: str
 
     """
 
     # pylint:disable=protected-access
-    def __init__(self, base_url: str, credential: TokenCredential, *, api_version: str = "1.0", **kwargs) -> None:
+    def __init__(self, base_url: str, credential: TokenCredential, **kwargs) -> None:
         try:
             if not base_url.lower().startswith("http"):
                 base_url = "https://" + base_url
@@ -89,7 +90,7 @@ class AzureAppConfigurationClient:
             )
 
         self._impl = AzureAppConfiguration(
-            base_url, pipeline=pipeline, credential_scopes=self._credential_scopes, api_version=api_version
+            base_url, pipeline=pipeline, credential_scopes=self._credential_scopes, **kwargs
         )
 
     @classmethod
