@@ -13,10 +13,14 @@ from typing import List
 class AsyncAppConfigTestCase(AppConfigTestCase):
     def create_aad_client(self, appconfiguration_endpoint_string):
         cred = self.get_credential(AzureAppConfigurationClient, is_async=True)
-        return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
+        # TODO: use default api version
+        # The current default api version "2022-11-01-preview" is not supported in public cloud
+        return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, api_version="1.0")
 
     def create_client(self, appconfiguration_connection_string):
-        return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
+        # TODO: use default api version
+        # The current default api version "2022-11-01-preview" is not supported in public cloud
+        return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string, api_version="1.0")
 
     async def add_for_test(self, client, config_setting):
         exist_list = await self.convert_to_list(
