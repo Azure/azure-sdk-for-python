@@ -119,10 +119,10 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
         if self._transport_type.value == TransportType.Amqp.value and self._socket_timeout is None:
             self._socket_timeout = SOCKET_TIMEOUT
-        elif (self._transport_type.value == TransportType.AmqpOverWebsocket.value and 
+        elif (self._transport_type.value == TransportType.AmqpOverWebsocket.value and
               self._socket_timeout is None):
             self._socket_timeout = WS_TIMEOUT_INTERVAL
-            
+
         if transport:
             self._transport = transport
         elif "sasl_credential" in kwargs:
