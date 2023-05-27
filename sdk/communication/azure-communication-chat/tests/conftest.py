@@ -29,7 +29,11 @@ from devtools_testutils import add_body_key_sanitizer
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
+    # Two sanitizers for chatMessageId because it can be either top-level or nested in bodies
+    add_body_key_sanitizer(json_path="$.chatMessageId", value="sanitized")
+    add_body_key_sanitizer(json_path="$..chatMessageId", value="sanitized")
     add_body_key_sanitizer(json_path="$..id", value="sanitized")
+    add_body_key_sanitizer(json_path="$.nextLink", value="sanitized")
     add_body_key_sanitizer(json_path="$.participants", value="sanitized")
     add_body_key_sanitizer(json_path="$.token", value="sanitized")
     add_body_key_sanitizer(json_path="$.value", value="sanitized")
