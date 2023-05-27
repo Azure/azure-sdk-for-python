@@ -1,0 +1,77 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/chat/threads?api-version=2021-09-07",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "198",
+        "Content-Type": "application/json",
+        "repeatability-request-id": "844aaee6-985b-403a-b41e-dd7ed2409efa",
+        "User-Agent": "azsdk-python-communication-chat/1.2.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "topic": "test topic",
+        "participants": [
+          {
+            "communicationIdentifier": {
+              "rawId": "sanitized",
+              "communicationUser": {
+                "id": "sanitized"
+              }
+            },
+            "displayName": "name",
+            "shareHistoryTime": "2023-05-27T00:21:00.080823Z"
+          }
+        ]
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-03-07, 2021-04-05-preview6, 2021-09-07, 2023-04-01-preview, 2023-07-01-preview",
+        "Content-Length": "185",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 27 May 2023 00:20:59 GMT",
+        "MS-CV": "vDjxah4N/kCc\u002BOH/cE3LKQ.0",
+        "Strict-Transport-Security": "max-age=2592000",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Processing-Time": "539ms"
+      },
+      "ResponseBody": {
+        "chatThread": {
+          "id": "sanitized",
+          "topic": "test topic",
+          "createdOn": "2023-05-27T00:20:59Z",
+          "createdByCommunicationIdentifier": {
+            "rawId": "sanitized",
+            "communicationUser": {
+              "id": "sanitized"
+            }
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/chat/threads/19:I5ildGd3k2TWH7uIii2oklDP6a6O5SiqjSMO8oUujtw1@thread.v2?api-version=2021-09-07",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-communication-chat/1.2.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-03-07, 2021-04-05-preview6, 2021-09-07, 2023-04-01-preview, 2023-07-01-preview",
+        "Date": "Sat, 27 May 2023 00:20:59 GMT",
+        "MS-CV": "9nund0KbKUSWHKqNWavXNg.0",
+        "Strict-Transport-Security": "max-age=2592000",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Processing-Time": "163ms"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}
