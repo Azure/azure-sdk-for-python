@@ -10,6 +10,7 @@ from copy import deepcopy
 from typing import Any, Awaitable
 
 from azure.core import AsyncPipelineClient
+from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .. import models as _models
@@ -38,19 +39,22 @@ class AzureCommunicationCallAutomationService(
      azure.communication.callautomation.aio.operations.CallRecordingOperations
     :param endpoint: The endpoint of the Azure Communication resource. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2023-01-15-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :keyword api_version: Api Version. Default value is "2023-03-06". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, endpoint: str, **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
-        self._config = AzureCommunicationCallAutomationServiceConfiguration(endpoint=endpoint, **kwargs)
+        self._config = AzureCommunicationCallAutomationServiceConfiguration(
+            endpoint=endpoint, credential=credential, **kwargs
+        )
         self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models._models.__dict__.items() if isinstance(v, type)}
+        client_models.update({k: v for k, v in _models.__dict__.items() if isinstance(v, type)})
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False

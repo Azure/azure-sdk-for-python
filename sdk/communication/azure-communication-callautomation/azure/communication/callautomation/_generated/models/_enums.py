@@ -38,7 +38,7 @@ class CallRejectReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class CommunicationCloudEnvironmentModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CommunicationCloudEnvironmentModel."""
+    """The cloud that the identifier belongs to."""
 
     PUBLIC = "public"
     DOD = "dod"
@@ -46,7 +46,7 @@ class CommunicationCloudEnvironmentModel(str, Enum, metaclass=CaseInsensitiveEnu
 
 
 class CommunicationIdentifierModelKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of CommunicationIdentifierModel."""
+    """The identifier kind, for example 'communicationUser' or 'phoneNumber'."""
 
     UNKNOWN = "unknown"
     COMMUNICATION_USER = "communicationUser"
@@ -75,38 +75,10 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ASTERISK = "asterisk"
 
 
-class Gender(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Voice gender type."""
-
-    MALE = "male"
-    FEMALE = "female"
-
-
-class MediaStreamingAudioChannelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Audio channel type to stream, eg. unmixed audio, mixed audio."""
-
-    MIXED = "mixed"
-    UNMIXED = "unmixed"
-
-
-class MediaStreamingContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Content type to stream, eg. audio, audio/video."""
-
-    AUDIO = "audio"
-
-
-class MediaStreamingTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of transport to be used for media streaming, eg. Websocket."""
-
-    WEBSOCKET = "websocket"
-
-
 class PlaySourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the type of the play source."""
 
     FILE = "file"
-    TEXT = "text"
-    SSML = "ssml"
 
 
 class RecognitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -115,18 +87,12 @@ class RecognitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     DTMF = "dtmf"
-    SPEECH = "speech"
-    SPEECH_OR_DTMF = "speechOrDtmf"
-    CHOICES = "choices"
 
 
 class RecognizeInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines the type of the recognition."""
 
     DTMF = "dtmf"
-    SPEECH = "speech"
-    SPEECH_OR_DTMF = "speechOrDtmf"
-    CHOICES = "choices"
 
 
 class RecordingChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -156,10 +122,3 @@ class RecordingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ACTIVE = "active"
     INACTIVE = "inactive"
-
-
-class RecordingStorage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the type of external storage."""
-
-    ACS = "acs"
-    BLOB_STORAGE = "blobStorage"
