@@ -68,8 +68,17 @@ class AzureAppConfigurationRefreshOptions:
         self.refresh_interval = 30
         self._refresh_registrations = []
         self.callback = None
+        self.on_error = None
 
     def register(
         self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL, refresh_all: Optional[bool] = False
     ):
         self._refresh_registrations.append(RefreshRegistrations(key_filter, label_filter, refresh_all))
+
+    def _callback(self):
+        if self.callback is not None:
+            self.callback()
+
+    def _on_error(self):
+        if self.on_error is not None:
+            self.on_error()

@@ -21,10 +21,18 @@ configuration_setting = ConfigurationSetting(key="message", value="Hello World!"
 
 client.set_configuration_setting(configuration_setting=configuration_setting)
 
+def my_callback():
+    print("Refreshed!")
+
+def my_callback_on_fail():
+    print("Refresh failed!")
+
 # Connecting to Azure App Configuration using connection string
 refresh_options = AzureAppConfigurationRefreshOptions()
 refresh_options.refresh_interval = 1
-refresh_options.register(key_filter="message")
+refresh_options.register(key_filter="message", refresh_all=True)
+refresh_options.callback = my_callback
+refresh_options.callback_on_fail = my_callback_on_fail
 config = load(connection_string=connection_string, refresh_options=refresh_options)
 
 print(config["message"])
@@ -39,6 +47,16 @@ client.set_configuration_setting(configuration_setting=configuration_setting)
 time.sleep(2)
 
 # Refreshing the configuration setting
+config.refresh()
+
+# Printing the updated value
+print(config["message"])
+print(config["my_json"]["key"])
+
+# Waiting for the refresh interval to pass
+time.sleep(2)
+
+# Refreshing the configuration setting with no changes
 config.refresh()
 
 # Printing the updated value

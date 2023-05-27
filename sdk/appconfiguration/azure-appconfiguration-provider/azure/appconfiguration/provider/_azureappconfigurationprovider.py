@@ -278,6 +278,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         refresh_registrations = self._refresh_options._refresh_registrations
         if self._refresh_options is None or len(refresh_registrations) == 0:
             logging.debug("Refresh called but no refresh options set.")
+            self._refresh_options._on_error()
             return
 
         if datetime.now() < self._next_refresh_time:
@@ -285,24 +286,36 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             return
 
         refresh_all = False
+        updated_registration = None
+        updated_registration_etag = None
 
-        # pylint:disable=protected-access
-        for registration in refresh_registrations:
-            if registration.refresh_all:
-                updated_sentinel = self._client.get_configuration_setting(
-                    key=registration.key_filter, label=registration.label_filter, **kwargs
-                )
-                if registration.etag != updated_sentinel.etag:
-                    logging.debug(
-                        "Refresh all triggered by key: %s label %s.", registration.key_filter, registration.label_filter
+        try:
+            # pylint:disable=protected-access
+            for registration in refresh_registrations:
+                if registration.refresh_all:
+                    updated_sentinel = self._client.get_configuration_setting(
+                        key=registration.key_filter, label=registration.label_filter, **kwargs
                     )
-                    refresh_all = True
-                    break
+                    if registration.etag != updated_sentinel.etag:
+                        logging.debug(
+                            "Refresh all triggered by key: %s label %s.", registration.key_filter, registration.label_filter
+                        )
+                        refresh_all = True
+                        updated_registration = registration
+                        updated_registration_etag = updated_sentinel.etag
+                        break
+        except Exception as ex:  # pylint:disable=broad-except
+            logging.debug("Refresh all trigger failed by exception: %s", ex)
+            self._refresh_options._on_error()
+            return
 
         if refresh_all:
             self._load_all(**kwargs)
+            updated_registration.etag = updated_registration_etag
             self._next_refresh_time = datetime.now() + timedelta(seconds=self._refresh_options.refresh_interval)
             self._attempts = 1
+
+            self._refresh_options._callback()
             return
 
         # Only update individual keys if the refresh_all didn't trigger
@@ -310,6 +323,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         
         # pylint:disable=protected-access
         updated_registrations = refresh_registrations.copy()
+        updated_keys = False
 
         try:
             for registration in updated_registrations:
@@ -327,6 +341,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                             registration.key_filter,
                             registration.label_filter,
                         )
+                        updated_keys = True
 
             self._dict = updated_dict
             # pylint:disable=protected-access
@@ -342,8 +357,11 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             # Refresh All or None, any failure will trigger a backoff
             self._next_refresh_time = datetime.now() + timedelta(microseconds=self._calculate_backoff())
             self._attempts += 1
+            self._refresh_options._on_error()
             return
         self._attempts = 1
+        if updated_keys:
+            self._refresh_options._callback()
 
     def _load_all(self, **kwargs):
         dict = {}
@@ -385,6 +403,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             except json.JSONDecodeError:
                 # If the value is not a valid JSON, treat it like regular string value
                 return config.value
+        return config.value
 
     def _calculate_backoff(self):
         max_attempts = 30
