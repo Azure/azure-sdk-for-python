@@ -134,6 +134,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 host=endpoint,
                 credential=kwargs["sasl_credential"],
                 custom_endpoint=custom_endpoint,
+                socket_timeout=self._socket_timeout,
                 network_trace_params=self._network_trace_params,
                 **kwargs
             )
@@ -141,6 +142,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             self._transport = Transport(
                 parsed_url.netloc,
                 transport_type=self._transport_type,
+                socket_timeout=self._socket_timeout,
                 network_trace_params=self._network_trace_params,
                 **kwargs)
         self._max_frame_size = kwargs.pop("max_frame_size", MAX_FRAME_SIZE_BYTES)  # type: int
