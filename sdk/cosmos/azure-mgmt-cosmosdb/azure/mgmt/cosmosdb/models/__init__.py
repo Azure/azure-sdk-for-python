@@ -60,6 +60,7 @@ from ._models_py3 import ContainerPartitionKey
 from ._models_py3 import ContinuousBackupInformation
 from ._models_py3 import ContinuousBackupRestoreLocation
 from ._models_py3 import ContinuousModeBackupPolicy
+from ._models_py3 import ContinuousModeProperties
 from ._models_py3 import CorsPolicy
 from ._models_py3 import CreateUpdateOptions
 from ._models_py3 import DataCenterResource
@@ -282,6 +283,7 @@ from ._cosmos_db_management_client_enums import CompositePathSortOrder
 from ._cosmos_db_management_client_enums import ConflictResolutionMode
 from ._cosmos_db_management_client_enums import ConnectionState
 from ._cosmos_db_management_client_enums import ConnectorOffer
+from ._cosmos_db_management_client_enums import ContinuousTier
 from ._cosmos_db_management_client_enums import CreateMode
 from ._cosmos_db_management_client_enums import CreatedByType
 from ._cosmos_db_management_client_enums import DataType
@@ -375,6 +377,7 @@ __all__ = [
     "ContinuousBackupInformation",
     "ContinuousBackupRestoreLocation",
     "ContinuousModeBackupPolicy",
+    "ContinuousModeProperties",
     "CorsPolicy",
     "CreateUpdateOptions",
     "DataCenterResource",
@@ -596,6 +599,7 @@ __all__ = [
     "ConflictResolutionMode",
     "ConnectionState",
     "ConnectorOffer",
+    "ContinuousTier",
     "CreateMode",
     "CreatedByType",
     "DataType",

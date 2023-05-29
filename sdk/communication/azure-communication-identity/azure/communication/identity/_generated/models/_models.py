@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,20 +7,25 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from typing import Any, List, Optional, TYPE_CHECKING, Union
+
+from .. import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class CommunicationError(msrest.serialization.Model):
+class CommunicationError(_serialization.Model):
     """The Communication Services error.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. The error code.
+    :ivar code: The error code. Required.
     :vartype code: str
-    :ivar message: Required. The error message.
+    :ivar message: The error message. Required.
     :vartype message: str
     :ivar target: The error target.
     :vartype target: str
@@ -30,266 +36,281 @@ class CommunicationError(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'inner_error': {'readonly': True},
+        "code": {"required": True},
+        "message": {"required": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "inner_error": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CommunicationError]'},
-        'inner_error': {'key': 'innererror', 'type': 'CommunicationError'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CommunicationError]"},
+        "inner_error": {"key": "innererror", "type": "CommunicationError"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, *, code: str, message: str, **kwargs: Any) -> None:
         """
-        :keyword code: Required. The error code.
+        :keyword code: The error code. Required.
         :paramtype code: str
-        :keyword message: Required. The error message.
+        :keyword message: The error message. Required.
         :paramtype message: str
         """
-        super(CommunicationError, self).__init__(**kwargs)
-        self.code = kwargs['code']
-        self.message = kwargs['message']
+        super().__init__(**kwargs)
+        self.code = code
+        self.message = message
         self.target = None
         self.details = None
         self.inner_error = None
 
 
-class CommunicationErrorResponse(msrest.serialization.Model):
+class CommunicationErrorResponse(_serialization.Model):
     """The Communication Services error.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar error: Required. The Communication Services error.
+    :ivar error: The Communication Services error. Required.
     :vartype error: ~azure.communication.identity.models.CommunicationError
     """
 
     _validation = {
-        'error': {'required': True},
+        "error": {"required": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'CommunicationError'},
+        "error": {"key": "error", "type": "CommunicationError"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, *, error: "_models.CommunicationError", **kwargs: Any) -> None:
         """
-        :keyword error: Required. The Communication Services error.
+        :keyword error: The Communication Services error. Required.
         :paramtype error: ~azure.communication.identity.models.CommunicationError
         """
-        super(CommunicationErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs['error']
+        super().__init__(**kwargs)
+        self.error = error
 
 
-class CommunicationIdentity(msrest.serialization.Model):
+class CommunicationIdentity(_serialization.Model):
     """A communication identity.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. Identifier of the identity.
+    :ivar id: Identifier of the identity. Required.
     :vartype id: str
     """
 
     _validation = {
-        'id': {'required': True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
-        :keyword id: Required. Identifier of the identity.
+        :keyword id: Identifier of the identity. Required.
         :paramtype id: str
         """
-        super(CommunicationIdentity, self).__init__(**kwargs)
-        self.id = kwargs['id']
+        super().__init__(**kwargs)
+        self.id = id
 
 
-class CommunicationIdentityAccessToken(msrest.serialization.Model):
+class CommunicationIdentityAccessToken(_serialization.Model):
     """An access token.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar token: Required. The access token issued for the identity.
+    :ivar token: The access token issued for the identity. Required.
     :vartype token: str
-    :ivar expires_on: Required. The expiry time of the token.
-    :vartype expires_on: ~datetime.datetime
+    :ivar expires_on: The expiry time of the token. Required.
+    :vartype expires_on: str
     """
 
     _validation = {
-        'token': {'required': True},
-        'expires_on': {'required': True},
+        "token": {"required": True},
+        "expires_on": {"required": True},
     }
 
     _attribute_map = {
-        'token': {'key': 'token', 'type': 'str'},
-        'expires_on': {'key': 'expiresOn', 'type': 'iso-8601'},
+        "token": {"key": "token", "type": "str"},
+        "expires_on": {"key": "expiresOn", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, *, token: str, expires_on: str, **kwargs: Any) -> None:
         """
-        :keyword token: Required. The access token issued for the identity.
+        :keyword token: The access token issued for the identity. Required.
         :paramtype token: str
-        :keyword expires_on: Required. The expiry time of the token.
-        :paramtype expires_on: ~datetime.datetime
+        :keyword expires_on: The expiry time of the token. Required.
+        :paramtype expires_on: str
         """
-        super(CommunicationIdentityAccessToken, self).__init__(**kwargs)
-        self.token = kwargs['token']
-        self.expires_on = kwargs['expires_on']
+        super().__init__(**kwargs)
+        self.token = token
+        self.expires_on = expires_on
 
 
-class CommunicationIdentityAccessTokenRequest(msrest.serialization.Model):
+class CommunicationIdentityAccessTokenRequest(_serialization.Model):
     """CommunicationIdentityAccessTokenRequest.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar scopes: Required. List of scopes attached to the token.
+    :ivar scopes: List of scopes attached to the token. Required.
     :vartype scopes: list[str or ~azure.communication.identity.models.CommunicationTokenScope]
+    :ivar expires_in_minutes: Optional custom validity period of the token within [60,1440] minutes
+     range. If not provided, the default value of 1440 minutes (24 hours) will be used.
+    :vartype expires_in_minutes: int
     """
 
     _validation = {
-        'scopes': {'required': True},
+        "scopes": {"required": True},
+        "expires_in_minutes": {"maximum": 1440, "minimum": 60},
     }
 
     _attribute_map = {
-        'scopes': {'key': 'scopes', 'type': '[str]'},
+        "scopes": {"key": "scopes", "type": "[str]"},
+        "expires_in_minutes": {"key": "expiresInMinutes", "type": "int"},
     }
 
     def __init__(
         self,
-        **kwargs
-    ):
+        *,
+        scopes: List[Union[str, "_models.CommunicationTokenScope"]],
+        expires_in_minutes: int = 1440,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword scopes: Required. List of scopes attached to the token.
+        :keyword scopes: List of scopes attached to the token. Required.
         :paramtype scopes: list[str or ~azure.communication.identity.models.CommunicationTokenScope]
+        :keyword expires_in_minutes: Optional custom validity period of the token within [60,1440]
+         minutes range. If not provided, the default value of 1440 minutes (24 hours) will be used.
+        :paramtype expires_in_minutes: int
         """
-        super(CommunicationIdentityAccessTokenRequest, self).__init__(**kwargs)
-        self.scopes = kwargs['scopes']
+        super().__init__(**kwargs)
+        self.scopes = scopes
+        self.expires_in_minutes = expires_in_minutes
 
 
-class CommunicationIdentityAccessTokenResult(msrest.serialization.Model):
+class CommunicationIdentityAccessTokenResult(_serialization.Model):
     """A communication identity with access token.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar identity: Required. A communication identity.
+    :ivar identity: A communication identity. Required.
     :vartype identity: ~azure.communication.identity.models.CommunicationIdentity
     :ivar access_token: An access token.
     :vartype access_token: ~azure.communication.identity.models.CommunicationIdentityAccessToken
     """
 
     _validation = {
-        'identity': {'required': True},
+        "identity": {"required": True},
     }
 
     _attribute_map = {
-        'identity': {'key': 'identity', 'type': 'CommunicationIdentity'},
-        'access_token': {'key': 'accessToken', 'type': 'CommunicationIdentityAccessToken'},
+        "identity": {"key": "identity", "type": "CommunicationIdentity"},
+        "access_token": {"key": "accessToken", "type": "CommunicationIdentityAccessToken"},
     }
 
     def __init__(
         self,
-        **kwargs
-    ):
+        *,
+        identity: "_models.CommunicationIdentity",
+        access_token: Optional["_models.CommunicationIdentityAccessToken"] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword identity: Required. A communication identity.
+        :keyword identity: A communication identity. Required.
         :paramtype identity: ~azure.communication.identity.models.CommunicationIdentity
         :keyword access_token: An access token.
         :paramtype access_token: ~azure.communication.identity.models.CommunicationIdentityAccessToken
         """
-        super(CommunicationIdentityAccessTokenResult, self).__init__(**kwargs)
-        self.identity = kwargs['identity']
-        self.access_token = kwargs.get('access_token', None)
+        super().__init__(**kwargs)
+        self.identity = identity
+        self.access_token = access_token
 
 
-class CommunicationIdentityCreateRequest(msrest.serialization.Model):
+class CommunicationIdentityCreateRequest(_serialization.Model):
     """CommunicationIdentityCreateRequest.
 
     :ivar create_token_with_scopes: Also create access token for the created identity.
     :vartype create_token_with_scopes: list[str or
      ~azure.communication.identity.models.CommunicationTokenScope]
+    :ivar expires_in_minutes: Optional custom validity period of the token within [60,1440] minutes
+     range. If not provided, the default value of 1440 minutes (24 hours) will be used.
+    :vartype expires_in_minutes: int
     """
 
+    _validation = {
+        "expires_in_minutes": {"maximum": 1440, "minimum": 60},
+    }
+
     _attribute_map = {
-        'create_token_with_scopes': {'key': 'createTokenWithScopes', 'type': '[str]'},
+        "create_token_with_scopes": {"key": "createTokenWithScopes", "type": "[str]"},
+        "expires_in_minutes": {"key": "expiresInMinutes", "type": "int"},
     }
 
     def __init__(
         self,
-        **kwargs
-    ):
+        *,
+        create_token_with_scopes: Optional[List[Union[str, "_models.CommunicationTokenScope"]]] = None,
+        expires_in_minutes: int = 1440,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword create_token_with_scopes: Also create access token for the created identity.
         :paramtype create_token_with_scopes: list[str or
          ~azure.communication.identity.models.CommunicationTokenScope]
+        :keyword expires_in_minutes: Optional custom validity period of the token within [60,1440]
+         minutes range. If not provided, the default value of 1440 minutes (24 hours) will be used.
+        :paramtype expires_in_minutes: int
         """
-        super(CommunicationIdentityCreateRequest, self).__init__(**kwargs)
-        self.create_token_with_scopes = kwargs.get('create_token_with_scopes', None)
+        super().__init__(**kwargs)
+        self.create_token_with_scopes = create_token_with_scopes
+        self.expires_in_minutes = expires_in_minutes
 
 
-class TeamsUserExchangeTokenRequest(msrest.serialization.Model):
+class TeamsUserExchangeTokenRequest(_serialization.Model):
     """TeamsUserExchangeTokenRequest.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar token: Required. Azure AD access token of a Teams User to acquire a new Communication
-     Identity access token.
+    :ivar token: Azure AD access token of a Teams User to acquire a new Communication Identity
+     access token. Required.
     :vartype token: str
-    :ivar app_id: Required. Client ID of an Azure AD application to be verified against the appid
-     claim in the Azure AD access token.
+    :ivar app_id: Client ID of an Azure AD application to be verified against the appid claim in
+     the Azure AD access token. Required.
     :vartype app_id: str
-    :ivar user_id: Required. Object ID of an Azure AD user (Teams User) to be verified against the
-     oid claim in the Azure AD access token.
+    :ivar user_id: Object ID of an Azure AD user (Teams User) to be verified against the oid claim
+     in the Azure AD access token. Required.
     :vartype user_id: str
     """
 
     _validation = {
-        'token': {'required': True},
-        'app_id': {'required': True},
-        'user_id': {'required': True},
+        "token": {"required": True},
+        "app_id": {"required": True},
+        "user_id": {"required": True},
     }
 
     _attribute_map = {
-        'token': {'key': 'token', 'type': 'str'},
-        'app_id': {'key': 'appId', 'type': 'str'},
-        'user_id': {'key': 'userId', 'type': 'str'},
+        "token": {"key": "token", "type": "str"},
+        "app_id": {"key": "appId", "type": "str"},
+        "user_id": {"key": "userId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, *, token: str, app_id: str, user_id: str, **kwargs: Any) -> None:
         """
-        :keyword token: Required. Azure AD access token of a Teams User to acquire a new Communication
-         Identity access token.
+        :keyword token: Azure AD access token of a Teams User to acquire a new Communication Identity
+         access token. Required.
         :paramtype token: str
-        :keyword app_id: Required. Client ID of an Azure AD application to be verified against the
-         appid claim in the Azure AD access token.
+        :keyword app_id: Client ID of an Azure AD application to be verified against the appid claim in
+         the Azure AD access token. Required.
         :paramtype app_id: str
-        :keyword user_id: Required. Object ID of an Azure AD user (Teams User) to be verified against
-         the oid claim in the Azure AD access token.
+        :keyword user_id: Object ID of an Azure AD user (Teams User) to be verified against the oid
+         claim in the Azure AD access token. Required.
         :paramtype user_id: str
         """
-        super(TeamsUserExchangeTokenRequest, self).__init__(**kwargs)
-        self.token = kwargs['token']
-        self.app_id = kwargs['app_id']
-        self.user_id = kwargs['user_id']
+        super().__init__(**kwargs)
+        self.token = token
+        self.app_id = app_id
+        self.user_id = user_id

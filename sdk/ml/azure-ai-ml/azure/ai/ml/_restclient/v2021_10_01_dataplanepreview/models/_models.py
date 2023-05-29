@@ -275,6 +275,71 @@ class AmlToken(IdentityConfiguration):
         self.identity_type = 'AMLToken'  # type: str
 
 
+class DataReferenceCredentialDto(msrest.serialization.Model):
+    """DataReferenceCredentialDto.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: DockerCredentialDto, ManagedIdentityCredentialDto, AnonymousAccessCredentialDto, SASCredentialDto.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar credential_type: Required. Constant filled by server. Possible values include: "SAS",
+     "DockerCredentials", "ManagedIdentity", "NoCredentials".
+    :vartype credential_type: str or
+     ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialType
+    """
+
+    _validation = {
+        'credential_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'credential_type': {'key': 'credentialType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'credential_type': {'DockerCredentials': 'DockerCredentialDto', 'ManagedIdentity': 'ManagedIdentityCredentialDto', 'NoCredentials': 'AnonymousAccessCredentialDto', 'SAS': 'SASCredentialDto'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(DataReferenceCredentialDto, self).__init__(**kwargs)
+        self.credential_type = 'DataReferenceCredentialDto'  # type: str
+
+
+class AnonymousAccessCredentialDto(DataReferenceCredentialDto):
+    """AnonymousAccessCredentialDto.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar credential_type: Required. Constant filled by server. Possible values include: "SAS",
+     "DockerCredentials", "ManagedIdentity", "NoCredentials".
+    :vartype credential_type: str or
+     ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialType
+    """
+
+    _validation = {
+        'credential_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'credential_type': {'key': 'credentialType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(AnonymousAccessCredentialDto, self).__init__(**kwargs)
+        self.credential_type = 'NoCredentials'  # type: str
+
+
 class ResourceBase(msrest.serialization.Model):
     """ResourceBase.
 
@@ -1039,17 +1104,17 @@ class BasicBinding(Binding):
 class BlobReferenceForConsumptionDto(msrest.serialization.Model):
     """BlobReferenceForConsumptionDto.
 
-    :ivar blob_uri:
+    :ivar blob_uri: https://blob.windows.core.net/Container/Path.
     :vartype blob_uri: str
-    :ivar credential: Anything.
-    :vartype credential: any
+    :ivar credential:
+    :vartype credential: ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialDto
     :ivar storage_account_arm_id:
     :vartype storage_account_arm_id: str
     """
 
     _attribute_map = {
         'blob_uri': {'key': 'blobUri', 'type': 'str'},
-        'credential': {'key': 'credential', 'type': 'object'},
+        'credential': {'key': 'credential', 'type': 'DataReferenceCredentialDto'},
         'storage_account_arm_id': {'key': 'storageAccountArmId', 'type': 'str'},
     }
 
@@ -1058,10 +1123,10 @@ class BlobReferenceForConsumptionDto(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword blob_uri:
+        :keyword blob_uri: https://blob.windows.core.net/Container/Path.
         :paramtype blob_uri: str
-        :keyword credential: Anything.
-        :paramtype credential: any
+        :keyword credential:
+        :paramtype credential: ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialDto
         :keyword storage_account_arm_id:
         :paramtype storage_account_arm_id: str
         """
@@ -2511,6 +2576,9 @@ class DataVersionBaseDetails(AssetBase):
     :ivar data_uri: Required. Uri of the data. Usage/meaning depends on
      Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20211001Dataplane.Assets.DataVersionBase.DataType.
     :vartype data_uri: str
+    :ivar intellectual_property: Intellectual Property details. Used if data is an Intellectual
+     Property.
+    :vartype intellectual_property: ~azure.mgmt.machinelearningservices.models.IntellectualProperty
     """
 
     _validation = {
@@ -2526,6 +2594,7 @@ class DataVersionBaseDetails(AssetBase):
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'data_type': {'key': 'dataType', 'type': 'str'},
         'data_uri': {'key': 'dataUri', 'type': 'str'},
+        'intellectual_property': {'key': 'intellectualProperty', 'type': 'IntellectualProperty'},
     }
 
     _subtype_map = {
@@ -2550,10 +2619,15 @@ class DataVersionBaseDetails(AssetBase):
         :keyword data_uri: Required. Uri of the data. Usage/meaning depends on
          Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20211001Dataplane.Assets.DataVersionBase.DataType.
         :paramtype data_uri: str
+        :keyword intellectual_property: Intellectual Property details. Used if data is an Intellectual
+         Property.
+        :paramtype intellectual_property:
+         ~azure.mgmt.machinelearningservices.models.IntellectualProperty
         """
         super(DataVersionBaseDetails, self).__init__(**kwargs)
         self.data_type = 'DataVersionBaseDetails'  # type: str
         self.data_uri = kwargs['data_uri']
+        self.intellectual_property = kwargs.get('intellectual_property', None)
 
 
 class DataVersionBaseResourceArmPaginatedResult(msrest.serialization.Model):
@@ -2620,6 +2694,47 @@ class DistributionConfiguration(msrest.serialization.Model):
         """
         super(DistributionConfiguration, self).__init__(**kwargs)
         self.distribution_type = None  # type: Optional[str]
+
+
+class DockerCredentialDto(DataReferenceCredentialDto):
+    """DockerCredentialDto.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar credential_type: Required. Constant filled by server. Possible values include: "SAS",
+     "DockerCredentials", "ManagedIdentity", "NoCredentials".
+    :vartype credential_type: str or
+     ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialType
+    :ivar password:
+    :vartype password: str
+    :ivar user_name:
+    :vartype user_name: str
+    """
+
+    _validation = {
+        'credential_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'credential_type': {'key': 'credentialType', 'type': 'str'},
+        'password': {'key': 'password', 'type': 'str'},
+        'user_name': {'key': 'userName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword password:
+        :paramtype password: str
+        :keyword user_name:
+        :paramtype user_name: str
+        """
+        super(DockerCredentialDto, self).__init__(**kwargs)
+        self.credential_type = 'DockerCredentials'  # type: str
+        self.password = kwargs.get('password', None)
+        self.user_name = kwargs.get('user_name', None)
 
 
 class EnvironmentContainerData(Resource):
@@ -2852,8 +2967,13 @@ class EnvironmentVersionDetails(AssetBase):
     :ivar inference_config: Defines configuration specific to inference.
     :vartype inference_config:
      ~azure.mgmt.machinelearningservices.models.InferenceContainerProperties
+    :ivar intellectual_property: Intellectual Property details. Used if environment is an
+     Intellectual Property.
+    :vartype intellectual_property: ~azure.mgmt.machinelearningservices.models.IntellectualProperty
     :ivar os_type: The OS type of the environment. Possible values include: "Linux", "Windows".
     :vartype os_type: str or ~azure.mgmt.machinelearningservices.models.OperatingSystemType
+    :ivar stage: Stage in the environment lifecycle assigned to this environment.
+    :vartype stage: str
     """
 
     _validation = {
@@ -2871,7 +2991,9 @@ class EnvironmentVersionDetails(AssetBase):
         'environment_type': {'key': 'environmentType', 'type': 'str'},
         'image': {'key': 'image', 'type': 'str'},
         'inference_config': {'key': 'inferenceConfig', 'type': 'InferenceContainerProperties'},
+        'intellectual_property': {'key': 'intellectualProperty', 'type': 'IntellectualProperty'},
         'os_type': {'key': 'osType', 'type': 'str'},
+        'stage': {'key': 'stage', 'type': 'str'},
     }
 
     def __init__(
@@ -2913,8 +3035,14 @@ class EnvironmentVersionDetails(AssetBase):
         :keyword inference_config: Defines configuration specific to inference.
         :paramtype inference_config:
          ~azure.mgmt.machinelearningservices.models.InferenceContainerProperties
+        :keyword intellectual_property: Intellectual Property details. Used if environment is an
+         Intellectual Property.
+        :paramtype intellectual_property:
+         ~azure.mgmt.machinelearningservices.models.IntellectualProperty
         :keyword os_type: The OS type of the environment. Possible values include: "Linux", "Windows".
         :paramtype os_type: str or ~azure.mgmt.machinelearningservices.models.OperatingSystemType
+        :keyword stage: Stage in the environment lifecycle assigned to this environment.
+        :paramtype stage: str
         """
         super(EnvironmentVersionDetails, self).__init__(**kwargs)
         self.build = kwargs.get('build', None)
@@ -2922,7 +3050,9 @@ class EnvironmentVersionDetails(AssetBase):
         self.environment_type = None
         self.image = kwargs.get('image', None)
         self.inference_config = kwargs.get('inference_config', None)
+        self.intellectual_property = kwargs.get('intellectual_property', None)
         self.os_type = kwargs.get('os_type', None)
+        self.stage = kwargs.get('stage', None)
 
 
 class EnvironmentVersionResourceArmPaginatedResult(msrest.serialization.Model):
@@ -3121,8 +3251,8 @@ class ImageReferenceForConsumptionDto(msrest.serialization.Model):
 
     :ivar acr_details:
     :vartype acr_details: ~azure.mgmt.machinelearningservices.models.AcrDetail
-    :ivar credential: Anything.
-    :vartype credential: any
+    :ivar credential:
+    :vartype credential: ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialDto
     :ivar image_name:
     :vartype image_name: str
     :ivar image_registry_reference:
@@ -3131,7 +3261,7 @@ class ImageReferenceForConsumptionDto(msrest.serialization.Model):
 
     _attribute_map = {
         'acr_details': {'key': 'acrDetails', 'type': 'AcrDetail'},
-        'credential': {'key': 'credential', 'type': 'object'},
+        'credential': {'key': 'credential', 'type': 'DataReferenceCredentialDto'},
         'image_name': {'key': 'imageName', 'type': 'str'},
         'image_registry_reference': {'key': 'imageRegistryReference', 'type': 'str'},
     }
@@ -3143,8 +3273,8 @@ class ImageReferenceForConsumptionDto(msrest.serialization.Model):
         """
         :keyword acr_details:
         :paramtype acr_details: ~azure.mgmt.machinelearningservices.models.AcrDetail
-        :keyword credential: Anything.
-        :paramtype credential: any
+        :keyword credential:
+        :paramtype credential: ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialDto
         :keyword image_name:
         :paramtype image_name: str
         :keyword image_registry_reference:
@@ -3192,6 +3322,45 @@ class InferenceContainerProperties(msrest.serialization.Model):
         self.liveness_route = kwargs.get('liveness_route', None)
         self.readiness_route = kwargs.get('readiness_route', None)
         self.scoring_route = kwargs.get('scoring_route', None)
+
+
+class IntellectualProperty(msrest.serialization.Model):
+    """Intellectual Property details for a resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar protection_level: Protection level of the Intellectual Property. Possible values include:
+     "All", "None".
+    :vartype protection_level: str or ~azure.mgmt.machinelearningservices.models.ProtectionLevel
+    :ivar publisher: Required. Publisher of the Intellectual Property. Must be the same as Registry
+     publisher name.
+    :vartype publisher: str
+    """
+
+    _validation = {
+        'publisher': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'protection_level': {'key': 'protectionLevel', 'type': 'str'},
+        'publisher': {'key': 'publisher', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword protection_level: Protection level of the Intellectual Property. Possible values
+         include: "All", "None".
+        :paramtype protection_level: str or ~azure.mgmt.machinelearningservices.models.ProtectionLevel
+        :keyword publisher: Required. Publisher of the Intellectual Property. Must be the same as
+         Registry publisher name.
+        :paramtype publisher: str
+        """
+        super(IntellectualProperty, self).__init__(**kwargs)
+        self.protection_level = kwargs.get('protection_level', None)
+        self.publisher = kwargs['publisher']
 
 
 class Job(JobBase):
@@ -3688,6 +3857,73 @@ class ManagedIdentity(IdentityConfiguration):
         self.resource_id = kwargs.get('resource_id', None)
 
 
+class ManagedIdentityCredentialDto(DataReferenceCredentialDto):
+    """ManagedIdentityCredentialDto.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar credential_type: Required. Constant filled by server. Possible values include: "SAS",
+     "DockerCredentials", "ManagedIdentity", "NoCredentials".
+    :vartype credential_type: str or
+     ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialType
+    :ivar managed_identity_type:
+    :vartype managed_identity_type: str
+    :ivar user_managed_identity_client_id: ClientId for the UAMI. For ManagedIdentityType =
+     SystemManaged, this field is null.
+    :vartype user_managed_identity_client_id: str
+    :ivar user_managed_identity_principal_id: PrincipalId for the UAMI. For ManagedIdentityType =
+     SystemManaged, this field is null.
+    :vartype user_managed_identity_principal_id: str
+    :ivar user_managed_identity_resource_id: Full arm scope for the Id. For ManagedIdentityType =
+     SystemManaged, this field is null.
+    :vartype user_managed_identity_resource_id: str
+    :ivar user_managed_identity_tenant_id: TenantId for the UAMI. For ManagedIdentityType =
+     SystemManaged, this field is null.
+    :vartype user_managed_identity_tenant_id: str
+    """
+
+    _validation = {
+        'credential_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'credential_type': {'key': 'credentialType', 'type': 'str'},
+        'managed_identity_type': {'key': 'managedIdentityType', 'type': 'str'},
+        'user_managed_identity_client_id': {'key': 'userManagedIdentityClientId', 'type': 'str'},
+        'user_managed_identity_principal_id': {'key': 'userManagedIdentityPrincipalId', 'type': 'str'},
+        'user_managed_identity_resource_id': {'key': 'userManagedIdentityResourceId', 'type': 'str'},
+        'user_managed_identity_tenant_id': {'key': 'userManagedIdentityTenantId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword managed_identity_type:
+        :paramtype managed_identity_type: str
+        :keyword user_managed_identity_client_id: ClientId for the UAMI. For ManagedIdentityType =
+         SystemManaged, this field is null.
+        :paramtype user_managed_identity_client_id: str
+        :keyword user_managed_identity_principal_id: PrincipalId for the UAMI. For ManagedIdentityType
+         = SystemManaged, this field is null.
+        :paramtype user_managed_identity_principal_id: str
+        :keyword user_managed_identity_resource_id: Full arm scope for the Id. For ManagedIdentityType
+         = SystemManaged, this field is null.
+        :paramtype user_managed_identity_resource_id: str
+        :keyword user_managed_identity_tenant_id: TenantId for the UAMI. For ManagedIdentityType =
+         SystemManaged, this field is null.
+        :paramtype user_managed_identity_tenant_id: str
+        """
+        super(ManagedIdentityCredentialDto, self).__init__(**kwargs)
+        self.credential_type = 'ManagedIdentity'  # type: str
+        self.managed_identity_type = kwargs.get('managed_identity_type', None)
+        self.user_managed_identity_client_id = kwargs.get('user_managed_identity_client_id', None)
+        self.user_managed_identity_principal_id = kwargs.get('user_managed_identity_principal_id', None)
+        self.user_managed_identity_resource_id = kwargs.get('user_managed_identity_resource_id', None)
+        self.user_managed_identity_tenant_id = kwargs.get('user_managed_identity_tenant_id', None)
+
+
 class MedianStoppingPolicy(EarlyTerminationPolicy):
     """Defines an early termination policy based on running averages of the primary metric of all runs.
 
@@ -3748,6 +3984,9 @@ class MLTableData(DataVersionBaseDetails):
     :ivar data_uri: Required. Uri of the data. Usage/meaning depends on
      Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20211001Dataplane.Assets.DataVersionBase.DataType.
     :vartype data_uri: str
+    :ivar intellectual_property: Intellectual Property details. Used if data is an Intellectual
+     Property.
+    :vartype intellectual_property: ~azure.mgmt.machinelearningservices.models.IntellectualProperty
     :ivar referenced_uris: Uris referenced in the MLTable definition (required for lineage).
     :vartype referenced_uris: list[str]
     """
@@ -3765,6 +4004,7 @@ class MLTableData(DataVersionBaseDetails):
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'data_type': {'key': 'dataType', 'type': 'str'},
         'data_uri': {'key': 'dataUri', 'type': 'str'},
+        'intellectual_property': {'key': 'intellectualProperty', 'type': 'IntellectualProperty'},
         'referenced_uris': {'key': 'referencedUris', 'type': '[str]'},
     }
 
@@ -3786,6 +4026,10 @@ class MLTableData(DataVersionBaseDetails):
         :keyword data_uri: Required. Uri of the data. Usage/meaning depends on
          Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20211001Dataplane.Assets.DataVersionBase.DataType.
         :paramtype data_uri: str
+        :keyword intellectual_property: Intellectual Property details. Used if data is an Intellectual
+         Property.
+        :paramtype intellectual_property:
+         ~azure.mgmt.machinelearningservices.models.IntellectualProperty
         :keyword referenced_uris: Uris referenced in the MLTable definition (required for lineage).
         :paramtype referenced_uris: list[str]
         """
@@ -3990,12 +4234,17 @@ class ModelVersionDetails(AssetBase):
     :vartype is_archived: bool
     :ivar flavors: Mapping of model flavors to their properties.
     :vartype flavors: dict[str, ~azure.mgmt.machinelearningservices.models.FlavorData]
+    :ivar intellectual_property: Intellectual Property details. Used if model is an Intellectual
+     Property.
+    :vartype intellectual_property: ~azure.mgmt.machinelearningservices.models.IntellectualProperty
     :ivar job_name: Name of the training job which produced this model.
     :vartype job_name: str
     :ivar model_type: The storage format for this entity. Used for NCD.
     :vartype model_type: str
     :ivar model_uri: The URI path to the model contents.
     :vartype model_uri: str
+    :ivar origin_asset_id: AssetId of origin model.
+    :vartype origin_asset_id: str
     """
 
     _attribute_map = {
@@ -4005,9 +4254,11 @@ class ModelVersionDetails(AssetBase):
         'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'flavors': {'key': 'flavors', 'type': '{FlavorData}'},
+        'intellectual_property': {'key': 'intellectualProperty', 'type': 'IntellectualProperty'},
         'job_name': {'key': 'jobName', 'type': 'str'},
         'model_type': {'key': 'modelType', 'type': 'str'},
         'model_uri': {'key': 'modelUri', 'type': 'str'},
+        'origin_asset_id': {'key': 'originAssetId', 'type': 'str'},
     }
 
     def __init__(
@@ -4027,18 +4278,26 @@ class ModelVersionDetails(AssetBase):
         :paramtype is_archived: bool
         :keyword flavors: Mapping of model flavors to their properties.
         :paramtype flavors: dict[str, ~azure.mgmt.machinelearningservices.models.FlavorData]
+        :keyword intellectual_property: Intellectual Property details. Used if model is an Intellectual
+         Property.
+        :paramtype intellectual_property:
+         ~azure.mgmt.machinelearningservices.models.IntellectualProperty
         :keyword job_name: Name of the training job which produced this model.
         :paramtype job_name: str
         :keyword model_type: The storage format for this entity. Used for NCD.
         :paramtype model_type: str
         :keyword model_uri: The URI path to the model contents.
         :paramtype model_uri: str
+        :keyword origin_asset_id: AssetId of origin model.
+        :paramtype origin_asset_id: str
         """
         super(ModelVersionDetails, self).__init__(**kwargs)
         self.flavors = kwargs.get('flavors', None)
+        self.intellectual_property = kwargs.get('intellectual_property', None)
         self.job_name = kwargs.get('job_name', None)
         self.model_type = kwargs.get('model_type', None)
         self.model_uri = kwargs.get('model_uri', None)
+        self.origin_asset_id = kwargs.get('origin_asset_id', None)
 
 
 class ModelVersionResourceArmPaginatedResult(msrest.serialization.Model):
@@ -4531,6 +4790,41 @@ class Route(msrest.serialization.Model):
         self.port = kwargs['port']
 
 
+class SASCredentialDto(DataReferenceCredentialDto):
+    """SASCredentialDto.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar credential_type: Required. Constant filled by server. Possible values include: "SAS",
+     "DockerCredentials", "ManagedIdentity", "NoCredentials".
+    :vartype credential_type: str or
+     ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialType
+    :ivar sas_uri: Full SAS Uri, including the storage, container/blob path and SAS token.
+    :vartype sas_uri: str
+    """
+
+    _validation = {
+        'credential_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'credential_type': {'key': 'credentialType', 'type': 'str'},
+        'sas_uri': {'key': 'sasUri', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword sas_uri: Full SAS Uri, including the storage, container/blob path and SAS token.
+        :paramtype sas_uri: str
+        """
+        super(SASCredentialDto, self).__init__(**kwargs)
+        self.credential_type = 'SAS'  # type: str
+        self.sas_uri = kwargs.get('sas_uri', None)
+
+
 class SasDatastoreCredentials(DatastoreCredentials):
     """SAS datastore credentials configuration.
 
@@ -4969,9 +5263,10 @@ class TemporaryDataReferenceRequestDto(msrest.serialization.Model):
 
     :ivar asset_id:
     :vartype asset_id: str
-    :ivar temporary_data_reference_id:
+    :ivar temporary_data_reference_id: If TemporaryDataReferenceId = null then random guid will be
+     used.
     :vartype temporary_data_reference_id: str
-    :ivar temporary_data_reference_type:
+    :ivar temporary_data_reference_type: Either TemporaryBlobReference or TemporaryImageReference.
     :vartype temporary_data_reference_type: str
     """
 
@@ -4988,9 +5283,11 @@ class TemporaryDataReferenceRequestDto(msrest.serialization.Model):
         """
         :keyword asset_id:
         :paramtype asset_id: str
-        :keyword temporary_data_reference_id:
+        :keyword temporary_data_reference_id: If TemporaryDataReferenceId = null then random guid will
+         be used.
         :paramtype temporary_data_reference_id: str
-        :keyword temporary_data_reference_type:
+        :keyword temporary_data_reference_type: Either TemporaryBlobReference or
+         TemporaryImageReference.
         :paramtype temporary_data_reference_type: str
         """
         super(TemporaryDataReferenceRequestDto, self).__init__(**kwargs)
@@ -5002,7 +5299,7 @@ class TemporaryDataReferenceRequestDto(msrest.serialization.Model):
 class TemporaryDataReferenceResponseDto(msrest.serialization.Model):
     """TemporaryDataReferenceResponseDto.
 
-    :ivar blob_reference_for_consumption:
+    :ivar blob_reference_for_consumption: Container level read, write, list SAS.
     :vartype blob_reference_for_consumption:
      ~azure.mgmt.machinelearningservices.models.BlobReferenceForConsumptionDto
     :ivar image_reference_for_consumption:
@@ -5026,7 +5323,7 @@ class TemporaryDataReferenceResponseDto(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword blob_reference_for_consumption:
+        :keyword blob_reference_for_consumption: Container level read, write, list SAS.
         :paramtype blob_reference_for_consumption:
          ~azure.mgmt.machinelearningservices.models.BlobReferenceForConsumptionDto
         :keyword image_reference_for_consumption:
@@ -5215,6 +5512,9 @@ class UriFileDataVersion(DataVersionBaseDetails):
     :ivar data_uri: Required. Uri of the data. Usage/meaning depends on
      Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20211001Dataplane.Assets.DataVersionBase.DataType.
     :vartype data_uri: str
+    :ivar intellectual_property: Intellectual Property details. Used if data is an Intellectual
+     Property.
+    :vartype intellectual_property: ~azure.mgmt.machinelearningservices.models.IntellectualProperty
     """
 
     _validation = {
@@ -5230,6 +5530,7 @@ class UriFileDataVersion(DataVersionBaseDetails):
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'data_type': {'key': 'dataType', 'type': 'str'},
         'data_uri': {'key': 'dataUri', 'type': 'str'},
+        'intellectual_property': {'key': 'intellectualProperty', 'type': 'IntellectualProperty'},
     }
 
     def __init__(
@@ -5250,6 +5551,10 @@ class UriFileDataVersion(DataVersionBaseDetails):
         :keyword data_uri: Required. Uri of the data. Usage/meaning depends on
          Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20211001Dataplane.Assets.DataVersionBase.DataType.
         :paramtype data_uri: str
+        :keyword intellectual_property: Intellectual Property details. Used if data is an Intellectual
+         Property.
+        :paramtype intellectual_property:
+         ~azure.mgmt.machinelearningservices.models.IntellectualProperty
         """
         super(UriFileDataVersion, self).__init__(**kwargs)
         self.data_type = 'uri_file'  # type: str
@@ -5276,6 +5581,9 @@ class UriFolderDataVersion(DataVersionBaseDetails):
     :ivar data_uri: Required. Uri of the data. Usage/meaning depends on
      Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20211001Dataplane.Assets.DataVersionBase.DataType.
     :vartype data_uri: str
+    :ivar intellectual_property: Intellectual Property details. Used if data is an Intellectual
+     Property.
+    :vartype intellectual_property: ~azure.mgmt.machinelearningservices.models.IntellectualProperty
     """
 
     _validation = {
@@ -5291,6 +5599,7 @@ class UriFolderDataVersion(DataVersionBaseDetails):
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'data_type': {'key': 'dataType', 'type': 'str'},
         'data_uri': {'key': 'dataUri', 'type': 'str'},
+        'intellectual_property': {'key': 'intellectualProperty', 'type': 'IntellectualProperty'},
     }
 
     def __init__(
@@ -5311,6 +5620,10 @@ class UriFolderDataVersion(DataVersionBaseDetails):
         :keyword data_uri: Required. Uri of the data. Usage/meaning depends on
          Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20211001Dataplane.Assets.DataVersionBase.DataType.
         :paramtype data_uri: str
+        :keyword intellectual_property: Intellectual Property details. Used if data is an Intellectual
+         Property.
+        :paramtype intellectual_property:
+         ~azure.mgmt.machinelearningservices.models.IntellectualProperty
         """
         super(UriFolderDataVersion, self).__init__(**kwargs)
         self.data_type = 'uri_folder'  # type: str

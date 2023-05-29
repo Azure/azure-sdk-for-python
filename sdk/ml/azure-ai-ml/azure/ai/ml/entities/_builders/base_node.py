@@ -187,7 +187,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         self._init = False
 
     @property
-    def name(self):
+    def name(self) -> str:
         """Name of the node."""
         return self._name
 

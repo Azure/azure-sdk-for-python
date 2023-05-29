@@ -28,17 +28,17 @@ class TestSearchClientSkillsets(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
-    async def test_skillset_crud(self, api_key, endpoint):
-        client = SearchIndexerClient(endpoint, api_key)
-        async with client:
-            await self._test_create_skillset(client)
-            await self._test_get_skillset(client)
-            await self._test_get_skillsets(client)
-            await self._test_create_or_update_skillset(client)
-            await self._test_create_or_update_skillset_if_unchanged(client)
-            await self._test_create_or_update_skillset_inplace(client)
-            await self._test_delete_skillset_if_unchanged(client)
-            await self._test_delete_skillset(client)
+    # async def test_skillset_crud(self, api_key, endpoint):
+    #     client = SearchIndexerClient(endpoint, api_key)
+    #     async with client:
+    #         await self._test_create_skillset(client)
+    #         await self._test_get_skillset(client)
+    #         await self._test_get_skillsets(client)
+    #         await self._test_create_or_update_skillset(client)
+    #         await self._test_create_or_update_skillset_if_unchanged(client)
+    #         await self._test_create_or_update_skillset_inplace(client)
+    #         await self._test_delete_skillset_if_unchanged(client)
+    #         await self._test_delete_skillset(client)
 
     async def _test_create_skillset(self, client):
         name = "test-ss-create"

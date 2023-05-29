@@ -23,7 +23,6 @@
 Cosmos database service.
 """
 from . import http_constants
-from ..cosmos.documents import _OperationType
 
 
 class _TimeoutFailoverRetryPolicy(object):
@@ -38,19 +37,14 @@ class _TimeoutFailoverRetryPolicy(object):
         self.failover_retry_count = 0
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
-
         if self.request:
-            self.request.clear_route_to_location()
-
-            # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
-            # This enables marking the endpoint unavailability on endpoint failover/unreachability
             self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
-            self.request.route_to_location(self.location_endpoint)
 
     def needsRetry(self):
         if self.args:
             if (self.args[3].method == "GET") \
-                    or (http_constants.HttpHeaders.IsQueryPlanRequest in self.args[3].headers):
+                    or http_constants.HttpHeaders.IsQueryPlanRequest in self.args[3].headers\
+                    or http_constants.HttpHeaders.IsQuery in self.args[3].headers:
                 return True
         return False
 
@@ -75,27 +69,16 @@ class _TimeoutFailoverRetryPolicy(object):
 
         self.failover_retry_count += 1
 
-        if self.location_endpoint:
-            if _OperationType.IsReadOnlyOperation(self.request.operation_type):
-                # Mark current read endpoint as unavailable
-                self.global_endpoint_manager.mark_endpoint_unavailable_for_read(self.location_endpoint)
-            else:
-                self.global_endpoint_manager.mark_endpoint_unavailable_for_write(self.location_endpoint)
+        if self.request:
+            # clear previous location-based routing directive
+            self.request.clear_route_to_location()
 
-        # set the refresh_needed flag to ensure that endpoint list is
-        # refreshed with new writable and readable locations
-        self.global_endpoint_manager.refresh_needed = True
+            # set location-based routing directive based on retry count
+            # ensuring usePreferredLocations is set to True for retry
+            self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, True)
 
-        # clear previous location-based routing directive
-        self.request.clear_route_to_location()
-
-        # set location-based routing directive based on retry count
-        # simulating single master writes by ensuring usePreferredLocations
-        # is set to false
-        self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, False)
-
-        # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
-        # This enables marking the endpoint unavailability on endpoint failover/unreachability
-        self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
-        self.request.route_to_location(self.location_endpoint)
+            # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
+            # This enables marking the endpoint unavailability on endpoint failover/unreachability
+            self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
+            self.request.route_to_location(self.location_endpoint)
         return True

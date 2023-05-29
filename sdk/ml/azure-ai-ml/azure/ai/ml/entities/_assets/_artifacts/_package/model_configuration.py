@@ -5,6 +5,7 @@
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ModelConfiguration as RestModelConfiguration
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._utils.utils import snake_to_camel
 
 
 @experimental
@@ -17,7 +18,7 @@ class ModelConfiguration:
     :type mount_path: str
     """
 
-    def __init__(self, mode: str = None, mount_path: str = None):
+    def __init__(self, *, mode: str = None, mount_path: str = None):
         self.mode = mode
         self.mount_path = mount_path
 
@@ -26,4 +27,4 @@ class ModelConfiguration:
         return ModelConfiguration(mode=rest_obj.mode, mount_path=rest_obj.mount_path)
 
     def _to_rest_object(self) -> RestModelConfiguration:
-        return RestModelConfiguration(mode=self.mode, mount_path=self.mount_path)
+        return RestModelConfiguration(mode=snake_to_camel(self.mode), mount_path=self.mount_path)

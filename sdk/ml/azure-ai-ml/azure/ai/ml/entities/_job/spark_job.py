@@ -13,7 +13,7 @@ from marshmallow import INCLUDE
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_04_01_preview.models import SparkJob as RestSparkJob
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
-from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
+from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP
 from azure.ai.ml._schema.job.spark_job import SparkJobSchema
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
@@ -139,6 +139,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
 
         super().__init__(**kwargs)
         self.conf = self.conf or {}
+        self.properties = self.properties or {}
         self.driver_cores = driver_cores
         self.driver_memory = driver_memory
         self.executor_cores = executor_cores
@@ -231,6 +232,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             archives=self.archives,
             identity=self.identity._to_job_rest_object() if self.identity else None,
             conf=conf,
+            properties=self.properties,
             environment_id=self.environment,
             inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=self.type),
             outputs=to_rest_data_outputs(self.outputs),
@@ -250,13 +252,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     @classmethod
     def _load_from_rest(cls, obj: JobBase) -> "SparkJob":
         rest_spark_job: RestSparkJob = obj.properties
-        conf_schema = UnionField(
-            [
-                NestedField(SparkConfSchema, unknown=INCLUDE),
-            ]
-        )
         rest_spark_conf = copy.copy(rest_spark_job.conf) or {}
-        rest_spark_conf = conf_schema._deserialize(value=rest_spark_conf, attr=None, data=None)
         spark_job = SparkJob(
             name=obj.name,
             entry=SparkJobEntry._from_rest_object(rest_spark_job.entry),
@@ -326,6 +322,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             dynamic_allocation_min_executors=self.dynamic_allocation_min_executors,
             dynamic_allocation_max_executors=self.dynamic_allocation_max_executors,
             conf=self.conf,
+            properties=self.properties,
             environment=self.environment,
             inputs=self._to_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
             outputs=self._to_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),

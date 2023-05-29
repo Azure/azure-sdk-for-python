@@ -4,11 +4,20 @@ from typing import Any, Callable, Dict
 
 import pydash
 import pytest
+from azure.core.exceptions import HttpResponseError
 from devtools_testutils import AzureRecordedTestCase, is_live
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, sleep_if_live, wait_until_done
+from test_utilities.utils import (
+    _PYTEST_TIMEOUT_METHOD,
+    assert_job_cancel,
+    sleep_if_live,
+    wait_until_done,
+)
 
 from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
-from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId, is_singularity_id_for_resource
+from azure.ai.ml._utils._arm_id_utils import (
+    AMLVersionedArmId,
+    is_singularity_id_for_resource,
+)
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants import InputOutputModes
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
@@ -17,7 +26,6 @@ from azure.ai.ml.entities._builders import Command, Pipeline
 from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.spark import Spark
 from azure.ai.ml.exceptions import JobException
-from azure.core.exceptions import HttpResponseError
 
 from .._util import (
     _PIPELINE_JOB_LONG_RUNNING_TIMEOUT_SECOND,
@@ -28,7 +36,12 @@ from .._util import (
 
 
 def assert_job_input_output_types(job: PipelineJob):
-    from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput, PipelineOutput
+    from azure.ai.ml.entities._job.pipeline._io import (
+        NodeInput,
+        NodeOutput,
+        PipelineInput,
+        PipelineOutput,
+    )
 
     for _, input in job.inputs.items():
         assert isinstance(input, PipelineInput)
@@ -49,6 +62,7 @@ def assert_job_input_output_types(job: PipelineJob):
     "mock_component_hash",
     "mock_set_headers_with_user_aml_token",
     "enable_environment_id_arm_expansion",
+    "mock_anon_component_version",
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
@@ -722,6 +736,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_job = client.jobs.create_or_update(pipeline_job)
         assert created_job.jobs[job_key].component == f"{component_name}:{component_versions[-1]}"
 
+    @pytest.mark.skip("TODO (2370129): Recording fails due to 'Cannot find pipeline run' error")
     def test_sample_job_dump(self, client: MLClient, randstr: Callable[[str], str]):
         job = client.jobs.create_or_update(
             load_job(
@@ -1792,7 +1807,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             "automl/pipeline_with_instance_type.yml",
             "automl/pipeline_without_instance_type.yml",
             "automl/pipeline_with_instance_type_no_default.yml",
-            "parallel/pipeline_serverless_compute.yml",
+            # "parallel/pipeline_serverless_compute.yml", TODO (2349832): azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33 uses deprecated Python
             "spark/pipeline_serverless_compute.yml",
             "spark/node_serverless_compute_no_default.yml",
         ],
@@ -1876,6 +1891,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             },
         }
 
+    @pytest.mark.skip(reason="Need to create SingularityTestVC cluster.")
     def test_pipeline_job_singularity_short_name(self, client: MLClient) -> None:
         yaml_path = "./tests/test_configs/pipeline_jobs/singularity/pipeline_job_short_name.yml"
         pipeline_job = load_job(yaml_path)

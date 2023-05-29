@@ -51,6 +51,14 @@ class CrossRegionRestore(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "Disabled"
 
 
+class CrossSubscriptionRestoreState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """CrossSubscriptionRestoreState."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+    PERMANENTLY_DISABLED = "PermanentlyDisabled"
+
+
 class ImmutabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ImmutabilityState."""
 

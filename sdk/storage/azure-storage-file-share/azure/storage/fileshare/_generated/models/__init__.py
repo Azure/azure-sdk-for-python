@@ -39,6 +39,7 @@ from ._models_py3 import StorageError
 from ._models_py3 import StorageServiceProperties
 from ._models_py3 import StringEncoded
 
+from ._azure_file_storage_enums import AccessRight
 from ._azure_file_storage_enums import CopyStatusType
 from ._azure_file_storage_enums import DeleteSnapshotsOptionType
 from ._azure_file_storage_enums import FileLastWrittenMode
@@ -90,6 +91,7 @@ __all__ = [
     "StorageError",
     "StorageServiceProperties",
     "StringEncoded",
+    "AccessRight",
     "CopyStatusType",
     "DeleteSnapshotsOptionType",
     "FileLastWrittenMode",

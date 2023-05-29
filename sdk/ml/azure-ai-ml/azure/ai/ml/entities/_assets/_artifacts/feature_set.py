@@ -111,6 +111,7 @@ class FeatureSet(Artifact):
             ),
             specification=FeatureSetSpecification._from_rest_object(featureset_rest_object_details.specification),
             stage=featureset_rest_object_details.stage,
+            properties=featureset_rest_object_details.properties,
         )
         return featureset
 

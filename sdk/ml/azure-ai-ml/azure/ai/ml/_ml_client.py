@@ -45,6 +45,9 @@ from azure.ai.ml._restclient.v2023_02_01_preview import (
 from azure.ai.ml._restclient.v2023_04_01_preview import (
     AzureMachineLearningWorkspaces as ServiceClient042023Preview,
 )
+from azure.ai.ml._restclient.v2023_04_01 import (
+    AzureMachineLearningWorkspaces as ServiceClient042023,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -57,10 +60,12 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._preflight_utils import get_deployments_operation
 from azure.ai.ml._utils._registry_utils import get_registry_client
-from azure.ai.ml._utils.utils import _is_https_url, is_private_preview_enabled
+from azure.ai.ml._utils.utils import _is_https_url
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities import (
     BatchDeployment,
+    ModelBatchDeployment,
+    PipelineComponentBatchDeployment,
     BatchEndpoint,
     Component,
     Compute,
@@ -211,6 +216,9 @@ class MLClient:
             )
         module_logger.debug("Cloud configured in MLClient: '%s'.", cloud_name)
 
+        # Add cloud information to kwargs
+        kwargs.update(_get_cloud_information_from_metadata(cloud_name))
+
         # registry_name is present when the operations need referring assets from registry.
         # the subscription, resource group, if provided, will be ignored and replaced by
         # whatever is received from the registry discovery service.
@@ -243,7 +251,6 @@ class MLClient:
 
         base_url = _get_base_url_from_metadata(cloud_name=cloud_name, is_local_mfe=True)
         self._base_url = base_url
-        kwargs.update(_get_cloud_information_from_metadata(cloud_name))
         self._kwargs = kwargs
 
         self._operation_container = OperationsContainer()
@@ -268,6 +275,13 @@ class MLClient:
         )
 
         self._service_client_05_2022 = ServiceClient052022(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
+        self._service_client_04_2023 = ServiceClient042023(
             credential=self._credential,
             subscription_id=self._operation_scope._subscription_id,
             base_url=base_url,
@@ -363,11 +377,7 @@ class MLClient:
         self._models = ModelOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview
-            if registry_name
-            else self._service_client_02_2023_preview
-            if is_private_preview_enabled
-            else self._service_client_05_2022,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview,
             self._datastores,
             self._operation_container,
             requests_pipeline=self._requests_pipeline,
@@ -377,7 +387,7 @@ class MLClient:
         self._code = CodeOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_05_2022,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023,
             self._datastores,
             **ops_kwargs,
         )
@@ -385,7 +395,7 @@ class MLClient:
         self._environments = EnvironmentOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_05_2022,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview,
             self._operation_container,
             **ops_kwargs,
         )
@@ -417,7 +427,7 @@ class MLClient:
         self._online_deployments = OnlineDeploymentOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_02_2022_preview,
+            self._service_client_04_2023_preview,
             self._operation_container,
             self._local_deployment_helper,
             self._credential,
@@ -431,6 +441,7 @@ class MLClient:
             credentials=self._credential,
             requests_pipeline=self._requests_pipeline,
             service_client_09_2020_dataplanepreview=self._service_client_09_2020_dataplanepreview,
+            service_client_02_2023_preview=self._service_client_02_2023_preview,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.ONLINE_DEPLOYMENT, self._online_deployments)
@@ -438,7 +449,7 @@ class MLClient:
         self._data = DataOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_10_2022,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview,
             self._datastores,
             requests_pipeline=self._requests_pipeline,
             **ops_kwargs,
@@ -1029,6 +1040,18 @@ def _(entity: OnlineDeployment, operations, *args, **kwargs):
 
 @_begin_create_or_update.register(BatchDeployment)
 def _(entity: BatchDeployment, operations, *args, **kwargs):
+    module_logger.debug("Creating or updating batch_deployments")
+    return operations[AzureMLResourceType.BATCH_DEPLOYMENT].begin_create_or_update(entity, **kwargs)
+
+
+@_begin_create_or_update.register(ModelBatchDeployment)
+def _(entity: ModelBatchDeployment, operations, *args, **kwargs):
+    module_logger.debug("Creating or updating batch_deployments")
+    return operations[AzureMLResourceType.BATCH_DEPLOYMENT].begin_create_or_update(entity, **kwargs)
+
+
+@_begin_create_or_update.register(PipelineComponentBatchDeployment)
+def _(entity: PipelineComponentBatchDeployment, operations, *args, **kwargs):
     module_logger.debug("Creating or updating batch_deployments")
     return operations[AzureMLResourceType.BATCH_DEPLOYMENT].begin_create_or_update(entity, **kwargs)
 

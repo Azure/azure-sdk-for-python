@@ -8,7 +8,6 @@ from typing import Dict, Iterable, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-from azure.ai.ml._utils._experimental import experimental
 
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -50,7 +49,6 @@ class RegistryOperations:
         self._init_kwargs = kwargs
 
     @monitor_with_activity(logger, "Registry.List", ActivityType.PUBLICAPI)
-    @experimental
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Registry]:
         """List all registries that the user has access to in the current resource group or subscription.
 
@@ -69,7 +67,6 @@ class RegistryOperations:
         )
 
     @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
-    @experimental
     def get(self, name: Optional[str] = None) -> Registry:
         """Get a registry by name.
 
@@ -110,7 +107,6 @@ class RegistryOperations:
         )
 
     @monitor_with_activity(logger, "Registry.BeginCreate", ActivityType.PUBLICAPI)
-    @experimental
     def begin_create(
         self,
         registry: Registry,
@@ -143,7 +139,6 @@ class RegistryOperations:
         return poller
 
     @monitor_with_activity(logger, "Registry.BeginDelete", ActivityType.PUBLICAPI)
-    @experimental
     def begin_delete(self, *, name: str, **kwargs: Dict) -> LROPoller[None]:
         """Delete a registry if it exists. Returns nothing on a successful operation.
 
