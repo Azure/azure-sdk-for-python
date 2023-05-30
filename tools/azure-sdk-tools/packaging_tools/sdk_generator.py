@@ -22,6 +22,7 @@ from .generate_utils import (
     gen_typespec,
     update_typespec_location,
     return_origin_path,
+    check_api_version_in_subfolder,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -176,6 +177,9 @@ def main(generate_input, generate_output):
                 f"pip install --ignore-requires-python -e {sdk_code_path}",
                 shell=True,
             )
+
+            # check whether multiapi package has only one api-version in per subfolder
+            check_api_version_in_subfolder(sdk_code_path)
 
             # use multiapi combiner to combine multiapi package
             if package_name in ("azure-mgmt-network"):
