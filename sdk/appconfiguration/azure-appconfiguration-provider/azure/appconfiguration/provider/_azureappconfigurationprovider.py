@@ -285,10 +285,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             logging.debug("Refresh called but refresh interval not elapsed.")
             return
 
-        refresh_all = False
-        updated_registration = None
-        updated_registration_etag = None
-
         try:
             # pylint:disable=protected-access
             for registration in refresh_registrations:
@@ -303,19 +299,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                         refresh_all = True
                         updated_registration = registration
                         updated_registration_etag = updated_sentinel.etag
-                        break
+                        self._load_all(**kwargs)
+                        updated_registration.etag = updated_registration_etag
+                        self._updated_configurations()
+                        return
         except Exception as ex:  # pylint:disable=broad-except
-            logging.debug("Refresh all trigger failed by exception: %s", ex)
-            self._refresh_options._on_error()
-            return
-
-        if refresh_all:
-            self._load_all(**kwargs)
-            updated_registration.etag = updated_registration_etag
-            self._next_refresh_time = datetime.now() + timedelta(seconds=self._refresh_options.refresh_interval)
-            self._attempts = 1
-
-            self._refresh_options._callback()
+            self._failed_update(ex, "Refresh all trigger failed by exception: %s")
             return
 
         # Only update individual keys if the refresh_all didn't trigger
@@ -342,26 +331,26 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                             registration.label_filter,
                         )
                         updated_keys = True
-
-            self._dict = updated_dict
-            # pylint:disable=protected-access
-            self._refresh_options._refresh_registrations = updated_registrations
-            self._next_refresh_time = datetime.now() + timedelta(seconds=self._refresh_options.refresh_interval)
+            if updated_keys:
+                self._dict = updated_dict
+                # pylint:disable=protected-access
+                self._refresh_options._refresh_registrations = updated_registrations
+                self._updated_configurations()
         except Exception as error:
-            logging.warning(
-                "An error occurred while checking for configuration updates. \
-                %s attempts have been made.\n %r",
-                self._attempts,
-                error,
-            )
-            # Refresh All or None, any failure will trigger a backoff
-            self._next_refresh_time = datetime.now() + timedelta(microseconds=self._calculate_backoff())
-            self._attempts += 1
-            self._refresh_options._on_error()
-            return
+            self._failed_update(error, "An error occurred while checking for configuration updates. \
+                %s attempts have been made.\n %r")
+
+    def _updated_configurations(self):
+        self._next_refresh_time = datetime.now() + timedelta(seconds=self._refresh_options.refresh_interval)
         self._attempts = 1
-        if updated_keys:
-            self._refresh_options._callback()
+        self._refresh_options._callback()
+
+    def _failed_update(self, error, message):
+        logging.warning(message, self._attempts, error)
+        # Refresh All or None, any failure will trigger a backoff
+        self._next_refresh_time = datetime.now() + timedelta(microseconds=self._calculate_backoff())
+        self._attempts += 1
+        self._refresh_options._on_error()
 
     def _load_all(self, **kwargs):
         dict = {}
