@@ -51,8 +51,11 @@ def del_outdated_folder(readme: str):
             sdk_folder = re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+", line)[0]
             sample_folder = Path(f"sdk/{sdk_folder}/generated_samples")
             if sample_folder.exists():
-                shutil.rmtree(sample_folder)
-                _LOGGER.info(f"remove sample folder: {sample_folder}")
+                if "azure-mgmt-rdbms" not in str(sample_folder):
+                    shutil.rmtree(sample_folder)
+                    _LOGGER.info(f"remove sample folder: {sample_folder}")
+                else:
+                    _LOGGER.info(f"we don't remove sample folder for rdbms")
             else:
                 _LOGGER.info(f"sample folder does not exist: {sample_folder}")
             # remove old generated SDK code
