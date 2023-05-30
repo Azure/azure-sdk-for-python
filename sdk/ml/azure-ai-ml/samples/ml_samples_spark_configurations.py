@@ -73,6 +73,13 @@ class SparkConfigurationOptions(object):
 
         # [END spark_component_definition]
 
+        # [START spark_entry_type]
+        from azure.ai.ml.entities import SparkJobEntry, SparkJobEntryType
+
+        spark_entry = SparkJobEntry(entry_type=SparkJobEntryType.SPARK_JOB_FILE_ENTRY, entry="main.py")
+
+        # [END spark_entry_type]
+
 
 if __name__ == "__main__":
     sample = SparkConfigurationOptions()
