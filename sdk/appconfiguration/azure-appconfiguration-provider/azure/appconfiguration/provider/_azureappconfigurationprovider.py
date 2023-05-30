@@ -164,11 +164,14 @@ def _get_headers(key_vault_options: Optional[AzureAppConfigurationKeyVaultOption
 
 
 def _buildprovider(
-    connection_string: Optional[str], endpoint: Optional[str], credential: Optional["TokenCredential"], **kwargs
+    connection_string: Optional[str],
+    endpoint: Optional[str],
+    credential: Optional["TokenCredential"],
+    **kwargs
 ) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
     provider = AzureAppConfigurationProvider(**kwargs)
-    headers = _get_headers(key_vault_options, **kwargs)
+    headers = _get_headers(provider._key_vault_options, **kwargs)
     useragent = USER_AGENT
     retry_total = kwargs.pop("retry_total", 2)
     retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
