@@ -399,6 +399,41 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     StorageTaskCompletedEventName = 'Microsoft.Storage.StorageTaskCompleted'
 
+    StorageTaskQueuedEventName = 'Microsoft.Storage.StorageTaskQueued'
+
+    SubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
+
+    SubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
+
+    WebAppServicePlanUpdatedEventName = 'Microsoft.Web.AppServicePlanUpdated'
+
+    WebAppUpdatedEventName = 'Microsoft.Web.AppUpdated'
+
+    WebBackupOperationCompletedEventName = 'Microsoft.Web.BackupOperationCompleted'
+
+    WebBackupOperationFailedEventName = 'Microsoft.Web.BackupOperationFailed'
+
+    WebBackupOperationStartedEventName = 'Microsoft.Web.BackupOperationStarted'
+
+    WebRestoreOperationCompletedEventName = 'Microsoft.Web.RestoreOperationCompleted'
+
+    WebRestoreOperationFailedEventName = 'Microsoft.Web.RestoreOperationFailed'
+
+    WebRestoreOperationStartedEventName = 'Microsoft.Web.RestoreOperationStarted'
+
+    WebSlotSwapCompletedEventName = 'Microsoft.Web.SlotSwapCompleted'
+
+    WebSlotSwapFailedEventName = 'Microsoft.Web.SlotSwapFailed'
+
+    WebSlotSwapStartedEventName = 'Microsoft.Web.SlotSwapStarted'
+
+    WebSlotSwapWithPreviewCancelledEventName = 'Microsoft.Web.SlotSwapWithPreviewCancelled'
+
+    WebSlotSwapWithPreviewStartedEventName = 'Microsoft.Web.SlotSwapWithPreviewStarted'
+
+    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
+
+    KeyVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
 
     ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
 
