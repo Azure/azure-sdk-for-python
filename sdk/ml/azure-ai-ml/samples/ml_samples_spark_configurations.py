@@ -122,6 +122,24 @@ class SparkConfigurationOptions(object):
         )
         # [END materialization_setting_configuration]
 
+        # [START synapse_spark_compute_configuration]
+        from azure.ai.ml.entities import IdentityConfiguration, SynapseSparkCompute, UserAssignedIdentity
+
+        synapse_compute = SynapseSparkCompute(
+            name="synapse_name",
+            resource_id="/subscriptions/mysubid/resourceGroups/myrg/providers/Microsoft.Synapse/workspaces/myws/bigDataPools/mysparkpoolname",
+            identity=IdentityConfiguration(
+                type="UserAssigned",
+                user_assigned_identities=[
+                    UserAssignedIdentity(
+                        resource_id="/subscriptions/mysubid/resourceGroups/myrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mymanagedidentityname"
+                    )
+                ],
+            ),
+        )
+
+        # [END synapse_spark_compute_configuration]
+
 
 if __name__ == "__main__":
     sample = SparkConfigurationOptions()
