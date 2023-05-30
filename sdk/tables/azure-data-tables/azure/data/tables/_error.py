@@ -208,7 +208,8 @@ def _reprocess_error(decoded_error, identifiers=None):
         error_code = decoded_error.error_code
         message = decoded_error.message
         authentication_failed = "Server failed to authenticate the request"
-        invalid_input = "The number of keys specified in the URI does not match number of key properties for the resource"
+        invalid_input = "The number of keys specified in the URI does not match number of key properties "\
+            "for the resource"
         invalid_query_parameter_value = "Value for one of the query parameters specified in the request URI is invalid"
         invalid_url = "Request url is invalid"
         properties_need_value = "The values are not specified for all properties in the entity"
