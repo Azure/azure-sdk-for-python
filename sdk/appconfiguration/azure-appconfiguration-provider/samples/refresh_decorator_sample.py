@@ -27,11 +27,13 @@ refresh_options.refresh_interval = 1
 refresh_options.register(key_filter="message")
 config = load(connection_string=connection_string, refresh_options=refresh_options)
 
-@config.drefresh
+
+@config.drefresh  # cspell:disable-line
 def print_configurations(config):
     time.sleep(2)
     print(config["message"])
     print(config["my_json"]["key"])
+
 
 print_configurations(config)
 
@@ -41,4 +43,3 @@ configuration_setting.value = "Hello World Updated!"
 client.set_configuration_setting(configuration_setting=configuration_setting)
 
 print_configurations(config)
-

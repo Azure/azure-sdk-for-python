@@ -21,11 +21,14 @@ configuration_setting = ConfigurationSetting(key="message", value="Hello World!"
 
 client.set_configuration_setting(configuration_setting=configuration_setting)
 
+
 def my_callback():
     print("Refreshed!")
 
+
 def my_callback_on_fail():
     print("Refresh failed!")
+
 
 # Connecting to Azure App Configuration using connection string
 refresh_options = AzureAppConfigurationRefreshOptions()

@@ -138,6 +138,7 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
             register.etag = key.etag
     return provider
 
+
 def _get_headers(key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions], **kwargs) -> str:
     headers = kwargs.pop("headers", {})
     if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() != "true":
@@ -164,15 +165,11 @@ def _get_headers(key_vault_options: Optional[AzureAppConfigurationKeyVaultOption
 
 
 def _buildprovider(
-    connection_string: Optional[str],
-    endpoint: Optional[str],
-    credential: Optional["TokenCredential"],
-    **kwargs
+    connection_string: Optional[str], endpoint: Optional[str], credential: Optional["TokenCredential"], **kwargs
 ) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
     provider = AzureAppConfigurationProvider(**kwargs)
     headers = _get_headers(provider._key_vault_options, **kwargs)
-    useragent = USER_AGENT
     retry_total = kwargs.pop("retry_total", 2)
     retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
 
@@ -281,11 +278,11 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         self._min_backoff: Optional[int] = kwargs.pop("min_backoff", 30)
         self._max_backoff: Optional[int] = kwargs.pop("min_backoff", 600)
 
-    def drefresh(self, func):
-
+    def drefresh(self, func):  # cspell:disable-line
         def refresh_wrapper(*args, **kwargs):
             self.refresh()
             return func(*args, **kwargs)
+
         return refresh_wrapper
 
     def refresh(self, **kwargs) -> None:
@@ -309,9 +306,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                     )
                     if registration.etag != updated_sentinel.etag:
                         logging.debug(
-                            "Refresh all triggered by key: %s label %s.", registration.key_filter, registration.label_filter
+                            "Refresh all triggered by key: %s label %s.",
+                            registration.key_filter,
+                            registration.label_filter,
                         )
-                        refresh_all = True
                         updated_registration = registration
                         updated_registration_etag = updated_sentinel.etag
                         self._load_all(**kwargs)
@@ -324,8 +322,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
 
         # Only update individual keys if the refresh_all didn't trigger
         updated_dict = self._dict.copy()
-        
-        # pylint:disable=protected-access
         updated_registrations = refresh_registrations.copy()
         updated_keys = False
 
@@ -352,10 +348,14 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                 self._refresh_options._refresh_registrations = updated_registrations
                 self._updated_configurations()
         except Exception as error:
-            self._failed_update(error, "An error occurred while checking for configuration updates. \
-                %s attempts have been made.\n %r")
+            self._failed_update(
+                error,
+                "An error occurred while checking for configuration updates. \
+                %s attempts have been made.\n %r",
+            )
 
     def _updated_configurations(self):
+        # pylint:disable=protected-access
         self._next_refresh_time = datetime.now() + timedelta(seconds=self._refresh_options.refresh_interval)
         self._attempts = 1
         self._refresh_options._callback()
@@ -363,6 +363,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
     def _failed_update(self, error, message):
         logging.warning(message, self._attempts, error)
         # Refresh All or None, any failure will trigger a backoff
+        # pylint:disable=protected-access
         self._next_refresh_time = datetime.now() + timedelta(microseconds=self._calculate_backoff())
         self._attempts += 1
         self._refresh_options._on_error()
@@ -400,7 +401,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
     def _proccess_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):
             return _resolve_keyvault_reference(config, self)
-        elif _is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
+        if _is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
             # Feature flags are of type json, but don't treat them as such
             try:
                 return json.loads(config.value)
