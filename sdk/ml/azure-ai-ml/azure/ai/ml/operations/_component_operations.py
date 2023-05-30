@@ -386,7 +386,7 @@ class ComponentOperations(_ScopeDependentOperations):
                     )
         except ResourceNotFoundError as e:
             logger.info("Failed to get component version, %s", e)
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             logger.error("Failed to compare client_component_hash, %s", e)
 
         try:
