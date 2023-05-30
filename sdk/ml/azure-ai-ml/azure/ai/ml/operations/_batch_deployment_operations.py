@@ -39,7 +39,9 @@ from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
-DeploymentType = TypeVar("DeploymentType", bound=Union[BatchDeployment, PipelineComponentBatchDeployment])
+DeploymentType = TypeVar(
+    "DeploymentType", bound=Union[BatchDeployment, PipelineComponentBatchDeployment, ModelBatchDeployment]
+)
 
 
 class BatchDeploymentOperations(_ScopeDependentOperations):
@@ -76,7 +78,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
     @monitor_with_activity(logger, "BatchDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
-        deployment: Union[BatchDeployment, PipelineComponentBatchDeployment, ModelBatchDeployment],
+        deployment: DeploymentType,
         *,
         skip_script_validation: bool = False,
         **kwargs,
@@ -286,7 +288,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             deployment.component = component_id
         elif isinstance(deployment.job_definition, str):
             job_component = PipelineComponent(source_job_id=deployment.job_definition)
-            deployment.component = self._component_operations.create_or_update(
+            job_component = self._component_operations.create_or_update(
                 name=job_component.name,
                 resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
@@ -294,3 +296,4 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 version=job_component.version,
                 **self._init_kwargs,
             )
+            deployment.component = job_component.id

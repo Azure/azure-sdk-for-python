@@ -16,6 +16,7 @@ from ._producer_async import EventHubProducer
 from ._buffered_producer import BufferedProducerDispatcher
 from .._utils import set_event_partition_key
 from .._constants import ALL_PARTITIONS, TransportType
+from .._tracing import TraceAttributes
 from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
@@ -729,14 +730,16 @@ class EventHubProducerClient(
                 )
             )
 
-        event_data_batch = EventDataBatch(
+        return EventDataBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
             partition_id=partition_id,
             partition_key=partition_key,
-            amqp_transport=self._amqp_transport
+            amqp_transport=self._amqp_transport,
+            tracing_attributes={
+                TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE: self._address.hostname if self._address else None,
+                TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self._address.path if self._address else None
+            }
         )
-
-        return event_data_batch
 
     async def get_eventhub_properties(self) -> Dict[str, Any]:
         """Get properties of the Event Hub.

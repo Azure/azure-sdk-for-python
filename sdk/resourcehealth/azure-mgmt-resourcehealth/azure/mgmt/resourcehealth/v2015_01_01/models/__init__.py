@@ -19,8 +19,8 @@ from ._models_py3 import ServiceImpactingEvent
 from ._models_py3 import ServiceImpactingEventIncidentProperties
 from ._models_py3 import ServiceImpactingEventStatus
 
-from ._microsoft_resource_health_enums import AvailabilityStateValues
-from ._microsoft_resource_health_enums import ReasonChronicityTypes
+from ._resource_health_mgmt_client_enums import AvailabilityStateValues
+from ._resource_health_mgmt_client_enums import ReasonChronicityTypes
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk

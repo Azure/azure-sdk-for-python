@@ -3,7 +3,7 @@
         "action": {
             "actionType": "CreateMonitor",
             "monitorDefinition": {
-                "computeId": "cpu-cluster",
+                "computeId": "spark",
                 "monitoringTarget": "fake_endpoint_id",
                 "signals": {
                     "testSignal": {
@@ -77,7 +77,9 @@
             "prop1": "value"
         },
         "tags": {
-            "tag1": "tag"
+            "tag1": "tag",
+            "compute.spark.resources.instance_type": "standard_e8s_v3",
+            "compute.spark.resources.runtime_version": "3.2"
         }
     }
 }
