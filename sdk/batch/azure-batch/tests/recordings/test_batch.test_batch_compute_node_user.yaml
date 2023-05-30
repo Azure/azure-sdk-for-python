@@ -230,7 +230,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"name": "BatchPythonSDKUser", "isAdmin": false, "password": "kt#_gahr!@aGERDXA"}'
+    body: '{"name": "BatchPythonSDKUser", "isAdmin": false, "password": "secret"}'
     headers:
       Accept:
       - application/json
@@ -239,7 +239,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '81'
+      - '70'
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:

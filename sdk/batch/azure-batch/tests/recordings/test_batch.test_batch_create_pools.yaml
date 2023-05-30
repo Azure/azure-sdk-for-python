@@ -276,7 +276,7 @@ interactions:
       "sku": "2016-Datacenter-smalldisk"}, "nodeAgentSKUId": "batch.node.windows amd64",
       "windowsConfiguration": {"enableAutomaticUpdates": true}}, "taskSchedulingPolicy":
       {"nodeFillType": "pack"}, "userAccounts": [{"name": "test-user-1", "password":
-      "kt#_gahr!@aGERDXA"}, {"name": "test-user-2", "password": "kt#_gahr!@aGERDXA",
+      "secret"}, {"name": "test-user-2", "password": "secret",
       "elevationLevel": "admin"}]}'
     headers:
       Accept:
@@ -286,7 +286,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '526'
+      - '504'
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
