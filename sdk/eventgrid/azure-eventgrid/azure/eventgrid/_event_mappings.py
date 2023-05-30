@@ -96,6 +96,48 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AcsRecordingFileStatusUpdatedEventName = 'Microsoft.Communication.RecordingFileStatusUpdated'
 
+    AcsRouterJobCancelledEventName = 'Microsoft.Communication.RouterJobCancelled'
+
+    AcsRouterJobClassificationFailedEventName = 'Microsoft.Communication.RouterJobClassificationFailed'
+
+    AcsRouterJobClassifiedEventName = 'Microsoft.Communication.RouterJobClassified'
+
+    AcsRouterJobClosedEventName = 'Microsoft.Communication.RouterJobClosed'
+
+    AcsRouterJobCompletedEventName = 'Microsoft.Communication.RouterJobCompleted'
+
+    AcsRouterJobDeletedEventName = 'Microsoft.Communication.RouterJobDeleted'
+
+    AcsRouterJobExceptionTriggeredEventName = 'Microsoft.Communication.RouterJobExceptionTriggered'
+
+    AcsRouterJobQueuedEventName = 'Microsoft.Communication.RouterJobQueued'
+
+    AcsRouterJobRecievedEventName = 'Microsoft.Communication.RouterJobReceived'
+
+    AcsRouterJobSchedulingFailedEventName = 'Microsoft.Communication.RouterJobSchedulingFailed'
+
+    AcsRouterJobUnassignedEventName = 'Microsoft.Communication.RouterJobUnassigned'
+
+    AcsRouterJobWaitingForActivationEventName = 'Microsoft.Communication.RouterJobWaitingForActivation'
+
+    AcsRouterJobWorkerSelectorsExpiredEventName = 'Microsoft.Communication.RouterJobWorkerSelectorsExpired'
+
+    AcsRouterWorkerDeletedEventName = 'Microsoft.Communication.RouterWorkerDeleted'
+
+    AcsRouterWorkerDeregisteredEventName = 'Microsoft.Communication.RouterWorkerDeregistered'
+
+    AcsRouterWorkerOfferAcceptedEventName = 'Microsoft.Communication.RouterWorkerOfferAccepted'
+
+    AcsRouterWorkerOfferDeclinedEventName = 'Microsoft.Communication.RouterWorkerOfferDeclined'
+
+    AcsRouterWorkerOfferExpiredEventName = 'Microsoft.Communication.RouterWorkerOfferExpired'
+
+    AcsRouterWorkerOfferIssuedEventName = 'Microsoft.Communication.RouterWorkerOfferIssued'
+
+    AcsRouterWorkerOfferRevokedEventName = 'Microsoft.Communication.RouterWorkerOfferRevoked'
+
+    AcsRouterWorkerRegisteredEventName = 'Microsoft.Communication.RouterWorkerRegistered'
+
     AcsSmsDeliveryReportReceivedEventName = 'Microsoft.Communication.SMSDeliveryReportReceived'
 
     AcsSmsReceivedEventName = 'Microsoft.Communication.SMSReceived'
@@ -166,7 +208,11 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ContainerRegistryImagePushedEventName = 'Microsoft.ContainerRegistry.ImagePushed'
 
+    ContainerServiceClusterOutOfSupportEventName = 'Microsoft.ContainerService.ClusterOutOfSupport'
+
     ContainerServiceNewKubernetesVersionAvailableEventName = 'Microsoft.ContainerService.NewKubernetesVersionAvailable'
+
+    ContainerServiceNodePoolRollingProgressEventName = 'Microsoft.ContainerService.NodePoolRollingProgress'
 
     DataBoxCopyCompletedEventName = 'Microsoft.DataBox.CopyCompleted'
 
@@ -353,41 +399,6 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     StorageTaskCompletedEventName = 'Microsoft.Storage.StorageTaskCompleted'
 
-    StorageTaskQueuedEventName = 'Microsoft.Storage.StorageTaskQueued'
-
-    SubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
-
-    SubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
-
-    WebAppServicePlanUpdatedEventName = 'Microsoft.Web.AppServicePlanUpdated'
-
-    WebAppUpdatedEventName = 'Microsoft.Web.AppUpdated'
-
-    WebBackupOperationCompletedEventName = 'Microsoft.Web.BackupOperationCompleted'
-
-    WebBackupOperationFailedEventName = 'Microsoft.Web.BackupOperationFailed'
-
-    WebBackupOperationStartedEventName = 'Microsoft.Web.BackupOperationStarted'
-
-    WebRestoreOperationCompletedEventName = 'Microsoft.Web.RestoreOperationCompleted'
-
-    WebRestoreOperationFailedEventName = 'Microsoft.Web.RestoreOperationFailed'
-
-    WebRestoreOperationStartedEventName = 'Microsoft.Web.RestoreOperationStarted'
-
-    WebSlotSwapCompletedEventName = 'Microsoft.Web.SlotSwapCompleted'
-
-    WebSlotSwapFailedEventName = 'Microsoft.Web.SlotSwapFailed'
-
-    WebSlotSwapStartedEventName = 'Microsoft.Web.SlotSwapStarted'
-
-    WebSlotSwapWithPreviewCancelledEventName = 'Microsoft.Web.SlotSwapWithPreviewCancelled'
-
-    WebSlotSwapWithPreviewStartedEventName = 'Microsoft.Web.SlotSwapWithPreviewStarted'
-
-    ContainerRegistryArtifactEventName = 'Microsoft.AppConfiguration.KeyValueModified'
-
-    KeyVaultAccessPolicyChangedEventName = 'Microsoft.KeyVault.VaultAccessPolicyChanged'
 
     ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
 
