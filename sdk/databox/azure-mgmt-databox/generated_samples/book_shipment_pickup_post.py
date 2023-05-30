@@ -26,12 +26,12 @@ from azure.mgmt.databox import DataBoxManagementClient
 def main():
     client = DataBoxManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="YourSubscriptionId",
+        subscription_id="fa68082f-8ff7-4a25-95c7-ce9da541242f",
     )
 
     response = client.jobs.book_shipment_pick_up(
-        resource_group_name="YourResourceGroupName",
-        job_name="TestJobName1",
+        resource_group_name="bvttoolrg6",
+        job_name="TJ-636646322037905056",
         shipment_pick_up_request={
             "endTime": "2019-09-22T18:30:00Z",
             "shipmentLocation": "Front desk",

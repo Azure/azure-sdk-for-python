@@ -181,14 +181,12 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy["HTTPRequestType", HTTPResponseT
         prefix: Optional[str] = None,
         **kwargs,  # pylint: disable=unused-argument
     ) -> None:
-        super().__init__()
-        if not hasattr(credential, "key"):
-            raise TypeError("String is not a supported credential input type. Use an instance of AzureKeyCredential.")
+        super(AzureKeyCredentialPolicy, self).__init__()
+        self._credential = credential
         if not name:
             raise ValueError("name can not be None or empty")
         if not isinstance(name, str):
             raise TypeError("name must be a string.")
-        self._credential = credential
         self._name = name
         self._prefix = prefix + " " if prefix else ""
 

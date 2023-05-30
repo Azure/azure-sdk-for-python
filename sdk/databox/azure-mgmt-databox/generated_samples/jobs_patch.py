@@ -26,30 +26,30 @@ from azure.mgmt.databox import DataBoxManagementClient
 def main():
     client = DataBoxManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="YourSubscriptionId",
+        subscription_id="fa68082f-8ff7-4a25-95c7-ce9da541242f",
     )
 
     response = client.jobs.begin_update(
-        resource_group_name="YourResourceGroupName",
-        job_name="TestJobName1",
+        resource_group_name="SdkRg5154",
+        job_name="SdkJob952",
         job_resource_update_parameter={
             "properties": {
                 "details": {
                     "contactDetails": {
-                        "contactName": "XXXX XXXX",
-                        "emailList": ["xxxx@xxxx.xxx"],
-                        "phone": "0000000000",
-                        "phoneExtension": "",
+                        "contactName": "Update Job",
+                        "emailList": ["testing@microsoft.com"],
+                        "phone": "1234567890",
+                        "phoneExtension": "1234",
                     },
                     "shippingAddress": {
                         "addressType": "Commercial",
-                        "city": "XXXX XXXX",
-                        "companyName": "XXXX XXXX",
-                        "country": "XX",
-                        "postalCode": "00000",
-                        "stateOrProvince": "XX",
-                        "streetAddress1": "XXXX XXXX",
-                        "streetAddress2": "XXXX XXXX",
+                        "city": "San Francisco",
+                        "companyName": "Microsoft",
+                        "country": "US",
+                        "postalCode": "94107",
+                        "stateOrProvince": "CA",
+                        "streetAddress1": "16 TOWNSEND ST",
+                        "streetAddress2": "Unit 1",
                     },
                 }
             }

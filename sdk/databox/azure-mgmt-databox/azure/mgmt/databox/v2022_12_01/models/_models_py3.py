@@ -766,10 +766,6 @@ class CopyProgress(_serialization.Model):  # pylint: disable=too-many-instance-a
     :ivar is_enumeration_in_progress: To indicate if enumeration of data is in progress.
      Until this is true, the TotalBytesToProcess may not be valid.
     :vartype is_enumeration_in_progress: bool
-    :ivar error: Error, if any, in the stage.
-    :vartype error: ~azure.mgmt.databox.v2022_12_01.models.CloudError
-    :ivar actions: Available actions on the job.
-    :vartype actions: list[str or ~azure.mgmt.databox.v2022_12_01.models.CustomerResolutionCode]
     """
 
     _validation = {
@@ -788,8 +784,6 @@ class CopyProgress(_serialization.Model):  # pylint: disable=too-many-instance-a
         "directories_errored_out": {"readonly": True},
         "invalid_directories_processed": {"readonly": True},
         "is_enumeration_in_progress": {"readonly": True},
-        "error": {"readonly": True},
-        "actions": {"readonly": True},
     }
 
     _attribute_map = {
@@ -808,8 +802,6 @@ class CopyProgress(_serialization.Model):  # pylint: disable=too-many-instance-a
         "directories_errored_out": {"key": "directoriesErroredOut", "type": "int"},
         "invalid_directories_processed": {"key": "invalidDirectoriesProcessed", "type": "int"},
         "is_enumeration_in_progress": {"key": "isEnumerationInProgress", "type": "bool"},
-        "error": {"key": "error", "type": "CloudError"},
-        "actions": {"key": "actions", "type": "[str]"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -830,8 +822,6 @@ class CopyProgress(_serialization.Model):  # pylint: disable=too-many-instance-a
         self.directories_errored_out = None
         self.invalid_directories_processed = None
         self.is_enumeration_in_progress = None
-        self.error = None
-        self.actions = None
 
 
 class ValidationRequest(_serialization.Model):
@@ -1293,10 +1283,6 @@ class DataBoxCustomerDiskCopyProgress(CopyProgress):  # pylint: disable=too-many
     :ivar is_enumeration_in_progress: To indicate if enumeration of data is in progress.
      Until this is true, the TotalBytesToProcess may not be valid.
     :vartype is_enumeration_in_progress: bool
-    :ivar error: Error, if any, in the stage.
-    :vartype error: ~azure.mgmt.databox.v2022_12_01.models.CloudError
-    :ivar actions: Available actions on the job.
-    :vartype actions: list[str or ~azure.mgmt.databox.v2022_12_01.models.CustomerResolutionCode]
     :ivar serial_number: Disk Serial Number.
     :vartype serial_number: str
     :ivar copy_status: The Status of the copy. Known values are: "NotStarted", "InProgress",
@@ -1323,8 +1309,6 @@ class DataBoxCustomerDiskCopyProgress(CopyProgress):  # pylint: disable=too-many
         "directories_errored_out": {"readonly": True},
         "invalid_directories_processed": {"readonly": True},
         "is_enumeration_in_progress": {"readonly": True},
-        "error": {"readonly": True},
-        "actions": {"readonly": True},
         "serial_number": {"readonly": True},
         "copy_status": {"readonly": True},
     }
@@ -1345,8 +1329,6 @@ class DataBoxCustomerDiskCopyProgress(CopyProgress):  # pylint: disable=too-many
         "directories_errored_out": {"key": "directoriesErroredOut", "type": "int"},
         "invalid_directories_processed": {"key": "invalidDirectoriesProcessed", "type": "int"},
         "is_enumeration_in_progress": {"key": "isEnumerationInProgress", "type": "bool"},
-        "error": {"key": "error", "type": "CloudError"},
-        "actions": {"key": "actions", "type": "[str]"},
         "serial_number": {"key": "serialNumber", "type": "str"},
         "copy_status": {"key": "copyStatus", "type": "str"},
     }
@@ -1782,10 +1764,6 @@ class DataBoxDiskCopyProgress(_serialization.Model):
      "DriveNotReceived", "UnsupportedDrive", "OtherServiceError", "OtherUserError",
      "DriveNotDetected", "DriveCorrupted", and "MetadataFilesModifiedOrRemoved".
     :vartype status: str or ~azure.mgmt.databox.v2022_12_01.models.CopyStatus
-    :ivar error: Error, if any, in the stage.
-    :vartype error: ~azure.mgmt.databox.v2022_12_01.models.CloudError
-    :ivar actions: Available actions on the job.
-    :vartype actions: list[str or ~azure.mgmt.databox.v2022_12_01.models.CustomerResolutionCode]
     """
 
     _validation = {
@@ -1793,8 +1771,6 @@ class DataBoxDiskCopyProgress(_serialization.Model):
         "bytes_copied": {"readonly": True},
         "percent_complete": {"readonly": True},
         "status": {"readonly": True},
-        "error": {"readonly": True},
-        "actions": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1802,8 +1778,6 @@ class DataBoxDiskCopyProgress(_serialization.Model):
         "bytes_copied": {"key": "bytesCopied", "type": "int"},
         "percent_complete": {"key": "percentComplete", "type": "int"},
         "status": {"key": "status", "type": "str"},
-        "error": {"key": "error", "type": "CloudError"},
-        "actions": {"key": "actions", "type": "[str]"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -1813,8 +1787,6 @@ class DataBoxDiskCopyProgress(_serialization.Model):
         self.bytes_copied = None
         self.percent_complete = None
         self.status = None
-        self.error = None
-        self.actions = None
 
 
 class GranularCopyLogDetails(_serialization.Model):
@@ -1936,10 +1908,6 @@ class GranularCopyProgress(_serialization.Model):  # pylint: disable=too-many-in
     :ivar is_enumeration_in_progress: To indicate if enumeration of data is in progress.
      Until this is true, the TotalBytesToProcess may not be valid.
     :vartype is_enumeration_in_progress: bool
-    :ivar error: Error, if any, in the stage.
-    :vartype error: ~azure.mgmt.databox.v2022_12_01.models.CloudError
-    :ivar actions: Available actions on the job.
-    :vartype actions: list[str or ~azure.mgmt.databox.v2022_12_01.models.CustomerResolutionCode]
     """
 
     _validation = {
@@ -1958,8 +1926,6 @@ class GranularCopyProgress(_serialization.Model):  # pylint: disable=too-many-in
         "directories_errored_out": {"readonly": True},
         "invalid_directories_processed": {"readonly": True},
         "is_enumeration_in_progress": {"readonly": True},
-        "error": {"readonly": True},
-        "actions": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1978,8 +1944,6 @@ class GranularCopyProgress(_serialization.Model):  # pylint: disable=too-many-in
         "directories_errored_out": {"key": "directoriesErroredOut", "type": "int"},
         "invalid_directories_processed": {"key": "invalidDirectoriesProcessed", "type": "int"},
         "is_enumeration_in_progress": {"key": "isEnumerationInProgress", "type": "bool"},
-        "error": {"key": "error", "type": "CloudError"},
-        "actions": {"key": "actions", "type": "[str]"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -2000,8 +1964,6 @@ class GranularCopyProgress(_serialization.Model):  # pylint: disable=too-many-in
         self.directories_errored_out = None
         self.invalid_directories_processed = None
         self.is_enumeration_in_progress = None
-        self.error = None
-        self.actions = None
 
 
 class DataBoxDiskGranularCopyProgress(GranularCopyProgress):  # pylint: disable=too-many-instance-attributes
@@ -2046,10 +2008,6 @@ class DataBoxDiskGranularCopyProgress(GranularCopyProgress):  # pylint: disable=
     :ivar is_enumeration_in_progress: To indicate if enumeration of data is in progress.
      Until this is true, the TotalBytesToProcess may not be valid.
     :vartype is_enumeration_in_progress: bool
-    :ivar error: Error, if any, in the stage.
-    :vartype error: ~azure.mgmt.databox.v2022_12_01.models.CloudError
-    :ivar actions: Available actions on the job.
-    :vartype actions: list[str or ~azure.mgmt.databox.v2022_12_01.models.CustomerResolutionCode]
     :ivar serial_number: Disk Serial Number.
     :vartype serial_number: str
     :ivar copy_status: The Status of the copy. Known values are: "NotStarted", "InProgress",
@@ -2076,8 +2034,6 @@ class DataBoxDiskGranularCopyProgress(GranularCopyProgress):  # pylint: disable=
         "directories_errored_out": {"readonly": True},
         "invalid_directories_processed": {"readonly": True},
         "is_enumeration_in_progress": {"readonly": True},
-        "error": {"readonly": True},
-        "actions": {"readonly": True},
         "serial_number": {"readonly": True},
         "copy_status": {"readonly": True},
     }
@@ -2098,8 +2054,6 @@ class DataBoxDiskGranularCopyProgress(GranularCopyProgress):  # pylint: disable=
         "directories_errored_out": {"key": "directoriesErroredOut", "type": "int"},
         "invalid_directories_processed": {"key": "invalidDirectoriesProcessed", "type": "int"},
         "is_enumeration_in_progress": {"key": "isEnumerationInProgress", "type": "bool"},
-        "error": {"key": "error", "type": "CloudError"},
-        "actions": {"key": "actions", "type": "[str]"},
         "serial_number": {"key": "serialNumber", "type": "str"},
         "copy_status": {"key": "copyStatus", "type": "str"},
     }
@@ -3629,35 +3583,22 @@ class EncryptionPreferences(_serialization.Model):
     :ivar double_encryption: Defines secondary layer of software-based encryption enablement. Known
      values are: "Enabled" and "Disabled".
     :vartype double_encryption: str or ~azure.mgmt.databox.v2022_12_01.models.DoubleEncryption
-    :ivar hardware_encryption: Defines Hardware level encryption (Only for disk). Known values are:
-     "Enabled" and "Disabled".
-    :vartype hardware_encryption: str or ~azure.mgmt.databox.v2022_12_01.models.HardwareEncryption
     """
 
     _attribute_map = {
         "double_encryption": {"key": "doubleEncryption", "type": "str"},
-        "hardware_encryption": {"key": "hardwareEncryption", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        double_encryption: Union[str, "_models.DoubleEncryption"] = "Disabled",
-        hardware_encryption: Optional[Union[str, "_models.HardwareEncryption"]] = None,
-        **kwargs: Any
+        self, *, double_encryption: Union[str, "_models.DoubleEncryption"] = "Disabled", **kwargs: Any
     ) -> None:
         """
         :keyword double_encryption: Defines secondary layer of software-based encryption enablement.
          Known values are: "Enabled" and "Disabled".
         :paramtype double_encryption: str or ~azure.mgmt.databox.v2022_12_01.models.DoubleEncryption
-        :keyword hardware_encryption: Defines Hardware level encryption (Only for disk). Known values
-         are: "Enabled" and "Disabled".
-        :paramtype hardware_encryption: str or
-         ~azure.mgmt.databox.v2022_12_01.models.HardwareEncryption
         """
         super().__init__(**kwargs)
         self.double_encryption = double_encryption
-        self.hardware_encryption = hardware_encryption
 
 
 class ErrorDetail(_serialization.Model):
@@ -5248,7 +5189,7 @@ class ShipmentPickUpResponse(_serialization.Model):
         self.ready_by_time = None
 
 
-class ShippingAddress(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ShippingAddress(_serialization.Model):
     """Shipping address where customer wishes to receive the device.
 
     All required parameters must be populated in order to send to Azure.
@@ -5273,11 +5214,6 @@ class ShippingAddress(_serialization.Model):  # pylint: disable=too-many-instanc
     :vartype company_name: str
     :ivar address_type: Type of address. Known values are: "None", "Residential", and "Commercial".
     :vartype address_type: str or ~azure.mgmt.databox.v2022_12_01.models.AddressType
-    :ivar skip_address_validation: Flag to indicate if customer has chosen to skip default address
-     validation.
-    :vartype skip_address_validation: bool
-    :ivar tax_identification_number: Tax Identification Number.
-    :vartype tax_identification_number: str
     """
 
     _validation = {
@@ -5296,8 +5232,6 @@ class ShippingAddress(_serialization.Model):  # pylint: disable=too-many-instanc
         "zip_extended_code": {"key": "zipExtendedCode", "type": "str"},
         "company_name": {"key": "companyName", "type": "str"},
         "address_type": {"key": "addressType", "type": "str"},
-        "skip_address_validation": {"key": "skipAddressValidation", "type": "bool"},
-        "tax_identification_number": {"key": "taxIdentificationNumber", "type": "str"},
     }
 
     def __init__(
@@ -5313,8 +5247,6 @@ class ShippingAddress(_serialization.Model):  # pylint: disable=too-many-instanc
         zip_extended_code: Optional[str] = None,
         company_name: Optional[str] = None,
         address_type: Union[str, "_models.AddressType"] = "None",
-        skip_address_validation: Optional[bool] = None,
-        tax_identification_number: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5339,11 +5271,6 @@ class ShippingAddress(_serialization.Model):  # pylint: disable=too-many-instanc
         :keyword address_type: Type of address. Known values are: "None", "Residential", and
          "Commercial".
         :paramtype address_type: str or ~azure.mgmt.databox.v2022_12_01.models.AddressType
-        :keyword skip_address_validation: Flag to indicate if customer has chosen to skip default
-         address validation.
-        :paramtype skip_address_validation: bool
-        :keyword tax_identification_number: Tax Identification Number.
-        :paramtype tax_identification_number: str
         """
         super().__init__(**kwargs)
         self.street_address1 = street_address1
@@ -5356,8 +5283,6 @@ class ShippingAddress(_serialization.Model):  # pylint: disable=too-many-instanc
         self.zip_extended_code = zip_extended_code
         self.company_name = company_name
         self.address_type = address_type
-        self.skip_address_validation = skip_address_validation
-        self.tax_identification_number = tax_identification_number
 
 
 class Sku(_serialization.Model):

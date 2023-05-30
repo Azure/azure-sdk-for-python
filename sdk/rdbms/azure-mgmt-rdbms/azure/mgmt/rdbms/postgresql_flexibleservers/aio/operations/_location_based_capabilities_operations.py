@@ -28,7 +28,6 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._location_based_capabilities_operations import build_execute_request
-from .._vendor import PostgreSQLManagementClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -54,16 +53,16 @@ class LocationBasedCapabilitiesOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def execute(self, location_name: str, **kwargs: Any) -> AsyncIterable["_models.FlexibleServerCapability"]:
+    def execute(self, location_name: str, **kwargs: Any) -> AsyncIterable["_models.CapabilityProperties"]:
         """Get capabilities at specified location in a given subscription.
 
         :param location_name: The name of the location. Required.
         :type location_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either FlexibleServerCapability or the result of
+        :return: An iterator like instance of either CapabilityProperties or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.postgresql_flexibleservers.models.FlexibleServerCapability]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.rdbms.postgresql_flexibleservers.models.CapabilityProperties]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}

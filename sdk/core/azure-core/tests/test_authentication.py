@@ -300,7 +300,7 @@ def test_azure_key_credential_policy(http_request):
 
 
 def test_azure_key_credential_policy_raises():
-    """Tests AzureKeyCredential and AzureKeyCredentialPolicy raises with non-compliant input parameters."""
+    """Tests AzureKeyCredential and AzureKeyCredentialPolicy raises with non-string input parameters."""
     api_key = 1234
     key_header = 5678
     with pytest.raises(TypeError):
@@ -309,9 +309,6 @@ def test_azure_key_credential_policy_raises():
     credential = AzureKeyCredential(str(api_key))
     with pytest.raises(TypeError):
         credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
-
-    with pytest.raises(TypeError):
-        credential_policy = AzureKeyCredentialPolicy(credential=str(api_key), name=key_header)
 
 
 def test_azure_key_credential_updates():

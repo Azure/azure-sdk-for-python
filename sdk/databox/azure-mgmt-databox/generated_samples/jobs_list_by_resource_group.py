@@ -26,11 +26,11 @@ from azure.mgmt.databox import DataBoxManagementClient
 def main():
     client = DataBoxManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="YourSubscriptionId",
+        subscription_id="fa68082f-8ff7-4a25-95c7-ce9da541242f",
     )
 
     response = client.jobs.list_by_resource_group(
-        resource_group_name="YourResourceGroupName",
+        resource_group_name="SdkRg5154",
     )
     for item in response:
         print(item)

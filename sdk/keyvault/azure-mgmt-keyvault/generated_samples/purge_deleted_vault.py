@@ -29,10 +29,11 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    client.vaults.begin_purge_deleted(
+    response = client.vaults.begin_purge_deleted(
         vault_name="sample-vault",
         location="westus",
     ).result()
+    print(response)
 
 
 # x-ms-original-file: specification/keyvault/resource-manager/Microsoft.KeyVault/stable/2023-02-01/examples/purgeDeletedVault.json

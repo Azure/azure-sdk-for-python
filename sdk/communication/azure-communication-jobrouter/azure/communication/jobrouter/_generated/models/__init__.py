@@ -18,7 +18,6 @@ from ._models import CommunicationErrorResponse
 from ._models import CompleteJobRequest
 from ._models import ConditionalQueueSelectorAttachment
 from ._models import ConditionalWorkerSelectorAttachment
-from ._models import DeclineJobOfferRequest
 from ._models import DirectMapRule
 from ._models import DistributionMode
 from ._models import DistributionPolicy
@@ -94,7 +93,6 @@ __all__ = [
     "CompleteJobRequest",
     "ConditionalQueueSelectorAttachment",
     "ConditionalWorkerSelectorAttachment",
-    "DeclineJobOfferRequest",
     "DirectMapRule",
     "DistributionMode",
     "DistributionPolicy",

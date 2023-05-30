@@ -26,17 +26,17 @@ from azure.mgmt.databox import DataBoxManagementClient
 def main():
     client = DataBoxManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="YourSubscriptionId",
+        subscription_id="fa68082f-8ff7-4a25-95c7-ce9da541242f",
     )
 
     response = client.jobs.begin_update(
-        resource_group_name="YourResourceGroupName",
-        job_name="TestJobName1",
+        resource_group_name="SdkRg9765",
+        job_name="SdkJob2965",
         job_resource_update_parameter={
             "identity": {
                 "type": "SystemAssigned,UserAssigned",
                 "userAssignedIdentities": {
-                    "/subscriptions/YourSubscriptionId/resourceGroups/YourResourceGroupName/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testIdentity": {}
+                    "/subscriptions/fa68082f-8ff7-4a25-95c7-ce9da541242f/resourceGroups/akvenkat/providers/Microsoft.ManagedIdentity/userAssignedIdentities/sdkIdentity": {}
                 },
             },
             "properties": {
@@ -45,12 +45,12 @@ def main():
                         "identityProperties": {
                             "type": "UserAssigned",
                             "userAssigned": {
-                                "resourceId": "/subscriptions/YourSubscriptionId/resourceGroups/YourResourceGroupName/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testIdentity"
+                                "resourceId": "/subscriptions/fa68082f-8ff7-4a25-95c7-ce9da541242f/resourceGroups/akvenkat/providers/Microsoft.ManagedIdentity/userAssignedIdentities/sdkIdentity"
                             },
                         },
                         "kekType": "CustomerManaged",
-                        "kekUrl": "https://xxx.xxx.xx",
-                        "kekVaultResourceID": "/subscriptions/YourSubscriptionId/resourceGroups/YourResourceGroupName/providers/Microsoft.KeyVault/vaults/YourKeyVaultName",
+                        "kekUrl": "https://sdkkeyvault.vault.azure.net/keys/SSDKEY/",
+                        "kekVaultResourceID": "/subscriptions/fa68082f-8ff7-4a25-95c7-ce9da541242f/resourceGroups/akvenkat/providers/Microsoft.KeyVault/vaults/SDKKeyVault",
                     }
                 }
             },

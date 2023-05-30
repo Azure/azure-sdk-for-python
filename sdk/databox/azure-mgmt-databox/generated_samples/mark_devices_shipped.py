@@ -26,15 +26,13 @@ from azure.mgmt.databox import DataBoxManagementClient
 def main():
     client = DataBoxManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="YourSubscriptionId",
+        subscription_id="fa68082f-8ff7-4a25-95c7-ce9da541242f",
     )
 
     response = client.jobs.mark_devices_shipped(
-        job_name="TestJobName1",
-        resource_group_name="YourResourceGroupName",
-        mark_devices_shipped_request={
-            "deliverToDcPackageDetails": {"carrierName": "testCarrier", "trackingId": "000000"}
-        },
+        job_name="SdkJob8367",
+        resource_group_name="SdkRg9836",
+        mark_devices_shipped_request={"deliverToDcPackageDetails": {"carrierName": "DHL", "trackingId": "123456"}},
     )
     print(response)
 

@@ -16,7 +16,6 @@ from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from ._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_PREFIX,
-    REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE,
     ServiceFabricEnvironmentVariable,
     AzureFunctionEnvironmentVariable,
     AzureWebAppEnvironmentVariable,
@@ -116,6 +115,7 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
             key_filter=select.key_filter, label_filter=select.label_filter
         )
         for config in configurations:
+
             trimmed_key = config.key
             # Trim the key if it starts with one of the prefixes provided
             for trim in provider._trim_prefixes:
@@ -146,29 +146,26 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     return provider
 
 
-def _get_headers(key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions], **kwargs) -> str:
-    headers = kwargs.pop("headers", {})
-    if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() != "true":
-        correlation_context = "RequestType=Startup"
-        if key_vault_options and (
-            key_vault_options.credential or key_vault_options.client_configs or key_vault_options.secret_resolver
-        ):
-            correlation_context += ",UsesKeyVault"
-        host_type = ""
-        if AzureFunctionEnvironmentVariable in os.environ:
-            host_type = "AzureFunction"
-        elif AzureWebAppEnvironmentVariable in os.environ:
-            host_type = "AzureWebApp"
-        elif ContainerAppEnvironmentVariable in os.environ:
-            host_type = "ContainerApp"
-        elif KubernetesEnvironmentVariable in os.environ:
-            host_type = "Kubernetes"
-        elif ServiceFabricEnvironmentVariable in os.environ:
-            host_type = "ServiceFabric"
-        if host_type:
-            correlation_context += ",Host=" + host_type
-        headers["Correlation-Context"] = correlation_context
-    return headers
+def _get_correlation_context(key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions]) -> str:
+    correlation_context = "RequestType=Startup"
+    if key_vault_options and (
+        key_vault_options.credential or key_vault_options.client_configs or key_vault_options.secret_resolver
+    ):
+        correlation_context += ",UsesKeyVault"
+    host_type = ""
+    if os.environ.get(AzureFunctionEnvironmentVariable) is not None:
+        host_type = "AzureFunctions"
+    elif os.environ.get(AzureWebAppEnvironmentVariable) is not None:
+        host_type = "AzureWebApps"
+    elif os.environ.get(ContainerAppEnvironmentVariable) is not None:
+        host_type = "ContainerApps"
+    elif os.environ.get(KubernetesEnvironmentVariable) is not None:
+        host_type = "Kubernetes"
+    elif os.environ.get(ServiceFabricEnvironmentVariable) is not None:
+        host_type = "ServiceFabric"
+    if host_type:
+        correlation_context += ",Host=" + host_type
+    return correlation_context
 
 
 def _buildprovider(
@@ -180,29 +177,17 @@ def _buildprovider(
     ) -> "AzureAppConfigurationProvider":
     #pylint:disable=protected-access
     provider = AzureAppConfigurationProvider()
-    headers = _get_headers(key_vault_options, **kwargs)
-
-    retry_total = kwargs.pop("retry_total", 2)
-    retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
+    headers = kwargs.pop("headers", {})
+    headers["Correlation-Context"] = _get_correlation_context(key_vault_options)
+    useragent = USER_AGENT
 
     if connection_string:
         provider._client = AzureAppConfigurationClient.from_connection_string(
-            connection_string,
-            user_agent=USER_AGENT,
-            headers=headers,
-            retry_total=retry_total,
-            retry_backoff_max=retry_backoff_max,
-            **kwargs
+            connection_string, user_agent=useragent, headers=headers, **kwargs
         )
         return provider
     provider._client = AzureAppConfigurationClient(
-        endpoint,
-        credential,
-        user_agent=USER_AGENT,
-        headers=headers,
-        retry_total=retry_total,
-        retry_backoff_max=retry_backoff_max,
-        **kwargs
+        endpoint, credential, user_agent=useragent, headers=headers, **kwargs
     )
     return provider
 

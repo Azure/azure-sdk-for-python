@@ -26,11 +26,11 @@ from azure.mgmt.databox import DataBoxManagementClient
 def main():
     client = DataBoxManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="YourSubscriptionId",
+        subscription_id="fa68082f-8ff7-4a25-95c7-ce9da541242f",
     )
 
     response = client.service.validate_inputs_by_resource_group(
-        resource_group_name="YourResourceGroupName",
+        resource_group_name="SdkRg6861",
         location="westus",
         validation_request={
             "individualRequestDetails": [
@@ -39,7 +39,7 @@ def main():
                         {
                             "accountDetails": {
                                 "dataAccountType": "StorageAccount",
-                                "storageAccountId": "/subscriptions/YourSubscriptionId/resourcegroups/YourResourceGroupName/providers/Microsoft.Storage/storageAccounts/YourStorageAccountName",
+                                "storageAccountId": "/subscriptions/fa68082f-8ff7-4a25-95c7-ce9da541242f/resourcegroups/databoxbvt/providers/Microsoft.Storage/storageAccounts/databoxbvttestaccount",
                             }
                         }
                     ],
@@ -51,20 +51,20 @@ def main():
                     "deviceType": "DataBox",
                     "shippingAddress": {
                         "addressType": "Commercial",
-                        "city": "XXXX XXXX",
-                        "companyName": "XXXX XXXX",
-                        "country": "XX",
-                        "postalCode": "00000",
-                        "stateOrProvince": "XX",
-                        "streetAddress1": "XXXX XXXX",
-                        "streetAddress2": "XXXX XXXX",
+                        "city": "San Francisco",
+                        "companyName": "Microsoft",
+                        "country": "US",
+                        "postalCode": "94107",
+                        "stateOrProvince": "CA",
+                        "streetAddress1": "16 TOWNSEND ST",
+                        "streetAddress2": "Unit 1",
                     },
                     "transportPreferences": {"preferredShipmentType": "MicrosoftManaged"},
                     "validationType": "ValidateAddress",
                 },
                 {"validationType": "ValidateSubscriptionIsAllowedToCreateJob"},
                 {
-                    "country": "XX",
+                    "country": "US",
                     "deviceType": "DataBox",
                     "location": "westus",
                     "transferType": "ImportToAzure",

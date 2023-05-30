@@ -2337,71 +2337,8 @@ class JobRouterOperations:
 
         return deserialized
 
-    @overload
-    async def decline_job_action(
-        self,
-        worker_id: str,
-        offer_id: str,
-        decline_job_offer_request: Optional[_models.DeclineJobOfferRequest] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> JSON:
-        """Declines an offer to work on a job.
-
-        Declines an offer to work on a job.
-
-        :param worker_id: Id of the worker. Required.
-        :type worker_id: str
-        :param offer_id: Id of the offer. Required.
-        :type offer_id: str
-        :param decline_job_offer_request: Request model for declining offer. Default value is None.
-        :type decline_job_offer_request: ~azure.communication.jobrouter.models.DeclineJobOfferRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: JSON
-        :rtype: JSON
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def decline_job_action(
-        self,
-        worker_id: str,
-        offer_id: str,
-        decline_job_offer_request: Optional[IO] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> JSON:
-        """Declines an offer to work on a job.
-
-        Declines an offer to work on a job.
-
-        :param worker_id: Id of the worker. Required.
-        :type worker_id: str
-        :param offer_id: Id of the offer. Required.
-        :type offer_id: str
-        :param decline_job_offer_request: Request model for declining offer. Default value is None.
-        :type decline_job_offer_request: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Known values are: 'application/*+json', 'application/json', 'text/json'. Default value is
-         "application/json".
-        :paramtype content_type: str
-        :return: JSON
-        :rtype: JSON
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace_async
-    async def decline_job_action(
-        self,
-        worker_id: str,
-        offer_id: str,
-        decline_job_offer_request: Optional[Union[_models.DeclineJobOfferRequest, IO]] = None,
-        **kwargs: Any
-    ) -> JSON:
+    async def decline_job_action(self, worker_id: str, offer_id: str, **kwargs: Any) -> JSON:
         """Declines an offer to work on a job.
 
         Declines an offer to work on a job.
@@ -2410,13 +2347,6 @@ class JobRouterOperations:
         :type worker_id: str
         :param offer_id: Id of the offer. Required.
         :type offer_id: str
-        :param decline_job_offer_request: Request model for declining offer. Is either a
-         DeclineJobOfferRequest type or a IO type. Default value is None.
-        :type decline_job_offer_request: ~azure.communication.jobrouter.models.DeclineJobOfferRequest
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/*+json',
-         'application/json', 'text/json'. Default value is None.
-        :paramtype content_type: str
         :return: JSON
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2429,30 +2359,15 @@ class JobRouterOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(decline_job_offer_request, (IOBase, bytes)):
-            _content = decline_job_offer_request
-        else:
-            if decline_job_offer_request is not None:
-                _json = self._serialize.body(decline_job_offer_request, "DeclineJobOfferRequest")
-            else:
-                _json = None
 
         request = build_job_router_decline_job_action_request(
             worker_id=worker_id,
             offer_id=offer_id,
-            content_type=content_type,
             api_version=self._config.api_version,
-            json=_json,
-            content=_content,
             headers=_headers,
             params=_params,
         )

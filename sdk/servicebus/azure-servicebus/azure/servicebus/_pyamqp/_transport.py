@@ -56,9 +56,9 @@ from .constants import (
     WEBSOCKET_PORT,
     TransportType,
     AMQP_WS_SUBPROTOCOL,
+    TIMEOUT_INTERVAL,
     WS_TIMEOUT_INTERVAL,
-    SOCKET_TIMEOUT,
-    CONNECT_TIMEOUT,
+    READ_TIMEOUT_INTERVAL,
 )
 from .error import AuthenticationException, ErrorCondition
 
@@ -153,8 +153,8 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         host,
         *,
         port=AMQP_PORT,
-        connect_timeout=CONNECT_TIMEOUT,
-        socket_timeout=SOCKET_TIMEOUT,
+        connect_timeout=None,
+        read_timeout=None,
         socket_settings=None,
         raise_on_initial_eintr=True,
         **kwargs
@@ -167,8 +167,8 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         self.host, self.port = to_host_port(host, port)
         self.network_trace_params = kwargs.get('network_trace_params')
 
-        self.connect_timeout = connect_timeout
-        self.socket_timeout = socket_timeout
+        self.connect_timeout = connect_timeout or TIMEOUT_INTERVAL
+        self.read_timeout = read_timeout or READ_TIMEOUT_INTERVAL
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
 
@@ -180,7 +180,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             self._connect(self.host, self.port, self.connect_timeout)
             self._init_socket(
                 self.socket_settings,
-                self.socket_timeout,
+                self.read_timeout,
             )
             # we've sent the banner; signal connect
             # EINTR, EAGAIN, EWOULDBLOCK would signal that the banner
@@ -193,6 +193,33 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                 self.sock.close()
                 self.sock = None
             raise
+
+    @contextmanager
+    def block_with_timeout(self, timeout):
+        if timeout is None:
+            yield self.sock
+        else:
+            sock = self.sock
+            prev = sock.gettimeout()
+            if prev != timeout:
+                sock.settimeout(timeout)
+            try:
+                yield self.sock
+            except SSLError as exc:
+                if "timed out" in str(exc):
+                    # http://bugs.python.org/issue10272
+                    raise socket.timeout()
+                if "The operation did not complete" in str(exc):
+                    # Non-blocking SSL sockets can throw SSLError
+                    raise socket.timeout()
+                raise
+            except socket.error as exc:
+                if get_errno(exc) == errno.EWOULDBLOCK:
+                    raise socket.timeout()
+                raise
+            finally:
+                if timeout != prev:
+                    sock.settimeout(prev)
 
     @contextmanager
     def block(self):
@@ -299,7 +326,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                     # hurray, we established connection
                     return
 
-    def _init_socket(self, socket_settings, socket_timeout):
+    def _init_socket(self, socket_settings, read_timeout):
         self.sock.settimeout(None)  # set socket back to blocking mode
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
         self._set_socket_options(socket_settings)
@@ -315,7 +342,10 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         #             pack('ll', sec, usec),
         #         )
         self._setup_transport()
-        self.sock.settimeout(socket_timeout)  # set socket to blocking with timeout
+        # TODO: a greater timeout value is needed in long distance communication
+        #  we should either figure out a reasonable value error/dynamically adjust the timeout
+        #  0.2 second is enough for perf analysis
+        self.sock.settimeout(read_timeout)  # set socket back to non-blocking mode
 
     def _get_tcp_socket_defaults(self, sock):   # pylint: disable=no-self-use
         tcp_opts = {}
@@ -473,12 +503,12 @@ class SSLTransport(_AbstractTransport):
     """Transport that works over SSL."""
 
     def __init__(
-        self, host, *, port=AMQPS_PORT, socket_timeout=None, ssl_opts=None, **kwargs
+        self, host, *, port=AMQPS_PORT, connect_timeout=None, ssl_opts=None, **kwargs
     ):
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
         self._read_buffer = BytesIO()
         super(SSLTransport, self).__init__(
-            host, port=port, socket_timeout=socket_timeout, **kwargs
+            host, port=port, connect_timeout=connect_timeout, **kwargs
         )
 
     def _setup_transport(self):
@@ -639,7 +669,7 @@ class SSLTransport(_AbstractTransport):
                 )
 
 
-def Transport(host, transport_type, socket_timeout=None, ssl_opts=True, **kwargs):
+def Transport(host, transport_type, connect_timeout=None, ssl_opts=True, **kwargs):
     """Create transport.
 
     Given a few parameters from the Connection constructor,
@@ -649,7 +679,7 @@ def Transport(host, transport_type, socket_timeout=None, ssl_opts=True, **kwargs
         transport = WebSocketTransport
     else:
         transport = SSLTransport
-    return transport(host, socket_timeout=socket_timeout, ssl_opts=ssl_opts, **kwargs)
+    return transport(host, connect_timeout=connect_timeout, ssl_opts=ssl_opts, **kwargs)
 
 
 class WebSocketTransport(_AbstractTransport):
@@ -658,16 +688,16 @@ class WebSocketTransport(_AbstractTransport):
         host,
         *,
         port=WEBSOCKET_PORT,
-        socket_timeout=None,
+        connect_timeout=None,
         ssl_opts=None,
         **kwargs,
     ):
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
-        self.socket_timeout = socket_timeout or WS_TIMEOUT_INTERVAL
+        self._connect_timeout = connect_timeout or WS_TIMEOUT_INTERVAL
         self._host = host
         self._custom_endpoint = kwargs.get("custom_endpoint")
-        super().__init__(host, port=port, socket_timeout=socket_timeout, **kwargs)
-        self.sock = None
+        super().__init__(host, port=port, connect_timeout=connect_timeout, **kwargs)
+        self.ws = None
         self._http_proxy = kwargs.get("http_proxy", None)
 
     def connect(self):
@@ -691,10 +721,10 @@ class WebSocketTransport(_AbstractTransport):
                 "Please install websocket-client library to use sync websocket transport."
             )
         try:
-            self.sock = create_connection(
+            self.ws = create_connection(
                 url="wss://{}".format(self._custom_endpoint or self._host),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
-                timeout=self.socket_timeout,    # timeout for read/write operations
+                timeout=self._connect_timeout,
                 skip_utf8_validation=True,
                 sslopt=self.sslopts,
                 http_proxy_host=http_proxy_host,
@@ -727,7 +757,7 @@ class WebSocketTransport(_AbstractTransport):
             n -= nbytes
             try:
                 while n:
-                    data = self.sock.recv()
+                    data = self.ws.recv()
                     if len(data) <= n:
                         view[length : length + len(data)] = data
                         n -= len(data)
@@ -747,15 +777,15 @@ class WebSocketTransport(_AbstractTransport):
 
     def close(self):
         with self.socket_lock:
-            if self.sock:
+            if self.ws:
                 self._shutdown_transport()
-                self.sock = None
+                self.ws = None
 
     def _shutdown_transport(self):
         # TODO Sync and Async close functions named differently
         """Do any preliminary work in shutting down the connection."""
-        if self.sock:
-            self.sock.close()
+        if self.ws:
+            self.ws.close()
 
     def _write(self, s):
         """Completely write a string to the peer.
@@ -765,7 +795,7 @@ class WebSocketTransport(_AbstractTransport):
         """
         from websocket import WebSocketConnectionClosedException, WebSocketTimeoutException
         try:
-            self.sock.send_binary(s)
+            self.ws.send_binary(s)
         except AttributeError:
             raise IOError("Websocket connection has already been closed.")
         except WebSocketTimeoutException as e:

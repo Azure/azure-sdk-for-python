@@ -22,7 +22,6 @@ from .generate_utils import (
     gen_typespec,
     update_typespec_location,
     return_origin_path,
-    check_api_version_in_subfolder,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -51,11 +50,8 @@ def del_outdated_folder(readme: str):
             sdk_folder = re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+", line)[0]
             sample_folder = Path(f"sdk/{sdk_folder}/generated_samples")
             if sample_folder.exists():
-                if "azure-mgmt-rdbms" not in str(sample_folder):
-                    shutil.rmtree(sample_folder)
-                    _LOGGER.info(f"remove sample folder: {sample_folder}")
-                else:
-                    _LOGGER.info(f"we don't remove sample folder for rdbms")
+                shutil.rmtree(sample_folder)
+                _LOGGER.info(f"remove sample folder: {sample_folder}")
             else:
                 _LOGGER.info(f"sample folder does not exist: {sample_folder}")
             # remove old generated SDK code
@@ -180,9 +176,6 @@ def main(generate_input, generate_output):
                 f"pip install --ignore-requires-python -e {sdk_code_path}",
                 shell=True,
             )
-
-            # check whether multiapi package has only one api-version in per subfolder
-            check_api_version_in_subfolder(sdk_code_path)
 
             # use multiapi combiner to combine multiapi package
             if package_name in ("azure-mgmt-network"):
