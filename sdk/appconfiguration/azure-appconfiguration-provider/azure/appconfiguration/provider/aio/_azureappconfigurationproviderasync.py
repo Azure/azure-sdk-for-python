@@ -12,8 +12,12 @@ from azure.keyvault.secrets.aio import SecretClient
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
 
 from .._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
-from .._constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_PREFIX, EMPTY_LABEL
-from .._azureappconfigurationprovider import _is_json_content_type, _get_correlation_context
+from .._constants import (
+    FEATURE_MANAGEMENT_KEY,
+    FEATURE_FLAG_PREFIX,
+    EMPTY_LABEL,
+)
+from .._azureappconfigurationprovider import _is_json_content_type, _get_headers
 from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
@@ -107,7 +111,6 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
             key_filter=select.key_filter, label_filter=select.label_filter
         )
         async for config in configurations:
-
             trimmed_key = config.key
             # Trim the key if it starts with one of the prefixes provided
             for trim in provider._trim_prefixes:
@@ -147,17 +150,29 @@ def _buildprovider(
     ) -> "AzureAppConfigurationProvider":
     #pylint:disable=protected-access
     provider = AzureAppConfigurationProvider()
-    headers = kwargs.pop("headers", {})
-    headers["Correlation-Context"] = _get_correlation_context(key_vault_options)
-    useragent = USER_AGENT
+    headers = _get_headers(key_vault_options, **kwargs)
+
+    retry_total = kwargs.pop("retry_total", 2)
+    retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
 
     if connection_string:
         provider._client = AzureAppConfigurationClient.from_connection_string(
-            connection_string, user_agent=useragent, headers=headers, **kwargs
+            connection_string,
+            user_agent=USER_AGENT,
+            headers=headers,
+            retry_total=retry_total,
+            retry_backoff_max=retry_backoff_max,
+            **kwargs
         )
         return provider
     provider._client = AzureAppConfigurationClient(
-        endpoint, credential, user_agent=useragent, headers=headers, **kwargs
+        endpoint,
+        credential,
+        user_agent=USER_AGENT,
+        headers=headers,
+        retry_total=retry_total,
+        retry_backoff_max=retry_backoff_max,
+        **kwargs
     )
     return provider
 

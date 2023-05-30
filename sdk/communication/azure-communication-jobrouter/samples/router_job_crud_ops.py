@@ -16,6 +16,7 @@ USAGE:
     1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
 """
 
+from datetime import datetime, timedelta
 import os
 import time
 
@@ -319,7 +320,8 @@ class RouterJobSamples(object):
             # [START decline_job_offer]
             decline_job_offer_result = router_client.decline_job_offer(
                 worker_id = worker_id,
-                offer_id = offer_id
+                offer_id = offer_id,
+                reoffer_time_utc = datetime.utcnow() + timedelta(0, 30)  # re-offer after 30 secs
             )
             # [END decline_job_offer]
         except Exception:
