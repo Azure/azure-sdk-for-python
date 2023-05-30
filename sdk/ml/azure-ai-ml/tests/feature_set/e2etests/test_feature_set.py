@@ -12,7 +12,7 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient
-from azure.ai.ml.entities._load_functions import _load_feature_set
+from azure.ai.ml.entities._load_functions import load_feature_set
 
 from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
 from azure.core.paging import ItemPaged
@@ -47,7 +47,7 @@ class TestFeatureSet(AzureRecordedTestCase):
             assert fset.description == fset_description
 
         fset = verify_entity_load_and_dump(
-            _load_feature_set,
+            load_feature_set,
             feature_set_validation,
             "./tests/test_configs/feature_set/feature_set_e2e.yaml",
             params_override=params_override,
@@ -96,7 +96,7 @@ class TestFeatureSet(AzureRecordedTestCase):
             assert isinstance(fset, FeatureSet)
 
         verify_entity_load_and_dump(
-            _load_feature_set,
+            load_feature_set,
             feature_set_validation,
             "./tests/test_configs/feature_set/feature_set_e2e.yaml",
             params_override=params_override,

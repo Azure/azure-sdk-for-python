@@ -25,23 +25,16 @@ from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCreden
 
 def load_registry():
     authority = get_authority(os.environ.get("CONTAINERREGISTRY_ENDPOINT"))
-    repos = [
-        "library/hello-world",
-        "library/alpine",
-        "library/busybox",
-    ]
+    repo = "library/hello-world"
     tags = [
         [
             "library/hello-world:latest",
             "library/hello-world:v1",
             "library/hello-world:v2",
-            "library/hello-world:v3",
-            "library/hello-world:v4",
-        ],
-        ["library/alpine"],
-        ["library/busybox"],
+            "library/hello-world:v3"
+        ]
     ]
-    for repo, tag in zip(repos, tags):
+    for tag in tags:
         try:
             _import_image(authority, repo, tag)
         except Exception as e:
@@ -112,3 +105,6 @@ def get_credential(authority, **kwargs):
         client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
         authority=authority
     )
+
+def get_data_path():
+    return os.path.join(os.getcwd(), "samples", "data", "docker_artifact")

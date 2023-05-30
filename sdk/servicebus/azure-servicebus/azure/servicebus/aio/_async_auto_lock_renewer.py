@@ -68,7 +68,7 @@ class AutoLockRenewer:
     ) -> None:
         self._internal_kwargs = get_dict_with_loop_if_needed(loop)
         self._shutdown = asyncio.Event()
-        self._futures: List[asyncio.Future] = []
+        self._futures = []  # type: List[asyncio.Future]
         self._sleep_time = 1
         self._renew_period = 10
         self._on_lock_renew_failure = on_lock_renew_failure
@@ -118,7 +118,7 @@ class AutoLockRenewer:
         _log.debug(
             "Running async lock auto-renew for %r seconds", max_lock_renewal_duration
         )
-        error: Optional[Exception] = None
+        error = None  # type: Optional[Exception]
         clean_shutdown = False  # Only trigger the on_lock_renew_failure if halting was not expected (shutdown, etc)
         renew_period = renew_period_override or self._renew_period
         try:

@@ -14,8 +14,8 @@ from azure.ai.ml.constants._common import (
     ARM_ID_PREFIX,
     PROVIDER_RESOURCE_ID_WITH_VERSION,
     AzureMLResourceType,
-    IPProtectionLevel,
 )
+from azure.ai.ml.constants._assets import IPProtectionLevel
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code, load_job

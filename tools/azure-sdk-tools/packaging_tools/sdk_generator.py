@@ -5,6 +5,7 @@ from pathlib import Path
 from subprocess import check_call
 import shutil
 import re
+import os
 
 from .swaggertosdk.SwaggerToSdkCore import (
     CONFIG_FILE,
@@ -20,10 +21,18 @@ from .generate_utils import (
     dpg_relative_folder,
     gen_typespec,
     update_typespec_location,
+    return_origin_path,
+    check_api_version_in_subfolder,
 )
 
 _LOGGER = logging.getLogger(__name__)
 
+
+@return_origin_path
+def multiapi_combiner(sdk_code_path: str):
+    os.chdir(sdk_code_path)
+    check_call(f"python {str(Path('../../../tools/azure-sdk-tools/packaging_tools/multiapi_combiner.py'))} --pkg-path={os.getcwd()}", shell=True)
+    check_call("pip install -e .", shell=True)
 
 def del_outdated_folder(readme: str):
     python_readme = Path(readme).parent / "readme.python.md"
@@ -42,8 +51,11 @@ def del_outdated_folder(readme: str):
             sdk_folder = re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+", line)[0]
             sample_folder = Path(f"sdk/{sdk_folder}/generated_samples")
             if sample_folder.exists():
-                shutil.rmtree(sample_folder)
-                _LOGGER.info(f"remove sample folder: {sample_folder}")
+                if "azure-mgmt-rdbms" not in str(sample_folder):
+                    shutil.rmtree(sample_folder)
+                    _LOGGER.info(f"remove sample folder: {sample_folder}")
+                else:
+                    _LOGGER.info(f"we don't remove sample folder for rdbms")
             else:
                 _LOGGER.info(f"sample folder does not exist: {sample_folder}")
             # remove old generated SDK code
@@ -114,6 +126,7 @@ def main(generate_input, generate_output):
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
+        # folder_name: "sdk/containerservice"; package_name: "azure-mgmt-containerservice"
         for folder_name, package_name in package_names:
             if package_name in package_total:
                 continue
@@ -167,6 +180,14 @@ def main(generate_input, generate_output):
                 f"pip install --ignore-requires-python -e {sdk_code_path}",
                 shell=True,
             )
+
+            # check whether multiapi package has only one api-version in per subfolder
+            check_api_version_in_subfolder(sdk_code_path)
+
+            # use multiapi combiner to combine multiapi package
+            if package_name in ("azure-mgmt-network"):
+                _LOGGER.info(f"start to combine multiapi package: {package_name}")
+                multiapi_combiner(sdk_code_path)
 
     # remove duplicates
     for value in result.values():

@@ -6,12 +6,14 @@
 from typing import Dict, Optional
 
 from azure.ai.ml._schema._deployment.online.data_collector_schema import DataCollectorSchema
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._deployment.request_logging import RequestLogging
 from azure.ai.ml.entities._deployment.deployment_collection import DeploymentCollection
 from azure.ai.ml._restclient.v2023_04_01_preview.models import DataCollector as RestDataCollector
 
 
+@experimental
 class DataCollector:
     """Data Capture deployment entity.
 

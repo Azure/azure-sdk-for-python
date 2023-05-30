@@ -16,6 +16,12 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNAL = "Internal"
 
 
+class AssociationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AssociationType."""
+
+    SUBNETS = "subnets"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -23,13 +29,6 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
-
-
-class FrontendIPAddressVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """FrontendIPAddressVersion."""
-
-    I_PV4 = "IPv4"
-    I_PV6 = "IPv6"
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -45,10 +44,10 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ProvisioningState."""
 
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
     PROVISIONING = "Provisioning"
     UPDATING = "Updating"
     DELETING = "Deleting"
     ACCEPTED = "Accepted"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"

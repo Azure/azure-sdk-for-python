@@ -276,15 +276,18 @@ class AnswerCallRequest(_serialization.Model):
     :vartype incoming_call_context: str
     :ivar callback_uri: The callback uri. Required.
     :vartype callback_uri: str
+    :ivar operation_context: A customer set value used to track the answering of a call.
+    :vartype operation_context: str
     :ivar media_streaming_configuration: Media Streaming Configuration.
     :vartype media_streaming_configuration:
      ~azure.communication.callautomation.models.MediaStreamingConfiguration
     :ivar azure_cognitive_services_endpoint_url: The endpoint URL of the Azure Cognitive Services
      resource attached.
     :vartype azure_cognitive_services_endpoint_url: str
-    :ivar answered_by_identifier: The identifier of the contoso app which answers the call.
+    :ivar answered_by_identifier: The identifier of the call automation entity which answers the
+     call.
     :vartype answered_by_identifier:
-     ~azure.communication.callautomation.models.CommunicationIdentifierModel
+     ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
     """
 
     _validation = {
@@ -295,9 +298,10 @@ class AnswerCallRequest(_serialization.Model):
     _attribute_map = {
         "incoming_call_context": {"key": "incomingCallContext", "type": "str"},
         "callback_uri": {"key": "callbackUri", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
         "media_streaming_configuration": {"key": "mediaStreamingConfiguration", "type": "MediaStreamingConfiguration"},
         "azure_cognitive_services_endpoint_url": {"key": "azureCognitiveServicesEndpointUrl", "type": "str"},
-        "answered_by_identifier": {"key": "answeredByIdentifier", "type": "CommunicationIdentifierModel"},
+        "answered_by_identifier": {"key": "answeredByIdentifier", "type": "CommunicationUserIdentifierModel"},
     }
 
     def __init__(
@@ -305,9 +309,10 @@ class AnswerCallRequest(_serialization.Model):
         *,
         incoming_call_context: str,
         callback_uri: str,
+        operation_context: Optional[str] = None,
         media_streaming_configuration: Optional["_models.MediaStreamingConfiguration"] = None,
         azure_cognitive_services_endpoint_url: Optional[str] = None,
-        answered_by_identifier: Optional["_models.CommunicationIdentifierModel"] = None,
+        answered_by_identifier: Optional["_models.CommunicationUserIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -315,19 +320,23 @@ class AnswerCallRequest(_serialization.Model):
         :paramtype incoming_call_context: str
         :keyword callback_uri: The callback uri. Required.
         :paramtype callback_uri: str
+        :keyword operation_context: A customer set value used to track the answering of a call.
+        :paramtype operation_context: str
         :keyword media_streaming_configuration: Media Streaming Configuration.
         :paramtype media_streaming_configuration:
          ~azure.communication.callautomation.models.MediaStreamingConfiguration
         :keyword azure_cognitive_services_endpoint_url: The endpoint URL of the Azure Cognitive
          Services resource attached.
         :paramtype azure_cognitive_services_endpoint_url: str
-        :keyword answered_by_identifier: The identifier of the contoso app which answers the call.
+        :keyword answered_by_identifier: The identifier of the call automation entity which answers the
+         call.
         :paramtype answered_by_identifier:
-         ~azure.communication.callautomation.models.CommunicationIdentifierModel
+         ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
         """
         super().__init__(**kwargs)
         self.incoming_call_context = incoming_call_context
         self.callback_uri = callback_uri
+        self.operation_context = operation_context
         self.media_streaming_configuration = media_streaming_configuration
         self.azure_cognitive_services_endpoint_url = azure_cognitive_services_endpoint_url
         self.answered_by_identifier = answered_by_identifier
@@ -409,7 +418,7 @@ class CallConnected(_serialization.Model):
         self.operation_context = operation_context
 
 
-class CallConnectionProperties(_serialization.Model):
+class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Properties of a call connection.
 
     :ivar call_connection_id: The call connection id.
@@ -422,7 +431,7 @@ class CallConnectionProperties(_serialization.Model):
      "connecting", "connected", "transferring", "transferAccepted", "disconnecting", and
      "disconnected".
     :vartype call_connection_state: str or
-     ~azure.communication.callautomation.models.CallConnectionStateModel
+     ~azure.communication.callautomation.models.CallConnectionState
     :ivar callback_uri: The callback URI.
     :vartype callback_uri: str
     :ivar media_subscription_id: SubscriptionId for media streaming.
@@ -437,6 +446,12 @@ class CallConnectionProperties(_serialization.Model):
     :ivar source_identity: Source identity.
     :vartype source_identity:
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :ivar correlation_id: The correlation ID.
+    :vartype correlation_id: str
+    :ivar answered_by_identifier: Identity of the answering entity. Only populated when identity is
+     provided in the request.
+    :vartype answered_by_identifier:
+     ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
     """
 
     _attribute_map = {
@@ -449,6 +464,8 @@ class CallConnectionProperties(_serialization.Model):
         "source_caller_id_number": {"key": "sourceCallerIdNumber", "type": "PhoneNumberIdentifierModel"},
         "source_display_name": {"key": "sourceDisplayName", "type": "str"},
         "source_identity": {"key": "sourceIdentity", "type": "CommunicationIdentifierModel"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+        "answered_by_identifier": {"key": "answeredByIdentifier", "type": "CommunicationUserIdentifierModel"},
     }
 
     def __init__(
@@ -457,12 +474,14 @@ class CallConnectionProperties(_serialization.Model):
         call_connection_id: Optional[str] = None,
         server_call_id: Optional[str] = None,
         targets: Optional[List["_models.CommunicationIdentifierModel"]] = None,
-        call_connection_state: Optional[Union[str, "_models.CallConnectionStateModel"]] = None,
+        call_connection_state: Optional[Union[str, "_models.CallConnectionState"]] = None,
         callback_uri: Optional[str] = None,
         media_subscription_id: Optional[str] = None,
         source_caller_id_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
         source_display_name: Optional[str] = None,
         source_identity: Optional["_models.CommunicationIdentifierModel"] = None,
+        correlation_id: Optional[str] = None,
+        answered_by_identifier: Optional["_models.CommunicationUserIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -477,7 +496,7 @@ class CallConnectionProperties(_serialization.Model):
          "connecting", "connected", "transferring", "transferAccepted", "disconnecting", and
          "disconnected".
         :paramtype call_connection_state: str or
-         ~azure.communication.callautomation.models.CallConnectionStateModel
+         ~azure.communication.callautomation.models.CallConnectionState
         :keyword callback_uri: The callback URI.
         :paramtype callback_uri: str
         :keyword media_subscription_id: SubscriptionId for media streaming.
@@ -492,6 +511,12 @@ class CallConnectionProperties(_serialization.Model):
         :keyword source_identity: Source identity.
         :paramtype source_identity:
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
+        :keyword correlation_id: The correlation ID.
+        :paramtype correlation_id: str
+        :keyword answered_by_identifier: Identity of the answering entity. Only populated when identity
+         is provided in the request.
+        :paramtype answered_by_identifier:
+         ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
         """
         super().__init__(**kwargs)
         self.call_connection_id = call_connection_id
@@ -503,6 +528,8 @@ class CallConnectionProperties(_serialization.Model):
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
         self.source_identity = source_identity
+        self.correlation_id = correlation_id
+        self.answered_by_identifier = answered_by_identifier
 
 
 class CallDisconnected(_serialization.Model):
@@ -746,6 +773,46 @@ class CallTransferFailed(_serialization.Model):
         self.result_information = result_information
 
 
+class ChannelAffinity(_serialization.Model):
+    """Channel affinity for a participant.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar channel: Channel number to which bitstream from a particular participant will be written.
+    :vartype channel: int
+    :ivar participant: The identifier for the participant whose bitstream will be written to the
+     channel
+     represented by the channel number. Required.
+    :vartype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    """
+
+    _validation = {
+        "channel": {"maximum": 4, "minimum": 0},
+        "participant": {"required": True},
+    }
+
+    _attribute_map = {
+        "channel": {"key": "channel", "type": "int"},
+        "participant": {"key": "participant", "type": "CommunicationIdentifierModel"},
+    }
+
+    def __init__(
+        self, *, participant: "_models.CommunicationIdentifierModel", channel: Optional[int] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword channel: Channel number to which bitstream from a particular participant will be
+         written.
+        :paramtype channel: int
+        :keyword participant: The identifier for the participant whose bitstream will be written to the
+         channel
+         represented by the channel number. Required.
+        :paramtype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+        """
+        super().__init__(**kwargs)
+        self.channel = channel
+        self.participant = participant
+
+
 class Choice(_serialization.Model):
     """Choice.
 
@@ -757,7 +824,7 @@ class Choice(_serialization.Model):
     :vartype phrases: list[str]
     :ivar tone: Known values are: "zero", "one", "two", "three", "four", "five", "six", "seven",
      "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
-    :vartype tone: str or ~azure.communication.callautomation.models.Tone
+    :vartype tone: str or ~azure.communication.callautomation.models.DtmfTone
     """
 
     _validation = {
@@ -772,7 +839,7 @@ class Choice(_serialization.Model):
     }
 
     def __init__(
-        self, *, label: str, phrases: List[str], tone: Optional[Union[str, "_models.Tone"]] = None, **kwargs: Any
+        self, *, label: str, phrases: List[str], tone: Optional[Union[str, "_models.DtmfTone"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword label: Identifier for a given choice. Required.
@@ -781,7 +848,7 @@ class Choice(_serialization.Model):
         :paramtype phrases: list[str]
         :keyword tone: Known values are: "zero", "one", "two", "three", "four", "five", "six", "seven",
          "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
-        :paramtype tone: str or ~azure.communication.callautomation.models.Tone
+        :paramtype tone: str or ~azure.communication.callautomation.models.DtmfTone
         """
         super().__init__(**kwargs)
         self.label = label
@@ -827,7 +894,7 @@ class CollectTonesResult(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar tones:
-    :vartype tones: list[str or ~azure.communication.callautomation.models.Tone]
+    :vartype tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
     """
 
     _validation = {
@@ -1057,14 +1124,12 @@ class ContinuousDtmfRecognitionStopped(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     """
 
@@ -1091,14 +1156,12 @@ class ContinuousDtmfRecognitionStopped(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super().__init__(**kwargs)
@@ -1116,12 +1179,13 @@ class ContinuousDtmfRecognitionToneFailed(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
     """
 
     _attribute_map = {
@@ -1129,6 +1193,7 @@ class ContinuousDtmfRecognitionToneFailed(_serialization.Model):
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "operation_context": {"key": "operationContext", "type": "str"},
     }
 
     def __init__(
@@ -1138,6 +1203,7 @@ class ContinuousDtmfRecognitionToneFailed(_serialization.Model):
         server_call_id: Optional[str] = None,
         correlation_id: Optional[str] = None,
         result_information: Optional["_models.ResultInformation"] = None,
+        operation_context: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1145,18 +1211,20 @@ class ContinuousDtmfRecognitionToneFailed(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
+         request to the response event.
+        :paramtype operation_context: str
         """
         super().__init__(**kwargs)
         self.call_connection_id = call_connection_id
         self.server_call_id = server_call_id
         self.correlation_id = correlation_id
         self.result_information = result_information
+        self.operation_context = operation_context
 
 
 class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
@@ -1171,9 +1239,11 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
     :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId or
      skype chain ID.
     :vartype correlation_id: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
     """
 
     _attribute_map = {
@@ -1182,6 +1252,7 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "operation_context": {"key": "operationContext", "type": "str"},
     }
 
     def __init__(
@@ -1192,6 +1263,7 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
         server_call_id: Optional[str] = None,
         correlation_id: Optional[str] = None,
         result_information: Optional["_models.ResultInformation"] = None,
+        operation_context: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1204,9 +1276,11 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
         :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId or
          skype chain ID.
         :paramtype correlation_id: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
+         request to the response event.
+        :paramtype operation_context: str
         """
         super().__init__(**kwargs)
         self.tone_info = tone_info
@@ -1214,6 +1288,7 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
         self.server_call_id = server_call_id
         self.correlation_id = correlation_id
         self.result_information = result_information
+        self.operation_context = operation_context
 
 
 class CreateCallRequest(_serialization.Model):
@@ -1232,7 +1307,7 @@ class CreateCallRequest(_serialization.Model):
     :vartype source_display_name: str
     :ivar source_identity: The identifier of the source of the call.
     :vartype source_identity:
-     ~azure.communication.callautomation.models.CommunicationIdentifierModel
+     ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
     :ivar operation_context: A customer set value used to track the answering of a call.
     :vartype operation_context: str
     :ivar callback_uri: The callback URI. Required.
@@ -1256,7 +1331,7 @@ class CreateCallRequest(_serialization.Model):
         "targets": {"key": "targets", "type": "[CommunicationIdentifierModel]"},
         "source_caller_id_number": {"key": "sourceCallerIdNumber", "type": "PhoneNumberIdentifierModel"},
         "source_display_name": {"key": "sourceDisplayName", "type": "str"},
-        "source_identity": {"key": "sourceIdentity", "type": "CommunicationIdentifierModel"},
+        "source_identity": {"key": "sourceIdentity", "type": "CommunicationUserIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "callback_uri": {"key": "callbackUri", "type": "str"},
         "media_streaming_configuration": {"key": "mediaStreamingConfiguration", "type": "MediaStreamingConfiguration"},
@@ -1271,7 +1346,7 @@ class CreateCallRequest(_serialization.Model):
         callback_uri: str,
         source_caller_id_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
         source_display_name: Optional[str] = None,
-        source_identity: Optional["_models.CommunicationIdentifierModel"] = None,
+        source_identity: Optional["_models.CommunicationUserIdentifierModel"] = None,
         operation_context: Optional[str] = None,
         media_streaming_configuration: Optional["_models.MediaStreamingConfiguration"] = None,
         azure_cognitive_services_endpoint_url: Optional[str] = None,
@@ -1291,7 +1366,7 @@ class CreateCallRequest(_serialization.Model):
         :paramtype source_display_name: str
         :keyword source_identity: The identifier of the source of the call.
         :paramtype source_identity:
-         ~azure.communication.callautomation.models.CommunicationIdentifierModel
+         ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
         :keyword operation_context: A customer set value used to track the answering of a call.
         :paramtype operation_context: str
         :keyword callback_uri: The callback URI. Required.
@@ -1357,7 +1432,7 @@ class DtmfOptions(_serialization.Model):
     :ivar max_tones_to_collect: Maximum number of DTMF tones to be collected.
     :vartype max_tones_to_collect: int
     :ivar stop_tones: List of tones that will stop recognizing.
-    :vartype stop_tones: list[str or ~azure.communication.callautomation.models.Tone]
+    :vartype stop_tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
     """
 
     _validation = {
@@ -1375,7 +1450,7 @@ class DtmfOptions(_serialization.Model):
         *,
         inter_tone_timeout_in_seconds: Optional[int] = None,
         max_tones_to_collect: Optional[int] = None,
-        stop_tones: Optional[List[Union[str, "_models.Tone"]]] = None,
+        stop_tones: Optional[List[Union[str, "_models.DtmfTone"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1384,7 +1459,7 @@ class DtmfOptions(_serialization.Model):
         :keyword max_tones_to_collect: Maximum number of DTMF tones to be collected.
         :paramtype max_tones_to_collect: int
         :keyword stop_tones: List of tones that will stop recognizing.
-        :paramtype stop_tones: list[str or ~azure.communication.callautomation.models.Tone]
+        :paramtype stop_tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
         """
         super().__init__(**kwargs)
         self.inter_tone_timeout_in_seconds = inter_tone_timeout_in_seconds
@@ -1398,7 +1473,7 @@ class DtmfResult(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar tones:
-    :vartype tones: list[str or ~azure.communication.callautomation.models.Tone]
+    :vartype tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
     """
 
     _validation = {
@@ -1422,7 +1497,7 @@ class ExternalStorage(_serialization.Model):
 
     :ivar storage_type: Defines the type of external storage. Required. Known values are: "acs" and
      "blobStorage".
-    :vartype storage_type: str or ~azure.communication.callautomation.models.RecordingStorageType
+    :vartype storage_type: str or ~azure.communication.callautomation.models.RecordingStorage
     :ivar blob_storage: Defines the blob storage location where the recording will be stored.
     :vartype blob_storage: ~azure.communication.callautomation.models.BlobStorage
     """
@@ -1439,14 +1514,14 @@ class ExternalStorage(_serialization.Model):
     def __init__(
         self,
         *,
-        storage_type: Union[str, "_models.RecordingStorageType"],
+        storage_type: Union[str, "_models.RecordingStorage"],
         blob_storage: Optional["_models.BlobStorage"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword storage_type: Defines the type of external storage. Required. Known values are: "acs"
          and "blobStorage".
-        :paramtype storage_type: str or ~azure.communication.callautomation.models.RecordingStorageType
+        :paramtype storage_type: str or ~azure.communication.callautomation.models.RecordingStorage
         :keyword blob_storage: Defines the blob storage location where the recording will be stored.
         :paramtype blob_storage: ~azure.communication.callautomation.models.BlobStorage
         """
@@ -1777,8 +1852,7 @@ class PlayCanceled(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
@@ -1806,8 +1880,7 @@ class PlayCanceled(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
@@ -1827,14 +1900,12 @@ class PlayCompleted(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     """
 
@@ -1861,14 +1932,12 @@ class PlayCompleted(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super().__init__(**kwargs)
@@ -1886,14 +1955,12 @@ class PlayFailed(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     """
 
@@ -1920,14 +1987,12 @@ class PlayFailed(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super().__init__(**kwargs)
@@ -2089,8 +2154,7 @@ class RecognizeCanceled(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
@@ -2118,8 +2182,7 @@ class RecognizeCanceled(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
@@ -2141,14 +2204,12 @@ class RecognizeCompleted(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     :ivar recognition_type: Determines the sub-type of the recognize operation.
      In case of cancel operation the this field is not set and is returned empty. Known values are:
@@ -2201,14 +2262,12 @@ class RecognizeCompleted(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         :keyword recognition_type: Determines the sub-type of the recognize operation.
          In case of cancel operation the this field is not set and is returned empty. Known values are:
@@ -2242,14 +2301,12 @@ class RecognizeFailed(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     """
 
@@ -2276,14 +2333,12 @@ class RecognizeFailed(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super().__init__(**kwargs)
@@ -2446,8 +2501,7 @@ class RecordingStateChanged(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar recording_id: The call recording id.
     :vartype recording_id: str
@@ -2485,8 +2539,7 @@ class RecordingStateChanged(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword state: Known values are: "active" and "inactive".
         :paramtype state: str or ~azure.communication.callautomation.models.RecordingState
@@ -2859,14 +2912,12 @@ class SendDtmfCompleted(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     """
 
@@ -2893,14 +2944,12 @@ class SendDtmfCompleted(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super().__init__(**kwargs)
@@ -2918,14 +2967,12 @@ class SendDtmfFailed(_serialization.Model):
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
     :vartype server_call_id: str
-    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-     skype chain ID.
+    :ivar correlation_id: Correlation ID for event to call correlation.
     :vartype correlation_id: str
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
-     services.
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     """
 
@@ -2952,14 +2999,12 @@ class SendDtmfFailed(_serialization.Model):
         :paramtype call_connection_id: str
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
-        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+        :keyword correlation_id: Correlation ID for event to call correlation.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword result_information: Contains the resulting SIP code/sub-code and message from NGC
-         services.
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
         :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
         """
         super().__init__(**kwargs)
@@ -2976,7 +3021,7 @@ class SendDtmfRequest(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar tones: List of tones to be sent to target participant. Required.
-    :vartype tones: list[str or ~azure.communication.callautomation.models.Tone]
+    :vartype tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
     :ivar target_participant: Target participant of send DTMF. Required.
     :vartype target_participant:
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
@@ -2998,14 +3043,14 @@ class SendDtmfRequest(_serialization.Model):
     def __init__(
         self,
         *,
-        tones: List[Union[str, "_models.Tone"]],
+        tones: List[Union[str, "_models.DtmfTone"]],
         target_participant: "_models.CommunicationIdentifierModel",
         operation_context: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword tones: List of tones to be sent to target participant. Required.
-        :paramtype tones: list[str or ~azure.communication.callautomation.models.Tone]
+        :paramtype tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
         :keyword target_participant: Target participant of send DTMF. Required.
         :paramtype target_participant:
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
@@ -3098,15 +3143,15 @@ class StartCallRecordingRequest(_serialization.Model):
     :ivar recording_content_type: The content type of call recording. Known values are: "audio" and
      "audioVideo".
     :vartype recording_content_type: str or
-     ~azure.communication.callautomation.models.RecordingContentType
+     ~azure.communication.callautomation.models.RecordingContent
     :ivar recording_channel_type: The channel type of call recording. Known values are: "mixed" and
      "unmixed".
     :vartype recording_channel_type: str or
-     ~azure.communication.callautomation.models.RecordingChannelType
+     ~azure.communication.callautomation.models.RecordingChannel
     :ivar recording_format_type: The format type of call recording. Known values are: "wav", "mp3",
      and "mp4".
     :vartype recording_format_type: str or
-     ~azure.communication.callautomation.models.RecordingFormatType
+     ~azure.communication.callautomation.models.RecordingFormat
     :ivar audio_channel_participant_ordering: The sequential order in which audio channels are
      assigned to participants in the unmixed recording.
      When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not
@@ -3117,6 +3162,12 @@ class StartCallRecordingRequest(_serialization.Model):
      of the recording.
     :vartype audio_channel_participant_ordering:
      list[~azure.communication.callautomation.models.CommunicationIdentifierModel]
+    :ivar channel_affinity: The channel affinity of call recording
+     When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified,
+     'channel' will be automatically assigned.
+     Channel-Participant mapping details can be found in the metadata of the recording.
+     ///.
+    :vartype channel_affinity: list[~azure.communication.callautomation.models.ChannelAffinity]
     :ivar external_storage: Optional property to specify location where recording will be stored.
     :vartype external_storage: ~azure.communication.callautomation.models.ExternalStorage
     """
@@ -3135,6 +3186,7 @@ class StartCallRecordingRequest(_serialization.Model):
             "key": "audioChannelParticipantOrdering",
             "type": "[CommunicationIdentifierModel]",
         },
+        "channel_affinity": {"key": "channelAffinity", "type": "[ChannelAffinity]"},
         "external_storage": {"key": "externalStorage", "type": "ExternalStorage"},
     }
 
@@ -3143,10 +3195,11 @@ class StartCallRecordingRequest(_serialization.Model):
         *,
         call_locator: "_models.CallLocator",
         recording_state_callback_uri: Optional[str] = None,
-        recording_content_type: Optional[Union[str, "_models.RecordingContentType"]] = None,
-        recording_channel_type: Optional[Union[str, "_models.RecordingChannelType"]] = None,
-        recording_format_type: Optional[Union[str, "_models.RecordingFormatType"]] = None,
+        recording_content_type: Optional[Union[str, "_models.RecordingContent"]] = None,
+        recording_channel_type: Optional[Union[str, "_models.RecordingChannel"]] = None,
+        recording_format_type: Optional[Union[str, "_models.RecordingFormat"]] = None,
         audio_channel_participant_ordering: Optional[List["_models.CommunicationIdentifierModel"]] = None,
+        channel_affinity: Optional[List["_models.ChannelAffinity"]] = None,
         external_storage: Optional["_models.ExternalStorage"] = None,
         **kwargs: Any
     ) -> None:
@@ -3158,15 +3211,15 @@ class StartCallRecordingRequest(_serialization.Model):
         :keyword recording_content_type: The content type of call recording. Known values are: "audio"
          and "audioVideo".
         :paramtype recording_content_type: str or
-         ~azure.communication.callautomation.models.RecordingContentType
+         ~azure.communication.callautomation.models.RecordingContent
         :keyword recording_channel_type: The channel type of call recording. Known values are: "mixed"
          and "unmixed".
         :paramtype recording_channel_type: str or
-         ~azure.communication.callautomation.models.RecordingChannelType
+         ~azure.communication.callautomation.models.RecordingChannel
         :keyword recording_format_type: The format type of call recording. Known values are: "wav",
          "mp3", and "mp4".
         :paramtype recording_format_type: str or
-         ~azure.communication.callautomation.models.RecordingFormatType
+         ~azure.communication.callautomation.models.RecordingFormat
         :keyword audio_channel_participant_ordering: The sequential order in which audio channels are
          assigned to participants in the unmixed recording.
          When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not
@@ -3177,6 +3230,12 @@ class StartCallRecordingRequest(_serialization.Model):
          of the recording.
         :paramtype audio_channel_participant_ordering:
          list[~azure.communication.callautomation.models.CommunicationIdentifierModel]
+        :keyword channel_affinity: The channel affinity of call recording
+         When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified,
+         'channel' will be automatically assigned.
+         Channel-Participant mapping details can be found in the metadata of the recording.
+         ///.
+        :paramtype channel_affinity: list[~azure.communication.callautomation.models.ChannelAffinity]
         :keyword external_storage: Optional property to specify location where recording will be
          stored.
         :paramtype external_storage: ~azure.communication.callautomation.models.ExternalStorage
@@ -3188,6 +3247,7 @@ class StartCallRecordingRequest(_serialization.Model):
         self.recording_channel_type = recording_channel_type
         self.recording_format_type = recording_format_type
         self.audio_channel_participant_ordering = audio_channel_participant_ordering
+        self.channel_affinity = channel_affinity
         self.external_storage = external_storage
 
 
@@ -3265,9 +3325,7 @@ class ToneInfo(_serialization.Model):
     :vartype sequence_id: int
     :ivar tone: Required. Known values are: "zero", "one", "two", "three", "four", "five", "six",
      "seven", "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
-    :vartype tone: str or ~azure.communication.callautomation.models.Tone
-    :ivar participant_id: The id of participant.
-    :vartype participant_id: str
+    :vartype tone: str or ~azure.communication.callautomation.models.DtmfTone
     """
 
     _validation = {
@@ -3278,26 +3336,20 @@ class ToneInfo(_serialization.Model):
     _attribute_map = {
         "sequence_id": {"key": "sequenceId", "type": "int"},
         "tone": {"key": "tone", "type": "str"},
-        "participant_id": {"key": "participantId", "type": "str"},
     }
 
-    def __init__(
-        self, *, sequence_id: int, tone: Union[str, "_models.Tone"], participant_id: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, sequence_id: int, tone: Union[str, "_models.DtmfTone"], **kwargs: Any) -> None:
         """
         :keyword sequence_id: The sequence id which can be used to determine if the same tone was
          played multiple times or if any tones were missed. Required.
         :paramtype sequence_id: int
         :keyword tone: Required. Known values are: "zero", "one", "two", "three", "four", "five",
          "six", "seven", "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
-        :paramtype tone: str or ~azure.communication.callautomation.models.Tone
-        :keyword participant_id: The id of participant.
-        :paramtype participant_id: str
+        :paramtype tone: str or ~azure.communication.callautomation.models.DtmfTone
         """
         super().__init__(**kwargs)
         self.sequence_id = sequence_id
         self.tone = tone
-        self.participant_id = participant_id
 
 
 class TransferCallResponse(_serialization.Model):

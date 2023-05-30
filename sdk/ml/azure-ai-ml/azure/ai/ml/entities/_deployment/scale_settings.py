@@ -47,9 +47,9 @@ class OnlineScaleSettings(RestTranslatableMixin):
     def _from_rest_object(  # pylint: disable=arguments-renamed
         cls, settings: RestOnlineScaleSettings
     ) -> "OnlineScaleSettings":
-        if isinstance(settings, RestDefaultScaleSettings):
+        if settings.scale_type == "Default":
             return DefaultScaleSettings._from_rest_object(settings)
-        if isinstance(settings, RestTargetUtilizationScaleSettings):
+        if settings.scale_type == "TargetUtilization":
             return TargetUtilizationScaleSettings._from_rest_object(settings)
 
         msg = f"Unsupported online scale setting type {settings.type}."
