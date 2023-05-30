@@ -106,6 +106,22 @@ class SparkConfigurationOptions(object):
 
         # [END spark_job_configuration]
 
+        # [START materialization_setting_configuration]
+        from azure.ai.ml.entities import MaterializationComputeResource, MaterializationSettings
+
+        materialization_settings = MaterializationSettings(
+            offline_enabled=True,
+            spark_configuration={
+                "spark.driver.cores": 2,
+                "spark.driver.memory": "18g",
+                "spark.executor.cores": 4,
+                "spark.executor.memory": "18g",
+                "spark.executor.instances": 5,
+            },
+            resource=MaterializationComputeResource(instance_type="standard_e4s_v3"),
+        )
+        # [END materialization_setting_configuration]
+
 
 if __name__ == "__main__":
     sample = SparkConfigurationOptions()
