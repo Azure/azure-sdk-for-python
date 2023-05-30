@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - Fixed an issue affecting authentication to registry-related services in sovereign regions.
+- Made job_tier and priority values case insensitive
 
 ### Breaking Changes
 

@@ -291,7 +291,6 @@ $PackageExclusions = @{
   'azure-mgmt-signalr' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18085';
   'azure-mgmt-mixedreality' = 'Missing version info https://github.com/Azure/azure-sdk-for-python/issues/18457';
   'azure-mgmt-network' = 'Manual process used to build';
-  'azure-iot-device' = 'Content error https://github.com/Azure/azure-sdk-for-python/issues/30469';
 
   'azure-mgmt-compute' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
   'azure-mgmt-consumption' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';

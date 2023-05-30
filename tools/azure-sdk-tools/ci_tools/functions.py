@@ -3,7 +3,7 @@ import subprocess
 import shutil
 from ast import Not
 from packaging.specifiers import SpecifierSet
-from packaging.version import Version, parse
+from packaging.version import Version, parse, InvalidVersion
 from pkg_resources import Requirement
 
 from ci_tools.variables import discover_repo_root, DEV_BUILD_IDENTIFIER
@@ -95,9 +95,21 @@ def apply_compatibility_filter(package_set: List[str]) -> List[str]:
     return collected_packages
 
 
-def compare_python_version(version_spec: str):
-    current_sys_version = parse(platform.python_version())
-    spec_set = SpecifierSet(version_spec)
+def compare_python_version(version_spec: str) -> bool:
+    """
+    Compares the current running platform version of python against a version spec. Sanitizes
+    the running platform version to just the major version.
+    """
+    platform_version = platform.python_version()
+    parsed_version = re.match(r"[0-9\.]+", platform_version, re.IGNORECASE)
+
+    # we want to be loud if we can't parse out a major version from the version string, not silently
+    # fail and skip running samples on a platform we really should be
+    if parsed_version is None:
+        raise InvalidVersion(f"Unable to parse the platform version. Unparsed value was \"{platform_version}\".")
+    else:
+        current_sys_version = parse(parsed_version[0])
+        spec_set = SpecifierSet(version_spec)
 
     return current_sys_version in spec_set
 
