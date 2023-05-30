@@ -369,7 +369,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         self._refresh_options._on_error()
 
     def _load_all(self, **kwargs):
-        dict = {}
+        configuration_settings = {}
         for select in self._selects:
             configurations = self._client.list_configuration_settings(
                 key_filter=select.key_filter, label_filter=select.label_filter, **kwargs
@@ -382,10 +382,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                     feature_management = self._dict.get(FEATURE_MANAGEMENT_KEY, {})
                     feature_management[key] = value
                     if FEATURE_MANAGEMENT_KEY not in self.keys():
-                        dict[FEATURE_MANAGEMENT_KEY] = feature_management
+                        configuration_settings[FEATURE_MANAGEMENT_KEY] = feature_management
                 else:
-                    dict[key] = value
-        self._dict = dict
+                    configuration_settings[key] = value
+        self._dict = configuration_settings
 
     def _proccess_key_name(self, config):
         trimmed_key = config.key

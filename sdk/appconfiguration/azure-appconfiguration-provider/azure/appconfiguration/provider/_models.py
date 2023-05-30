@@ -76,9 +76,9 @@ class AzureAppConfigurationRefreshOptions:
         self._refresh_registrations.append(RefreshRegistrations(key_filter, label_filter, refresh_all))
 
     def _callback(self):
-        if self.callback is not None:
+        if callable(self.callback):
             self.callback()
 
     def _on_error(self):
-        if self.on_error is not None:
+        if callable(self.on_error):
             self.on_error()
