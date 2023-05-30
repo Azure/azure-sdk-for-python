@@ -80,6 +80,32 @@ class SparkConfigurationOptions(object):
 
         # [END spark_entry_type]
 
+        # [START spark_job_configuration]
+        from azure.ai.ml.entities import Input, Output, SparkJob
+
+        spark_job = SparkJob(
+            code="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/basic_src",
+            entry={"file": "sampleword.py"},
+            conf={
+                "spark.driver.cores": 2,
+                "spark.driver.memory": "1g",
+                "spark.executor.cores": 1,
+                "spark.executor.memory": "1g",
+                "spark.executor.instances": 1,
+            },
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            inputs={
+                "input1": Input(
+                    type="uri_file", path="azureml://datastores/workspaceblobstore/paths/python/data.csv", mode="direct"
+                )
+            },
+            compute="synapsecompute",
+            outputs={"component_out_path": Output(type="uri_folder")},
+            args="--input1 ${{inputs.input1}} --output2 ${{outputs.output1}} --my_sample_rate ${{inputs.sample_rate}}",
+        )
+
+        # [END spark_job_configuration]
+
 
 if __name__ == "__main__":
     sample = SparkConfigurationOptions()
