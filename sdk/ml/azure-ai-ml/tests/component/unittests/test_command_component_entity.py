@@ -1,28 +1,26 @@
+import enum
 import os
 import sys
-from io import StringIO
-import enum
-from pathlib import Path
 import tempfile
+from io import StringIO
+from pathlib import Path
 from unittest.mock import patch
 from zipfile import ZipFile
 
 import pydash
 import pytest
-
-from conftest import normalized_arm_id_in_object
-from test_utilities.utils import verify_entity_load_and_dump, build_temp_folder
+from test_utilities.utils import build_temp_folder, verify_entity_load_and_dump
 
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AzureMLResourceType
-from azure.ai.ml.entities import Component, CommandComponent, CommandJobLimits, JobResourceConfiguration
-from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.entities._assets import Environment
+from azure.ai.ml.entities import CommandComponent, CommandJobLimits, Component, JobResourceConfiguration
+from azure.ai.ml.entities._assets import Code, Environment
 from azure.ai.ml.entities._builders import Command, Sweep
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
 from azure.ai.ml.sweep import Choice
+from conftest import normalized_arm_id_in_object
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -92,7 +90,11 @@ class TestCommandComponentEntity:
             environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         component_dict = component._to_rest_object().as_dict()
-        omits = ["properties.component_spec.$schema", "properties.component_spec._source"]
+        omits = [
+            "properties.component_spec.$schema",
+            "properties.component_spec._source",
+            "properties.properties.client_component_hash",
+        ]
         component_dict = pydash.omit(component_dict, *omits)
 
         yaml_path = "./tests/test_configs/components/basic_component_code_arm_id.yml"
@@ -235,6 +237,7 @@ class TestCommandComponentEntity:
             "properties.component_spec.distribution.added_property",
             "properties.component_spec.resources.properties",
             "properties.component_spec._source",
+            "properties.properties.client_component_hash",
         )
         yaml_component_dict = pydash.omit(
             yaml_component_dict,
@@ -242,6 +245,7 @@ class TestCommandComponentEntity:
             "properties.component_spec.distribution.added_property",
             "properties.component_spec.resources.properties",
             "properties.component_spec._source",
+            "properties.properties.client_component_hash",
         )
         assert component_dict == yaml_component_dict
 
