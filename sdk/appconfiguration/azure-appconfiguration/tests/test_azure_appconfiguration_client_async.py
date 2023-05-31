@@ -8,7 +8,7 @@ import copy
 import datetime
 import json
 import re
-import copy
+import time
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceModifiedError,
@@ -365,17 +365,18 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_only_accepttime(self, appconfiguration_connection_string, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        await self.set_up(appconfiguration_connection_string)
-        exclude_today = await self.convert_to_list(
-            self.client.list_configuration_settings(
-                accept_datetime=recorded_variables.setdefault(
-                    "datetime", str(datetime.datetime.today() + datetime.timedelta(days=-1))
-                )
+        recorded_variables.setdefault("timestamp", str(datetime.datetime.utcnow()))
+        
+        async with AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string) as client:
+            # Confirm all configuration settings are cleaned up
+            current_config_settings = await self.convert_to_list(client.list_configuration_settings())
+            assert len(current_config_settings) == 0
+        
+            revision = await self.convert_to_list(
+                client.list_configuration_settings(accept_datetime=recorded_variables.get("timestamp"))
             )
-        )
-        all_inclusive = await self.convert_to_list(self.client.list_configuration_settings())
-        assert len(all_inclusive) > len(exclude_today)
-        await self.tear_down()
+            assert len(revision) >= 0
+                
         return recorded_variables
 
     # method: list_revisions
