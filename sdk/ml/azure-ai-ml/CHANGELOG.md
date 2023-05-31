@@ -2,7 +2,7 @@
 
 ## 1.9.0 (Unreleased)
 
-## 1.8.0
+## 1.8.0 (Unreleased)
 
 ### Features Added
 - Added support to enable set workspace connection secret expiry time.
