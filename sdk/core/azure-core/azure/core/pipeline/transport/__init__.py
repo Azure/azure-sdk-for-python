@@ -52,7 +52,7 @@ def __dir__():
     return __all__
 
 
-def __getattr__(name):
+def __getattr__(name: str) -> HttpTransport:
     transport = None
     if name == "AsyncioRequestsTransport":
         try:

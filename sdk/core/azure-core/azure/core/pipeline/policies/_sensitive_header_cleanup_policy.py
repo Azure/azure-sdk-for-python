@@ -23,10 +23,11 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import List, Optional, Any
-from azure.core.pipeline import PipelineRequest
+from typing import List, Optional, Any, TYPE_CHECKING
 from ._base import SansIOHTTPPolicy
 
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineRequest
 
 class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
     """A simple policy that cleans up sensitive headers

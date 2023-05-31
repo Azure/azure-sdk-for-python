@@ -297,7 +297,7 @@ class Settings:
 
     .. code-block:: python
 
-        from azure.common.settings import settings
+        from azure.core.settings import settings
         settings.log_level = log_level = logging.DEBUG
 
     The following methods are searched in order for a setting:
