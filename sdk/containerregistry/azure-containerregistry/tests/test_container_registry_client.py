@@ -532,6 +532,8 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     def test_set_docker_manifest(self, **kwargs):
         containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
+        if self.is_china_endpoint(containerregistry_endpoint):
+            pytest.skip("Not run in China cloud")
         repo = self.get_resource_name("repo")
         path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
         with self.create_registry_client(containerregistry_endpoint) as client:
