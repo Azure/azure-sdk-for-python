@@ -5,9 +5,6 @@ stages:
     parameters:
       ServiceDirectory: servicebus
       TestTimeoutInMinutes: 360
-      SupportedClouds: 'Public,UsGov,China'
-      MatrixReplace:
-        - TestSamples=.*/true
       BuildTargetingString: azure-servicebus*
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(SERVICEBUS_SUBSCRIPTION_ID)
