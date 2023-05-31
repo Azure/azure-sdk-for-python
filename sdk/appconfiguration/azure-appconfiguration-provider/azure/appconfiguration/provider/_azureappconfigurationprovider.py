@@ -132,8 +132,8 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     provider = _buildprovider(connection_string, endpoint, credential, **kwargs)
     provider._load_all()
 
-    if provider._refresh_options is not None:
-        for register in provider._refresh_options._refresh_registrations:
+    if provider._configuration_refresh.refresh_options is not None:
+        for register in provider._configuration_refresh.refresh_options._refresh_registrations:
             key = provider._client.get_configuration_setting(register.key_filter, register.label_filter)
             register.etag = key.etag
     return provider
@@ -261,22 +261,14 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         self._client: Optional[AzureAppConfigurationClient] = None
         self._secret_clients: Dict[str, SecretClient] = {}
         self._key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
-        self._refresh_options: Optional[AzureAppConfigurationRefreshOptions] = kwargs.pop(
-            "refresh_options", AzureAppConfigurationRefreshOptions()
-        )
         self._selects: List[SettingSelector] = kwargs.pop(
             "selects", [SettingSelector(key_filter="*", label_filter=EMPTY_LABEL)]
         )
         self._sentinel_keys: List[str] = []
 
-        if self._refresh_options is not None:
-            self._next_refresh_time = datetime.now() + timedelta(seconds=self._refresh_options.refresh_interval)
-
         trim_prefixes: List[str] = kwargs.pop("trim_prefixes", [])
         self._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
-        self._attempts = 1
-        self._min_backoff: Optional[int] = kwargs.pop("min_backoff", 30)
-        self._max_backoff: Optional[int] = kwargs.pop("min_backoff", 600)
+        self._configuration_refresh = self._ConfigurationRefresh(**kwargs)
 
     def drefresh(self, func):  # cspell:disable-line
         def refresh_wrapper(*args, **kwargs):
@@ -287,13 +279,13 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
 
     def refresh(self, **kwargs) -> None:
         # pylint:disable=protected-access
-        refresh_registrations = self._refresh_options._refresh_registrations
-        if self._refresh_options is None or len(refresh_registrations) == 0:
+        refresh_registrations = self._configuration_refresh.refresh_options._refresh_registrations
+        if self._configuration_refresh.refresh_options is None or len(refresh_registrations) == 0:
             logging.debug("Refresh called but no refresh options set.")
-            self._refresh_options._on_error()
+            self._configuration_refresh.refresh_options._on_error()
             return
 
-        if datetime.now() < self._next_refresh_time:
+        if datetime.now() < self._configuration_refresh.next_refresh_time:
             logging.debug("Refresh called but refresh interval not elapsed.")
             return
 
@@ -314,10 +306,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                         updated_registration_etag = updated_sentinel.etag
                         self._load_all(**kwargs)
                         updated_registration.etag = updated_registration_etag
-                        self._updated_configurations()
+                        self._configuration_refresh.updated_configurations()
                         return
         except Exception as ex:  # pylint:disable=broad-except
-            self._failed_update(ex, "Refresh all trigger failed by exception: %s")
+            self._configuration_refresh.failed_update(ex, "Refresh all trigger failed by exception: %s")
             return
 
         # Only update individual keys if the refresh_all didn't trigger
@@ -345,28 +337,14 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             if updated_keys:
                 self._dict = updated_dict
                 # pylint:disable=protected-access
-                self._refresh_options._refresh_registrations = updated_registrations
-                self._updated_configurations()
+                self._configuration_refresh.refresh_options._refresh_registrations = updated_registrations
+                self._configuration_refresh.updated_configurations()
         except Exception as error:
-            self._failed_update(
+            self._configuration_refresh.failed_update(
                 error,
                 "An error occurred while checking for configuration updates. \
                 %s attempts have been made.\n %r",
             )
-
-    def _updated_configurations(self):
-        # pylint:disable=protected-access
-        self._next_refresh_time = datetime.now() + timedelta(seconds=self._refresh_options.refresh_interval)
-        self._attempts = 1
-        self._refresh_options._callback()
-
-    def _failed_update(self, error, message):
-        logging.warning(message, self._attempts, error)
-        # Refresh All or None, any failure will trigger a backoff
-        # pylint:disable=protected-access
-        self._next_refresh_time = datetime.now() + timedelta(microseconds=self._calculate_backoff())
-        self._attempts += 1
-        self._refresh_options._on_error()
 
     def _load_all(self, **kwargs):
         configuration_settings = {}
@@ -409,25 +387,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                 # If the value is not a valid JSON, treat it like regular string value
                 return config.value
         return config.value
-
-    def _calculate_backoff(self):
-        max_attempts = 30
-        microsecond = 1000000  # 1 Second in microseconds
-
-        min_backoff_microseconds = self._min_backoff * microsecond
-        max_backoff_microseconds = self._max_backoff * microsecond
-
-        if self._attempts <= 1 or self._max_backoff <= self._min_backoff:
-            return min_backoff_microseconds
-
-        calculated_microseconds = max(1, min_backoff_microseconds) * (1 << min(self._attempts, max_attempts))
-
-        if calculated_microseconds > max_backoff_microseconds or calculated_microseconds <= 0:
-            calculated_microseconds = max_backoff_microseconds
-
-        return min_backoff_microseconds + (
-            random.uniform(0.0, 1.0) * (calculated_microseconds - min_backoff_microseconds)
-        )
 
     def __getitem__(self, key: str) -> str:
         """
@@ -505,3 +464,49 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         self._client.__exit__(*args)
         for client in self._secret_clients.values():
             client.__exit__()
+    
+    class _ConfigurationRefresh():
+
+        def __init__(self, **kwargs):
+            self.refresh_options: Optional[AzureAppConfigurationRefreshOptions] = kwargs.pop(
+                "refresh_options", AzureAppConfigurationRefreshOptions()
+            )
+            if self.refresh_options is not None:
+                self.next_refresh_time = datetime.now() + timedelta(seconds=self.refresh_options.refresh_interval)
+            self.attempts = 1
+            self.min_backoff: Optional[int] = kwargs.pop("min_backoff", 30)
+            self.max_backoff: Optional[int] = kwargs.pop("min_backoff", 600)
+
+        def updated_configurations(self):
+            # pylint:disable=protected-access
+            self.next_refresh_time = datetime.now() + timedelta(seconds=self.refresh_options.refresh_interval)
+            self.attempts = 1
+            self.refresh_options._callback()
+
+        def failed_update(self, error, message):
+            logging.warning(message, self.attempts, error)
+            # Refresh All or None, any failure will trigger a backoff
+            # pylint:disable=protected-access
+            self.next_refresh_time = datetime.now() + timedelta(microseconds=self.calculate_backoff())
+            self.attempts += 1
+            self.refresh_options._on_error()
+
+
+        def calculate_backoff(self):
+            max_attempts = 30
+            microsecond = 1000000  # 1 Second in microseconds
+
+            min_backoff_microseconds = self.min_backoff * microsecond
+            max_backoff_microseconds = self.max_backoff * microsecond
+
+            if self.attempts <= 1 or self.max_backoff <= self.min_backoff:
+                return min_backoff_microseconds
+
+            calculated_microseconds = max(1, min_backoff_microseconds) * (1 << min(self.attempts, max_attempts))
+
+            if calculated_microseconds > max_backoff_microseconds or calculated_microseconds <= 0:
+                calculated_microseconds = max_backoff_microseconds
+
+            return min_backoff_microseconds + (
+                random.uniform(0.0, 1.0) * (calculated_microseconds - min_backoff_microseconds)
+            )

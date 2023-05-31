@@ -24,16 +24,16 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
     def test_backoff(self, appconfiguration_connection_string):
         client = self.build_provider(appconfiguration_connection_string)
         min_backoff = 30000000
-        assert min_backoff == client._calculate_backoff()
+        assert min_backoff == client._configuration_refresh.calculate_backoff()
 
         attempts = 2
-        client._attempts = attempts
-        backoff = client._calculate_backoff()
+        client._configuration_refresh.attempts = attempts
+        backoff = client._configuration_refresh.calculate_backoff()
         assert backoff >= min_backoff and backoff <= (min_backoff * (1 << attempts))
 
         attempts = 3
-        client._attempts = attempts
-        backoff = client._calculate_backoff()
+        client._configuration_refresh.attempts = attempts
+        backoff = client._configuration_refresh.calculate_backoff()
         assert backoff >= min_backoff and backoff <= (min_backoff * (1 << attempts))
 
     # method: _calculate_backoff
@@ -45,13 +45,13 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
 
         # When attempts is > 30 then it acts as if it was 30
         attempts = 30
-        client._attempts = attempts
-        backoff = client._calculate_backoff()
+        client._configuration_refresh.attempts = attempts
+        backoff = client._configuration_refresh.calculate_backoff()
         assert backoff >= min_backoff and backoff <= (min_backoff * (1 << attempts))
 
         attempts = 31
-        client._attempts = attempts
-        backoff = client._calculate_backoff()
+        client._configuration_refresh.attempts = attempts
+        backoff = client._configuration_refresh.calculate_backoff()
         assert backoff >= min_backoff and backoff <= (min_backoff * (1 << 30))
 
     # method: _calculate_backoff
@@ -63,13 +63,13 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
 
         # When attempts is < 1 then it acts as if it was 1
         attempts = 0
-        client._attempts = attempts
-        backoff = client._calculate_backoff()
+        client._configuration_refresh.attempts = attempts
+        backoff = client._configuration_refresh.calculate_backoff()
         assert backoff == min_backoff
 
         attempts = -1
-        client._attempts = attempts
-        backoff = client._calculate_backoff()
+        client._configuration_refresh.attempts = attempts
+        backoff = client._configuration_refresh.calculate_backoff()
         assert backoff == min_backoff
 
     # method: _calculate_backoff
@@ -85,6 +85,6 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
 
         # When attempts is < 1 then it acts as if it was 1
         attempts = 0
-        client._attempts = attempts
-        backoff = client._calculate_backoff()
+        client._configuration_refresh.attempts = attempts
+        backoff = client._configuration_refresh.calculate_backoff()
         assert backoff == (min_backoff * microsecond)
