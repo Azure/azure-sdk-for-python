@@ -723,11 +723,6 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
             blob_name = blob.name
         except AttributeError:
             blob_name = blob
-        if version_id is None:
-            try:
-                version_id = blob.version_id
-            except AttributeError:
-                pass
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access

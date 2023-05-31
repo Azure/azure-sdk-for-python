@@ -1635,7 +1635,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         with pytest.raises(HttpResponseError):
             deleted = container.get_blob_client(v1_props)
             deleted.get_blob_properties()
-        assert blob_client.get_blob_properties().get("version_id") == v3_props['version_id']
+        assert blob_client.get_blob_properties(version_id=v3_props['version_id']).get("version_id") == v3_props['version_id']
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -1713,7 +1713,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert len(response) == 2
         assert response[0].status_code == 202
         assert response[1].status_code == 202
-        assert remaining_blob.get_blob_properties().get("version_id") == v3_props['version_id']
+        assert remaining_blob.get_blob_properties(version_id=v3_props['version_id']).get("version_id") == v3_props['version_id']
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -2483,14 +2483,15 @@ class TestStorageContainer(StorageRecordedTestCase):
         blob_client.upload_blob(blob_data * 2, overwrite=True)
         v2_props = blob_client.get_blob_properties()
         blob_client.upload_blob(blob_data * 3, overwrite=True)
+        v3_props = blob_client.get_blob_properties()
 
         # Act
         downloaded = container.download_blob(v2_props, version_id=v1_props['version_id'])
-        downloaded2 = container.download_blob(v2_props)
+        downloaded2 = container.download_blob(v2_props, version_id=v3_props['version_id'])
 
         # Assert
         assert downloaded.readall() == blob_data
-        assert downloaded2.readall() == blob_data * 2
+        assert downloaded2.readall() == blob_data * 3
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -2680,11 +2681,11 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         v1_blob_client = container.get_blob_client(blob=v1_props['name'], version_id=v1_props['version_id'])
         props1 = v1_blob_client.get_blob_properties()
-        v2_blob_client = container.get_blob_client(blob=v2_props)
+        v2_blob_client = container.get_blob_client(blob=v1_props,  version_id=v2_props['version_id'])
         props2 = v2_blob_client.get_blob_properties()
-        v3_blob_client = bsc.get_blob_client(container=container.container_name, blob=v3_props['name'], version_id=v3_props['version_id'])
+        v3_blob_client = bsc.get_blob_client(container=container.container_name, blob=v2_props['name'], version_id=v3_props['version_id'])
         props3 = v3_blob_client.get_blob_properties()
-        v4_blob_client = bsc.get_blob_client(container=container.container_name, blob=v4_props)
+        v4_blob_client = bsc.get_blob_client(container=container.container_name, blob=v3_props, version_id=v4_props['version_id'])
         props4 = v4_blob_client.get_blob_properties()
 
         # Assert

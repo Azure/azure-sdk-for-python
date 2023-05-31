@@ -763,6 +763,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         validate_content = kwargs.pop('validate_content', False)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
+        if 'version_id' in kwargs:
+            version_id = kwargs.pop('version_id')
+        else:
+            version_id = self.version_id
 
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
@@ -777,7 +781,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             'config': self._config,
             'start_range': offset,
             'end_range': length,
-            'version_id': kwargs.pop('version_id', None) or self.version_id,
+            'version_id': version_id,
             'validate_content': validate_content,
             'encryption_options': {
                 'required': self.require_encryption,
@@ -1095,9 +1099,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         # type: (str, **Any) -> Dict[str, Any]
         if self.snapshot and delete_snapshots:
             raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
+        if 'version_id' in kwargs:
+            version_id = kwargs.pop('version_id')
+        else:
+            version_id = self.version_id
         options = self._generic_delete_blob_options(delete_snapshots, **kwargs)
         options['snapshot'] = self.snapshot
-        options['version_id'] = kwargs.pop('version_id', None) or self.version_id
+        options['version_id'] = version_id
         options['blob_delete_type'] = kwargs.pop('blob_delete_type', None)
         return options
 
@@ -1231,7 +1239,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             #other-client--per-operation-configuration>`_.
         :returns: boolean
         """
-        version_id = kwargs.pop('version_id', None) or self.version_id
+        if 'version_id' in kwargs:
+            version_id = kwargs.pop('version_id')
+        else:
+            version_id = self.version_id
+
         try:
             self._client.blob.get_properties(
                 snapshot=self.snapshot,
@@ -1313,7 +1325,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         # TODO: extract this out as _get_blob_properties_options
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-        version_id = kwargs.pop('version_id', None) or self.version_id
+        if 'version_id' in kwargs:
+            version_id = kwargs.pop('version_id')
+        else:
+            version_id = self.version_id
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -2405,7 +2420,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-        version_id = kwargs.pop('version_id', None) or self.version_id
+        if 'version_id' in kwargs:
+            version_id = kwargs.pop('version_id')
+        else:
+            version_id = self.version_id
         if standard_blob_tier is None:
             raise ValueError("A StandardBlobTier must be specified")
         if self.snapshot and kwargs.get('version_id'):
@@ -2916,12 +2934,16 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         tags = serialize_blob_tags(tags)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
+        if 'version_id' in kwargs:
+            version_id = kwargs.pop('version_id')
+        else:
+            version_id = self.version_id
 
         options = {
             'tags': tags,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
-            'version_id': kwargs.pop('version_id', None) or self.version_id,
+            'version_id': version_id,
             'cls': return_response_headers}
         options.update(kwargs)
         return options
@@ -2979,9 +3001,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         # type: (**Any) -> Dict[str, str]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
+        if 'version_id' in kwargs:
+            version_id = kwargs.pop('version_id')
+        else:
+            version_id = self.version_id
 
         options = {
-            'version_id': kwargs.pop('version_id', None) or self.version_id,
+            'version_id': version_id,
             'snapshot': self.snapshot,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,

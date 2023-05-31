@@ -774,11 +774,6 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             blob_name = blob.name
         except AttributeError:
             blob_name = blob
-        if version_id is None:
-            try:
-                version_id = blob.version_id
-            except AttributeError:
-                pass
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access

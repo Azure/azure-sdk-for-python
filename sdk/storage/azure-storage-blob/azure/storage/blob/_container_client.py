@@ -1169,10 +1169,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         blob_client = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
-        try:
-            version_id = kwargs.pop('version_id', None) or blob.version_id
-        except AttributeError:
-            version_id = None
+        version_id = kwargs.pop('version_id', None)
         blob_client.delete_blob( # type: ignore
             delete_snapshots=delete_snapshots,
             timeout=timeout,
@@ -1291,10 +1288,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :rtype: ~azure.storage.blob.StorageStreamDownloader
         """
         blob_client = self.get_blob_client(blob) # type: ignore
-        try:
-            version_id = kwargs.pop('version_id', None) or blob.version_id
-        except AttributeError:
-            version_id = None
+        version_id = kwargs.pop('version_id', None)
         kwargs.setdefault('merge_span', True)
         return blob_client.download_blob(
             offset=offset,
@@ -1775,11 +1769,6 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
-        if version_id is None:
-            try:
-                version_id = blob.version_id
-            except AttributeError:
-                pass
         return BlobClient(
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,

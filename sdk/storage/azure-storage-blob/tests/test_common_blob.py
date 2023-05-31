@@ -3268,7 +3268,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
                              version_id=v1_props['version_id'], credential=versioned_storage_account_key)
         blob_client.upload_blob(blob_data * 2, overwrite=True)
         v2_props = blob_client.get_blob_properties()
-        v2_blob = container.get_blob_client(v2_props)
+        v2_blob = container.get_blob_client(v2_props, version_id=v2_props['version_id'])
         blob_client.upload_blob(blob_data * 3, overwrite=True)
         v3_props = blob_client.get_blob_properties()
 
