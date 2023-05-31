@@ -28,7 +28,7 @@ def run_black(service_dir):
         package_name = os.path.basename(package)
 
         if is_check_enabled(package, "black", True):
-            out = subprocess.Popen(["tox", "-qqq", "run", "-e", "black", "--", os.path.join("sdk", service_dir, package_name)],
+            out = subprocess.Popen(["tox", "-qqq", "--conf", os.path.join(root_dir, "eng", "tox", "tox.ini"), "--root", root_dir, "run", "-e", "black", "--", os.path.join("sdk", service_dir, package_name)],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 cwd = root_dir
