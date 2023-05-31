@@ -3,7 +3,10 @@
 ## 12.17.0 (Unreleased)
 
 ### Features Added
-
+- The `get_blob_client` API now returns a version-aware `BlobClient`, in which all APIs that accept `version_id` will operate on the
+version ID provided to the `get_blob_client` API call by default.
+- Added `version_id` as a client constructor parameter to `BlobClient`. This change makes `BlobClient`s version-aware, such that
+all APIs that accept `version_id` will operate on the version ID provided during client construction by default.
 
 ## 12.17.0b1 (2023-05-30)
 
