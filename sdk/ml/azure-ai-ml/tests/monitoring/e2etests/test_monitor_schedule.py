@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Union
 
 from devtools_testutils import AzureRecordedTestCase, is_live
 import pytest
@@ -6,7 +6,9 @@ import pytest
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._monitoring import (
-    DefaultMonitorSignalNames,
+    DEFAULT_DATA_QUALITY_SIGNAL_NAME,
+    DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME,
+    DEFAULT_DATA_DRIFT_SIGNAL_NAME,
     MonitorSignalType,
     MonitorDatasetContext,
     MonitorFeatureType,
@@ -17,7 +19,7 @@ from azure.ai.ml.constants._monitoring import (
     DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY,
 )
 from azure.ai.ml.entities._load_functions import load_schedule
-from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
+from azure.ai.ml.entities import MonitorSchedule, DataDriftSignal, DataQualitySignal, PredictionDriftSignal
 from azure.ai.ml.entities._monitoring.thresholds import (
     DataDriftMetricThreshold,
     DataQualityMetricThreshold,
@@ -49,7 +51,9 @@ class TestMonitorSchedule(AzureRecordedTestCase):
         test_path = "tests/test_configs/monitoring/yaml_configs/data_quality.yaml"
         created_schedule = create_and_assert_basic_schedule_fields(client, test_path, randstr, data_with_2_versions)
 
-    # @pytest.mark.skipif(condition=is_live(), resason="complicated logic, consult SDK team if this needs to be re-recorded")
+    @pytest.mark.skipif(
+        condition=is_live(), reason="complicated logic, consult SDK team if this needs to be re-recorded"
+    )
     def test_out_of_box_schedule(self, client: MLClient):
         test_path = "tests/test_configs/monitoring/yaml_configs/out_of_the_box.yaml"
         endpoint_name = "iris-endpoint"
@@ -64,14 +68,14 @@ class TestMonitorSchedule(AzureRecordedTestCase):
         )
         created_schedule: MonitorSchedule = client.schedules.begin_create_or_update(monitor_schedule).result()
 
-        online_deployment = client.online_deployments.get(deployment_name, endpoint_name)
-
-        model_inputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_NAME_KEY)
-        model_inputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_VERSION_KEY)
-        model_outputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY)
-        model_outputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY)
-        model_inputs_type = client.data.get(model_inputs_name, model_inputs_version).type
-        model_outputs_type = client.data.get(model_outputs_name, model_outputs_version).type
+        (
+            model_inputs_name,
+            model_inputs_version,
+            model_outputs_name,
+            model_outputs_version,
+            model_inputs_type,
+            model_outputs_type,
+        ) = get_model_inputs_outputs_from_deployment(client, endpoint_name, deployment_name)
 
         assert is_ARM_id_for_parented_resource(
             created_schedule.create_monitor.monitoring_target.endpoint_deployment_id,
@@ -79,19 +83,15 @@ class TestMonitorSchedule(AzureRecordedTestCase):
             AzureMLResourceType.DEPLOYMENT,
         )
 
-        for signal_name in DefaultMonitorSignalNames:
-            assert signal_name.value in created_schedule.create_monitor.monitoring_signals
-            signal = created_schedule.create_monitor.monitoring_signals[signal_name.value]
+        for signal_name in [
+            DEFAULT_DATA_DRIFT_SIGNAL_NAME,
+            DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME,
+            DEFAULT_DATA_QUALITY_SIGNAL_NAME,
+        ]:
+            assert signal_name in created_schedule.create_monitor.monitoring_signals
+            signal = created_schedule.create_monitor.monitoring_signals[signal_name]
             if signal.type == MonitorSignalType.DATA_DRIFT:
-                assert model_inputs_name in signal.target_dataset.dataset.input_dataset.path
-                assert model_inputs_version in signal.target_dataset.dataset.input_dataset.path
-                assert signal.target_dataset.dataset.dataset_context == MonitorDatasetContext.MODEL_INPUTS
-                assert signal.target_dataset.dataset.input_dataset.type == model_inputs_type
-
-                assert model_inputs_name in signal.baseline_dataset.input_dataset.path
-                assert model_inputs_version in signal.target_dataset.dataset.input_dataset.path
-                assert signal.baseline_dataset.dataset_context == MonitorDatasetContext.MODEL_INPUTS
-                assert signal.baseline_dataset.input_dataset.type == model_inputs_type
+                check_default_datasets(signal, model_inputs_name, model_inputs_version, model_inputs_type, True)
 
                 assert signal.metric_thresholds == [
                     DataDriftMetricThreshold(
@@ -106,15 +106,7 @@ class TestMonitorSchedule(AzureRecordedTestCase):
                     ),
                 ]
             elif signal.type == MonitorSignalType.PREDICTION_DRIFT:
-                assert model_outputs_name in signal.target_dataset.dataset.input_dataset.path
-                assert model_outputs_version in signal.target_dataset.dataset.input_dataset.path
-                assert signal.target_dataset.dataset.dataset_context == MonitorDatasetContext.MODEL_OUTPUTS
-                assert signal.target_dataset.dataset.input_dataset.type == model_outputs_type
-
-                assert model_outputs_name in signal.baseline_dataset.input_dataset.path
-                assert model_outputs_version in signal.target_dataset.dataset.input_dataset.path
-                assert signal.baseline_dataset.dataset_context == MonitorDatasetContext.MODEL_OUTPUTS
-                assert signal.baseline_dataset.input_dataset.type == model_inputs_type
+                check_default_datasets(signal, model_outputs_name, model_outputs_version, model_outputs_type, False)
 
                 assert signal.metric_thresholds == [
                     PredictionDriftMetricThreshold(
@@ -129,15 +121,7 @@ class TestMonitorSchedule(AzureRecordedTestCase):
                     ),
                 ]
             elif signal.type == MonitorSignalType.DATA_QUALITY:
-                assert model_inputs_name in signal.target_dataset.dataset.input_dataset.path
-                assert model_inputs_version in signal.target_dataset.dataset.input_dataset.path
-                assert signal.target_dataset.dataset.dataset_context == MonitorDatasetContext.MODEL_INPUTS
-                assert signal.target_dataset.dataset.input_dataset.type == model_inputs_type
-
-                assert model_inputs_name in signal.baseline_dataset.input_dataset.path
-                assert model_inputs_version in signal.target_dataset.dataset.input_dataset.path
-                assert signal.baseline_dataset.dataset_context == MonitorDatasetContext.MODEL_INPUTS
-                assert signal.baseline_dataset.input_dataset.type == model_inputs_type
+                check_default_datasets(signal, model_inputs_name, model_inputs_version, model_inputs_type, True)
 
                 # service bug clobbering the applicable feature type
                 """assert signal.metric_thresholds == [
@@ -172,6 +156,90 @@ class TestMonitorSchedule(AzureRecordedTestCase):
                         metric_name=MonitorMetricName.OUT_OF_BOUND_RATE
                     ),
                 ]"""
+
+    @pytest.mark.skipif(
+        condition=is_live(), reason="complicated logic, consult SDK team if this needs to be re-recorded"
+    )
+    def test_default_target_baseline_dataset(self, client: MLClient):
+        test_path = "tests/test_configs/monitoring/yaml_configs/no_target_baseline_data.yaml"
+        endpoint_name = "iris-endpoint"
+        deployment_name = "my-iris-deployment"
+        monitor_schedule = load_schedule(
+            test_path,
+            params_override=[
+                {
+                    "create_monitor.monitoring_target.endpoint_deployment_id": f"azureml:{endpoint_name}:{deployment_name}"
+                }
+            ],
+        )
+        created_schedule: MonitorSchedule = client.schedules.begin_create_or_update(monitor_schedule).result()
+
+        (
+            model_inputs_name,
+            model_inputs_version,
+            model_outputs_name,
+            model_outputs_version,
+            model_inputs_type,
+            model_outputs_type,
+        ) = get_model_inputs_outputs_from_deployment(client, endpoint_name, deployment_name)
+
+        for signal_name in [
+            DEFAULT_DATA_DRIFT_SIGNAL_NAME,
+            DEFAULT_DATA_QUALITY_SIGNAL_NAME,
+            DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME,
+        ]:
+            assert signal_name in created_schedule.create_monitor.monitoring_signals
+            signal = created_schedule.create_monitor.monitoring_signals[signal_name]
+            if signal.type == MonitorSignalType.DATA_DRIFT:
+                check_default_datasets(signal, model_inputs_name, model_inputs_version, model_inputs_type, True)
+            elif signal.type == MonitorSignalType.PREDICTION_DRIFT:
+                check_default_datasets(signal, model_outputs_name, model_outputs_version, model_outputs_type, False)
+            elif signal.type == MonitorSignalType.DATA_QUALITY:
+                check_default_datasets(signal, model_inputs_name, model_inputs_version, model_inputs_type, True)
+
+
+def get_model_inputs_outputs_from_deployment(client: MLClient, endpoint_name: str, deployment_name: str):
+    online_deployment = client.online_deployments.get(deployment_name, endpoint_name)
+
+    model_inputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_NAME_KEY)
+    model_inputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_VERSION_KEY)
+    model_outputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY)
+    model_outputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY)
+    model_inputs_type = client.data.get(model_inputs_name, model_inputs_version).type
+    model_outputs_type = client.data.get(model_outputs_name, model_outputs_version).type
+
+    return (
+        model_inputs_name,
+        model_inputs_version,
+        model_outputs_name,
+        model_outputs_version,
+        model_inputs_type,
+        model_outputs_type,
+    )
+
+
+def check_default_datasets(
+    signal: Union[DataQualitySignal, DataDriftSignal],
+    dataset_name: str,
+    dataset_version: str,
+    dataset_type: str,
+    is_model_inputs: bool,
+):
+    assert dataset_name in signal.target_dataset.dataset.input_dataset.path
+    assert dataset_version in signal.target_dataset.dataset.input_dataset.path
+    if is_model_inputs:
+        assert signal.target_dataset.dataset.dataset_context == MonitorDatasetContext.MODEL_INPUTS
+    else:
+        assert signal.target_dataset.dataset.dataset_context == MonitorDatasetContext.MODEL_OUTPUTS
+    assert signal.target_dataset.dataset.input_dataset.type == dataset_type
+
+    assert dataset_name in signal.baseline_dataset.input_dataset.path
+    assert dataset_version in signal.target_dataset.dataset.input_dataset.path
+    if is_model_inputs:
+        assert signal.target_dataset.dataset.dataset_context == MonitorDatasetContext.MODEL_INPUTS
+    else:
+        assert signal.target_dataset.dataset.dataset_context == MonitorDatasetContext.MODEL_OUTPUTS
+    assert signal.baseline_dataset.input_dataset.type == dataset_type
 
 
 def create_and_assert_basic_schedule_fields(

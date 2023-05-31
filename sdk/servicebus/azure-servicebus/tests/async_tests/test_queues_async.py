@@ -2050,6 +2050,30 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 with pytest.raises(OperationTimeoutError):
                     await sender.send_messages(ServiceBusMessage("body"), timeout=5)
 
+        if not uamqp_transport:
+            # Amqp
+            async with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string,
+                uamqp_transport=uamqp_transport
+            ) as sb_client:
+                async with sb_client.get_queue_sender(servicebus_queue.name, socket_timeout=1.0) as sender:
+                    payload = "A" * 250 * 1024
+                    await sender.send_messages(ServiceBusMessage(payload))
+
+            if uamqp:
+                transport_type = uamqp.constants.TransportType.AmqpOverWebsocket
+            else:
+                transport_type = TransportType.AmqpOverWebsocket
+            # AmqpOverWebsocket
+            async with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string,
+                transport_type=transport_type,
+                uamqp_transport=uamqp_transport
+            ) as sb_client:
+                async with sb_client.get_queue_sender(servicebus_queue.name, socket_timeout=1.2) as sender:
+                    payload = "A" * 250 * 1024
+                    await sender.send_messages(ServiceBusMessage(payload))
+
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

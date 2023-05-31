@@ -1,5 +1,19 @@
 # Release History
 
+## 1.1.0b3 (2023-05-22)
+
+### Features Added
+
+  - Added operation group ElasticVersionsOperations
+  - Model MonitorProperties has a new parameter generate_api_key
+  - Model UserApiKeyResponse has a new parameter properties
+
+### Breaking Changes
+
+  - Model ElasticMonitorResource no longer has parameter generate_api_key
+  - Model UserApiKeyResponse no longer has parameter api_key
+  - Operation OrganizationsOperations.get_api_key no longer has parameter resource_group_name
+
 ## 1.1.0b2 (2023-04-20)
 
 ### Features Added

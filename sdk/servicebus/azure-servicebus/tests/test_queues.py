@@ -2451,7 +2451,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 self._connection.work()
             else:
                 try:
-                # TODO: update for uamqp
                     self._link.update_pending_deliveries()
                     self._connection.listen(wait=self._socket_timeout, **kwargs)
                 except ValueError:
@@ -2466,6 +2465,30 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 sender._handler._client_run = types.MethodType(_hack_amqp_sender_run, sender._handler)
                 with pytest.raises(OperationTimeoutError):
                     sender.send_messages(ServiceBusMessage("body"), timeout=5)
+
+        if not uamqp_transport:
+            # Amqp
+            with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string,
+                uamqp_transport=uamqp_transport
+            ) as sb_client:
+                with sb_client.get_queue_sender(servicebus_queue.name, socket_timeout=0.6) as sender:
+                    payload = "A" * 250 * 1024
+                    sender.send_messages(ServiceBusMessage(payload))
+
+            if uamqp:
+                transport_type = uamqp.constants.TransportType.AmqpOverWebsocket
+            else:
+                transport_type = TransportType.AmqpOverWebsocket
+            # AmqpOverWebsocket
+            with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string,
+                transport_type=transport_type,
+                uamqp_transport=uamqp_transport
+            ) as sb_client:
+                with sb_client.get_queue_sender(servicebus_queue.name, socket_timeout=0.8) as sender:
+                    payload = "A" * 250 * 1024
+                    sender.send_messages(ServiceBusMessage(payload))
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
