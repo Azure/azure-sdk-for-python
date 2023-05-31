@@ -67,8 +67,8 @@ class AzureAppConfigurationRefreshOptions:
     def __init__(self):
         self.refresh_interval = 30
         self._refresh_registrations = []
-        self.callback = None
-        self.on_error = None
+        self.callback: Callable = None
+        self.on_error: Callable = None
 
     def register(
         self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL, refresh_all: Optional[bool] = False
@@ -77,8 +77,8 @@ class AzureAppConfigurationRefreshOptions:
 
     def _callback(self):
         if callable(self.callback):
-            self.callback()
+            self.callback() # pylint:disable=not-callable
 
     def _on_error(self):
         if callable(self.on_error):
-            self.on_error()
+            self.on_error() # pylint:disable=not-callable

@@ -309,6 +309,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                         self._configuration_refresh.updated_configurations()
                         return
         except Exception as ex:  # pylint:disable=broad-except
+            # refresh should never throw an exception
             self._configuration_refresh.failed_update(ex, "Refresh all trigger failed by exception: %s")
             return
 
@@ -339,7 +340,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                 # pylint:disable=protected-access
                 self._configuration_refresh.refresh_options._refresh_registrations = updated_registrations
                 self._configuration_refresh.updated_configurations()
-        except Exception as error:
+        except Exception as error: # pylint:disable=broad-except
+            # refresh should never throw an exception
             self._configuration_refresh.failed_update(
                 error,
                 "An error occurred while checking for configuration updates. \
@@ -464,7 +466,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         self._client.__exit__(*args)
         for client in self._secret_clients.values():
             client.__exit__()
-    
+
     class _ConfigurationRefresh():
 
         def __init__(self, **kwargs):
