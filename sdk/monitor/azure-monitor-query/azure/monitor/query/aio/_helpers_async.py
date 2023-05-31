@@ -13,10 +13,10 @@ def get_authentication_policy(credential: AsyncTokenCredential, audience: str) -
     """Returns the correct authentication policy.
 
     :param credential: The credential to use for authentication with the service.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.AsyncTokenCredential
     :param str audience: The audience for the token.
     :returns: The correct authentication policy.
-    :rtype: ~azure.core.pipeline.policies.BearerTokenCredentialPolicy
+    :rtype: ~azure.core.pipeline.policies.AsyncBearerTokenCredentialPolicy
     """
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
