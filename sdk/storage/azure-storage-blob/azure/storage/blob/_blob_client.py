@@ -42,6 +42,7 @@ from ._serialize import (
     get_source_conditions,
     get_cpk_scope_info,
     get_api_version,
+    get_version_id,
     serialize_blob_tags_header,
     serialize_blob_tags,
     serialize_query_format, get_access_conditions
@@ -763,10 +764,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         validate_content = kwargs.pop('validate_content', False)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-        if 'version_id' in kwargs:
-            version_id = kwargs.pop('version_id')
-        else:
-            version_id = self.version_id
+        version_id = get_version_id(self.version_id, kwargs)
 
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
@@ -1099,10 +1097,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         # type: (str, **Any) -> Dict[str, Any]
         if self.snapshot and delete_snapshots:
             raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
-        if 'version_id' in kwargs:
-            version_id = kwargs.pop('version_id')
-        else:
-            version_id = self.version_id
+        version_id = get_version_id(self.version_id, kwargs)
         options = self._generic_delete_blob_options(delete_snapshots, **kwargs)
         options['snapshot'] = self.snapshot
         options['version_id'] = version_id
@@ -1239,10 +1234,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             #other-client--per-operation-configuration>`_.
         :returns: boolean
         """
-        if 'version_id' in kwargs:
-            version_id = kwargs.pop('version_id')
-        else:
-            version_id = self.version_id
+        version_id = get_version_id(self.version_id, kwargs)
 
         try:
             self._client.blob.get_properties(
@@ -1325,10 +1317,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         # TODO: extract this out as _get_blob_properties_options
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-        if 'version_id' in kwargs:
-            version_id = kwargs.pop('version_id')
-        else:
-            version_id = self.version_id
+        version_id = get_version_id(self.version_id, kwargs)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -2420,10 +2409,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-        if 'version_id' in kwargs:
-            version_id = kwargs.pop('version_id')
-        else:
-            version_id = self.version_id
+        version_id = get_version_id(self.version_id, kwargs)
         if standard_blob_tier is None:
             raise ValueError("A StandardBlobTier must be specified")
         if self.snapshot and kwargs.get('version_id'):
@@ -2934,10 +2920,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         tags = serialize_blob_tags(tags)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-        if 'version_id' in kwargs:
-            version_id = kwargs.pop('version_id')
-        else:
-            version_id = self.version_id
+        version_id = get_version_id(self.version_id, kwargs)
 
         options = {
             'tags': tags,
@@ -3001,10 +2984,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         # type: (**Any) -> Dict[str, str]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-        if 'version_id' in kwargs:
-            version_id = kwargs.pop('version_id')
-        else:
-            version_id = self.version_id
+        version_id = get_version_id(self.version_id, kwargs)
 
         options = {
             'version_id': version_id,

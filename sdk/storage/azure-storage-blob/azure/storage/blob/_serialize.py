@@ -149,6 +149,11 @@ def get_api_version(kwargs):
         raise ValueError("Unsupported API version '{}'. Please select from:\n{}".format(api_version, versions))
     return api_version or _SUPPORTED_API_VERSIONS[-1]
 
+def get_version_id(self_vid, kwargs):
+    # type: (str, Dict[str, Any]) -> str
+    if 'version_id' in kwargs:
+            return kwargs.pop('version_id')
+    return self_vid
 
 def serialize_blob_tags_header(tags=None):
     # type: (Optional[Dict[str, str]]) -> str

@@ -671,10 +671,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             #other-client--per-operation-configuration>`_.
         :returns: boolean
         """
-        if 'version_id' in kwargs:
-            version_id = kwargs.pop('version_id')
-        else:
-            version_id = self.version_id
+        version_id = get_version_id(self.version_id, kwargs)
         try:
             await self._client.blob.get_properties(
                 snapshot=self.snapshot,
@@ -755,10 +752,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-        if 'version_id' in kwargs:
-            version_id = kwargs.pop('version_id')
-        else:
-            version_id = self.version_id
+        version_id = get_version_id(self.version_id, kwargs)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -1568,10 +1562,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-        if 'version_id' in kwargs:
-            version_id = kwargs.pop('version_id')
-        else:
-            version_id = self.version_id
+        version_id = get_version_id(self.version_id, kwargs)
         if standard_blob_tier is None:
             raise ValueError("A StandardBlobTier must be specified")
         try:
@@ -1948,11 +1939,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
-        if 'version_id' in kwargs:
-            version_id = kwargs.pop('version_id')
-        else:
-            version_id = self.version_id
-        options = self._set_blob_tags_options(tags=tags, version_id=version_id, **kwargs)
+        options = self._set_blob_tags_options(tags=tags, **kwargs)
         try:
             return await self._client.blob.set_tags(**options)
         except HttpResponseError as error:

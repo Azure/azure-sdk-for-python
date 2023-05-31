@@ -1032,11 +1032,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         blob = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
-        version_id = kwargs.pop('version_id', None)
         await blob.delete_blob( # type: ignore
             delete_snapshots=delete_snapshots,
             timeout=timeout,
-            version_id=version_id,
             **kwargs)
 
     @overload
@@ -1151,13 +1149,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         :rtype: ~azure.storage.blob.aio.StorageStreamDownloader
         """
         blob_client = self.get_blob_client(blob) # type: ignore
-        version_id = kwargs.pop('version_id', None)
         kwargs.setdefault('merge_span', True)
         return await blob_client.download_blob(
             offset=offset,
             length=length,
             encoding=encoding,
-            version_id=version_id,
             **kwargs)
 
     @distributed_trace_async
