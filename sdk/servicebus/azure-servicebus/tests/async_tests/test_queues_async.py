@@ -2143,6 +2143,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 for message in messages:
                     if not uamqp_transport:
                         assert message._delivery_id is not None
+                        assert message._message.data[0].decode("utf-8")  == "A" * 250 * 1024
                     receiver.complete_message(message)  # complete messages 
 
     @pytest.mark.asyncio
