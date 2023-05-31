@@ -92,8 +92,25 @@ def main():
                     "sqlWorkloadTypeUpdateSettings": {"sqlWorkloadType": "OLTP"},
                 },
                 "sqlImageSku": "Enterprise",
-                "sqlManagement": "Full",
                 "sqlServerLicenseType": "PAYG",
+                "storageConfigurationSettings": {
+                    "diskConfigurationType": "NEW",
+                    "enableStorageConfigBlade": True,
+                    "sqlDataSettings": {"defaultFilePath": "F:\\folderpath\\", "luns": [0], "useStoragePool": False},
+                    "sqlLogSettings": {"defaultFilePath": "G:\\folderpath\\", "luns": [1], "useStoragePool": False},
+                    "sqlSystemDbOnDataDisk": True,
+                    "sqlTempDbSettings": {
+                        "dataFileCount": 8,
+                        "dataFileSize": 256,
+                        "dataGrowth": 512,
+                        "defaultFilePath": "D:\\TEMP",
+                        "logFileSize": 256,
+                        "logGrowth": 512,
+                        "luns": [2],
+                        "useStoragePool": False,
+                    },
+                    "storageWorkloadType": "OLTP",
+                },
                 "virtualMachineResourceId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/testrg/providers/Microsoft.Compute/virtualMachines/testvm",
             },
         },
@@ -101,6 +118,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/sqlvirtualmachine/resource-manager/Microsoft.SqlVirtualMachine/preview/2022-08-01-preview/examples/CreateOrUpdateSqlVirtualMachineMAX.json
+# x-ms-original-file: specification/sqlvirtualmachine/resource-manager/Microsoft.SqlVirtualMachine/preview/2023-01-01-preview/examples/CreateOrUpdateSqlVirtualMachineMAX.json
 if __name__ == "__main__":
     main()

@@ -70,7 +70,6 @@ def main():
                     "sqlWorkloadTypeUpdateSettings": {"sqlWorkloadType": "OLTP"},
                 },
                 "sqlImageSku": "Enterprise",
-                "sqlManagement": "Full",
                 "sqlServerLicenseType": "PAYG",
                 "virtualMachineResourceId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/testrg/providers/Microsoft.Compute/virtualMachines/testvm",
             },
@@ -79,6 +78,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/sqlvirtualmachine/resource-manager/Microsoft.SqlVirtualMachine/preview/2022-08-01-preview/examples/CreateOrUpdateSqlVirtualMachineAutomatedBackupWeekly.json
+# x-ms-original-file: specification/sqlvirtualmachine/resource-manager/Microsoft.SqlVirtualMachine/preview/2023-01-01-preview/examples/CreateOrUpdateSqlVirtualMachineAutomatedBackupWeekly.json
 if __name__ == "__main__":
     main()
