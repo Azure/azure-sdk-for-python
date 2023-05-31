@@ -8,7 +8,6 @@ import copy
 import datetime
 import json
 import re
-import time
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceModifiedError,
