@@ -668,7 +668,7 @@ def build_conversation_authoring_get_model_evaluation_summary_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_load_snapshot_status_request(
+def build_conversation_authoring_get_load_snapshot_job_status_request(
     project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -5255,7 +5255,9 @@ class ConversationAuthoringClientOperationsMixin(
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def get_load_snapshot_status(self, project_name: str, trained_model_label: str, job_id: str, **kwargs: Any) -> JSON:
+    def get_load_snapshot_job_status(
+        self, project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
+    ) -> JSON:
         """Gets the status for loading a snapshot.
 
         See
@@ -5343,7 +5345,7 @@ class ConversationAuthoringClientOperationsMixin(
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_get_load_snapshot_status_request(
+        request = build_conversation_authoring_get_load_snapshot_job_status_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             job_id=job_id,
