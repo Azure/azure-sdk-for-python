@@ -725,6 +725,15 @@ class TestCommandFunction:
         rest_dict = command_node._to_rest_object()
         assert rest_dict["queue_settings"] == expected_queue_settings
 
+        test_command_params.update(
+            {
+                "queue_settings": QueueSettings(job_tier="Standard", priority="Medium"),
+            }
+        )
+        command_node = command(**test_command_params)
+        rest_dict = command_node._to_rest_object()
+        assert rest_dict["queue_settings"] == expected_queue_settings
+
     def test_to_component_input(self):
         # test literal input
         literal_input_2_expected_type = {

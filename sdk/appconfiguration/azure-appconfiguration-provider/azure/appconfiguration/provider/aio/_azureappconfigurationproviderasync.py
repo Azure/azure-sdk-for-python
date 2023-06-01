@@ -12,8 +12,12 @@ from azure.keyvault.secrets.aio import SecretClient
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
 
 from .._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
-from .._constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_PREFIX, EMPTY_LABEL
-from .._azureappconfigurationprovider import _is_json_content_type, _get_correlation_context
+from .._constants import (
+    FEATURE_MANAGEMENT_KEY,
+    FEATURE_FLAG_PREFIX,
+    EMPTY_LABEL,
+)
+from .._azureappconfigurationprovider import _is_json_content_type, _get_headers
 from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
@@ -21,16 +25,17 @@ if TYPE_CHECKING:
 
 JSON = Union[str, Mapping[str, Any]]  # pylint: disable=unsubscriptable-object
 
+
 @overload
 async def load(
-        endpoint: str,
-        credential: "AsyncTokenCredential",
-        *,
-        selects: Optional[List[SettingSelector]] = None,
-        trim_prefixes: Optional[List[str]] = None,
-        key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
-        **kwargs
-    ) -> "AzureAppConfigurationProvider":
+    endpoint: str,
+    credential: "AsyncTokenCredential",
+    *,
+    selects: Optional[List[SettingSelector]] = None,
+    trim_prefixes: Optional[List[str]] = None,
+    key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
+    **kwargs
+) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
 
@@ -46,15 +51,16 @@ async def load(
     """
     ...
 
+
 @overload
 async def load(
-        *,
-        connection_string: str,
-        selects: Optional[List[SettingSelector]] = None,
-        trim_prefixes: Optional[List[str]] = None,
-        key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
-        **kwargs
-    ) -> "AzureAppConfigurationProvider":
+    *,
+    connection_string: str,
+    selects: Optional[List[SettingSelector]] = None,
+    trim_prefixes: Optional[List[str]] = None,
+    key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
+    **kwargs
+) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
 
@@ -70,7 +76,7 @@ async def load(
 
 
 async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
-    #pylint:disable=protected-access
+    # pylint:disable=protected-access
 
     # Start by parsing kwargs
     endpoint: Optional[str] = kwargs.pop("endpoint", None)
@@ -78,7 +84,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     connection_string: Optional[str] = kwargs.pop("connection_string", None)
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
     selects: List[SettingSelector] = kwargs.pop("selects", [SettingSelector(key_filter="*", label_filter=EMPTY_LABEL)])
-    trim_prefixes : List[str] = kwargs.pop("trim_prefixes", [])
+    trim_prefixes: List[str] = kwargs.pop("trim_prefixes", [])
 
     # Update endpoint and credential if specified positionally.
     if len(args) > 2:
@@ -97,7 +103,6 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     if (endpoint or credential) and connection_string:
         raise ValueError("Please pass either endpoint and credential, or a connection string.")
 
-
     provider = _buildprovider(connection_string, endpoint, credential, key_vault_options)
 
     provider._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
@@ -107,7 +112,6 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
             key_filter=select.key_filter, label_filter=select.label_filter
         )
         async for config in configurations:
-
             trimmed_key = config.key
             # Trim the key if it starts with one of the prefixes provided
             for trim in provider._trim_prefixes:
@@ -139,34 +143,44 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
 
 
 def _buildprovider(
-        connection_string: Optional[str],
-        endpoint: Optional[str],
-        credential: Optional["AsyncTokenCredential"],
-        key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions],
-        **kwargs
-    ) -> "AzureAppConfigurationProvider":
-    #pylint:disable=protected-access
+    connection_string: Optional[str],
+    endpoint: Optional[str],
+    credential: Optional["AsyncTokenCredential"],
+    key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions],
+    **kwargs
+) -> "AzureAppConfigurationProvider":
+    # pylint:disable=protected-access
     provider = AzureAppConfigurationProvider()
-    headers = kwargs.pop("headers", {})
-    headers["Correlation-Context"] = _get_correlation_context(key_vault_options)
-    useragent = USER_AGENT
+    headers = _get_headers(key_vault_options, **kwargs)
+
+    retry_total = kwargs.pop("retry_total", 2)
+    retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
 
     if connection_string:
         provider._client = AzureAppConfigurationClient.from_connection_string(
-            connection_string, user_agent=useragent, headers=headers, **kwargs
+            connection_string,
+            user_agent=USER_AGENT,
+            headers=headers,
+            retry_total=retry_total,
+            retry_backoff_max=retry_backoff_max,
+            **kwargs
         )
         return provider
     provider._client = AzureAppConfigurationClient(
-        endpoint, credential, user_agent=useragent, headers=headers, **kwargs
+        endpoint,
+        credential,
+        user_agent=USER_AGENT,
+        headers=headers,
+        retry_total=retry_total,
+        retry_backoff_max=retry_backoff_max,
+        **kwargs
     )
     return provider
 
 
 async def _resolve_keyvault_reference(
-        config,
-        key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions],
-        provider: "AzureAppConfigurationProvider"
-    ) -> str:
+    config, key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions], provider: "AzureAppConfigurationProvider"
+) -> str:
     if key_vault_options is None:
         raise ValueError("Key Vault options must be set to resolve Key Vault references.")
 
@@ -177,16 +191,14 @@ async def _resolve_keyvault_reference(
 
     vault_url = key_vault_identifier.vault_url + "/"
 
-    #pylint:disable=protected-access
+    # pylint:disable=protected-access
     referenced_client = provider._secret_clients.get(vault_url, None)
 
     vault_config = key_vault_options.client_configs.get(vault_url, {})
     credential = vault_config.pop("credential", key_vault_options.credential)
 
     if referenced_client is None and credential is not None:
-        referenced_client = SecretClient(
-            vault_url=vault_url, credential=credential, **vault_config
-        )
+        referenced_client = SecretClient(vault_url=vault_url, credential=credential, **vault_config)
         provider._secret_clients[vault_url] = referenced_client
 
     if referenced_client:
@@ -203,9 +215,8 @@ async def _resolve_keyvault_reference(
             # Secret resolver was sync
             return resolved
 
-    raise ValueError(
-        "No Secret Client found for Key Vault reference %s" % (vault_url)
-    )
+    raise ValueError("No Secret Client found for Key Vault reference %s" % (vault_url))
+
 
 class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
     """
@@ -213,6 +224,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
     settings from Azure App Configuration into a Python application. Enables trimming of prefixes from configuration
     keys. Enables resolution of Key Vault references in configuration settings.
     """
+
     def __init__(self) -> None:
         self._dict: Dict[str, str] = {}
         self._trim_prefixes: List[str] = []

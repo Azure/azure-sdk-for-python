@@ -1,5 +1,7 @@
 # Release History
 
+## 1.9.0 (Unreleased)
+
 ## 1.8.0 (Unreleased)
 
 ### Features Added
@@ -9,6 +11,7 @@
 ### Bugs Fixed
 
 - Fixed an issue affecting authentication to registry-related services in sovereign regions.
+- Made job_tier and priority values case insensitive
 
 ### Breaking Changes
 
