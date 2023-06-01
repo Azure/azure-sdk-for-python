@@ -48,7 +48,7 @@ artifact = {
 sent_share = {
     "properties": {
         "artifact": artifact,
-        "displayName": "sample=share",
+        "displayName": "sampleShare",
         "description": "A sample share"
     },
     "shareKind": "InPlace"

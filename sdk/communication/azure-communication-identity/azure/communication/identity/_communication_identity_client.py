@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, Tuple, Union
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import AccessToken
 
-from ._generated._communication_identity_client\
+from ._generated._client\
     import CommunicationIdentityClient as CommunicationIdentityClientGen
 from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._shared.models import CommunicationUserIdentifier
@@ -97,7 +97,7 @@ class CommunicationIdentityClient(object):
         :rtype: ~azure.communication.identity.CommunicationUserIdentifier
         """
         return self._identity_service_client.communication_identity.create(
-            cls=lambda pr, u, e: CommunicationUserIdentifier(u['identity']['id'], raw_id=u['identity']['id']),
+            cls=lambda pr, u, e: CommunicationUserIdentifier(u.identity.id, raw_id=u.identity.id),
             **kwargs)
 
     @distributed_trace
@@ -124,8 +124,8 @@ class CommunicationIdentityClient(object):
             'expiresInMinutes': convert_timedelta_to_mins(token_expires_in)
         }
         return self._identity_service_client.communication_identity.create(
-            cls=lambda pr, u, e: (CommunicationUserIdentifier(u['identity']['id'], raw_id=u['identity']['id']),
-                AccessToken(u['accessToken']['token'], u['accessToken']['expiresOn'])),
+            cls=lambda pr, u, e: (CommunicationUserIdentifier(u.identity.id, raw_id=u.identity.id),
+                AccessToken(u.access_token.token, u.access_token.expires_on)),
             body=request_body,
             **kwargs)
 
@@ -176,7 +176,7 @@ class CommunicationIdentityClient(object):
         return self._identity_service_client.communication_identity.issue_access_token(
             user.properties['id'],
             body=request_body,
-            cls=lambda pr, u, e: AccessToken(u['token'], u['expiresOn']),
+            cls=lambda pr, u, e: AccessToken(u.token, u.expires_on),
             **kwargs)
 
     @distributed_trace
@@ -228,6 +228,6 @@ class CommunicationIdentityClient(object):
 
         return self._identity_service_client.communication_identity.exchange_teams_user_access_token(
             body=request_body,
-            cls=lambda pr, u, e: AccessToken(u['token'], u['expiresOn']),
+            cls=lambda pr, u, e: AccessToken(u.token, u.expires_on),
             **kwargs)
     

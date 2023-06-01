@@ -53,7 +53,7 @@ def semantic_ranking():
     client = SearchClient(endpoint=endpoint,
                           index_name=index_name,
                           credential=credential)
-    results = list(client.search(search_text="luxury", query_type="semantic", query_language="en-us"))
+    results = list(client.search(search_text="luxury", query_type="semantic", semantic_configuration_name="semantic_config_name", query_language="en-us"))
 
     for result in results:
         print("{}\n{}\n)".format(result["HotelId"], result["HotelName"]))

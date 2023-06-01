@@ -6,8 +6,9 @@ import functools
 import json
 import logging
 import time
+from unittest.mock import Mock, patch
 
-from azure.core.exceptions import ResourceExistsError
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure_devtools.scenario_tests import RecordingProcessor
 from devtools_testutils import recorded_by_proxy
@@ -29,6 +30,7 @@ from azure.keyvault.certificates import (
     WellKnownIssuerNames
 )
 from azure.keyvault.certificates._client import NO_SAN_OR_SUBJECT
+from azure.keyvault.certificates._shared.client_base import DEFAULT_VERSION
 import pytest
 
 from _shared.test_case import KeyVaultTestCase
@@ -37,6 +39,7 @@ from certs import CERT_CONTENT_PASSWORD_ENCODED, CERT_CONTENT_NOT_PASSWORD_ENCOD
 
 
 all_api_versions = get_decorator()
+only_latest = get_decorator(api_versions=[DEFAULT_VERSION])
 logging_enabled = get_decorator(logging_enable=True)
 logging_disabled = get_decorator(logging_enable=False)
 exclude_2016_10_01 = get_decorator(api_versions=[v for v in ApiVersion if v != ApiVersion.V2016_10_01])
@@ -721,6 +724,23 @@ class TestCertificateClient(KeyVaultTestCase):
             [_ for _ in client.list_deleted_certificates(include_pending=True)]
 
         assert "The 'include_pending' parameter to `list_deleted_certificates` is only available for API versions v7.0 and up" in str(excinfo.value)
+
+    @pytest.mark.parametrize("api_version", only_latest)
+    @CertificatesClientPreparer()
+    @recorded_by_proxy
+    def test_40x_handling(self, client, **kwargs):
+        """Ensure 404 and 409 responses are raised with azure-core exceptions instead of generated KV ones"""
+
+        # Test that 404 is raised correctly by fetching a nonexistent cert
+        with pytest.raises(ResourceNotFoundError):
+            client.get_certificate("cert-that-does-not-exist")
+
+        # 409 is raised correctly (`begin_create_certificate` shouldn't actually trigger this, but for raising behavior)
+        def run(*_, **__):
+            return Mock(http_response=Mock(status_code=409))
+        with patch.object(client._client._client._pipeline, "run", run):
+            with pytest.raises(ResourceExistsError):
+                client.begin_create_certificate("...", CertificatePolicy.get_default())
 
 
 def test_policy_expected_errors_for_create_cert():

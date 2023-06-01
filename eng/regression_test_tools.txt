@@ -1,15 +1,17 @@
 pip==20.2
+cryptography<4
 
 # requirements leveraged by ci for testing
-pytest==4.6.9; python_version == '2.7'
-pytest==5.4.2; python_version >= '3.5'
-pytest-asyncio==0.12.0; python_version >= '3.5'
-pytest-cov==2.8.1
+pytest==7.3.1
+pytest-asyncio==0.21.0
+pytest-cov==4.0.0
 pytest-custom-exit-code==0.3.0
-pytest-xdist==1.32.0
-# we pin coverage to 4.5.4 because there is an bug with `pytest-cov`. the generated coverage files cannot be `coverage combine`ed
-coverage==4.5.4
+pytest-xdist==3.2.1
+coverage==7.2.5
 bandit==1.6.2
+protobuf==3.17.3; python_version == '2.7'
+chardet>=2.0,<5.0
+cmarkgfm<0.7.0
 
 # locking packages defined as deps from azure-sdk-tools or azure-devtools
 pytoml==0.1.21
@@ -19,15 +21,17 @@ json-delta==2.0
 ConfigArgParse==1.2.3
 six==1.14.0
 pyyaml==5.3.1
-packaging==20.4
-wheel==0.34.2
+packaging==23.1
 Jinja2==2.11.2
 markupsafe==2.0.1; python_version > '2.7'
 markupsafe==1.1.1; python_version == '2.7'
+wrapt==1.12.1; python_version <= '3.10'
+wrapt==1.14.1; python_version >= '3.11'
 
 # Locking pylint and required packages
 pylint==1.8.4; python_version < '3.4'
-pylint==2.5.2; python_version >= '3.4'
+pylint==2.9.3; python_version >= '3.6' and python_version <= '3.10'
+pylint==2.14.5; python_version >= '3.11'
 
 # python-dotenv
 python-dotenv==0.15.0

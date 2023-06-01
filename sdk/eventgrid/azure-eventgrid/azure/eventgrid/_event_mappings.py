@@ -92,6 +92,8 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AcsEmailEngagementTrackingReportReceivedEventName = 'Microsoft.Communication.EmailEngagementTrackingReportReceived'
 
+    AcsIncomingCallEventName = 'Microsoft.Communication.IncomingCall'
+
     AcsRecordingFileStatusUpdatedEventName = 'Microsoft.Communication.RecordingFileStatusUpdated'
 
     AcsSmsDeliveryReportReceivedEventName = 'Microsoft.Communication.SMSDeliveryReportReceived'
@@ -178,6 +180,8 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HealthcareDicomImageCreatedEventName = 'Microsoft.HealthcareApis.DicomImageCreated'
 
     HealthcareDicomImageDeletedEventName = 'Microsoft.HealthcareApis.DicomImageDeleted'
+
+    HealthcareDicomImageUpdatedEventName = 'Microsoft.HealthcareApis.DicomImageUpdated'
 
     # spell-checker:ignore Fhir
     HealthcareFhirResourceCreatedEventName = 'Microsoft.HealthcareApis.FhirResourceCreated'

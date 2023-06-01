@@ -34,6 +34,28 @@ class AdvancedFilterOperatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     IS_NOT_NULL = "IsNotNull"
 
 
+class AlternativeAuthenticationNameSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AlternativeAuthenticationNameSource."""
+
+    CLIENT_CERTIFICATE_SUBJECT = "ClientCertificateSubject"
+    CLIENT_CERTIFICATE_DNS = "ClientCertificateDns"
+    CLIENT_CERTIFICATE_URI = "ClientCertificateUri"
+    CLIENT_CERTIFICATE_IP = "ClientCertificateIp"
+    CLIENT_CERTIFICATE_EMAIL = "ClientCertificateEmail"
+
+
+class CaCertificateProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the CA Certificate resource."""
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    DELETED = "Deleted"
+
+
 class ChannelProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the channel."""
 
@@ -44,12 +66,58 @@ class ChannelProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     FAILED = "Failed"
     IDLE_DUE_TO_MIRRORED_PARTNER_TOPIC_DELETION = "IdleDueToMirroredPartnerTopicDeletion"
+    IDLE_DUE_TO_MIRRORED_PARTNER_DESTINATION_DELETION = "IdleDueToMirroredPartnerDestinationDeletion"
 
 
 class ChannelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the event channel which represents the direction flow of events."""
 
     PARTNER_TOPIC = "PartnerTopic"
+    PARTNER_DESTINATION = "PartnerDestination"
+
+
+class ClientCertificateValidationScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The validation scheme used to authenticate the client. Default value is
+    SubjectMatchesAuthenticationName.
+    """
+
+    SUBJECT_MATCHES_AUTHENTICATION_NAME = "SubjectMatchesAuthenticationName"
+    DNS_MATCHES_AUTHENTICATION_NAME = "DnsMatchesAuthenticationName"
+    URI_MATCHES_AUTHENTICATION_NAME = "UriMatchesAuthenticationName"
+    IP_MATCHES_AUTHENTICATION_NAME = "IpMatchesAuthenticationName"
+    EMAIL_MATCHES_AUTHENTICATION_NAME = "EmailMatchesAuthenticationName"
+    THUMBPRINT_MATCH = "ThumbprintMatch"
+
+
+class ClientGroupProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the ClientGroup resource."""
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    DELETED = "Deleted"
+
+
+class ClientProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the Client resource."""
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    DELETED = "Deleted"
+
+
+class ClientState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates if the client is enabled or not. Default value is Enabled."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -79,6 +147,18 @@ class DeliveryAttributeMappingType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
 
     STATIC = "Static"
     DYNAMIC = "Dynamic"
+
+
+class DeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Delivery mode of the event subscription."""
+
+    QUEUE = "Queue"
+
+
+class DeliverySchema(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The event delivery schema for the event subscription."""
+
+    CLOUD_EVENT_SCHEMA_V1_0 = "CloudEventSchemaV1_0"
 
 
 class DomainProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -113,6 +193,7 @@ class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SERVICE_BUS_QUEUE = "ServiceBusQueue"
     SERVICE_BUS_TOPIC = "ServiceBusTopic"
     AZURE_FUNCTION = "AzureFunction"
+    PARTNER_DESTINATION = "PartnerDestination"
 
 
 class EventDefinitionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -126,6 +207,12 @@ class EventDeliverySchema(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     EVENT_GRID_SCHEMA = "EventGridSchema"
     CUSTOM_INPUT_SCHEMA = "CustomInputSchema"
+    CLOUD_EVENT_SCHEMA_V1_0 = "CloudEventSchemaV1_0"
+
+
+class EventInputSchema(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This determines the format that is expected for incoming events published to the topic."""
+
     CLOUD_EVENT_SCHEMA_V1_0 = "CloudEventSchemaV1_0"
 
 
@@ -149,6 +236,30 @@ class EventSubscriptionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnu
     CANCELED = "Canceled"
     FAILED = "Failed"
     AWAITING_MANUAL_ACTION = "AwaitingManualAction"
+
+
+class FilterOperatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operator type used for filtering, e.g., NumberIn, StringContains, BoolEquals and others."""
+
+    NUMBER_IN = "NumberIn"
+    NUMBER_NOT_IN = "NumberNotIn"
+    NUMBER_LESS_THAN = "NumberLessThan"
+    NUMBER_GREATER_THAN = "NumberGreaterThan"
+    NUMBER_LESS_THAN_OR_EQUALS = "NumberLessThanOrEquals"
+    NUMBER_GREATER_THAN_OR_EQUALS = "NumberGreaterThanOrEquals"
+    BOOL_EQUALS = "BoolEquals"
+    STRING_IN = "StringIn"
+    STRING_NOT_IN = "StringNotIn"
+    STRING_BEGINS_WITH = "StringBeginsWith"
+    STRING_ENDS_WITH = "StringEndsWith"
+    STRING_CONTAINS = "StringContains"
+    NUMBER_IN_RANGE = "NumberInRange"
+    NUMBER_NOT_IN_RANGE = "NumberNotInRange"
+    STRING_NOT_BEGINS_WITH = "StringNotBeginsWith"
+    STRING_NOT_ENDS_WITH = "StringNotEndsWith"
+    STRING_NOT_CONTAINS = "StringNotContains"
+    IS_NULL_OR_UNDEFINED = "IsNullOrUndefined"
+    IS_NOT_NULL = "IsNotNull"
 
 
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -185,6 +296,42 @@ class IpActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALLOW = "Allow"
 
 
+class NamespaceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the namespace resource."""
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    DELETED = "Deleted"
+    DELETE_FAILED = "DeleteFailed"
+    CREATE_FAILED = "CreateFailed"
+    UPDATED_FAILED = "UpdatedFailed"
+
+
+class NamespaceTopicProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the namespace topic."""
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    DELETED = "Deleted"
+    DELETE_FAILED = "DeleteFailed"
+    CREATE_FAILED = "CreateFailed"
+    UPDATED_FAILED = "UpdatedFailed"
+
+
+class PartnerClientAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of client authentication."""
+
+    AZURE_AD = "AzureAD"
+
+
 class PartnerConfigurationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the partner configuration."""
 
@@ -194,6 +341,31 @@ class PartnerConfigurationProvisioningState(str, Enum, metaclass=CaseInsensitive
     SUCCEEDED = "Succeeded"
     CANCELED = "Canceled"
     FAILED = "Failed"
+
+
+class PartnerDestinationActivationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Activation state of the partner destination."""
+
+    NEVER_ACTIVATED = "NeverActivated"
+    ACTIVATED = "Activated"
+
+
+class PartnerDestinationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the partner destination."""
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    IDLE_DUE_TO_MIRRORED_CHANNEL_RESOURCE_DELETION = "IdleDueToMirroredChannelResourceDeletion"
+
+
+class PartnerEndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the endpoint for the partner destination."""
+
+    WEB_HOOK = "WebHook"
 
 
 class PartnerNamespaceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -249,6 +421,25 @@ class PartnerTopicRoutingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CHANNEL_NAME_HEADER = "ChannelNameHeader"
 
 
+class PermissionBindingProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the PermissionBinding resource."""
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    DELETED = "Deleted"
+
+
+class PermissionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The allowed permission."""
+
+    PUBLISHER = "Publisher"
+    SUBSCRIBER = "Subscriber"
+
+
 class PersistedConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the connection."""
 
@@ -264,6 +455,7 @@ class PrivateEndpointConnectionsParentType(str, Enum, metaclass=CaseInsensitiveE
     TOPICS = "topics"
     DOMAINS = "domains"
     PARTNER_NAMESPACES = "partnerNamespaces"
+    NAMESPACES = "namespaces"
 
 
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -277,11 +469,24 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "Disabled"
 
 
+class PublisherType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Publisher type of the namespace topic."""
+
+    CUSTOM = "Custom"
+
+
 class ReadinessState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The readiness state of the corresponding partner topic."""
 
     NEVER_ACTIVATED = "NeverActivated"
     ACTIVATED = "Activated"
+
+
+class ResourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of the resource."""
+
+    AZURE = "Azure"
+    AZURE_ARC = "AzureArc"
 
 
 class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -302,6 +507,57 @@ class ResourceRegionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GLOBAL_RESOURCE = "GlobalResource"
 
 
+class RoutingIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """RoutingIdentityType."""
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+
+
+class Sku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Sku name of the resource. The possible values are: Basic or Premium."""
+
+    BASIC = "Basic"
+    PREMIUM = "Premium"
+
+
+class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of the SKU."""
+
+    STANDARD = "Standard"
+
+
+class StaticRoutingEnrichmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Static routing enrichment value type. For e.g. this property value can be 'String'."""
+
+    STRING = "String"
+
+
+class SubscriptionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the event subscription."""
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    AWAITING_MANUAL_ACTION = "AwaitingManualAction"
+    DELETED = "Deleted"
+    DELETE_FAILED = "DeleteFailed"
+    CREATE_FAILED = "CreateFailed"
+    UPDATED_FAILED = "UpdatedFailed"
+
+
+class TlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Minimum TLS version of the publisher allowed to publish to this domain."""
+
+    ONE0 = "1.0"
+    ONE1 = "1.1"
+    ONE2 = "1.2"
+
+
 class TopicProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the topic."""
 
@@ -311,6 +567,25 @@ class TopicProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUCCEEDED = "Succeeded"
     CANCELED = "Canceled"
     FAILED = "Failed"
+
+
+class TopicSpaceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the TopicSpace resource."""
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    DELETED = "Deleted"
+
+
+class TopicSpacesConfigurationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicate if Topic Spaces Configuration is enabled for the namespace. Default is Disabled."""
+
+    DISABLED = "Disabled"
+    ENABLED = "Enabled"
 
 
 class TopicTypeProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

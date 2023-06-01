@@ -69,6 +69,35 @@ class TestModel(AzureRecordedTestCase):
         # with pytest.raises(Exception):
         #     client.models.get(name=model.name, version="3")
 
+    def test_crud_model_with_stage(self, client: MLClient, randstr: Callable[[], str], tmp_path: Path) -> None:
+        path = Path("./tests/test_configs/model/model_with_stage.yml")
+        model_name = randstr("model_prod_name")
+
+        model = load_model(path)
+        model.name = model_name
+        model = client.models.create_or_update(model)
+        assert model.name == model_name
+        assert model.version == "3"
+        assert model.description == "this is my test model with stage"
+        assert model.type == "mlflow_model"
+        assert model.stage == "Production"
+        assert re.match(LONG_URI_REGEX_FORMAT, model.path)
+
+        with pytest.raises(Exception):
+            with patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", return_value="DIFFERENT_HASH"):
+                model = load_model(source=artifact_path)
+                model = client.models.create_or_update(model)
+
+        model = client.models.get(model.name, "3")
+        assert model.name == model_name
+        assert model.version == "3"
+        assert model.description == "this is my test model with stage"
+        assert model.stage == "Production"
+
+        model_list = client.models.list(name=model.name, stage="Production")
+        model_stage_list = [m.stage for m in model_list if m is not None]
+        assert model.stage in model_stage_list
+
     def test_list_no_name(self, client: MLClient) -> None:
         models = client.models.list()
         assert isinstance(models, Iterator)
