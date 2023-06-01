@@ -32,7 +32,7 @@ from .._deserialize import (
 )
 from .._encryption import StorageEncryptionMixin
 from .._models import BlobType, BlobBlock, BlobProperties, PageRange
-from .._serialize import get_modify_conditions, get_api_version, get_access_conditions
+from .._serialize import get_modify_conditions, get_api_version, get_access_conditions, get_version_id
 from ._download_async import StorageStreamDownloader
 from ._lease_async import BlobLeaseClient
 from ._models import PageRangePaged
