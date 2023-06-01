@@ -1055,7 +1055,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self._link.send_disposition(
             first_delivery_id=first,
             last_delivery_id=last,
-            settled=True,
+            settled=False,
             delivery_state=state,
             batchable=batchable,
             wait=True,
