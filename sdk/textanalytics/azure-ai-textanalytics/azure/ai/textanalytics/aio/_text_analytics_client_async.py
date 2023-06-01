@@ -5,6 +5,7 @@
 # pylint: disable=too-many-lines
 
 from typing import Union, Any, List, Dict, cast, Optional
+from typing_extensions import Literal
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
@@ -1712,7 +1713,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         model_version: Optional[str] = None,
         string_index_type: Optional[str] = None,
         max_sentence_count: Optional[int] = None,
-        order_by: Optional[str] = None,
+        order_by: Optional[Literal["Rank", "Offset"]] = None,
         **kwargs: Any,
     ) -> AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[ExtractiveSummaryResult, DocumentError]]]:
         """Start a long-running extractive summarization operation.

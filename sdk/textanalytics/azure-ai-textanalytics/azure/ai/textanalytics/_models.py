@@ -6,7 +6,7 @@
 # pylint: disable=unused-argument
 import re
 from enum import Enum
-from typing import Optional, List, Dict, Any, Union
+from typing import Optional, List, Any, Union
 from typing_extensions import Literal
 from azure.core import CaseInsensitiveEnumMeta
 from ._generated.models import (

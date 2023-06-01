@@ -12,6 +12,7 @@ from typing import (
     cast,
     Optional,
 )
+from typing_extensions import Literal
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
@@ -1716,7 +1717,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version: Optional[str] = None,
         string_index_type: Optional[str] = None,
         max_sentence_count: Optional[int] = None,
-        order_by: Optional[str] = None,
+        order_by: Optional[Literal["Rank", "Offset"]] = None,
         **kwargs: Any,
     ) -> TextAnalysisLROPoller[ItemPaged[Union[ExtractiveSummaryResult, DocumentError]]]:
         """Start a long-running extractive summarization operation.
@@ -1898,9 +1899,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_abstractive_summary.py
-                :start-after: [START abstractive_summary]
-                :end-before: [END abstractive_summary]
+            .. literalinclude:: ../samples/sample_abstract_summary.py
+                :start-after: [START abstract_summary]
+                :end-before: [END abstract_summary]
                 :language: python
                 :dedent: 4
                 :caption: Perform abstractive summarization on a batch of documents.
