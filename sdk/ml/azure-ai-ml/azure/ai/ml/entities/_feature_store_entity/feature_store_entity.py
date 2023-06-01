@@ -32,7 +32,7 @@ class FeatureStoreEntity(Asset):
         name: str,
         version: str,
         index_columns: List[DataColumn],
-        stage: Optional[str] = None,
+        stage: Optional[str] = "Development",
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs,
