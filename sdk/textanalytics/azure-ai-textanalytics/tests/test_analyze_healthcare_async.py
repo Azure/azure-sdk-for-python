@@ -569,7 +569,6 @@ class TestHealth(TextAnalyticsTest):
 
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
-    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15758510")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async

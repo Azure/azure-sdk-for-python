@@ -20,7 +20,7 @@ from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from testcase import TextAnalyticsTest
-from azure.ai.textanalytics.aio._lro_async import AsyncAnalyzeActionsLROPoller
+from azure.ai.textanalytics.aio._lro_async import AsyncAnalyzeActionsLROPoller, AsyncTextAnalysisLROPoller
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     TextDocumentInput,
@@ -42,8 +42,8 @@ from azure.ai.textanalytics import (
     ClassifyDocumentResult,
     RecognizeCustomEntitiesResult,
     AnalyzeHealthcareEntitiesAction,
-    ExtractSummaryAction,
-    ExtractSummaryResult,
+    ExtractiveSummaryAction,
+    ExtractiveSummaryResult,
     AbstractiveSummaryAction,
 )
 
@@ -560,7 +560,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     assert document_result.statistics.character_count
                     assert document_result.statistics.transaction_count
 
-    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15758510")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -579,6 +578,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
 
             response = await poller.result()
 
+            assert isinstance(poller, AsyncTextAnalysisLROPoller)
             assert isinstance(poller, AsyncAnalyzeActionsLROPoller)
             assert isinstance(poller.created_on, datetime.datetime)
             assert not poller.display_name
@@ -1823,7 +1823,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             )
             await poller.cancel()
 
-    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/26163")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -1936,7 +1935,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_actions(
                 docs,
-                actions=[ExtractSummaryAction()],
+                actions=[ExtractiveSummaryAction()],
                 show_stats=True,
                 polling_interval=self._interval(),
             )).result()
@@ -1949,7 +1948,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             for document_result in document_results:
                 assert len(document_result) == 1
                 for result in document_result:
-                    assert isinstance(result, ExtractSummaryResult)
+                    assert isinstance(result, ExtractiveSummaryResult)
                     assert result.statistics
                     assert len(result.sentences) == 3 if result.id == 0 else 1
                     for sentence in result.sentences:
@@ -1984,7 +1983,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_actions(
                 docs,
-                actions=[ExtractSummaryAction(max_sentence_count=5, order_by="Rank")],
+                actions=[ExtractiveSummaryAction(max_sentence_count=5, order_by="Rank")],
                 show_stats=True,
                 polling_interval=self._interval(),
             )).result()
@@ -1997,7 +1996,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             for document_result in document_results:
                 assert len(document_result) == 1
                 for result in document_result:
-                    assert isinstance(result, ExtractSummaryResult)
+                    assert isinstance(result, ExtractiveSummaryResult)
                     assert result.statistics
                     assert len(result.sentences) == 5
                     previous_score = 1.0
@@ -2019,7 +2018,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze_actions(
                 docs,
-                actions=[ExtractSummaryAction()],
+                actions=[ExtractiveSummaryAction()],
                 show_stats=True,
                 polling_interval=self._interval(),
             )).result()
@@ -2031,7 +2030,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             assert document_results[0][0].error.code == "InvalidDocument"
 
             assert not document_results[1][0].is_error
-            assert isinstance(document_results[1][0], ExtractSummaryResult)
+            assert isinstance(document_results[1][0], ExtractiveSummaryResult)
 
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
