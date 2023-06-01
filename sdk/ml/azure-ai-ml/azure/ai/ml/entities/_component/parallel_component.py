@@ -79,7 +79,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
         Details will be provided in the error message.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         name: Optional[str] = None,
