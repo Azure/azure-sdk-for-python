@@ -123,7 +123,13 @@ class SparkConfigurationOptions(object):
         # [END materialization_setting_configuration]
 
         # [START synapse_spark_compute_configuration]
-        from azure.ai.ml.entities import IdentityConfiguration, SynapseSparkCompute, UserAssignedIdentity
+        from azure.ai.ml.entities import (
+            AutoPauseSettings,
+            AutoScaleSettings,
+            IdentityConfiguration,
+            SynapseSparkCompute,
+            UserAssignedIdentity,
+        )
 
         synapse_compute = SynapseSparkCompute(
             name="synapse_name",
@@ -136,6 +142,8 @@ class SparkConfigurationOptions(object):
                     )
                 ],
             ),
+            scale_settings=AutoScaleSettings(min_node_count=1, max_node_count=3, auto_scale_enabled=True),
+            auto_pause_settings=AutoPauseSettings(delay_in_minutes=10, enabled=True),
         )
 
         # [END synapse_spark_compute_configuration]

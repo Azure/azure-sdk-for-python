@@ -19,7 +19,24 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 class AutoScaleSettings:
-    """Auto scale settings for synapse spark compute."""
+    """Auto-scale settings for Synapse Spark compute.
+
+    :param min_node_count: Minimum compute node count.
+    :type min_node_count: Optional[int]
+    :param max_node_count: Maximum compute node count.
+    :type max_node_count: Optional[int]
+    :param auto_scale_enabled: Specifies if Auto-scale is enabled.
+    :type auto_scale_enabled: Optional[bool]
+
+    .. admonition:: Example:
+        :class: tip
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+            :start-after: [START synapse_spark_compute_configuration]
+            :end-before: [END synapse_spark_compute_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring AutoScaleSettings on SynapseSparkCompute.
+    """
 
     def __init__(
         self,
@@ -29,12 +46,12 @@ class AutoScaleSettings:
         enabled: Optional[bool] = None,
     ) -> None:
         """
-        :param min_node_count: Min node count
-        :type min_node_count: int
-        :param max_node_count: Max node count
-        :type max_node_count: int
-        :param auto_scale_enabled:  Auto scale enabled
-        :type auto_scale_enabled: bool
+        :param min_node_count: Minimum compute node count.
+        :type min_node_count: Optional[int]
+        :param max_node_count: Maximum compute node count.
+        :type max_node_count: Optional[int]
+        :param auto_scale_enabled: Specifies if Auto-scale is enabled.
+        :type auto_scale_enabled: Optional[bool]
         """
         self.min_node_count = min_node_count
         self.max_node_count = max_node_count
@@ -60,17 +77,26 @@ class AutoPauseSettings:
     """Auto pause settings for Synapse Spark compute.
 
     :param delay_in_minutes: The ideal time delay in minutes before pausing cluster.
-    :type delay_in_minutes: int
+    :type delay_in_minutes: Optional[int]
     :param auto_scale_enabled: Specifies if auto pause is enabled.
-    :type auto_scale_enabled: bool
+    :type auto_scale_enabled: Optional[bool]
+
+    .. admonition:: Example:
+        :class: tip
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+            :start-after: [START synapse_spark_compute_configuration]
+            :end-before: [END synapse_spark_compute_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring AutoPauseSettings on SynapseSparkCompute.
     """
 
     def __init__(self, *, delay_in_minutes: Optional[int] = None, enabled: Optional[bool] = None) -> None:
         """
         :param delay_in_minutes: ideal time delay in minutes before pause cluster
-        :type delay_in_minutes: int
+        :type delay_in_minutes: Optional[int]
         :param auto_scale_enabled:  Auto pause enabled
-        :type auto_scale_enabled: bool
+        :type auto_scale_enabled: Optional[bool]
         """
         self.delay_in_minutes = delay_in_minutes
         self.auto_pause_enabled = enabled
