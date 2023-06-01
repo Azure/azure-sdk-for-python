@@ -99,6 +99,7 @@ class HttpHeaders(object):
     # Our custom DocDB headers
     Continuation = "x-ms-continuation"
     PageSize = "x-ms-max-item-count"
+    ResponseContinuationTokenLimitInKb = "x-ms-documentdb-responsecontinuationtokenlimitinkb"
 
     # Request sender generated. Simply echoed by backend.
     ActivityId = "x-ms-activity-id"
