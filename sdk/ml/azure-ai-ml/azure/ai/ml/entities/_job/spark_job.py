@@ -63,13 +63,13 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     :param entry: The file or class entry point.
     :type entry: dict[str, str]
     :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
-    :type py_files: Optional[typing.List[str]]
+    :type py_files: List[str]
     :param jars: The list of .JAR files to include on the driver and executor classpaths.
-    :type jars: Optional[typing.List[str]]
+    :type jars: List[str]
     :param files: The list of files to be placed in the working directory of each executor.
-    :type files: Optional[typing.List[str]]
+    :type files: List[str]
     :param archives: The list of archives to be extracted into the working directory of each executor.
-    :type archives: Optional[typing.List[str]]
+    :type archives: List[str]
     :param identity: The identity that the Spark job will use while running on compute.
     :type identity: Union[
         azure.ai.ml.ManagedIdentityConfiguration,
@@ -98,9 +98,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     :param environment: The Azure ML environment to run the job in.
     :type environment: Union[str, azure.ai.ml.entities.Environment]
     :param inputs: The mapping of inputs data bindings used in the job.
-    :type inputs: dict
+    :type inputs: dict[str, ~azure.ai.ml.Inputs]
     :param outputs: The mapping of outputs data bindings used in the job.
-    :type outputs: dict
+    :type outputs: dict[str, ~azure.ai.ml.Outputs]
     :param args: The arguments for the job.
     :type args: str
     :param compute: The compute resource the job runs on.

@@ -43,8 +43,8 @@ class AutoScaleSettings:
         :type min_node_count: Optional[int]
         :param max_node_count: Maximum compute node count.
         :type max_node_count: Optional[int]
-        :param auto_scale_enabled: Specifies if Auto-scale is enabled.
-        :type auto_scale_enabled: Optional[bool]
+        :param nabled: Specifies if Auto-scale is enabled.
+        :type enabled: Optional[bool]
         """
         self.min_node_count = min_node_count
         self.max_node_count = max_node_count

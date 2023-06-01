@@ -24,10 +24,12 @@ class SparkConfigurationOptions(object):
 
         from azure.ai.ml import MLClient
 
-        subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
-        resource_group = os.environ["RESOURCE_GROUP_NAME"]
+        # subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+        # resource_group = os.environ["RESOURCE_GROUP_NAME"]
+        subscription_id = "e9b2ec51-5c94-4fa8-809a-dc1e695e4896"
+        resource_group = "dipeck-rg1"
         credential = DefaultAzureCredential()
-        ml_client = MLClient(credential, subscription_id, resource_group, workspace_name="test-ws1")
+        ml_client = MLClient(credential, subscription_id, resource_group, workspace_name="r-bug-bash")
 
         # [START spark_monitor_definition]
         from azure.ai.ml.entities import (
@@ -76,12 +78,13 @@ class SparkConfigurationOptions(object):
         # [START spark_entry_type]
         from azure.ai.ml.entities import SparkJobEntry, SparkJobEntryType
 
-        spark_entry = SparkJobEntry(entry_type=SparkJobEntryType.SPARK_JOB_FILE_ENTRY, entry="main.py")
+        spark_entry = SparkJobEntry(type=SparkJobEntryType.SPARK_JOB_FILE_ENTRY, entry="main.py")
 
         # [END spark_entry_type]
 
         # [START spark_job_configuration]
-        from azure.ai.ml.entities import Input, Output, SparkJob
+        from azure.ai.ml import Input, Output
+        from azure.ai.ml.entities import SparkJob
 
         spark_job = SparkJob(
             code="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/basic_src",
@@ -127,8 +130,8 @@ class SparkConfigurationOptions(object):
             AutoPauseSettings,
             AutoScaleSettings,
             IdentityConfiguration,
+            ManagedIdentityConfiguration,
             SynapseSparkCompute,
-            UserAssignedIdentity,
         )
 
         synapse_compute = SynapseSparkCompute(
@@ -137,12 +140,12 @@ class SparkConfigurationOptions(object):
             identity=IdentityConfiguration(
                 type="UserAssigned",
                 user_assigned_identities=[
-                    UserAssignedIdentity(
+                    ManagedIdentityConfiguration(
                         resource_id="/subscriptions/mysubid/resourceGroups/myrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mymanagedidentityname"
                     )
                 ],
             ),
-            scale_settings=AutoScaleSettings(min_node_count=1, max_node_count=3, auto_scale_enabled=True),
+            scale_settings=AutoScaleSettings(min_node_count=1, max_node_count=3, enabled=True),
             auto_pause_settings=AutoPauseSettings(delay_in_minutes=10, enabled=True),
         )
 
