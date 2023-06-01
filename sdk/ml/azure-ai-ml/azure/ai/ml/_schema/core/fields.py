@@ -440,7 +440,7 @@ class UnionField(fields.Field):
             self.is_strict = is_strict  # S\When True, combine fields with oneOf instead of anyOf at schema generation
         except FieldInstanceResolutionError as error:
             raise ValueError(
-                'Elements of "union_fields" must be subclasses or ' "instances of marshmallow.base.FieldABC."
+                'Elements of "union_fields" must be subclasses or instances of marshmallow.base.FieldABC.'
             ) from error
 
     @property
@@ -781,7 +781,7 @@ class ExperimentalField(fields.Field):
             self.required = experimental_field.required
         except FieldInstanceResolutionError as error:
             raise ValueError(
-                '"experimental_field" must be subclasses or ' "instances of marshmallow.base.FieldABC."
+                '"experimental_field" must be subclasses or instances of marshmallow.base.FieldABC.'
             ) from error
 
     @property
