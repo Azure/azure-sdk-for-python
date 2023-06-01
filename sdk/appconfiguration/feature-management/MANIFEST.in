@@ -1,0 +1,8 @@
+recursive-include tests *.py
+include *.md
+include LICENSE
+include feature/__init__.py
+include feature/management/*.py
+recursive-include samples *.py *.md
+recursive-include doc *.rst
+include feature/management/py.typed

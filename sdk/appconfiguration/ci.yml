@@ -39,3 +39,5 @@ extends:
       safeName: azureappconfigurationprovider
     - name: azure-mgmt-appconfiguration
       safeName: azuremgmtappconfiguration
+    - name: feature-management
+      safeName: featuremanagement
