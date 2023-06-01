@@ -150,7 +150,7 @@ def get_api_version(kwargs):
     return api_version or _SUPPORTED_API_VERSIONS[-1]
 
 def get_version_id(self_vid, kwargs):
-    # type: (str, Dict[str, Any]) -> str
+    # type: (Optional[str], Dict[str, Any]) -> Optional[str]
     if 'version_id' in kwargs:
             return kwargs.pop('version_id')
     return self_vid
