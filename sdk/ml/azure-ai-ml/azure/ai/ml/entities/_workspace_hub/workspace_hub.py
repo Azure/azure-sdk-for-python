@@ -110,7 +110,7 @@ class WorkspaceHub(Workspace):
             return None
 
         workspace_object = Workspace._from_rest_object(rest_obj)
-        workspacehub_object =  WorkspaceHub(
+        workspacehub_object = WorkspaceHub(
             name=workspace_object.name,
             description=workspace_object.description,
             tags=workspace_object.tags,
@@ -148,7 +148,7 @@ class WorkspaceHub(Workspace):
         }
         loaded_schema = load_from_dict(WorkspaceHubSchema, data, context, **kwargs)
         return WorkspaceHub(**loaded_schema)
-    
+
     def set_associated_workspaces(self, value):
         self.associated_workspaces = value
 
