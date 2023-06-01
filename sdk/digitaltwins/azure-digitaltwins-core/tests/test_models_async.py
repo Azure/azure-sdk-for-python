@@ -9,6 +9,7 @@ from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, Reso
 from azure.digitaltwins.core.aio import DigitalTwinsClient
 from azure.digitaltwins.core import DigitalTwinsModelData
 from devtools_testutils import AzureRecordedTestCase
+from msrest.exceptions import ValidationError
 
 
 class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):

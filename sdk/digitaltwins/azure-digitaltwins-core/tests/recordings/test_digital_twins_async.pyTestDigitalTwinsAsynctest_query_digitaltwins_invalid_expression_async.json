@@ -8,7 +8,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "16",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "query": "foo"
@@ -16,11 +16,12 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:03:37 GMT",
-        "mise-correlation-id": "b177ca82-55e1-4f68-918c-6f70f98cba96",
+        "Date": "Thu, 01 Jun 2023 20:36:51 GMT",
+        "mise-correlation-id": "ae788ce8-ef89-430d-896f-8c080559fe82",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-e0b3027add823d04832eabf0b636a8cb-10507024ea636a44-01",
-        "Transfer-Encoding": "chunked"
+        "traceresponse": "00-aa95b2701e583b1e7c3e9819a2410254-b9e10929f84a3dcd-01",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "SqlQueryError"
       },
       "ResponseBody": {
         "error": {

@@ -6,17 +6,18 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Length": "246",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:02:44 GMT",
-        "mise-correlation-id": "154b6a1f-5b99-408f-b35d-6db7c32f987a",
+        "Date": "Thu, 01 Jun 2023 20:30:27 GMT",
+        "mise-correlation-id": "23cb40b7-ca47-4245-8e9d-f50773d51f0b",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-cad091e87b8b0c7d40315345befcbb67-76755107899abdcd-01"
+        "traceresponse": "00-13d4d93f496969b393f243d46aea2f25-3a1ef9778e1445b0-01",
+        "x-ms-error-code": "ComponentNotFound"
       },
       "ResponseBody": {
         "error": {
@@ -31,17 +32,18 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Length": "257",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:02:44 GMT",
-        "mise-correlation-id": "6e05879d-d37e-4bba-ba72-2dd49d4699a4",
+        "Date": "Thu, 01 Jun 2023 20:30:27 GMT",
+        "mise-correlation-id": "6a7e781e-88a6-4442-b471-c198b1f8b660",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-57241c71b5b57158de2a698931b47f95-0f65cb19dbafc61b-01"
+        "traceresponse": "00-826090f8e29482b37a49332ed5142887-f5bf9c081b52a468-01",
+        "x-ms-error-code": "DigitalTwinNotFound"
       },
       "ResponseBody": {
         "error": {

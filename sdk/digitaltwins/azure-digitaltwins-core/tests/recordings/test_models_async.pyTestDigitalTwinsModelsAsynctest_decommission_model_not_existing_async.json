@@ -8,17 +8,18 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "61",
         "Content-Type": "application/json-patch\u002Bjson",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": "[{\u0022op\u0022: \u0022replace\u0022, \u0022path\u0022: \u0022/decommissioned\u0022, \u0022value\u0022: true}]",
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Length": "220",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:03:51 GMT",
-        "mise-correlation-id": "de005bfe-9823-40e0-bf21-ab65447c391f",
+        "Date": "Thu, 01 Jun 2023 20:37:21 GMT",
+        "mise-correlation-id": "abfe86f9-1f02-4d5c-970f-725477aa086f",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-1ed001efde949d55949643b0b3c5ce9b-bf913606978a927c-01"
+        "traceresponse": "00-fc15a0a617fe393a19621f7477d81e34-d5f591b16818658e-01",
+        "x-ms-error-code": "ModelNotFound"
       },
       "ResponseBody": {
         "error": {

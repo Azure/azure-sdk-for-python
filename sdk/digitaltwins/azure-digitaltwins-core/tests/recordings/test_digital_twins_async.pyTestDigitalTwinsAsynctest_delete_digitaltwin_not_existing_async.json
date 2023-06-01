@@ -7,17 +7,18 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Length": "274",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:03:20 GMT",
-        "mise-correlation-id": "2dd68c6f-49e0-4ad8-acf2-b3a2aae53968",
+        "Date": "Thu, 01 Jun 2023 20:34:02 GMT",
+        "mise-correlation-id": "278726a3-8e76-4d3d-8212-2c4831070d29",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-bc7c8327883a34e136b71eb9f98c8e67-1b9e0f605db6ee4c-01"
+        "traceresponse": "00-2826c0eb6bb2acb891ec272154e73d65-73af256f31f69dc5-01",
+        "x-ms-error-code": "DigitalTwinNotFound"
       },
       "ResponseBody": {
         "error": {

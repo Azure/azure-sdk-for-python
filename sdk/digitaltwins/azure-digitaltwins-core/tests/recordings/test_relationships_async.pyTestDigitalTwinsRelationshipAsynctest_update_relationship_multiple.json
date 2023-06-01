@@ -6,17 +6,17 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "Content-Length": "521",
+        "Content-Length": "523",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:04:36 GMT",
-        "mise-correlation-id": "256cf18a-d2cc-423f-9934-6ca3aa1413cb",
+        "Date": "Thu, 01 Jun 2023 20:39:14 GMT",
+        "mise-correlation-id": "f834f6a9-f8a7-453a-b5c1-fb1579c38aae",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-ef319ee8f54031022689d0a06964bbbe-94b5fa7e0cb4f0a1-01"
+        "traceresponse": "00-6d9bbb26ed20da7c56720037d77e972e-1aa54c53be0e3971-01"
       },
       "ResponseBody": {
         "value": [
@@ -27,7 +27,7 @@
               "en": "Building"
             },
             "decommissioned": false,
-            "uploadTime": "2022-09-29T04:04:36.273177\u002B00:00"
+            "uploadTime": "2023-06-01T20:39:14.1544138\u002B00:00"
           },
           {
             "id": "dtmi:samples:RelationshipTestFloor;1",
@@ -36,7 +36,7 @@
               "en": "Floor"
             },
             "decommissioned": false,
-            "uploadTime": "2022-09-29T04:04:36.2732131\u002B00:00"
+            "uploadTime": "2023-06-01T20:39:14.1544378\u002B00:00"
           },
           {
             "id": "dtmi:samples:RelationshipTestRoom;1",
@@ -45,7 +45,7 @@
               "en": "Room"
             },
             "decommissioned": false,
-            "uploadTime": "2022-09-29T04:04:36.273223\u002B00:00"
+            "uploadTime": "2023-06-01T20:39:14.1544543\u002B00:00"
           }
         ],
         "nextLink": null
@@ -58,16 +58,16 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 29 Sep 2022 04:04:36 GMT",
-        "mise-correlation-id": "a61a042c-03f1-4a44-92ec-fb4bacf38853",
+        "Date": "Thu, 01 Jun 2023 20:39:14 GMT",
+        "mise-correlation-id": "0d6e2ae8-38cf-4353-9443-13a65f6a2b71",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-1e0f788c733ffdbe83916c4d52516ecc-fbb5e1c8a2ed574c-01"
+        "traceresponse": "00-46c8d725c437782238bc75870592b430-5cd7095dc2cddaf6-01"
       },
       "ResponseBody": null
     },
@@ -78,16 +78,16 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 29 Sep 2022 04:04:36 GMT",
-        "mise-correlation-id": "aa20b453-af2e-4036-b031-dc0806d178c2",
+        "Date": "Thu, 01 Jun 2023 20:39:14 GMT",
+        "mise-correlation-id": "3b42ba76-b3de-4d4d-91ad-4816e062c42f",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-f55e8bda8ade8dd6dfcc2b65687ba75b-9979ff162ccb4d67-01"
+        "traceresponse": "00-8716339616c55e1d2f40300c0cc87928-25adb8b535bae01e-01"
       },
       "ResponseBody": null
     },
@@ -98,16 +98,16 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 29 Sep 2022 04:04:36 GMT",
-        "mise-correlation-id": "5d224209-8181-49b1-82d4-8a8e307ce429",
+        "Date": "Thu, 01 Jun 2023 20:39:15 GMT",
+        "mise-correlation-id": "b6fed77e-5275-41ef-b0c6-efcbba3f3e8b",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-cb15060a85ee26ca4dce16fcc51da529-ad06f31bec721760-01"
+        "traceresponse": "00-bc6df9c57795ef0f315f55c419c3bc58-53445d470d2a82c7-01"
       },
       "ResponseBody": null
     },
@@ -117,17 +117,17 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "28",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:04:36 GMT",
-        "mise-correlation-id": "a86c895f-fb9e-46bb-95a7-57c9085545a7",
+        "Date": "Thu, 01 Jun 2023 20:39:15 GMT",
+        "mise-correlation-id": "392a9f1b-c38d-4d0f-8ee2-bdee06cdaf1e",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-e064115daa480cae634e0c1d714ccf4c-a0214b5d3c7682ec-01"
+        "traceresponse": "00-9285c23e151dd6af597492e57d30b7dd-08759a1c34157bb7-01"
       },
       "ResponseBody": {
         "value": [],
@@ -140,17 +140,17 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "28",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:04:36 GMT",
-        "mise-correlation-id": "8005694d-0527-42bb-afee-f9e3ab7928b2",
+        "Date": "Thu, 01 Jun 2023 20:39:15 GMT",
+        "mise-correlation-id": "197f9b65-a7dd-4e84-9e27-987e9b9cbdc6",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-fe05b73a40eccdb355267c74955514b7-5906cd403e2916f3-01"
+        "traceresponse": "00-bba66e8e40d7463c864fd3f79f9e3865-e415a8ea79694a88-01"
       },
       "ResponseBody": {
         "nextLink": null,
@@ -163,17 +163,17 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "28",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:04:36 GMT",
-        "mise-correlation-id": "4eb28a63-ffab-4755-b023-9594d63bc4ed",
+        "Date": "Thu, 01 Jun 2023 20:39:15 GMT",
+        "mise-correlation-id": "ea15cced-5383-4726-bcbb-08fc4242ed67",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-a94751303e1a1c15b119fdef630de97b-3e95a0e04879e774-01"
+        "traceresponse": "00-ed3e869410a3c01961c7c95f5d36ff5a-377a46fad4c742c8-01"
       },
       "ResponseBody": {
         "nextLink": null,
@@ -186,24 +186,24 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "260",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:04:37 GMT",
-        "mise-correlation-id": "5218724a-e83b-4cc2-9bbd-cc1f7f612eab",
+        "Date": "Thu, 01 Jun 2023 20:39:15 GMT",
+        "mise-correlation-id": "870b7db6-8afa-4b73-9a47-47b1e0bd5cb8",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-30cdb0eff18f263a5093e104dc5db118-8b7bb6cbd2cb6feb-01"
+        "traceresponse": "00-4760be2935a6031bb853cdeb72b4c29a-ab33bb6c68d0a029-01"
       },
       "ResponseBody": {
         "nextLink": null,
         "value": [
           {
             "$relationshipId": "BuildingHasFloor",
-            "$etag": "W/\u0022c94036fd-287e-4d94-8502-6609a0ae40d2\u0022",
+            "$etag": "W/\u0022cc4d612c-e28f-4a94-9a91-b18b9cca62b2\u0022",
             "$sourceId": "DTRelationshipTestsBuildingTwin",
             "$relationshipName": "has",
             "$targetId": "DTRelationshipTestsFloorTwin",
@@ -219,16 +219,16 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 29 Sep 2022 04:04:37 GMT",
-        "mise-correlation-id": "c341f323-7c3c-476d-9171-bc91e96b2165",
+        "Date": "Thu, 01 Jun 2023 20:39:17 GMT",
+        "mise-correlation-id": "39661a58-01e2-4b06-975d-311504624b84",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-bb74e63f909ca95f6814d5da4f2b9e7b-6f8a69bd3294caa3-01"
+        "traceresponse": "00-100ca5369315d2b4064d23bd5891cbb1-71ea457dcd73a613-01"
       },
       "ResponseBody": null
     },
@@ -239,16 +239,16 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 29 Sep 2022 04:04:37 GMT",
-        "mise-correlation-id": "77f7d1cd-b37e-4bd2-aae8-21500ba0982f",
+        "Date": "Thu, 01 Jun 2023 20:39:17 GMT",
+        "mise-correlation-id": "ae94fe1e-0828-4aa7-8017-dfc25c8b04e3",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-b0aea9a318a47f2f72519821ea27719e-61699c946a8ea090-01"
+        "traceresponse": "00-f82a4e7f5566d0699ec5f3edd5a668bf-7e584867541ee9ac-01"
       },
       "ResponseBody": null
     },
@@ -259,16 +259,16 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 29 Sep 2022 04:04:37 GMT",
-        "mise-correlation-id": "b39533ac-e74e-402a-99a4-5ca29d33cba4",
+        "Date": "Thu, 01 Jun 2023 20:39:17 GMT",
+        "mise-correlation-id": "b72871e1-d64c-48c4-b8be-57331998504e",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-c55ca35fb8ecdf0c134c9a532e58d8eb-1f17395e80015915-01"
+        "traceresponse": "00-11ade5cc5a96f90930b0c6a7a63e10c0-e5a1ff4bcc0845bd-01"
       },
       "ResponseBody": null
     },
@@ -279,16 +279,16 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 29 Sep 2022 04:04:37 GMT",
-        "mise-correlation-id": "64fc3267-ecc9-494e-a7a9-962aa0ce201a",
+        "Date": "Thu, 01 Jun 2023 20:39:17 GMT",
+        "mise-correlation-id": "c98da07d-d629-457f-9e7b-9e7e88ba26d7",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-a409e8c67b9059c21182b8355f338e24-b2826e9fbe975884-01"
+        "traceresponse": "00-0cb1aaf7e584ccb651d99974984cb440-d7eb5ff57a12af65-01"
       },
       "ResponseBody": null
     },
@@ -300,19 +300,19 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "992",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": "[{\u0022@id\u0022: \u0022dtmi:samples:RelationshipTestBuilding;1\u0022, \u0022@type\u0022: \u0022Interface\u0022, \u0022@context\u0022: \u0022dtmi:dtdl:context;2\u0022, \u0022displayName\u0022: \u0022Building\u0022, \u0022contents\u0022: [{\u0022@type\u0022: \u0022Relationship\u0022, \u0022name\u0022: \u0022has\u0022, \u0022target\u0022: \u0022dtmi:samples:RelationshipTestFloor;1\u0022, \u0022properties\u0022: [{\u0022@type\u0022: \u0022Property\u0022, \u0022name\u0022: \u0022isAccessRestricted\u0022, \u0022schema\u0022: \u0022boolean\u0022}]}, {\u0022@type\u0022: \u0022Property\u0022, \u0022name\u0022: \u0022AverageTemperature\u0022, \u0022schema\u0022: \u0022double\u0022}]}, {\u0022@id\u0022: \u0022dtmi:samples:RelationshipTestFloor;1\u0022, \u0022@type\u0022: \u0022Interface\u0022, \u0022@context\u0022: \u0022dtmi:dtdl:context;2\u0022, \u0022displayName\u0022: \u0022Floor\u0022, \u0022contents\u0022: [{\u0022@type\u0022: \u0022Relationship\u0022, \u0022name\u0022: \u0022contains\u0022, \u0022target\u0022: \u0022dtmi:samples:RelationshipTestRoom;1\u0022}, {\u0022@type\u0022: \u0022Property\u0022, \u0022name\u0022: \u0022AverageTemperature\u0022, \u0022schema\u0022: \u0022double\u0022}]}, {\u0022@id\u0022: \u0022dtmi:samples:RelationshipTestRoom;1\u0022, \u0022@type\u0022: \u0022Interface\u0022, \u0022@context\u0022: \u0022dtmi:dtdl:context;2\u0022, \u0022displayName\u0022: \u0022Room\u0022, \u0022contents\u0022: [{\u0022@type\u0022: \u0022Property\u0022, \u0022name\u0022: \u0022Temperature\u0022, \u0022schema\u0022: \u0022double\u0022}, {\u0022@type\u0022: \u0022Property\u0022, \u0022name\u0022: \u0022IsOccupied\u0022, \u0022schema\u0022: \u0022boolean\u0022}]}]",
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "497",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:04:37 GMT",
-        "mise-correlation-id": "7581cb9d-aa23-4d8e-88cb-b1fd7189f039",
+        "Date": "Thu, 01 Jun 2023 20:39:17 GMT",
+        "mise-correlation-id": "c5f5a37a-bd9d-4178-9576-bd6c6f7ceb9c",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-030542e1e3ccfcdf451bcd3a3bacf208-b07d37c0586ccf3b-01"
+        "traceresponse": "00-9f95365ac1735ffdc6ff3ab191cdc4e1-d5f05a7b4bb7bb16-01"
       },
-      "ResponseBody": "[{\u0022id\u0022:\u0022dtmi:samples:RelationshipTestBuilding;1\u0022,\u0022description\u0022:{},\u0022displayName\u0022:{\u0022en\u0022:\u0022Building\u0022},\u0022decommissioned\u0022:false,\u0022uploadTime\u0022:\u00222022-09-29T04:04:37.5531388\u002B00:00\u0022},{\u0022id\u0022:\u0022dtmi:samples:RelationshipTestFloor;1\u0022,\u0022description\u0022:{},\u0022displayName\u0022:{\u0022en\u0022:\u0022Floor\u0022},\u0022decommissioned\u0022:false,\u0022uploadTime\u0022:\u00222022-09-29T04:04:37.5531569\u002B00:00\u0022},{\u0022id\u0022:\u0022dtmi:samples:RelationshipTestRoom;1\u0022,\u0022description\u0022:{},\u0022displayName\u0022:{\u0022en\u0022:\u0022Room\u0022},\u0022decommissioned\u0022:false,\u0022uploadTime\u0022:\u00222022-09-29T04:04:37.5531666\u002B00:00\u0022}]"
+      "ResponseBody": "[{\u0022id\u0022:\u0022dtmi:samples:RelationshipTestBuilding;1\u0022,\u0022description\u0022:{},\u0022displayName\u0022:{\u0022en\u0022:\u0022Building\u0022},\u0022decommissioned\u0022:false,\u0022uploadTime\u0022:\u00222023-06-01T20:39:17.7388859\u002B00:00\u0022},{\u0022id\u0022:\u0022dtmi:samples:RelationshipTestFloor;1\u0022,\u0022description\u0022:{},\u0022displayName\u0022:{\u0022en\u0022:\u0022Floor\u0022},\u0022decommissioned\u0022:false,\u0022uploadTime\u0022:\u00222023-06-01T20:39:17.7389076\u002B00:00\u0022},{\u0022id\u0022:\u0022dtmi:samples:RelationshipTestRoom;1\u0022,\u0022description\u0022:{},\u0022displayName\u0022:{\u0022en\u0022:\u0022Room\u0022},\u0022decommissioned\u0022:false,\u0022uploadTime\u0022:\u00222023-06-01T20:39:17.7389199\u002B00:00\u0022}]"
     },
     {
       "RequestUri": "https://fake.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin?api-version=2022-05-31",
@@ -322,7 +322,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "94",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "$metadata": {
@@ -334,21 +334,21 @@
       "ResponseHeaders": {
         "Content-Length": "305",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:04:37 GMT",
-        "ETag": "W/\u0022f5655b52-b592-45e4-8e9d-d63381ed911f\u0022",
-        "mise-correlation-id": "1fc2b4dd-c0e2-4f1b-abc7-e9f668b818c9",
+        "Date": "Thu, 01 Jun 2023 20:39:17 GMT",
+        "ETag": "W/\u0022808019b4-c608-4d37-8c20-ce6c58188ffe\u0022",
+        "mise-correlation-id": "34216870-2e4e-42cf-a3aa-905d00624149",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-20435077f59e44592a2a54d1cb6d224f-0179b54fc38d75b1-01"
+        "traceresponse": "00-05368faac43120bf3bf9d839602b5877-6ea3eaa1f6e837d4-01"
       },
       "ResponseBody": {
         "$dtId": "DTRelationshipTestsBuildingTwin",
-        "$etag": "W/\u0022f5655b52-b592-45e4-8e9d-d63381ed911f\u0022",
+        "$etag": "W/\u0022808019b4-c608-4d37-8c20-ce6c58188ffe\u0022",
         "AverageTemperature": 68,
         "$metadata": {
           "$model": "dtmi:samples:RelationshipTestBuilding;1",
-          "$lastUpdateTime": "2022-09-29T04:04:37.6152184Z",
+          "$lastUpdateTime": "2023-06-01T20:39:17.8751249Z",
           "AverageTemperature": {
-            "lastUpdateTime": "2022-09-29T04:04:37.6152184Z"
+            "lastUpdateTime": "2023-06-01T20:39:17.8751249Z"
           }
         }
       }
@@ -361,7 +361,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "91",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "$metadata": {
@@ -373,21 +373,21 @@
       "ResponseHeaders": {
         "Content-Length": "299",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:04:37 GMT",
-        "ETag": "W/\u0022899c8af4-5a76-4b56-835e-f233f7d92cc5\u0022",
-        "mise-correlation-id": "ff85ae4b-1cbb-428e-b925-698be7731918",
+        "Date": "Thu, 01 Jun 2023 20:39:18 GMT",
+        "ETag": "W/\u0022d6583335-9d6e-41e9-9243-0f220ee267b2\u0022",
+        "mise-correlation-id": "6653a254-902c-43e7-ac3b-ab03c760e70c",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-34f9c0410b0af9effaa91a09f8e15fb8-9f4b7e0ff97c32cf-01"
+        "traceresponse": "00-ebf5092bfdeefa41ce58f57a37376b3e-800a8f0316ef1e09-01"
       },
       "ResponseBody": {
         "$dtId": "DTRelationshipTestsFloorTwin",
-        "$etag": "W/\u0022899c8af4-5a76-4b56-835e-f233f7d92cc5\u0022",
+        "$etag": "W/\u0022d6583335-9d6e-41e9-9243-0f220ee267b2\u0022",
         "AverageTemperature": 75,
         "$metadata": {
           "$model": "dtmi:samples:RelationshipTestFloor;1",
-          "$lastUpdateTime": "2022-09-29T04:04:37.6776064Z",
+          "$lastUpdateTime": "2023-06-01T20:39:18.0413485Z",
           "AverageTemperature": {
-            "lastUpdateTime": "2022-09-29T04:04:37.6776064Z"
+            "lastUpdateTime": "2023-06-01T20:39:18.0413485Z"
           }
         }
       }
@@ -400,7 +400,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "103",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "$metadata": {
@@ -413,25 +413,25 @@
       "ResponseHeaders": {
         "Content-Length": "364",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:04:37 GMT",
-        "ETag": "W/\u00228597a68e-4400-4fed-ade5-feee34f4440d\u0022",
-        "mise-correlation-id": "f01b1a0d-6c20-4528-9664-826cf9a2dedc",
+        "Date": "Thu, 01 Jun 2023 20:39:18 GMT",
+        "ETag": "W/\u00229e0a755b-d6a3-4b88-a2d6-4c1cd52055d5\u0022",
+        "mise-correlation-id": "f5213490-f194-4f82-8a47-0f836b778734",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-823c779a9860f987ac9c636b4b30754b-c9b452b5d7571a93-01"
+        "traceresponse": "00-010bfc5fdeed88657d5e8a7e5e9e36e7-7a5d7271363aeab3-01"
       },
       "ResponseBody": {
         "$dtId": "DTRelationshipTestsRoomTwin",
-        "$etag": "W/\u00228597a68e-4400-4fed-ade5-feee34f4440d\u0022",
+        "$etag": "W/\u00229e0a755b-d6a3-4b88-a2d6-4c1cd52055d5\u0022",
         "Temperature": 80,
         "IsOccupied": true,
         "$metadata": {
           "$model": "dtmi:samples:RelationshipTestRoom;1",
-          "$lastUpdateTime": "2022-09-29T04:04:37.7388588Z",
+          "$lastUpdateTime": "2023-06-01T20:39:18.2145790Z",
           "Temperature": {
-            "lastUpdateTime": "2022-09-29T04:04:37.7388588Z"
+            "lastUpdateTime": "2023-06-01T20:39:18.2145790Z"
           },
           "IsOccupied": {
-            "lastUpdateTime": "2022-09-29T04:04:37.7388588Z"
+            "lastUpdateTime": "2023-06-01T20:39:18.2145790Z"
           }
         }
       }
@@ -444,7 +444,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "189",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "$relationshipId": "BuildingHasFloor",
@@ -457,15 +457,15 @@
       "ResponseHeaders": {
         "Content-Length": "233",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:04:37 GMT",
-        "ETag": "W/\u00226d18d46e-2a90-4f77-9d77-92cc731655da\u0022",
-        "mise-correlation-id": "da064e2a-4074-4e2d-9184-73f479343652",
+        "Date": "Thu, 01 Jun 2023 20:39:18 GMT",
+        "ETag": "W/\u0022fcbe4891-1c68-4ac6-a3a6-e6bb06589e09\u0022",
+        "mise-correlation-id": "cc474e57-5c2d-4dbf-a724-9f3cb9ff6e3d",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-7ad5eb5e812f846c16d411fafba7e3ae-002bf75c744015cd-01"
+        "traceresponse": "00-ceacecf7667d9944b0afe33335308457-35cbeec8a7c8e226-01"
       },
       "ResponseBody": {
         "$relationshipId": "BuildingHasFloor",
-        "$etag": "W/\u00226d18d46e-2a90-4f77-9d77-92cc731655da\u0022",
+        "$etag": "W/\u0022fcbe4891-1c68-4ac6-a3a6-e6bb06589e09\u0022",
         "$sourceId": "DTRelationshipTestsBuildingTwin",
         "$relationshipName": "has",
         "$targetId": "DTRelationshipTestsFloorTwin",
@@ -480,17 +480,17 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "114",
         "Content-Type": "application/json-patch\u002Bjson",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": "[{\u0022op\u0022: \u0022replace\u0022, \u0022path\u0022: \u0022/isAccessRestricted\u0022, \u0022value\u0022: true}, {\u0022op\u0022: \u0022remove\u0022, \u0022path\u0022: \u0022/isAccessRestricted\u0022}]",
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 29 Sep 2022 04:04:37 GMT",
-        "ETag": "W/\u00224a1ac3c9-7eaf-4e2f-9b81-07f1d95fa8d9\u0022",
-        "mise-correlation-id": "4bcc6f41-2456-4885-9f16-8ffa4a5edbd0",
+        "Date": "Thu, 01 Jun 2023 20:39:18 GMT",
+        "ETag": "W/\u0022ec342193-cd5e-4bc5-9380-09c2cc0dfd59\u0022",
+        "mise-correlation-id": "dc9ec567-1812-4b78-a2ce-6125ced738e4",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-6558daebd450c1d2f85efed831c8506e-7b57d3c1cb34bf3c-01"
+        "traceresponse": "00-58edd61ca75e9628b755cb1f7d4eb00b-2ffbca29da475088-01"
       },
       "ResponseBody": null
     },
@@ -500,22 +500,22 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "206",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:04:37 GMT",
-        "ETag": "W/\u00224a1ac3c9-7eaf-4e2f-9b81-07f1d95fa8d9\u0022",
-        "mise-correlation-id": "7461419a-790f-4271-b1ef-5c0d78e3efa5",
+        "Date": "Thu, 01 Jun 2023 20:39:18 GMT",
+        "ETag": "W/\u0022ec342193-cd5e-4bc5-9380-09c2cc0dfd59\u0022",
+        "mise-correlation-id": "158f04fd-4e38-4bc6-b1c4-65729184b443",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-8d8efdb163c516aa96879cf7e177d217-5fdd2110c4238d0a-01"
+        "traceresponse": "00-25228c7a961b40a2ffc4004b61db032d-4d11975973ef92b7-01"
       },
       "ResponseBody": {
         "$relationshipId": "BuildingHasFloor",
-        "$etag": "W/\u00224a1ac3c9-7eaf-4e2f-9b81-07f1d95fa8d9\u0022",
+        "$etag": "W/\u0022ec342193-cd5e-4bc5-9380-09c2cc0dfd59\u0022",
         "$sourceId": "DTRelationshipTestsBuildingTwin",
         "$relationshipName": "has",
         "$targetId": "DTRelationshipTestsFloorTwin"

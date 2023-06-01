@@ -7,17 +7,18 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Length": "223",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:03:40 GMT",
-        "mise-correlation-id": "84532eae-a09f-4c74-9242-b3e017808182",
+        "Date": "Thu, 01 Jun 2023 20:36:56 GMT",
+        "mise-correlation-id": "408fcf4f-3be6-40f5-a834-259bb06c9454",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-8994d21af87769c8783925fb84212bcf-e9170d8dccf3271a-01"
+        "traceresponse": "00-3f08d8976f80e64d6dcd635aa73ae039-ec46910287d7f8fb-01",
+        "x-ms-error-code": "EventRouteNotFound"
       },
       "ResponseBody": {
         "error": {

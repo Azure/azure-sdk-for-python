@@ -8,7 +8,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "145",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "endpointName": "endpoint-a0b43b6d",
@@ -18,10 +18,11 @@
       "ResponseHeaders": {
         "Content-Length": "224",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:03:39 GMT",
-        "mise-correlation-id": "96df80cf-ad6c-4ff5-9cb2-adf528e72d3c",
+        "Date": "Thu, 01 Jun 2023 20:36:55 GMT",
+        "mise-correlation-id": "2d082a66-be52-4491-a833-c5632911a37a",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-a572b530fe97c2a588be9b52a8411eb8-6bced07c9ec64031-01"
+        "traceresponse": "00-6a921ef43a474f1a7a96d05c1a0801a5-895fd6bcea8eea0e-01",
+        "x-ms-error-code": "EventRouteEndpointInvalid"
       },
       "ResponseBody": {
         "error": {

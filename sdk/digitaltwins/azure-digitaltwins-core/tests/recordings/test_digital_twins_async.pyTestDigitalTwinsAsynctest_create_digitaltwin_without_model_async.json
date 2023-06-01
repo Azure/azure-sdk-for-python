@@ -8,7 +8,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "108",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "$metadata": {
@@ -21,10 +21,11 @@
       "ResponseHeaders": {
         "Content-Length": "191",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:03:18 GMT",
-        "mise-correlation-id": "276078ae-f47c-45cf-ae0b-e063c8218605",
+        "Date": "Thu, 01 Jun 2023 20:33:55 GMT",
+        "mise-correlation-id": "5f06a0a6-23f1-40e7-bf20-c9f7eec22bee",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-8e76f08d8503841873d4501181474bd2-892785c42fbb1b81-01"
+        "traceresponse": "00-a910b246cec97239259f9fb363ca06b3-756f0c2adcf7a2a5-01",
+        "x-ms-error-code": "ValidationFailed"
       },
       "ResponseBody": {
         "error": {
