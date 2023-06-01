@@ -304,7 +304,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
     def test_list_configuration_settings_correct_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_list_kv = self.create_config_setting()
-        to_list_kv = self.add_for_test(client, to_list_kv)
+        self.add_for_test(client, to_list_kv)
         custom_headers = {"If-Match": to_list_kv.etag}
         items = list(
             client.list_configuration_settings(
@@ -410,7 +410,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
     def test_list_revisions_correct_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_list_kv = self.create_config_setting()
-        to_list_kv = self.add_for_test(client, to_list_kv)
+        self.add_for_test(client, to_list_kv)
         custom_headers = {"If-Match": to_list_kv.etag}
         items = list(
             client.list_revisions(key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers)

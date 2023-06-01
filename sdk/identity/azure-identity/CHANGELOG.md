@@ -1,8 +1,10 @@
 # Release History
 
-## 1.13.1 (Unreleased)
+## 1.14.0b1 (Unreleased)
 
 ### Features Added
+
+- Continue attempt next credential when finding an expired token from cached token credential in DefaultAzureCredential. ([#30441](https://github.com/Azure/azure-sdk-for-python/pull/30441))
 
 ### Breaking Changes
 

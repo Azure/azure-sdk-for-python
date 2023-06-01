@@ -262,6 +262,9 @@
 /sdk/mixedreality/azure-mixedreality-authentication/                 @crtreasu
 /sdk/remoterendering/                                                @rikogeln
 
+# PRLabel: %Open AI
+/sdk/openai                                                          @kristapratico @glecaros
+
 # PRLabel: %Purview
 /sdk/purview/                                                        @iscai-msft @msyyc
 
