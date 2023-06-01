@@ -66,55 +66,6 @@ class Spark(BaseNode, SparkJobEntryMixin):
 
     You should not instantiate this class directly. Instead, you should
     create from builder function: spark.
-
-    :param component: Id or instance of the spark component/job to be run for the step
-    :type component: azure.ai.ml.entities.SparkComponent
-    :param entry: File or class entry point.
-    :type entry: dict[str, str]
-    :param py_files: List of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
-    :type py_files: Optional[typing.List[str]]
-    :param jars: List of jars to include on the driver and executor classpaths.
-    :type jars: Optional[typing.List[str]]
-    :param files: List of files to be placed in the working directory of each executor.
-    :type files: Optional[typing.List[str]]
-    :param archives: List of archives to be extracted into the working directory of each executor.
-    :type archives: Optional[typing.List[str]]
-    :param identity: Identity that spark job will use while running on compute.
-    :type identity: Union[
-        Dict,
-        azure.ai.ml.entities.ManagedIdentityConfiguration,
-        azure.ai.ml.entities.AmlTokenConfiguration,
-        azure.ai.ml.entities.UserIdentityConfiguration]
-    :param driver_cores: Number of cores to use for the driver process, only in cluster mode.
-    :type driver_cores: int
-    :param driver_memory: Amount of memory to use for the driver process.
-    :type driver_memory: str
-    :param executor_cores: The number of cores to use on each executor.
-    :type executor_cores: int
-    :param executor_memory: Amount of memory to use per executor process, in the same format as JVM memory strings with
-        a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g).
-    :type executor_memory: str
-    :param executor_instances: Initial number of executors.
-    :type executor_instances: int
-    :param dynamic_allocation_enabled: Whether to use dynamic resource allocation, which scales the number of executors
-        registered with this application up and down based on the workload.
-    :type dynamic_allocation_enabled: bool
-    :param dynamic_allocation_min_executors: Lower bound for the number of executors if dynamic allocation is enabled.
-    :type dynamic_allocation_min_executors: int
-    :param dynamic_allocation_max_executors: Upper bound for the number of executors if dynamic allocation is enabled.
-    :type dynamic_allocation_max_executors: int
-    :param conf: A dict with pre-defined spark configurations key and values.
-    :type conf: dict
-    :param inputs: Mapping of inputs data bindings used in the job.
-    :type inputs: dict
-    :param outputs: Mapping of outputs data bindings used in the job.
-    :type outputs: dict
-    :param args: Arguments for the job.
-    :type args: str
-    :param compute: The compute resource the job runs on.
-    :type compute: str
-    :param resources: Compute Resource configuration for the job.
-    :type resources: Union[Dict, azure.ai.ml.entities.SparkResourceConfiguration]
     """
 
     def __init__(
@@ -159,59 +110,55 @@ class Spark(BaseNode, SparkJobEntryMixin):
         args: Optional[str] = None,
         **kwargs,
     ) -> None:
-        """Base class for spark node, used for spark component version consumption.
-
-        You should not instantiate this class directly. Instead, you should
-        create from builder function: spark.
-
-        :param component: Id or instance of the spark component/job to be run for the step
-        :type component: azure.ai.ml.entities.SparkComponent
-        :param entry: File or class entry point.
-        :type entry: dict[str, str]
-        :param py_files: List of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
-        :type py_files: Optional[typing.List[str]]
-        :param jars: List of jars to include on the driver and executor classpaths.
-        :type jars: Optional[typing.List[str]]
-        :param files: List of files to be placed in the working directory of each executor.
-        :type files: Optional[typing.List[str]]
-        :param archives: List of archives to be extracted into the working directory of each executor.
-        :type archives: Optional[typing.List[str]]
-        :param identity: Identity that spark job will use while running on compute.
+        """
+        :param component: The id or instance of the Spark component or job to be run during the step.
+        :type component: ~azure.ai.ml.entities.SparkComponent
+        :param entry: The file or class entry point.
+        :type entry: Dict[str, str]
+        :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
+        :type py_files: List[str]
+        :param jars: The list of .JAR files to include on the driver and executor classpaths.
+        :type jars: List[str]
+        :param files: The list of files to be placed in the working directory of each executor.
+        :type files: List[str]
+        :param archives: The list of archives to be extracted into the working directory of each executor.
+        :type archives: List[str]
+        :param identity: The identity that the Spark job will use while running on compute.
         :type identity: Union[
             Dict,
-            azure.ai.ml.entities.ManagedIdentityConfiguration,
-            azure.ai.ml.entities.AmlTokenConfiguration,
-            azure.ai.ml.entities.UserIdentityConfiguration]
-        :param driver_cores: Number of cores to use for the driver process, only in cluster mode.
+            ~azure.ai.ml.entities.ManagedIdentityConfiguration,
+            ~azure.ai.ml.entities.AmlTokenConfiguration,
+            ~azure.ai.ml.entities.UserIdentityConfiguration]
+        :param driver_cores: The number of cores to use for the driver process, only in cluster mode.
         :type driver_cores: int
-        :param driver_memory: Amount of memory to use for the driver process.
+        :param driver_memory: The amount of memory to use for the driver process, (e.g. "2g").
         :type driver_memory: str
         :param executor_cores: The number of cores to use on each executor.
         :type executor_cores: int
-        :param executor_memory: Amount of memory to use per executor process, in the same format as JVM memory strings with
+        :param executor_memory: The amount of memory to use per executor process, in the same format as JVM memory strings with
             a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g).
         :type executor_memory: str
-        :param executor_instances: Initial number of executors.
+        :param executor_instances: The initial number of executors.
         :type executor_instances: int
         :param dynamic_allocation_enabled: Whether to use dynamic resource allocation, which scales the number of executors
             registered with this application up and down based on the workload.
         :type dynamic_allocation_enabled: bool
-        :param dynamic_allocation_min_executors: Lower bound for the number of executors if dynamic allocation is enabled.
+        :param dynamic_allocation_min_executors: The lower bound for the number of executors if dynamic allocation is enabled.
         :type dynamic_allocation_min_executors: int
-        :param dynamic_allocation_max_executors: Upper bound for the number of executors if dynamic allocation is enabled.
+        :param dynamic_allocation_max_executors: The upper bound for the number of executors if dynamic allocation is enabled.
         :type dynamic_allocation_max_executors: int
-        :param conf: A dict with pre-defined spark configurations key and values.
-        :type conf: dict
-        :param inputs: Mapping of inputs data bindings used in the job.
-        :type inputs: dict
-        :param outputs: Mapping of outputs data bindings used in the job.
-        :type outputs: dict
-        :param args: Arguments for the job.
+        :param conf: A dictionary with pre-defined Spark configurations key and values.
+        :type conf: Dict
+        :param inputs: A mapping of inputs data bindings used in the job.
+        :type inputs: Dict
+        :param outputs: A mapping of outputs data bindings used in the job.
+        :type outputs: Dict
+        :param args: The arguments for the job.
         :type args: str
         :param compute: The compute resource the job runs on.
         :type compute: str
-        :param resources: Compute Resource configuration for the job.
-        :type resources: Union[Dict, azure.ai.ml.entities.SparkResourceConfiguration]
+        :param resources: The compute resource configuration for the job.
+        :type resources: Union[Dict, ~azure.ai.ml.entities.SparkResourceConfiguration]
         """
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
@@ -282,16 +229,27 @@ class Spark(BaseNode, SparkJobEntryMixin):
 
     @property
     def component(self) -> Union[str, SparkComponent]:
+        """The id or instance of the Spark component or job to be run during the step.
+
+        :rtype: ~azure.ai.ml.entities.SparkComponent
+        """
         return self._component
 
     @property
     def resources(self) -> Optional[SparkResourceConfiguration]:
-        """Compute Resource configuration for the job."""
+        """The compute resource configuration for the job.
 
+        :rtype: ~azure.ai.ml.entities.SparkResourceConfiguration
+        """
         return self._resources
 
     @resources.setter
     def resources(self, value: Union[Dict[str, str], SparkResourceConfiguration, None]):
+        """Sets the compute resource configuration for the job.
+
+        :param value: The compute resource configuration for the job.
+        :type value: Union[Dict[str, str], ~azure.ai.ml.entities.SparkResourceConfiguration]
+        """
         if isinstance(value, dict):
             value = SparkResourceConfiguration(**value)
         self._resources = value
@@ -300,7 +258,10 @@ class Spark(BaseNode, SparkJobEntryMixin):
     def identity(
         self,
     ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
-        """Identity that spark job will use while running on compute."""
+        """The identity that the Spark job will use while running on compute.
+
+        :rtype: Union[~azure.ai.ml.entities.ManagedIdentityConfiguration, ~azure.ai.ml.entities.AmlTokenConfiguration, ~azure.ai.ml.entities.UserIdentityConfiguration]
+        """
         # If there is no identity from CLI/SDK input: for jobs running on synapse compute (MLCompute Clusters), the
         # managed identity is the default; for jobs running on clusterless, the user identity should be the default,
         # otherwise use user input identity.
@@ -318,6 +279,11 @@ class Spark(BaseNode, SparkJobEntryMixin):
             Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, None
         ],
     ):
+        """Sets the identity that the Spark job will use while running on compute.
+
+        :param value: The identity that the Spark job will use while running on compute.
+        :type value: Union[Dict[str, str], ~azure.ai.ml.entities.ManagedIdentityConfiguration, ~azure.ai.ml.entities.AmlTokenConfiguration, ~azure.ai.ml.entities.UserIdentityConfiguration]
+        """
         if isinstance(value, dict):
             identify_schema = UnionField(
                 [
@@ -331,10 +297,19 @@ class Spark(BaseNode, SparkJobEntryMixin):
 
     @property
     def code(self) -> Optional[Union[str, PathLike]]:
+        """The local or remote path pointing at source code.
+
+        :rtype: Union[str, PathLike]
+        """
         return self.component.code if hasattr(self.component, "code") else None
 
     @code.setter
     def code(self, value: str) -> None:
+        """Sets the source code to be used for the job.
+
+        :param value: The local or remote path pointing at source code.
+        :type value: Union[str, PathLike]
+        """
         if isinstance(self.component, Component):
             self.component.code = value
         else:
