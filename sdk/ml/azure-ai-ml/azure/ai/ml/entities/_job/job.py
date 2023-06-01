@@ -7,7 +7,7 @@
 import json
 import logging
 import traceback
-from abc import abstractclassmethod, abstractmethod
+from abc import abstractmethod
 from collections import OrderedDict
 from os import PathLike
 from pathlib import Path
@@ -332,6 +332,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         telemetry_values = {"type": self.type}
         return telemetry_values
 
-    @abstractclassmethod
+    @classmethod
+    @abstractmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Job":
         pass
