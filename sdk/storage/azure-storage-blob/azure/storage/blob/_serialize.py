@@ -152,7 +152,7 @@ def get_api_version(kwargs):
 def get_version_id(self_vid, kwargs):
     # type: (Optional[str], Dict[str, Any]) -> Optional[str]
     if 'version_id' in kwargs:
-            return kwargs.pop('version_id')
+        return kwargs.pop('version_id')
     return self_vid
 
 def serialize_blob_tags_header(tags=None):
