@@ -163,7 +163,7 @@ class AzureMLSDKLogHandler(AzureLogHandler):
     # enable_telemetry had been set to true.
     def log_record_to_envelope(self, record):
         if self._is_telemetry_collection_disabled:
-            return
+            return None
 
         envelope = create_envelope(self.options.instrumentation_key, record)
 

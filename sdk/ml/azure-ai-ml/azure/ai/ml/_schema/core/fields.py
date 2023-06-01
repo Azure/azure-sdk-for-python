@@ -66,7 +66,7 @@ class StringTransformedEnum(Field):
 
     def _serialize(self, value, attr, obj, **kwargs):
         if not value:
-            return
+            return None
         if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
             return value if self.pass_original else self.casing_transform(value)
         raise ValidationError(f"Value {value!r} passed is not in set {self.allowed_values}")

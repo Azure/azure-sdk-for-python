@@ -304,7 +304,7 @@ class DockerClient(object):
             verify_single_deployment=True,
         )
         if container is None:
-            return
+            return None
         _validate_container_state(
             endpoint_name=endpoint_name,
             deployment_name=deployment_name,
@@ -378,7 +378,7 @@ class DockerClient(object):
             include_stopped=include_stopped,
         )
         if len(containers) == 0:
-            return
+            return None
         if len(containers) > 1 and verify_single_deployment:
             raise MultipleLocalDeploymentsFoundError(endpoint_name=endpoint_name)
         return containers[0]
@@ -462,14 +462,14 @@ def get_endpoint_json_from_container(container: "docker.models.containers.Contai
     if container:
         data = container.labels[LocalEndpointConstants.LABEL_KEY_ENDPOINT_JSON]
         return json.loads(data)
-    return
+    return None
 
 
 def get_deployment_json_from_container(container: "docker.models.containers.Container") -> dict:
     if container:
         data = container.labels[LocalEndpointConstants.LABEL_KEY_DEPLOYMENT_JSON]
         return json.loads(data)
-    return
+    return None
 
 
 def get_status_from_container(container: "docker.models.containers.Container") -> str:
