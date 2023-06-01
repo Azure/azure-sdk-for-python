@@ -182,7 +182,9 @@ def main(generate_input, generate_output):
             )
 
             # check whether multiapi package has only one api-version in per subfolder
-            check_api_version_in_subfolder(sdk_code_path)
+            # skip check for network for https://github.com/Azure/azure-sdk-for-python/issues/30556#issuecomment-1571341309
+            if "azure-mgmt-network" not in sdk_code_path:
+                check_api_version_in_subfolder(sdk_code_path)
 
             # use multiapi combiner to combine multiapi package
             if package_name in ("azure-mgmt-network"):
