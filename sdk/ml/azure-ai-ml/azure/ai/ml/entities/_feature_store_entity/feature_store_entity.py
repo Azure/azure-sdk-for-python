@@ -45,6 +45,8 @@ class FeatureStoreEntity(Asset):
         :type version: str
         :param index_columns: Specifies index columns.
         :type index_columns: list[~azure.ai.ml.entities.DataColumn]
+        :param stage: Feature store entity stage. Allowed values: Development, Production, Archived
+        :type stage: str
         :param description: Description of the resource.
         :type description: str
         :param tags: Tag dictionary. Tags can be added, removed, and updated.
