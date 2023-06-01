@@ -5,7 +5,7 @@
 import json
 import logging
 import traceback
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union, NoReturn
 
 from colorama import Fore, Style, init
 from marshmallow.exceptions import ValidationError as SchemaValidationError
@@ -266,7 +266,7 @@ def format_create_validation_error(
     return formatted_error
 
 
-def log_and_raise_error(error, debug=False, yaml_operation=False):
+def log_and_raise_error(error: Exception, debug: bool = False, yaml_operation: bool = False) -> NoReturn:
     init()
 
     # use an f-string to automatically call str() on error
