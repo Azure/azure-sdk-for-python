@@ -1895,9 +1895,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_abstractive_summary_async.py
-                :start-after: [START abstractive_summary_async]
-                :end-before: [END abstractive_summary_async]
+            .. literalinclude:: ../samples/async_samples/sample_abstract_summary_async.py
+                :start-after: [START abstract_summary_async]
+                :end-before: [END abstract_summary_async]
                 :language: python
                 :dedent: 4
                 :caption: Perform abstractive summarization on a batch of documents.
