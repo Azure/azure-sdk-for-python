@@ -27,4 +27,3 @@
 ### New Features
 
 - Initial release of the Purview Share client library for python
-python 
