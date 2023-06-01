@@ -64,7 +64,7 @@ def _get_client_args(**kwargs) -> Optional[dict]:
         return None
 
     # pylint: disable=line-too-long
-    request_url_format = "https://{}/api/v1/proxy/obotoken/v1.0/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/getuseraccesstokenforrun"  # cspell:disable-line
+    request_url_format = "https://{}/api/v1/proxy/obotoken/v1.0/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/getuseraccesstokenforspark"  # cspell:disable-line
     # pylint: enable=line-too-long
 
     url = request_url_format.format(
