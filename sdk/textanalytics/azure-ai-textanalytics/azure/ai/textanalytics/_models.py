@@ -2319,7 +2319,7 @@ class ExtractiveSummaryAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai."""
     max_sentence_count: Optional[int] = None
     """Number of sentences to return. Defaults to 3."""
-    order_by: Optional[str] = None
+    order_by: Optional[Literal["Rank", "Offset"]] = None
     """Possible values include "Offset", "Rank". Default value is "Offset"."""
 
     def __init__(
@@ -2329,7 +2329,7 @@ class ExtractiveSummaryAction(DictMixin):
         string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
         max_sentence_count: Optional[int] = None,
-        order_by: Optional[str] = None,
+        order_by: Optional[Literal["Rank", "Offset"]] = None,
         **kwargs: Any
     ) -> None:
         self.model_version = model_version
