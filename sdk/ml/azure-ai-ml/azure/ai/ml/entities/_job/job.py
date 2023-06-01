@@ -318,7 +318,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                 message=str(ex),
                 no_personal_data_message=f"Unable to parse a job resource of type:{type(obj).__name__}",
                 error_category=ErrorCategory.SYSTEM_ERROR,
-            )
+            ) from ex
         else:
             msg = f"Unsupported job type {obj.properties.job_type}"
             raise JobException(

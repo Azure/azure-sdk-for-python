@@ -364,7 +364,7 @@ class DataOperations(_ScopeDependentOperations):
                         tartget=ErrorTarget.DATA,
                         no_personal_data_message=CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
                         error_category=ErrorCategory.USER_ERROR,
-                    )
+                    ) from ex
             raise ex
 
     @monitor_with_activity(logger, "Data.ImportData", ActivityType.PUBLICAPI)

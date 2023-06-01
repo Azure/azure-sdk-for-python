@@ -142,8 +142,8 @@ class LocalPathField(fields.Str):
             result = result.resolve()
             if (self._allow_dir and result.is_dir()) or (self._allow_file and result.is_file()):
                 return result
-        except OSError:
-            raise self.make_error("invalid_path")
+        except OSError as e:
+            raise self.make_error("invalid_path") from e
         raise self.make_error("path_not_exist", path=result.as_posix(), allow_type=self.allowed_path_type)
 
     @property
@@ -257,8 +257,8 @@ class DateTimeStr(fields.Str):
     def _validate(self, value):
         try:
             from_iso_datetime(value)
-        except Exception:
-            raise ValidationError(f"Not a valid ISO8601-formatted datetime string: {value}")
+        except Exception as e:
+            raise ValidationError(f"Not a valid ISO8601-formatted datetime string: {value}") from e
 
 
 class ArmStr(Field):
@@ -335,7 +335,7 @@ class ArmVersionedStr(ArmStr):
         except ValidationException as e:
             # Schema will try to deserialize the value with all possible Schema & catch ValidationError
             # So raise ValidationError instead of ValidationException
-            raise ValidationError(e.message)
+            raise ValidationError(e.message) from e
 
         version = None
         if not label:
