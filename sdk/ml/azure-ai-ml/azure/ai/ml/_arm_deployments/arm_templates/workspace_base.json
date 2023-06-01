@@ -554,8 +554,8 @@
         "privateEndpointDeploymentName": "[concat('DeployPrivateEndpoint-', uniqueString(parameters('privateEndpointName')))]",
         "offlineStoreConnectionName": "[if(equals(parameters('offline_store_connection_name'), ''), 'OfflineStoreConnectionName', parameters('offline_store_connection_name'))]",
         "onlineStoreConnectionName": "[if(equals(parameters('online_store_connection_name'), ''), 'OnlineStoreConnectionName', parameters('online_store_connection_name'))]",
-        "isLeanWorkspace": "[equals(parameters('kind'), 'lean')]",
-        "isHub": "[equals(parameters('kind'), 'hub')]",
+        "isProjectWorkspace": "[equals(parameters('kind'), 'lean')]",
+        "isWorkspaceHub": "[equals(parameters('kind'), 'hub')]",
         "storageAccountList": ["[variables('storageAccount')]"],
         "keyVaultList": ["[variables('keyVault')]"],
         "emptyArray": [],
@@ -603,7 +603,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('storageAccountOption'), 'new'), equals(length(parameters('storage_accounts')), 0), not(variables('isLeanWorkspace')))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('storageAccountOption'), 'new'), equals(length(parameters('storage_accounts')), 0), not(variables('isProjectWorkspace')))]",
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-04-01",
             "name": "[parameters('storageAccountName')]",
@@ -634,7 +634,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('keyVaultOption'), 'new'), equals(length(parameters('key_vaults')), 0), not(variables('isLeanWorkspace')))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('keyVaultOption'), 'new'), equals(length(parameters('key_vaults')), 0), not(variables('isProjectWorkspace')))]",
             "type": "Microsoft.KeyVault/vaults",
             "apiVersion": "2019-09-01",
             "tags": "[parameters('tagValues')]",
@@ -654,7 +654,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('containerRegistryOption'), 'new'), equals(length(parameters('container_registies')), 0), not(variables('isLeanWorkspace')))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('containerRegistryOption'), 'new'), equals(length(parameters('container_registies')), 0), not(variables('isProjectWorkspace')))]",
             "type": "Microsoft.ContainerRegistry/registries",
             "apiVersion": "2019-05-01",
             "tags": "[parameters('tagValues')]",
@@ -684,7 +684,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'), not(variables('isHub')))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'), not(variables('isWorkspaceHub')))]",
             "type": "Microsoft.Insights/components",
             "tags": "[parameters('tagValues')]",
             "apiVersion": "2020-02-02-preview",
@@ -700,7 +700,7 @@
             }
         },
         {
-            "condition": "[variables('enablePE')]",
+            "condition": "[variables('enablePE'), not(variables('isProjectWorkspace'))]",
             "type": "Microsoft.MachineLearningServices/workspaces",
             "apiVersion": "2023-04-01-preview",
             "tags": "[parameters('tagValues')]",
@@ -717,10 +717,10 @@
             "properties": {
                 "friendlyName": "[parameters('friendlyName')]",
                 "description": "[parameters('description')]",
-                "storageAccount": "[if(or(variables('isLeanWorkspace'), variables('isHub')), json('null'), variables('storageAccount'))]",
-                "keyVault": "[if(or(variables('isLeanWorkspace'), variables('isHub')), json('null'), variables('keyVault'))]",
-                "applicationInsights": "[if(variables('isHub'), json('null'), variables('applicationInsights'))]",
-                "containerRegistry": "[if(or(variables('isLeanWorkspace'), variables('isHub')), json('null'), if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null')))]",
+                "storageAccount": "[if(or(variables('isProjectWorkspace'), variables('isWorkspaceHub')), json('null'), variables('storageAccount'))]",
+                "keyVault": "[if(or(variables('isProjectWorkspace'), variables('isWorkspaceHub')), json('null'), variables('keyVault'))]",
+                "applicationInsights": "[if(variables('isWorkspaceHub'), json('null'), variables('applicationInsights'))]",
+                "containerRegistry": "[if(or(variables('isProjectWorkspace'), variables('isWorkspaceHub')), json('null'), if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null')))]",
                 "hbiWorkspace": "[parameters('confidential_data')]",
                 "imageBuildCompute": "[parameters('imageBuildCompute')]",
                 "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
@@ -750,6 +750,22 @@
                 "keyVaults": "[if(equals(length(parameters('key_vaults')), 0), variables('keyVaultList'), parameters('key_vaults'))]",
                 "containerRegistries": "[if(equals(length(parameters('container_registies')), 0), variables('containerRegistryList'), parameters('container_registies'))]",
                 "existingWorkspaces": "[parameters('existing_workspaces')]",
+            }
+        },
+        {
+            "condition": "[variables('enablePE'), variables('isProjectWorkspace'))]",
+            "type": "Microsoft.MachineLearningServices/workspaces",
+            "apiVersion": "2023-04-01-preview",
+            "tags": "[parameters('tagValues')]",
+            "name": "[parameters('workspaceName')]",
+            "kind": "[parameters('kind')]",
+            "location": "[parameters('location')]",
+            "identity": "[parameters('identity')]",
+            "properties": {
+                "friendlyName": "[parameters('friendlyName')]",
+                "description": "[parameters('description')]",
+                "applicationInsights": "[if(variables('isWorkspaceHub'), json('null'), variables('applicationInsights'))]",
+                "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
                 "hubResourceId": "[parameters('workspace_hub')]"
             }
         },
