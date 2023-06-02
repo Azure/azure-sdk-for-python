@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0 (Unreleased)
+## 1.1.0 (2023-06-06)
 
 ### Features Added
 - Added support for service version 2023-04-01.
