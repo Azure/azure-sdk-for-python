@@ -29,7 +29,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             iothub_dps_endpoint
         )
 
-        enrollments = client.individual_enrollment.query(
+        enrollments = client.enrollment.query(
             query_specification={"query": "SELECT *"}
         )
         with pytest.raises(StopIteration):
@@ -48,7 +48,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             iothub_dps_endpoint, name, key
         )
 
-        enrollments = client.individual_enrollment.query(
+        enrollments = client.enrollment.query(
             query_specification={"query": "SELECT *"}
         )
 
@@ -70,7 +70,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             iothub_dps_endpoint, sas
         )
 
-        enrollments = client.individual_enrollment.query(
+        enrollments = client.enrollment.query(
             query_specification={"query": "SELECT *"}
         )
 

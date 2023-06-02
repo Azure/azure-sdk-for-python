@@ -67,7 +67,7 @@ class EnrollmentSamples(object):
             "initialTwin": initial_twin
         }
 
-        await dps_service_client.individual_enrollment.create_or_update(
+        await dps_service_client.enrollment.create_or_update(
             id=self.symmetric_enrollment_id, enrollment=enrollment
         )
 
@@ -97,7 +97,7 @@ class EnrollmentSamples(object):
             },
         }
 
-        await dps_service_client.individual_enrollment.create_or_update(
+        await dps_service_client.enrollment.create_or_update(
             id=self.x509_enrollment_id, enrollment=enrollment
         )
 
@@ -118,7 +118,7 @@ class EnrollmentSamples(object):
             },
         }
 
-        await dps_service_client.individual_enrollment.create_or_update(
+        await dps_service_client.enrollment.create_or_update(
             id=self.tpm_enrollment_id, enrollment=enrollment
         )
 
@@ -131,13 +131,13 @@ class EnrollmentSamples(object):
         )
 
         # Get individual enrollments
-        await dps_service_client.individual_enrollment.get(
+        await dps_service_client.enrollment.get(
             id=self.symmetric_enrollment_id
         )
 
-        await dps_service_client.individual_enrollment.get(id=self.x509_enrollment_id)
+        await dps_service_client.enrollment.get(id=self.x509_enrollment_id)
 
-        await dps_service_client.individual_enrollment.get(id=self.tpm_enrollment_id)
+        await dps_service_client.enrollment.get(id=self.tpm_enrollment_id)
 
     async def get_enrollment_attestation_sample_async(self):
         # Instantiate a DPS Service Client using a connection string
@@ -148,15 +148,15 @@ class EnrollmentSamples(object):
         )
 
         # Get attestations for individual enrollments
-        await dps_service_client.individual_enrollment.get_attestation_mechanism(
+        await dps_service_client.enrollment.get_attestation_mechanism(
             id=self.x509_enrollment_id
         )
 
-        await dps_service_client.individual_enrollment.get_attestation_mechanism(
+        await dps_service_client.enrollment.get_attestation_mechanism(
             id=self.symmetric_enrollment_id
         )
 
-        await dps_service_client.individual_enrollment.get_attestation_mechanism(
+        await dps_service_client.enrollment.get_attestation_mechanism(
             id=self.tpm_enrollment_id
         )
 
@@ -169,7 +169,7 @@ class EnrollmentSamples(object):
         )
 
         # Get individual enrollment
-        sym_enrollment = await dps_service_client.individual_enrollment.get(
+        sym_enrollment = await dps_service_client.enrollment.get(
             id=self.symmetric_enrollment_id
         )
 
@@ -181,7 +181,7 @@ class EnrollmentSamples(object):
         sym_enrollment["allocationPolicy"] = "geoLatency"
 
         # Send update
-        await dps_service_client.individual_enrollment.create_or_update(
+        await dps_service_client.enrollment.create_or_update(
             id=self.symmetric_enrollment_id,
             enrollment=sym_enrollment,
             if_match=eTag,
@@ -196,7 +196,7 @@ class EnrollmentSamples(object):
         )
 
         # Get individual enrollment
-        sym_enrollment = await dps_service_client.individual_enrollment.get(
+        sym_enrollment = await dps_service_client.enrollment.get(
             id=self.symmetric_enrollment_id
         )
 
@@ -212,7 +212,7 @@ class EnrollmentSamples(object):
         }
 
         # Update enrollment with custom reprovisioning policy
-        await dps_service_client.individual_enrollment.create_or_update(
+        await dps_service_client.enrollment.create_or_update(
             id=self.symmetric_enrollment_id,
             enrollment=sym_enrollment,
             if_match=eTag,
@@ -249,7 +249,7 @@ class EnrollmentSamples(object):
         bulk_operation = {"mode": "create", "enrollments": enrollments}
 
         # Send create operation
-        await dps_service_client.individual_enrollment.run_bulk_operation(
+        await dps_service_client.enrollment.run_bulk_operation(
             bulk_operation=bulk_operation
         )
 
@@ -257,7 +257,7 @@ class EnrollmentSamples(object):
         bulk_operation["mode"] = "delete"
 
         # Send delete operation
-        await dps_service_client.individual_enrollment.run_bulk_operation(
+        await dps_service_client.enrollment.run_bulk_operation(
             bulk_operation=bulk_operation
         )
 
@@ -270,13 +270,13 @@ class EnrollmentSamples(object):
         )
 
         # Delete individual enrollments
-        await dps_service_client.individual_enrollment.delete(
+        await dps_service_client.enrollment.delete(
             id=self.x509_enrollment_id
         )
-        await dps_service_client.individual_enrollment.delete(
+        await dps_service_client.enrollment.delete(
             id=self.symmetric_enrollment_id
         )
-        await dps_service_client.individual_enrollment.delete(id=self.tpm_enrollment_id)
+        await dps_service_client.enrollment.delete(id=self.tpm_enrollment_id)
 
 
 async def main():

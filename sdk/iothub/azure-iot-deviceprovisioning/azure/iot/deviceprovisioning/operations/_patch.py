@@ -30,11 +30,11 @@ from ._operations import (
     DeviceRegistrationStateOperations as DeviceRegistrationStateOperationsGenerated,
 )
 from ._operations import EnrollmentGroupOperations as EnrollmentGroupOperationsGenerated
-from ._operations import IndividualEnrollmentOperations as EnrollmentOperationsGenerated
+from ._operations import EnrollmentOperations as EnrollmentOperationsGenerated
 from ._operations import (
     build_device_registration_state_query_request,
     build_enrollment_group_query_request,
-    build_individual_enrollment_query_request,
+    build_enrollment_query_request,
 )
 
 if sys.version_info >= (3, 9):
@@ -59,14 +59,14 @@ def _extract_data_default(pipeline_response, **kwargs):
     return continuation or None, cast(JSON, response_json)
 
 
-class IndividualEnrollmentOperations(EnrollmentOperationsGenerated):
+class EnrollmentOperations(EnrollmentOperationsGenerated):
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.iot.deviceprovisioning.DeviceProvisioningClient`'s
-        :attr:`individual_enrollment` attribute.
+        :attr:`enrollment` attribute.
     """
 
     @distributed_trace
@@ -238,7 +238,7 @@ class IndividualEnrollmentOperations(EnrollmentOperationsGenerated):
                           DateTime this resource was created.
                         "customAllocationDefinition": {
                             "apiVersion": "str",  # The API version of the provisioning
-                              service types (such as IndividualEnrollment) sent in the custom
+                              service types (such as Enrollment) sent in the custom
                               allocation request. Minimum supported version: "2018-09-01-preview".
                               Required.
                             "webhookUrl": "str"  # The webhook URL used for allocation
@@ -374,7 +374,7 @@ class IndividualEnrollmentOperations(EnrollmentOperationsGenerated):
 
         def prepare_request(continuation_token=None):
             if not continuation_token:
-                request = build_individual_enrollment_query_request(
+                request = build_enrollment_query_request(
                     x_ms_max_item_count=top,
                     content_type=content_type,
                     api_version=self._config.api_version,
@@ -385,7 +385,7 @@ class IndividualEnrollmentOperations(EnrollmentOperationsGenerated):
                     **kwargs,
                 )
             else:
-                request = build_individual_enrollment_query_request(
+                request = build_enrollment_query_request(
                     x_ms_max_item_count=top,
                     x_ms_continuation=continuation_token,
                     content_type=content_type,
@@ -597,7 +597,7 @@ class EnrollmentGroupOperations(EnrollmentGroupOperationsGenerated):
                           DateTime this resource was created.
                         "customAllocationDefinition": {
                             "apiVersion": "str",  # The API version of the provisioning
-                              service types (such as IndividualEnrollment) sent in the custom
+                              service types (such as Enrollment) sent in the custom
                               allocation request. Minimum supported version: "2018-09-01-preview".
                               Required.
                             "webhookUrl": "str"  # The webhook URL used for allocation
@@ -673,9 +673,7 @@ class EnrollmentGroupOperations(EnrollmentGroupOperationsGenerated):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", None)
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
 
         content_type = content_type or "application/json"
         _json = None
@@ -860,7 +858,7 @@ class DeviceRegistrationStateOperations(DeviceRegistrationStateOperationsGenerat
 
 
 __all__ = [
-    "IndividualEnrollmentOperations",
+    "EnrollmentOperations",
     "EnrollmentGroupOperations",
     "DeviceRegistrationStateOperations",
 ]

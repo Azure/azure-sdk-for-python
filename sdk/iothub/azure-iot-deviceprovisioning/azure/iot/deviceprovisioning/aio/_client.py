@@ -14,7 +14,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
 from ._configuration import DeviceProvisioningClientConfiguration
-from .operations import DeviceRegistrationStateOperations, EnrollmentGroupOperations, IndividualEnrollmentOperations
+from .operations import DeviceRegistrationStateOperations, EnrollmentGroupOperations, EnrollmentOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -24,9 +24,8 @@ if TYPE_CHECKING:
 class DeviceProvisioningClient:  # pylint: disable=client-accepts-api-version-keyword
     """API for service operations with the Azure IoT Hub Device Provisioning Service.
 
-    :ivar individual_enrollment: IndividualEnrollmentOperations operations
-    :vartype individual_enrollment:
-     azure.iot.deviceprovisioning.aio.operations.IndividualEnrollmentOperations
+    :ivar enrollment: EnrollmentOperations operations
+    :vartype enrollment: azure.iot.deviceprovisioning.aio.operations.EnrollmentOperations
     :ivar enrollment_group: EnrollmentGroupOperations operations
     :vartype enrollment_group:
      azure.iot.deviceprovisioning.aio.operations.EnrollmentGroupOperations
@@ -56,9 +55,7 @@ class DeviceProvisioningClient:  # pylint: disable=client-accepts-api-version-ke
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.individual_enrollment = IndividualEnrollmentOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.enrollment = EnrollmentOperations(self._client, self._config, self._serialize, self._deserialize)
         self.enrollment_group = EnrollmentGroupOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

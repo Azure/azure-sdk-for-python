@@ -49,9 +49,9 @@ class DeviceProvisioningClient(
         recent service version that is compatible with the current SDK. Setting to an older version may result
         in reduced feature compatibility.
     :paramtype api_version: str or ApiVersion
-    :ivar individual_enrollment: IndividualEnrollmentOperations operations
-    :vartype individual_enrollment:
-    azure.iot.deviceprovisioningservice.operations.IndividualEnrollmentOperations
+    :ivar enrollment: EnrollmentOperations operations
+    :vartype enrollment:
+    azure.iot.deviceprovisioningservice.operations.EnrollmentOperations
     :ivar enrollment_group: EnrollmentGroupOperations operations
     :vartype enrollment_group:
     azure.iot.deviceprovisioningservice.operations.EnrollmentGroupOperations
@@ -96,16 +96,6 @@ class DeviceProvisioningClient(
             api_version=api_version,
             **kwargs,
         )
-
-        # self.individual_enrollment: IndividualEnrollmentOperations = (
-        #     self._runtime_client.individual_enrollment
-        # )
-        # self.enrollment_group: EnrollmentGroupOperations = (
-        #     self._runtime_client.enrollment_group
-        # )
-        # self.device_registration_state: DeviceRegistrationStateOperations = (
-        #     self._runtime_client.device_registration_state
-        # )
 
     @classmethod
     def from_connection_string(

@@ -6,14 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._patch import IndividualEnrollmentOperations
+from ._patch import EnrollmentOperations
 from ._patch import EnrollmentGroupOperations
 from ._patch import DeviceRegistrationStateOperations
 
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "IndividualEnrollmentOperations",
+    "EnrollmentOperations",
     "EnrollmentGroupOperations",
     "DeviceRegistrationStateOperations",
 ]

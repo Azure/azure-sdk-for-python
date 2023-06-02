@@ -28,18 +28,18 @@ from ...operations._operations import (
     build_device_registration_state_delete_request,
     build_device_registration_state_get_request,
     build_device_registration_state_query_request,
+    build_enrollment_create_or_update_request,
+    build_enrollment_delete_request,
+    build_enrollment_get_attestation_mechanism_request,
+    build_enrollment_get_request,
     build_enrollment_group_create_or_update_request,
     build_enrollment_group_delete_request,
     build_enrollment_group_get_attestation_mechanism_request,
     build_enrollment_group_get_request,
     build_enrollment_group_query_request,
     build_enrollment_group_run_bulk_operation_request,
-    build_individual_enrollment_create_or_update_request,
-    build_individual_enrollment_delete_request,
-    build_individual_enrollment_get_attestation_mechanism_request,
-    build_individual_enrollment_get_request,
-    build_individual_enrollment_query_request,
-    build_individual_enrollment_run_bulk_operation_request,
+    build_enrollment_query_request,
+    build_enrollment_run_bulk_operation_request,
 )
 
 if sys.version_info >= (3, 9):
@@ -51,14 +51,14 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class IndividualEnrollmentOperations:
+class EnrollmentOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.iot.deviceprovisioning.aio.DeviceProvisioningClient`'s
-        :attr:`individual_enrollment` attribute.
+        :attr:`enrollment` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -204,7 +204,7 @@ class IndividualEnrollmentOperations:
                       resource was created.
                     "customAllocationDefinition": {
                         "apiVersion": "str",  # The API version of the provisioning service
-                          types (such as IndividualEnrollment) sent in the custom allocation request.
+                          types (such as Enrollment) sent in the custom allocation request.
                           Minimum supported version: "2018-09-01-preview". Required.
                         "webhookUrl": "str"  # The webhook URL used for allocation requests.
                           Required.
@@ -321,7 +321,7 @@ class IndividualEnrollmentOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_individual_enrollment_get_request(
+        request = build_enrollment_get_request(
             id=id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -501,7 +501,7 @@ class IndividualEnrollmentOperations:
                       resource was created.
                     "customAllocationDefinition": {
                         "apiVersion": "str",  # The API version of the provisioning service
-                          types (such as IndividualEnrollment) sent in the custom allocation request.
+                          types (such as Enrollment) sent in the custom allocation request.
                           Minimum supported version: "2018-09-01-preview". Required.
                         "webhookUrl": "str"  # The webhook URL used for allocation requests.
                           Required.
@@ -724,7 +724,7 @@ class IndividualEnrollmentOperations:
                       resource was created.
                     "customAllocationDefinition": {
                         "apiVersion": "str",  # The API version of the provisioning service
-                          types (such as IndividualEnrollment) sent in the custom allocation request.
+                          types (such as Enrollment) sent in the custom allocation request.
                           Minimum supported version: "2018-09-01-preview". Required.
                         "webhookUrl": "str"  # The webhook URL used for allocation requests.
                           Required.
@@ -980,7 +980,7 @@ class IndividualEnrollmentOperations:
                       resource was created.
                     "customAllocationDefinition": {
                         "apiVersion": "str",  # The API version of the provisioning service
-                          types (such as IndividualEnrollment) sent in the custom allocation request.
+                          types (such as Enrollment) sent in the custom allocation request.
                           Minimum supported version: "2018-09-01-preview". Required.
                         "webhookUrl": "str"  # The webhook URL used for allocation requests.
                           Required.
@@ -1230,7 +1230,7 @@ class IndividualEnrollmentOperations:
                       resource was created.
                     "customAllocationDefinition": {
                         "apiVersion": "str",  # The API version of the provisioning service
-                          types (such as IndividualEnrollment) sent in the custom allocation request.
+                          types (such as Enrollment) sent in the custom allocation request.
                           Minimum supported version: "2018-09-01-preview". Required.
                         "webhookUrl": "str"  # The webhook URL used for allocation requests.
                           Required.
@@ -1453,7 +1453,7 @@ class IndividualEnrollmentOperations:
                       resource was created.
                     "customAllocationDefinition": {
                         "apiVersion": "str",  # The API version of the provisioning service
-                          types (such as IndividualEnrollment) sent in the custom allocation request.
+                          types (such as Enrollment) sent in the custom allocation request.
                           Minimum supported version: "2018-09-01-preview". Required.
                         "webhookUrl": "str"  # The webhook URL used for allocation requests.
                           Required.
@@ -1579,7 +1579,7 @@ class IndividualEnrollmentOperations:
         else:
             _json = enrollment
 
-        request = build_individual_enrollment_create_or_update_request(
+        request = build_enrollment_create_or_update_request(
             id=id,
             if_match=if_match,
             content_type=content_type,
@@ -1643,7 +1643,7 @@ class IndividualEnrollmentOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_individual_enrollment_delete_request(
+        request = build_enrollment_delete_request(
             id=id,
             if_match=if_match,
             api_version=self._config.api_version,
@@ -1667,7 +1667,7 @@ class IndividualEnrollmentOperations:
             return cls(pipeline_response, None, {})
 
     @overload
-    async def query(
+    async def _query(
         self,
         query_specification: JSON,
         *,
@@ -1676,285 +1676,10 @@ class IndividualEnrollmentOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[JSON]:
-        """Query the device enrollment records.
-
-        Query the device enrollment records.
-
-        :param query_specification: The query specification. Required.
-        :type query_specification: JSON
-        :keyword x_ms_max_item_count: Page size. Default value is None.
-        :paramtype x_ms_max_item_count: int
-        :keyword x_ms_continuation: Continuation token. Default value is None.
-        :paramtype x_ms_continuation: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: list of JSON object
-        :rtype: list[JSON]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                query_specification = {
-                    "query": "str"  # Required.
-                }
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "attestation": {
-                            "type": "str",  # Attestation Type. Required. Known values
-                              are: "none", "tpm", "x509", and "symmetricKey".
-                            "symmetricKey": {
-                                "primaryKey": "str",  # Optional. Primary symmetric
-                                  key.
-                                "secondaryKey": "str"  # Optional. Secondary
-                                  symmetric key.
-                            },
-                            "tpm": {
-                                "endorsementKey": "str",  # Required.
-                                "storageRootKey": "str"  # Optional. TPM attestation
-                                  method.
-                            },
-                            "x509": {
-                                "caReferences": {
-                                    "primary": "str",  # Optional. Primary and
-                                      secondary CA references.
-                                    "secondary": "str"  # Optional. Primary and
-                                      secondary CA references.
-                                },
-                                "clientCertificates": {
-                                    "primary": {
-                                        "certificate": "str",  # Optional.
-                                          Certificate and Certificate info.
-                                        "info": {
-                                            "issuerName": "str",  #
-                                              Required.
-                                            "notAfterUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "notBeforeUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "serialNumber": "str",  #
-                                              Required.
-                                            "sha1Thumbprint": "str",  #
-                                              Required.
-                                            "sha256Thumbprint": "str",  #
-                                              Required.
-                                            "subjectName": "str",  #
-                                              Required.
-                                            "version": 0  # Required.
-                                        }
-                                    },
-                                    "secondary": {
-                                        "certificate": "str",  # Optional.
-                                          Certificate and Certificate info.
-                                        "info": {
-                                            "issuerName": "str",  #
-                                              Required.
-                                            "notAfterUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "notBeforeUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "serialNumber": "str",  #
-                                              Required.
-                                            "sha1Thumbprint": "str",  #
-                                              Required.
-                                            "sha256Thumbprint": "str",  #
-                                              Required.
-                                            "subjectName": "str",  #
-                                              Required.
-                                            "version": 0  # Required.
-                                        }
-                                    }
-                                },
-                                "signingCertificates": {
-                                    "primary": {
-                                        "certificate": "str",  # Optional.
-                                          Certificate and Certificate info.
-                                        "info": {
-                                            "issuerName": "str",  #
-                                              Required.
-                                            "notAfterUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "notBeforeUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "serialNumber": "str",  #
-                                              Required.
-                                            "sha1Thumbprint": "str",  #
-                                              Required.
-                                            "sha256Thumbprint": "str",  #
-                                              Required.
-                                            "subjectName": "str",  #
-                                              Required.
-                                            "version": 0  # Required.
-                                        }
-                                    },
-                                    "secondary": {
-                                        "certificate": "str",  # Optional.
-                                          Certificate and Certificate info.
-                                        "info": {
-                                            "issuerName": "str",  #
-                                              Required.
-                                            "notAfterUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "notBeforeUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "serialNumber": "str",  #
-                                              Required.
-                                            "sha1Thumbprint": "str",  #
-                                              Required.
-                                            "sha256Thumbprint": "str",  #
-                                              Required.
-                                            "subjectName": "str",  #
-                                              Required.
-                                            "version": 0  # Required.
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "registrationId": "str",  # This id is used to uniquely identify a
-                          device registration of an enrollment."nA case-insensitive string (up to 128
-                          characters long) of alphanumeric characters plus certain special characters :
-                          . _ -. No special characters allowed at start or end. Required.
-                        "allocationPolicy": "str",  # Optional. The allocation policy of this
-                          resource. This policy overrides the tenant level allocation policy for this
-                          individual enrollment or enrollment group. Possible values include 'hashed':
-                          Linked IoT hubs are equally likely to have devices provisioned to them,
-                          'geoLatency':  Devices are provisioned to an IoT hub with the lowest latency
-                          to the device.If multiple linked IoT hubs would provide the same lowest
-                          latency, the provisioning service hashes devices across those hubs, 'static'
-                          : Specification of the desired IoT hub in the enrollment list takes priority
-                          over the service-level allocation policy, 'custom': Devices are provisioned
-                          to an IoT hub based on your own custom logic. The provisioning service passes
-                          information about the device to the logic, and the logic returns the desired
-                          IoT hub as well as the desired initial configuration. We recommend using
-                          Azure Functions to host your logic. Known values are: "hashed", "geoLatency",
-                          "static", and "custom".
-                        "capabilities": {
-                            "iotEdge": False  # Default value is False. If set to true,
-                              this device is an IoTEdge device. Required.
-                        },
-                        "createdDateTimeUtc": "2020-02-20 00:00:00",  # Optional. The
-                          DateTime this resource was created.
-                        "customAllocationDefinition": {
-                            "apiVersion": "str",  # The API version of the provisioning
-                              service types (such as IndividualEnrollment) sent in the custom
-                              allocation request. Minimum supported version: "2018-09-01-preview".
-                              Required.
-                            "webhookUrl": "str"  # The webhook URL used for allocation
-                              requests. Required.
-                        },
-                        "deviceId": "str",  # Optional. Desired IoT Hub device ID (optional).
-                        "etag": "str",  # Optional. The entity tag associated with the
-                          resource.
-                        "initialTwin": {
-                            "properties": {
-                                "desired": {
-                                    "count": 0,  # Optional. Number of properties
-                                      in the TwinCollection.
-                                    "metadata": {
-                                        "lastUpdated": "2020-02-20 00:00:00",
-                                          # Optional. Last time the TwinCollection was updated.
-                                        "lastUpdatedVersion": 0  # Optional.
-                                          This is null for reported properties metadata and is not null
-                                          for desired properties metadata.
-                                    },
-                                    "version": 0  # Optional. Version of the
-                                      TwinCollection.
-                                }
-                            },
-                            "tags": {
-                                "count": 0,  # Optional. Number of properties in the
-                                  TwinCollection.
-                                "metadata": {
-                                    "lastUpdated": "2020-02-20 00:00:00",  #
-                                      Optional. Last time the TwinCollection was updated.
-                                    "lastUpdatedVersion": 0  # Optional. This is
-                                      null for reported properties metadata and is not null for desired
-                                      properties metadata.
-                                },
-                                "version": 0  # Optional. Version of the
-                                  TwinCollection.
-                            }
-                        },
-                        "iotHubHostName": "str",  # Optional. The Iot Hub host name.
-                        "iotHubs": [
-                            "str"  # Optional. The list of IoT Hub hostnames the
-                              device(s) in this resource can be allocated to. Must be a subset of
-                              tenant level list of IoT hubs.
-                        ],
-                        "lastUpdatedDateTimeUtc": "2020-02-20 00:00:00",  # Optional. The
-                          DateTime this resource was last updated.
-                        "optionalDeviceInformation": {
-                            "count": 0,  # Optional. Number of properties in the
-                              TwinCollection.
-                            "metadata": {
-                                "lastUpdated": "2020-02-20 00:00:00",  # Optional.
-                                  Last time the TwinCollection was updated.
-                                "lastUpdatedVersion": 0  # Optional. This is null for
-                                  reported properties metadata and is not null for desired properties
-                                  metadata.
-                            },
-                            "version": 0  # Optional. Version of the TwinCollection.
-                        },
-                        "provisioningStatus": "enabled",  # Optional. Default value is
-                          "enabled". The provisioning status. Known values are: "enabled" and
-                          "disabled".
-                        "registrationState": {
-                            "assignedHub": "str",  # Optional. Assigned Azure IoT Hub.
-                            "createdDateTimeUtc": "2020-02-20 00:00:00",  # Optional.
-                              Registration create date time (in UTC).
-                            "deviceId": "str",  # Optional. Device ID.
-                            "errorCode": 0,  # Optional. Error code.
-                            "errorMessage": "str",  # Optional. Error message.
-                            "etag": "str",  # Optional. The entity tag associated with
-                              the resource.
-                            "lastUpdatedDateTimeUtc": "2020-02-20 00:00:00",  # Optional.
-                              Last updated date time (in UTC).
-                            "payload": {},  # Optional. Custom allocation payload
-                              returned from the webhook to the device.
-                            "registrationId": "str",  # Optional. This id is used to
-                              uniquely identify a device registration of an enrollment."nA
-                              case-insensitive string (up to 128 characters long) of alphanumeric
-                              characters plus certain special characters : . _ -. No special characters
-                              allowed at start or end.
-                            "status": "str",  # Optional. Enrollment status. Known values
-                              are: "unassigned", "assigning", "assigned", "failed", and "disabled".
-                            "substatus": "str"  # Optional. Substatus for 'Assigned'
-                              devices. Possible values include - 'initialAssignment': Device has been
-                              assigned to an IoT hub for the first time, 'deviceDataMigrated': Device
-                              has been assigned to a different IoT hub and its device data was migrated
-                              from the previously assigned IoT hub. Device data was removed from the
-                              previously assigned IoT hub, 'deviceDataReset':  Device has been assigned
-                              to a different IoT hub and its device data was populated from the initial
-                              state stored in the enrollment. Device data was removed from the
-                              previously assigned IoT hub, 'reprovisionedToInitialAssignment': Device
-                              has been re-provisioned to a previously assigned IoT hub. Known values
-                              are: "initialAssignment", "deviceDataMigrated", "deviceDataReset", and
-                              "reprovisionedToInitialAssignment".
-                        },
-                        "reprovisionPolicy": {
-                            "migrateDeviceData": True,  # Default value is True. When set
-                              to true (default), the Device Provisioning Service will migrate the
-                              device's data (twin, device capabilities, and device ID) from one IoT hub
-                              to another during an IoT hub assignment update. If set to false, the
-                              Device Provisioning Service will reset the device's data to the initial
-                              desired configuration stored in the corresponding enrollment list.
-                            "updateHubAssignment": True  # Default value is True. When
-                              set to true (default), the Device Provisioning Service will evaluate the
-                              device's IoT Hub assignment and update it if necessary for any
-                              provisioning requests beyond the first from a given device. If set to
-                              false, the device will stay assigned to its current IoT hub.
-                        }
-                    }
-                ]
-        """
+        ...
 
     @overload
-    async def query(
+    async def _query(
         self,
         query_specification: IO,
         *,
@@ -1963,280 +1688,10 @@ class IndividualEnrollmentOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[JSON]:
-        """Query the device enrollment records.
-
-        Query the device enrollment records.
-
-        :param query_specification: The query specification. Required.
-        :type query_specification: IO
-        :keyword x_ms_max_item_count: Page size. Default value is None.
-        :paramtype x_ms_max_item_count: int
-        :keyword x_ms_continuation: Continuation token. Default value is None.
-        :paramtype x_ms_continuation: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: list of JSON object
-        :rtype: list[JSON]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "attestation": {
-                            "type": "str",  # Attestation Type. Required. Known values
-                              are: "none", "tpm", "x509", and "symmetricKey".
-                            "symmetricKey": {
-                                "primaryKey": "str",  # Optional. Primary symmetric
-                                  key.
-                                "secondaryKey": "str"  # Optional. Secondary
-                                  symmetric key.
-                            },
-                            "tpm": {
-                                "endorsementKey": "str",  # Required.
-                                "storageRootKey": "str"  # Optional. TPM attestation
-                                  method.
-                            },
-                            "x509": {
-                                "caReferences": {
-                                    "primary": "str",  # Optional. Primary and
-                                      secondary CA references.
-                                    "secondary": "str"  # Optional. Primary and
-                                      secondary CA references.
-                                },
-                                "clientCertificates": {
-                                    "primary": {
-                                        "certificate": "str",  # Optional.
-                                          Certificate and Certificate info.
-                                        "info": {
-                                            "issuerName": "str",  #
-                                              Required.
-                                            "notAfterUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "notBeforeUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "serialNumber": "str",  #
-                                              Required.
-                                            "sha1Thumbprint": "str",  #
-                                              Required.
-                                            "sha256Thumbprint": "str",  #
-                                              Required.
-                                            "subjectName": "str",  #
-                                              Required.
-                                            "version": 0  # Required.
-                                        }
-                                    },
-                                    "secondary": {
-                                        "certificate": "str",  # Optional.
-                                          Certificate and Certificate info.
-                                        "info": {
-                                            "issuerName": "str",  #
-                                              Required.
-                                            "notAfterUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "notBeforeUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "serialNumber": "str",  #
-                                              Required.
-                                            "sha1Thumbprint": "str",  #
-                                              Required.
-                                            "sha256Thumbprint": "str",  #
-                                              Required.
-                                            "subjectName": "str",  #
-                                              Required.
-                                            "version": 0  # Required.
-                                        }
-                                    }
-                                },
-                                "signingCertificates": {
-                                    "primary": {
-                                        "certificate": "str",  # Optional.
-                                          Certificate and Certificate info.
-                                        "info": {
-                                            "issuerName": "str",  #
-                                              Required.
-                                            "notAfterUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "notBeforeUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "serialNumber": "str",  #
-                                              Required.
-                                            "sha1Thumbprint": "str",  #
-                                              Required.
-                                            "sha256Thumbprint": "str",  #
-                                              Required.
-                                            "subjectName": "str",  #
-                                              Required.
-                                            "version": 0  # Required.
-                                        }
-                                    },
-                                    "secondary": {
-                                        "certificate": "str",  # Optional.
-                                          Certificate and Certificate info.
-                                        "info": {
-                                            "issuerName": "str",  #
-                                              Required.
-                                            "notAfterUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "notBeforeUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "serialNumber": "str",  #
-                                              Required.
-                                            "sha1Thumbprint": "str",  #
-                                              Required.
-                                            "sha256Thumbprint": "str",  #
-                                              Required.
-                                            "subjectName": "str",  #
-                                              Required.
-                                            "version": 0  # Required.
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "registrationId": "str",  # This id is used to uniquely identify a
-                          device registration of an enrollment."nA case-insensitive string (up to 128
-                          characters long) of alphanumeric characters plus certain special characters :
-                          . _ -. No special characters allowed at start or end. Required.
-                        "allocationPolicy": "str",  # Optional. The allocation policy of this
-                          resource. This policy overrides the tenant level allocation policy for this
-                          individual enrollment or enrollment group. Possible values include 'hashed':
-                          Linked IoT hubs are equally likely to have devices provisioned to them,
-                          'geoLatency':  Devices are provisioned to an IoT hub with the lowest latency
-                          to the device.If multiple linked IoT hubs would provide the same lowest
-                          latency, the provisioning service hashes devices across those hubs, 'static'
-                          : Specification of the desired IoT hub in the enrollment list takes priority
-                          over the service-level allocation policy, 'custom': Devices are provisioned
-                          to an IoT hub based on your own custom logic. The provisioning service passes
-                          information about the device to the logic, and the logic returns the desired
-                          IoT hub as well as the desired initial configuration. We recommend using
-                          Azure Functions to host your logic. Known values are: "hashed", "geoLatency",
-                          "static", and "custom".
-                        "capabilities": {
-                            "iotEdge": False  # Default value is False. If set to true,
-                              this device is an IoTEdge device. Required.
-                        },
-                        "createdDateTimeUtc": "2020-02-20 00:00:00",  # Optional. The
-                          DateTime this resource was created.
-                        "customAllocationDefinition": {
-                            "apiVersion": "str",  # The API version of the provisioning
-                              service types (such as IndividualEnrollment) sent in the custom
-                              allocation request. Minimum supported version: "2018-09-01-preview".
-                              Required.
-                            "webhookUrl": "str"  # The webhook URL used for allocation
-                              requests. Required.
-                        },
-                        "deviceId": "str",  # Optional. Desired IoT Hub device ID (optional).
-                        "etag": "str",  # Optional. The entity tag associated with the
-                          resource.
-                        "initialTwin": {
-                            "properties": {
-                                "desired": {
-                                    "count": 0,  # Optional. Number of properties
-                                      in the TwinCollection.
-                                    "metadata": {
-                                        "lastUpdated": "2020-02-20 00:00:00",
-                                          # Optional. Last time the TwinCollection was updated.
-                                        "lastUpdatedVersion": 0  # Optional.
-                                          This is null for reported properties metadata and is not null
-                                          for desired properties metadata.
-                                    },
-                                    "version": 0  # Optional. Version of the
-                                      TwinCollection.
-                                }
-                            },
-                            "tags": {
-                                "count": 0,  # Optional. Number of properties in the
-                                  TwinCollection.
-                                "metadata": {
-                                    "lastUpdated": "2020-02-20 00:00:00",  #
-                                      Optional. Last time the TwinCollection was updated.
-                                    "lastUpdatedVersion": 0  # Optional. This is
-                                      null for reported properties metadata and is not null for desired
-                                      properties metadata.
-                                },
-                                "version": 0  # Optional. Version of the
-                                  TwinCollection.
-                            }
-                        },
-                        "iotHubHostName": "str",  # Optional. The Iot Hub host name.
-                        "iotHubs": [
-                            "str"  # Optional. The list of IoT Hub hostnames the
-                              device(s) in this resource can be allocated to. Must be a subset of
-                              tenant level list of IoT hubs.
-                        ],
-                        "lastUpdatedDateTimeUtc": "2020-02-20 00:00:00",  # Optional. The
-                          DateTime this resource was last updated.
-                        "optionalDeviceInformation": {
-                            "count": 0,  # Optional. Number of properties in the
-                              TwinCollection.
-                            "metadata": {
-                                "lastUpdated": "2020-02-20 00:00:00",  # Optional.
-                                  Last time the TwinCollection was updated.
-                                "lastUpdatedVersion": 0  # Optional. This is null for
-                                  reported properties metadata and is not null for desired properties
-                                  metadata.
-                            },
-                            "version": 0  # Optional. Version of the TwinCollection.
-                        },
-                        "provisioningStatus": "enabled",  # Optional. Default value is
-                          "enabled". The provisioning status. Known values are: "enabled" and
-                          "disabled".
-                        "registrationState": {
-                            "assignedHub": "str",  # Optional. Assigned Azure IoT Hub.
-                            "createdDateTimeUtc": "2020-02-20 00:00:00",  # Optional.
-                              Registration create date time (in UTC).
-                            "deviceId": "str",  # Optional. Device ID.
-                            "errorCode": 0,  # Optional. Error code.
-                            "errorMessage": "str",  # Optional. Error message.
-                            "etag": "str",  # Optional. The entity tag associated with
-                              the resource.
-                            "lastUpdatedDateTimeUtc": "2020-02-20 00:00:00",  # Optional.
-                              Last updated date time (in UTC).
-                            "payload": {},  # Optional. Custom allocation payload
-                              returned from the webhook to the device.
-                            "registrationId": "str",  # Optional. This id is used to
-                              uniquely identify a device registration of an enrollment."nA
-                              case-insensitive string (up to 128 characters long) of alphanumeric
-                              characters plus certain special characters : . _ -. No special characters
-                              allowed at start or end.
-                            "status": "str",  # Optional. Enrollment status. Known values
-                              are: "unassigned", "assigning", "assigned", "failed", and "disabled".
-                            "substatus": "str"  # Optional. Substatus for 'Assigned'
-                              devices. Possible values include - 'initialAssignment': Device has been
-                              assigned to an IoT hub for the first time, 'deviceDataMigrated': Device
-                              has been assigned to a different IoT hub and its device data was migrated
-                              from the previously assigned IoT hub. Device data was removed from the
-                              previously assigned IoT hub, 'deviceDataReset':  Device has been assigned
-                              to a different IoT hub and its device data was populated from the initial
-                              state stored in the enrollment. Device data was removed from the
-                              previously assigned IoT hub, 'reprovisionedToInitialAssignment': Device
-                              has been re-provisioned to a previously assigned IoT hub. Known values
-                              are: "initialAssignment", "deviceDataMigrated", "deviceDataReset", and
-                              "reprovisionedToInitialAssignment".
-                        },
-                        "reprovisionPolicy": {
-                            "migrateDeviceData": True,  # Default value is True. When set
-                              to true (default), the Device Provisioning Service will migrate the
-                              device's data (twin, device capabilities, and device ID) from one IoT hub
-                              to another during an IoT hub assignment update. If set to false, the
-                              Device Provisioning Service will reset the device's data to the initial
-                              desired configuration stored in the corresponding enrollment list.
-                            "updateHubAssignment": True  # Default value is True. When
-                              set to true (default), the Device Provisioning Service will evaluate the
-                              device's IoT Hub assignment and update it if necessary for any
-                              provisioning requests beyond the first from a given device. If set to
-                              false, the device will stay assigned to its current IoT hub.
-                        }
-                    }
-                ]
-        """
+        ...
 
     @distributed_trace_async
-    async def query(
+    async def _query(
         self,
         query_specification: Union[JSON, IO],
         *,
@@ -2410,7 +1865,7 @@ class IndividualEnrollmentOperations:
                           DateTime this resource was created.
                         "customAllocationDefinition": {
                             "apiVersion": "str",  # The API version of the provisioning
-                              service types (such as IndividualEnrollment) sent in the custom
+                              service types (such as Enrollment) sent in the custom
                               allocation request. Minimum supported version: "2018-09-01-preview".
                               Required.
                             "webhookUrl": "str"  # The webhook URL used for allocation
@@ -2543,7 +1998,7 @@ class IndividualEnrollmentOperations:
         else:
             _json = query_specification
 
-        request = build_individual_enrollment_query_request(
+        request = build_enrollment_query_request(
             x_ms_max_item_count=x_ms_max_item_count,
             x_ms_continuation=x_ms_continuation,
             content_type=content_type,
@@ -2701,7 +2156,7 @@ class IndividualEnrollmentOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_individual_enrollment_get_attestation_mechanism_request(
+        request = build_enrollment_get_attestation_mechanism_request(
             id=id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2897,7 +2352,7 @@ class IndividualEnrollmentOperations:
                               DateTime this resource was created.
                             "customAllocationDefinition": {
                                 "apiVersion": "str",  # The API version of the
-                                  provisioning service types (such as IndividualEnrollment) sent in the
+                                  provisioning service types (such as Enrollment) sent in the
                                   custom allocation request. Minimum supported version:
                                   "2018-09-01-preview". Required.
                                 "webhookUrl": "str"  # The webhook URL used for
@@ -3240,7 +2695,7 @@ class IndividualEnrollmentOperations:
                               DateTime this resource was created.
                             "customAllocationDefinition": {
                                 "apiVersion": "str",  # The API version of the
-                                  provisioning service types (such as IndividualEnrollment) sent in the
+                                  provisioning service types (such as Enrollment) sent in the
                                   custom allocation request. Minimum supported version:
                                   "2018-09-01-preview". Required.
                                 "webhookUrl": "str"  # The webhook URL used for
@@ -3401,7 +2856,7 @@ class IndividualEnrollmentOperations:
         else:
             _json = bulk_operation
 
-        request = build_individual_enrollment_run_bulk_operation_request(
+        request = build_enrollment_run_bulk_operation_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -3581,7 +3036,7 @@ class EnrollmentGroupOperations:
                       resource was created.
                     "customAllocationDefinition": {
                         "apiVersion": "str",  # The API version of the provisioning service
-                          types (such as IndividualEnrollment) sent in the custom allocation request.
+                          types (such as Enrollment) sent in the custom allocation request.
                           Minimum supported version: "2018-09-01-preview". Required.
                         "webhookUrl": "str"  # The webhook URL used for allocation requests.
                           Required.
@@ -3829,7 +3284,7 @@ class EnrollmentGroupOperations:
                       resource was created.
                     "customAllocationDefinition": {
                         "apiVersion": "str",  # The API version of the provisioning service
-                          types (such as IndividualEnrollment) sent in the custom allocation request.
+                          types (such as Enrollment) sent in the custom allocation request.
                           Minimum supported version: "2018-09-01-preview". Required.
                         "webhookUrl": "str"  # The webhook URL used for allocation requests.
                           Required.
@@ -4005,7 +3460,7 @@ class EnrollmentGroupOperations:
                       resource was created.
                     "customAllocationDefinition": {
                         "apiVersion": "str",  # The API version of the provisioning service
-                          types (such as IndividualEnrollment) sent in the custom allocation request.
+                          types (such as Enrollment) sent in the custom allocation request.
                           Minimum supported version: "2018-09-01-preview". Required.
                         "webhookUrl": "str"  # The webhook URL used for allocation requests.
                           Required.
@@ -4212,7 +3667,7 @@ class EnrollmentGroupOperations:
                       resource was created.
                     "customAllocationDefinition": {
                         "apiVersion": "str",  # The API version of the provisioning service
-                          types (such as IndividualEnrollment) sent in the custom allocation request.
+                          types (such as Enrollment) sent in the custom allocation request.
                           Minimum supported version: "2018-09-01-preview". Required.
                         "webhookUrl": "str"  # The webhook URL used for allocation requests.
                           Required.
@@ -4414,7 +3869,7 @@ class EnrollmentGroupOperations:
                       resource was created.
                     "customAllocationDefinition": {
                         "apiVersion": "str",  # The API version of the provisioning service
-                          types (such as IndividualEnrollment) sent in the custom allocation request.
+                          types (such as Enrollment) sent in the custom allocation request.
                           Minimum supported version: "2018-09-01-preview". Required.
                         "webhookUrl": "str"  # The webhook URL used for allocation requests.
                           Required.
@@ -4590,7 +4045,7 @@ class EnrollmentGroupOperations:
                       resource was created.
                     "customAllocationDefinition": {
                         "apiVersion": "str",  # The API version of the provisioning service
-                          types (such as IndividualEnrollment) sent in the custom allocation request.
+                          types (such as Enrollment) sent in the custom allocation request.
                           Minimum supported version: "2018-09-01-preview". Required.
                         "webhookUrl": "str"  # The webhook URL used for allocation requests.
                           Required.
@@ -4758,7 +4213,7 @@ class EnrollmentGroupOperations:
             return cls(pipeline_response, None, {})
 
     @overload
-    async def query(
+    async def _query(
         self,
         query_specification: JSON,
         *,
@@ -4767,236 +4222,10 @@ class EnrollmentGroupOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[JSON]:
-        """Query the device enrollment groups.
-
-        Query the device enrollment groups.
-
-        :param query_specification: The query specification. Required.
-        :type query_specification: JSON
-        :keyword x_ms_max_item_count: Page size. Default value is None.
-        :paramtype x_ms_max_item_count: int
-        :keyword x_ms_continuation: Continuation token. Default value is None.
-        :paramtype x_ms_continuation: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: list of JSON object
-        :rtype: list[JSON]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                query_specification = {
-                    "query": "str"  # Required.
-                }
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "attestation": {
-                            "type": "str",  # Attestation Type. Required. Known values
-                              are: "none", "tpm", "x509", and "symmetricKey".
-                            "symmetricKey": {
-                                "primaryKey": "str",  # Optional. Primary symmetric
-                                  key.
-                                "secondaryKey": "str"  # Optional. Secondary
-                                  symmetric key.
-                            },
-                            "tpm": {
-                                "endorsementKey": "str",  # Required.
-                                "storageRootKey": "str"  # Optional. TPM attestation
-                                  method.
-                            },
-                            "x509": {
-                                "caReferences": {
-                                    "primary": "str",  # Optional. Primary and
-                                      secondary CA references.
-                                    "secondary": "str"  # Optional. Primary and
-                                      secondary CA references.
-                                },
-                                "clientCertificates": {
-                                    "primary": {
-                                        "certificate": "str",  # Optional.
-                                          Certificate and Certificate info.
-                                        "info": {
-                                            "issuerName": "str",  #
-                                              Required.
-                                            "notAfterUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "notBeforeUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "serialNumber": "str",  #
-                                              Required.
-                                            "sha1Thumbprint": "str",  #
-                                              Required.
-                                            "sha256Thumbprint": "str",  #
-                                              Required.
-                                            "subjectName": "str",  #
-                                              Required.
-                                            "version": 0  # Required.
-                                        }
-                                    },
-                                    "secondary": {
-                                        "certificate": "str",  # Optional.
-                                          Certificate and Certificate info.
-                                        "info": {
-                                            "issuerName": "str",  #
-                                              Required.
-                                            "notAfterUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "notBeforeUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "serialNumber": "str",  #
-                                              Required.
-                                            "sha1Thumbprint": "str",  #
-                                              Required.
-                                            "sha256Thumbprint": "str",  #
-                                              Required.
-                                            "subjectName": "str",  #
-                                              Required.
-                                            "version": 0  # Required.
-                                        }
-                                    }
-                                },
-                                "signingCertificates": {
-                                    "primary": {
-                                        "certificate": "str",  # Optional.
-                                          Certificate and Certificate info.
-                                        "info": {
-                                            "issuerName": "str",  #
-                                              Required.
-                                            "notAfterUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "notBeforeUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "serialNumber": "str",  #
-                                              Required.
-                                            "sha1Thumbprint": "str",  #
-                                              Required.
-                                            "sha256Thumbprint": "str",  #
-                                              Required.
-                                            "subjectName": "str",  #
-                                              Required.
-                                            "version": 0  # Required.
-                                        }
-                                    },
-                                    "secondary": {
-                                        "certificate": "str",  # Optional.
-                                          Certificate and Certificate info.
-                                        "info": {
-                                            "issuerName": "str",  #
-                                              Required.
-                                            "notAfterUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "notBeforeUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "serialNumber": "str",  #
-                                              Required.
-                                            "sha1Thumbprint": "str",  #
-                                              Required.
-                                            "sha256Thumbprint": "str",  #
-                                              Required.
-                                            "subjectName": "str",  #
-                                              Required.
-                                            "version": 0  # Required.
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "enrollmentGroupId": "str",  # Enrollment Group ID. Required.
-                        "allocationPolicy": "str",  # Optional. The allocation policy of this
-                          resource. This policy overrides the tenant level allocation policy for this
-                          individual enrollment or enrollment group. Possible values include 'hashed':
-                          Linked IoT hubs are equally likely to have devices provisioned to them,
-                          'geoLatency':  Devices are provisioned to an IoT hub with the lowest latency
-                          to the device.If multiple linked IoT hubs would provide the same lowest
-                          latency, the provisioning service hashes devices across those hubs, 'static'
-                          : Specification of the desired IoT hub in the enrollment list takes priority
-                          over the service-level allocation policy, 'custom': Devices are provisioned
-                          to an IoT hub based on your own custom logic. The provisioning service passes
-                          information about the device to the logic, and the logic returns the desired
-                          IoT hub as well as the desired initial configuration. We recommend using
-                          Azure Functions to host your logic. Known values are: "hashed", "geoLatency",
-                          "static", and "custom".
-                        "capabilities": {
-                            "iotEdge": False  # Default value is False. If set to true,
-                              this device is an IoTEdge device. Required.
-                        },
-                        "createdDateTimeUtc": "2020-02-20 00:00:00",  # Optional. The
-                          DateTime this resource was created.
-                        "customAllocationDefinition": {
-                            "apiVersion": "str",  # The API version of the provisioning
-                              service types (such as IndividualEnrollment) sent in the custom
-                              allocation request. Minimum supported version: "2018-09-01-preview".
-                              Required.
-                            "webhookUrl": "str"  # The webhook URL used for allocation
-                              requests. Required.
-                        },
-                        "etag": "str",  # Optional. The entity tag associated with the
-                          resource.
-                        "initialTwin": {
-                            "properties": {
-                                "desired": {
-                                    "count": 0,  # Optional. Number of properties
-                                      in the TwinCollection.
-                                    "metadata": {
-                                        "lastUpdated": "2020-02-20 00:00:00",
-                                          # Optional. Last time the TwinCollection was updated.
-                                        "lastUpdatedVersion": 0  # Optional.
-                                          This is null for reported properties metadata and is not null
-                                          for desired properties metadata.
-                                    },
-                                    "version": 0  # Optional. Version of the
-                                      TwinCollection.
-                                }
-                            },
-                            "tags": {
-                                "count": 0,  # Optional. Number of properties in the
-                                  TwinCollection.
-                                "metadata": {
-                                    "lastUpdated": "2020-02-20 00:00:00",  #
-                                      Optional. Last time the TwinCollection was updated.
-                                    "lastUpdatedVersion": 0  # Optional. This is
-                                      null for reported properties metadata and is not null for desired
-                                      properties metadata.
-                                },
-                                "version": 0  # Optional. Version of the
-                                  TwinCollection.
-                            }
-                        },
-                        "iotHubHostName": "str",  # Optional. The Iot Hub host name.
-                        "iotHubs": [
-                            "str"  # Optional. The list of IoT Hub hostnames the
-                              device(s) in this resource can be allocated to. Must be a subset of
-                              tenant level list of IoT hubs.
-                        ],
-                        "lastUpdatedDateTimeUtc": "2020-02-20 00:00:00",  # Optional. The
-                          DateTime this resource was last updated.
-                        "provisioningStatus": "enabled",  # Optional. Default value is
-                          "enabled". The provisioning status. Known values are: "enabled" and
-                          "disabled".
-                        "reprovisionPolicy": {
-                            "migrateDeviceData": True,  # Default value is True. When set
-                              to true (default), the Device Provisioning Service will migrate the
-                              device's data (twin, device capabilities, and device ID) from one IoT hub
-                              to another during an IoT hub assignment update. If set to false, the
-                              Device Provisioning Service will reset the device's data to the initial
-                              desired configuration stored in the corresponding enrollment list.
-                            "updateHubAssignment": True  # Default value is True. When
-                              set to true (default), the Device Provisioning Service will evaluate the
-                              device's IoT Hub assignment and update it if necessary for any
-                              provisioning requests beyond the first from a given device. If set to
-                              false, the device will stay assigned to its current IoT hub.
-                        }
-                    }
-                ]
-        """
+        ...
 
     @overload
-    async def query(
+    async def _query(
         self,
         query_specification: IO,
         *,
@@ -5005,231 +4234,10 @@ class EnrollmentGroupOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[JSON]:
-        """Query the device enrollment groups.
-
-        Query the device enrollment groups.
-
-        :param query_specification: The query specification. Required.
-        :type query_specification: IO
-        :keyword x_ms_max_item_count: Page size. Default value is None.
-        :paramtype x_ms_max_item_count: int
-        :keyword x_ms_continuation: Continuation token. Default value is None.
-        :paramtype x_ms_continuation: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: list of JSON object
-        :rtype: list[JSON]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "attestation": {
-                            "type": "str",  # Attestation Type. Required. Known values
-                              are: "none", "tpm", "x509", and "symmetricKey".
-                            "symmetricKey": {
-                                "primaryKey": "str",  # Optional. Primary symmetric
-                                  key.
-                                "secondaryKey": "str"  # Optional. Secondary
-                                  symmetric key.
-                            },
-                            "tpm": {
-                                "endorsementKey": "str",  # Required.
-                                "storageRootKey": "str"  # Optional. TPM attestation
-                                  method.
-                            },
-                            "x509": {
-                                "caReferences": {
-                                    "primary": "str",  # Optional. Primary and
-                                      secondary CA references.
-                                    "secondary": "str"  # Optional. Primary and
-                                      secondary CA references.
-                                },
-                                "clientCertificates": {
-                                    "primary": {
-                                        "certificate": "str",  # Optional.
-                                          Certificate and Certificate info.
-                                        "info": {
-                                            "issuerName": "str",  #
-                                              Required.
-                                            "notAfterUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "notBeforeUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "serialNumber": "str",  #
-                                              Required.
-                                            "sha1Thumbprint": "str",  #
-                                              Required.
-                                            "sha256Thumbprint": "str",  #
-                                              Required.
-                                            "subjectName": "str",  #
-                                              Required.
-                                            "version": 0  # Required.
-                                        }
-                                    },
-                                    "secondary": {
-                                        "certificate": "str",  # Optional.
-                                          Certificate and Certificate info.
-                                        "info": {
-                                            "issuerName": "str",  #
-                                              Required.
-                                            "notAfterUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "notBeforeUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "serialNumber": "str",  #
-                                              Required.
-                                            "sha1Thumbprint": "str",  #
-                                              Required.
-                                            "sha256Thumbprint": "str",  #
-                                              Required.
-                                            "subjectName": "str",  #
-                                              Required.
-                                            "version": 0  # Required.
-                                        }
-                                    }
-                                },
-                                "signingCertificates": {
-                                    "primary": {
-                                        "certificate": "str",  # Optional.
-                                          Certificate and Certificate info.
-                                        "info": {
-                                            "issuerName": "str",  #
-                                              Required.
-                                            "notAfterUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "notBeforeUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "serialNumber": "str",  #
-                                              Required.
-                                            "sha1Thumbprint": "str",  #
-                                              Required.
-                                            "sha256Thumbprint": "str",  #
-                                              Required.
-                                            "subjectName": "str",  #
-                                              Required.
-                                            "version": 0  # Required.
-                                        }
-                                    },
-                                    "secondary": {
-                                        "certificate": "str",  # Optional.
-                                          Certificate and Certificate info.
-                                        "info": {
-                                            "issuerName": "str",  #
-                                              Required.
-                                            "notAfterUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "notBeforeUtc": "2020-02-20
-                                              00:00:00",  # Required.
-                                            "serialNumber": "str",  #
-                                              Required.
-                                            "sha1Thumbprint": "str",  #
-                                              Required.
-                                            "sha256Thumbprint": "str",  #
-                                              Required.
-                                            "subjectName": "str",  #
-                                              Required.
-                                            "version": 0  # Required.
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "enrollmentGroupId": "str",  # Enrollment Group ID. Required.
-                        "allocationPolicy": "str",  # Optional. The allocation policy of this
-                          resource. This policy overrides the tenant level allocation policy for this
-                          individual enrollment or enrollment group. Possible values include 'hashed':
-                          Linked IoT hubs are equally likely to have devices provisioned to them,
-                          'geoLatency':  Devices are provisioned to an IoT hub with the lowest latency
-                          to the device.If multiple linked IoT hubs would provide the same lowest
-                          latency, the provisioning service hashes devices across those hubs, 'static'
-                          : Specification of the desired IoT hub in the enrollment list takes priority
-                          over the service-level allocation policy, 'custom': Devices are provisioned
-                          to an IoT hub based on your own custom logic. The provisioning service passes
-                          information about the device to the logic, and the logic returns the desired
-                          IoT hub as well as the desired initial configuration. We recommend using
-                          Azure Functions to host your logic. Known values are: "hashed", "geoLatency",
-                          "static", and "custom".
-                        "capabilities": {
-                            "iotEdge": False  # Default value is False. If set to true,
-                              this device is an IoTEdge device. Required.
-                        },
-                        "createdDateTimeUtc": "2020-02-20 00:00:00",  # Optional. The
-                          DateTime this resource was created.
-                        "customAllocationDefinition": {
-                            "apiVersion": "str",  # The API version of the provisioning
-                              service types (such as IndividualEnrollment) sent in the custom
-                              allocation request. Minimum supported version: "2018-09-01-preview".
-                              Required.
-                            "webhookUrl": "str"  # The webhook URL used for allocation
-                              requests. Required.
-                        },
-                        "etag": "str",  # Optional. The entity tag associated with the
-                          resource.
-                        "initialTwin": {
-                            "properties": {
-                                "desired": {
-                                    "count": 0,  # Optional. Number of properties
-                                      in the TwinCollection.
-                                    "metadata": {
-                                        "lastUpdated": "2020-02-20 00:00:00",
-                                          # Optional. Last time the TwinCollection was updated.
-                                        "lastUpdatedVersion": 0  # Optional.
-                                          This is null for reported properties metadata and is not null
-                                          for desired properties metadata.
-                                    },
-                                    "version": 0  # Optional. Version of the
-                                      TwinCollection.
-                                }
-                            },
-                            "tags": {
-                                "count": 0,  # Optional. Number of properties in the
-                                  TwinCollection.
-                                "metadata": {
-                                    "lastUpdated": "2020-02-20 00:00:00",  #
-                                      Optional. Last time the TwinCollection was updated.
-                                    "lastUpdatedVersion": 0  # Optional. This is
-                                      null for reported properties metadata and is not null for desired
-                                      properties metadata.
-                                },
-                                "version": 0  # Optional. Version of the
-                                  TwinCollection.
-                            }
-                        },
-                        "iotHubHostName": "str",  # Optional. The Iot Hub host name.
-                        "iotHubs": [
-                            "str"  # Optional. The list of IoT Hub hostnames the
-                              device(s) in this resource can be allocated to. Must be a subset of
-                              tenant level list of IoT hubs.
-                        ],
-                        "lastUpdatedDateTimeUtc": "2020-02-20 00:00:00",  # Optional. The
-                          DateTime this resource was last updated.
-                        "provisioningStatus": "enabled",  # Optional. Default value is
-                          "enabled". The provisioning status. Known values are: "enabled" and
-                          "disabled".
-                        "reprovisionPolicy": {
-                            "migrateDeviceData": True,  # Default value is True. When set
-                              to true (default), the Device Provisioning Service will migrate the
-                              device's data (twin, device capabilities, and device ID) from one IoT hub
-                              to another during an IoT hub assignment update. If set to false, the
-                              Device Provisioning Service will reset the device's data to the initial
-                              desired configuration stored in the corresponding enrollment list.
-                            "updateHubAssignment": True  # Default value is True. When
-                              set to true (default), the Device Provisioning Service will evaluate the
-                              device's IoT Hub assignment and update it if necessary for any
-                              provisioning requests beyond the first from a given device. If set to
-                              false, the device will stay assigned to its current IoT hub.
-                        }
-                    }
-                ]
-        """
+        ...
 
     @distributed_trace_async
-    async def query(
+    async def _query(
         self,
         query_specification: Union[JSON, IO],
         *,
@@ -5400,7 +4408,7 @@ class EnrollmentGroupOperations:
                           DateTime this resource was created.
                         "customAllocationDefinition": {
                             "apiVersion": "str",  # The API version of the provisioning
-                              service types (such as IndividualEnrollment) sent in the custom
+                              service types (such as Enrollment) sent in the custom
                               allocation request. Minimum supported version: "2018-09-01-preview".
                               Required.
                             "webhookUrl": "str"  # The webhook URL used for allocation
@@ -5835,7 +4843,7 @@ class EnrollmentGroupOperations:
                               DateTime this resource was created.
                             "customAllocationDefinition": {
                                 "apiVersion": "str",  # The API version of the
-                                  provisioning service types (such as IndividualEnrollment) sent in the
+                                  provisioning service types (such as Enrollment) sent in the
                                   custom allocation request. Minimum supported version:
                                   "2018-09-01-preview". Required.
                                 "webhookUrl": "str"  # The webhook URL used for
@@ -6115,7 +5123,7 @@ class EnrollmentGroupOperations:
                               DateTime this resource was created.
                             "customAllocationDefinition": {
                                 "apiVersion": "str",  # The API version of the
-                                  provisioning service types (such as IndividualEnrollment) sent in the
+                                  provisioning service types (such as Enrollment) sent in the
                                   custom allocation request. Minimum supported version:
                                   "2018-09-01-preview". Required.
                                 "webhookUrl": "str"  # The webhook URL used for

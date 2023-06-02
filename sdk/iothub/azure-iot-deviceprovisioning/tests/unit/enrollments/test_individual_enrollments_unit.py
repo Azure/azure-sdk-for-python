@@ -185,13 +185,13 @@ class TestIndividualEnrollmentGet(object):
 
     def test_individual_enrollment_get(self, service_client_get, sdk_client):
         enrollment_id = create_random_name()
-        sdk_client.individual_enrollment.get(id=enrollment_id)
+        sdk_client.enrollment.get(id=enrollment_id)
 
     def test_individual_enrollment_get_error(
         self, service_client_get_error, sdk_client
     ):
         with pytest.raises(HttpResponseError):
-            sdk_client.individual_enrollment.get(id=create_random_name())
+            sdk_client.enrollment.get(id=create_random_name())
 
 
 class TestIndividualEnrollmentCreate(object):
@@ -222,7 +222,7 @@ class TestIndividualEnrollmentCreate(object):
         self, service_client, sdk_client, enrollment
     ):
         enrollment_id = create_random_name()
-        sdk_client.individual_enrollment.create_or_update(
+        sdk_client.enrollment.create_or_update(
             id=enrollment_id, enrollment=enrollment
         )
 
@@ -232,7 +232,7 @@ class TestIndividualEnrollmentCreate(object):
     ):
         enrollment_id = create_random_name()
         with pytest.raises(HttpResponseError):
-            sdk_client.individual_enrollment.create_or_update(
+            sdk_client.enrollment.create_or_update(
                 id=enrollment_id, enrollment=enrollment
             )
 
@@ -262,12 +262,12 @@ class TestIndividualEnrollmentDelete(object):
 
     def test_individual_enrollment_delete(self, service_client, sdk_client):
         enrollment_id = create_random_name()
-        sdk_client.individual_enrollment.delete(id=enrollment_id)
+        sdk_client.enrollment.delete(id=enrollment_id)
 
     def test_individual_enrollment_delete_error(self, service_client_error, sdk_client):
         enrollment_id = create_random_name()
         with pytest.raises(HttpResponseError):
-            sdk_client.individual_enrollment.delete(id=enrollment_id)
+            sdk_client.enrollment.delete(id=enrollment_id)
 
 
 class TestIndividualEnrollmentQuery(object):
@@ -295,14 +295,14 @@ class TestIndividualEnrollmentQuery(object):
 
     @pytest.mark.parametrize("query", "select *")
     def test_individual_enrollment_query(self, service_client, sdk_client, query):
-        query = sdk_client.individual_enrollment.query(query_specification=query)
+        query = sdk_client.enrollment.query(query_specification=query)
         assert [enrollment for enrollment in query]
 
     def test_individual_enrollment_query_error(
         self, service_client_generic_error, sdk_client
     ):
         with pytest.raises(HttpResponseError):
-            query = sdk_client.individual_enrollment.query(
+            query = sdk_client.enrollment.query(
                 query_specification="select *"
             )
             assert [enrollment for enrollment in query]
@@ -335,14 +335,14 @@ class TestIndividualEnrollmentAttestation(object):
         self, service_client, sdk_client
     ):
         enrollment_id = create_random_name()
-        sdk_client.individual_enrollment.get_attestation_mechanism(id=enrollment_id)
+        sdk_client.enrollment.get_attestation_mechanism(id=enrollment_id)
 
     def test_individual_enrollment_get_attestation_mechanism_error(
         self, service_client_generic_error, sdk_client
     ):
         enrollment_id = create_random_name()
         with pytest.raises(HttpResponseError):
-            sdk_client.individual_enrollment.get_attestation_mechanism(id=enrollment_id)
+            sdk_client.enrollment.get_attestation_mechanism(id=enrollment_id)
 
 
 class TestIndividualEnrollmentBulk(object):
@@ -383,7 +383,7 @@ class TestIndividualEnrollmentBulk(object):
     def test_individual_enrollment_run_bulk_operation(
         self, service_client, sdk_client, enrollments, mode
     ):
-        sdk_client.individual_enrollment.run_bulk_operation(
+        sdk_client.enrollment.run_bulk_operation(
             bulk_operation={"enrollments": enrollments, "mode": mode}
         )
 
@@ -403,6 +403,6 @@ class TestIndividualEnrollmentBulk(object):
         self, service_client_generic_error, sdk_client, enrollments, mode
     ):
         with pytest.raises(HttpResponseError):
-            sdk_client.individual_enrollment.run_bulk_operation(
+            sdk_client.enrollment.run_bulk_operation(
                 bulk_operation={"enrollments": enrollments, "mode": mode}
             )

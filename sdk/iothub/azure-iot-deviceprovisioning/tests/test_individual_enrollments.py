@@ -39,7 +39,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             allocation_policy="static",
         )
 
-        enrollment_response = client.individual_enrollment.create_or_update(
+        enrollment_response = client.enrollment.create_or_update(
             id=enrollment_id, enrollment=enrollment
         )
 
@@ -54,7 +54,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         assert enrollment_response["provisioningStatus"] == "enabled"
 
         # check for enrollment in query response
-        enrollment_list = client.individual_enrollment.query(
+        enrollment_list = client.enrollment.query(
             query_specification={"query": "SELECT *"}
         )
         enrollments = [e for e in enrollment_list]
@@ -62,12 +62,12 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         assert enrollments[0]["registrationId"] == enrollment_id
 
         # check enrollment get
-        enrollment_response = client.individual_enrollment.get(id=enrollment_id)
+        enrollment_response = client.enrollment.get(id=enrollment_id)
 
         assert enrollment_response["registrationId"] == enrollment_id
 
         # check attestation
-        attestation_response = client.individual_enrollment.get_attestation_mechanism(
+        attestation_response = client.enrollment.get_attestation_mechanism(
             id=enrollment_id
         )
 
@@ -76,7 +76,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         # update enrollment
         enrollment["provisioningStatus"] = "disabled"
         enrollment["optionalDeviceInformation"] = DEVICE_INFO
-        enrollment_response = client.individual_enrollment.create_or_update(
+        enrollment_response = client.enrollment.create_or_update(
             id=enrollment_id,
             enrollment=enrollment,
             if_match=enrollment_response["etag"],
@@ -90,10 +90,10 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         )
 
         # delete enrollment
-        client.individual_enrollment.delete(id=enrollment_id)
+        client.enrollment.delete(id=enrollment_id)
 
         # ensure deletion
-        enrollment_list = client.individual_enrollment.query(
+        enrollment_list = client.enrollment.query(
             query_specification={"query": "SELECT *"}
         )
         assert len([e for e in enrollment_list]) == 0
@@ -123,7 +123,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             attestation_type=attestation_type,
             reprovision_policy=REPROVISION_MIGRATE,
         )
-        enrollment_response = client.individual_enrollment.create_or_update(
+        enrollment_response = client.enrollment.create_or_update(
             id=enrollment_id,
             enrollment=enrollment,
         )
@@ -155,7 +155,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         assert enrollment_response["reprovisionPolicy"]["updateHubAssignment"]
 
         # check for enrollment in query response
-        enrollment_list = client.individual_enrollment.query(
+        enrollment_list = client.enrollment.query(
             query_specification={"query": "SELECT *"}
         )
         enrollments = [e for e in enrollment_list]
@@ -163,7 +163,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         assert enrollments[0]["registrationId"] == enrollment_id
 
         # check enrollment get
-        enrollment_response = client.individual_enrollment.get(id=enrollment_id)
+        enrollment_response = client.enrollment.get(id=enrollment_id)
 
         assert enrollment_response["registrationId"] == enrollment_id
 
@@ -171,7 +171,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollment["provisioningStatus"] = "disabled"
         enrollment["allocationPolicy"] = "custom"
         enrollment["customAllocationDefinition"] = CUSTOM_ALLOCATION
-        enrollment_response = client.individual_enrollment.create_or_update(
+        enrollment_response = client.enrollment.create_or_update(
             id=enrollment_id,
             enrollment=enrollment,
             if_match=enrollment_response["etag"],
@@ -189,10 +189,10 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         )
 
         # delete enrollment
-        client.individual_enrollment.delete(id=enrollment_id)
+        client.enrollment.delete(id=enrollment_id)
 
         # ensure deletion
-        enrollment_list = client.individual_enrollment.query(
+        enrollment_list = client.enrollment.query(
             query_specification={"query": "SELECT *"}
         )
         assert len([e for e in enrollment_list]) == 0
@@ -226,7 +226,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollment_id2 = self.create_random_name("sym_enrollment2_")
 
         # Use provided keys
-        enrollment_response = client.individual_enrollment.create_or_update(
+        enrollment_response = client.enrollment.create_or_update(
             id=enrollment_id, enrollment=enrollment
         )
 
@@ -250,7 +250,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         assert enrollment_response["reprovisionPolicy"]["updateHubAssignment"]
 
         # check for enrollment in query response
-        enrollment_list = client.individual_enrollment.query(
+        enrollment_list = client.enrollment.query(
             query_specification={"query": "SELECT *"}
         )
         enrollments = [e for e in enrollment_list]
@@ -258,11 +258,11 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         assert enrollments[0]["registrationId"] == enrollment_id
 
         # check enrollment get
-        enrollment_response = client.individual_enrollment.get(id=enrollment_id)
+        enrollment_response = client.enrollment.get(id=enrollment_id)
         assert enrollment_response["registrationId"] == enrollment_id
 
         # check attestation
-        attestation_response = client.individual_enrollment.get_attestation_mechanism(
+        attestation_response = client.enrollment.get_attestation_mechanism(
             id=enrollment_id
         )
 
@@ -274,7 +274,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         enrollment["provisioningStatus"] = "disabled"
         enrollment["allocationPolicy"] = "custom"
         enrollment["customAllocationDefinition"] = CUSTOM_ALLOCATION
-        enrollment_response = client.individual_enrollment.create_or_update(
+        enrollment_response = client.enrollment.create_or_update(
             id=enrollment_id,
             enrollment=enrollment,
             if_match=enrollment_response["etag"],
@@ -305,14 +305,14 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             webhook_url=WEBHOOK_URL,
             api_version=API_VERSION,
         )
-        enrollment_2 = client.individual_enrollment.create_or_update(
+        enrollment_2 = client.enrollment.create_or_update(
             id=enrollment_id2, enrollment=enrollment2
         )
 
         assert enrollment_2
 
         # check both enrollments
-        enrollment_list = client.individual_enrollment.query(
+        enrollment_list = client.enrollment.query(
             query_specification={"query": "SELECT *"}
         )
         enrollments = [e["registrationId"] for e in enrollment_list]
@@ -321,11 +321,11 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         assert enrollment_id2 in enrollments
 
         # delete both enrollments
-        client.individual_enrollment.delete(id=enrollment_id)
-        client.individual_enrollment.delete(id=enrollment_id2)
+        client.enrollment.delete(id=enrollment_id)
+        client.enrollment.delete(id=enrollment_id2)
 
         # ensure deletion
-        enrollment_list = client.individual_enrollment.query(
+        enrollment_list = client.enrollment.query(
             query_specification={"query": "SELECT *"}
         )
         assert len([e for e in enrollment_list]) == 0
@@ -372,7 +372,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             "mode": "create",
         }
 
-        bulk_enrollment_response = client.individual_enrollment.run_bulk_operation(
+        bulk_enrollment_response = client.enrollment.run_bulk_operation(
             bulk_operation=bulk_enrollment_operation
         )
         assert bulk_enrollment_response
@@ -381,13 +381,13 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         bulk_enrollment_operation["enrollments"][1]["provisioningStatus"] == "disabled"
         bulk_enrollment_operation["mode"] = "update"
 
-        bulk_enrollment_response = client.individual_enrollment.run_bulk_operation(
+        bulk_enrollment_response = client.enrollment.run_bulk_operation(
             bulk_operation=bulk_enrollment_operation
         )
         assert bulk_enrollment_response
 
         bulk_enrollment_operation["mode"] = "delete"
-        bulk_enrollment_response = client.individual_enrollment.run_bulk_operation(
+        bulk_enrollment_response = client.enrollment.run_bulk_operation(
             bulk_operation=bulk_enrollment_operation
         )
         assert bulk_enrollment_response
@@ -415,13 +415,13 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
                 device_id=device_id,
                 allocation_policy="static",
             )
-            client.individual_enrollment.create_or_update(
+            client.enrollment.create_or_update(
                 id=enrollment_id, enrollment=enrollment
             )
             enrollments.append(enrollment_id)
 
         query_results = []
-        query = client.individual_enrollment.query(
+        query = client.enrollment.query(
             query_specification={"query": "select *"}
         )
         for enrollment in query:
@@ -430,7 +430,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
 
         query_results = []
         # Should page `page_size` items at a time
-        query = client.individual_enrollment.query(
+        query = client.enrollment.query(
             query_specification={"query": "select *"}, top=page_size
         )
         for enrollment_page in query.by_page():
@@ -441,4 +441,4 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         assert len(query_results) == len(enrollments)
 
         for id in enrollments:
-            client.individual_enrollment.delete(id=id)
+            client.enrollment.delete(id=id)

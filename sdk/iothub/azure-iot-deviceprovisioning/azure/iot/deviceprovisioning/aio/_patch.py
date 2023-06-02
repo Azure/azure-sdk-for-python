@@ -49,9 +49,9 @@ class DeviceProvisioningClient(
         recent service version that is compatible with the current SDK. Setting to an older version may result
         in reduced feature compatibility.
     :paramtype api_version: str or ApiVersion
-    :ivar individual_enrollment: IndividualEnrollmentOperations operations
-    :vartype individual_enrollment:
-    azure.iot.deviceprovisioningservice.aio.operations.IndividualEnrollmentOperations
+    :ivar enrollment: EnrollmentOperations operations
+    :vartype enrollment:
+    azure.iot.deviceprovisioningservice.aio.operations.EnrollmentOperations
     :ivar enrollment_group: EnrollmentGroupOperations operations
     :vartype enrollment_group:
     azure.iot.deviceprovisioningservice.aio.operations.EnrollmentGroupOperations

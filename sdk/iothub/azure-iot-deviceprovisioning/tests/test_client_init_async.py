@@ -32,7 +32,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             iothub_dps_endpoint
         )
 
-        enrollments = await client.individual_enrollment.query(
+        enrollments = await client.enrollment.query(
             query_specification={"query": "SELECT *"}
         )
         assert len([enrollment async for enrollment in enrollments]) == 0
@@ -51,7 +51,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             iothub_dps_endpoint, name, key
         )
 
-        enrollments = await client.individual_enrollment.query(
+        enrollments = await client.enrollment.query(
             query_specification={"query": "SELECT *"}
         )
 
@@ -73,7 +73,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             iothub_dps_endpoint, sas
         )
 
-        enrollments = await client.individual_enrollment.query(
+        enrollments = await client.enrollment.query(
             query_specification={"query": "SELECT *"}
         )
 
