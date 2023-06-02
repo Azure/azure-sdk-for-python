@@ -18,7 +18,7 @@ class FeatureSetSchema(YamlFileSchema):
     version = fields.Str(required=True, allow_none=False)
     specification = NestedField(FeatureSetSpecificationSchema, required=True, allow_none=False)
     entities = fields.List(fields.Str, required=True, allow_none=False)
-    stage = fields.Str(validate=validate.OneOf(["Development", "Production", "Archived"]), default="Development")
+    stage = fields.Str(validate=validate.OneOf(["Development", "Production", "Archived"]), dump_default="Development")
     description = fields.Str()
     tags = fields.Dict(keys=fields.Str(), values=fields.Str())
     materialization_settings = NestedField(MaterializationSettingsSchema)
