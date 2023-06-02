@@ -371,17 +371,6 @@ def format_samples(sdk_code_path) -> None:
 
     _LOGGER.info(f"format generated_samples successfully")
 
-def get_npm_package_version(package: str) -> Dict[any, any]:
-    temp_file = "python_temp.json"
-    check_call(f"npm list {package} -json > {temp_file}", shell=True)
-    with open(temp_file, "r") as file_in:
-        data = json.load(file_in)
-    if "dependencies" not in data:
-        _LOGGER.info(f"can not find {package}: {data}")
-        return {}
-
-    return data["dependencies"]
-
 def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> None:
     ci = Path(folder_path, "ci.yml")
     service_name = folder_path.name
@@ -401,27 +390,15 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
     with open(ci, "w") as file_out:
         file_out.writelines(content)
 
-def gen_typespec(typespec_relative_path: str, spec_folder: str) -> Dict[str, Any]:
+def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, rest_repo_url: str) -> Dict[str, Any]:
     typespec_python = "@azure-tools/typespec-python"
-    autorest_python = "@autorest/python"
 
-    # npm install tool
-    origin_path = os.getcwd()
-    with open(Path("eng/emitter-package.json"), "r") as file_in:
-        typespec_python_dep = json.load(file_in)
-    os.chdir(Path(spec_folder) / typespec_relative_path)
-    with open("package.json", "w") as file_out:
-        json.dump(typespec_python_dep, file_out)
-    check_call("npm install", shell=True)
-
-    # generate code
-    typespec_file = "client.tsp" if Path("client.tsp").exists() else "."
-    check_call(f"npx tsp compile {typespec_file} --emit {typespec_python} --arg \"python-sdk-folder={origin_path}\" ", shell=True)
+    # call scirpt to generate sdk
+    check_call(f'pwsh {Path("eng/common/scripts/TypeSpec-Project-Generate.ps1")} {Path(spec_folder) / typespec_relative_path} {head_sha} {rest_repo_url}', shell=True)
 
     # get version of codegen used in generation
-    npm_package_verstion = get_npm_package_version(autorest_python)
-
-    # return to original folder
-    os.chdir(origin_path)
+    with open(Path("eng/emitter-package.json"), "r") as file_in:
+        data = json.load(file_in)
+        npm_package_verstion = {typespec_python: data["dependencies"][typespec_python]}
 
     return npm_package_verstion

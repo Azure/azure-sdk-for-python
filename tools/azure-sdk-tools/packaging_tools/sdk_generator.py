@@ -121,7 +121,7 @@ def main(generate_input, generate_output):
         elif "data-plane" in input_readme:
             config = gen_dpg(input_readme, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
         else:
-            config = gen_typespec(input_readme, spec_folder)
+            config = gen_typespec(input_readme, spec_folder, data["head_sha"], data["repoHttpsUrl"])
             is_typespec = True
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
