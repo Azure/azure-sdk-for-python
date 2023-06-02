@@ -700,7 +700,7 @@
             }
         },
         {
-            "condition": "[variables('enablePE'), not(variables('isProjectWorkspace'))]",
+            "condition": "[and(variables('enablePE'), not(variables('isProjectWorkspace')))]",
             "type": "Microsoft.MachineLearningServices/workspaces",
             "apiVersion": "2023-04-01-preview",
             "tags": "[parameters('tagValues')]",
@@ -717,10 +717,10 @@
             "properties": {
                 "friendlyName": "[parameters('friendlyName')]",
                 "description": "[parameters('description')]",
-                "storageAccount": "[if(or(variables('isProjectWorkspace'), variables('isWorkspaceHub')), json('null'), variables('storageAccount'))]",
-                "keyVault": "[if(or(variables('isProjectWorkspace'), variables('isWorkspaceHub')), json('null'), variables('keyVault'))]",
+                "storageAccount": "[if(variables('isWorkspaceHub'), json('null'), variables('storageAccount'))]",
+                "keyVault": "[if(variables('isWorkspaceHub'), json('null'), variables('keyVault'))]",
                 "applicationInsights": "[if(variables('isWorkspaceHub'), json('null'), variables('applicationInsights'))]",
-                "containerRegistry": "[if(or(variables('isProjectWorkspace'), variables('isWorkspaceHub')), json('null'), if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null')))]",
+                "containerRegistry": "[if(variables('isWorkspaceHub'), json('null'), if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null')))]",
                 "hbiWorkspace": "[parameters('confidential_data')]",
                 "imageBuildCompute": "[parameters('imageBuildCompute')]",
                 "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
@@ -749,11 +749,11 @@
                 "storageAccounts": "[if(equals(length(parameters('storage_accounts')), 0), variables('storageAccountList'), parameters('storage_accounts'))]",
                 "keyVaults": "[if(equals(length(parameters('key_vaults')), 0), variables('keyVaultList'), parameters('key_vaults'))]",
                 "containerRegistries": "[if(equals(length(parameters('container_registies')), 0), variables('containerRegistryList'), parameters('container_registies'))]",
-                "existingWorkspaces": "[parameters('existing_workspaces')]",
+                "existingWorkspaces": "[parameters('existing_workspaces')]"
             }
         },
         {
-            "condition": "[variables('enablePE'), variables('isProjectWorkspace'))]",
+            "condition": "[and(variables('enablePE'), variables('isProjectWorkspace')))]",
             "type": "Microsoft.MachineLearningServices/workspaces",
             "apiVersion": "2023-04-01-preview",
             "tags": "[parameters('tagValues')]",
@@ -764,7 +764,7 @@
             "properties": {
                 "friendlyName": "[parameters('friendlyName')]",
                 "description": "[parameters('description')]",
-                "applicationInsights": "[if(variables('isWorkspaceHub'), json('null'), variables('applicationInsights'))]",
+                "applicationInsights": "[variables('applicationInsights')]",
                 "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
                 "hubResourceId": "[parameters('workspace_hub')]"
             }

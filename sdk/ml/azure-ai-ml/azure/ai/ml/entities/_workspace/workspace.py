@@ -253,7 +253,7 @@ class Workspace(Resource):
         )
 
     @classmethod
-    def get_workspace_info(armid: str) -> str:
+    def get_workspace_info(cls, armid: str) -> str:
         """Get the workspace SubscriptionId, ResourceGroup, Name from from the resource ID.
 
         :param armid: the Resource Id of a workspace
