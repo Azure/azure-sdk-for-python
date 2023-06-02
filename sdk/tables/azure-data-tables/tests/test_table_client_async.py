@@ -189,6 +189,25 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
         ) as service_client:
             with pytest.raises(ClientAuthenticationError):
                 await service_client.create_table_if_not_exists(table_name="TestInsert")
+    
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_create_client_from_sas_url(self, tables_storage_account_name, tables_primary_storage_account_key):
+        base_url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        
+        async with TableClient(base_url, table_name, credential=tables_primary_storage_account_key) as client:
+            await client.create_table()
+        
+        sas_token = os.getenv("TABLES_STORAGE_SAS_TOKEN")
+        sas_url = f"{base_url}/{table_name}?{sas_token}"
+        async with TableClient.from_table_url(sas_url) as client:
+            entities = client.query_entities(
+                query_filter='PartitionKey eq @pk',
+                parameters={'pk': 'dummy-pk'},
+            )
+            async for e in entities:
+                pass
 
 
 class TestTableClientAsyncUnitTests(AsyncTableTestCase):

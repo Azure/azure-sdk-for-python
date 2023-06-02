@@ -188,6 +188,25 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
         ) as service_client:
             with pytest.raises(ClientAuthenticationError):
                 service_client.create_table_if_not_exists(table_name="TestInsert")
+    
+    @tables_decorator
+    @recorded_by_proxy
+    def test_create_client_from_sas_url(self, tables_storage_account_name, tables_primary_storage_account_key):
+        base_url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        
+        with TableClient(base_url, table_name, credential=tables_primary_storage_account_key) as client:
+            client.create_table()
+        
+        sas_token = os.getenv("TABLES_STORAGE_SAS_TOKEN")
+        sas_url = f"{base_url}/{table_name}?{sas_token}"
+        with TableClient.from_table_url(sas_url) as client:
+            entities = client.query_entities(
+                query_filter='PartitionKey eq @pk',
+                parameters={'pk': 'dummy-pk'},
+            )
+            for e in entities:
+                pass
 
 
 # --Helpers-----------------------------------------------------------------
