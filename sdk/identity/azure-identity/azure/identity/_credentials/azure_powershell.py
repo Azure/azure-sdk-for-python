@@ -7,7 +7,6 @@ import logging
 import subprocess
 import sys
 from typing import List, Tuple, Optional, Any
-import six
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -135,7 +134,7 @@ def run_command_line(command_line: List[str], timeout: int) -> str:
             message="Failed to invoke PowerShell.\n"
                     "To mitigate this issue, please refer to the troubleshooting guidelines here at "
                     "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.")
-        six.raise_from(error, ex)
+        raise error from ex
 
     raise_for_error(proc.returncode, stdout, stderr)
     return stdout
