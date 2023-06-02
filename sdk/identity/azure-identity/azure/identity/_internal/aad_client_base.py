@@ -10,7 +10,6 @@ import time
 from uuid import uuid4
 from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union, Dict
 
-import six
 from msal import TokenCache
 
 from azure.core.pipeline import PipelineResponse
@@ -208,22 +207,15 @@ class AadClientBase(abc.ABC):
 
     def _get_client_certificate_assertion(self, certificate: AadClientCertificate, **kwargs: Any) -> str:
         now = int(time.time())
-        header = six.ensure_binary(
-            json.dumps({"typ": "JWT", "alg": "RS256", "x5t": certificate.thumbprint}), encoding="utf-8"
-        )
-        payload = six.ensure_binary(
-            json.dumps(
-                {
-                    "jti": str(uuid4()),
-                    "aud": self._get_token_url(**kwargs),
-                    "iss": self._client_id,
-                    "sub": self._client_id,
-                    "nbf": now,
-                    "exp": now + (60 * 30),
-                }
-            ),
-            encoding="utf-8",
-        )
+        header = json.dumps({"typ": "JWT", "alg": "RS256", "x5t": certificate.thumbprint}).encode("utf-8")
+        payload = json.dumps({
+            "jti": str(uuid4()),
+            "aud": self._get_token_url(**kwargs),
+            "iss": self._client_id,
+            "sub": self._client_id,
+            "nbf": now,
+            "exp": now + (60 * 30),
+        }).encode("utf-8")
         jws = base64.urlsafe_b64encode(header) + b"." + base64.urlsafe_b64encode(payload)
         signature = certificate.sign(jws)
         jwt_bytes = jws + b"." + base64.urlsafe_b64encode(signature)
