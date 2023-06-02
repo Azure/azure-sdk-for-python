@@ -962,7 +962,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         await self._link.send_disposition(
             first_delivery_id=first,
             last_delivery_id=last,
-            settled=False,
+            settled=True,
             delivery_state=state,
             batchable=batchable,
             wait=True
