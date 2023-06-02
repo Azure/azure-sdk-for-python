@@ -1,6 +1,6 @@
-# Azure IoT Device Provisioning Service client library for Python Samples
+# Azure IoT Device Provisioning client library for Python Samples
 
-These are code samples that show common usage of the Azure IoT Device Provisioning Service client library.
+These are code samples that show common usage of the Azure IoT Device Provisioning client library.
 The async versions of any sample files will be appended with `_async` to show async client usage examples.
 
 
@@ -11,7 +11,7 @@ The async versions of any sample files will be appended with `_async` to show as
 
 ## Setup
 
-1. Install the Azure IoT Device Provisioning Service client library for Python with [pip](https://pypi.org/project/pip/):
+1. Install the Azure IoT Device Provisioning client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
 pip install azure-iot-deviceprovisioning
@@ -67,4 +67,4 @@ pip install azure-iot-deviceprovisioning
 ## Next steps
 
 Check out the [API reference documentation](https://learn.microsoft.com/rest/api/iot-dps/) to learn more about
-what you can do with the Azure IoT Device Provisioning Service client library.
+what you can do with the Azure IoT Device Provisioning client library.

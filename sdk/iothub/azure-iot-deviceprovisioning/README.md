@@ -1,4 +1,4 @@
-# Azure IoT Hub Device Provisioning Service client library for Python
+# Azure IoT Device Provisioning client library for Python
 
 The IoT Hub Device Provisioning Service (DPS) is a helper service for IoT Hub that enables zero-touch, just-in-time provisioning to the right IoT hub without requiring human intervention, allowing customers to provision millions of devices in a secure and scalable manner. 
 
@@ -18,7 +18,7 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 
 ### Install the package
-Install the Azure IoT Hub Device Provisioning Service client library for Python with [pip](https://pypi.org/project/pip/):
+Install the Azure IoT Device Provisioning client library for Python with [pip](https://pypi.org/project/pip/):
 ```bash
 pip install azure-iot-deviceprovisioning
 ```
@@ -39,7 +39,7 @@ az iot dps create --name my-dps --resource-group my-resource-group --location we
 or [Bicep](https://learn.microsoft.com/azure/iot-dps/quick-setup-auto-provision-bicep?tabs=CLI),
 
 ### Create the client
-The Device Provisioning Service client library for Python allows you to interact with three main operational categories: individual enrollments, enrollment groups, and device registration states.
+The Azure IoT Device Provisioning client library for Python allows you to interact with three main operational categories: individual enrollments, enrollment groups, and device registration states.
 
 Interaction with these resources starts with an instance of a DeviceProvisioningClient. To create the DeviceProvisioningClient object, you will need the DPS resource's endpoint URL and a credential that allows you to access the resource.
 
@@ -109,7 +109,7 @@ The following operation groups comprise the Service data plane layer:
 2. [Enrollment groups](https://learn.microsoft.com/azure/iot-dps/concepts-service#enrollment-group)
 3. [Device registration](https://learn.microsoft.com/azure/iot-dps/concepts-service#registration-record)
 
-The Device Provisioning Service client library for Python allows you to interact with each of these components through different operation namespaces on the DeviceProvisioningClient.
+The Azure IoT Device Provisioning client library for Python allows you to interact with each of these components through different operation namespaces on the DeviceProvisioningClient.
 
 ## Examples
 The following sections provide several code snippets covering some of the most common DPS service, including:
