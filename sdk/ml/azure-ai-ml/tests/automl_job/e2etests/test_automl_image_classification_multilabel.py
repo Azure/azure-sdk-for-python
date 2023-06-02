@@ -109,12 +109,6 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
         image_classification_multilabel_job_sweep.extend_search_space(
             [
                 SearchSpace(
-                    model_name=Choice(["microsoft/beit-base-patch16-224"]),
-                    learning_rate=Uniform(0.005, 0.05),
-                    number_of_epochs=Choice([15, 30]),
-                    gradient_accumulation_step=Choice([1, 2]),
-                ),
-                SearchSpace(
                     model_name=Choice(["vitb16r224"]),
                     learning_rate=Uniform(0.005, 0.05),
                     number_of_epochs=Choice([15, 30]),
