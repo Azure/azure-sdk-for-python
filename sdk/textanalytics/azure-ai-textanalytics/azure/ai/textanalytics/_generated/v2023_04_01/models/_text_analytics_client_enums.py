@@ -10,16 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AgeUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Age Unit of measurement.
-    """
-
-    UNSPECIFIED = "Unspecified"
-    YEAR = "Year"
-    MONTH = "Month"
-    WEEK = "Week"
-    DAY = "Day"
-
 class AnalyzeTextLROResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration of supported Text Analysis long-running operation task results.
     """
@@ -74,32 +64,23 @@ class AnalyzeTextTaskResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LANGUAGE_DETECTION_RESULTS = "LanguageDetectionResults"
     ENTITY_LINKING_RESULTS = "EntityLinkingResults"
 
-class AreaUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The area Unit of measurement.
+class DocumentSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Predicted sentiment for document (Negative, Neutral, Positive, or Mixed).
     """
 
-    UNSPECIFIED = "Unspecified"
-    SQUARE_KILOMETER = "SquareKilometer"
-    SQUARE_HECTOMETER = "SquareHectometer"
-    SQUARE_DECAMETER = "SquareDecameter"
-    SQUARE_DECIMETER = "SquareDecimeter"
-    SQUARE_METER = "SquareMeter"
-    SQUARE_CENTIMETER = "SquareCentimeter"
-    SQUARE_MILLIMETER = "SquareMillimeter"
-    SQUARE_INCH = "SquareInch"
-    SQUARE_FOOT = "SquareFoot"
-    SQUARE_MILE = "SquareMile"
-    SQUARE_YARD = "SquareYard"
-    ACRE = "Acre"
+    POSITIVE = "positive"
+    NEUTRAL = "neutral"
+    NEGATIVE = "negative"
+    MIXED = "mixed"
 
-class Association(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class EntityAssociation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes if the entity is the subject of the text or if it describes someone else.
     """
 
     SUBJECT = "subject"
     OTHER = "other"
 
-class Certainty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class EntityCertainty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes the entities certainty and polarity.
     """
 
@@ -109,31 +90,12 @@ class Certainty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NEGATIVE_POSSIBLE = "negativePossible"
     NEGATIVE = "negative"
 
-class Conditionality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class EntityConditionality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes any conditionality on the entity.
     """
 
     HYPOTHETICAL = "hypothetical"
     CONDITIONAL = "conditional"
-
-class DateTimeSubKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The DateTime SubKind.
-    """
-
-    TIME = "Time"
-    DATE = "Date"
-    DATE_TIME = "DateTime"
-    DURATION = "Duration"
-    SET = "Set"
-
-class DocumentSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Predicted sentiment for document (Negative, Neutral, Positive, or Mixed).
-    """
-
-    POSITIVE = "positive"
-    NEUTRAL = "neutral"
-    NEGATIVE = "negative"
-    MIXED = "mixed"
 
 class ErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Human-readable error code.
@@ -168,29 +130,6 @@ class ExtractiveSummarizationSortingCriteria(str, Enum, metaclass=CaseInsensitiv
     #: the model.
     RANK = "Rank"
 
-class FhirVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The FHIR Spec version that the result will use to format the fhirBundle. For additional
-    information see https://www.hl7.org/fhir/overview.html.
-    """
-
-    FOUR0_1 = "4.0.1"
-
-class HealthcareDocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Document type that can be provided as input for Fhir Documents. Expect to have fhirVersion
-    provided when used. Behavior of using None enum is the same as not using the documentType
-    parameter.
-    """
-
-    NONE = "None"
-    CLINICAL_TRIAL = "ClinicalTrial"
-    DISCHARGE_SUMMARY = "DischargeSummary"
-    PROGRESS_NOTE = "ProgressNote"
-    HISTORY_AND_PHYSICAL = "HistoryAndPhysical"
-    CONSULT = "Consult"
-    IMAGING = "Imaging"
-    PATHOLOGY = "Pathology"
-    PROCEDURE_NOTE = "ProcedureNote"
-
 class HealthcareEntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Healthcare Entity Category.
     """
@@ -198,6 +137,7 @@ class HealthcareEntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BODY_STRUCTURE = "BodyStructure"
     AGE = "Age"
     GENDER = "Gender"
+    ETHNICITY = "Ethnicity"
     EXAMINATION_NAME = "ExaminationName"
     DATE = "Date"
     DIRECTION = "Direction"
@@ -206,14 +146,18 @@ class HealthcareEntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MEASUREMENT_UNIT = "MeasurementUnit"
     RELATIONAL_OPERATOR = "RelationalOperator"
     TIME = "Time"
+    COURSE = "Course"
     GENE_OR_PROTEIN = "GeneOrProtein"
     VARIANT = "Variant"
+    EXPRESSION = "Expression"
+    MUTATION_TYPE = "MutationType"
     ADMINISTRATIVE_EVENT = "AdministrativeEvent"
     CARE_ENVIRONMENT = "CareEnvironment"
     HEALTHCARE_PROFESSION = "HealthcareProfession"
     DIAGNOSIS = "Diagnosis"
     SYMPTOM_OR_SIGN = "SymptomOrSign"
     CONDITION_QUALIFIER = "ConditionQualifier"
+    CONDITION_SCALE = "ConditionScale"
     MEDICATION_CLASS = "MedicationClass"
     MEDICATION_NAME = "MedicationName"
     DOSAGE = "Dosage"
@@ -221,24 +165,51 @@ class HealthcareEntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MEDICATION_ROUTE = "MedicationRoute"
     FAMILY_RELATION = "FamilyRelation"
     TREATMENT_NAME = "TreatmentName"
+    ALLERGEN = "Allergen"
+    EMPLOYMENT = "Employment"
+    LIVING_STATUS = "LivingStatus"
+    SUBSTANCE_USE = "SubstanceUse"
+    SUBSTANCE_USE_AMOUNT = "SubstanceUseAmount"
 
-class InformationUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The information (data) Unit of measurement.
+class HealthcareEntityRelation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of relation. Examples include: ``DosageOfMedication`` or 'FrequencyOfMedication', etc.
     """
 
-    UNSPECIFIED = "Unspecified"
-    BIT = "Bit"
-    KILOBIT = "Kilobit"
-    MEGABIT = "Megabit"
-    GIGABIT = "Gigabit"
-    TERABIT = "Terabit"
-    PETABIT = "Petabit"
-    BYTE = "Byte"
-    KILOBYTE = "Kilobyte"
-    MEGABYTE = "Megabyte"
-    GIGABYTE = "Gigabyte"
-    TERABYTE = "Terabyte"
-    PETABYTE = "Petabyte"
+    ABBREVIATION = "Abbreviation"
+    BODY_SITE_OF_CONDITION = "BodySiteOfCondition"
+    BODY_SITE_OF_TREATMENT = "BodySiteOfTreatment"
+    COURSE_OF_CONDITION = "CourseOfCondition"
+    COURSE_OF_EXAMINATION = "CourseOfExamination"
+    COURSE_OF_MEDICATION = "CourseOfMedication"
+    COURSE_OF_TREATMENT = "CourseOfTreatment"
+    DIRECTION_OF_BODY_STRUCTURE = "DirectionOfBodyStructure"
+    DIRECTION_OF_CONDITION = "DirectionOfCondition"
+    DIRECTION_OF_EXAMINATION = "DirectionOfExamination"
+    DIRECTION_OF_TREATMENT = "DirectionOfTreatment"
+    DOSAGE_OF_MEDICATION = "DosageOfMedication"
+    EXAMINATION_FINDS_CONDITION = "ExaminationFindsCondition"
+    EXPRESSION_OF_GENE = "ExpressionOfGene"
+    EXPRESSION_OF_VARIANT = "ExpressionOfVariant"
+    FORM_OF_MEDICATION = "FormOfMedication"
+    FREQUENCY_OF_CONDITION = "FrequencyOfCondition"
+    FREQUENCY_OF_MEDICATION = "FrequencyOfMedication"
+    FREQUENCY_OF_TREATMENT = "FrequencyOfTreatment"
+    MUTATION_TYPE_OF_GENE = "MutationTypeOfGene"
+    MUTATION_TYPE_OF_VARIANT = "MutationTypeOfVariant"
+    QUALIFIER_OF_CONDITION = "QualifierOfCondition"
+    RELATION_OF_EXAMINATION = "RelationOfExamination"
+    ROUTE_OF_MEDICATION = "RouteOfMedication"
+    SCALE_OF_CONDITION = "ScaleOfCondition"
+    TIME_OF_CONDITION = "TimeOfCondition"
+    TIME_OF_EVENT = "TimeOfEvent"
+    TIME_OF_EXAMINATION = "TimeOfExamination"
+    TIME_OF_MEDICATION = "TimeOfMedication"
+    TIME_OF_TREATMENT = "TimeOfTreatment"
+    UNIT_OF_CONDITION = "UnitOfCondition"
+    UNIT_OF_EXAMINATION = "UnitOfExamination"
+    VALUE_OF_CONDITION = "ValueOfCondition"
+    VALUE_OF_EXAMINATION = "ValueOfExamination"
+    VARIANT_OF_GENE = "VariantOfGene"
 
 class InnerErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Human-readable error code.
@@ -259,41 +230,17 @@ class InnerErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNSUPPORTED_LANGUAGE_CODE = "UnsupportedLanguageCode"
     INVALID_COUNTRY_HINT = "InvalidCountryHint"
 
-class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The length Unit of measurement.
+class PiiDomain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The PII domain used for PII Entity Recognition.
     """
 
-    UNSPECIFIED = "Unspecified"
-    KILOMETER = "Kilometer"
-    HECTOMETER = "Hectometer"
-    DECAMETER = "Decameter"
-    METER = "Meter"
-    DECIMETER = "Decimeter"
-    CENTIMETER = "Centimeter"
-    MILLIMETER = "Millimeter"
-    MICROMETER = "Micrometer"
-    NANOMETER = "Nanometer"
-    PICOMETER = "Picometer"
-    MILE = "Mile"
-    YARD = "Yard"
-    INCH = "Inch"
-    FOOT = "Foot"
-    LIGHT_YEAR = "LightYear"
-    PT = "Pt"
+    #: Indicates that entities in the Personal Health Information domain should be redacted.
+    PHI = "phi"
+    #: Indicates that no domain is specified.
+    NONE = "none"
 
-class NumberKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the extracted number entity.
-    """
-
-    INTEGER = "Integer"
-    DECIMAL = "Decimal"
-    POWER = "Power"
-    FRACTION = "Fraction"
-    PERCENT = "Percent"
-    UNSPECIFIED = "Unspecified"
-
-class PiiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PiiCategory.
+class PiiEntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """PiiEntityCategory.
     """
 
     ABA_ROUTING_NUMBER = "ABARoutingNumber"
@@ -470,89 +417,6 @@ class PiiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALL = "All"
     DEFAULT = "Default"
 
-class PiiDomain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The PII domain used for PII Entity Recognition.
-    """
-
-    #: Indicates that entities in the Personal Health Information domain should be redacted.
-    PHI = "phi"
-    #: Indicates that no domain is specified.
-    NONE = "none"
-
-class RangeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of range that the resolution object represents.
-    """
-
-    NUMBER = "Number"
-    SPEED = "Speed"
-    WEIGHT = "Weight"
-    LENGTH = "Length"
-    VOLUME = "Volume"
-    AREA = "Area"
-    AGE = "Age"
-    INFORMATION = "Information"
-    TEMPERATURE = "Temperature"
-    CURRENCY = "Currency"
-
-class RelationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of relation. Examples include: ``DosageOfMedication`` or 'FrequencyOfMedication', etc.
-    """
-
-    ABBREVIATION = "Abbreviation"
-    DIRECTION_OF_BODY_STRUCTURE = "DirectionOfBodyStructure"
-    DIRECTION_OF_CONDITION = "DirectionOfCondition"
-    DIRECTION_OF_EXAMINATION = "DirectionOfExamination"
-    DIRECTION_OF_TREATMENT = "DirectionOfTreatment"
-    DOSAGE_OF_MEDICATION = "DosageOfMedication"
-    FORM_OF_MEDICATION = "FormOfMedication"
-    FREQUENCY_OF_MEDICATION = "FrequencyOfMedication"
-    FREQUENCY_OF_TREATMENT = "FrequencyOfTreatment"
-    QUALIFIER_OF_CONDITION = "QualifierOfCondition"
-    RELATION_OF_EXAMINATION = "RelationOfExamination"
-    ROUTE_OF_MEDICATION = "RouteOfMedication"
-    TIME_OF_CONDITION = "TimeOfCondition"
-    TIME_OF_EVENT = "TimeOfEvent"
-    TIME_OF_EXAMINATION = "TimeOfExamination"
-    TIME_OF_MEDICATION = "TimeOfMedication"
-    TIME_OF_TREATMENT = "TimeOfTreatment"
-    UNIT_OF_CONDITION = "UnitOfCondition"
-    UNIT_OF_EXAMINATION = "UnitOfExamination"
-    VALUE_OF_CONDITION = "ValueOfCondition"
-    VALUE_OF_EXAMINATION = "ValueOfExamination"
-
-class RelativeTo(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The reference point that the ordinal number denotes.
-    """
-
-    CURRENT = "Current"
-    END = "End"
-    START = "Start"
-
-class ResolutionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The entity resolution object kind.
-    """
-
-    DATE_TIME_RESOLUTION = "DateTimeResolution"
-    NUMBER_RESOLUTION = "NumberResolution"
-    ORDINAL_RESOLUTION = "OrdinalResolution"
-    SPEED_RESOLUTION = "SpeedResolution"
-    WEIGHT_RESOLUTION = "WeightResolution"
-    LENGTH_RESOLUTION = "LengthResolution"
-    VOLUME_RESOLUTION = "VolumeResolution"
-    AREA_RESOLUTION = "AreaResolution"
-    AGE_RESOLUTION = "AgeResolution"
-    INFORMATION_RESOLUTION = "InformationResolution"
-    TEMPERATURE_RESOLUTION = "TemperatureResolution"
-    CURRENCY_RESOLUTION = "CurrencyResolution"
-    NUMERIC_RANGE_RESOLUTION = "NumericRangeResolution"
-    TEMPORAL_SPAN_RESOLUTION = "TemporalSpanResolution"
-
-class ScriptKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Identifies the script of the input document.
-    """
-
-    LATIN = "Latin"
-
 class SentenceSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The predicted Sentiment for the sentence.
     """
@@ -561,27 +425,8 @@ class SentenceSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NEUTRAL = "neutral"
     NEGATIVE = "negative"
 
-class SpeedUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The speed Unit of measurement.
-    """
-
-    UNSPECIFIED = "Unspecified"
-    METER_PER_SECOND = "MeterPerSecond"
-    KILOMETER_PER_HOUR = "KilometerPerHour"
-    KILOMETER_PER_MINUTE = "KilometerPerMinute"
-    KILOMETER_PER_SECOND = "KilometerPerSecond"
-    MILE_PER_HOUR = "MilePerHour"
-    KNOT = "Knot"
-    FOOT_PER_SECOND = "FootPerSecond"
-    FOOT_PER_MINUTE = "FootPerMinute"
-    YARD_PER_MINUTE = "YardPerMinute"
-    YARD_PER_SECOND = "YardPerSecond"
-    METER_PER_MILLISECOND = "MeterPerMillisecond"
-    CENTIMETER_PER_MILLISECOND = "CentimeterPerMillisecond"
-    KILOMETER_PER_MILLISECOND = "KilometerPerMillisecond"
-
 class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the task at the mentioned last update time.
+    """State.
     """
 
     NOT_STARTED = "notStarted"
@@ -616,39 +461,6 @@ class TargetRelationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ASSESSMENT = "assessment"
     TARGET = "target"
 
-class TemperatureUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The temperature Unit of measurement.
-    """
-
-    UNSPECIFIED = "Unspecified"
-    FAHRENHEIT = "Fahrenheit"
-    KELVIN = "Kelvin"
-    RANKINE = "Rankine"
-    CELSIUS = "Celsius"
-
-class TemporalModifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """An optional modifier of a date/time instance.
-    """
-
-    AFTER_APPROX = "AfterApprox"
-    BEFORE = "Before"
-    BEFORE_START = "BeforeStart"
-    APPROX = "Approx"
-    REFERENCE_UNDEFINED = "ReferenceUndefined"
-    SINCE_END = "SinceEnd"
-    AFTER_MID = "AfterMid"
-    START = "Start"
-    AFTER = "After"
-    BEFORE_END = "BeforeEnd"
-    UNTIL = "Until"
-    END = "End"
-    LESS = "Less"
-    SINCE = "Since"
-    AFTER_START = "AfterStart"
-    BEFORE_APPROX = "BeforeApprox"
-    MID = "Mid"
-    MORE = "More"
-
 class TokenSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Targeted sentiment in the sentence.
     """
@@ -657,63 +469,9 @@ class TokenSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MIXED = "mixed"
     NEGATIVE = "negative"
 
-class VolumeUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Volume Unit of measurement.
-    """
-
-    UNSPECIFIED = "Unspecified"
-    CUBIC_METER = "CubicMeter"
-    CUBIC_CENTIMETER = "CubicCentimeter"
-    CUBIC_MILLIMETER = "CubicMillimeter"
-    HECTOLITER = "Hectoliter"
-    DECALITER = "Decaliter"
-    LITER = "Liter"
-    CENTILITER = "Centiliter"
-    MILLILITER = "Milliliter"
-    CUBIC_YARD = "CubicYard"
-    CUBIC_INCH = "CubicInch"
-    CUBIC_FOOT = "CubicFoot"
-    CUBIC_MILE = "CubicMile"
-    FLUID_OUNCE = "FluidOunce"
-    TEASPOON = "Teaspoon"
-    TABLESPOON = "Tablespoon"
-    PINT = "Pint"
-    QUART = "Quart"
-    CUP = "Cup"
-    GILL = "Gill"
-    PINCH = "Pinch"
-    FLUID_DRAM = "FluidDram"
-    BARREL = "Barrel"
-    MINIM = "Minim"
-    CORD = "Cord"
-    PECK = "Peck"
-    BUSHEL = "Bushel"
-    HOGSHEAD = "Hogshead"
-
 class WarningCodeValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Error code.
     """
 
     LONG_WORDS_IN_DOCUMENT = "LongWordsInDocument"
     DOCUMENT_TRUNCATED = "DocumentTruncated"
-
-class WeightUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The weight Unit of measurement.
-    """
-
-    UNSPECIFIED = "Unspecified"
-    KILOGRAM = "Kilogram"
-    GRAM = "Gram"
-    MILLIGRAM = "Milligram"
-    GALLON = "Gallon"
-    METRIC_TON = "MetricTon"
-    TON = "Ton"
-    POUND = "Pound"
-    OUNCE = "Ounce"
-    GRAIN = "Grain"
-    PENNY_WEIGHT = "PennyWeight"
-    LONG_TON_BRITISH = "LongTonBritish"
-    SHORT_TON_US = "ShortTonUS"
-    SHORT_HUNDRED_WEIGHT_US = "ShortHundredWeightUS"
-    STONE = "Stone"
-    DRAM = "Dram"
