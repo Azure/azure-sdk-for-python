@@ -34,7 +34,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_usage_request(scope: str, **kwargs: Any) -> HttpRequest:
+def build_usage_request(scope: str, skip_token: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -51,6 +51,8 @@ def build_usage_request(scope: str, **kwargs: Any) -> HttpRequest:
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
+    if skip_token is not None:
+        _params["skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -119,7 +121,7 @@ class QueryOperations:
 
     @overload
     def usage(
-        self, scope: str, parameters: _models.QueryDefinition, *, content_type: str = "application/json", **kwargs: Any
+        self, scope: str, skip_token: str, parameters: _models.QueryDefinition, *, content_type: str = "application/json", **kwargs: Any
     ) -> Optional[_models.QueryResult]:
         """Query the usage data for scope defined.
 
@@ -144,6 +146,7 @@ class QueryOperations:
          specific for partners. Required.
         :type scope: str
         :param parameters: Parameters supplied to the CreateOrUpdate Query Config operation. Required.
+        :type skip_token: str
         :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -156,7 +159,7 @@ class QueryOperations:
 
     @overload
     def usage(
-        self, scope: str, parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, scope: str, skip_token: str, parameters: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> Optional[_models.QueryResult]:
         """Query the usage data for scope defined.
 
@@ -181,6 +184,7 @@ class QueryOperations:
          specific for partners. Required.
         :type scope: str
         :param parameters: Parameters supplied to the CreateOrUpdate Query Config operation. Required.
+        :type skip_token: str
         :type parameters: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -193,7 +197,7 @@ class QueryOperations:
 
     @distributed_trace
     def usage(
-        self, scope: str, parameters: Union[_models.QueryDefinition, IO], **kwargs: Any
+        self, scope: str,  skip_token: str, parameters: Union[_models.QueryDefinition, IO], **kwargs: Any
     ) -> Optional[_models.QueryResult]:
         """Query the usage data for scope defined.
 
@@ -219,6 +223,7 @@ class QueryOperations:
         :type scope: str
         :param parameters: Parameters supplied to the CreateOrUpdate Query Config operation. Is either
          a QueryDefinition type or a IO type. Required.
+        :type skip_token: str
         :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -253,6 +258,7 @@ class QueryOperations:
 
         request = build_usage_request(
             scope=scope,
+            skip_token=skip_token,
             api_version=api_version,
             content_type=content_type,
             json=_json,

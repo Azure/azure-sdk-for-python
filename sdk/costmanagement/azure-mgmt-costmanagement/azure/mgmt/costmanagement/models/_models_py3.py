@@ -3954,6 +3954,8 @@ class QueryDefinition(_serialization.Model):
     :vartype time_period: ~azure.mgmt.costmanagement.models.QueryTimePeriod
     :ivar dataset: Has definition for data in this query. Required.
     :vartype dataset: ~azure.mgmt.costmanagement.models.QueryDataset
+    :ivar skip_token: The skip token for next result of query.
+    :vartype type: str
     """
 
     _validation = {
@@ -3967,6 +3969,7 @@ class QueryDefinition(_serialization.Model):
         "timeframe": {"key": "timeframe", "type": "str"},
         "time_period": {"key": "timePeriod", "type": "QueryTimePeriod"},
         "dataset": {"key": "dataset", "type": "QueryDataset"},
+        "skip_token": {"key": "skipToken", "type": "str"},
     }
 
     def __init__(
