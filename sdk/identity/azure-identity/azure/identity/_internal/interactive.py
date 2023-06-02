@@ -10,7 +10,7 @@ import json
 import logging
 import time
 from typing import Any, Optional
-import six
+from urllib.parse import urlparse
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -55,7 +55,7 @@ def _build_auth_record(response):
             home_account_id = id_token["sub"]
 
         # "iss" is the URL of the issuing tenant e.g. https://authority/tenant
-        issuer = six.moves.urllib_parse.urlparse(id_token["iss"])
+        issuer = urlparse(id_token["iss"])
 
         # tenant which issued the token, not necessarily user's home tenant
         tenant_id = id_token.get("tid") or issuer.path.strip("/")
@@ -74,7 +74,7 @@ def _build_auth_record(response):
         auth_error = ClientAuthenticationError(
             message="Failed to build AuthenticationRecord from unexpected identity token"
         )
-        six.raise_from(auth_error, ex)
+        raise auth_error from ex
 
 
 class InteractiveCredential(MsalCredential, ABC):
