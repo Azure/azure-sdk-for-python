@@ -145,30 +145,6 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
                 f.write("".join(includes))
 
 
-def update_typespec_location(sdk_folder, data, config, folder_name, package_name, input_readme):
-    if "meta" in config:
-        return
-
-    metadata = {
-        "directory": input_readme,
-        "commit": data["headSha"],
-        "repo": data["repoHttpsUrl"].split("github.com/")[-1],
-        "cleanup": False,
-    }
-
-    _LOGGER.info("tsp-location:\n {}".format(json.dumps(metadata, indent=2)))
-
-    package_folder = Path(sdk_folder) / folder_name / package_name
-    if not package_folder.exists():
-        _LOGGER.info(f"Package folder doesn't exist: {package_folder}")
-        return
-
-    metadata_file_path = package_folder / "tsp-location.yaml"
-    with open(metadata_file_path, "w") as writer:
-        yaml.safe_dump(metadata, writer)
-    _LOGGER.info(f"Saved metadata to {metadata_file_path}")
-
-
 def judge_tag_preview(path: str) -> bool:
     files = [i for i in Path(path).glob("**/*.py")]
     default_api_version = ""  # for multi-api
@@ -394,7 +370,7 @@ def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, r
     typespec_python = "@azure-tools/typespec-python"
 
     # call scirpt to generate sdk
-    check_call(f'pwsh {Path("eng/common/scripts/TypeSpec-Project-Generate.ps1")} {Path(spec_folder) / typespec_relative_path} {head_sha} {rest_repo_url}', shell=True)
+    check_call(f'pwsh {Path("eng/common/scripts/TypeSpec-Project-Process.ps1")} {Path(spec_folder) / typespec_relative_path} {head_sha} {rest_repo_url}', shell=True)
 
     # get version of codegen used in generation
     with open(Path("eng/emitter-package.json"), "r") as file_in:
