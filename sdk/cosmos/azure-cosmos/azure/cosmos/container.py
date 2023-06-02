@@ -354,7 +354,7 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword int response_Continuation_Token_Limit_In_Kb: is used to limit the length of continuation token
+        :keyword int response_continuation_token_limit_in_kb: is used to limit the length of continuation token
             in the query response. Valid values are >= 0.
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -398,9 +398,9 @@ class ContainerProxy(object):
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         correlated_activity_id = GenerateGuidId()
         feed_options["correlatedActivityId"] = correlated_activity_id
-        response_Continuation_Token_Limit_In_Kb = kwargs.pop("response_Continuation_Token_Limit_In_Kb", None)
-        if response_Continuation_Token_Limit_In_Kb is not None:
-            feed_options["responseContinuationTokenLimitInKb"] = response_Continuation_Token_Limit_In_Kb
+        response_continuation_token_limit_in_kb = kwargs.pop("response_continuation_token_limit_in_kb", None)
+        if response_continuation_token_limit_in_kb is not None:
+            feed_options["responseContinuationTokenLimitInKb"] = response_continuation_token_limit_in_kb
         if hasattr(response_hook, "clear"):
             response_hook.clear()
 

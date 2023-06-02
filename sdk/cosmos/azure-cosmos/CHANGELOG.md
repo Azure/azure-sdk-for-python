@@ -4,6 +4,7 @@
 
 #### Features Added
 * Added conditional patching for Patch operations. See [PR 30455](https://github.com/Azure/azure-sdk-for-python/pull/30455).
+* Added ability to limit Continuation Token size. See [PR 30600](https://github.com/Azure/azure-sdk-for-python/pull/30600)
 
 #### Bugs Fixed
 * Fixed bug with non english locales causing an error with the RFC 1123 Date Format. See [PR 30125](https://github.com/Azure/azure-sdk-for-python/pull/30125).
