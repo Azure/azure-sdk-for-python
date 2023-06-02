@@ -370,7 +370,7 @@ def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, r
     typespec_python = "@azure-tools/typespec-python"
 
     # call scirpt to generate sdk
-    check_call(f'pwsh {Path("eng/common/scripts/TypeSpec-Project-Process.ps1")} {(Path(spec_folder) / typespec_relative_path).absolute()} {head_sha} {rest_repo_url}', shell=True)
+    check_call(f'pwsh {Path("eng/common/scripts/TypeSpec-Project-Process.ps1")} {(Path(spec_folder) / typespec_relative_path).resolve()} {head_sha} {rest_repo_url}', shell=True)
 
     # get version of codegen used in generation
     with open(Path("eng/emitter-package.json"), "r") as file_in:
