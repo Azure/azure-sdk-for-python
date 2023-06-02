@@ -22,6 +22,7 @@ from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._feature_set.feature_set_specification import FeatureSetSpecification
 from azure.ai.ml.entities._feature_set.materialization_settings import MaterializationSettings
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .artifact import ArtifactStorageInfo
 
@@ -70,6 +71,15 @@ class FeatureSet(Artifact):
             path=specification.path,
             **kwargs,
         )
+        if stage not in ["Development", "Production", "Archived"]:
+            msg = f"Stage must be Development, Production, or Archived, found {stage}"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                error_type=ValidationErrorType.INVALID_VALUE,
+                target=ErrorTarget.FEATURE_SET,
+                error_category=ErrorCategory.USER_ERROR,
+            )
         self.entities = entities
         self.specification = specification
         self.stage = stage

@@ -20,6 +20,7 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .data_column import DataColumn
 
@@ -61,6 +62,15 @@ class FeatureStoreEntity(Asset):
             tags=tags,
             **kwargs,
         )
+        if stage not in ["Development", "Production", "Archived"]:
+            msg = f"Stage must be Development, Production, or Archived, found {stage}"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                error_type=ValidationErrorType.INVALID_VALUE,
+                target=ErrorTarget.FEATURE_STORE_ENTITY,
+                error_category=ErrorCategory.USER_ERROR,
+            )
         self.index_columns = index_columns
         self.version = version
         self.latest_version = None
