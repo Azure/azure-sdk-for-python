@@ -20,7 +20,7 @@ Conversational Language Understanding - aka **CLU** for short - is a cloud-based
 
 * Python 3.7 or later is required to use this package.
 * An [Azure subscription][azure_subscription]
-* An existing Azure Language Service Resource
+* A [Language service resource][language_resource]
 
 
 ### Install the package
@@ -462,6 +462,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_cli]: https://docs.microsoft.com/cli/azure/
 [azure_portal]: https://portal.azure.com/
 [azure_subscription]: https://azure.microsoft.com/free/
+[language_resource]: https://portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics
 [cla]: https://cla.microsoft.com
 [coc_contact]: mailto:opencode@microsoft.com
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
