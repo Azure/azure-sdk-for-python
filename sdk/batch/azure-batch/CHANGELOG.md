@@ -8,11 +8,16 @@
     - Whether this feature can be enabled is also related to whether an operating system/VM instance is supported, which should align with AcceleratedNetworking Policy ([AcceleratedNetworking Limitations and constraints](https://learn.microsoft.com/azure/virtual-network/accelerated-networking-overview?tabs=redhat#limitations-and-constraints)). 
   - Added boolean property `enableAutomaticUpgrade` to `VMExtension`. 
     -  This property determines whether the extension should be automatically upgraded by the platform if there is a newer version of the extension available. 
+  - Added a new property `type` to `ContainerConfiguration`. Possible values include: `dockerCompatible` and `criCompatible`.
 
 ### Breaking Changes
 - Removed lifetime statistics API. This API is no longer supported. 
     - Removed `job.get_all_lifetime_statistics` API. 
     - Removed `pool.get_all_lifetime_statistics` API. 
+
+### Other Changes
+- Deprecating `CertificateOperations` related methods.
+  - This operation is deprecating and will be removed after February 2024. Please use [Azure KeyVault Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide) instead.
   
 ## 13.0.0 (2022-11-08)
 
