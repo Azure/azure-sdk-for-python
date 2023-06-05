@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b2 (2023-06-05)
 
 ### Features Added
 
@@ -9,16 +9,6 @@
 ### Bugs Fixed
 
 - Fixed Samples and Tests
-
-### Other Changes
-
-## 1.0.0b2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 
