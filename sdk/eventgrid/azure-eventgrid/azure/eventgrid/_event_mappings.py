@@ -403,6 +403,3 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'
 
-    ContainerServiceClusterSupportEventName = 'Microsoft.ContainerService.ClusterSupport'
-
-    ContainerServiceNodePoolRollingEventName = 'Microsoft.ContainerService.NodePoolRolling'
