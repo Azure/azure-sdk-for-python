@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -44,7 +44,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -53,7 +53,8 @@ class Resource(_serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -88,7 +89,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -167,8 +168,8 @@ class AttestationProvider(TrackedResource):
         trust_model: Optional[str] = None,
         status: Optional[Union[str, "_models.AttestationServiceStatus"]] = None,
         attest_uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -210,7 +211,7 @@ class AttestationProviderListResult(_serialization.Model):
         "value": {"key": "value", "type": "[AttestationProvider]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.AttestationProvider"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.AttestationProvider"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Attestation Provider array.
         :paramtype value: list[~azure.mgmt.attestation.models.AttestationProvider]
@@ -251,8 +252,8 @@ class AttestationServiceCreationParams(_serialization.Model):
         location: str,
         properties: "_models.AttestationServiceCreationSpecificParams",
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The supported Azure location where the attestation provider should be
          created. Required.
@@ -280,7 +281,7 @@ class AttestationServiceCreationSpecificParams(_serialization.Model):
         "policy_signing_certificates": {"key": "policySigningCertificates", "type": "JSONWebKeySet"},
     }
 
-    def __init__(self, *, policy_signing_certificates: Optional["_models.JSONWebKeySet"] = None, **kwargs):
+    def __init__(self, *, policy_signing_certificates: Optional["_models.JSONWebKeySet"] = None, **kwargs: Any) -> None:
         """
         :keyword policy_signing_certificates: JSON Web Key Set defining a set of X.509 Certificates
          that will represent the parent certificate for the signing certificate used for policy
@@ -302,7 +303,7 @@ class AttestationServicePatchParams(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: The tags that will be assigned to the attestation provider.
         :paramtype tags: dict[str, str]
@@ -327,7 +328,7 @@ class CloudErrorBody(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -451,8 +452,8 @@ class JSONWebKey(_serialization.Model):  # pylint: disable=too-many-instance-att
         x: Optional[str] = None,
         x5_c: Optional[List[str]] = None,
         y: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword alg: The "alg" (algorithm) parameter identifies the algorithm intended for
          use with the key.  The values used should either be registered in the
@@ -549,7 +550,7 @@ class JSONWebKeySet(_serialization.Model):
         "keys": {"key": "keys", "type": "[JSONWebKey]"},
     }
 
-    def __init__(self, *, keys: Optional[List["_models.JSONWebKey"]] = None, **kwargs):
+    def __init__(self, *, keys: Optional[List["_models.JSONWebKey"]] = None, **kwargs: Any) -> None:
         """
         :keyword keys: The value of the "keys" parameter is an array of JWK values.  By
          default, the order of the JWK values within the array does not imply
@@ -582,7 +583,7 @@ class OperationList(_serialization.Model):
         "value": {"key": "value", "type": "[OperationsDefinition]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.OperationsDefinition"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.OperationsDefinition"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of supported operations.
         :paramtype value: list[~azure.mgmt.attestation.models.OperationsDefinition]
@@ -607,8 +608,12 @@ class OperationsDefinition(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Optional[str] = None, display: Optional["_models.OperationsDisplayDefinition"] = None, **kwargs
-    ):
+        self,
+        *,
+        name: Optional[str] = None,
+        display: Optional["_models.OperationsDisplayDefinition"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the operation.
         :paramtype name: str
@@ -647,8 +652,8 @@ class OperationsDisplayDefinition(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Resource provider of the operation.
         :paramtype provider: str
@@ -683,7 +688,7 @@ class PrivateEndpoint(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -738,8 +743,8 @@ class PrivateEndpointConnection(Resource):
         *,
         private_endpoint: Optional["_models.PrivateEndpoint"] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: The resource of private end point.
         :paramtype private_endpoint: ~azure.mgmt.attestation.models.PrivateEndpoint
@@ -765,7 +770,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private endpoint connections.
         :paramtype value: list[~azure.mgmt.attestation.models.PrivateEndpointConnection]
@@ -775,7 +780,8 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
 
 
 class PrivateLinkServiceConnectionState(_serialization.Model):
-    """A collection of information about the state of the connection between service consumer and provider.
+    """A collection of information about the state of the connection between service consumer and
+    provider.
 
     :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
      of the service. Known values are: "Pending", "Approved", and "Rejected".
@@ -799,8 +805,8 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = None,
         description: Optional[str] = None,
         actions_required: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
          owner of the service. Known values are: "Pending", "Approved", and "Rejected".
@@ -854,8 +860,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
