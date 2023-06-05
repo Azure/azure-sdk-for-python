@@ -190,9 +190,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             letter country codes specified by ISO 3166-1 alpha-2. Per-document
             country hints will take precedence over whole batch hints. Defaults to
             "US". If you don't want to use a country hint, pass the string "none".
-        :keyword str model_version: Version of the model used on the service side for scoring,
-            e.g. "latest", "2019-10-01". If a model version
-            is not specified, the API will default to the latest, non-preview version.
+        :keyword str model_version: The model version to use for the analysis, e.g. "latest". 
+            If a model version is not specified, the API will default to the latest, non-preview version.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
@@ -300,9 +299,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
             supported languages in Language API.
-        :keyword str model_version: This value indicates which model will
-            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
-            is not specified, the API will default to the latest, non-preview version.
+        :keyword str model_version: The model version to use for the analysis, e.g. "latest". 
+            If a model version is not specified, the API will default to the latest, non-preview version.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
@@ -414,9 +412,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
             supported languages in Language API.
-        :keyword str model_version: This value indicates which model will
-            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
-            is not specified, the API will default to the latest, non-preview version.
+        :keyword str model_version: The model version to use for the analysis, e.g. "latest". 
+            If a model version is not specified, the API will default to the latest, non-preview version.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
@@ -539,9 +536,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
             supported languages in Language API.
-        :keyword str model_version: This value indicates which model will
-            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
-            is not specified, the API will default to the latest, non-preview version.
+        :keyword str model_version: The model version to use for the analysis, e.g. "latest". 
+            If a model version is not specified, the API will default to the latest, non-preview version.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
@@ -669,9 +665,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
-        :keyword str model_version: This value indicates which model will
-            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
-            is not specified, the API will default to the latest, non-preview version.
+        :keyword str model_version: The model version to use for the analysis, e.g. "latest". 
+            If a model version is not specified, the API will default to the latest, non-preview version.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
@@ -862,9 +857,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
             supported languages in Language API.
-        :keyword str model_version: This value indicates which model will
-            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
-            is not specified, the API will default to the latest, non-preview version.
+        :keyword str model_version: The model version to use for the analysis, e.g. "latest". 
+            If a model version is not specified, the API will default to the latest, non-preview version.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
@@ -975,9 +969,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
             supported languages in Language API.
-        :keyword str model_version: This value indicates which model will
-            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
-            is not specified, the API will default to the latest, non-preview version.
+        :keyword str model_version: The model version to use for the analysis, e.g. "latest". 
+            If a model version is not specified, the API will default to the latest, non-preview version.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
             level statistics in the `statistics` field of the document-level response.
@@ -1189,8 +1182,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             corresponding *RecognizeCustomEntitiesResult*, *ClassifyDocumentResult*,
             and *AnalyzeHealthcareEntitiesResult* result objects
         .. versionadded:: 2023-04-01
-            The *ExtractiveSummaryAction* and *AbstractSummaryAction* input options and the corresponding
-            *ExtractiveSummaryResult* and *AbstractSummaryResult* result objects.
+            The *ExtractiveSummaryAction* and *AbstractiveSummaryAction* input options and the corresponding
+            *ExtractiveSummaryResult* and *AbstractiveSummaryResult* result objects.
 
         .. admonition:: Example:
 
@@ -1740,7 +1733,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword Optional[int] max_sentence_count: Maximum number of sentences to return. Defaults to 3.
         :keyword Optional[str] order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
-        :keyword Optional[str] model_version: The model version to use for the analysis.
+        :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest". 
+            If a model version is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, the Language service logs your
@@ -1851,9 +1846,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         For a conceptual discussion of abstractive summarization, see the service documentation:
         https://learn.microsoft.com/azure/cognitive-services/language-service/summarization/overview
 
-        .. note:: The abstractive summarization feature is part of a gated preview. Request access here:
-            https://aka.ms/applyforgatedsummarizationfeatures
-
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
             use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
@@ -1868,7 +1860,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             See https://aka.ms/talangs for supported languages in Language API.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
-        :keyword Optional[str] model_version: The model version to use for the analysis.
+        :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest". 
+            If a model version is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, the Language service logs your
