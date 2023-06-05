@@ -507,16 +507,23 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         """Test that retry mechanisms are working when streaming data."""
-        container_name = self.get_resource_name('utcontainer') 
-        retry = LinearRetry(backoff = 0.1, random_jitter_range=0)
+        container_name = self.get_resource_name('utcontainer')
+        # default is 3, but acts more like 4 (3 retries + 1 initial try)
+        # retry = LinearRetry(backoff = 0.1, random_jitter_range=0)
+
+        # set retry_total=0 to have only our retry logic and not aiohttp
+        retry = LinearRetry(backoff=0.1, random_jitter_range=0, retry_total=0)
 
         service = self._create_storage_service(
             BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)
         container = service.get_container_client(container_name)
-        await container.create_container()
+        try:
+            await container.create_container()
+        except ResourceExistsError:
+            pass
         assert await container.exists()
         blob_name = "myblob"
-        await container.upload_blob(blob_name, b"abcde")
+        await container.upload_blob(blob_name, b"abcde", overwrite=True)
 
         stream_reader_read_mock = mock.MagicMock()
         future = asyncio.Future()
@@ -527,6 +534,6 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
             count = [0]
             blob._pipeline._transport.send = self._count_wrapper(count, blob._pipeline._transport.send)
             await blob.download_blob()
-        assert stream_reader_read_mock.call_count == count[0] == 4
+        assert stream_reader_read_mock.call_count == count[0] == 3
 
 # ------------------------------------------------------------------------------

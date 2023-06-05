@@ -212,7 +212,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                 try:
                     chunk_data = process_content(response, offset[0], offset[1], self.encryption_options)
                     retry_active = False
-                except (IncompleteReadError, HttpResponseError, DecodeError) as error:
+                except (DecodeError, HttpResponseError, IncompleteReadError) as error:
                     retry_total -= 1
                     if retry_total <= 0:
                         raise HttpResponseError(error, error=error)
@@ -476,7 +476,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                         self._encryption_options
                     )
                 retry_active = False
-            except (IncompleteReadError, HttpResponseError, DecodeError) as error:
+            except (DecodeError, HttpResponseError, IncompleteReadError) as error:
                 retry_total -= 1
                 if retry_total <= 0:
                     raise HttpResponseError(error, error=error)
