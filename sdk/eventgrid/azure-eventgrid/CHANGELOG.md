@@ -1,10 +1,10 @@
 # Release History
 
-## 4.13.0 (Unreleased)
+## 4.13.0 (2023-06-06)
 
 ### Features Added
 
-- Added new enum values to `SystemEventNames`
+- Added new enum values to `SystemEventNames` related to Azure Container Services.
 
 ## 4.12.0b1 (2023-05-22)
 
