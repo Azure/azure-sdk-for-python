@@ -2,6 +2,10 @@
 
 ## 1.9.0 (Unreleased)
 
+### Other Changes
+
+- Improved the output when printing a workspace to be more clean and readable. 
+
 ## 1.8.0 (Unreleased)
 
 ### Features Added
