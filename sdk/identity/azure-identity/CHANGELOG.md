@@ -6,10 +6,6 @@
 
 - Continue attempt next credential when finding an expired token from cached token credential in DefaultAzureCredential. ([#30441](https://github.com/Azure/azure-sdk-for-python/pull/30441))
 
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
 
 - VisualStudioCodeCredential prints an informative error message when used (as it is currently broken) ([#30385](https://github.com/Azure/azure-sdk-for-python/pull/30385))
