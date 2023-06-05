@@ -5,6 +5,7 @@ stages:
     parameters:
       JobName: openai_main
       ServiceDirectory: openai
+      InjectedPackages: git+https://github.com/openai/openai-python@main
       MatrixFilters:
         - PythonVersion=3.11.*
       EnvVars:
