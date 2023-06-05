@@ -184,7 +184,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             letter country codes specified by ISO 3166-1 alpha-2. Per-document
             country hints will take precedence over whole batch hints. Defaults to
             "US". If you don't want to use a country hint, pass the string "none".
-        :keyword str model_version: The model version to use for the analysis, e.g. "latest". 
+        :keyword str model_version: The model version to use for the analysis, e.g. "latest".
             If a model version is not specified, the API will default to the latest, non-preview version.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
@@ -293,7 +293,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
             supported languages in Language API.
-        :keyword str model_version: The model version to use for the analysis, e.g. "latest". 
+        :keyword str model_version: The model version to use for the analysis, e.g. "latest".
             If a model version is not specified, the API will default to the latest, non-preview version.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
@@ -406,7 +406,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
             supported languages in Language API.
-        :keyword str model_version: The model version to use for the analysis, e.g. "latest". 
+        :keyword str model_version: The model version to use for the analysis, e.g. "latest".
             If a model version is not specified, the API will default to the latest, non-preview version.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
@@ -530,7 +530,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
             supported languages in Language API.
-        :keyword str model_version: The model version to use for the analysis, e.g. "latest". 
+        :keyword str model_version: The model version to use for the analysis, e.g. "latest".
             If a model version is not specified, the API will default to the latest, non-preview version.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
@@ -642,7 +642,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
             supported languages in Language API.
-        :keyword str model_version: The model version to use for the analysis, e.g. "latest". 
+        :keyword str model_version: The model version to use for the analysis, e.g. "latest".
             If a model version is not specified, the API will default to the latest, non-preview version.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
@@ -754,7 +754,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
             supported languages in Language API.
-        :keyword str model_version: The model version to use for the analysis, e.g. "latest". 
+        :keyword str model_version: The model version to use for the analysis, e.g. "latest".
             If a model version is not specified, the API will default to the latest, non-preview version.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document
@@ -887,7 +887,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
-        :keyword str model_version: The model version to use for the analysis, e.g. "latest". 
+        :keyword str model_version: The model version to use for the analysis, e.g. "latest".
             If a model version is not specified, the API will default to the latest, non-preview version.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document level statistics.
@@ -1729,7 +1729,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword Optional[int] max_sentence_count: Maximum number of sentences to return. Defaults to 3.
         :keyword Optional[str] order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
-        :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest". 
+        :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest".
             If a model version is not specified, the API will default to the latest, non-preview version.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
@@ -1856,7 +1856,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             See https://aka.ms/talangs for supported languages in Language API.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
-        :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest". 
+        :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest".
             If a model version is not specified, the API will default to the latest, non-preview version.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.

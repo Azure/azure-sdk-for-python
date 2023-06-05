@@ -1451,7 +1451,7 @@ class RecognizeEntitiesAction(DictMixin):
     long running actions on the input of documents, call method `recognize_entities` instead
     of interfacing with this model.
 
-    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest". 
+    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest".
         If a model version is not specified, the API will default to the latest, non-preview version.
         See here for more info: https://aka.ms/text-analytics-model-versioning
     :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
@@ -1469,7 +1469,7 @@ class RecognizeEntitiesAction(DictMixin):
     """
 
     model_version: Optional[str] = None
-    """The model version to use for the analysis, e.g. "latest". 
+    """The model version to use for the analysis, e.g. "latest".
         If a model version is not specified, the API will default to the latest, non-preview version.
         See here for more info: https://aka.ms/text-analytics-model-versioning"""
     string_index_type: Optional[str] = None
@@ -1533,7 +1533,7 @@ class AnalyzeSentimentAction(DictMixin):
     long running actions on the input of documents, call method `analyze_sentiment` instead
     of interfacing with this model.
 
-    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest". 
+    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest".
         If a model version is not specified, the API will default to the latest, non-preview version.
         See here for more info: https://aka.ms/text-analytics-model-versioning
     :keyword Optional[bool] show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
@@ -1562,7 +1562,7 @@ class AnalyzeSentimentAction(DictMixin):
         :class:`~azure.ai.textanalytics.SentenceSentiment` objects
         will have property `mined_opinions` containing the result of this analysis."""
     model_version: Optional[str] = None
-    """The model version to use for the analysis, e.g. "latest". 
+    """The model version to use for the analysis, e.g. "latest".
         If a model version is not specified, the API will default to the latest, non-preview version.
         See here for more info: https://aka.ms/text-analytics-model-versioning."""
     string_index_type: Optional[str] = None
@@ -1632,7 +1632,7 @@ class RecognizePiiEntitiesAction(DictMixin):
     long running actions on the input of documents, call method `recognize_pii_entities` instead
     of interfacing with this model.
 
-    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest". 
+    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest".
         If a model version is not specified, the API will default to the latest, non-preview version.
         See here for more info: https://aka.ms/text-analytics-model-versioning
     :keyword Optional[str] domain_filter: An optional string to set the PII domain to include only a
@@ -1664,7 +1664,7 @@ class RecognizePiiEntitiesAction(DictMixin):
     """An optional string to set the PII domain to include only a
         subset of the PII entity categories. Possible values include 'phi' or None."""
     model_version: Optional[str] = None
-    """The model version to use for the analysis, e.g. "latest". 
+    """The model version to use for the analysis, e.g. "latest".
         If a model version is not specified, the API will default to the latest, non-preview version.
         See here for more info: https://aka.ms/text-analytics-model-versioning"""
     string_index_type: Optional[str] = None
@@ -1738,7 +1738,7 @@ class ExtractKeyPhrasesAction(DictMixin):
     long running actions on the input of documents, call method `extract_key_phrases` instead
     of interfacing with this model.
 
-    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest". 
+    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest".
         If a model version is not specified, the API will default to the latest, non-preview version.
         See here for more info: https://aka.ms/text-analytics-model-versioning
     :keyword Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
@@ -1752,7 +1752,7 @@ class ExtractKeyPhrasesAction(DictMixin):
     """
 
     model_version: Optional[str] = None
-    """The model version to use for the analysis, e.g. "latest". 
+    """The model version to use for the analysis, e.g. "latest".
         If a model version is not specified, the API will default to the latest, non-preview version.
         See here for more info: https://aka.ms/text-analytics-model-versioning"""
     disable_service_logs: Optional[bool] = None
@@ -1806,7 +1806,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
     long running actions on the input of documents, call method `recognize_linked_entities` instead
     of interfacing with this model.
 
-    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest". 
+    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest".
         If a model version is not specified, the API will default to the latest, non-preview version.
         See here for more info: https://aka.ms/text-analytics-model-versioning
     :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
@@ -1824,7 +1824,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
     """
 
     model_version: Optional[str] = None
-    """The model version to use for the analysis, e.g. "latest". 
+    """The model version to use for the analysis, e.g. "latest".
         If a model version is not specified, the API will default to the latest, non-preview version.
         See here for more info: https://aka.ms/text-analytics-model-versioning"""
     string_index_type: Optional[str] = None
@@ -2229,7 +2229,7 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
     long running actions on the input of documents, call method `begin_analyze_healthcare_entities` instead
     of interfacing with this model.
 
-    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest". 
+    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest".
         If a model version is not specified, the API will default to the latest, non-preview version.
         See here for more info: https://aka.ms/text-analytics-model-versioning
     :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
@@ -2250,7 +2250,7 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
     """
 
     model_version: Optional[str] = None
-    """The model version to use for the analysis, e.g. "latest". 
+    """The model version to use for the analysis, e.g. "latest".
         If a model version is not specified, the API will default to the latest, non-preview version.
         See here for more info: https://aka.ms/text-analytics-model-versioning"""
     string_index_type: Optional[str] = None
@@ -2303,7 +2303,7 @@ class ExtractiveSummaryAction(DictMixin):
     Summarization operation. For a conceptual discussion of extractive summarization, see the service documentation:
     https://learn.microsoft.com/azure/cognitive-services/language-service/summarization/overview
 
-    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest". 
+    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest".
         If a model version is not specified, the API will default to the latest, non-preview version.
         See here for more info: https://aka.ms/text-analytics-model-versioning
     :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
@@ -2326,7 +2326,7 @@ class ExtractiveSummaryAction(DictMixin):
     """
 
     model_version: Optional[str] = None
-    """The model version to use for the analysis, e.g. "latest". 
+    """The model version to use for the analysis, e.g. "latest".
         If a model version is not specified, the API will default to the latest, non-preview version.
         See here for more info: https://aka.ms/text-analytics-model-versioning"""
     string_index_type: Optional[str] = None
@@ -2612,7 +2612,7 @@ class AbstractiveSummaryAction(DictMixin):
     summarization involves paraphrasing the document using novel sentences.
 
     :keyword Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
-    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest". 
+    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest".
         If a model version is not specified, the API will default to the latest, non-preview version.
         See here for more info: https://aka.ms/text-analytics-model-versioning
     :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
@@ -2635,7 +2635,7 @@ class AbstractiveSummaryAction(DictMixin):
     sentence_count: Optional[int] = None
     """It controls the approximate number of sentences in the output summaries."""
     model_version: Optional[str] = None
-    """The model version to use for the analysis, e.g. "latest". 
+    """The model version to use for the analysis, e.g. "latest".
         If a model version is not specified, the API will default to the latest, non-preview version.
         See here for more info: https://aka.ms/text-analytics-model-versioning"""
     string_index_type: Optional[str] = None
