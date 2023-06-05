@@ -10,7 +10,7 @@ from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
-    ExtractSummaryResult,
+    ExtractiveSummaryResult,
     AbstractiveSummaryResult
 )
 
@@ -54,7 +54,7 @@ class TestSummarization(TextAnalyticsTest):
             )).result()
 
             async for result in document_results:
-                assert isinstance(result, ExtractSummaryResult)
+                assert isinstance(result, ExtractiveSummaryResult)
                 assert result.statistics
                 assert len(result.sentences) == 3 if result.id == 0 else 1
                 for sentence in result.sentences:
@@ -96,7 +96,7 @@ class TestSummarization(TextAnalyticsTest):
             )).result()
 
             async for result in response:
-                assert isinstance(result, ExtractSummaryResult)
+                assert isinstance(result, ExtractiveSummaryResult)
                 assert result.statistics
                 assert len(result.sentences) == 5
                 previous_score = 1.0
@@ -132,7 +132,7 @@ class TestSummarization(TextAnalyticsTest):
             "accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said."}]
 
         async with client:
-            response = await (await client.begin_abstractive_summary(
+            response = await (await client.begin_abstract_summary(
                 docs,
                 show_stats=True,
                 polling_interval=self._interval(),
@@ -171,7 +171,7 @@ class TestSummarization(TextAnalyticsTest):
             "Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister "
             "accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said."}]
 
-        response = await (await client.begin_abstractive_summary(
+        response = await (await client.begin_abstract_summary(
             docs,
             sentence_count=5,
             show_stats=True,

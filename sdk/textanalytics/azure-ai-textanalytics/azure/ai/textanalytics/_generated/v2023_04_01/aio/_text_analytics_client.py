@@ -26,15 +26,15 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):  # pylint: disabl
     best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
     detection and question answering. Further documentation can be found in :code:`<a
-    href="https://docs.microsoft.com/azure/cognitive-services/language-service/overview">https://docs.microsoft.com/azure/cognitive-services/language-service/overview</a>`.0.
+    href="https://docs.microsoft.com/azure/cognitive-services/language-service/overview">https://docs.microsoft.com/azure/cognitive-services/language-service/overview</a>`.
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2022-10-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-04-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
