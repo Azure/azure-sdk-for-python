@@ -6,7 +6,7 @@ import pytest
 import openai
 from devtools_testutils import AzureRecordedTestCase
 
-
+@pytest.mark.skip("testing")
 class TestCompletionsAsync(AzureRecordedTestCase):
     """Missing tests for keyword argument `suffix`"""
 

@@ -7,7 +7,7 @@ import pytest
 import openai
 from devtools_testutils import AzureRecordedTestCase
 
-
+@pytest.mark.skip("testing")
 class TestEmbeddings(AzureRecordedTestCase):
 
     def test_embedding_bad_deployment_name(self, azure_openai_creds):

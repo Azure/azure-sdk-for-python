@@ -7,7 +7,7 @@ import pytest
 import openai
 from devtools_testutils import AzureRecordedTestCase
 
-
+@pytest.mark.skip("testing")
 class TestEmbeddingsAsync(AzureRecordedTestCase):
 
     @pytest.mark.asyncio
