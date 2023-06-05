@@ -86,24 +86,29 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         api_version: Optional[str] = None,
         **kwargs
     ) -> None:
-        if not credential:
-            raise ValueError("credential can not be None")
-        try:
-            if not endpoint.lower().startswith('http'):
-                endpoint = "https://" + endpoint
-        except AttributeError:
-            raise ValueError("Host URL must be a string")
-        parsed_url = urlparse(endpoint.rstrip('/'))
-        if not parsed_url.netloc:
-            raise ValueError(f"Invalid URL: {format(endpoint)}")
-        self._client = AzureCommunicationCallAutomationService(
-            endpoint,
-            api_version=api_version or DEFAULT_VERSION,
-            authentication_policy=get_authentication_policy(
-                endpoint, credential),
-            sdk_moniker=SDK_MONIKER,
-            **kwargs)
-
+        call_automation_client = kwargs.get('_callautomation_client', None)
+        if call_automation_client is None:
+            if not credential:
+                raise ValueError("credential can not be None")
+            try:
+                if not endpoint.lower().startswith('http'):
+                    endpoint = "https://" + endpoint
+            except AttributeError:
+                raise ValueError("Host URL must be a string")
+            parsed_url = urlparse(endpoint.rstrip('/'))
+            if not parsed_url.netloc:
+                raise ValueError(f"Invalid URL: {format(endpoint)}")
+            self._client = AzureCommunicationCallAutomationService(
+                endpoint,
+                credential=credential,
+                api_version=api_version or DEFAULT_VERSION,
+                authentication_policy=get_authentication_policy(
+                    endpoint, credential),
+                sdk_moniker=SDK_MONIKER,
+                **kwargs)
+        else:
+            self._client = call_automation_client
+ 
         self._call_connection_id = call_connection_id
         self._call_connection_client = self._client.call_connection
         self._call_media_client = self._client.call_media
