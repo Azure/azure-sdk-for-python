@@ -56,7 +56,7 @@ For example, `https://<region>.api.cognitive.microsoft.com/`.
 Install the Azure Text Analytics client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-textanalytics --pre
+pip install azure-ai-textanalytics
 ```
 
 <!-- SNIPPET:sample_authentication.create_ta_client_with_key -->
@@ -74,14 +74,14 @@ text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
 <!-- END SNIPPET -->
 
 > Note that `5.2.X` and newer targets the Azure Cognitive Service for Language APIs. These APIs include the text analysis and natural language processing features found in the previous versions of the Text Analytics client library.
-In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-10-01-preview`.
+In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2023-04-01`.
 
 This table shows the relationship between SDK versions and supported API versions of the service
 
 | SDK version  | Supported API version of service  |
 | ------------ | --------------------------------- |
-| 5.3.0b2 - Latest beta release | 3.0, 3.1, 2022-05-01, 2022-10-01-preview (default) |
-| 5.2.X - Latest stable release | 3.0, 3.1, 2022-05-01 (default) |
+| 5.3.X - Latest stable release | 3.0, 3.1, 2022-05-01, 2023-04-01 (default) |
+| 5.2.X  | 3.0, 3.1, 2022-05-01 (default) |
 | 5.1.0  | 3.0, 3.1 (default) |
 | 5.0.0  | 3.0 |
 
@@ -632,8 +632,8 @@ Note: Healthcare Entities Analysis is only available with API version v3.1 and n
 - Custom Single Label Classification (API version 2022-05-01 and newer)
 - Custom Multi Label Classification (API version 2022-05-01 and newer)
 - Healthcare Entities Analysis (API version 2022-05-01 and newer)
-- Extractive Summarization (API version 2022-10-01-preview and newer)
-- Abstractive Summarization (API version 2022-10-01-preview and newer)
+- Extractive Summarization (API version 2023-04-01 and newer)
+- Abstractive Summarization (API version 2023-04-01 and newer)
 
 <!-- SNIPPET:sample_analyze_actions.analyze -->
 
@@ -824,7 +824,6 @@ Common scenarios
 Advanced scenarios
 
 - Opinion Mining: [sample_analyze_sentiment_with_opinion_mining.py][opinion_mining_sample] ([async_version][opinion_mining_sample_async])
-- NER resolutions: [sample_recognize_entity_resolutions.py][recognize_entity_resolutions_sample] ([async_version][recognize_entity_resolutions_sample_async])
 
 ### Additional documentation
 

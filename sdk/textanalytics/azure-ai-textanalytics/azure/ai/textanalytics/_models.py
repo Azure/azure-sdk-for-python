@@ -1080,9 +1080,7 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
     language: Optional[str] = None
     """This is the 2 letter ISO 639-1 representation
      of a language. For example, use "en" for English; "es" for Spanish etc.
-     For automatic language detection, use "auto" (Only supported by long-running
-     operation APIs with API version 2022-10-01-preview or newer). If
-     not set, uses "en" for English as default."""
+     If not set, uses "en" for English as default."""
 
     def __init__(
         self,
@@ -1453,7 +1451,9 @@ class RecognizeEntitiesAction(DictMixin):
     long running actions on the input of documents, call method `recognize_entities` instead
     of interfacing with this model.
 
-    :keyword Optional[str] model_version: The model version to use for the analysis.
+    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest".
+        If a model version is not specified, the API will default to the latest, non-preview version.
+        See here for more info: https://aka.ms/text-analytics-model-versioning
     :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
@@ -1469,7 +1469,9 @@ class RecognizeEntitiesAction(DictMixin):
     """
 
     model_version: Optional[str] = None
-    """The model version to use for the analysis."""
+    """The model version to use for the analysis, e.g. "latest".
+        If a model version is not specified, the API will default to the latest, non-preview version.
+        See here for more info: https://aka.ms/text-analytics-model-versioning"""
     string_index_type: Optional[str] = None
     """Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
@@ -1531,7 +1533,9 @@ class AnalyzeSentimentAction(DictMixin):
     long running actions on the input of documents, call method `analyze_sentiment` instead
     of interfacing with this model.
 
-    :keyword Optional[str] model_version: The model version to use for the analysis.
+    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest".
+        If a model version is not specified, the API will default to the latest, non-preview version.
+        See here for more info: https://aka.ms/text-analytics-model-versioning
     :keyword Optional[bool] show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
         granular analysis around the aspects of a product or service (also known as
         aspect-based sentiment analysis). If set to true, the returned
@@ -1558,7 +1562,9 @@ class AnalyzeSentimentAction(DictMixin):
         :class:`~azure.ai.textanalytics.SentenceSentiment` objects
         will have property `mined_opinions` containing the result of this analysis."""
     model_version: Optional[str] = None
-    """The model version to use for the analysis."""
+    """The model version to use for the analysis, e.g. "latest".
+        If a model version is not specified, the API will default to the latest, non-preview version.
+        See here for more info: https://aka.ms/text-analytics-model-versioning."""
     string_index_type: Optional[str] = None
     """Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
@@ -1626,7 +1632,9 @@ class RecognizePiiEntitiesAction(DictMixin):
     long running actions on the input of documents, call method `recognize_pii_entities` instead
     of interfacing with this model.
 
-    :keyword Optional[str] model_version: The model version to use for the analysis.
+    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest".
+        If a model version is not specified, the API will default to the latest, non-preview version.
+        See here for more info: https://aka.ms/text-analytics-model-versioning
     :keyword Optional[str] domain_filter: An optional string to set the PII domain to include only a
         subset of the PII entity categories. Possible values include 'phi' or None.
     :keyword categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
@@ -1656,7 +1664,9 @@ class RecognizePiiEntitiesAction(DictMixin):
     """An optional string to set the PII domain to include only a
         subset of the PII entity categories. Possible values include 'phi' or None."""
     model_version: Optional[str] = None
-    """The model version to use for the analysis."""
+    """The model version to use for the analysis, e.g. "latest".
+        If a model version is not specified, the API will default to the latest, non-preview version.
+        See here for more info: https://aka.ms/text-analytics-model-versioning"""
     string_index_type: Optional[str] = None
     """Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
@@ -1728,7 +1738,9 @@ class ExtractKeyPhrasesAction(DictMixin):
     long running actions on the input of documents, call method `extract_key_phrases` instead
     of interfacing with this model.
 
-    :keyword Optional[str] model_version: The model version to use for the analysis.
+    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest".
+        If a model version is not specified, the API will default to the latest, non-preview version.
+        See here for more info: https://aka.ms/text-analytics-model-versioning
     :keyword Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
@@ -1740,7 +1752,9 @@ class ExtractKeyPhrasesAction(DictMixin):
     """
 
     model_version: Optional[str] = None
-    """The model version to use for the analysis."""
+    """The model version to use for the analysis, e.g. "latest".
+        If a model version is not specified, the API will default to the latest, non-preview version.
+        See here for more info: https://aka.ms/text-analytics-model-versioning"""
     disable_service_logs: Optional[bool] = None
     """If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
@@ -1792,7 +1806,9 @@ class RecognizeLinkedEntitiesAction(DictMixin):
     long running actions on the input of documents, call method `recognize_linked_entities` instead
     of interfacing with this model.
 
-    :keyword Optional[str] model_version: The model version to use for the analysis.
+    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest".
+        If a model version is not specified, the API will default to the latest, non-preview version.
+        See here for more info: https://aka.ms/text-analytics-model-versioning
     :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
@@ -1808,7 +1824,9 @@ class RecognizeLinkedEntitiesAction(DictMixin):
     """
 
     model_version: Optional[str] = None
-    """The model version to use for the analysis."""
+    """The model version to use for the analysis, e.g. "latest".
+        If a model version is not specified, the API will default to the latest, non-preview version.
+        See here for more info: https://aka.ms/text-analytics-model-versioning"""
     string_index_type: Optional[str] = None
     """Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
@@ -2211,7 +2229,9 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
     long running actions on the input of documents, call method `begin_analyze_healthcare_entities` instead
     of interfacing with this model.
 
-    :keyword Optional[str] model_version: The model version to use for the analysis.
+    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest".
+        If a model version is not specified, the API will default to the latest, non-preview version.
+        See here for more info: https://aka.ms/text-analytics-model-versioning
     :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
@@ -2230,7 +2250,9 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
     """
 
     model_version: Optional[str] = None
-    """The model version to use for the analysis."""
+    """The model version to use for the analysis, e.g. "latest".
+        If a model version is not specified, the API will default to the latest, non-preview version.
+        See here for more info: https://aka.ms/text-analytics-model-versioning"""
     string_index_type: Optional[str] = None
     """Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
@@ -2281,7 +2303,9 @@ class ExtractiveSummaryAction(DictMixin):
     Summarization operation. For a conceptual discussion of extractive summarization, see the service documentation:
     https://learn.microsoft.com/azure/cognitive-services/language-service/summarization/overview
 
-    :keyword Optional[str] model_version: The model version to use for the analysis.
+    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest".
+        If a model version is not specified, the API will default to the latest, non-preview version.
+        See here for more info: https://aka.ms/text-analytics-model-versioning
     :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
@@ -2302,7 +2326,9 @@ class ExtractiveSummaryAction(DictMixin):
     """
 
     model_version: Optional[str] = None
-    """The model version to use for the analysis."""
+    """The model version to use for the analysis, e.g. "latest".
+        If a model version is not specified, the API will default to the latest, non-preview version.
+        See here for more info: https://aka.ms/text-analytics-model-versioning"""
     string_index_type: Optional[str] = None
     """Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
@@ -2585,11 +2611,10 @@ class AbstractiveSummaryAction(DictMixin):
     concatenating extracted sentences from the input document into a summary, while abstractive
     summarization involves paraphrasing the document using novel sentences.
 
-    .. note:: The abstractive summarization feature is part of a gated preview. Request access here:
-        https://aka.ms/applyforgatedsummarizationfeatures
-
     :keyword Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
-    :keyword Optional[str] model_version: The model version to use for the analysis.
+    :keyword Optional[str] model_version: The model version to use for the analysis, e.g. "latest".
+        If a model version is not specified, the API will default to the latest, non-preview version.
+        See here for more info: https://aka.ms/text-analytics-model-versioning
     :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
@@ -2610,7 +2635,9 @@ class AbstractiveSummaryAction(DictMixin):
     sentence_count: Optional[int] = None
     """It controls the approximate number of sentences in the output summaries."""
     model_version: Optional[str] = None
-    """The model version to use for the analysis."""
+    """The model version to use for the analysis, e.g. "latest".
+        If a model version is not specified, the API will default to the latest, non-preview version.
+        See here for more info: https://aka.ms/text-analytics-model-versioning"""
     string_index_type: Optional[str] = None
     """Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
