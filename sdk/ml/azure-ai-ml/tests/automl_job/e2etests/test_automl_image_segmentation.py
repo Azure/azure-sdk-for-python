@@ -118,7 +118,7 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
                 SearchSpace(
                     model_name=Choice(["mask_rcnn_swin-s-p4-w7_fpn_fp16_ms-crop-3x_coco"]),
                     learning_rate=Uniform(0.0001, 0.001),
-                    optimizer=Choice(["sgd", "adam", "adamw"]),
+                    optimizer=Choice(["sgd", "adamw_hf", "adamw"]),
                 ),
             ]
         )
