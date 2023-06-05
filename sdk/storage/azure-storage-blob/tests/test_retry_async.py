@@ -15,7 +15,8 @@ from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
-    ServiceResponseError
+    ServiceResponseError,
+    IncompleteReadError
 )
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.storage.blob import LocationMode
@@ -527,7 +528,7 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
 
         stream_reader_read_mock = mock.MagicMock()
         future = asyncio.Future()
-        future.set_exception(ClientPayloadError())
+        future.set_exception(IncompleteReadError())
         stream_reader_read_mock.return_value = future
         with mock.patch.object(StreamReader, "read", stream_reader_read_mock), pytest.raises(HttpResponseError):
             blob = container.get_blob_client(blob=blob_name)
