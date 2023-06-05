@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Union
+from typing import Union, Optional
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     BayesianSamplingAlgorithm as RestBayesianSamplingAlgorithm,
@@ -15,7 +15,13 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class SamplingAlgorithm(ABC, RestTranslatableMixin):
+    """Base class for sampling algorithms.
+
+    You should not instantiate this class directly. Instead, use one of its subclasses.
+    """
+
     def __init__(self) -> None:
+        """Base class for sampling algorithms"""
         self.type = None
 
     @classmethod
@@ -39,25 +45,44 @@ class SamplingAlgorithm(ABC, RestTranslatableMixin):
 class RandomSamplingAlgorithm(SamplingAlgorithm):
     """Random Sampling Algorithm.
 
-    :ivar type: Specifies the type of sampling algorithm. Set automatically to "random" for this class.
-    :vartype type: str
-    :param logbase: A positive number or e in string format to be used as base for log
-        based random sampling.
-    :type logbase: Union[float, str]
-    :param rule: The specific type of random algorithm. Possible values include: "random",
+    :param rule: The specific type of random algorithm. Acceptable values are: "random",
         "sobol".
     :type rule: str
-    :param seed: An integer to use as the seed for random number generation.
+    :param seed: The seed for random number generation.
     :type seed: int
+    :param logbase: A positive number or the number "e" in string format to be used as the base for log
+        based random sampling.
+    :type logbase: Union[float, str]
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_random_sampling_algorithm]
+            :end-before: [END configure_sweep_job_random_sampling_algorithm]
+            :language: python
+            :dedent: 8
+            :caption: Assigning a random sampling algorithm for a SweepJob
     """
 
     def __init__(
         self,
         *,
-        rule: str = None,
-        seed: int = None,
-        logbase: Union[float, str] = None,
+        rule: Optional[str] = None,
+        seed: Optional[int] = None,
+        logbase: Optional[Union[float, str]] = None,
     ) -> None:
+        """Random Sampling Algorithm.
+
+        :param rule: The specific type of random algorithm. Acceptable values are: "random",
+            "sobol".
+        :type rule: str
+        :param seed: The seed for random number generation.
+        :type seed: int
+        :param logbase: A positive number or the number "e" in string format to be used as the base for log
+            based random sampling.
+        :type logbase: Union[float, str]
+        """
         super().__init__()
         self.type = SamplingAlgorithmType.RANDOM.lower()
         self.rule = rule
@@ -83,8 +108,15 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
 class GridSamplingAlgorithm(SamplingAlgorithm):
     """Grid Sampling Algorithm.
 
-    :ivar type: Specifies the type of sampling algorithm. Set automatically to "grid" for this class.
-    :vartype type: str
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_grid_sampling_algorithm]
+            :end-before: [END configure_sweep_job_grid_sampling_algorithm]
+            :language: python
+            :dedent: 8
+            :caption: Assigning a grid sampling algorithm for a SweepJob
     """
 
     def __init__(self) -> None:
@@ -104,11 +136,18 @@ class GridSamplingAlgorithm(SamplingAlgorithm):
 class BayesianSamplingAlgorithm(SamplingAlgorithm):
     """Bayesian Sampling Algorithm.
 
-    :ivar type: Specifies the type of sampling algorithm. Set automatically to "bayesian" for this class.
-    :vartype type: str
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]
+            :end-before: [END configure_sweep_job_bayesian_sampling_algorithm]
+            :language: python
+            :dedent: 8
+            :caption: Assigning a Bayesian sampling algorithm for a SweepJob
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.type = SamplingAlgorithmType.BAYESIAN.lower()
 

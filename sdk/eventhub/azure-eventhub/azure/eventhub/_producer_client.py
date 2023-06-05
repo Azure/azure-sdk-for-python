@@ -22,6 +22,7 @@ from typing_extensions import Literal
 from ._client_base import ClientBase
 from ._producer import EventHubProducer
 from ._constants import ALL_PARTITIONS
+from ._tracing import TraceAttributes
 from ._common import EventDataBatch, EventData
 from ._buffered_producer import BufferedProducerDispatcher
 from ._utils import set_event_partition_key
@@ -743,14 +744,16 @@ class EventHubProducerClient(
                 )
             )
 
-        event_data_batch = EventDataBatch(
+        return EventDataBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
             partition_id=partition_id,
             partition_key=partition_key,
             amqp_transport=self._amqp_transport,
+            tracing_attributes={
+                TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE: self._address.hostname if self._address else None,
+                TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self._address.path if self._address else None
+            }
         )
-
-        return event_data_batch
 
     def get_eventhub_properties(self):
         # type:() -> Dict[str, Any]

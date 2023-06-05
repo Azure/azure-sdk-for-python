@@ -1,5 +1,7 @@
 # Release History
 
+## 1.9.0 (Unreleased)
+
 ## 1.8.0 (Unreleased)
 
 ### Features Added
@@ -8,9 +10,24 @@
 
 ### Bugs Fixed
 
+- Fixed an issue affecting authentication to registry-related services in sovereign regions.
+- Made job_tier and priority values case insensitive
+
 ### Breaking Changes
 
 ### Other Changes
+
+
+## 1.7.2 (2023-05-18)
+
+### Features Added
+- Public preview support for new schedule type `MonitorSchedule`
+
+
+## 1.7.1 (2023-05-17)
+
+### Bugs Fixed
+- Fixed an issue where `OnlineDeployment.provisioning_state` was incorrectly deserialized and set as `None`
 
 
 ## 1.7.0 (2023-05-15)

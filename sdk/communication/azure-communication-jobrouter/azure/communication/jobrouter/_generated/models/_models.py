@@ -39,9 +39,9 @@ class AcceptJobOfferResult(_serialization.Model):
     """
 
     _validation = {
-        "assignment_id": {"required": True},
-        "job_id": {"required": True},
-        "worker_id": {"required": True},
+        "assignment_id": {"required": True, "min_length": 1},
+        "job_id": {"required": True, "min_length": 1},
+        "worker_id": {"required": True, "min_length": 1},
     }
 
     _attribute_map = {
@@ -852,6 +852,36 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment):
         self.label_selectors = label_selectors
 
 
+class DeclineJobOfferRequest(_serialization.Model):
+    """Request payload for declining offers.
+
+    :ivar reoffer_time_utc: If the reoffer time is not provided, then this job will not be
+     re-offered to the worker who declined this job unless
+     the worker is de-registered and re-registered.  If a reoffer time is provided, then the job
+     will be re-matched to
+     eligible workers after the reoffer time.  The worker that declined the job will also be
+     eligible for the job at that time.
+    :vartype reoffer_time_utc: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "reoffer_time_utc": {"key": "reofferTimeUtc", "type": "iso-8601"},
+    }
+
+    def __init__(self, *, reoffer_time_utc: Optional[datetime.datetime] = None, **kwargs: Any) -> None:
+        """
+        :keyword reoffer_time_utc: If the reoffer time is not provided, then this job will not be
+         re-offered to the worker who declined this job unless
+         the worker is de-registered and re-registered.  If a reoffer time is provided, then the job
+         will be re-matched to
+         eligible workers after the reoffer time.  The worker that declined the job will also be
+         eligible for the job at that time.
+        :paramtype reoffer_time_utc: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.reoffer_time_utc = reoffer_time_utc
+
+
 class RouterRule(_serialization.Model):
     """A rule of one of the following types:
 
@@ -1326,7 +1356,7 @@ class JobAssignment(_serialization.Model):
     """
 
     _validation = {
-        "id": {"required": True},
+        "id": {"required": True, "min_length": 1},
         "assign_time": {"required": True},
     }
 
@@ -1447,8 +1477,8 @@ class JobOffer(_serialization.Model):
     """
 
     _validation = {
-        "id": {"required": True},
-        "job_id": {"required": True},
+        "id": {"required": True, "min_length": 1},
+        "job_id": {"required": True, "min_length": 1},
         "capacity_cost": {"required": True},
     }
 
@@ -1509,9 +1539,9 @@ class JobPositionDetails(_serialization.Model):
     """
 
     _validation = {
-        "job_id": {"required": True},
+        "job_id": {"required": True, "min_length": 1},
         "position": {"required": True},
-        "queue_id": {"required": True},
+        "queue_id": {"required": True, "min_length": 1},
         "queue_length": {"required": True},
         "estimated_wait_time_minutes": {"required": True},
     }
@@ -2078,7 +2108,7 @@ class QueueStatistics(_serialization.Model):
     """
 
     _validation = {
-        "queue_id": {"required": True},
+        "queue_id": {"required": True, "min_length": 1},
         "length": {"required": True},
     }
 
@@ -2280,7 +2310,8 @@ class RouterJob(_serialization.Model):  # pylint: disable=too-many-instance-attr
     :ivar channel_reference: Reference to an external parent context, eg. call ID.
     :vartype channel_reference: str
     :ivar job_status: The state of the Job. Known values are: "pendingClassification", "queued",
-     "assigned", "completed", "closed", "cancelled", "classificationFailed", and "created".
+     "assigned", "completed", "closed", "cancelled", "classificationFailed", "created",
+     "pendingSchedule", "scheduled", "scheduleFailed", and "waitingForActivation".
     :vartype job_status: str or ~azure.communication.jobrouter.models.RouterJobStatus
     :ivar enqueue_time_utc: The time a job was queued.
     :vartype enqueue_time_utc: ~datetime.datetime
@@ -2310,6 +2341,13 @@ class RouterJob(_serialization.Model):  # pylint: disable=too-many-instance-attr
     :vartype tags: dict[str, any]
     :ivar notes: Notes attached to a job, sorted by timestamp.
     :vartype notes: dict[str, str]
+    :ivar unavailable_for_matching: A flag indicating this job is ready for being matched with
+     workers.
+     When set to true, job matching will not be started. If set to false, job matching will start
+     automatically.
+    :vartype unavailable_for_matching: bool
+    :ivar scheduled_time_utc: If set, job will be scheduled to be enqueued at a given time.
+    :vartype scheduled_time_utc: ~datetime.datetime
     """
 
     _validation = {
@@ -2336,6 +2374,8 @@ class RouterJob(_serialization.Model):  # pylint: disable=too-many-instance-attr
         "assignments": {"key": "assignments", "type": "{JobAssignment}"},
         "tags": {"key": "tags", "type": "{object}"},
         "notes": {"key": "notes", "type": "{str}"},
+        "unavailable_for_matching": {"key": "unavailableForMatching", "type": "bool"},
+        "scheduled_time_utc": {"key": "scheduledTimeUtc", "type": "iso-8601"},
     }
 
     def __init__(
@@ -2351,6 +2391,8 @@ class RouterJob(_serialization.Model):  # pylint: disable=too-many-instance-attr
         labels: Optional[Dict[str, Any]] = None,
         tags: Optional[Dict[str, Any]] = None,
         notes: Optional[Dict[str, str]] = None,
+        unavailable_for_matching: Optional[bool] = None,
+        scheduled_time_utc: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2378,6 +2420,13 @@ class RouterJob(_serialization.Model):  # pylint: disable=too-many-instance-attr
         :paramtype tags: dict[str, any]
         :keyword notes: Notes attached to a job, sorted by timestamp.
         :paramtype notes: dict[str, str]
+        :keyword unavailable_for_matching: A flag indicating this job is ready for being matched with
+         workers.
+         When set to true, job matching will not be started. If set to false, job matching will start
+         automatically.
+        :paramtype unavailable_for_matching: bool
+        :keyword scheduled_time_utc: If set, job will be scheduled to be enqueued at a given time.
+        :paramtype scheduled_time_utc: ~datetime.datetime
         """
         super().__init__(**kwargs)
         self.id = None
@@ -2395,6 +2444,8 @@ class RouterJob(_serialization.Model):  # pylint: disable=too-many-instance-attr
         self.assignments = None
         self.tags = tags
         self.notes = notes
+        self.unavailable_for_matching = unavailable_for_matching
+        self.scheduled_time_utc = scheduled_time_utc
 
 
 class RouterJobItem(_serialization.Model):
@@ -2825,7 +2876,7 @@ class UnassignJobResult(_serialization.Model):
     """
 
     _validation = {
-        "job_id": {"required": True},
+        "job_id": {"required": True, "min_length": 1},
         "unassignment_count": {"required": True},
     }
 
@@ -3009,8 +3060,8 @@ class WorkerAssignment(_serialization.Model):
     """
 
     _validation = {
-        "id": {"required": True},
-        "job_id": {"required": True},
+        "id": {"required": True, "min_length": 1},
+        "job_id": {"required": True, "min_length": 1},
         "capacity_cost": {"required": True},
         "assign_time": {"required": True},
     }

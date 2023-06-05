@@ -53,7 +53,7 @@ def sample_analyze_healthcare_action() -> None:
         documents,
         display_name="Sample Text Analysis",
         actions=[
-            AnalyzeHealthcareEntitiesAction(fhir_version="4.0.1"),
+            AnalyzeHealthcareEntitiesAction(),
             RecognizePiiEntitiesAction(domain_filter="phi"),
         ],
     )
@@ -85,7 +85,6 @@ def sample_analyze_healthcare_action() -> None:
                     print(f"Relation of type: {relation.relation_type} has the following roles")
                     for role in relation.roles:
                         print(f"...Role '{role.name}' with entity '{role.entity.text}'")
-                print(f"......FHIR object: {result.fhir_bundle}")
 
             elif result.kind == "PiiEntityRecognition":
                 print("Results of Recognize PII Entities action:")

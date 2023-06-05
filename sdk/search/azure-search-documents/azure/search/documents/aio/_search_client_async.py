@@ -161,6 +161,7 @@ class SearchClient(HeadersMixin):
             query_speller: Optional[Union[str, QuerySpellerType]] = None,
             query_answer: Optional[Union[str, QueryAnswerType]] = None,
             query_answer_count: Optional[int] = None,
+            query_answer_threshold: Optional[float] = None,
             query_caption: Optional[Union[str, QueryCaptionType]] = None,
             query_caption_highlight: Optional[bool] = None,
             semantic_fields: Optional[List[str]] = None,
@@ -238,6 +239,8 @@ class SearchClient(HeadersMixin):
         :keyword int query_answer_count: This parameter is only valid if the query type is 'semantic' and
          query answer is 'extractive'.
          Configures the number of answers returned. Default count is 1.
+        :keyword float query_answer_threshold: This parameter is only valid if the query type is 'semantic' and
+         query answer is 'extractive'. Configures the number of confidence threshold. Default count is 0.7.
         :keyword query_caption: This parameter is only valid if the query type is 'semantic'. If set, the
          query returns captions extracted from key passages in the highest ranked documents.
          Defaults to 'None'. Possible values include: "none", "extractive".
@@ -315,6 +318,9 @@ class SearchClient(HeadersMixin):
         search_fields_str = ",".join(search_fields) if search_fields else None
         answers = query_answer if not query_answer_count else '{}|count-{}'.format(
             query_answer, query_answer_count
+        )
+        answers = answers if not query_answer_threshold else '{}|threshold-{}'.format(
+            answers, query_answer_threshold
         )
         captions = query_caption if not query_caption_highlight else '{}|highlight-{}'.format(
             query_caption, query_caption_highlight

@@ -5,13 +5,14 @@
 
 import pytest
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer
-from azure.ai.textanalytics import TextAnalyticsClient
+from azure.ai.textanalytics import TextAnalyticsClient, AnalyzeSentimentAction
 from azure.core.credentials import AzureKeyCredential
 import os
 
 
 class TestAuth(TextAnalyticsTest):
 
+    @pytest.mark.skip("AAD not enabled for 2023-04-01 yet")
     @pytest.mark.live_test_only
     @TextAnalyticsPreparer()
     def test_active_directory_auth(self, **kwargs):
@@ -27,6 +28,25 @@ class TestAuth(TextAnalyticsTest):
                 {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
 
         response = text_analytics.detect_language(docs)
+
+    @pytest.mark.skip("AAD not enabled for 2023-04-01 yet")
+    @pytest.mark.live_test_only
+    @TextAnalyticsPreparer()
+    def test_analyze_active_directory_auth(self, **kwargs):
+        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        token = self.get_credential(TextAnalyticsClient)
+        text_analytics_endpoint_suffix = os.environ.get("TEXTANALYTICS_ENDPOINT_SUFFIX",".cognitiveservices.azure.com")
+        credential_scopes = ["https://{}/.default".format(text_analytics_endpoint_suffix[1:])]
+        text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, token, credential_scopes=credential_scopes)
+
+        docs = ["Microsoft was founded by Bill Gates and Paul Allen."]
+
+        response = text_analytics.begin_analyze_actions(
+            docs,
+            actions=[AnalyzeSentimentAction()],
+        ).result()
+
+        pages = list(response)
 
     @TextAnalyticsPreparer()
     def test_empty_credentials(self, **kwargs):
