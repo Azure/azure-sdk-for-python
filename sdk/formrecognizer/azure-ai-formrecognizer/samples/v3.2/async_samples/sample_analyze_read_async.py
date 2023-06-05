@@ -76,37 +76,19 @@ async def analyze_read():
 
     for page in result.pages:
         print(f"----Analyzing document from page #{page.page_number}----")
-        print(
-            "Page has width: {} and height: {}, measured with unit: {}".format(
-                page.width, page.height, page.unit
-            )
-        )
+        print(f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}")
 
         for line_idx, line in enumerate(page.lines):
             words = line.get_words()
-            print(
-                "...Line # {} has {} words and text '{}' within bounding polygon '{}'".format(
-                    line_idx,
-                    len(words),
-                    line.content,
-                    format_polygon(line.polygon),
-                )
-            )
+            print(f"...Line # {line_idx} has {len(words)} words and text '{line.content}' within bounding polygon '{format_polygon(line.polygon)}'")
 
             for word in words:
-                print(
-                    "......Word '{}' has a confidence of {}".format(
-                        word.content, word.confidence
-                    )
-                )
+                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
         for selection_mark in page.selection_marks:
             print(
-                "...Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
-                    selection_mark.state,
-                    format_polygon(selection_mark.polygon),
-                    selection_mark.confidence,
-                )
+                f"...Selection mark is '{selection_mark.state}' within bounding polygon "
+                f"'{format_polygon(selection_mark.polygon)}' and has a confidence of {selection_mark.confidence}"
             )
 
     if len(result.paragraphs) > 0:

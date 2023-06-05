@@ -78,59 +78,32 @@ async def analyze_layout_async():
         for line_idx, line in enumerate(page.lines):
             words = line.get_words()
             print(
-                "...Line # {} has word count {} and text '{}' within bounding polygon '{}'".format(
-                    line_idx,
-                    len(words),
-                    line.content,
-                    format_polygon(line.polygon),
-                )
+                f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
+                f"within bounding polygon '{format_polygon(line.polygon)}'"
             )
 
             for word in words:
-                print(
-                    "......Word '{}' has a confidence of {}".format(
-                        word.content, word.confidence
-                    )
-                )
+                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
         for selection_mark in page.selection_marks:
             print(
-                "Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
-                    selection_mark.state,
-                    format_polygon(selection_mark.polygon),
-                    selection_mark.confidence,
-                )
+                f"Selection mark is '{selection_mark.state}' within bounding polygon "
+                f"'{format_polygon(selection_mark.polygon)}' and has a confidence of {selection_mark.confidence}"
             )
 
     for table_idx, table in enumerate(result.tables):
         print(
-            "Table # {} has {} rows and {} columns".format(
-                table_idx, table.row_count, table.column_count
-            )
+            f"Table # {table_idx} has {table.row_count} rows and "
+            f"{table.column_count} columns"
         )
         for region in table.bounding_regions:
             print(
-                "Table # {} location on page: {} is {}".format(
-                    table_idx,
-                    region.page_number,
-                    format_polygon(region.polygon),
-                )
+                f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}"
             )
         for cell in table.cells:
-            print(
-                "...Cell[{}][{}] has text '{}'".format(
-                    cell.row_index,
-                    cell.column_index,
-                    cell.content,
-                )
-            )
+            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
             for region in cell.bounding_regions:
-                print(
-                    "...content on page {} is within bounding polygon '{}'".format(
-                        region.page_number,
-                        format_polygon(region.polygon),
-                    )
-                )
+                print(f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'")
 
     print("----------------------------------------")
 
