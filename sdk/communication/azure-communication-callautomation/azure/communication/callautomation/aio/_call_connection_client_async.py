@@ -42,7 +42,6 @@ from .._shared.utils import (
 if TYPE_CHECKING:
     from ._call_automation_client_async import CallAutomationClient
     from .._models  import (
-        FileSource,
         CallInvite
     )
     from azure.core.credentials_async import (
@@ -315,7 +314,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """Play media to specific participant(s) in the call.
 
         :param play_source: A PlaySource representing the source to play.
-        :type play_source: Union[~azure.communication.callautomation.FileSource, List[~azure.communication.callautomation.FileSource]]
+        :type play_source: Union[~azure.communication.callautomation.FileSource,
+        List[~azure.communication.callautomation.FileSource]]
         :param play_to: The targets to play media to.
         :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
         :keyword loop: if the media should be repeated until cancelled.
@@ -351,7 +351,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """Play media to all participants in the call.
 
         :param play_source: A PlaySource representing the source to play.
-        :type play_source: Union[~azure.communication.callautomation.FileSource, List[~azure.communication.callautomation.FileSource]]
+        :type play_source: Union[~azure.communication.callautomation.FileSource,
+        List[~azure.communication.callautomation.FileSource]]
         :keyword loop: if the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
