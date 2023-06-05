@@ -402,4 +402,3 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ContainerRegistryEventName = 'Microsoft.ContainerRegistry.ChartPushed'
 
     ServiceBusDeadletterMessagesAvailableWithNoListenerEventName = 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'
-
