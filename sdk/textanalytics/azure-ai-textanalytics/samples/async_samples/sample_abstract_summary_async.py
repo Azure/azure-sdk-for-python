@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_abstractive_summary_async.py
+FILE: sample_abstract_summary_async.py
 
 DESCRIPTION:
     This sample demonstrates how to submit text documents for abstractive text summarization.
@@ -14,11 +14,8 @@ DESCRIPTION:
     Abstractive summarization generates a summary that may not use the same words as those in
     the document, but captures the main idea.
 
-    The abstractive summarization feature is part of a gated preview. Request access here:
-    https://aka.ms/applyforgatedsummarizationfeatures
-
 USAGE:
-    python sample_abstractive_summary_async.py
+    python sample_abstract_summary_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
@@ -29,7 +26,7 @@ import asyncio
 
 
 async def sample_abstractive_summarization_async() -> None:
-    # [START abstractive_summary_async]
+    # [START abstract_summary_async]
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
@@ -61,9 +58,9 @@ async def sample_abstractive_summarization_async() -> None:
         "component of this aspiration, if grounded with external knowledge sources in the downstream AI tasks."
     ]
     async with text_analytics_client:
-        poller = await text_analytics_client.begin_abstractive_summary(document)
-        abstractive_summary_results = await poller.result()
-        async for result in abstractive_summary_results:
+        poller = await text_analytics_client.begin_abstract_summary(document)
+        abstract_summary_results = await poller.result()
+        async for result in abstract_summary_results:
             if result.kind == "AbstractiveSummarization":
                 print("Summaries abstracted:")
                 [print(f"{summary.text}\n") for summary in result.summaries]
@@ -71,7 +68,7 @@ async def sample_abstractive_summarization_async() -> None:
                 print("...Is an error with code '{}' and message '{}'".format(
                     result.error.code, result.error.message
                 ))
-    # [END abstractive_summary_async]
+    # [END abstract_summary_async]
 
 
 async def main():

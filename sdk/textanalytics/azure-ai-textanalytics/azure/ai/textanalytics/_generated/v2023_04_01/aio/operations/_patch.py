@@ -36,7 +36,7 @@ class TextAnalyticsClientOperationsMixin(GeneratedTextAnalyticsClientOperationsM
         executed as a long-running operation.
 
         :param body: Collection of documents to analyze and one or more tasks to execute.
-        :type body: ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextJobsInput
+        :type body: ~azure.ai.textanalytics.v2023_04_01.models.AnalyzeTextJobsInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncAnalyzeActionsLROPollingMethod.
@@ -48,7 +48,7 @@ class TextAnalyticsClientOperationsMixin(GeneratedTextAnalyticsClientOperationsM
         :return: An instance of AsyncAnalyzeActionsLROPoller that returns either AnalyzeTextJobState or
          the result of cls(response)
         :rtype:
-         ~.....aio._lro_async.AsyncAnalyzeActionsLROPoller[~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextJobState]
+         ~.....aio._lro_async.AsyncAnalyzeActionsLROPoller[~azure.ai.textanalytics.v2023_04_01.models.AnalyzeTextJobState]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -56,7 +56,7 @@ class TextAnalyticsClientOperationsMixin(GeneratedTextAnalyticsClientOperationsM
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-10-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-04-01"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeTextJobState]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]

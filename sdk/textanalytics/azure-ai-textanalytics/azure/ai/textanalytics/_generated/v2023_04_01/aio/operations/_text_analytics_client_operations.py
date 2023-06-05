@@ -42,7 +42,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         executed immediately.
 
         :param body: Collection of documents to analyze and a single task to execute. Required.
-        :type body: ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTask
+        :type body: ~azure.ai.textanalytics.v2023_04_01.models.AnalyzeTextTask
         :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics. Default value is None.
         :type show_stats: bool
@@ -51,7 +51,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeTextTaskResult or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResult
+        :rtype: ~azure.ai.textanalytics.v2023_04_01.models.AnalyzeTextTaskResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -79,7 +79,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeTextTaskResult or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResult
+        :rtype: ~azure.ai.textanalytics.v2023_04_01.models.AnalyzeTextTaskResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -98,7 +98,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
 
         :param body: Collection of documents to analyze and a single task to execute. Is either a model
          type or a IO type. Required.
-        :type body: ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTask or IO
+        :type body: ~azure.ai.textanalytics.v2023_04_01.models.AnalyzeTextTask or IO
         :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics. Default value is None.
         :type show_stats: bool
@@ -107,7 +107,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeTextTaskResult or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextTaskResult
+        :rtype: ~azure.ai.textanalytics.v2023_04_01.models.AnalyzeTextTaskResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -118,7 +118,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-10-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-04-01"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeTextTaskResult]
 
@@ -182,7 +182,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-10-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-04-01"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.AnalyzeTextJobState]]
 
@@ -253,7 +253,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         executed as a long-running operation.
 
         :param body: Collection of documents to analyze and one or more tasks to execute. Required.
-        :type body: ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextJobsInput
+        :type body: ~azure.ai.textanalytics.v2023_04_01.models.AnalyzeTextJobsInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -268,7 +268,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :return: An instance of AsyncAnalyzeActionsLROPoller that returns either AnalyzeTextJobState or
          the result of cls(response)
         :rtype:
-         ~.....aio._lro_async.AsyncAnalyzeActionsLROPoller[~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextJobState]
+         ~.....aio._lro_async.AsyncAnalyzeActionsLROPoller[~azure.ai.textanalytics.v2023_04_01.models.AnalyzeTextJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -301,7 +301,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :return: An instance of AsyncAnalyzeActionsLROPoller that returns either AnalyzeTextJobState or
          the result of cls(response)
         :rtype:
-         ~.....aio._lro_async.AsyncAnalyzeActionsLROPoller[~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextJobState]
+         ~.....aio._lro_async.AsyncAnalyzeActionsLROPoller[~azure.ai.textanalytics.v2023_04_01.models.AnalyzeTextJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -319,7 +319,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
 
         :param body: Collection of documents to analyze and one or more tasks to execute. Is either a
          model type or a IO type. Required.
-        :type body: ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextJobsInput or IO
+        :type body: ~azure.ai.textanalytics.v2023_04_01.models.AnalyzeTextJobsInput or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -334,13 +334,13 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :return: An instance of AsyncAnalyzeActionsLROPoller that returns either AnalyzeTextJobState or
          the result of cls(response)
         :rtype:
-         ~.....aio._lro_async.AsyncAnalyzeActionsLROPoller[~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextJobState]
+         ~.....aio._lro_async.AsyncAnalyzeActionsLROPoller[~azure.ai.textanalytics.v2023_04_01.models.AnalyzeTextJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-10-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-04-01"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeTextJobState]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -420,7 +420,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         :type skip: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeTextJobState or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v2022_10_01_preview.models.AnalyzeTextJobState
+        :rtype: ~azure.ai.textanalytics.v2023_04_01.models.AnalyzeTextJobState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -431,7 +431,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-10-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-04-01"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeTextJobState]
 
         
@@ -487,7 +487,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-10-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-04-01"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
@@ -554,7 +554,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-10-01-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-04-01"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop(
