@@ -47,12 +47,12 @@ class TestCallMediaClient(unittest.TestCase):
     def test_play(self):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
-        play_sources = [FileSource(url=self.url)]
+        play_source = FileSource(url=self.url)
 
-        self.call_connection_client.play_media(play_sources=play_sources, play_to=[self.target_user])
+        self.call_connection_client.play_media(play_source=play_source, play_to=[self.target_user])
 
         expected_play_request = PlayRequest(
-            play_sources=[x._to_generated() for x in play_sources],
+            play_sources=[play_source._to_generated()],
             play_to=[serialize_identifier(self.target_user)],
             play_options=PlayOptions(loop=False)
         )
@@ -68,12 +68,12 @@ class TestCallMediaClient(unittest.TestCase):
     def test_play_to_all(self):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
-        play_sources = [FileSource(url=self.url)]
+        play_source = FileSource(url=self.url)
 
-        self.call_connection_client.play_media_to_all(play_sources=play_sources)
+        self.call_connection_client.play_media_to_all(play_source=play_source)
 
         expected_play_request = PlayRequest(
-            play_sources=[x._to_generated() for x in play_sources],
+            play_sources=[play_source._to_generated()],
             play_to=[],
             play_options=PlayOptions(loop=False)
         )

@@ -20,7 +20,8 @@ from ._models import (
     CallConnectionProperties,
     AddParticipantResult,
     RemoveParticipantResult,
-    TransferCallResult
+    TransferCallResult,
+    FileSource
 )
 from ._generated._client import AzureCommunicationCallAutomationService
 from ._generated.models import (
@@ -40,7 +41,6 @@ from ._shared.utils import (
 if TYPE_CHECKING:
     from ._call_automation_client import CallAutomationClient
     from ._models  import (
-        FileSource,
         CallInvite
     )
     from azure.core.credentials import (
@@ -300,7 +300,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace
     def play_media(
         self,
-        play_sources: List['FileSource'],
+        play_source: Union['FileSource', List['FileSource']],
         play_to: List['CommunicationIdentifier'],
         *,
         loop: Optional[bool] = False,
@@ -309,8 +309,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     ) -> None:
         """Play media to specific participant(s) in this call.
 
-        :param play_sources: A list of PlaySources representing the sources to play.
-        :type play_sources: List[~azure.communication.callautomation.FileSource]
+        :param play_source: A PlaySource representing the source to play.
+        :type play_source: Union[~azure.communication.callautomation.FileSource,
+        List[~azure.communication.callautomation.FileSource]]
         :param play_to: The targets to play media to.
         :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
         :keyword loop: if the media should be repeated until cancelled.
@@ -321,8 +322,11 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        if isinstance(play_source, FileSource):
+            play_source = [play_source]
+
         play_request = PlayRequest(
-            play_sources=[play_source._to_generated() for play_source in play_sources],#pylint:disable=protected-access
+            play_sources=[play_source._to_generated() for play_source in play_source],#pylint:disable=protected-access
             play_to=[serialize_identifier(identifier)
                      for identifier in play_to],
             play_options=PlayOptions(loop=loop),
@@ -334,7 +338,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace
     def play_media_to_all(
         self,
-        play_sources: List['FileSource'],
+        play_source: Union['FileSource', List['FileSource']],
         *,
         loop: Optional[bool] = False,
         operation_context: Optional[str] = None,
@@ -342,8 +346,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     ) -> None:
         """Play media to all participants in this call.
 
-        :param play_sources: A list of PlaySources representing the sources to play.
-        :type play_sources: List[~azure.communication.callautomation.FileSource]
+        :param play_source: A PlaySource representing the source to play.
+        :type play_source: Union[~azure.communication.callautomation.FileSource,
+        List[~azure.communication.callautomation.FileSource]]
         :keyword loop: if the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
@@ -352,7 +357,10 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self.play_media(play_sources=play_sources,
+        if isinstance(play_source, FileSource):
+            play_source = [play_source]
+
+        self.play_media(play_source=play_source,
                         play_to=[],
                         loop=loop,
                         operation_context=operation_context,
