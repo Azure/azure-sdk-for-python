@@ -53,7 +53,6 @@ def unzip_sdist_to_directory(containing_folder: str) -> str:
     else:
         tars = glob.glob(os.path.join(containing_folder, "*.tar.gz"))
         val = unzip_file_to_directory(tars[0], containing_folder)
-        breakpoint()
         return val
 
 
