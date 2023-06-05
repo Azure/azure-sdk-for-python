@@ -192,7 +192,7 @@ class DockerClient(object):
         module_logger.debug("Mounting volumes: '%s'\n", volumes)
         module_logger.debug("Setting environment variables: '%s'\n", environment)
         container_name = _get_container_name(endpoint_name, deployment_name)
-        device_requests = [docker.types.DeviceRequest(capabilities=[["gpu"]])] if local_enable_gpu else None
+        device_requests = [docker.types.DeviceRequest(count=-1, capabilities=[["gpu"]])] if local_enable_gpu else None
         container = self._client.containers.create(
             image_name,
             name=container_name,
