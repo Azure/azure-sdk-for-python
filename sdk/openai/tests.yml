@@ -3,7 +3,7 @@ trigger: none
 stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      JobName: openai-main
+      JobName: openai_main
       ServiceDirectory: openai
       MatrixFilters:
         - PythonVersion=3.11.*
@@ -17,7 +17,7 @@ stages:
         AZURE_TEST_RUN_LIVE: 'true' # use when utilizing the New-TestResources Script
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      JobName: openai-released
+      JobName: openai_released
       ServiceDirectory: openai
       InjectedPackages: openai
       MatrixFilters:
