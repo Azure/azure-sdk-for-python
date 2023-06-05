@@ -224,7 +224,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.PopulateQueryMetrics] = options["populateQueryMetrics"]
 
     if options.get("responseContinuationTokenLimitInKb"):
-        headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options["responseContinuationTokenLimitInKb"]
+        headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options["responseContinuationTokenLimitInKb"] # pylint: disable=line-too-long
 
     if cosmos_client_connection.master_key:
         #formatedate guarantees RFC 1123 date format regardless of current locale
