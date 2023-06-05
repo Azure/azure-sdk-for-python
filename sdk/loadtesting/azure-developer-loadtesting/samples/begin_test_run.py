@@ -42,10 +42,10 @@ testRunPoller = client.begin_test_run(
     {
         "testId": TEST_ID,
         "displayName": "My New Load Test Run",
-    }
+    },
 )
 
-#waiting for test run status to be completed with timeout = 3600 seconds
+# waiting for test run status to be completed with timeout = 3600 seconds
 result = testRunPoller.result(3600)
 
 print(result["status"])

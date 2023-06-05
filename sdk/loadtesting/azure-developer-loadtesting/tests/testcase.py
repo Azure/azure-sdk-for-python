@@ -9,8 +9,8 @@ import functools
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 from azure.developer.loadtesting import LoadTestAdministrationClient, LoadTestRunClient
 
-class LoadtestingTest(AzureRecordedTestCase):
 
+class LoadtestingTest(AzureRecordedTestCase):
     def create_administration_client(self, endpoint):
         credential = self.get_credential(LoadTestAdministrationClient)
         return self.create_client_from_credential(

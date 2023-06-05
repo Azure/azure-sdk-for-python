@@ -15,8 +15,9 @@ from devtools_testutils import recorded_by_proxy, set_bodiless_matcher, set_cust
 
 DISPLAY_NAME = "TestingResourcePyTest"
 NON_EXISTING_RESOURCE = "nonexistingresource"
-class TestLoadTestAdministrationClient(LoadtestingTest):
 
+
+class TestLoadTestAdministrationClient(LoadtestingTest):
     def setup_create_load_test(self, endpoint):
         self.setup_load_test_id = "pytest_setup_load_test_id"
         client = self.create_administration_client(endpoint)
@@ -36,13 +37,17 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
                 "passFailCriteria": {"passFailMetrics": {}},
                 "keyvaultReferenceIdentityType": "SystemAssigned",
                 "keyvaultReferenceIdentityId": None,
-            }
+            },
         )
 
     def setup_upload_test_file(self, endpoint):
         client = self.create_administration_client(endpoint)
         self.setup_file_name = "sample.jmx"
-        client.begin_upload_test_file(self.setup_load_test_id, "sample.jmx", open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb"))
+        client.begin_upload_test_file(
+            self.setup_load_test_id,
+            "sample.jmx",
+            open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb"),
+        )
 
     def setup_app_components(self, endpoint, resource_id):
         client = self.create_administration_client(endpoint)
@@ -60,6 +65,7 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
                 },
             },
         )
+
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_create_or_update_load_test(self, loadtesting_endpoint, loadtesting_test_id):
@@ -140,7 +146,6 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
         result = client.list_tests()
         assert result is not None
 
-
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_get_test_file(self, loadtesting_endpoint):
@@ -169,7 +174,6 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
         with pytest.raises(ResourceNotFoundError):
             client.delete_test_file(self.setup_load_test_id, "nonexistent.jmx")
 
-
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def list_test_files(self, loadtesting_endpoint):
@@ -193,17 +197,15 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
         result = client.create_or_update_app_components(
             loadtesting_test_id,
             {
-                "components":
-                {
-                    loadtesting_resource_id:
-                    {
+                "components": {
+                    loadtesting_resource_id: {
                         "resourceId": loadtesting_resource_id,
                         "resourceName": "App-Service-Sample-Demo",
                         "resourceType": "Microsoft.Web/sites",
-                        "kind": "web"
+                        "kind": "web",
                     }
                 }
-            }
+            },
         )
         assert result is not None
 
@@ -219,7 +221,7 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
                             "kind": "web",
                         }
                     }
-                }
+                },
             )
 
     @LoadtestingPowerShellPreparer()
@@ -243,8 +245,11 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
         self.setup_create_load_test(loadtesting_endpoint)
 
         client = self.create_administration_client(loadtesting_endpoint)
-        poller = client.begin_upload_test_file(self.setup_load_test_id, "sample.jmx",
-                                               open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb"))
+        poller = client.begin_upload_test_file(
+            self.setup_load_test_id,
+            "sample.jmx",
+            open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb"),
+        )
 
         result = poller.result(1000)
         assert poller.status() is not None
@@ -253,7 +258,9 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
-    def test_create_or_update_server_metrics_config(self, loadtesting_endpoint, loadtesting_resource_id, loadtesting_test_id):
+    def test_create_or_update_server_metrics_config(
+        self, loadtesting_endpoint, loadtesting_resource_id, loadtesting_test_id
+    ):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
@@ -268,10 +275,10 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
                         "name": "requests/duration",
                         "aggregation": "Average",
                         "unit": None,
-                        "resourceType": "microsoft.insights/components"
+                        "resourceType": "microsoft.insights/components",
                     }
                 }
-            }
+            },
         )
         assert result is not None
 

@@ -56,7 +56,7 @@ metrics = client.list_metrics(
     TEST_RUN_ID,
     metric_name=metric_definitions["value"][0]["name"],
     metric_namespace=metric_namespaces["value"][0]["name"],
-    time_interval=test_run_response["startDateTime"]+"/"+test_run_response["endDateTime"]
+    time_interval=test_run_response["startDateTime"] + "/" + test_run_response["endDateTime"],
 )
 
 for page in metrics.by_page():
