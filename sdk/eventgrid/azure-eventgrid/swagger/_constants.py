@@ -56,7 +56,7 @@ additional_events = {
     'ContainerRegistryArtifactEventName': 'Microsoft.AppConfiguration.KeyValueModified',
     'KeyVaultAccessPolicyChangedEventName': 'Microsoft.KeyVault.VaultAccessPolicyChanged',
     'ContainerRegistryEventName': 'Microsoft.ContainerRegistry.ChartPushed',
-    'ServiceBusDeadletterMessagesAvailableWithNoListenerEventName': 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners',
+    'ServiceBusDeadletterMessagesAvailableWithNoListenerEventName': 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'
 }
 
 EXCEPTIONS = ['ContainerRegistryArtifactEventData', 'ContainerRegistryEventData', 'ContainerServiceClusterSupportEventData', 'ContainerServiceNodePoolRollingEventData']
