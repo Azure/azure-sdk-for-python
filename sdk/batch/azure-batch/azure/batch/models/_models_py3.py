@@ -2614,7 +2614,7 @@ class ContainerConfiguration(Model):
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'ContainerType'},
+        'type': {'key': 'type', 'type': 'str'},
         'container_image_names': {'key': 'containerImageNames', 'type': '[str]'},
         'container_registries': {'key': 'containerRegistries', 'type': '[ContainerRegistry]'},
     }
