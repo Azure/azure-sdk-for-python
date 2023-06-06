@@ -26,7 +26,7 @@ python:
 ```yaml
 title: Azure Communication Rooms Service
 require:
-    - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/af1e7a82ebff0f97dfc90cfe95b1e2cc07594685/specification/communication/data-plane/Rooms/readme.md
+    - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/bb9ff61373e304b02f08fbc4ab083c95adc25b79/specification/communication/data-plane/Rooms/readme.md
 output-folder: ../azure/communication/rooms/_generated
 namespace: azure.communication.rooms
 package-name: azure-communication-rooms
