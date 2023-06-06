@@ -73,10 +73,8 @@ class RouterJob(RouterJobGenerated):
                     datetime_as_str: str = _datetime_as_isostr(k)  # pylint:disable=protected-access
                     notes.pop(k)
                     notes[datetime_as_str] = v
-
         if isinstance(scheduled_time_utc, str):
             scheduled_time_utc = _convert_str_to_datetime(scheduled_time_utc)  # pylint:disable=protected-access
-
         super().__init__(
             channel_reference=channel_reference,
             channel_id=channel_id,

@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.rdbms import MySQLManagementClient
+from azure.mgmt.rdbms import PostgreSQLManagementClient
 
 """
 # PREREQUISITES
@@ -24,19 +24,18 @@ from azure.mgmt.rdbms import MySQLManagementClient
 
 
 def main():
-    client = MySQLManagementClient(
+    client = PostgreSQLManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.server_keys.begin_delete(
+    client.server_keys.begin_delete(
         server_name="testserver",
         key_name="someVault_someKey_01234567890123456789012345678901",
         resource_group_name="testrg",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/legacy/stable/2020-01-01/examples/ServerKeyDelete.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2020-01-01/examples/ServerKeyDelete.json
 if __name__ == "__main__":
     main()

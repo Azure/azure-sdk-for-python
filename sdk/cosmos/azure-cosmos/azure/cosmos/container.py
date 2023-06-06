@@ -576,7 +576,7 @@ class ContainerProxy(object):
         item: Union[str, Dict[str, Any]],
         partition_key: Union[str, int, float, bool],
         patch_operations: List[Dict[str, Any]],
-        **kwargs:Any
+        **kwargs: Any
     ) -> Dict[str, Any]:
         """ **Provisional method** Patches the specified item with the provided operations if it
          exists in the container.
@@ -589,6 +589,7 @@ class ContainerProxy(object):
         :type partition_key: Union[str, int, float, bool]
         :param patch_operations: The list of patch operations to apply to the item.
         :type patch_operations: List[Dict[str, Any]]
+        :keyword str filter_predicate: conditional filter to apply to Patch operations.
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
@@ -606,6 +607,9 @@ class ContainerProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         request_options["disableAutomaticIdGeneration"] = True
         request_options["partitionKey"] = partition_key
+        filter_predicate = kwargs.pop("filter_predicate", None)
+        if filter_predicate is not None:
+            request_options["filterPredicate"] = filter_predicate
 
         item_link = self._get_document_link(item)
         result = self.client_connection.PatchItem(
