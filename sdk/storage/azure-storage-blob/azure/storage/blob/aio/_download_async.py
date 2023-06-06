@@ -12,7 +12,6 @@ from itertools import islice
 from typing import AsyncIterator, Generic, IO, Optional, TypeVar
 
 import asyncio
-
 from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
 
 from .._shared.request_handlers import validate_and_format_range_headers

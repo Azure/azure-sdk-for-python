@@ -10,8 +10,9 @@ import random
 import logging
 from typing import Any, TYPE_CHECKING
 
+from aiohttp import ServerTimeoutError
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, AsyncHTTPPolicy
-from azure.core.exceptions import AzureError
+from azure.core.exceptions import AzureError, IncompleteReadError
 
 from .authentication import StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE, STORAGE_OAUTH_SCOPE
@@ -62,7 +63,10 @@ class AsyncStorageResponseHook(AsyncHTTPPolicy):
             request.context.options.pop('raw_response_hook', self._response_callback)
 
         response = await self.next.send(request)
-        await response.http_response.load_body()
+        try:
+            await response.http_response.load_body()
+        except ServerTimeoutError:
+            raise IncompleteReadError("ServerTimeoutError re-raised as IncompleteReadError")
 
         will_retry = is_retry(response, request.context.options.get('mode'))
         # Auth error could come from Bearer challenge, in which case this request will be made again
