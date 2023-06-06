@@ -2,7 +2,7 @@
 
 ## 1.0.0 (2023-06-12)
 
-- General Availability version of the Azure Communication Services Rooms Python SDK.
+- Stable release of `azure-communication-rooms`.
 
 ## 1.0.0b3 (2023-05-17)
 
