@@ -6,7 +6,7 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 ## Deprecation notice
 
-This package was EOL-ed on 3/31/2023.
+This package reached the end of its life and is no longer supported as of 3/31/2023.
 
 ## _Disclaimer_
 
