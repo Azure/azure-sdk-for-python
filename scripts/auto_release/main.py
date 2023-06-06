@@ -279,23 +279,26 @@ class CodegenTestPR:
         else:
             log("{python_md} does not exist")
         os.chdir(Path(f'sdk/{self.sdk_folder}'))
-        # add `title` in sdk_packaging.toml
-        if title:
-            toml = Path(f"azure-mgmt-{self.package_name}") / "sdk_packaging.toml"
-            if toml.exists():
-                def edit_toml(content: List[str]):
-                    has_title = False
-                    for line in content:
-                        if "title" in line:
-                            has_title = True
-                            break
-                    if not has_title:
-                        content.append(f"title = \"{title}\"\n")
-                modify_file(str(toml), edit_toml)
-            else:
-                log(f"{os.getcwd()}/{toml} does not exist")
+        # add `title` and update `is_stable` in sdk_packaging.toml
+        toml = Path(f"azure-mgmt-{self.package_name}") / "sdk_packaging.toml"
+        stable_config = "is_stable = " + ("true" if self.tag_is_stable else "false") + "\n"
+        if toml.exists():
+            def edit_toml(content: List[str]):
+                has_title = False
+                has_isstable = False
+                for idx in range(len(content)):
+                    if "title" in content[idx]:
+                        has_title = True
+                    if "is_stable" in content[idx]:
+                        has_isstable = True
+                        content[idx] = stable_config
+                if not has_title:
+                    content.append(f"title = \"{title}\"\n")
+                if not has_isstable:
+                    content.append(stable_config)
+            modify_file(str(toml), edit_toml)
         else:
-            log(f"do not find title in {python_md}")
+            log(f"{os.getcwd()}/{toml} does not exist")
 
         print_check(f'python -m packaging_tools --build-conf azure-mgmt-{self.package_name}')
         log('packaging_tools --build-conf successfully ')
