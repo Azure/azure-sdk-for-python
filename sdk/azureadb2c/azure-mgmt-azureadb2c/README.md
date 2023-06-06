@@ -4,6 +4,10 @@ This is the Microsoft Azure Azureadb2c Management Client Library.
 This package has been tested with Python 3.6+.
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
+## Deprecation notice
+
+This package reached the end of its life and is no longer supported as of 3/31/2023.
+
 ## _Disclaimer_
 
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
