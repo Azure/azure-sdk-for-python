@@ -169,7 +169,7 @@ def download_text_from_url(
         timeout_params = {}
     else:
         connect_timeout, read_timeout = timeout if isinstance(timeout, tuple) else (timeout, timeout)
-        timeout_params = dict(read_timeout=read_timeout, connection_timeout=connect_timeout)
+        timeout_params = {"read_timeout": read_timeout, "connection_timeout": connect_timeout}
 
     response = requests_pipeline.get(source_uri, **timeout_params)
     # Match old behavior from execution service's status API.
@@ -637,7 +637,7 @@ def convert_identity_dict(
             if identity.user_assigned_identities:
                 if isinstance(identity.user_assigned_identities, dict):  # if the identity is already in right format
                     return identity
-                ids = dict()
+                ids = {}
                 for id in identity.user_assigned_identities:  # pylint: disable=redefined-builtin
                     ids[id["resource_id"]] = {}
                 identity.user_assigned_identities = ids
