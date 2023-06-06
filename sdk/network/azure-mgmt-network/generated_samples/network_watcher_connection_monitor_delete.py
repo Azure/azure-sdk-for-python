@@ -29,12 +29,11 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.connection_monitors.begin_delete(
+    client.connection_monitors.begin_delete(
         resource_group_name="rg1",
         network_watcher_name="nw1",
         connection_monitor_name="cm1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/NetworkWatcherConnectionMonitorDelete.json

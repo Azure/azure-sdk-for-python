@@ -29,12 +29,11 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.vip_swap.begin_create(
+    client.vip_swap.begin_create(
         group_name="rg1",
         resource_name="testCloudService",
         parameters={"properties": {"slotType": "Production"}},
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/CloudServiceSwapPut.json
