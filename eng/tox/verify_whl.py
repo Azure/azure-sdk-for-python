@@ -48,7 +48,7 @@ def extract_whl(dist_dir, version):
 
 
 def verify_whl_root_directory(dist_dir, expected_top_level_module, version):
-    # This method ensures root directory in whl is the directoy indicated by our top level namespace
+    # This method ensures root directory in whl is the directory indicated by our top level namespace
     extract_location = extract_whl(dist_dir, version)
     root_folders = os.listdir(extract_location)
 
