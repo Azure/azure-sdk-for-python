@@ -93,10 +93,10 @@ class Command(InternalBaseNode):
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
         rest_obj.update(
-            dict(
-                limits=get_rest_dict_for_node_attrs(self.limits, clear_empty_value=True),
-                resources=get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
-            )
+            {
+                "limits": get_rest_dict_for_node_attrs(self.limits, clear_empty_value=True),
+                "resources": get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
+            }
         )
         return rest_obj
 
@@ -164,8 +164,8 @@ class Distributed(Command):
         rest_obj = super()._to_rest_object(**kwargs)
         distribution = self.distribution._to_rest_object() if self.distribution else None  # pylint: disable=no-member
         rest_obj.update(
-            dict(
-                distribution=get_rest_dict_for_node_attrs(distribution),
-            )
+            {
+                "distribution": get_rest_dict_for_node_attrs(distribution),
+            }
         )
         return rest_obj

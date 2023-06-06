@@ -35,7 +35,7 @@ def index_entity_response_to_job(entity: IndexEntityResponse) -> Job:
         tags=annotations.tags,
         properties=properties.additional_properties["userProperties"],
         experiment_name=properties.additional_properties["experimentName"],
-        services=dict(),
+        services={},
         status=annotations.additional_properties["status"],
         creation_context=creation_context,
         compute=properties.additional_properties["compute"]["armId"]
