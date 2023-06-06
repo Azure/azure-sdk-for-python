@@ -111,6 +111,7 @@ class DockerClient(object):
         azureml_port: int,
         local_endpoint_mode: LocalEndpointMode,
         prebuilt_image_name: Optional[str] = None,
+        local_enable_gpu: Optional[bool] = False,
     ) -> None:
         """Builds and runs an image from provided image context.
 
@@ -140,6 +141,8 @@ class DockerClient(object):
         :type local_endpoint_mode: LocalEndpointMode
         :param prebuilt_image_name: Name of pre-built image from customer if using BYOC flow.
         :type prebuilt_image_name: str
+        :param local_enable_gpu: enable local container to access gpu
+        :type local_enable_gpu: bool
         """
         # Prepare image
         if prebuilt_image_name is None:
@@ -189,6 +192,7 @@ class DockerClient(object):
         module_logger.debug("Mounting volumes: '%s'\n", volumes)
         module_logger.debug("Setting environment variables: '%s'\n", environment)
         container_name = _get_container_name(endpoint_name, deployment_name)
+        device_requests = [docker.types.DeviceRequest(count=-1, capabilities=[["gpu"]])] if local_enable_gpu else None
         container = self._client.containers.create(
             image_name,
             name=container_name,
@@ -198,6 +202,7 @@ class DockerClient(object):
             detach=True,
             tty=True,
             publish_all_ports=True,
+            device_requests=device_requests,
         )
         if local_endpoint_mode == LocalEndpointMode.VSCodeDevContainer:
             try:
