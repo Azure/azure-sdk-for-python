@@ -11,7 +11,6 @@ import subprocess
 import sys
 import time
 from typing import List, Optional, Any, Dict
-import six
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -184,8 +183,8 @@ def _run_command(command: str, timeout: int) -> str:
     except OSError as ex:
         # failed to execute 'cmd' or '/bin/sh'
         error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))
-        six.raise_from(error, ex)
+        raise error from ex
     except Exception as ex:  # pylint:disable=broad-except
         # could be a timeout, for example
         error = CredentialUnavailableError(message="Failed to invoke the Azure CLI")
-        six.raise_from(error, ex)
+        raise error from ex

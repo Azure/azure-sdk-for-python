@@ -19,8 +19,7 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from msal import TokenCache
 import msal
 import pytest
-import six
-from six.moves.urllib_parse import urlparse
+from urllib.parse import urlparse
 
 from helpers import (
     build_aad_response,
@@ -253,12 +252,15 @@ def validate_jwt(request, client_id, cert_bytes, cert_password, expect_x5c=False
         cert = x509.load_pem_x509_certificate(cert_bytes, default_backend())
     except ValueError:
         if cert_password:
-            cert_password = six.ensure_binary(cert_password)
+            if isinstance(cert_password, str):
+                cert_password = cert_password.encode("utf-8")
         cert_bytes = load_pkcs12_certificate(cert_bytes, cert_password).pem_bytes
         cert = x509.load_pem_x509_certificate(cert_bytes, default_backend())
 
     # jwt is of the form 'header.payload.signature'; 'signature' is 'header.payload' signed with cert's private key
-    jwt = six.ensure_str(request.body["client_assertion"])
+    jwt = request.body["client_assertion"]
+    if isinstance(jwt, bytes):
+        jwt = jwt.decode("utf-8")
     header, payload, signature = (urlsafeb64_decode(s) for s in jwt.split("."))
     signed_part = jwt[: jwt.rfind(".")]
 
