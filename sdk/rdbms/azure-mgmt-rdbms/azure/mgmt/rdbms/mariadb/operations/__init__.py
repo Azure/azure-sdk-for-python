@@ -25,35 +25,45 @@ from ._wait_statistics_operations import WaitStatisticsOperations
 from ._maria_db_management_client_operations import MariaDBManagementClientOperationsMixin
 from ._advisors_operations import AdvisorsOperations
 from ._recommended_actions_operations import RecommendedActionsOperations
-from ._location_based_recommended_action_sessions_operation_status_operations import LocationBasedRecommendedActionSessionsOperationStatusOperations
-from ._location_based_recommended_action_sessions_result_operations import LocationBasedRecommendedActionSessionsResultOperations
+from ._location_based_recommended_action_sessions_operation_status_operations import (
+    LocationBasedRecommendedActionSessionsOperationStatusOperations,
+)
+from ._location_based_recommended_action_sessions_result_operations import (
+    LocationBasedRecommendedActionSessionsResultOperations,
+)
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'ServersOperations',
-    'ReplicasOperations',
-    'FirewallRulesOperations',
-    'VirtualNetworkRulesOperations',
-    'DatabasesOperations',
-    'ConfigurationsOperations',
-    'ServerParametersOperations',
-    'LogFilesOperations',
-    'RecoverableServersOperations',
-    'ServerBasedPerformanceTierOperations',
-    'LocationBasedPerformanceTierOperations',
-    'CheckNameAvailabilityOperations',
-    'Operations',
-    'QueryTextsOperations',
-    'TopQueryStatisticsOperations',
-    'WaitStatisticsOperations',
-    'MariaDBManagementClientOperationsMixin',
-    'AdvisorsOperations',
-    'RecommendedActionsOperations',
-    'LocationBasedRecommendedActionSessionsOperationStatusOperations',
-    'LocationBasedRecommendedActionSessionsResultOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
-    'ServerSecurityAlertPoliciesOperations',
+    "ServersOperations",
+    "ReplicasOperations",
+    "FirewallRulesOperations",
+    "VirtualNetworkRulesOperations",
+    "DatabasesOperations",
+    "ConfigurationsOperations",
+    "ServerParametersOperations",
+    "LogFilesOperations",
+    "RecoverableServersOperations",
+    "ServerBasedPerformanceTierOperations",
+    "LocationBasedPerformanceTierOperations",
+    "CheckNameAvailabilityOperations",
+    "Operations",
+    "QueryTextsOperations",
+    "TopQueryStatisticsOperations",
+    "WaitStatisticsOperations",
+    "MariaDBManagementClientOperationsMixin",
+    "AdvisorsOperations",
+    "RecommendedActionsOperations",
+    "LocationBasedRecommendedActionSessionsOperationStatusOperations",
+    "LocationBasedRecommendedActionSessionsResultOperations",
+    "PrivateEndpointConnectionsOperations",
+    "PrivateLinkResourcesOperations",
+    "ServerSecurityAlertPoliciesOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
