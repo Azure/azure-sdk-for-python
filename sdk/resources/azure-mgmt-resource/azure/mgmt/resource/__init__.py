@@ -14,6 +14,7 @@ from .locks import ManagementLockClient
 from .policy import PolicyClient
 from .resources import ResourceManagementClient
 from .subscriptions import SubscriptionClient
+from .deploymentstacks import DeploymentStacksClient
 __all__ = ['ApplicationClient',
            'DeploymentScriptsClient',
            'FeatureClient',
@@ -21,4 +22,5 @@ __all__ = ['ApplicationClient',
            'ManagementLinkClient',
            'ManagementLockClient',
            'ResourceManagementClient',
-           'SubscriptionClient']
+           'SubscriptionClient',
+           'DeploymentStacksClient']
