@@ -84,7 +84,7 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
         training_data = Input(type=AssetTypes.MLTABLE, path=train_path)
         validation_data = Input(type=AssetTypes.MLTABLE, path=val_path)
         properties = get_automl_job_properties()
-        # properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/image_classification_pipeline/versions/0.0.5"
+        properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/image_classification_pipeline/versions/0.0.5"
 
         # Make generic classification job
         image_classification_job = automl.image_classification(

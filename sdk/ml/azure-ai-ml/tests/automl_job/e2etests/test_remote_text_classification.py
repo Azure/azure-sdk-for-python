@@ -26,7 +26,7 @@ class TestTextClassification(AzureRecordedTestCase):
     ) -> None:
         training_data, validation_data, target_column_name = newsgroup
         properties = get_automl_job_properties()
-        # properties['_pipeline_id_override'] = TODO
+        properties['_pipeline_id_override'] = "azureml:/subscriptions/ed2cab61-14cc-4fb3-ac23-d72609214cfd/resourceGroups/training_rg/providers/Microsoft.MachineLearningServices/workspaces/rakoll-automlnlp-ws/components/nlp_textclassification_multiclass_rakoll/versions/0.0.4"
 
         job = text_classification(
             training_data=training_data,

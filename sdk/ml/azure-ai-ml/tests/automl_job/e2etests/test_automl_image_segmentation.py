@@ -76,7 +76,7 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
         validation_data = Input(type=AssetTypes.MLTABLE, path=val_path)
 
         properties = get_automl_job_properties()
-        # properties["_pipeline_id_override"] = "azureml://registries/azmlft-dev-registry01/components/image_object_detection_pipeline/versions/0.0.5"
+        properties["_pipeline_id_override"] = "azureml://registries/azmlft-dev-registry01/components/image_instance_segmentation_pipeline/versions/0.0.5"
 
         # Make generic segmentation job
         image_instance_segmentation_job = automl.image_instance_segmentation(

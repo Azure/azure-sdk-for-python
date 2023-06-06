@@ -26,7 +26,7 @@ class TestTextNer(AzureRecordedTestCase):
     ) -> None:
         training_data, validation_data = conll
         properties = get_automl_job_properties()
-        # properties['_pipeline_id_override'] = TODO
+        properties['_pipeline_id_override'] = "azureml:/subscriptions/ed2cab61-14cc-4fb3-ac23-d72609214cfd/resourceGroups/training_rg/providers/Microsoft.MachineLearningServices/workspaces/rakoll-automlnlp-ws/components/nlp_textclassification_ner_pipelinecomponent/versions/0.0.6"
 
         job = text_ner(
             training_data=training_data,
