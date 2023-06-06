@@ -51,7 +51,7 @@ class DataCollector:
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestDataCollector) -> "DataCollector":
-        collections = dict()
+        collections = {}
         for k, v in rest_obj.collections.items():
             sampling_rate = v.sampling_rate
             collections[k] = DeploymentCollection._from_rest_object(v)
@@ -77,7 +77,7 @@ class DataCollector:
         if self.request_logging:
             self.request_logging = self.request_logging._to_rest_object()
         if self.collections:
-            rest_collections = dict()
+            rest_collections = {}
             for k, v in self.collections.items():
                 rest_collections[k] = v._to_rest_object()
         return RestDataCollector(
