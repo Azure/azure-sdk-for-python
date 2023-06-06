@@ -144,7 +144,7 @@ def load_from_dict(schema: Any, data: Dict, context: Dict, additional_message: s
         return schema(context=context).load(data, **kwargs)
     except ValidationError as e:
         pretty_error = json.dumps(e.normalized_messages(), indent=2)
-        raise ValidationError(decorate_validation_error(schema, pretty_error, additional_message))
+        raise ValidationError(decorate_validation_error(schema, pretty_error, additional_message)) from e
 
 
 def decorate_validation_error(schema: Any, pretty_error: str, additional_message: str = "") -> str:

@@ -7,7 +7,7 @@
 import json
 import logging
 import traceback
-from abc import abstractclassmethod, abstractmethod
+from abc import abstractmethod
 from collections import OrderedDict
 from os import PathLike
 from pathlib import Path
@@ -318,7 +318,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                 message=str(ex),
                 no_personal_data_message=f"Unable to parse a job resource of type:{type(obj).__name__}",
                 error_category=ErrorCategory.SYSTEM_ERROR,
-            )
+            ) from ex
         else:
             msg = f"Unsupported job type {obj.properties.job_type}"
             raise JobException(
@@ -332,6 +332,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         telemetry_values = {"type": self.type}
         return telemetry_values
 
-    @abstractclassmethod
+    @classmethod
+    @abstractmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Job":
         pass

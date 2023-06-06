@@ -742,7 +742,7 @@ def _get_latest_version_from_container(
         )
         version = container.properties.latest_version
 
-    except ResourceNotFoundError:
+    except ResourceNotFoundError as e:
         message = (
             f"Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
@@ -759,7 +759,7 @@ def _get_latest_version_from_container(
             target=ErrorTarget.ASSET,
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
-        )
+        ) from e
     return version
 
 
