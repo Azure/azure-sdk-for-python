@@ -36,7 +36,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_reset_query_performance_insight_data_request(  # pylint: disable=name-too-long
+def build_reset_query_performance_insight_data_request(
     resource_group_name: str, server_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -69,7 +69,7 @@ def build_reset_query_performance_insight_data_request(  # pylint: disable=name-
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_recommended_action_session_request(  # pylint: disable=name-too-long
+def build_create_recommended_action_session_request(
     resource_group_name: str,
     server_name: str,
     advisor_name: str,
@@ -169,7 +169,7 @@ class MySQLManagementClientOperationsMixin(MySQLManagementClientMixinABC):
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/servers/{serverName}/resetQueryPerformanceInsightData"
     }
 
-    def _create_recommended_action_session_initial(  # pylint: disable=inconsistent-return-statements,name-too-long
+    def _create_recommended_action_session_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, server_name: str, advisor_name: str, database_name: str, **kwargs: Any
     ) -> None:
         error_map = {

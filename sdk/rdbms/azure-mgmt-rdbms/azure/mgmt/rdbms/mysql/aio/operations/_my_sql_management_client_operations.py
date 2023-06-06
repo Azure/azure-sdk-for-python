@@ -102,7 +102,7 @@ class MySQLManagementClientOperationsMixin(MySQLManagementClientMixinABC):
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/servers/{serverName}/resetQueryPerformanceInsightData"
     }
 
-    async def _create_recommended_action_session_initial(  # pylint: disable=inconsistent-return-statements,name-too-long
+    async def _create_recommended_action_session_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, server_name: str, advisor_name: str, database_name: str, **kwargs: Any
     ) -> None:
         error_map = {
