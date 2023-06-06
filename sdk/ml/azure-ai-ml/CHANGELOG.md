@@ -16,6 +16,7 @@
 ### Breaking Changes
 
 ### Other Changes
+- Log level of unknown field notifications for pipeline nodes raised from INFO to WARNING.
 
 
 ## 1.7.2 (2023-05-18)
