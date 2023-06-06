@@ -1,5 +1,12 @@
 # Release History
 
+## 30.1.0 (2023-06-06)
+
+### Features Added
+
+  - Added model CommunityGalleryImageIdentifier
+  - Added model EdgeZoneStorageAccountType
+
 ## 30.0.0 (2023-05-25)
 
 ### Features Added
