@@ -136,7 +136,7 @@ def find_type_in_override(params_override: Optional[list] = None) -> Optional[st
 
 
 def is_compute_in_override(params_override: Optional[list] = None) -> bool:
-    return any([EndpointYamlFields.COMPUTE in param for param in params_override])
+    return any(EndpointYamlFields.COMPUTE in param for param in params_override)
 
 
 def load_from_dict(schema: Any, data: Dict, context: Dict, additional_message: str = "", **kwargs):
