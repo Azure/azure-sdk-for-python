@@ -400,7 +400,7 @@ class TestIfElse(TestControlFlowPipeline):
 
     def test_if_else_with_group_input(self, client: MLClient):
         hello_world_component_no_paths = load_component(
-            source=r"D:\Project\azure-sdk-for-python\sdk\ml\azure-ai-ml/tests/test_configs/components/helloworld_component_no_paths.yml"
+            source=r"./tests/test_configs/components/helloworld_component_no_paths.yml"
         )
 
         @group
