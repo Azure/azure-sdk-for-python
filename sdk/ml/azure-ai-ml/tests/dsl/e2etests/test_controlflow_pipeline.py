@@ -424,10 +424,11 @@ class TestIfElse(TestControlFlowPipeline):
 
         dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"]["expression_component"] == {
-            'environment_variables': {'AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED': 'true'}, 'name': 'expression_component',
-            'type': 'command',
-            'inputs': {'num': {'job_input_type': 'literal', 'value': '${{parent.inputs.group_input.input_group.num}}'}},
-            '_source': 'REMOTE.WORKSPACE.COMPONENT'
+            "environment_variables": {"AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED": "true"},
+            "name": "expression_component",
+            "type": "command",
+            "inputs": {"num": {"job_input_type": "literal", "value": "${{parent.inputs.group_input.input_group.num}}"}},
+            "_source": "REMOTE.WORKSPACE.COMPONENT",
         }
 
 
