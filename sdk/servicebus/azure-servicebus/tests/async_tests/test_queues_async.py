@@ -78,70 +78,70 @@ _logger = get_logger(logging.DEBUG)
 
 class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
 
-    # @pytest.mark.asyncio
-    # @pytest.mark.liveTest
-    # @pytest.mark.live_test_only
-    # @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    # @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    # @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
-    # @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    # @ArgPasserAsync()
-    # async def test_async_queue_by_queue_client_conn_str_receive_handler_peeklock(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
-    #     async with ServiceBusClient.from_connection_string(
-    #         servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
+    @pytest.mark.asyncio
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_async_queue_by_queue_client_conn_str_receive_handler_peeklock(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
-    #         sender = sb_client.get_queue_sender(servicebus_queue.name)
-    #         async with sender:
-    #             for i in range(10):
-    #                 message = ServiceBusMessage("Handler message no. {}".format(i))
-    #                 await sender.send_messages(message, timeout=5)
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            async with sender:
+                for i in range(10):
+                    message = ServiceBusMessage("Handler message no. {}".format(i))
+                    await sender.send_messages(message, timeout=5)
 
-    #             # Test that noop empty send works properly.
-    #             await sender.send_messages([])
-    #             await sender.send_messages(ServiceBusMessageBatch())
-    #             assert len(await sender.schedule_messages([], utc_now())) == 0
-    #             await sender.cancel_scheduled_messages([])
+                # Test that noop empty send works properly.
+                await sender.send_messages([])
+                await sender.send_messages(ServiceBusMessageBatch())
+                assert len(await sender.schedule_messages([], utc_now())) == 0
+                await sender.cancel_scheduled_messages([])
 
-    #         # Then test expected failure modes.
-    #         with pytest.raises(ValueError):
-    #             async with sender:
-    #                 raise AssertionError("Should raise ValueError")
-    #         with pytest.raises(ValueError):
-    #             await sender.send_messages(ServiceBusMessage('msg'))
-    #         with pytest.raises(ValueError):
-    #             await sender.schedule_messages(ServiceBusMessage('msg'), utc_now())
-    #         with pytest.raises(ValueError):
-    #             await sender.cancel_scheduled_messages([1, 2, 3])
+            # Then test expected failure modes.
+            with pytest.raises(ValueError):
+                async with sender:
+                    raise AssertionError("Should raise ValueError")
+            with pytest.raises(ValueError):
+                await sender.send_messages(ServiceBusMessage('msg'))
+            with pytest.raises(ValueError):
+                await sender.schedule_messages(ServiceBusMessage('msg'), utc_now())
+            with pytest.raises(ValueError):
+                await sender.cancel_scheduled_messages([1, 2, 3])
 
-    #         with pytest.raises(ServiceBusError):
-    #             await (sb_client.get_queue_receiver(servicebus_queue.name, session_id="test", max_wait_time=5))._open_with_retry()
+            with pytest.raises(ServiceBusError):
+                await (sb_client.get_queue_receiver(servicebus_queue.name, session_id="test", max_wait_time=5))._open_with_retry()
 
-    #         with pytest.raises(ValueError):
-    #             sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=0)
+            with pytest.raises(ValueError):
+                sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=0)
 
-    #         receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
-    #         async with receiver:
-    #             assert len(await receiver.receive_deferred_messages([])) == 0
-    #             with pytest.raises(ValueError):
-    #                 await receiver.receive_messages(max_wait_time=0)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+            async with receiver:
+                assert len(await receiver.receive_deferred_messages([])) == 0
+                with pytest.raises(ValueError):
+                    await receiver.receive_messages(max_wait_time=0)
 
-    #             count = 0
-    #             async for message in receiver:
-    #                 print_message(_logger, message)
-    #                 count += 1
-    #                 await receiver.complete_message(message)
+                count = 0
+                async for message in receiver:
+                    print_message(_logger, message)
+                    count += 1
+                    await receiver.complete_message(message)
 
-    #         assert count == 10
+            assert count == 10
 
-    #         with pytest.raises(ValueError):
-    #             await receiver.receive_messages()
-    #         with pytest.raises(ValueError):
-    #             async with receiver:
-    #                 raise AssertionError("Should raise ValueError")
-    #         with pytest.raises(ValueError):
-    #             await receiver.receive_deferred_messages([1, 2, 3])
-    #         with pytest.raises(ValueError):
-    #             await receiver.peek_messages()
+            with pytest.raises(ValueError):
+                await receiver.receive_messages()
+            with pytest.raises(ValueError):
+                async with receiver:
+                    raise AssertionError("Should raise ValueError")
+            with pytest.raises(ValueError):
+                await receiver.receive_deferred_messages([1, 2, 3])
+            with pytest.raises(ValueError):
+                await receiver.peek_messages()
 
     
     # @pytest.mark.asyncio

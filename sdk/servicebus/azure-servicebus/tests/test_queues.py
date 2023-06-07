@@ -1,82 +1,82 @@
-# #-------------------------------------------------------------------------
-# # Copyright (c) Microsoft Corporation. All rights reserved.
-# # Licensed under the MIT License. See License.txt in the project root for
-# # license information.
-# #--------------------------------------------------------------------------
+#-------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+#--------------------------------------------------------------------------
 
-# import logging
-# import sys
-# import os
-# import json
-# from concurrent.futures import ThreadPoolExecutor
-# import types
-# import pytest
-# import time
-# import uuid
-# from datetime import datetime, timedelta
-# import calendar
-# import unittest
-# import pickle
+import logging
+import sys
+import os
+import json
+from concurrent.futures import ThreadPoolExecutor
+import types
+import pytest
+import time
+import uuid
+from datetime import datetime, timedelta
+import calendar
+import unittest
+import pickle
 
-# try:
-#     import uamqp
-#     from azure.servicebus._transport._uamqp_transport import UamqpTransport
-# except ImportError:
-#     uamqp = None
+try:
+    import uamqp
+    from azure.servicebus._transport._uamqp_transport import UamqpTransport
+except ImportError:
+    uamqp = None
 
-# from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
-# from azure.servicebus._pyamqp.message import Message
-# from azure.servicebus._pyamqp import error, client, management_operation
-# from azure.servicebus import (
-#     ServiceBusClient,
-#     AutoLockRenewer,
-#     TransportType,
-#     ServiceBusMessage,
-#     ServiceBusMessageBatch,
-#     ServiceBusReceivedMessage,
-#     ServiceBusReceiveMode,
-#     ServiceBusSubQueue,
-#     ServiceBusMessageState
-# )
-# from azure.servicebus.amqp import (
-#     AmqpMessageHeader,
-#     AmqpMessageBodyType,
-#     AmqpAnnotatedMessage,
-#     AmqpMessageProperties,
-# )
-# from azure.servicebus._common.constants import (
-#     _X_OPT_LOCK_TOKEN,
-#     _X_OPT_PARTITION_KEY,
-#     _X_OPT_VIA_PARTITION_KEY,
-#     _X_OPT_SCHEDULED_ENQUEUE_TIME,
-#     ServiceBusMessageState
-# )
-# from azure.servicebus._common.utils import utc_now
-# from azure.servicebus.management._models import DictMixin
-# from azure.servicebus.exceptions import (
-#     ServiceBusConnectionError,
-#     ServiceBusError,
-#     MessageLockLostError,
-#     MessageAlreadySettled,
-#     AutoLockRenewTimeout,
-#     MessageSizeExceededError,
-#     OperationTimeoutError
-# )
+from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
+from azure.servicebus._pyamqp.message import Message
+from azure.servicebus._pyamqp import error, client, management_operation
+from azure.servicebus import (
+    ServiceBusClient,
+    AutoLockRenewer,
+    TransportType,
+    ServiceBusMessage,
+    ServiceBusMessageBatch,
+    ServiceBusReceivedMessage,
+    ServiceBusReceiveMode,
+    ServiceBusSubQueue,
+    ServiceBusMessageState
+)
+from azure.servicebus.amqp import (
+    AmqpMessageHeader,
+    AmqpMessageBodyType,
+    AmqpAnnotatedMessage,
+    AmqpMessageProperties,
+)
+from azure.servicebus._common.constants import (
+    _X_OPT_LOCK_TOKEN,
+    _X_OPT_PARTITION_KEY,
+    _X_OPT_VIA_PARTITION_KEY,
+    _X_OPT_SCHEDULED_ENQUEUE_TIME,
+    ServiceBusMessageState
+)
+from azure.servicebus._common.utils import utc_now
+from azure.servicebus.management._models import DictMixin
+from azure.servicebus.exceptions import (
+    ServiceBusConnectionError,
+    ServiceBusError,
+    MessageLockLostError,
+    MessageAlreadySettled,
+    AutoLockRenewTimeout,
+    MessageSizeExceededError,
+    OperationTimeoutError
+)
 
-# from devtools_testutils import AzureMgmtRecordedTestCase
-# from servicebus_preparer import (
-#     CachedServiceBusNamespacePreparer,
-#     ServiceBusQueuePreparer,
-#     CachedServiceBusQueuePreparer,
-#     CachedServiceBusResourceGroupPreparer
-# )
-# from utilities import get_logger, print_message, sleep_until_expired
-# from mocks import MockReceivedMessage, MockReceiver
-# from utilities import uamqp_transport as get_uamqp_transport, ArgPasser
+from devtools_testutils import AzureMgmtRecordedTestCase
+from servicebus_preparer import (
+    CachedServiceBusNamespacePreparer,
+    ServiceBusQueuePreparer,
+    CachedServiceBusQueuePreparer,
+    CachedServiceBusResourceGroupPreparer
+)
+from utilities import get_logger, print_message, sleep_until_expired
+from mocks import MockReceivedMessage, MockReceiver
+from utilities import uamqp_transport as get_uamqp_transport, ArgPasser
 
-# uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
+uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 
-# _logger = get_logger(logging.DEBUG)
+_logger = get_logger(logging.DEBUG)
 
 
 # # A note regarding live_test_only.
@@ -1053,23 +1053,23 @@
 #             assert count == 10
     
 
-#     @pytest.mark.liveTest
-#     @pytest.mark.live_test_only
-#     @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-#     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-#     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-#     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-#     @ArgPasser()
-#     def test_queue_by_servicebus_client_session_fail(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_queue_by_servicebus_client_session_fail(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
     
-#         with ServiceBusClient.from_connection_string(
-#             servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
-#             with pytest.raises(ServiceBusError):
-#                 sb_client.get_queue_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
+            with pytest.raises(ServiceBusError):
+                sb_client.get_queue_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
     
-#             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-#                 sender.send_messages(ServiceBusMessage("test session sender", session_id="test"))
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                sender.send_messages(ServiceBusMessage("test session sender", session_id="test"))
     
 
 #     @pytest.mark.liveTest
