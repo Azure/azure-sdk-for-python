@@ -213,7 +213,7 @@ async def analyze_tax_us_w2_async():
                 employer_state_id_number = tax.value.get("EmployerStateIdNumber")
                 if employer_state_id_number:
                     print(
-                        "...Employer state ID number: {employer_state_id_number.value} has "
+                        f"...Employer state ID number: {employer_state_id_number.value} has "
                         f"confidence: {employer_state_id_number.confidence}"
                     )
                 state_wages_tips  = tax.value.get("StateWagesTipsEtc")

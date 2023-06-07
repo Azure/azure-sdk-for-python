@@ -60,19 +60,15 @@ async def analyze_layout_async():
             )
         result = await poller.result()
 
-    for idx, style in enumerate(result.styles):
+    for style in result.styles:
         print(
-            "Document contains {} content".format(
-                "handwritten" if style.is_handwritten else "no handwritten"
-            )
+            f"Document contains {'handwritten' if style.is_handwritten else 'no handwritten'} content"
         )
 
-    for idx, page in enumerate(result.pages):
-        print(f"----Analyzing layout from page #{idx + 1}----")
+    for page in result.pages:
+        print(f"----Analyzing layout from page #{page.page_number}----")
         print(
-            "Page has width: {} and height: {}, measured with unit: {}".format(
-                page.width, page.height, page.unit
-            )
+            f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}"
         )
 
         for line_idx, line in enumerate(page.lines):

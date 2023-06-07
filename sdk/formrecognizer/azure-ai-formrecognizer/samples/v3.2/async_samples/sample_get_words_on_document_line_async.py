@@ -61,8 +61,8 @@ async def get_words_on_document_line_async():
             )
         result = await poller.result()
 
-    for idx, page in enumerate(result.pages):
-        print(f"----Analyzing lines and words from page #{idx + 1}----")
+    for page in result.pages:
+        print(f"----Analyzing lines and words from page #{page.page_number}----")
         print(
             f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}"
         )

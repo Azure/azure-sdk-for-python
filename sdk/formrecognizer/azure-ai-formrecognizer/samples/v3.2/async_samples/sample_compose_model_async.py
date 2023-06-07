@@ -84,11 +84,11 @@ async def sample_compose_model_async():
     print("Office Supplies Composed Model Info:")
     print(f"Model ID: {model.model_id}")
     print(f"Description: {model.description}")
-    print(f"Model created on: {model.created_on}\n")
+    print(f"Model created on: {model.created_on}")
     print(f"Model expires on: {model.expires_on}")
     print("Doc types the model can recognize:")
     for name, doc_type in model.doc_types.items():
-        print(f"\nDoc Type: '{name}' which has the following fields:")
+        print(f"Doc Type: '{name}' which has the following fields:")
         for field_name, field in doc_type.field_schema.items():
             print(
                 f"Field: '{field_name}' has type '{field['type']}' and confidence score "
