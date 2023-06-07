@@ -20,16 +20,17 @@ from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationE
 module_logger = logging.getLogger(__name__)
 
 
-def _find_deepest_dictionary(data):
+def _find_deepest_dictionary(data: dict) -> dict:
     """
     Find deepest dictionary in nested dictionary.
     Used here to get nested error message. Can't be in utils.py due to circular import.
     """
-    if not any(isinstance(data.get(key), dict) for key in data):
-        return data
-    for key in data:
-        if isinstance(data.get(key), dict):
-            return _find_deepest_dictionary(data.get(key))
+
+    for v in data.values():
+        if isinstance(v, dict):
+            return _find_deepest_dictionary(v)
+
+    return data
 
 
 def get_entity_type(error: Union[SchemaValidationError, ValidationException]) -> Tuple[str, str]:
