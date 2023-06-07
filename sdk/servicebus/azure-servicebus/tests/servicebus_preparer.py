@@ -583,6 +583,6 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
 
 CachedServiceBusResourceGroupPreparer = functools.partial(ServiceBusResourceGroupPreparer, use_cache=True, random_name_enabled=True)
 CachedServiceBusNamespacePreparer = functools.partial(ServiceBusNamespacePreparer, use_cache=True)
-CachedServiceBusQueuePreparer = functools.partial(ServiceBusQueuePreparer, use_cache=False)
-CachedServiceBusTopicPreparer = functools.partial(ServiceBusTopicPreparer, use_cache=False)
+CachedServiceBusQueuePreparer = functools.partial(ServiceBusQueuePreparer, use_cache=True)
+CachedServiceBusTopicPreparer = functools.partial(ServiceBusTopicPreparer, use_cache=True)
 CachedServiceBusSubscriptionPreparer = functools.partial(ServiceBusSubscriptionPreparer, use_cache=True)
