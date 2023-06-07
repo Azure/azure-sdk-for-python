@@ -21,9 +21,18 @@ from azure.ai.ml.entities._util import load_from_dict
 class AutoScaleSettings:
     """Auto-scale settings for Synapse Spark compute.
 
+    :param min_node_count: Minimum compute node count.
+    :type min_node_count: Optional[int]
+    :param max_node_count: Maximum compute node count.
+    :type max_node_count: Optional[int]
+    :param enabled: Specifies if Auto-scale is enabled.
+    :type enabled: Optional[bool]
+
     .. admonition:: Example:
         :class: tip
+
         .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+
             :start-after: [START synapse_spark_compute_configuration]
             :end-before: [END synapse_spark_compute_configuration]
             :language: python
@@ -38,14 +47,6 @@ class AutoScaleSettings:
         max_node_count: Optional[int] = None,
         enabled: Optional[bool] = None,
     ) -> None:
-        """
-        :param min_node_count: Minimum compute node count.
-        :type min_node_count: Optional[int]
-        :param max_node_count: Maximum compute node count.
-        :type max_node_count: Optional[int]
-        :param nabled: Specifies if Auto-scale is enabled.
-        :type enabled: Optional[bool]
-        """
         self.min_node_count = min_node_count
         self.max_node_count = max_node_count
         self.auto_scale_enabled = enabled
@@ -71,6 +72,7 @@ class AutoPauseSettings:
 
     .. admonition:: Example:
         :class: tip
+
         .. literalinclude:: ../samples/ml_samples_spark_configurations.py
             :start-after: [START synapse_spark_compute_configuration]
             :end-before: [END synapse_spark_compute_configuration]
@@ -83,8 +85,8 @@ class AutoPauseSettings:
         """
         :param delay_in_minutes: ideal time delay in minutes before pause cluster
         :type delay_in_minutes: Optional[int]
-        :param auto_scale_enabled:  Auto pause enabled
-        :type auto_scale_enabled: Optional[bool]
+        :param enabled:  Specifies if auto pause is enabled.
+        :type enabled: Optional[bool]
         """
         self.delay_in_minutes = delay_in_minutes
         self.auto_pause_enabled = enabled
@@ -109,6 +111,7 @@ class SynapseSparkCompute(Compute):
 
     .. admonition:: Example:
         :class: tip
+
         .. literalinclude:: ../samples/ml_samples_spark_configurations.py
             :start-after: [START synapse_spark_compute_configuration]
             :end-before: [END synapse_spark_compute_configuration]
@@ -147,6 +150,8 @@ class SynapseSparkCompute(Compute):
         :type node_size: Optional[str]
         :param spark_version: The version of Spark to use.
         :type spark_version: Optional[str]
+        :param identity: The configuration of identities that are associated with the compute cluster.
+        :type identity: Optional[IdentityConfiguration]
         :param scale_settings: The scale settings for the compute.
         :type scale_settings: Optional[AutoScaleSettings]
         :param auto_pause_settings: The auto pause settings for the compute.
@@ -155,8 +160,6 @@ class SynapseSparkCompute(Compute):
         :type location: Optional[str]
         :param resource_id: The ARM resource id of the underlying compute.
         :type resource_id: Optional[str]
-        :param identity: The configuration of identities that are associated with the compute cluster.
-        :type identity: Optional[IdentityConfiguration]
         """
         kwargs[TYPE] = ComputeType.SYNAPSESPARK
         super().__init__(name=name, description=description, location=kwargs.pop("location", None), tags=tags, **kwargs)
