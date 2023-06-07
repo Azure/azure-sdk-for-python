@@ -54,14 +54,14 @@ The options that are available for all `Send` perf tests:
 
 - `--message-size=100` - Size of a single message (in bytes). Defaults to 100.
 - `--batch-size=100` - The number of messages that should be included in each batch. Defaults to 100.
-- `--uamqp-transport` - Use the `uamqp` library as the underlying transport instead of pyamqp. Defaults to False.
+- `--uamqp-transport` - Use the `uamqp` library as the underlying transport instead of the Python-based AMQP library. Defaults to False.
 - `--transport-type` - Whether to use AMQP (0) or Websocket (1) transport protocol when communicating with the Service Bus service. Defaults to 0 (AMQP).
 
 The options that are available for all `Receive` perf tests:
 
 - `--message-size=100` - Size of a single message (in bytes). Defaults to 100.
 - `--num-messages=100` - Maximum number of messages to receive. Defaults to 100.
-- `--uamqp-transport` - Use the `uamqp` library as the underlying transport instead of pyamqp. Defaults to False.
+- `--uamqp-transport` - Use the `uamqp` library as the underlying transport instead of the Python-based AMQP library. Defaults to False.
 - `--transport-type` - Whether to use AMQP (0) or Websocket (1) transport protocol when communicating with the Service Bus service. Defaults to 0 (AMQP).
 - `--peeklock` - Whether to run the test using peeklock mode instead of receive and  mode. If peeklock is used, messages will be completed. Default is False (receive and delete).
 - `--max-wait-time=0` - The max time to wait for the specified number of messages to be received. Defaults to 0 (indefinitely).
