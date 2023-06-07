@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 import logging
-from typing import Generic, TypeVar, Union, Any, List, Dict, Optional
+from typing import Generic, TypeVar, Union, Any, List, Dict, Optional, Iterable
 from contextlib import AbstractContextManager
 from azure.core.pipeline import (
     PipelineRequest,
@@ -41,7 +41,7 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 
 
 _LOGGER = logging.getLogger(__name__)
-PoliciesType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
+PoliciesType = Iterable[Union[HTTPPolicy, SansIOHTTPPolicy]]
 
 
 class _SansIOHTTPPolicyRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):

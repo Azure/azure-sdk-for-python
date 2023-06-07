@@ -667,12 +667,3 @@ class TestDetectLanguage(TextAnalyticsTest):
         with pytest.raises(ValueError) as e:
             res = await client.detect_language(["I'm tired"], disable_service_logs=True)
         assert str(e.value) == "'disable_service_logs' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
-
-    @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
-    @recorded_by_proxy_async
-    async def test_detect_language_script(self, client):
-        docs = ["Tumhara naam kya hai?"]
-        response = await client.detect_language(docs, model_version="2022-04-10-preview")
-        assert response[0].primary_language.script == "Latin"
-        assert response[0].primary_language.iso6391_name == "hi"

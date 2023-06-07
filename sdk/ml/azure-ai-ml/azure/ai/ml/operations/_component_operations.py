@@ -10,11 +10,13 @@ from functools import partial
 from inspect import Parameter, signature
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
+from azure.core.exceptions import ResourceNotFoundError
+
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
-from azure.ai.ml._restclient.v2022_10_01.models import ListViewType
+from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion, ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -168,6 +170,36 @@ class ComponentOperations(_ScopeDependentOperations):
             )
         )
 
+    @monitor_with_telemetry_mixin(logger, "ComponentVersion.Get", ActivityType.INTERNALCALL)
+    def _get_component_version(self, name: str, version: Optional[str] = DEFAULT_COMPONENT_VERSION) -> ComponentVersion:
+        """Returns ComponentVersion information about the specified component name and version.
+
+        :param name: Name of the code component.
+        :type name: str
+        :param version: Version of the component.
+        :type version: Optional[str]
+        :return: The ComponentVersion object of the specified component name and version.
+        :rtype: ~azure.ai.ml.entities.ComponentVersion
+        """
+        result = (
+            self._version_operation.get(
+                name=name,
+                version=version,
+                resource_group_name=self._resource_group_name,
+                registry_name=self._registry_name,
+                **self._init_args,
+            )
+            if self._registry_name
+            else self._version_operation.get(
+                name=name,
+                version=version,
+                resource_group_name=self._resource_group_name,
+                workspace_name=self._workspace_name,
+                **self._init_args,
+            )
+        )
+        return result
+
     @monitor_with_telemetry_mixin(logger, "Component.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Component:
         """Returns information about the specified component.
@@ -202,23 +234,7 @@ class ComponentOperations(_ScopeDependentOperations):
         if label:
             return _resolve_label_to_asset(self, name, label)
 
-        result = (
-            self._version_operation.get(
-                name=name,
-                version=version,
-                resource_group_name=self._resource_group_name,
-                registry_name=self._registry_name,
-                **self._init_args,
-            )
-            if self._registry_name
-            else self._version_operation.get(
-                name=name,
-                version=version,
-                resource_group_name=self._resource_group_name,
-                workspace_name=self._workspace_name,
-                **self._init_args,
-            )
-        )
+        result = self._get_component_version(name, version)
         component = Component._from_rest_object(result)
         self._resolve_dependencies_for_pipeline_component_jobs(
             component,
@@ -354,6 +370,26 @@ class ComponentOperations(_ScopeDependentOperations):
         name, version = component._get_rest_name_version()
         rest_component_resource = component._to_rest_object()
         result = None
+        try:
+            if not component._is_anonymous and kwargs.get("skip_if_no_change"):
+                client_component_hash = rest_component_resource.properties.properties.get("client_component_hash")
+                remote_component_version = self._get_component_version(name=name)  # will raise error if not found.
+                remote_component_hash = remote_component_version.properties.properties.get("client_component_hash")
+                if client_component_hash == remote_component_hash:
+                    component.version = remote_component_version.properties.component_spec.get(
+                        "version"
+                    )  # only update the default version component instead of creating a new version component
+                    version = component.version
+                    rest_component_resource = component._to_rest_object()
+                    logger.warning(
+                        "The component is not modified compared to the default version "
+                        "and the new version component registration is skipped."
+                    )
+        except ResourceNotFoundError as e:
+            logger.info("Failed to get component version, %s", e)
+        except Exception as e:  # pylint: disable=broad-except
+            logger.error("Failed to compare client_component_hash, %s", e)
+
         try:
             if self._registry_name:
                 start_time = time.time()

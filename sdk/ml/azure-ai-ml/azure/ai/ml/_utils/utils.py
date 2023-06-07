@@ -170,7 +170,7 @@ def download_text_from_url(
         timeout_params = {}
     else:
         connect_timeout, read_timeout = timeout if isinstance(timeout, tuple) else (timeout, timeout)
-        timeout_params = dict(read_timeout=read_timeout, connection_timeout=connect_timeout)
+        timeout_params = {"read_timeout": read_timeout, "connection_timeout": connect_timeout}
 
     response = requests_pipeline.get(source_uri, **timeout_params)
     # Match old behavior from execution service's status API.
@@ -198,7 +198,7 @@ def load_file(file_path: str) -> str:
     try:
         with open(file_path, "r") as f:
             cfg = f.read()
-    except OSError:  # FileNotFoundError introduced in Python 3
+    except OSError as e:  # FileNotFoundError introduced in Python 3
         msg = "No such file or directory: {}"
         raise ValidationException(
             message=msg.format(file_path),
@@ -206,7 +206,7 @@ def load_file(file_path: str) -> str:
             error_category=ErrorCategory.USER_ERROR,
             target=ErrorTarget.GENERAL,
             error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
-        )
+        ) from e
     return cfg
 
 
@@ -227,7 +227,7 @@ def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
     try:
         with open(file_path, "r") as f:
             cfg = json.load(f)
-    except OSError:  # FileNotFoundError introduced in Python 3
+    except OSError as e:  # FileNotFoundError introduced in Python 3
         msg = "No such file or directory: {}"
         raise ValidationException(
             message=msg.format(file_path),
@@ -235,7 +235,7 @@ def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
             error_category=ErrorCategory.USER_ERROR,
             target=ErrorTarget.GENERAL,
             error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
-        )
+        ) from e
     return cfg
 
 
@@ -283,7 +283,7 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
     if must_open_file:  # If supplied a file path, open it.
         try:
             input = open(source, "r")
-        except OSError:  # FileNotFoundError introduced in Python 3
+        except OSError as e:  # FileNotFoundError introduced in Python 3
             msg = "No such file or directory: {}"
             raise ValidationException(
                 message=msg.format(source),
@@ -291,7 +291,7 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
                 error_category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.GENERAL,
                 error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
-            )
+            ) from e
     # input should now be an readable file or stream. Parse it.
     cfg = {}
     try:
@@ -304,7 +304,7 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
             error_category=ErrorCategory.USER_ERROR,
             target=ErrorTarget.GENERAL,
             error_type=ValidationErrorType.CANNOT_PARSE,
-        )
+        ) from e
     finally:
         if must_open_file:
             input.close()
@@ -393,7 +393,7 @@ def dump_yaml_to_file(
     if must_open_file:  # If supplied a file path, open it.
         try:
             output = open(dest, "w")
-        except OSError:  # FileNotFoundError introduced in Python 3
+        except OSError as e:  # FileNotFoundError introduced in Python 3
             msg = "No such file or directory: {}"
             raise ValidationException(
                 message=msg.format(dest),
@@ -401,7 +401,7 @@ def dump_yaml_to_file(
                 error_category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.GENERAL,
                 error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
-            )
+            ) from e
 
     # Once we have an open file pointer through either method, dump.
     try:
@@ -414,7 +414,7 @@ def dump_yaml_to_file(
             error_category=ErrorCategory.USER_ERROR,
             target=ErrorTarget.GENERAL,
             error_type=ValidationErrorType.CANNOT_PARSE,
-        )
+        ) from e
     finally:
         # close the file only if we opened it as part of this function.
         if must_open_file:
@@ -638,7 +638,7 @@ def convert_identity_dict(
             if identity.user_assigned_identities:
                 if isinstance(identity.user_assigned_identities, dict):  # if the identity is already in right format
                     return identity
-                ids = dict()
+                ids = {}
                 for id in identity.user_assigned_identities:  # pylint: disable=redefined-builtin
                     ids[id["resource_id"]] = {}
                 identity.user_assigned_identities = ids
@@ -902,10 +902,10 @@ class DockerProxy:
             import docker  # pylint: disable=import-error
 
             return getattr(docker, name)
-        except ModuleNotFoundError:
+        except ModuleNotFoundError as e:
             raise Exception(
                 "Please install docker in the current python environment with `pip install docker` and try again."
-            )
+            ) from e
 
 
 def get_all_enum_values_iter(enum_type):

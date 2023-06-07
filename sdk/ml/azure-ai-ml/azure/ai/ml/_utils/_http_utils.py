@@ -146,34 +146,27 @@ class HttpPipeline(Pipeline):
     @_request_function
     def delete(self) -> None:
         """Sends a DELETE request."""
-        ...
 
     @_request_function
     def get(self) -> None:
         """Sends a GET request."""
-        ...
 
     @_request_function
     def head(self) -> None:
         """Sends a HEAD request."""
-        ...
 
     @_request_function
     def options(self) -> None:
         """Sends a OPTIONS request."""
-        ...
 
     @_request_function
     def patch(self) -> None:
         """Sends a PATCH request."""
-        ...
 
     @_request_function
     def post(self) -> None:
         """Sends a POST request."""
-        ...
 
     @_request_function
     def put(self) -> None:
         """Sends a PUT request."""
-        ...

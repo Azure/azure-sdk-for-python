@@ -94,7 +94,11 @@ class TestCommandComponentEntity:
             environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         component_dict = component._to_rest_object().as_dict()
-        omits = ["properties.component_spec.$schema", "properties.component_spec._source"]
+        omits = [
+            "properties.component_spec.$schema",
+            "properties.component_spec._source",
+            "properties.properties.client_component_hash",
+        ]
         component_dict = pydash.omit(component_dict, *omits)
 
         yaml_path = "./tests/test_configs/components/basic_component_code_arm_id.yml"
@@ -222,6 +226,7 @@ class TestCommandComponentEntity:
             "properties.component_spec.distribution.added_property",
             "properties.component_spec.resources.properties",
             "properties.component_spec._source",
+            "properties.properties.client_component_hash",
         )
         yaml_component_dict = pydash.omit(
             yaml_component_dict,
@@ -229,6 +234,7 @@ class TestCommandComponentEntity:
             "properties.component_spec.distribution.added_property",
             "properties.component_spec.resources.properties",
             "properties.component_spec._source",
+            "properties.properties.client_component_hash",
         )
         assert component_dict == yaml_component_dict
 

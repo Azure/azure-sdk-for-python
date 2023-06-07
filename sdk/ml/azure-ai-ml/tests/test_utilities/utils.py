@@ -109,6 +109,7 @@ def prepare_dsl_curated(
                     "properties.jobs.*.trial.properties.isAnonymous",
                     "properties.jobs.*.trial.properties.componentSpec._source",
                     "properties.settings",
+                    "properties.jobs.*.trial.properties.properties.client_component_hash",
                 ]
             )
     else:

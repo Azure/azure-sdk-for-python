@@ -18,6 +18,7 @@ import os
 from azure.identity import AzureAuthorityHosts, ClientSecretCredential, DefaultAzureCredential
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 
+
 def get_authority(endpoint):
     # cSpell:ignore azconfig
     if ".azconfig.io" in endpoint:
@@ -28,6 +29,7 @@ def get_authority(endpoint):
         return AzureAuthorityHosts.AZURE_GOVERNMENT
     raise ValueError(f"Endpoint ({endpoint}) could not be understood")
 
+
 def get_audience(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
         return "https://management.azure.com"
@@ -36,13 +38,14 @@ def get_audience(authority):
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
         return "https://management.usgovcloudapi.net"
 
+
 def get_credential(authority, **kwargs):
     if authority != AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
         return ClientSecretCredential(
             tenant_id=os.environ.get("AZURE_TENANT_ID"),
             client_id=os.environ.get("AZURE_CLIENT_ID"),
             client_secret=os.environ.get("AZURE_CLIENT_SECRET"),
-            authority=authority
+            authority=authority,
         )
     is_async = kwargs.pop("is_async", False)
     if is_async:
