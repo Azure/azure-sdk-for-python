@@ -259,7 +259,7 @@ class MutableValidationResult(ValidationResult):
             return self
 
         if self._warnings:
-            module_logger.info("Warnings: %s" % str(self._warnings))
+            module_logger.warning("Warnings: %s" % str(self._warnings))
 
         if not self.passed:
             message = (
@@ -385,7 +385,7 @@ class SchemaValidatableMixin:
                 no_personal_data_message=str(e),
                 target=cls._get_validation_error_target(),
                 error_category=ErrorCategory.USER_ERROR,
-            )
+            ) from e
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> PathAwareSchema:

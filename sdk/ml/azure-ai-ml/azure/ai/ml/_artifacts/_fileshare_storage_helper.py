@@ -344,11 +344,11 @@ def recursive_download(
             sub_client = client.get_subdirectory_client(f["name"])
             destination = "/".join((destination, f["name"]))
             recursive_download(sub_client, destination=destination, max_concurrency=max_concurrency)
-    except Exception:
+    except Exception as e:
         msg = f"Saving fileshare directory with prefix {starts_with} was unsuccessful."
         raise MlException(
             message=msg.format(starts_with),
             no_personal_data_message=msg.format("[prefix]"),
             target=ErrorTarget.ARTIFACT,
             error_category=ErrorCategory.SYSTEM_ERROR,
-        )
+        ) from e

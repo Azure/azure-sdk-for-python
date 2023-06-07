@@ -1,10 +1,15 @@
 # Release History
 
-## 7.11.0 (Unreleased)
+## 7.11.0 (2023-06-06)
 
 ### Features Added
 
 - A new float keyword argument `socket_timeout` has been added to `get_queue_sender`, `get_queue_receiver`, `get_topic_sender`, and `get_subscription_receiver` on the sync and async `ServiceBusClient`.
+
+### Bugs Fixed
+
+- Fixed a bug where sending large messages failed on socket write timeout ([#30425](https://github.com/Azure/azure-sdk-for-python/issues/30425)).
+- Fixed a bug where settling large messages failed due to  `delivery_id` being `None`.
 
 ### Other Changes
 

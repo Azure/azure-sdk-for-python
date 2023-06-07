@@ -409,14 +409,14 @@ class Component(
         rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
         init_kwargs = cls._load_with_schema(rest_component_version.component_spec, unknown=INCLUDE)
         init_kwargs.update(
-            dict(
-                id=obj.id,
-                is_anonymous=rest_component_version.is_anonymous,
-                creation_context=obj.system_data,
-                inputs=inputs,
-                outputs=outputs,
-                name=origin_name,
-            )
+            {
+                "id": obj.id,
+                "is_anonymous": rest_component_version.is_anonymous,
+                "creation_context": obj.system_data,
+                "inputs": inputs,
+                "outputs": outputs,
+                "name": origin_name,
+            }
         )
 
         # remove empty values, because some property only works for specific component, eg: distribution for command

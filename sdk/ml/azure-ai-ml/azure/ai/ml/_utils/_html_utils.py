@@ -46,7 +46,7 @@ def convert_dict_to_table(object_to_convert):
     if all(is_collection):
         # Cases 2 and 4
         length = len(list(ordered_obj.values)[0])
-        if any([len(v) != length for v in ordered_obj.values()]):
+        if any(len(v) != length for v in ordered_obj.values()):
             # Case 4
             logging.warning("Uneven column lengths in table conversion")
             all_rows.append(values_to_data_row(ordered_obj.values()))
