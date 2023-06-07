@@ -39,12 +39,15 @@ async def sample_manage_models_async():
 
     async with document_model_admin_client:
         account_details = await document_model_admin_client.get_resource_details()
-        print("Our resource has {} custom models, and we can have at most {} custom models\n".format(
-            account_details.custom_document_models.count, account_details.custom_document_models.limit
-        ))
+        print(
+            f"Our resource has {account_details.custom_document_models.count} custom models, "
+            f"and we can have at most {account_details.custom_document_models.limit} custom models"
+        )
         neural_models = account_details.custom_neural_document_model_builds
-        print(f"The quota limit for custom neural document models is {neural_models.quota} and the resource has"
-              f"used {neural_models.used}. The resource quota will reset on {neural_models.quota_resets_on}")
+        print(
+            f"The quota limit for custom neural document models is {neural_models.quota} and the resource has"
+            f"used {neural_models.used}. The resource quota will reset on {neural_models.quota_resets_on}"
+        )
         # [END get_resource_details_async]
 
         # Next, we get a paged list of all of our custom models

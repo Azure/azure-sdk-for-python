@@ -65,9 +65,10 @@ async def sample_copy_model_to_async(custom_model_id):
     for name, doc_type in copied_over_model.doc_types.items():
         print(f"\nDoc Type: '{name}' which has the following fields:")
         for field_name, field in doc_type.field_schema.items():
-            print("Field: '{}' has type '{}' and confidence score {}".format(
-                field_name, field["type"], doc_type.field_confidence[field_name]
-            ))
+            print(
+                f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                f"{doc_type.field_confidence[field_name]}"
+            )
     # [END begin_copy_document_model_to_async]
 
 

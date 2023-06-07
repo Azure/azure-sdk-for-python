@@ -52,9 +52,10 @@ async def sample_build_model_async():
     for name, doc_type in model.doc_types.items():
         print(f"\nDoc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:")
         for field_name, field in doc_type.field_schema.items():
-            print("Field: '{}' has type '{}' and confidence score {}".format(
-                field_name, field["type"], doc_type.field_confidence[field_name]
-            ))
+            print(
+                f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                f"{doc_type.field_confidence[field_name]}"
+            )
     # [END build_model_async]
 
 

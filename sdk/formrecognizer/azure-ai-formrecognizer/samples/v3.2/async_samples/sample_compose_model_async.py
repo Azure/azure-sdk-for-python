@@ -90,9 +90,10 @@ async def sample_compose_model_async():
     for name, doc_type in model.doc_types.items():
         print(f"\nDoc Type: '{name}' which has the following fields:")
         for field_name, field in doc_type.field_schema.items():
-            print("Field: '{}' has type '{}' and confidence score {}".format(
-                field_name, field["type"], doc_type.field_confidence[field_name]
-            ))
+            print(
+                f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                f"{doc_type.field_confidence[field_name]}"
+            )
     # [END composed_model_async]
 
 

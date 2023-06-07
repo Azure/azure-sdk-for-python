@@ -87,31 +87,19 @@ async def get_elements_with_spans_async():
     if result.tables is not None:
         for table_idx, table in enumerate(result.tables):
             print(
-                "Table # {} has {} rows and {} columns".format(
-                    table_idx, table.row_count, table.column_count
-                )
+                f"Table # {table_idx} has {table.row_count} rows and {table.column_count} columns"
             )
 
             lines = []
 
             if table.bounding_regions is not None:
                 for region in table.bounding_regions:
-                    print(
-                        "Table # {} location on page: {}".format(
-                            table_idx,
-                            region.page_number,
-                        )
-                    )
+                    print(f"Table # {table_idx} location on page: {region.page_number}")
                     lines.extend(get_lines(table.spans, get_page(region.page_number, result.pages)))
 
             print(f"Found # {len(lines)} lines in the table")
             for line in lines:
-                print(
-                    "...Line '{}' is within bounding polygon: '{}'".format(
-                        line.content,
-                        line.polygon,
-                    )
-                )
+                print(f"...Line '{line.content}' is within bounding polygon: '{line.polygon}'")
 
     # Below is a method to search for the style of a particular element by using spans.
     # This example uses DocumentLine, but other elements that also have a `spans` or `span`
@@ -119,20 +107,12 @@ async def get_elements_with_spans_async():
     if result.pages[0].lines is not None:
         for line in result.pages[0].lines:
             styles = get_styles(line.spans, result.styles)
-            print(
-                "Found line '{}' with style:".format(
-                    line.content
-                )
-            )
+            print(f"Found line '{line.content}' with style:")
             if not styles:
-                print(
-                    "...no handwritten text found"
-                )
+                print("...no handwritten text found")
             for style in styles:
                 if style.is_handwritten:
-                    print(
-                        f"...handwritten with confidence {style.confidence}"
-                    )
+                    print(f"...handwritten with confidence {style.confidence}")
     print("----------------------------------------")
 
 
