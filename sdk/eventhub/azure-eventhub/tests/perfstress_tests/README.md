@@ -60,7 +60,7 @@ The options that are available for `SendEventsTest`/`SendEventBatchTest`:
 
 - `--event-size=100` - Size of event body (in bytes). Defaults to 100.
 - `--batch-size=100` - The number of events that should be included in each batch. Defaults to 100.
-- `--uamqp-transport` - Use the `uamqp` library as the underlying transport instead of pyamqp. Defaults to False.
+- `--uamqp-transport` - Use the `uamqp` library as the underlying transport instead of the python based amqp library. Defaults to False.
 - `--transport-type` - Whether to use AMQP (0) or Websocket (1) transport protocol when communicating with the Event Hubs service. Defaults to 0 (AMQP).
 - `--event-extra` - Add properties to the events to increase payload and serialization. Defaults to False.
 
