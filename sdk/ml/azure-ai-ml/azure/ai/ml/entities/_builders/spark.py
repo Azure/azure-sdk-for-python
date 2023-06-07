@@ -97,9 +97,9 @@ class Spark(BaseNode, SparkJobEntryMixin):
     :type dynamic_allocation_max_executors: int
     :param conf: A dictionary with pre-defined Spark configurations key and values.
     :type conf: Dict
-    :param inputs: A mapping of inputs data bindings used in the job.
+    :param inputs: A mapping of input data bindings used in the job.
     :type inputs: Dict
-    :param outputs: A mapping of outputs data bindings used in the job.
+    :param outputs: A mapping of output data bindings used in the job.
     :type outputs: Dict
     :param args: The arguments for the job.
     :type args: str

@@ -68,9 +68,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     :param dynamic_allocation_max_executors: The upper bound for the number of executors if dynamic allocation is
         enabled.
     :type dynamic_allocation_max_executors: int
-    :param inputs: The mapping of inputs data bindings used in the job.
+    :param inputs: The mapping of input data bindings used in the job.
     :type inputs: dict[str, ~azure.ai.ml.Inputs]
-    :param outputs: The mapping of outputs data bindings used in the job.
+    :param outputs: The mapping of output data bindings used in the job.
     :type outputs: dict[str, ~azure.ai.ml.Outputs]
     :param compute: The compute resource the job runs on.
     :type compute: str
@@ -164,7 +164,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
 
     @property
     def resources(self) -> Optional[SparkResourceConfiguration]:
-        """Get the compute resource configuration for the job.
+        """The compute resource configuration for the job.
 
         :return: The compute resource configuration for the job.
         :rtype: ~azure.ai.ml.entities.SparkResourceConfiguration
@@ -173,7 +173,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
 
     @resources.setter
     def resources(self, value: Union[Dict[str, str], SparkResourceConfiguration, None]):
-        """Set the compute resource configuration for the job.
+        """Sets the compute resource configuration for the job.
 
         :param value: The compute resource configuration for the job.
         :type value: Union[Dict, ~azure.ai.ml.entities.SparkResourceConfiguration]
@@ -186,7 +186,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     def identity(
         self,
     ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
-        """Get the identity that the Spark job will use while running on compute.
+        """The identity that the Spark job will use while running on compute.
 
         :return: The identity that the Spark job will use while running on compute.
         :rtype: Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
@@ -201,7 +201,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, None
         ],
     ):
-        """Set the identity that the Spark job will use while running on compute.
+        """Sets the identity that the Spark job will use while running on compute.
 
         :param value: The identity that the Spark job will use while running on compute.
         :type value: Union[Dict, ~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
@@ -222,7 +222,13 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         # pylint: disable=no-member
         return SparkJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
-    def filter_conf_fields(self):
+    def filter_conf_fields(self) -> Dict[str, str]:
+        """Filters out the fields of the conf attribute that are not among the Spark configuration fields
+        listed in ~azure.ai.ml._schema.job.parameterized_spark.CONF_KEY_MAP and returns them in their own dictionary.
+
+        :return: A dictionary of the conf fields that are not Spark configuration fields.
+        :rtype: Dict[str, str]
+        """
         if self.conf is None:
             return {}
         data_conf = {}

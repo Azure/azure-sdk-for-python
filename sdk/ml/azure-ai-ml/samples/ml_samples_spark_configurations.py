@@ -151,6 +151,46 @@ class SparkConfigurationOptions(object):
 
         # [END synapse_spark_compute_configuration]
 
+        # [START spark_function_configuration]
+        from azure.ai.ml import Input, Output, spark
+        from azure.ai.ml.entities import ManagedIdentityConfiguration
+
+        node = spark(
+            experiment_name="builder-spark-experiment-name",
+            description="simply spark description",
+            code="./tests/test_configs/spark_job/basic_spark_job/src",
+            entry={"file": "./main.py"},
+            jars=["simple-1.1.1.jar"],
+            driver_cores=1,
+            driver_memory="2g",
+            executor_cores=2,
+            executor_memory="2g",
+            executor_instances=2,
+            dynamic_allocation_enabled=True,
+            dynamic_allocation_min_executors=1,
+            dynamic_allocation_max_executors=3,
+            identity=ManagedIdentityConfiguration(),
+            inputs={
+                "input1": Input(
+                    type="uri_file", path="azureml://datastores/workspaceblobstore/paths/python/data.csv", mode="direct"
+                )
+            },
+            outputs={
+                "output1": Output(
+                    type="uri_file",
+                    path="azureml://datastores/workspaceblobstore/spark_titanic_output/titanic.parquet",
+                    mode="direct",
+                )
+            },
+            args="--input1 ${{inputs.input1}} --output1 ${{outputs.output1}} --my_sample_rate 0.01",
+            resources={
+                "instance_type": "Standard_E8S_V3",
+                "runtime_version": "3.2.0",
+            },
+        )
+
+        # [END spark_function_configuration]
+
 
 if __name__ == "__main__":
     sample = SparkConfigurationOptions()

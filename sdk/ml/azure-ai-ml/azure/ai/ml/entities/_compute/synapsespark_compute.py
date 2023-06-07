@@ -21,9 +21,9 @@ from azure.ai.ml.entities._util import load_from_dict
 class AutoScaleSettings:
     """Auto-scale settings for Synapse Spark compute.
 
-    :param min_node_count: Minimum compute node count.
+    :param min_node_count: The minimum compute node count.
     :type min_node_count: Optional[int]
-    :param max_node_count: Maximum compute node count.
+    :param max_node_count: The maximum compute node count.
     :type max_node_count: Optional[int]
     :param enabled: Specifies if Auto-scale is enabled.
     :type enabled: Optional[bool]
@@ -70,7 +70,7 @@ class AutoScaleSettings:
 class AutoPauseSettings:
     """Auto pause settings for Synapse Spark compute.
 
-    :param delay_in_minutes: ideal time delay in minutes before pause cluster
+    :param delay_in_minutes: The time delay in minutes before pause cluster
     :type delay_in_minutes: Optional[int]
     :param enabled:  Specifies if auto pause is enabled.
     :type enabled: Optional[bool]

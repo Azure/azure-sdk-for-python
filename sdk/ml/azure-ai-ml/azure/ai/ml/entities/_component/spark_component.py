@@ -59,9 +59,9 @@ class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pyli
     :type conf: dict
     :param environment: The Azure ML environment to run the job in.
     :type environment: Union[str, azure.ai.ml.entities.Environment]
-    :param inputs: The mapping of inputs data bindings used in the job.
+    :param inputs: The mapping of input data bindings used in the job.
     :type inputs: dict
-    :param outputs: The mapping of outputs data bindings used in the job.
+    :param outputs: The mapping of output data bindings used in the job.
     :type outputs: dict
     :param args: The arguments for the job.
     :type args: str
