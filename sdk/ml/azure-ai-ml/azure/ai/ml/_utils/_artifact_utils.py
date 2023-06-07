@@ -54,8 +54,7 @@ class ArtifactCache:
         # check az extension azure-devops installed. Install it if not installed.
         result = subprocess.run(
             ["az", "artifacts", "--help", "--yes"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
             check=False,
         )
 
@@ -104,8 +103,7 @@ class ArtifactCache:
         """
         result = subprocess.run(
             ["git", "config", "--get", "remote.origin.url"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
             encoding="utf-8",
             check=False,
         )
@@ -199,8 +197,7 @@ class ArtifactCache:
             retries += 1
             result = subprocess.run(
                 download_cmd,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                capture_output=True,
                 encoding="utf-8",
                 check=False,
             )
@@ -324,8 +321,7 @@ class ArtifactCache:
         _logger.info("Start downloading artifacts %s:%s from %s.", name, version, feed)
         result = subprocess.run(
             download_cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
             encoding="utf-8",
             check=False,
         )
