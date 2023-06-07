@@ -14,7 +14,7 @@ from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
 from azure.identity import DefaultAzureCredential, AzureAuthorityHosts, ClientSecretCredential
 
-from devtools_testutils import AzureRecordedTestCase, is_live, FakeTokenCredential
+from devtools_testutils import AzureRecordedTestCase, FakeTokenCredential
 
 logger = logging.getLogger()
 
@@ -154,23 +154,3 @@ def import_image(authority, repository, tags, is_anonymous=False):
     )
 
     result.wait()
-
-@pytest.fixture(scope="session")
-def load_registry():
-    if not is_live():
-        return
-    authority = get_authority(os.environ.get("CONTAINERREGISTRY_ENDPOINT"))
-    authority_anon = get_authority(os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT"))
-    repo = "library/hello-world"
-    tags = [
-        [
-            "library/hello-world:latest",
-            "library/hello-world:v1"
-        ]
-    ]
-    for tag in tags:
-        try:
-            import_image(authority, repo, tag)
-            import_image(authority_anon, repo, tag, is_anonymous=True)
-        except Exception as e:
-            print(e)

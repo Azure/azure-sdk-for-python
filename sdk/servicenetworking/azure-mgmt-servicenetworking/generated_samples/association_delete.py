@@ -31,8 +31,8 @@ def main():
 
     response = client.associations_interface.begin_delete(
         resource_group_name="rg1",
-        traffic_controller_name="TC1",
-        association_name="associatedvnet-2",
+        traffic_controller_name="tc1",
+        association_name="as1",
     ).result()
     print(response)
 

@@ -9,11 +9,12 @@ It focuses on displaying the logic required to fetch an AAD access token and to 
 
 """
 
+import time
 import logging
 import redis
 from azure.identity import DefaultAzureCredential
 
-scope = "https://*.cacheinfra.windows.net:10225/appid/.default"  # The scope will be changed for AAD Public Preview
+scope = "acca5fbb-b7e4-4009-81f1-37e38fd66d78/.default"  # The current scope is for public preview and may change for GA release.
 host = ""  # Required
 port = 6380  # Required
 user_name = ""  # Required
@@ -46,6 +47,12 @@ def re_authentication():
     max_retry = 3
     for index in range(max_retry):
         try:
+            if _need_refreshing(token):
+                _LOGGER.info("Refreshing token...")
+                tmp_token = cred.get_token(scope)
+                if tmp_token:
+                    token = tmp_token
+                r.execute_command("AUTH", user_name, token.token)
             r.set("Az:key1", "value1")
             t = r.get("Az:key1")
             print(t)
@@ -63,6 +70,9 @@ def re_authentication():
             _LOGGER.info("Unknown failures.")
             break
 
+
+def _need_refreshing(token, refresh_offset=300):
+    return not token or token.expires_on - time.time() < refresh_offset
 
 if __name__ == '__main__':
     hello_world()

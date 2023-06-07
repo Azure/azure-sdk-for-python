@@ -115,9 +115,9 @@ def validate_response(response: HttpResponse) -> None:
         if response.status_code != 204:
             try:
                 r_json = response.json()
-            except ValueError:
+            except ValueError as e:
                 # exception is not in the json format
-                raise Exception(response.content.decode("utf-8"))
+                raise Exception(response.content.decode("utf-8")) from e
         failure_msg = r_json.get("error", {}).get("message", response)
         error_map = {
             401: ClientAuthenticationError,
@@ -203,9 +203,9 @@ def validate_scoring_script(deployment):
                     no_personal_data_message=np_msg,
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.CANNOT_PARSE,
-                )
+                ) from err
     except OSError as err:
         raise MlException(
             message=f"Failed to open scoring script {err.filename}.",
             no_personal_data_message="Failed to open scoring script.",
-        )
+        ) from err

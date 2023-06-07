@@ -27,9 +27,9 @@ def check_for_unsupported_actions_types(*args, **kwargs):
         return
 
     actions_version_mapping = {
-        "2022-10-01-preview":
+        "2023-04-01":
         [
-            "ExtractSummaryAction",
+            "ExtractiveSummaryAction",
             "AbstractiveSummaryAction",
         ],
         "2022-05-01":

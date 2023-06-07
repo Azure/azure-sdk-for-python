@@ -17,6 +17,10 @@ class {{ operation_group.name }}{{ "(" + operation_group.name.replace("Operation
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
         self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
+{% else %}
+    @property
+    def _api_version(self)-> str:
+        return self._get_api_version(None)
 
 {% endif %}
     {% for operation in operation_group.operations %}

@@ -1,19 +1,16 @@
 import pydash
 import pytest
 
-from azure.ai.ml import MLClient
-from azure.ai.ml import load_component
+from azure.ai.ml import MLClient, load_component
+from azure.ai.ml.constants._component import DataCopyMode, DataTransferTaskType
 from azure.ai.ml.entities._component.datatransfer_component import (
     DataTransferCopyComponent,
-    DataTransferImportComponent,
     DataTransferExportComponent,
+    DataTransferImportComponent,
 )
-from azure.ai.ml.constants._component import DataCopyMode, DataTransferTaskType
-from .test_component_schema import (
-    load_component_entity_from_rest_json,
-    load_component_entity_from_yaml,
-)
+
 from .._util import _COMPONENT_TIMEOUT_SECOND
+from .test_component_schema import load_component_entity_from_rest_json, load_component_entity_from_yaml
 
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
@@ -148,6 +145,7 @@ class TestDataTransferComponentEntity:
         omit_fields = [
             "properties.component_spec.$schema",
             "properties.component_spec._source",
+            "properties.properties.client_component_hash",
         ]
         component._validate()
         component_dict = component._to_rest_object().as_dict()

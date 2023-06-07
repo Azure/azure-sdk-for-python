@@ -34,11 +34,18 @@ def main():
         vm_scale_set_name="myvmScaleSet",
         instance_id="0",
         run_command_name="myRunCommand",
-        run_command={"properties": {"source": {"script": "Write-Host Script Source Updated!"}}},
+        run_command={
+            "properties": {
+                "source": {
+                    "scriptUri": "https://mystorageaccount.blob.core.windows.net/scriptcontainer/MyScript.ps1",
+                    "scriptUriManagedIdentity": {"objectId": "4231e4d2-33e4-4e23-96b2-17888afa6072"},
+                }
+            }
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2022-11-01/examples/runCommandExamples/VirtualMachineScaleSetVMRunCommand_Update.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2023-03-01/examples/runCommandExamples/VirtualMachineScaleSetVMRunCommand_Update.json
 if __name__ == "__main__":
     main()
