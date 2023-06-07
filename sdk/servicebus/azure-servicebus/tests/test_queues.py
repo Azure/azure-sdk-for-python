@@ -79,11 +79,11 @@ uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 _logger = get_logger(logging.DEBUG)
 
 
-# # A note regarding live_test_only.
-# # Old servicebus tests were not written to work on both stubs and live entities.
-# # This disables those tests for non-live scenarios, and should be removed as tests
-# # are ported to offline-compatible code.
-# class TestServiceBusQueue(AzureMgmtRecordedTestCase):
+# A note regarding live_test_only.
+# Old servicebus tests were not written to work on both stubs and live entities.
+# This disables those tests for non-live scenarios, and should be removed as tests
+# are ported to offline-compatible code.
+class TestServiceBusQueue(AzureMgmtRecordedTestCase):
 
 #     @pytest.mark.liveTest
 #     @pytest.mark.live_test_only
