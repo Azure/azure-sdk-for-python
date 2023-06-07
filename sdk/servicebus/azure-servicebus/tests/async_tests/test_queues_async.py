@@ -982,31 +982,31 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("test session sender", session_id="test"))
  
-    # @pytest.mark.asyncio
-    # @pytest.mark.liveTest
-    # @pytest.mark.live_test_only
-    # @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    # @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    # @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    # @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    # @ArgPasserAsync()
-    # async def test_async_queue_by_servicebus_client_browse_messages_client(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
-    #     async with ServiceBusClient.from_connection_string(
-    #         servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
+    @pytest.mark.asyncio
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_async_queue_by_servicebus_client_browse_messages_client(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
-    #         async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-    #             for i in range(5):
-    #                 message = ServiceBusMessage("Test message no. {}".format(i))
-    #                 await sender.send_messages(message)
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(5):
+                    message = ServiceBusMessage("Test message no. {}".format(i))
+                    await sender.send_messages(message)
 
-    #         async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-    #             messages = await receiver.peek_messages(5)
-    #             assert len(messages) == 5
-    #             assert all(isinstance(m, ServiceBusReceivedMessage) for m in messages)
-    #             for message in messages:
-    #                 print_message(_logger, message)
-    #                 with pytest.raises(ValueError):
-    #                     await receiver.complete_message(message)
+            async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
+                messages = await receiver.peek_messages(5)
+                assert len(messages) == 5
+                assert all(isinstance(m, ServiceBusReceivedMessage) for m in messages)
+                for message in messages:
+                    print_message(_logger, message)
+                    with pytest.raises(ValueError):
+                        await receiver.complete_message(message)
 
     # @pytest.mark.asyncio
     # @pytest.mark.liveTest
