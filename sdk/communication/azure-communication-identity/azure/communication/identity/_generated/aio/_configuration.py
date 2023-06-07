@@ -23,14 +23,14 @@ class CommunicationIdentityClientConfiguration(Configuration):  # pylint: disabl
     :param endpoint: The communication resource, for example
      https://my-resource.communication.azure.com. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2022-10-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-08-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, **kwargs: Any) -> None:
         super(CommunicationIdentityClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2022-10-01")
+        api_version: str = kwargs.pop("api_version", "2023-08-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

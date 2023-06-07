@@ -1,5 +1,15 @@
 # Release History
 
+## 1.5.0 (2023-08-01)
+
+### Features Added
+
+- To make POST APIs (`create_user` & `revoke_tokens`) behave in an idempotent way, added support for Repeatable requests by passing below headers in the request. These header values remain the same cross all retries.
+  - `Repeatability-Request-Id` that identifies the request uniquely with a GUID.
+  - `Repeatability-First-Sent` that represents the time stamp when the original request was first sent.
+- Repeatability headers are automatically generated, added and sent to the API when using this library.
+- Added a new API version `ApiVersion.V2023_08_01` that is now the default API version.
+
 ## 1.4.0b2 (Unreleased)
 
 ### Features Added
