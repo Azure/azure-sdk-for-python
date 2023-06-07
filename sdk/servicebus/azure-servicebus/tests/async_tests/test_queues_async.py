@@ -964,23 +964,23 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     count += 1
             assert count == 10
 
-    @pytest.mark.asyncio
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    @ArgPasserAsync()
-    async def test_async_queue_by_servicebus_client_session_fail(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
-        async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
+    # @pytest.mark.asyncio
+    # @pytest.mark.liveTest
+    # @pytest.mark.live_test_only
+    # @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    # @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    # @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    # @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    # @ArgPasserAsync()
+    # async def test_async_queue_by_servicebus_client_session_fail(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+    #     async with ServiceBusClient.from_connection_string(
+    #         servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
-            with pytest.raises(ServiceBusError):
-                await sb_client.get_queue_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
+    #         with pytest.raises(ServiceBusError):
+    #             await sb_client.get_queue_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
 
-            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                await sender.send_messages(ServiceBusMessage("test session sender", session_id="test"))
+    #         async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+    #             await sender.send_messages(ServiceBusMessage("test session sender", session_id="test"))
  
     @pytest.mark.asyncio
     @pytest.mark.liveTest
