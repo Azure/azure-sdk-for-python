@@ -1072,7 +1072,9 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 sender.send_messages(ServiceBusMessage("test session sender", session_id="test"))
             
             with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                receiver.receive_messages()
+                messages = receiver.receive_messages()
+                for message in messages:
+                    receiver.complete_message(message)
     
 
     @pytest.mark.liveTest
