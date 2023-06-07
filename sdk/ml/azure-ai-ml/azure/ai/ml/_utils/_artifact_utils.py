@@ -53,8 +53,7 @@ class ArtifactCache:
     def check_artifact_extension():
         # check az extension azure-devops installed. Install it if not installed.
         result = subprocess.run(
-            "az artifacts --help --yes",
-            shell=True,  # nosec B602
+            ["az", "artifacts", "--help", "--yes"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             check=False,
@@ -104,11 +103,10 @@ class ArtifactCache:
         :rtype organization_url, project: str, str
         """
         result = subprocess.run(
-            "git config --get remote.origin.url",
+            ["git", "config", "--get", "remote.origin.url"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             encoding="utf-8",
-            shell=True,  # nosec B602
             check=False,
         )
 
@@ -203,7 +201,6 @@ class ArtifactCache:
                 download_cmd,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                shell=True,  # nosec B602
                 encoding="utf-8",
                 check=False,
             )
@@ -304,20 +301,31 @@ class ArtifactCache:
         :return artifact_package_path: Cache path of the artifact package
         """
         tempdir = tempfile.mktemp()  # nosec B306
-        download_cmd = (
-            f"az artifacts universal download --feed {feed} --name {name} --version {version} "
-            f"--scope {scope} --path {tempdir}"
-        )
+        download_cmd = [
+            "az",
+            "artifacts",
+            "universal",
+            "download",
+            "--feed",
+            feed,
+            "--name",
+            name,
+            "--version",
+            version,
+            "--scope",
+            scope,
+            "--path",
+            tempdir,
+        ]
         if organization:
-            download_cmd = download_cmd + f" --org {organization}"
+            download_cmd.extend(["--org", organization])
         if project:
-            download_cmd = download_cmd + f" --project {project}"
+            download_cmd.extend(["--project", project])
         _logger.info("Start downloading artifacts %s:%s from %s.", name, version, feed)
         result = subprocess.run(
             download_cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            shell=True,  # nosec B602
             encoding="utf-8",
             check=False,
         )
@@ -329,7 +337,7 @@ class ArtifactCache:
                 _logger.warning(
                     "Download package %s:%s from the feed %s failed: %s", name, version, feed, result.stderr
                 )
-                download_cmd = download_cmd + "--debug"
+                download_cmd.append("--debug")
                 self._download_artifacts(download_cmd, organization, name, version, feed)
             else:
                 raise RuntimeError(f"Download package {name}:{version} from the feed {feed} failed: {result.stderr}")
