@@ -136,12 +136,12 @@ class SparkConfigurationOptions(object):
 
         synapse_compute = SynapseSparkCompute(
             name="synapse_name",
-            resource_id="/subscriptions/mysubid/resourceGroups/myrg/providers/Microsoft.Synapse/workspaces/myws/bigDataPools/mysparkpoolname",
+            resource_id="/subscriptions/subscription/resourceGroups/group/providers/Microsoft.Synapse/workspaces/workspace/bigDataPools/pool",
             identity=IdentityConfiguration(
                 type="UserAssigned",
                 user_assigned_identities=[
                     ManagedIdentityConfiguration(
-                        resource_id="/subscriptions/mysubid/resourceGroups/myrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mymanagedidentityname"
+                        resource_id="/subscriptions/subscription/resourceGroups/group/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity"
                     )
                 ],
             ),
