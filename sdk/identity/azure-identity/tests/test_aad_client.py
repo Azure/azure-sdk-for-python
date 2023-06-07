@@ -10,7 +10,7 @@ from azure.identity._internal import AadClient, AadClientCertificate
 
 import pytest
 from msal import TokenCache
-from six.moves.urllib_parse import urlparse
+from urllib.parse import urlparse
 
 from helpers import build_aad_response, mock_response
 from test_certificate_credential import PEM_CERT_PATH

@@ -23,7 +23,7 @@ from azure.identity._internal import get_default_authority
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
 import pytest
-from six.moves.urllib_parse import urlparse
+from urllib.parse import urlparse
 
 try:
     from unittest.mock import MagicMock, Mock, patch

@@ -58,7 +58,7 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def begin_create_certificate(
         self, certificate_name: str, policy: CertificatePolicy, **kwargs
-    ) -> "LROPoller[Union[KeyVaultCertificate, CertificateOperation]]":
+    ) -> LROPoller[Union[KeyVaultCertificate, CertificateOperation]]:
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This operation requires the

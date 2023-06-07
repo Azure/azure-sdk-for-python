@@ -147,15 +147,15 @@ def get_execution_service_response(
         response.raise_for_status()
         return (response.content, body.get("SnapshotId", None))
     except AzureError as err:
-        raise SystemExit(err)
-    except Exception:
+        raise SystemExit(err) from err
+    except Exception as e:
         msg = "Failed to read in local executable job"
         raise JobException(
             message=msg,
             target=ErrorTarget.LOCAL_JOB,
             no_personal_data_message=msg,
             error_category=ErrorCategory.SYSTEM_ERROR,
-        )
+        ) from e
 
 
 def is_local_run(job_definition: JobBaseData) -> bool:
@@ -217,12 +217,12 @@ class CommonRuntimeHelper:
         try:
             client = docker.from_env(version="auto")
         except docker.errors.DockerException as e:
-            raise Exception(self.DOCKER_CLIENT_FAILURE_MSG.format(e))
+            raise Exception(self.DOCKER_CLIENT_FAILURE_MSG.format(e)) from e
 
         try:
             client.version()
         except Exception as e:
-            raise Exception(self.DOCKER_DAEMON_FAILURE_MSG.format(e))
+            raise Exception(self.DOCKER_DAEMON_FAILURE_MSG.format(e)) from e
 
         if registry:
             try:
@@ -232,7 +232,7 @@ class CommonRuntimeHelper:
                     registry=registry["url"],
                 )
             except Exception as e:
-                raise RuntimeError(self.DOCKER_LOGIN_FAILURE_MSG.format(registry["url"], e))
+                raise RuntimeError(self.DOCKER_LOGIN_FAILURE_MSG.format(registry["url"], e)) from e
         else:
             raise RuntimeError("Registry information is missing from bootstrapper configuration.")
 
@@ -258,7 +258,7 @@ class CommonRuntimeHelper:
                     tar.extract(file_name, os.path.dirname(path_in_host))
             os.remove(tar_file)
         except docker.errors.APIError as e:
-            raise Exception(f"Copying {path_in_container} from container has failed. Detailed message: {e}")
+            raise Exception(f"Copying {path_in_container} from container has failed. Detailed message: {e}") from e
 
     def get_common_runtime_info_from_response(self, response: Dict[str, str]) -> Tuple[Dict[str, str], str]:
         """Extract common-runtime info from Execution Service response.
@@ -413,7 +413,7 @@ def start_run_if_local(
             temp_dir = unzip_to_temporary_file(job_definition, zip_content)
             invoke_command(temp_dir)
         except Exception as e:
-            raise Exception(LOCAL_JOB_FAILURE_MSG.format(e))
+            raise Exception(LOCAL_JOB_FAILURE_MSG.format(e)) from e
     return snapshot_id
 
 
