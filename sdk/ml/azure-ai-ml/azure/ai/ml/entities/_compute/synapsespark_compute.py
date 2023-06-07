@@ -70,6 +70,11 @@ class AutoScaleSettings:
 class AutoPauseSettings:
     """Auto pause settings for Synapse Spark compute.
 
+    :param delay_in_minutes: ideal time delay in minutes before pause cluster
+    :type delay_in_minutes: Optional[int]
+    :param enabled:  Specifies if auto pause is enabled.
+    :type enabled: Optional[bool]
+
     .. admonition:: Example:
         :class: tip
 
@@ -82,12 +87,6 @@ class AutoPauseSettings:
     """
 
     def __init__(self, *, delay_in_minutes: Optional[int] = None, enabled: Optional[bool] = None) -> None:
-        """
-        :param delay_in_minutes: ideal time delay in minutes before pause cluster
-        :type delay_in_minutes: Optional[int]
-        :param enabled:  Specifies if auto pause is enabled.
-        :type enabled: Optional[bool]
-        """
         self.delay_in_minutes = delay_in_minutes
         self.auto_pause_enabled = enabled
 
@@ -108,6 +107,31 @@ class AutoPauseSettings:
 @experimental
 class SynapseSparkCompute(Compute):
     """SynapseSpark Compute resource.
+
+    :param name: The name of the compute.
+    :type name: str
+    :param description: The description of the resource.
+    :type description: Optional[str]
+    :param tags: The set of tags. Contains resource tags defined as key/value pairs.
+    :type tags: Optional[dict[str, str]]
+    :param node_count: The number of nodes in the compute.
+    :type node_count: Optional[int]
+    :param node_family: The node family of the compute.
+    :type node_family: Optional[str]
+    :param node_size: The size of the node.
+    :type node_size: Optional[str]
+    :param spark_version: The version of Spark to use.
+    :type spark_version: Optional[str]
+    :param identity: The configuration of identities that are associated with the compute cluster.
+    :type identity: Optional[IdentityConfiguration]
+    :param scale_settings: The scale settings for the compute.
+    :type scale_settings: Optional[AutoScaleSettings]
+    :param auto_pause_settings: The auto pause settings for the compute.
+    :type auto_pause_settings: Optional[AutoPauseSettings]
+    :param location: The resource location.
+    :type location: Optional[str]
+    :param resource_id: The ARM resource id of the underlying compute.
+    :type resource_id: Optional[str]
 
     .. admonition:: Example:
         :class: tip
@@ -135,32 +159,6 @@ class SynapseSparkCompute(Compute):
         auto_pause_settings: Optional[AutoPauseSettings] = None,
         **kwargs,
     ) -> None:
-        """
-        :param name: The name of the compute.
-        :type name: str
-        :param description: The description of the resource.
-        :type description: Optional[str]
-        :param tags: The set of tags. Contains resource tags defined as key/value pairs.
-        :type tags: Optional[dict[str, str]]
-        :param node_count: The number of nodes in the compute.
-        :type node_count: Optional[int]
-        :param node_family: The node family of the compute.
-        :type node_family: Optional[str]
-        :param node_size: The size of the node.
-        :type node_size: Optional[str]
-        :param spark_version: The version of Spark to use.
-        :type spark_version: Optional[str]
-        :param identity: The configuration of identities that are associated with the compute cluster.
-        :type identity: Optional[IdentityConfiguration]
-        :param scale_settings: The scale settings for the compute.
-        :type scale_settings: Optional[AutoScaleSettings]
-        :param auto_pause_settings: The auto pause settings for the compute.
-        :type auto_pause_settings: Optional[AutoPauseSettings]
-        :param location: The resource location.
-        :type location: Optional[str]
-        :param resource_id: The ARM resource id of the underlying compute.
-        :type resource_id: Optional[str]
-        """
         kwargs[TYPE] = ComputeType.SYNAPSESPARK
         super().__init__(name=name, description=description, location=kwargs.pop("location", None), tags=tags, **kwargs)
         self.identity = identity
