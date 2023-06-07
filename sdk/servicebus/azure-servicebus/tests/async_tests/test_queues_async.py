@@ -981,6 +981,11 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
 
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("test session sender", session_id="test"))
+
+            async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
+                messages = await receiver.receive_messages()
+                for message in messages:
+                    await receiver.complete_message(message)
  
     @pytest.mark.asyncio
     @pytest.mark.liveTest
