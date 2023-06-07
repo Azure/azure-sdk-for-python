@@ -69,83 +69,44 @@ def analyze_general_documents():
             print(f"Common name for key value pair: {kv_pair.common_name}")
         if kv_pair.key:
             print(
-                    "Key '{}' found within '{}' bounding regions".format(
-                        kv_pair.key.content,
-                        format_bounding_region(kv_pair.key.bounding_regions),
-                    )
-                )
+                f"Key '{kv_pair.key.content}' found within "
+                f"'{format_bounding_region(kv_pair.key.bounding_regions)}' bounding regions"
+            )
         if kv_pair.value:
             print(
-                    "Value '{}' found within '{}' bounding regions\n".format(
-                        kv_pair.value.content,
-                        format_bounding_region(kv_pair.value.bounding_regions),
-                    )
-                )
+                f"Value '{kv_pair.value.content}' found within "
+                f"'{format_bounding_region(kv_pair.value.bounding_regions)}' bounding regions\n"
+            )
 
     for page in result.pages:
         print(f"----Analyzing document from page #{page.page_number}----")
-        print(
-            "Page has width: {} and height: {}, measured with unit: {}".format(
-                page.width, page.height, page.unit
-            )
-        )
+        print(f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}")
 
         for line_idx, line in enumerate(page.lines):
             words = line.get_words()
             print(
-                "...Line # {} has {} words and text '{}' within bounding polygon '{}'".format(
-                    line_idx,
-                    len(words),
-                    line.content,
-                    format_polygon(line.polygon),
-                )
+                f"...Line #{line_idx} has {len(words)} words and text '{line.content}' within "
+                f"bounding polygon '{format_polygon(line.polygon)}'"
             )
 
             for word in words:
-                print(
-                    "......Word '{}' has a confidence of {}".format(
-                        word.content, word.confidence
-                    )
-                )
+                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
         for selection_mark in page.selection_marks:
             print(
-                "...Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
-                    selection_mark.state,
-                    format_polygon(selection_mark.polygon),
-                    selection_mark.confidence,
-                )
+                f"Selection mark is '{selection_mark.state}' within bounding polygon "
+                f"'{format_polygon(selection_mark.polygon)}' and has a confidence of "
+                f"{selection_mark.confidence}"
             )
 
     for table_idx, table in enumerate(result.tables):
-        print(
-            "Table # {} has {} rows and {} columns".format(
-                table_idx, table.row_count, table.column_count
-            )
-        )
+        print(f"Table # {table_idx} has {table.row_count} rows and {table.column_count} columns")
         for region in table.bounding_regions:
-            print(
-                "Table # {} location on page: {} is {}".format(
-                    table_idx,
-                    region.page_number,
-                    format_polygon(region.polygon),
-                )
-            )
+            print(f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}")
         for cell in table.cells:
-            print(
-                "...Cell[{}][{}] has content '{}'".format(
-                    cell.row_index,
-                    cell.column_index,
-                    cell.content,
-                )
-            )
+            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
             for region in cell.bounding_regions:
-                print(
-                    "...content on page {} is within bounding polygon '{}'\n".format(
-                        region.page_number,
-                        format_polygon(region.polygon),
-                    )
-                )
+                print(f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'\n")
     print("----------------------------------------")
     # [END analyze_general_documents]
 

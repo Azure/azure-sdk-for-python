@@ -56,15 +56,16 @@ def sample_copy_model_to(custom_model_id):
 
     print(f"Model ID: {copied_over_model.model_id}")
     print(f"Description: {copied_over_model.description}")
-    print(f"Model created on: {copied_over_model.created_on}\n")
-    print(f"Model expires on: {copied_over_model.expires_on}\n")
+    print(f"Model created on: {copied_over_model.created_on}")
+    print(f"Model expires on: {copied_over_model.expires_on}")
     print("Doc types the model can recognize:")
     for name, doc_type in copied_over_model.doc_types.items():
-        print(f"\nDoc Type: '{name}' which has the following fields:")
+        print(f"Doc Type: '{name}' which has the following fields:")
         for field_name, field in doc_type.field_schema.items():
-            print("Field: '{}' has type '{}' and confidence score {}".format(
-                field_name, field["type"], doc_type.field_confidence[field_name]
-            ))
+            print(
+                f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                f"{doc_type.field_confidence[field_name]}"
+            )
     # [END begin_copy_document_model_to]
 
 

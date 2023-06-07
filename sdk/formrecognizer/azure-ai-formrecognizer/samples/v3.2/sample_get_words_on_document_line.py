@@ -58,32 +58,22 @@ def get_words_on_document_line():
         )
     result = poller.result()
 
-    for idx, page in enumerate(result.pages):
-        print(f"----Analyzing lines and words from page #{idx + 1}----")
+    for page in result.pages:
+        print(f"----Analyzing lines and words from page #{page.page_number}----")
         print(
-            "Page has width: {} and height: {}, measured with unit: {}".format(
-                page.width, page.height, page.unit
-            )
+            f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}"
         )
 
         if page.lines is not None:
             for line_idx, line in enumerate(page.lines):
                 words = line.get_words()
                 print(
-                    "...Line # {} has word count {} and text '{}' within bounding polygon '{}'".format(
-                        line_idx,
-                        len(words),
-                        line.content,
-                        format_polygon(line.polygon),
-                    )
+                    f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
+                    f"within bounding polygon '{format_polygon(line.polygon)}'"
                 )
 
                 for word in words:
-                    print(
-                        "......Word '{}' has a confidence of {}".format(
-                            word.content, word.confidence
-                        )
-                    )
+                    print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
     print("----------------------------------------")
 
