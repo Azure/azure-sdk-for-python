@@ -50,8 +50,8 @@ class WorkspaceConnection(Resource):
     :type name: str
     :param target: The URL or ARM resource ID of the external resource.
     :type target: str
-    :param expiryTime: The expiry time of the workspace connection secret
-    :type expiryTime: str
+    :param expiry_time: The expiry time of the workspace connection secret
+    :type expiry_time: str
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: Union[
         ~azure.ai.ml.entities.PatTokenConfiguration, ~azure.ai.ml.entities.SasTokenConfiguration,
@@ -79,13 +79,13 @@ class WorkspaceConnection(Resource):
             ServicePrincipalConfiguration,
             AccessKeyConfiguration,
         ],
-        expiryTime: Optional[str] = None,
+        expiry_time: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
         **kwargs,
     ):
         self.type = type
         self._target = target
-        self._expiryTime = expiryTime
+        self._expiry_time = expiry_time
         self._credentials = credentials
         self._metadata = json.loads(json.dumps(metadata))
         super().__init__(**kwargs)
@@ -106,13 +106,13 @@ class WorkspaceConnection(Resource):
         self._type = camel_to_snake(value)
 
     @property
-    def expiryTime(self) -> str:
+    def expiry_time(self) -> str:
         """Secret expiry time for workspace connection.
 
         :return: Secret expiry time for workspace connection.
         :rtype: str
         """
-        return self._expiryTime
+        return self._expiry_time
 
     @property
     def target(self) -> str:
@@ -221,7 +221,7 @@ class WorkspaceConnection(Resource):
             id=rest_obj.id,
             name=rest_obj.name,
             target=properties.target,
-            expiryTime=properties.expiry_time,
+            expiry_time=properties.expiry_time,
             creation_context=SystemData._from_rest_object(rest_obj.system_data) if rest_obj.system_data else None,
             type=camel_to_snake(properties.category),
             credentials=credentials,
@@ -256,7 +256,7 @@ class WorkspaceConnection(Resource):
             target=self.target,
             credentials=self.credentials._to_workspace_connection_rest_object(),
             metadata=self.metadata,
-            expiry_time=self.expiryTime,
+            expiry_time=self.expiry_time,
             # auth_type=auth_type,
             category=_snake_to_camel(self.type),
         )
