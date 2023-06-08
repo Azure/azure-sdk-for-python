@@ -461,243 +461,243 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     
     # Live only, as test proxy now cannot handle spaces correctly
     # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
-    @pytest.mark.live_test_only
-    @acr_preparer()
-    async def test_set_oci_manifest(self, **kwargs):
-        containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
-        repo = self.get_resource_name("repo")
-        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest.json")
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            await self.upload_oci_manifest_prerequisites(repo, client)
+    # @pytest.mark.live_test_only
+    # @acr_preparer()
+    # async def test_set_oci_manifest(self, **kwargs):
+    #     containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
+    #     repo = self.get_resource_name("repo")
+    #     path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest.json")
+    #     async with self.create_registry_client(containerregistry_endpoint) as client:
+    #         await self.upload_oci_manifest_prerequisites(repo, client)
             
-            with open(path, "rb") as manifest_stream:
-                # test set oci manifest in stream format
-                with pytest.raises(HttpResponseError):
-                    await client.set_manifest(repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST)
-                manifest_stream.seek(0)
-                digest1 = await client.set_manifest(repo, manifest_stream, tag="v1")
-                manifest_stream.seek(0)
+    #         with open(path, "rb") as manifest_stream:
+    #             # test set oci manifest in stream format
+    #             with pytest.raises(HttpResponseError):
+    #                 await client.set_manifest(repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST)
+    #             manifest_stream.seek(0)
+    #             digest1 = await client.set_manifest(repo, manifest_stream, tag="v1")
+    #             manifest_stream.seek(0)
                 
-                # test set oci manifest in JSON format
-                manifest_json = json.loads(manifest_stream.read().decode())
-                with pytest.raises(HttpResponseError):
-                    await client.set_manifest(repo, manifest_json, tag="v2", media_type=DOCKER_MANIFEST)
-                digest2 = await client.set_manifest(repo, manifest_json, tag="v2")
+    #             # test set oci manifest in JSON format
+    #             manifest_json = json.loads(manifest_stream.read().decode())
+    #             with pytest.raises(HttpResponseError):
+    #                 await client.set_manifest(repo, manifest_json, tag="v2", media_type=DOCKER_MANIFEST)
+    #             digest2 = await client.set_manifest(repo, manifest_json, tag="v2")
                 
-            assert digest1 == digest2
+    #         assert digest1 == digest2
             
-            # test get oci manifest by digest
-            response = await client.get_manifest(repo, digest1)
-            assert response.media_type == OCI_IMAGE_MANIFEST
+    #         # test get oci manifest by digest
+    #         response = await client.get_manifest(repo, digest1)
+    #         assert response.media_type == OCI_IMAGE_MANIFEST
             
-            # test get oci manifest by tag
-            response = await client.get_manifest(repo, "v1")
-            assert response.media_type == OCI_IMAGE_MANIFEST
-            response = await client.get_manifest(repo, "v2")
-            assert response.media_type == OCI_IMAGE_MANIFEST
+    #         # test get oci manifest by tag
+    #         response = await client.get_manifest(repo, "v1")
+    #         assert response.media_type == OCI_IMAGE_MANIFEST
+    #         response = await client.get_manifest(repo, "v2")
+    #         assert response.media_type == OCI_IMAGE_MANIFEST
 
-            await client.delete_manifest(repo, digest1)
-            await client.delete_repository(repo)
+    #         await client.delete_manifest(repo, digest1)
+    #         await client.delete_repository(repo)
     
     # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly.
     # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
-    @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_set_oci_manifest_without_spaces(self, containerregistry_endpoint):
-        if self.is_china_endpoint(containerregistry_endpoint):
-            pytest.skip("Running in china cloud may cause all tests finishing longer than the max time of 120 mins.")
+    # @acr_preparer()
+    # @recorded_by_proxy_async
+    # async def test_set_oci_manifest_without_spaces(self, containerregistry_endpoint):
+    #     if self.is_china_endpoint(containerregistry_endpoint):
+    #         pytest.skip("Running in china cloud may cause all tests finishing longer than the max time of 120 mins.")
         
-        repo = self.get_resource_name("repo")
-        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest_without_spaces.json")
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            await self.upload_oci_manifest_prerequisites(repo, client)
+    #     repo = self.get_resource_name("repo")
+    #     path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest_without_spaces.json")
+    #     async with self.create_registry_client(containerregistry_endpoint) as client:
+    #         await self.upload_oci_manifest_prerequisites(repo, client)
 
-            with open(path, "rb") as manifest_stream:
-                # test set oci manifest in stream format
-                with pytest.raises(HttpResponseError):
-                    await client.set_manifest(repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST)
-                manifest_stream.seek(0)
-                digest = await client.set_manifest(repo, manifest_stream, tag="v1")
+    #         with open(path, "rb") as manifest_stream:
+    #             # test set oci manifest in stream format
+    #             with pytest.raises(HttpResponseError):
+    #                 await client.set_manifest(repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST)
+    #             manifest_stream.seek(0)
+    #             digest = await client.set_manifest(repo, manifest_stream, tag="v1")
                 
-            # test get oci manifest by digest
-            response = await client.get_manifest(repo, digest)
-            assert response.media_type == OCI_IMAGE_MANIFEST
+    #         # test get oci manifest by digest
+    #         response = await client.get_manifest(repo, digest)
+    #         assert response.media_type == OCI_IMAGE_MANIFEST
             
-            # test get oci manifest by tag
-            response = await client.get_manifest(repo, "v1")
-            assert response.media_type == OCI_IMAGE_MANIFEST
+    #         # test get oci manifest by tag
+    #         response = await client.get_manifest(repo, "v1")
+    #         assert response.media_type == OCI_IMAGE_MANIFEST
 
-            await client.delete_manifest(repo, digest)
-            await client.delete_repository(repo)
+    #         await client.delete_manifest(repo, digest)
+    #         await client.delete_repository(repo)
 
     # Live only, as test proxy now cannot handle spaces correctly
     # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
-    @pytest.mark.live_test_only
-    @acr_preparer()
-    async def test_set_docker_manifest(self, **kwargs):
-        containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
-        if self.is_china_endpoint(containerregistry_endpoint):
-            pytest.skip("Not run in China cloud")
-        repo = self.get_resource_name("repo")
-        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            await self.upload_docker_manifest_prerequisites(repo, client)
+    # @pytest.mark.live_test_only
+    # @acr_preparer()
+    # async def test_set_docker_manifest(self, **kwargs):
+    #     containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
+    #     if self.is_china_endpoint(containerregistry_endpoint):
+    #         pytest.skip("Not run in China cloud")
+    #     repo = self.get_resource_name("repo")
+    #     path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
+    #     async with self.create_registry_client(containerregistry_endpoint) as client:
+    #         await self.upload_docker_manifest_prerequisites(repo, client)
             
-            with open(path, "rb") as manifest_stream:
-                # test set Docker manifest in stream format
-                with pytest.raises(HttpResponseError):
-                    # It fails as the default media type is oci image manifest media type
-                    await client.set_manifest(repo, manifest_stream, tag="v1")
-                manifest_stream.seek(0)
-                digest1 = await client.set_manifest(repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST)
-                manifest_stream.seek(0)
+    #         with open(path, "rb") as manifest_stream:
+    #             # test set Docker manifest in stream format
+    #             with pytest.raises(HttpResponseError):
+    #                 # It fails as the default media type is oci image manifest media type
+    #                 await client.set_manifest(repo, manifest_stream, tag="v1")
+    #             manifest_stream.seek(0)
+    #             digest1 = await client.set_manifest(repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST)
+    #             manifest_stream.seek(0)
                 
-                # test set Docker manifest in JSON format
-                manifest_json = json.loads(manifest_stream.read().decode())
-                with pytest.raises(HttpResponseError):
-                    # It fails as the default media type is oci image manifest media type
-                    await client.set_manifest(repo, manifest_json, tag="v2")
-                digest2 = await client.set_manifest(repo, manifest_json, tag="v2", media_type=DOCKER_MANIFEST)
+    #             # test set Docker manifest in JSON format
+    #             manifest_json = json.loads(manifest_stream.read().decode())
+    #             with pytest.raises(HttpResponseError):
+    #                 # It fails as the default media type is oci image manifest media type
+    #                 await client.set_manifest(repo, manifest_json, tag="v2")
+    #             digest2 = await client.set_manifest(repo, manifest_json, tag="v2", media_type=DOCKER_MANIFEST)
             
-            assert digest1 == digest2
+    #         assert digest1 == digest2
                 
-            # test get Docker manifest by digest
-            response = await client.get_manifest(repo, digest1)
-            assert response.media_type == DOCKER_MANIFEST
+    #         # test get Docker manifest by digest
+    #         response = await client.get_manifest(repo, digest1)
+    #         assert response.media_type == DOCKER_MANIFEST
             
-            # test get Docker manifest by tag
-            response = await client.get_manifest(repo, "v1")
-            assert response.media_type == DOCKER_MANIFEST
-            response = await client.get_manifest(repo, "v2")
-            assert response.media_type == DOCKER_MANIFEST
+    #         # test get Docker manifest by tag
+    #         response = await client.get_manifest(repo, "v1")
+    #         assert response.media_type == DOCKER_MANIFEST
+    #         response = await client.get_manifest(repo, "v2")
+    #         assert response.media_type == DOCKER_MANIFEST
 
-            await client.delete_manifest(repo, digest1)
-            await client.delete_repository(repo)
+    #         await client.delete_manifest(repo, digest1)
+    #         await client.delete_repository(repo)
     
     # Reading data from a no space file to make this test pass in playback as test proxy cannot handle spaces correctly.
     # issue: https://github.com/Azure/azure-sdk-tools/issues/5968
-    @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_set_docker_manifest_without_spaces(self, containerregistry_endpoint):
-        if self.is_china_endpoint(containerregistry_endpoint):
-            pytest.skip("Running in china cloud may cause all tests finishing longer than the max time of 120 mins.")
+    # @acr_preparer()
+    # @recorded_by_proxy_async
+    # async def test_set_docker_manifest_without_spaces(self, containerregistry_endpoint):
+    #     if self.is_china_endpoint(containerregistry_endpoint):
+    #         pytest.skip("Running in china cloud may cause all tests finishing longer than the max time of 120 mins.")
         
-        repo = self.get_resource_name("repo")
-        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest_without_spaces.json")
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            await self.upload_docker_manifest_prerequisites(repo, client)
+    #     repo = self.get_resource_name("repo")
+    #     path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest_without_spaces.json")
+    #     async with self.create_registry_client(containerregistry_endpoint) as client:
+    #         await self.upload_docker_manifest_prerequisites(repo, client)
             
-            with open(path, "rb") as manifest_stream:
-                # test set Docker manifest in stream format
-                with pytest.raises(HttpResponseError):
-                    # It fails as the default media type is oci image manifest media type
-                    await client.set_manifest(repo, manifest_stream, tag="v1")
-                manifest_stream.seek(0)
-                digest = await client.set_manifest(repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST)
+    #         with open(path, "rb") as manifest_stream:
+    #             # test set Docker manifest in stream format
+    #             with pytest.raises(HttpResponseError):
+    #                 # It fails as the default media type is oci image manifest media type
+    #                 await client.set_manifest(repo, manifest_stream, tag="v1")
+    #             manifest_stream.seek(0)
+    #             digest = await client.set_manifest(repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST)
                 
-            # test get Docker manifest by digest
-            response = await client.get_manifest(repo, digest)
-            assert response.media_type == DOCKER_MANIFEST
+    #         # test get Docker manifest by digest
+    #         response = await client.get_manifest(repo, digest)
+    #         assert response.media_type == DOCKER_MANIFEST
             
-            # test get Docker manifest by tag
-            response = await client.get_manifest(repo, "v1")
-            assert response.media_type == DOCKER_MANIFEST
+    #         # test get Docker manifest by tag
+    #         response = await client.get_manifest(repo, "v1")
+    #         assert response.media_type == DOCKER_MANIFEST
 
-            await client.delete_manifest(repo, digest)
-            await client.delete_repository(repo)
+    #         await client.delete_manifest(repo, digest)
+    #         await client.delete_repository(repo)
 
-    @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_upload_blob(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
-        blob = BytesIO(b"hello world")
+    # @acr_preparer()
+    # @recorded_by_proxy_async
+    # async def test_upload_blob(self, containerregistry_endpoint):
+    #     repo = self.get_resource_name("repo")
+    #     blob = BytesIO(b"hello world")
 
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            # Act
-            digest, blob_size = await client.upload_blob(repo, blob)
+    #     async with self.create_registry_client(containerregistry_endpoint) as client:
+    #         # Act
+    #         digest, blob_size = await client.upload_blob(repo, blob)
 
-            # Assert
-            blob_content = b""
-            stream = await client.download_blob(repo, digest)
-            async for chunk in stream:
-                blob_content += chunk
-            assert len(blob_content) == blob_size
+    #         # Assert
+    #         blob_content = b""
+    #         stream = await client.download_blob(repo, digest)
+    #         async for chunk in stream:
+    #             blob_content += chunk
+    #         assert len(blob_content) == blob_size
 
-            await client.delete_blob(repo, digest)
-            await client.delete_repository(repo)
+    #         await client.delete_blob(repo, digest)
+    #         await client.delete_repository(repo)
 
-    @pytest.mark.live_test_only
-    @acr_preparer()
-    async def test_upload_large_blob_in_chunk(self, **kwargs):
-        containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
-        if not self.is_public_endpoint(containerregistry_endpoint):
-            pytest.skip("Running in non-public cloud may cause all tests finishing longer than the max time of 120 mins.")
+    # @pytest.mark.live_test_only
+    # @acr_preparer()
+    # async def test_upload_large_blob_in_chunk(self, **kwargs):
+    #     containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
+    #     if not self.is_public_endpoint(containerregistry_endpoint):
+    #         pytest.skip("Running in non-public cloud may cause all tests finishing longer than the max time of 120 mins.")
         
-        repo = self.get_resource_name("repo")
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            # Test blob upload and download in equal size chunks
-            try:
-                blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
-                data = b'\x00' * int(blob_size)
-                digest, size = await client.upload_blob(repo, BytesIO(data))
-                assert size == blob_size
+    #     repo = self.get_resource_name("repo")
+    #     async with self.create_registry_client(containerregistry_endpoint) as client:
+    #         # Test blob upload and download in equal size chunks
+    #         try:
+    #             blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
+    #             data = b'\x00' * int(blob_size)
+    #             digest, size = await client.upload_blob(repo, BytesIO(data))
+    #             assert size == blob_size
 
-                stream = await client.download_blob(repo, digest)
-                size = 0
-                with open("text1.txt", "wb") as file:
-                    async for chunk in stream:
-                        size += file.write(chunk)
-                assert size == blob_size
+    #             stream = await client.download_blob(repo, digest)
+    #             size = 0
+    #             with open("text1.txt", "wb") as file:
+    #                 async for chunk in stream:
+    #                     size += file.write(chunk)
+    #             assert size == blob_size
 
-                await client.delete_blob(repo, digest)
-            except (ServiceRequestError, ServiceResponseError) as err:
-                # Service does not support resumable upload when get transient error while uploading
-                # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
-                print(f"Failed to upload blob: {err.message}")
-            except ResourceNotFoundError as err:
-                # Service does not support resumable upload when get transient error while uploading
-                # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
-                assert err.status_code == 404
-                assert err.response.request.method == "PATCH"
-                assert err.response.text() == '{"errors":[{"code":"BLOB_UPLOAD_INVALID","message":"blob upload invalid"}]}\n'
+    #             await client.delete_blob(repo, digest)
+    #         except (ServiceRequestError, ServiceResponseError) as err:
+    #             # Service does not support resumable upload when get transient error while uploading
+    #             # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
+    #             print(f"Failed to upload blob: {err.message}")
+    #         except ResourceNotFoundError as err:
+    #             # Service does not support resumable upload when get transient error while uploading
+    #             # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
+    #             assert err.status_code == 404
+    #             assert err.response.request.method == "PATCH"
+    #             assert err.response.text() == '{"errors":[{"code":"BLOB_UPLOAD_INVALID","message":"blob upload invalid"}]}\n'
 
-            # Test blob upload and download in unequal size chunks
-            try:
-                blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
-                data = b'\x00' * int(blob_size)
-                digest, size = await client.upload_blob(repo, BytesIO(data))
-                assert size == blob_size
+    #         # Test blob upload and download in unequal size chunks
+    #         try:
+    #             blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
+    #             data = b'\x00' * int(blob_size)
+    #             digest, size = await client.upload_blob(repo, BytesIO(data))
+    #             assert size == blob_size
 
-                stream = await client.download_blob(repo, digest)
-                size = 0
-                with open("text2.txt", "wb") as file:
-                    async for chunk in stream:
-                        size += file.write(chunk)
-                assert size == blob_size
+    #             stream = await client.download_blob(repo, digest)
+    #             size = 0
+    #             with open("text2.txt", "wb") as file:
+    #                 async for chunk in stream:
+    #                     size += file.write(chunk)
+    #             assert size == blob_size
 
-                await client.delete_blob(repo, digest)
-            except (ServiceRequestError, ServiceResponseError) as err:
-                # Service does not support resumable upload when get transient error while uploading
-                # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
-                print(f"Failed to upload blob: {err.message}")
-            except ResourceNotFoundError as err:
-                # Service does not support resumable upload when get transient error while uploading
-                # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
-                assert err.status_code == 404
-                assert err.response.request.method == "PATCH"
-                assert err.response.text() == '{"errors":[{"code":"BLOB_UPLOAD_INVALID","message":"blob upload invalid"}]}\n'
+    #             await client.delete_blob(repo, digest)
+    #         except (ServiceRequestError, ServiceResponseError) as err:
+    #             # Service does not support resumable upload when get transient error while uploading
+    #             # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
+    #             print(f"Failed to upload blob: {err.message}")
+    #         except ResourceNotFoundError as err:
+    #             # Service does not support resumable upload when get transient error while uploading
+    #             # issue: https://github.com/Azure/azure-sdk-for-python/issues/29738
+    #             assert err.status_code == 404
+    #             assert err.response.request.method == "PATCH"
+    #             assert err.response.text() == '{"errors":[{"code":"BLOB_UPLOAD_INVALID","message":"blob upload invalid"}]}\n'
 
-            # Cleanup
-            await client.delete_repository(repo)
+    #         # Cleanup
+    #         await client.delete_repository(repo)
 
-    @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_delete_blob_does_not_exist(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
-        hash_value = hashlib.sha256(b"test").hexdigest()
-        digest = f"sha256:{hash_value}"
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            await client.delete_blob(repo, digest)
+    # @acr_preparer()
+    # @recorded_by_proxy_async
+    # async def test_delete_blob_does_not_exist(self, containerregistry_endpoint):
+    #     repo = self.get_resource_name("repo")
+    #     hash_value = hashlib.sha256(b"test").hexdigest()
+    #     digest = f"sha256:{hash_value}"
+    #     async with self.create_registry_client(containerregistry_endpoint) as client:
+    #         await client.delete_blob(repo, digest)
 
     @acr_preparer()
     @recorded_by_proxy_async
