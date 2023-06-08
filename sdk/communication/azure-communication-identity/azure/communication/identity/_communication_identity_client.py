@@ -5,8 +5,8 @@
 # ------------------------------------
 
 from typing import TYPE_CHECKING, Any, Tuple, Union
-from uuid import UUID
-
+from datetime import datetime
+from uuid import uuid1
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import AccessToken
 from ._generated._client\
@@ -16,12 +16,17 @@ from ._shared.models import CommunicationUserIdentifier
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
 from ._utils import convert_timedelta_to_mins
-from datetime import datetime
-import uuid
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureKeyCredential
     from ._generated.models import CommunicationTokenScope
+
+
+def get_repeatability_headers():
+    """ Initializes and returns Repeatability Headers """
+    repeatability_request_id = uuid1()
+    repeatability_first_sent = datetime.utcnow()
+    return repeatability_request_id, repeatability_first_sent
 
 
 class CommunicationIdentityClient(object):
@@ -98,7 +103,7 @@ class CommunicationIdentityClient(object):
         :return: CommunicationUserIdentifier
         :rtype: ~azure.communication.identity.CommunicationUserIdentifier
         """
-        repeatability_request_id, repeatability_first_sent = self.get_repeatability_headers()
+        repeatability_request_id, repeatability_first_sent = get_repeatability_headers()
         return self._identity_service_client.communication_identity.create(
             cls=lambda pr, u, e: CommunicationUserIdentifier(u.identity.id, raw_id=u.identity.id),
             repeatability_request_id=repeatability_request_id,
@@ -123,7 +128,7 @@ class CommunicationIdentityClient(object):
         :rtype:
             tuple of (~azure.communication.identity.CommunicationUserIdentifier, ~azure.core.credentials.AccessToken)
         """
-        repeatability_request_id, repeatability_first_sent = self.get_repeatability_headers()
+        repeatability_request_id, repeatability_first_sent = get_repeatability_headers()
         token_expires_in = kwargs.pop('token_expires_in', None)
         request_body = {
             'createTokenWithScopes': scopes,
@@ -201,7 +206,7 @@ class CommunicationIdentityClient(object):
         :return: None
         :rtype: None
         """
-        repeatability_request_id, repeatability_first_sent = self.get_repeatability_headers()
+        repeatability_request_id, repeatability_first_sent = get_repeatability_headers()
         return self._identity_service_client.communication_identity.revoke_access_tokens(
             user.properties['id'] if user else None,
             repeatability_request_id=repeatability_request_id,
@@ -241,9 +246,3 @@ class CommunicationIdentityClient(object):
             body=request_body,
             cls=lambda pr, u, e: AccessToken(u.token, u.expires_on),
             **kwargs)
-
-    def get_repeatability_headers(self) -> tuple[UUID, datetime]:
-        """ Initializes and returns Repeatability Headers """
-        repeatability_request_id = uuid.uuid1()
-        repeatability_first_sent = datetime.utcnow()
-        return repeatability_request_id, repeatability_first_sent
