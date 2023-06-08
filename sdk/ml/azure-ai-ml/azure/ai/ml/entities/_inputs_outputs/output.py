@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 # pylint: disable=redefined-builtin, too-many-instance-attributes
+import logging
 import re
 from typing import Dict, overload
 
@@ -10,11 +11,19 @@ from typing_extensions import Literal
 
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import IOConstants
-from azure.ai.ml.exceptions import UserErrorException
 from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    UserErrorException,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from .base import _InputOutputBase
 from .utils import _remove_empty_values
+
+module_logger = logging.getLogger(__name__)
 
 
 class Output(_InputOutputBase):
@@ -97,6 +106,9 @@ class Output(_InputOutputBase):
         self.mode = mode
         # use this field to determine the Output is control or not, currently hide in kwargs
         self.is_control = kwargs.pop("is_control", None)
+        self.min = kwargs.pop("min", None)
+        self.max = kwargs.pop("max", None)
+        self.default = kwargs.pop("default", None)
         # use this field to mark Output for early node orchestrate, currently hide in kwargs
         self.early_available = kwargs.pop("early_available", None)
         self._intellectual_property = None
@@ -153,3 +165,71 @@ class Output(_InputOutputBase):
             )
         if self.version and not self.name:
             raise UserErrorException("Output name is required when output version is specified.")
+
+    @property
+    def _multiple_types(self) -> bool:
+        """Returns True if this input has multiple types.
+
+        Currently, there are two scenarios that need to check this property:
+        1. before `in` as it may throw exception; there will be `in` operation for validation/transformation.
+        2. `str()` of list is not ideal, so we need to manually create its string result.
+        """
+        return isinstance(self.type, list)
+
+    def _parse(self, val):
+        """Parse value passed from command line.
+
+        :param val: The input value
+        :return: The parsed value.
+        """
+        if self.type == "integer":
+            return int(val)
+        if self.type == "number":
+            return float(val)
+        if self.type == "boolean":
+            lower_val = str(val).lower()
+            if lower_val not in {"true", "false"}:
+                msg = "Boolean parameter '{}' only accept True/False, got {}."
+                raise ValidationException(
+                    message=msg.format(self._port_name, val),
+                    no_personal_data_message=msg.format("[self._port_name]", "[val]"),
+                    error_category=ErrorCategory.USER_ERROR,
+                    target=ErrorTarget.PIPELINE,
+                    error_type=ValidationErrorType.INVALID_VALUE,
+                )
+            return lower_val == "true"
+        if self.type == "string":
+            return val if isinstance(val, str) else str(val)
+        return val
+
+    def _validate_or_throw(self, value):
+        """Validate input parameter value, throw exception if not as expected.
+        It will throw exception if validate failed, otherwise do nothing.
+        """
+        if value is None:
+            return
+        # for numeric values, need extra check for min max value
+        if not self._multiple_types and self.type in ("integer", "number"):
+            if self.min is not None and value < self.min:
+                module_logger.warning(
+                    "Parameter '%s' is less than the minimum value %s.",
+                    self._port_name,
+                    self.min,
+                )
+            if self.max is not None and value > self.max:
+                module_logger.warning(
+                    "Parameter '%s' is greater than the maximum value %s.",
+                    self._port_name,
+                    self.max,
+                )
+
+    def _parse_and_validate(self, val):
+        """Parse the val passed from the command line and validate the value.
+
+        :param str_val: The input string value from the command line.
+        :return: The parsed value.
+        """
+        if self._is_primitive_type:
+            val = self._parse(val) if isinstance(val, str) else val
+            self._validate_or_throw(val)
+        return val
