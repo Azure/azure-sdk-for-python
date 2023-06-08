@@ -742,7 +742,7 @@ class DatabaseProxy(object):
         :rtype: ~azure.cosmos.ThroughputProperties
         """
         warnings.warn(
-            "read_offer is a deprecated method name, use read_throughput instead",
+            "read_offer is a deprecated method name, use get_throughput instead",
             DeprecationWarning
         )
         return self.get_throughput(**kwargs)

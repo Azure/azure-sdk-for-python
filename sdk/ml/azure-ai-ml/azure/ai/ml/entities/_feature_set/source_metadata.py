@@ -10,7 +10,13 @@ from .delay_metadata import DelayMetadata
 
 class SourceMetadata(object):
     def __init__(
-        self, *, type: str, path: str, timestamp_column: TimestampColumnMetadata, source_delay: DelayMetadata, **kwargs
+        self,
+        *,
+        type: str,
+        path: str,
+        timestamp_column: TimestampColumnMetadata,
+        source_delay: DelayMetadata = None,
+        **kwargs
     ):
         self.type = type
         self.path = path

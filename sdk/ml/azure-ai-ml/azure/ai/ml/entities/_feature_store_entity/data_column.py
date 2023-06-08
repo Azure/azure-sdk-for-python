@@ -4,48 +4,60 @@
 
 # pylint: disable=redefined-builtin,disable=unused-argument
 
-from typing import Dict
+from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import IndexColumn, FeatureDataType
-
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._restclient.v2023_02_01_preview.models import FeatureDataType, IndexColumn
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
-from .data_column_type import _DataColumnType
+from .data_column_type import DataColumnType
 
-DataColumnTypeMap: Dict[_DataColumnType, FeatureDataType] = {
-    _DataColumnType.string: FeatureDataType.STRING,
-    _DataColumnType.integer: FeatureDataType.INTEGER,
-    _DataColumnType.long: FeatureDataType.LONG,
-    _DataColumnType.float: FeatureDataType.FLOAT,
-    _DataColumnType.double: FeatureDataType.DOUBLE,
-    _DataColumnType.binary: FeatureDataType.BINARY,
-    _DataColumnType.datetime: FeatureDataType.DATETIME,
-    _DataColumnType.boolean: FeatureDataType.BOOLEAN,
+DataColumnTypeMap: Dict[DataColumnType, FeatureDataType] = {
+    DataColumnType.STRING: FeatureDataType.STRING,
+    DataColumnType.INTEGER: FeatureDataType.INTEGER,
+    DataColumnType.LONG: FeatureDataType.LONG,
+    DataColumnType.FLOAT: FeatureDataType.FLOAT,
+    DataColumnType.DOUBLE: FeatureDataType.DOUBLE,
+    DataColumnType.BINARY: FeatureDataType.BINARY,
+    DataColumnType.DATETIME: FeatureDataType.DATETIME,
+    DataColumnType.BOOLEAN: FeatureDataType.BOOLEAN,
 }
 
-FeatureDataTypeMap: Dict[str, _DataColumnType] = {
-    "String": _DataColumnType.string,
-    "Integer": _DataColumnType.integer,
-    "Long": _DataColumnType.long,
-    "Float": _DataColumnType.float,
-    "Double": _DataColumnType.double,
-    "Binary": _DataColumnType.binary,
-    "Datetime": _DataColumnType.datetime,
-    "Boolean": _DataColumnType.boolean,
+FeatureDataTypeMap: Dict[str, DataColumnType] = {
+    "String": DataColumnType.STRING,
+    "Integer": DataColumnType.INTEGER,
+    "Long": DataColumnType.LONG,
+    "Float": DataColumnType.FLOAT,
+    "Double": DataColumnType.DOUBLE,
+    "Binary": DataColumnType.BINARY,
+    "Datetime": DataColumnType.DATETIME,
+    "Boolean": DataColumnType.BOOLEAN,
 }
 
 
 @experimental
-class _DataColumn(RestTranslatableMixin):
+class DataColumn(RestTranslatableMixin):
     """A dataframe column
     :param name: The column name
     :type name: str, required
     :param type: Column data type
     :type type: str, one of [string, integer, long, float, double, binary, datetime, boolean] or
-    ~azure.ai.ml.entities._DataColumnType, optional"""
+    ~azure.ai.ml.entities.DataColumnType, optional"""
 
-    def __init__(self, *, name: str, type: _DataColumnType = None, **kwargs):
+    def __init__(self, *, name: str, type: Optional[Union[str, DataColumnType]] = None, **kwargs):
+        if isinstance(type, str):
+            type = DataColumnType[type]
+        elif not isinstance(type, DataColumnType):
+            msg = f"Type should be DataColumnType enum string or enum type, found {type}"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                error_type=ValidationErrorType.INVALID_VALUE,
+                target=ErrorTarget.DATA,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
         self.name = name
         self.type = type
 
@@ -53,5 +65,5 @@ class _DataColumn(RestTranslatableMixin):
         return IndexColumn(column_name=self.name, data_type=DataColumnTypeMap.get(self.type, None))
 
     @classmethod
-    def _from_rest_object(cls, obj: IndexColumn) -> "_DataColumn":
-        return _DataColumn(name=obj.column_name, type=FeatureDataTypeMap.get(obj.data_type, None))
+    def _from_rest_object(cls, obj: IndexColumn) -> "DataColumn":
+        return DataColumn(name=obj.column_name, type=FeatureDataTypeMap.get(obj.data_type, None))

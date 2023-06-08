@@ -29,6 +29,15 @@ class AuthorizationCodeCredential(GetTokenMixin):
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_authorization_code_credential]
+            :end-before: [END create_authorization_code_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create an AuthorizationCodeCredential.
     """
 
     def __init__(
@@ -79,7 +88,9 @@ class AuthorizationCodeCredential(GetTokenMixin):
         # pylint:disable=useless-super-delegation
         return super(AuthorizationCodeCredential, self).get_token(*scopes, **kwargs)
 
-    def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
+    def _acquire_token_silently(
+        self, *scopes: str, **kwargs
+    ) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
     def _request_token(self, *scopes: str, **kwargs) -> AccessToken:

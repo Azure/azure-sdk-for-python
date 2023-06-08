@@ -632,7 +632,7 @@ class DataLakeDirectoryClient(PathClient):
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline)
+            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)
 
     def get_sub_directory_client(self, sub_directory  # type: Union[DirectoryProperties, str]
                                  ):
@@ -660,4 +660,4 @@ class DataLakeDirectoryClient(PathClient):
         return DataLakeDirectoryClient(
             self.url, self.file_system_name, directory_name=subdir_path, credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline)
+            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)

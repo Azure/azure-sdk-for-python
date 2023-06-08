@@ -211,8 +211,9 @@ class EmailOperations:
 
         :param message: Message payload for sending an email. Required.
         :type message: JSON
-        :keyword operation_id: This is the ID used by the status monitor for this long running
-         operation. Default value is None.
+        :keyword operation_id: This is the ID provided by the customer to identify the long running
+         operation. If an ID is not provided by the customer, the service will generate one. Default
+         value is None.
         :paramtype operation_id: str
         :keyword client_request_id: Tracking ID sent with the request to help with debugging. Default
          value is None.
@@ -325,8 +326,9 @@ class EmailOperations:
 
         :param message: Message payload for sending an email. Required.
         :type message: IO
-        :keyword operation_id: This is the ID used by the status monitor for this long running
-         operation. Default value is None.
+        :keyword operation_id: This is the ID provided by the customer to identify the long running
+         operation. If an ID is not provided by the customer, the service will generate one. Default
+         value is None.
         :paramtype operation_id: str
         :keyword client_request_id: Tracking ID sent with the request to help with debugging. Default
          value is None.
@@ -386,8 +388,9 @@ class EmailOperations:
         :param message: Message payload for sending an email. Is either a model type or a IO type.
          Required.
         :type message: JSON or IO
-        :keyword operation_id: This is the ID used by the status monitor for this long running
-         operation. Default value is None.
+        :keyword operation_id: This is the ID provided by the customer to identify the long running
+         operation. If an ID is not provided by the customer, the service will generate one. Default
+         value is None.
         :paramtype operation_id: str
         :keyword client_request_id: Tracking ID sent with the request to help with debugging. Default
          value is None.

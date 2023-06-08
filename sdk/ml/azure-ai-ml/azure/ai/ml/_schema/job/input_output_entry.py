@@ -205,6 +205,7 @@ class DatabaseSchema(metaclass=PatchedSchemaMeta):
     def make(self, data, **kwargs):
         from azure.ai.ml.data_transfer import Database
 
+        data.pop("type", None)
         return Database(**data)
 
     @pre_dump
@@ -231,6 +232,7 @@ class FileSystemSchema(metaclass=PatchedSchemaMeta):
     def make(self, data, **kwargs):
         from azure.ai.ml.data_transfer import FileSystem
 
+        data.pop("type", None)
         return FileSystem(**data)
 
     @pre_dump

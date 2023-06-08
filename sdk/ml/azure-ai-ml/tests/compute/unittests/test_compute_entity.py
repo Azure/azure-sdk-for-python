@@ -3,6 +3,8 @@ from typing import List, Union
 import pytest
 import yaml
 from msrest import Serializer
+
+from azure.ai.ml._restclient.v2023_04_01_preview.models import DataFactory
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_compute
@@ -16,6 +18,7 @@ from azure.ai.ml.entities import (
     ManagedIdentityConfiguration,
     SynapseSparkCompute,
     VirtualMachineCompute,
+    UnsupportedCompute,
 )
 
 
@@ -342,3 +345,8 @@ class TestComputeEntity:
         assert body["identity"]["userAssignedIdentities"] == self._uai_list_to_dict(
             compute.identity.user_assigned_identities
         )
+
+    def test_deserialize_data_factory_compute(self):
+        rest_compute = ComputeResource(properties=DataFactory())
+        # DataFactory compute can load from rest object
+        UnsupportedCompute._load_from_rest(rest_compute)

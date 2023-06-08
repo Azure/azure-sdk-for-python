@@ -4,11 +4,11 @@
 
 import logging
 from abc import ABC
-from typing import Optional
+from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2022_12_01_preview.models import SweepJobLimits as RestSweepJobLimits
-from azure.ai.ml._utils.utils import from_iso_duration_format, to_iso_duration_format
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CommandJobLimits as RestCommandJobLimits
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SweepJobLimits as RestSweepJobLimits
+from azure.ai.ml._utils.utils import from_iso_duration_format, is_data_binding_expression, to_iso_duration_format
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -37,21 +37,28 @@ class CommandJobLimits(JobLimits):
     :type timeout: int
     """
 
-    def __init__(self, *, timeout: Optional[int] = None):
+    def __init__(self, *, timeout: Union[int, str, None] = None):
         super().__init__()
         self.type = JobType.COMMAND
         self.timeout = timeout
 
     def _to_rest_object(self) -> RestCommandJobLimits:
+        if is_data_binding_expression(self.timeout):
+            return RestCommandJobLimits(timeout=self.timeout)
         return RestCommandJobLimits(timeout=to_iso_duration_format(self.timeout))
 
     @classmethod
-    def _from_rest_object(cls, obj: RestCommandJobLimits) -> "CommandJobLimits":
+    def _from_rest_object(cls, obj: Union[RestCommandJobLimits, dict]) -> Optional["CommandJobLimits"]:
         if not obj:
             return None
-
-        result = cls(timeout=from_iso_duration_format(obj.timeout))
-        return result
+        if isinstance(obj, dict):
+            timeout_value = obj.get("timeout", None)
+            # if timeout value is a binding string
+            if is_data_binding_expression(timeout_value):
+                return cls(timeout=timeout_value)
+            # if response timeout is a normal iso date string
+            obj = RestCommandJobLimits.from_dict(obj)
+        return cls(timeout=from_iso_duration_format(obj.timeout))
 
 
 class SweepJobLimits(JobLimits):
@@ -68,6 +75,16 @@ class SweepJobLimits(JobLimits):
     :type timeout: int
     :param trial_timeout: Sweep Job Trial timeout value in seconds.
     :type trial_timeout: int
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]
+            :end-before: [END configure_sweep_job_bayesian_sampling_algorithm]
+            :language: python
+            :dedent: 8
+            :caption: Assigning limits to a SweepJob
     """
 
     def __init__(
@@ -77,7 +94,19 @@ class SweepJobLimits(JobLimits):
         max_total_trials: Optional[int] = None,
         timeout: Optional[int] = None,
         trial_timeout: Optional[int] = None,
-    ):
+    ) -> None:
+        """Sweep Job limit class.
+
+        :param max_concurrent_trials: Sweep Job max concurrent trials.
+        :type max_concurrent_trials: int
+        :param max_total_trials: Sweep Job max total trials.
+        :type max_total_trials: int
+        :param timeout: The max run duration in seconds , after which the job will be cancelled.
+        Only supports duration with precision as low as Seconds.
+        :type timeout: int
+        :param trial_timeout: Sweep Job Trial timeout value in seconds.
+        :type trial_timeout: int
+        """
         super().__init__()
         self.type = JobType.SWEEP
         self.max_concurrent_trials = max_concurrent_trials

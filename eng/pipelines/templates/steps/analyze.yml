@@ -39,11 +39,6 @@ steps:
           ServiceName: ${{parameters.ServiceDirectory}}
           ForRelease: false
 
-  - pwsh: |
-     python -m pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
-    displayName: 'Install Necessary Dependencies'
-    condition: succeededOrFailed()
-
   - script: |
       python -m pip install "./tools/azure-sdk-tools[build]" -q -I
       sdk_find_invalid_versions --always-succeed --service=${{parameters.ServiceDirectory}}

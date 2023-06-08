@@ -191,7 +191,7 @@ class CalculateExchangeOperations:
         Calculates price for exchanging ``Reservations`` if there are no policy errors.
 
         :param body: Request containing purchases and refunds that need to be executed. Is either a
-         model type or a IO type. Required.
+         CalculateExchangeRequest type or a IO type. Required.
         :type body: ~azure.mgmt.reservations.models.CalculateExchangeRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

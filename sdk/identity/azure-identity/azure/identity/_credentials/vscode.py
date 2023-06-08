@@ -46,7 +46,13 @@ class _VSCodeCredentialBase(abc.ABC):
         if not self._refresh_token:
             self._refresh_token = get_refresh_token(self._cloud)
             if not self._refresh_token:
-                raise CredentialUnavailableError(message="Failed to get Azure user details from Visual Studio Code.")
+                message = (
+                    "Failed to get Azure user details from Visual Studio Code. "
+                    "Currently, the VisualStudioCodeCredential only works with the Azure "
+                    "Account extension version 0.9.11 and earlier. A long-term fix is in "
+                    "progress, see https://github.com/Azure/azure-sdk-for-python/issues/25713"
+                )
+                raise CredentialUnavailableError(message=message)
         return self._refresh_token
 
     def _initialize(self, vscode_user_settings: Dict, **kwargs: Any) -> None:
@@ -151,7 +157,9 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
             raise CredentialUnavailableError(message=error_message)
         return super(VisualStudioCodeCredential, self).get_token(*scopes, **kwargs)
 
-    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Optional[AccessToken]:
         self._client = cast(AadClient, self._client)
         return self._client.get_cached_access_token(scopes, **kwargs)
 

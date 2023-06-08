@@ -29,14 +29,13 @@ def main():
         subscription_id="subid1",
     )
 
-    response = client.maintenance_configurations.delete(
+    client.maintenance_configurations.delete(
         resource_group_name="rg1",
         resource_name="clustername1",
         config_name="default",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-01-01/examples/MaintenanceConfigurationsDelete.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-04-01/examples/MaintenanceConfigurationsDelete.json
 if __name__ == "__main__":
     main()

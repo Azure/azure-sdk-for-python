@@ -13,12 +13,9 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2023_02_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
-from azure.ai.ml._restclient.v2023_02_01_preview.models import QueueSettings as RestQueueSettings
-from azure.ai.ml._schema.core.fields import NestedField, UnionField
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
+from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from azure.ai.ml._schema.job.services import JobServiceSchema
@@ -40,13 +37,14 @@ from azure.ai.ml.entities._job.distribution import (
     DistributionConfiguration,
     MpiDistribution,
     PyTorchDistribution,
+    RayDistribution,
     TensorFlowDistribution,
 )
 from azure.ai.ml.entities._job.job_limits import CommandJobLimits
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.job_service import (
-    JobServiceBase,
     JobService,
+    JobServiceBase,
     JupyterLabJobService,
     SshJobService,
     TensorBoardJobService,
@@ -72,7 +70,12 @@ from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..._schema import PathAwareSchema
-from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
+from ..._schema.job.distribution import (
+    MPIDistributionSchema,
+    PyTorchDistributionSchema,
+    RayDistributionSchema,
+    TensorFlowDistributionSchema,
+)
 from .._util import (
     convert_ordered_dict_to_dict,
     from_rest_dict_to_dummy_rest_object,
@@ -120,7 +123,7 @@ class Command(BaseNode):
     :param code: A local path or http:, https:, azureml: url pointing to a remote location.
     :type code: str
     :param distribution: Distribution configuration for distributed training.
-    :type distribution: Union[Dict, PyTorchDistribution, MpiDistribution, TensorFlowDistribution]
+    :type distribution: Union[Dict, PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]
     :param environment: Environment that training job will run in.
     :type environment: Union[Environment, str]
     :param limits: Command Job limit.
@@ -161,7 +164,9 @@ class Command(BaseNode):
         identity: Optional[
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
-        distribution: Optional[Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution]] = None,
+        distribution: Optional[
+            Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution, RayDistribution]
+        ] = None,
         environment: Optional[Union[Environment, str]] = None,
         environment_variables: Optional[Dict] = None,
         resources: Optional[JobResourceConfiguration] = None,
@@ -232,13 +237,13 @@ class Command(BaseNode):
     @property
     def distribution(
         self,
-    ) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]:
+    ) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]:
         return self._distribution
 
     @distribution.setter
     def distribution(
         self,
-        value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution],
+        value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution, RayDistribution],
     ):
         if isinstance(value, dict):
             dist_schema = UnionField(
@@ -246,6 +251,7 @@ class Command(BaseNode):
                     NestedField(PyTorchDistributionSchema, unknown=INCLUDE),
                     NestedField(TensorFlowDistributionSchema, unknown=INCLUDE),
                     NestedField(MPIDistributionSchema, unknown=INCLUDE),
+                    ExperimentalField(NestedField(RayDistributionSchema, unknown=INCLUDE)),
                 ]
             )
             value = dist_schema._deserialize(value=value, attr=None, data=None)
@@ -392,6 +398,12 @@ class Command(BaseNode):
             self.limits = CommandJobLimits(timeout=timeout)
 
     def set_queue_settings(self, *, job_tier: Optional[str] = None, priority: Optional[str] = None):
+        """Set QueueSettings for the job.
+        :param job_tier: determines the job tier.
+        :type job_tier: str
+        :param priority: controls the priority on the compute.
+        :type priority: str
+        """
         if isinstance(self.queue_settings, QueueSettings):
             self.queue_settings.job_tier = job_tier
             self.queue_settings.priority = priority
@@ -422,42 +434,64 @@ class Command(BaseNode):
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
+        job_tier: Optional[str] = None,
+        priority: Optional[str] = None,
     ) -> Sweep:
-        """Turn the command into a sweep node with extra sweep run setting. The command component in current Command
-        node will be used as its trial component. A command node can sweep for multiple times, and the generated sweep
-        node will share the same trial component.
+        """Turns the command into a sweep node with extra sweep run setting. The command component
+        in the current Command node will be used as its trial component. A command node can sweep
+        multiple times, and the generated sweep node will share the same trial component.
 
-        :param primary_metric: primary metric of the sweep objective, AUC e.g. The metric must be logged in running
-            the trial component.
+        :param primary_metric: The primary metric of the sweep objective - e.g. AUC (Area Under the Curve).
+        The metric must be logged while running the trial component.
         :type primary_metric: str
-        :param goal: goal of the sweep objective.
-        :type goal: str, valid values: maximize or minimize
-        :param sampling_algorithm: sampling algorithm to sample inside search space. Defaults to "random"
-        :type sampling_algorithm: str, valid values: random, grid or bayesian
-        :param compute: target compute to run the node. If not specified, compute of current node will be used.
+        :param goal: The goal of the Sweep objective. Accepted values are "minimize" or "maximize".
+        :type goal: str
+        :param sampling_algorithm: The sampling algorithm to use inside the search space. Defaults to "random".
+        Acceptable values are "random", "grid", or "bayesian".
+        :type sampling_algorithm: str
+        :param compute: The target compute to run the node on. If not specified, the current node's compute
+        will be used.
         :type compute: str
-        :param max_total_trials: maximum trials to run, will overwrite value in limits
+        :param max_total_trials: The maximum number of trials to run. This value will overwrite value in
+        CommandJob.limits if specified.
         :type max_total_trials: int
-        :param max_concurrent_trials: Sweep Job max concurrent trials.
+        :param max_concurrent_trials: The maximum number of concurrent trials for the Sweep job.
         :type max_concurrent_trials: int
-        :param max_total_trials: Sweep Job max total trials.
+        :param max_total_trials: The maximum number of total trials for the Sweep Job.
         :type max_total_trials: int
-        :param timeout: The max run duration in seconds, after which the job will be cancelled.
+        :param timeout: The maximum run duration in seconds, after which the job will be cancelled.
         :type timeout: int
-        :param trial_timeout: Sweep Job Trial timeout value in seconds.
+        :param trial_timeout: The Sweep Job trial timeout value in seconds.
         :type trial_timeout: int
-        :param early_termination_policy: early termination policy of the sweep node:
-        :type early_termination_policy: Union[EarlyTerminationPolicy, str], valid values: bandit, median_stopping
-            or truncation_selection.
-        :param identity: Identity that training job will use while running on compute.
+        :param early_termination_policy: The early termination policy of the sweep node. Acceptable
+        values are "bandit", "median_stopping", or "truncation_selection".
+        :type early_termination_policy: Union[~azure.ai.ml.sweep.BanditPolicy,
+        ~azure.ai.ml.sweep.TruncationSelectionPolicy, ~azure.ai.ml.sweep.MedianStoppingPolicy, str]
+        :param identity: The identity that the training job will use while running on compute.
         :type identity: Union[
-            ManagedIdentityConfiguration,
-            AmlTokenConfiguration,
-            UserIdentityConfiguration]
-        :param queue_settings: Queue settings for the job.
-        :type queue_settings: QueueSettings
-        :return: A sweep node with component from current Command node as its trial component.
-        :rtype: Sweep
+            ~azure.ai.ml.ManagedIdentityConfiguration,
+            ~azure.ai.ml.AmlTokenConfiguration,
+            ~azure.ai.ml.UserIdentityConfiguration]
+        :param queue_settings: The queue settings for the job.
+        :type queue_settings: ~azure.ai.ml.entities.QueueSettings
+        :param job_tier: **Experimental** The job tier. Accepted values are "Spot", "Basic",
+        "Standard", or "Premium".
+        :type job_tier: str
+        :param priority: **Experimental** The compute priority. Accepted values are "low",
+        "medium", and "high".
+        :type priority: str
+        :return: A Sweep node with the component from current Command node as its trial component.
+        :rtype: ~azure.ai.ml.entities.Sweep
+
+        .. admonition:: Example:
+            :class: tip
+
+            .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+                :start-after: [START configure_sweep_job_bandit_policy]
+                :end-before: [END configure_sweep_job_bandit_policy]
+                :language: python
+                :dedent: 8
+                :caption: Creating a Sweep node from a Command job.
         """
         self._swept = True
         # inputs & outputs are already built in source Command obj
@@ -465,6 +499,13 @@ class Command(BaseNode):
         inputs, inputs_search_space = Sweep._get_origin_inputs_and_search_space(self.inputs)
         if search_space:
             inputs_search_space.update(search_space)
+
+        if not queue_settings:
+            queue_settings = self.queue_settings
+        if job_tier is not None:
+            queue_settings.job_tier = job_tier
+        if priority is not None:
+            queue_settings.priority = priority
 
         sweep_node = Sweep(
             trial=copy.deepcopy(
@@ -485,7 +526,7 @@ class Command(BaseNode):
             experiment_name=self.experiment_name,
             identity=self.identity if not identity else identity,
             _from_component_func=True,
-            queue_settings=self.queue_settings if queue_settings is None else queue_settings,
+            queue_settings=queue_settings,
         )
         sweep_node.set_limits(
             max_total_trials=max_total_trials,
@@ -535,7 +576,7 @@ class Command(BaseNode):
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
-        return ["resources", "distribution", "limits", "environment_variables"]
+        return ["resources", "distribution", "limits", "environment_variables", "queue_settings"]
 
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
@@ -573,8 +614,7 @@ class Command(BaseNode):
         obj = BaseNode._from_rest_object_to_init_params(obj)
 
         if "resources" in obj and obj["resources"]:
-            resources = RestJobResourceConfiguration.from_dict(obj["resources"])
-            obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
+            obj["resources"] = JobResourceConfiguration._from_rest_object(obj["resources"])
 
         # services, sweep won't have services
         if "services" in obj and obj["services"]:
@@ -590,15 +630,13 @@ class Command(BaseNode):
 
         # handle limits
         if "limits" in obj and obj["limits"]:
-            rest_limits = RestCommandJobLimits.from_dict(obj["limits"])
-            obj["limits"] = CommandJobLimits()._from_rest_object(rest_limits)
+            obj["limits"] = CommandJobLimits._from_rest_object(obj["limits"])
 
         if "identity" in obj and obj["identity"]:
             obj["identity"] = _BaseJobIdentityConfiguration._load(obj["identity"])
 
         if "queue_settings" in obj and obj["queue_settings"]:
-            queue_settings = RestQueueSettings.from_dict(obj["queue_settings"])
-            obj["queue_settings"] = QueueSettings._from_rest_object(queue_settings)
+            obj["queue_settings"] = QueueSettings._from_rest_object(obj["queue_settings"])
 
         return obj
 
@@ -682,7 +720,9 @@ class Command(BaseNode):
                 setattr(node.outputs, name, original_output._data)
             self._refine_optional_inputs_with_no_value(node, kwargs)
             # set default values: compute, environment_variables, outputs
-            node._name = self.name
+            # won't copy name to be able to distinguish if a node's name is assigned by user
+            # e.g. node_1 = command_func()
+            # In above example, node_1.name will be None so we can apply node_1 as it's name
             node.compute = self.compute
             node.tags = self.tags
             # Pass through the display name only if the display name is not system generated.

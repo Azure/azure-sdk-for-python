@@ -130,8 +130,8 @@ class MsixImagesOperations:
         :type resource_group_name: str
         :param host_pool_name: The name of the host pool within the specified resource group. Required.
         :type host_pool_name: str
-        :param msix_image_uri: Object containing URI to MSIX Image. Is either a model type or a IO
-         type. Required.
+        :param msix_image_uri: Object containing URI to MSIX Image. Is either a MSIXImageURI type or a
+         IO type. Required.
         :type msix_image_uri: ~azure.mgmt.desktopvirtualization.models.MSIXImageURI or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -145,11 +145,11 @@ class MsixImagesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-09-09"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-09-09"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ExpandMsixImageList]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ExpandMsixImageList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -182,7 +182,7 @@ class MsixImagesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -198,7 +198,7 @@ class MsixImagesOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -206,13 +206,13 @@ class MsixImagesOperations:
             deserialized = self._deserialize("ExpandMsixImageList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -225,4 +225,6 @@ class MsixImagesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    expand.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DesktopVirtualization/hostPools/{hostPoolName}/expandMsixImage"}  # type: ignore
+    expand.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DesktopVirtualization/hostPools/{hostPoolName}/expandMsixImage"
+    }

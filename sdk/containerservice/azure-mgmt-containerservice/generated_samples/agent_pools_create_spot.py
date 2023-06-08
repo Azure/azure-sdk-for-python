@@ -50,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-01-01/examples/AgentPoolsCreate_Spot.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-04-01/examples/AgentPoolsCreate_Spot.json
 if __name__ == "__main__":
     main()

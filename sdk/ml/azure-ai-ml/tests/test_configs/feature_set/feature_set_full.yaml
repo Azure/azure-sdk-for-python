@@ -2,8 +2,8 @@ name: test-featureset
 version: "1"
 entities: ["azureml:test:1", "azureml:test:2"]
 specification:
-  path: local/
-stage: registered
+  path: "./tests/test_configs/feature_set"
+stage: Production
 description: Test featureset
 materialization_settings: 
   schedule:
@@ -15,7 +15,7 @@ materialization_settings:
       hours: [12]
       minutes: [5]
   notification:
-    email_on: [jobcompleted, jobfailed]
+    email_on: [JobCompleted, JobFailed]
     emails: [fake@email.com, test@email.com]
   resource:
     instance_type: standard_e8s_v3

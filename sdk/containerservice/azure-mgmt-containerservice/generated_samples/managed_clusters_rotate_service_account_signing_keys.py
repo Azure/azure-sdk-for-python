@@ -29,13 +29,12 @@ def main():
         subscription_id="subid1",
     )
 
-    response = client.managed_clusters.begin_rotate_service_account_signing_keys(
+    client.managed_clusters.begin_rotate_service_account_signing_keys(
         resource_group_name="rg1",
         resource_name="clustername1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-01-01/examples/ManagedClustersRotateServiceAccountSigningKeys.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-04-01/examples/ManagedClustersRotateServiceAccountSigningKeys.json
 if __name__ == "__main__":
     main()

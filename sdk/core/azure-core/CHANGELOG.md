@@ -1,6 +1,6 @@
 # Release History
 
-## 1.26.4 (Unreleased)
+## 1.27.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,27 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.27.0 (2023-06-01)
+
+### Features Added
+
+- Added support to use sync credentials in `AsyncBearerTokenCredentialPolicy`. #30381
+- Added "prefix" parameter to AzureKeyCredentialPolicy #29901
+
+### Bugs Fixed
+
+- Improve error message when providing the wrong credential type for AzureKeyCredential  #30380
+
+## 1.26.4 (2023-04-06)
+
+### Features Added
+
+- Updated settings to include OpenTelemetry as a tracer provider.  #29095
+
+### Other Changes
+
+- Improved typing
 
 ## 1.26.3 (2023-02-02)
 

@@ -129,6 +129,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         # property _source can't be set
         kwargs.pop("_source", None)
         _from_component_func = kwargs.pop("_from_component_func", False)
+        self._name = None
         super(BaseNode, self).__init__(
             type=type,
             name=name,
@@ -184,6 +185,24 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         )
         self._validate_required_input_not_provided = True
         self._init = False
+
+    @property
+    def name(self) -> str:
+        """Name of the node."""
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        """Set name of the node."""
+        # when name is not lower case, lower it to make sure it's a valid node name
+        if value and value != value.lower():
+            module_logger.warning(
+                "Changing node name %s to lower case: %s since upper case is not allowed node name.",
+                value,
+                value.lower(),
+            )
+            value = value.lower()
+        self._name = value
 
     @classmethod
     def _get_supported_inputs_types(cls):
@@ -431,7 +450,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         )
         # only add comment in REST object when it is set
         if self.comment is not None:
-            rest_obj.update(dict(comment=self.comment))
+            rest_obj.update({"comment": self.comment})
 
         return convert_ordered_dict_to_dict(rest_obj)
 

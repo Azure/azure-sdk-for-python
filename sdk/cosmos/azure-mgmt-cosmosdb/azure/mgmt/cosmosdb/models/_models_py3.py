@@ -178,6 +178,88 @@ class ARMResourceProperties(_serialization.Model):
         self.tags = tags
 
 
+class AuthenticationMethodLdapProperties(_serialization.Model):
+    """Ldap authentication method properties. This feature is in preview.
+
+    :ivar server_hostname: Hostname of the LDAP server.
+    :vartype server_hostname: str
+    :ivar server_port: Port of the LDAP server.
+    :vartype server_port: int
+    :ivar service_user_distinguished_name: Distinguished name of the look up user account, who can
+     look up user details on authentication.
+    :vartype service_user_distinguished_name: str
+    :ivar service_user_password: Password of the look up user.
+    :vartype service_user_password: str
+    :ivar search_base_distinguished_name: Distinguished name of the object to start the recursive
+     search of users from.
+    :vartype search_base_distinguished_name: str
+    :ivar search_filter_template: Template to use for searching. Defaults to (cn=%s) where %s will
+     be replaced by the username used to login.
+    :vartype search_filter_template: str
+    :ivar server_certificates:
+    :vartype server_certificates: list[~azure.mgmt.cosmosdb.models.Certificate]
+    :ivar connection_timeout_in_ms: Timeout for connecting to the LDAP server in miliseconds. The
+     default is 5000 ms.
+    :vartype connection_timeout_in_ms: int
+    """
+
+    _attribute_map = {
+        "server_hostname": {"key": "serverHostname", "type": "str"},
+        "server_port": {"key": "serverPort", "type": "int"},
+        "service_user_distinguished_name": {"key": "serviceUserDistinguishedName", "type": "str"},
+        "service_user_password": {"key": "serviceUserPassword", "type": "str"},
+        "search_base_distinguished_name": {"key": "searchBaseDistinguishedName", "type": "str"},
+        "search_filter_template": {"key": "searchFilterTemplate", "type": "str"},
+        "server_certificates": {"key": "serverCertificates", "type": "[Certificate]"},
+        "connection_timeout_in_ms": {"key": "connectionTimeoutInMs", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        server_hostname: Optional[str] = None,
+        server_port: Optional[int] = None,
+        service_user_distinguished_name: Optional[str] = None,
+        service_user_password: Optional[str] = None,
+        search_base_distinguished_name: Optional[str] = None,
+        search_filter_template: Optional[str] = None,
+        server_certificates: Optional[List["_models.Certificate"]] = None,
+        connection_timeout_in_ms: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword server_hostname: Hostname of the LDAP server.
+        :paramtype server_hostname: str
+        :keyword server_port: Port of the LDAP server.
+        :paramtype server_port: int
+        :keyword service_user_distinguished_name: Distinguished name of the look up user account, who
+         can look up user details on authentication.
+        :paramtype service_user_distinguished_name: str
+        :keyword service_user_password: Password of the look up user.
+        :paramtype service_user_password: str
+        :keyword search_base_distinguished_name: Distinguished name of the object to start the
+         recursive search of users from.
+        :paramtype search_base_distinguished_name: str
+        :keyword search_filter_template: Template to use for searching. Defaults to (cn=%s) where %s
+         will be replaced by the username used to login.
+        :paramtype search_filter_template: str
+        :keyword server_certificates:
+        :paramtype server_certificates: list[~azure.mgmt.cosmosdb.models.Certificate]
+        :keyword connection_timeout_in_ms: Timeout for connecting to the LDAP server in miliseconds.
+         The default is 5000 ms.
+        :paramtype connection_timeout_in_ms: int
+        """
+        super().__init__(**kwargs)
+        self.server_hostname = server_hostname
+        self.server_port = server_port
+        self.service_user_distinguished_name = service_user_distinguished_name
+        self.service_user_password = service_user_password
+        self.search_base_distinguished_name = search_base_distinguished_name
+        self.search_filter_template = search_filter_template
+        self.server_certificates = server_certificates
+        self.connection_timeout_in_ms = connection_timeout_in_ms
+
+
 class AutoscaleSettings(_serialization.Model):
     """AutoscaleSettings.
 
@@ -436,6 +518,8 @@ class CassandraClusterDataCenterNodeItem(_serialization.Model):  # pylint: disab
     :vartype state: str or ~azure.mgmt.cosmosdb.models.NodeState
     :ivar status:
     :vartype status: str
+    :ivar cassandra_process_status: Cassandra service status on this node.
+    :vartype cassandra_process_status: str
     :ivar load: The amount of file system data in the data directory (e.g., 47.66 kB), excluding
      all content in the snapshots subdirectories. Because all SSTable data files are included, any
      data that is not cleaned up (such as TTL-expired cells or tombstones) is counted.
@@ -471,6 +555,7 @@ class CassandraClusterDataCenterNodeItem(_serialization.Model):  # pylint: disab
         "address": {"key": "address", "type": "str"},
         "state": {"key": "state", "type": "str"},
         "status": {"key": "status", "type": "str"},
+        "cassandra_process_status": {"key": "cassandraProcessStatus", "type": "str"},
         "load": {"key": "load", "type": "str"},
         "tokens": {"key": "tokens", "type": "[str]"},
         "size": {"key": "size", "type": "int"},
@@ -492,6 +577,7 @@ class CassandraClusterDataCenterNodeItem(_serialization.Model):  # pylint: disab
         address: Optional[str] = None,
         state: Optional[Union[str, "_models.NodeState"]] = None,
         status: Optional[str] = None,
+        cassandra_process_status: Optional[str] = None,
         load: Optional[str] = None,
         tokens: Optional[List[str]] = None,
         size: Optional[int] = None,
@@ -515,6 +601,8 @@ class CassandraClusterDataCenterNodeItem(_serialization.Model):  # pylint: disab
         :paramtype state: str or ~azure.mgmt.cosmosdb.models.NodeState
         :keyword status:
         :paramtype status: str
+        :keyword cassandra_process_status: Cassandra service status on this node.
+        :paramtype cassandra_process_status: str
         :keyword load: The amount of file system data in the data directory (e.g., 47.66 kB), excluding
          all content in the snapshots subdirectories. Because all SSTable data files are included, any
          data that is not cleaned up (such as TTL-expired cells or tombstones) is counted.
@@ -551,6 +639,7 @@ class CassandraClusterDataCenterNodeItem(_serialization.Model):  # pylint: disab
         self.address = address
         self.state = state
         self.status = status
+        self.cassandra_process_status = cassandra_process_status
         self.load = load
         self.tokens = tokens
         self.size = size
@@ -576,6 +665,9 @@ class CassandraClusterPublicStatus(_serialization.Model):
     :ivar connection_errors: List relevant information about any connection errors to the
      Datacenters.
     :vartype connection_errors: list[~azure.mgmt.cosmosdb.models.ConnectionError]
+    :ivar errors: List relevant information about any errors about cluster, data center and
+     connection error.
+    :vartype errors: list[~azure.mgmt.cosmosdb.models.CassandraError]
     :ivar data_centers: List of the status of each datacenter in this cluster.
     :vartype data_centers:
      list[~azure.mgmt.cosmosdb.models.CassandraClusterPublicStatusDataCentersItem]
@@ -585,6 +677,7 @@ class CassandraClusterPublicStatus(_serialization.Model):
         "e_tag": {"key": "eTag", "type": "str"},
         "reaper_status": {"key": "reaperStatus", "type": "ManagedCassandraReaperStatus"},
         "connection_errors": {"key": "connectionErrors", "type": "[ConnectionError]"},
+        "errors": {"key": "errors", "type": "[CassandraError]"},
         "data_centers": {"key": "dataCenters", "type": "[CassandraClusterPublicStatusDataCentersItem]"},
     }
 
@@ -594,6 +687,7 @@ class CassandraClusterPublicStatus(_serialization.Model):
         e_tag: Optional[str] = None,
         reaper_status: Optional["_models.ManagedCassandraReaperStatus"] = None,
         connection_errors: Optional[List["_models.ConnectionError"]] = None,
+        errors: Optional[List["_models.CassandraError"]] = None,
         data_centers: Optional[List["_models.CassandraClusterPublicStatusDataCentersItem"]] = None,
         **kwargs: Any
     ) -> None:
@@ -605,6 +699,9 @@ class CassandraClusterPublicStatus(_serialization.Model):
         :keyword connection_errors: List relevant information about any connection errors to the
          Datacenters.
         :paramtype connection_errors: list[~azure.mgmt.cosmosdb.models.ConnectionError]
+        :keyword errors: List relevant information about any errors about cluster, data center and
+         connection error.
+        :paramtype errors: list[~azure.mgmt.cosmosdb.models.CassandraError]
         :keyword data_centers: List of the status of each datacenter in this cluster.
         :paramtype data_centers:
          list[~azure.mgmt.cosmosdb.models.CassandraClusterPublicStatusDataCentersItem]
@@ -613,6 +710,7 @@ class CassandraClusterPublicStatus(_serialization.Model):
         self.e_tag = e_tag
         self.reaper_status = reaper_status
         self.connection_errors = connection_errors
+        self.errors = errors
         self.data_centers = data_centers
 
 
@@ -653,6 +751,52 @@ class CassandraClusterPublicStatusDataCentersItem(_serialization.Model):
         self.name = name
         self.seed_nodes = seed_nodes
         self.nodes = nodes
+
+
+class CassandraError(_serialization.Model):
+    """CassandraError.
+
+    :ivar code: The code of error that occurred.
+    :vartype code: str
+    :ivar message: The message of the error.
+    :vartype message: str
+    :ivar target: The target resource of the error.
+    :vartype target: str
+    :ivar additional_error_info: Additional information about the error.
+    :vartype additional_error_info: str
+    """
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "additional_error_info": {"key": "additionalErrorInfo", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        message: Optional[str] = None,
+        target: Optional[str] = None,
+        additional_error_info: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword code: The code of error that occurred.
+        :paramtype code: str
+        :keyword message: The message of the error.
+        :paramtype message: str
+        :keyword target: The target resource of the error.
+        :paramtype target: str
+        :keyword additional_error_info: Additional information about the error.
+        :paramtype additional_error_info: str
+        """
+        super().__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.target = target
+        self.additional_error_info = additional_error_info
 
 
 class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
@@ -1915,7 +2059,7 @@ class ClusterResourceProperties(_serialization.Model):  # pylint: disable=too-ma
     :ivar authentication_method: Which authentication method Cassandra should use to authenticate
      clients. 'None' turns off authentication, so should not be used except in emergencies.
      'Cassandra' is the default password based authentication. The default is 'Cassandra'. Known
-     values are: "None" and "Cassandra".
+     values are: "None", "Cassandra", and "Ldap".
     :vartype authentication_method: str or ~azure.mgmt.cosmosdb.models.AuthenticationMethod
     :ivar initial_cassandra_admin_password: Initial password for clients connecting as admin to the
      cluster. Should be changed after cluster creation. Returns null on GET. This field only applies
@@ -1948,13 +2092,15 @@ class ClusterResourceProperties(_serialization.Model):  # pylint: disable=too-ma
     :ivar seed_nodes: List of IP addresses of seed nodes in the managed data centers. These should
      be added to the seed node lists of all unmanaged nodes.
     :vartype seed_nodes: list[~azure.mgmt.cosmosdb.models.SeedNode]
-    :ivar hours_between_backups: Number of hours to wait between taking a backup of the cluster. To
-     disable backups, set this property to 0.
+    :ivar hours_between_backups: (Deprecated) Number of hours to wait between taking a backup of
+     the cluster.
     :vartype hours_between_backups: int
     :ivar deallocated: Whether the cluster and associated data centers has been deallocated.
     :vartype deallocated: bool
     :ivar cassandra_audit_logging_enabled: Whether Cassandra audit logging is enabled.
     :vartype cassandra_audit_logging_enabled: bool
+    :ivar provision_error: Error related to resource provisioning.
+    :vartype provision_error: ~azure.mgmt.cosmosdb.models.CassandraError
     """
 
     _validation = {
@@ -1980,6 +2126,7 @@ class ClusterResourceProperties(_serialization.Model):  # pylint: disable=too-ma
         "hours_between_backups": {"key": "hoursBetweenBackups", "type": "int"},
         "deallocated": {"key": "deallocated", "type": "bool"},
         "cassandra_audit_logging_enabled": {"key": "cassandraAuditLoggingEnabled", "type": "bool"},
+        "provision_error": {"key": "provisionError", "type": "CassandraError"},
     }
 
     def __init__(
@@ -2000,6 +2147,7 @@ class ClusterResourceProperties(_serialization.Model):  # pylint: disable=too-ma
         hours_between_backups: Optional[int] = None,
         deallocated: Optional[bool] = None,
         cassandra_audit_logging_enabled: Optional[bool] = None,
+        provision_error: Optional["_models.CassandraError"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2026,7 +2174,7 @@ class ClusterResourceProperties(_serialization.Model):  # pylint: disable=too-ma
         :keyword authentication_method: Which authentication method Cassandra should use to
          authenticate clients. 'None' turns off authentication, so should not be used except in
          emergencies. 'Cassandra' is the default password based authentication. The default is
-         'Cassandra'. Known values are: "None" and "Cassandra".
+         'Cassandra'. Known values are: "None", "Cassandra", and "Ldap".
         :paramtype authentication_method: str or ~azure.mgmt.cosmosdb.models.AuthenticationMethod
         :keyword initial_cassandra_admin_password: Initial password for clients connecting as admin to
          the cluster. Should be changed after cluster creation. Returns null on GET. This field only
@@ -2052,13 +2200,15 @@ class ClusterResourceProperties(_serialization.Model):  # pylint: disable=too-ma
         :keyword external_seed_nodes: List of IP addresses of seed nodes in unmanaged data centers.
          These will be added to the seed node lists of all managed nodes.
         :paramtype external_seed_nodes: list[~azure.mgmt.cosmosdb.models.SeedNode]
-        :keyword hours_between_backups: Number of hours to wait between taking a backup of the cluster.
-         To disable backups, set this property to 0.
+        :keyword hours_between_backups: (Deprecated) Number of hours to wait between taking a backup of
+         the cluster.
         :paramtype hours_between_backups: int
         :keyword deallocated: Whether the cluster and associated data centers has been deallocated.
         :paramtype deallocated: bool
         :keyword cassandra_audit_logging_enabled: Whether Cassandra audit logging is enabled.
         :paramtype cassandra_audit_logging_enabled: bool
+        :keyword provision_error: Error related to resource provisioning.
+        :paramtype provision_error: ~azure.mgmt.cosmosdb.models.CassandraError
         """
         super().__init__(**kwargs)
         self.provisioning_state = provisioning_state
@@ -2078,6 +2228,7 @@ class ClusterResourceProperties(_serialization.Model):  # pylint: disable=too-ma
         self.hours_between_backups = hours_between_backups
         self.deallocated = deallocated
         self.cassandra_audit_logging_enabled = cassandra_audit_logging_enabled
+        self.provision_error = provision_error
 
 
 class Column(_serialization.Model):
@@ -2492,6 +2643,8 @@ class ContinuousModeBackupPolicy(BackupPolicy):
     :ivar migration_state: The object representing the state of the migration between the backup
      policies.
     :vartype migration_state: ~azure.mgmt.cosmosdb.models.BackupPolicyMigrationState
+    :ivar continuous_mode_properties: Configuration values for continuous mode backup.
+    :vartype continuous_mode_properties: ~azure.mgmt.cosmosdb.models.ContinuousModeProperties
     """
 
     _validation = {
@@ -2501,18 +2654,48 @@ class ContinuousModeBackupPolicy(BackupPolicy):
     _attribute_map = {
         "type": {"key": "type", "type": "str"},
         "migration_state": {"key": "migrationState", "type": "BackupPolicyMigrationState"},
+        "continuous_mode_properties": {"key": "continuousModeProperties", "type": "ContinuousModeProperties"},
     }
 
     def __init__(
-        self, *, migration_state: Optional["_models.BackupPolicyMigrationState"] = None, **kwargs: Any
+        self,
+        *,
+        migration_state: Optional["_models.BackupPolicyMigrationState"] = None,
+        continuous_mode_properties: Optional["_models.ContinuousModeProperties"] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword migration_state: The object representing the state of the migration between the backup
          policies.
         :paramtype migration_state: ~azure.mgmt.cosmosdb.models.BackupPolicyMigrationState
+        :keyword continuous_mode_properties: Configuration values for continuous mode backup.
+        :paramtype continuous_mode_properties: ~azure.mgmt.cosmosdb.models.ContinuousModeProperties
         """
         super().__init__(migration_state=migration_state, **kwargs)
         self.type: str = "Continuous"
+        self.continuous_mode_properties = continuous_mode_properties
+
+
+class ContinuousModeProperties(_serialization.Model):
+    """Configuration values for periodic mode backup.
+
+    :ivar tier: Enum to indicate type of Continuous backup mode. Known values are:
+     "Continuous7Days" and "Continuous30Days".
+    :vartype tier: str or ~azure.mgmt.cosmosdb.models.ContinuousTier
+    """
+
+    _attribute_map = {
+        "tier": {"key": "tier", "type": "str"},
+    }
+
+    def __init__(self, *, tier: Optional[Union[str, "_models.ContinuousTier"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tier: Enum to indicate type of Continuous backup mode. Known values are:
+         "Continuous7Days" and "Continuous30Days".
+        :paramtype tier: str or ~azure.mgmt.cosmosdb.models.ContinuousTier
+        """
+        super().__init__(**kwargs)
+        self.tier = tier
 
 
 class CorsPolicy(_serialization.Model):
@@ -2627,16 +2810,27 @@ class DatabaseAccountConnectionString(_serialization.Model):
     :vartype connection_string: str
     :ivar description: Description of the connection string.
     :vartype description: str
+    :ivar key_kind: Kind of the connection string key. Known values are: "Primary", "Secondary",
+     "PrimaryReadonly", and "SecondaryReadonly".
+    :vartype key_kind: str or ~azure.mgmt.cosmosdb.models.Kind
+    :ivar type: Type of the connection string. Known values are: "Sql", "Table", "MongoDB",
+     "Cassandra", "CassandraConnectorMetadata", "Gremlin", "SqlDedicatedGateway", "GremlinV2", and
+     "Undefined".
+    :vartype type: str or ~azure.mgmt.cosmosdb.models.Type
     """
 
     _validation = {
         "connection_string": {"readonly": True},
         "description": {"readonly": True},
+        "key_kind": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
         "connection_string": {"key": "connectionString", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "key_kind": {"key": "keyKind", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -2644,6 +2838,8 @@ class DatabaseAccountConnectionString(_serialization.Model):
         super().__init__(**kwargs)
         self.connection_string = None
         self.description = None
+        self.key_kind = None
+        self.type = None
 
 
 class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: disable=too-many-instance-attributes
@@ -2713,7 +2909,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
      "FirstPartyIdentity", "SystemAssignedIdentity" and more.
     :vartype default_identity: str
     :ivar public_network_access: Whether requests from Public Network are allowed. Known values
-     are: "Enabled" and "Disabled".
+     are: "Enabled", "Disabled", and "SecuredByPerimeter".
     :vartype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
     :ivar enable_free_tier: Flag to indicate whether Free Tier is enabled.
     :vartype enable_free_tier: bool
@@ -2905,7 +3101,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
          "FirstPartyIdentity", "SystemAssignedIdentity" and more.
         :paramtype default_identity: str
         :keyword public_network_access: Whether requests from Public Network are allowed. Known values
-         are: "Enabled" and "Disabled".
+         are: "Enabled", "Disabled", and "SecuredByPerimeter".
         :paramtype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
         :keyword enable_free_tier: Flag to indicate whether Free Tier is enabled.
         :paramtype enable_free_tier: bool
@@ -3067,7 +3263,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
      "FirstPartyIdentity", "SystemAssignedIdentity" and more.
     :vartype default_identity: str
     :ivar public_network_access: Whether requests from Public Network are allowed. Known values
-     are: "Enabled" and "Disabled".
+     are: "Enabled", "Disabled", and "SecuredByPerimeter".
     :vartype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
     :ivar enable_free_tier: Flag to indicate whether Free Tier is enabled.
     :vartype enable_free_tier: bool
@@ -3273,7 +3469,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
          "FirstPartyIdentity", "SystemAssignedIdentity" and more.
         :paramtype default_identity: str
         :keyword public_network_access: Whether requests from Public Network are allowed. Known values
-         are: "Enabled" and "Disabled".
+         are: "Enabled", "Disabled", and "SecuredByPerimeter".
         :paramtype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
         :keyword enable_free_tier: Flag to indicate whether Free Tier is enabled.
         :paramtype enable_free_tier: bool
@@ -3591,7 +3787,7 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
      "FirstPartyIdentity", "SystemAssignedIdentity" and more.
     :vartype default_identity: str
     :ivar public_network_access: Whether requests from Public Network are allowed. Known values
-     are: "Enabled" and "Disabled".
+     are: "Enabled", "Disabled", and "SecuredByPerimeter".
     :vartype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
     :ivar enable_free_tier: Flag to indicate whether Free Tier is enabled.
     :vartype enable_free_tier: bool
@@ -3757,7 +3953,7 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
          "FirstPartyIdentity", "SystemAssignedIdentity" and more.
         :paramtype default_identity: str
         :keyword public_network_access: Whether requests from Public Network are allowed. Known values
-         are: "Enabled" and "Disabled".
+         are: "Enabled", "Disabled", and "SecuredByPerimeter".
         :paramtype public_network_access: str or ~azure.mgmt.cosmosdb.models.PublicNetworkAccess
         :keyword enable_free_tier: Flag to indicate whether Free Tier is enabled.
         :paramtype enable_free_tier: bool
@@ -3932,11 +4128,19 @@ class DataCenterResourceProperties(_serialization.Model):  # pylint: disable=too
     :vartype sku: str
     :ivar disk_sku: Disk SKU used for data centers. Default value is P30.
     :vartype disk_sku: str
-    :ivar disk_capacity: Number of disk used for data centers. Default value is 4.
+    :ivar disk_capacity: Number of disks attached to each node. Default is 4.
     :vartype disk_capacity: int
-    :ivar availability_zone: If the azure data center has Availability Zone support, apply it to
-     the Virtual Machine ScaleSet that host the cassandra data center virtual machines.
+    :ivar availability_zone: If the data center has Availability Zone support, apply it to the
+     Virtual Machine ScaleSet that host the cassandra data center virtual machines.
     :vartype availability_zone: bool
+    :ivar authentication_method_ldap_properties: Ldap authentication method properties. This
+     feature is in preview.
+    :vartype authentication_method_ldap_properties:
+     ~azure.mgmt.cosmosdb.models.AuthenticationMethodLdapProperties
+    :ivar deallocated: Whether the data center has been deallocated.
+    :vartype deallocated: bool
+    :ivar provision_error: Error related to resource provisioning.
+    :vartype provision_error: ~azure.mgmt.cosmosdb.models.CassandraError
     """
 
     _validation = {
@@ -3956,6 +4160,12 @@ class DataCenterResourceProperties(_serialization.Model):  # pylint: disable=too
         "disk_sku": {"key": "diskSku", "type": "str"},
         "disk_capacity": {"key": "diskCapacity", "type": "int"},
         "availability_zone": {"key": "availabilityZone", "type": "bool"},
+        "authentication_method_ldap_properties": {
+            "key": "authenticationMethodLdapProperties",
+            "type": "AuthenticationMethodLdapProperties",
+        },
+        "deallocated": {"key": "deallocated", "type": "bool"},
+        "provision_error": {"key": "provisionError", "type": "CassandraError"},
     }
 
     def __init__(
@@ -3972,6 +4182,9 @@ class DataCenterResourceProperties(_serialization.Model):  # pylint: disable=too
         disk_sku: Optional[str] = None,
         disk_capacity: Optional[int] = None,
         availability_zone: Optional[bool] = None,
+        authentication_method_ldap_properties: Optional["_models.AuthenticationMethodLdapProperties"] = None,
+        deallocated: Optional[bool] = None,
+        provision_error: Optional["_models.CassandraError"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4008,11 +4221,19 @@ class DataCenterResourceProperties(_serialization.Model):  # pylint: disable=too
         :paramtype sku: str
         :keyword disk_sku: Disk SKU used for data centers. Default value is P30.
         :paramtype disk_sku: str
-        :keyword disk_capacity: Number of disk used for data centers. Default value is 4.
+        :keyword disk_capacity: Number of disks attached to each node. Default is 4.
         :paramtype disk_capacity: int
-        :keyword availability_zone: If the azure data center has Availability Zone support, apply it to
-         the Virtual Machine ScaleSet that host the cassandra data center virtual machines.
+        :keyword availability_zone: If the data center has Availability Zone support, apply it to the
+         Virtual Machine ScaleSet that host the cassandra data center virtual machines.
         :paramtype availability_zone: bool
+        :keyword authentication_method_ldap_properties: Ldap authentication method properties. This
+         feature is in preview.
+        :paramtype authentication_method_ldap_properties:
+         ~azure.mgmt.cosmosdb.models.AuthenticationMethodLdapProperties
+        :keyword deallocated: Whether the data center has been deallocated.
+        :paramtype deallocated: bool
+        :keyword provision_error: Error related to resource provisioning.
+        :paramtype provision_error: ~azure.mgmt.cosmosdb.models.CassandraError
         """
         super().__init__(**kwargs)
         self.provisioning_state = provisioning_state
@@ -4027,6 +4248,9 @@ class DataCenterResourceProperties(_serialization.Model):  # pylint: disable=too
         self.disk_sku = disk_sku
         self.disk_capacity = disk_capacity
         self.availability_zone = availability_zone
+        self.authentication_method_ldap_properties = authentication_method_ldap_properties
+        self.deallocated = deallocated
+        self.provision_error = provision_error
 
 
 class RegionalServiceResource(_serialization.Model):
@@ -5614,18 +5838,39 @@ class LocationProperties(_serialization.Model):
     :ivar backup_storage_redundancies: The properties of available backup storage redundancies.
     :vartype backup_storage_redundancies: list[str or
      ~azure.mgmt.cosmosdb.models.BackupStorageRedundancy]
+    :ivar is_subscription_region_access_allowed_for_regular: Flag indicating whether the
+     subscription have access in region for Non-Availability Zones.
+    :vartype is_subscription_region_access_allowed_for_regular: bool
+    :ivar is_subscription_region_access_allowed_for_az: Flag indicating whether the subscription
+     have access in region for Availability Zones(Az).
+    :vartype is_subscription_region_access_allowed_for_az: bool
+    :ivar status: Enum to indicate current buildout status of the region. Known values are:
+     "Uninitialized", "Initializing", "InternallyReady", "Online", and "Deleting".
+    :vartype status: str or ~azure.mgmt.cosmosdb.models.Status
     """
 
     _validation = {
         "supports_availability_zone": {"readonly": True},
         "is_residency_restricted": {"readonly": True},
         "backup_storage_redundancies": {"readonly": True},
+        "is_subscription_region_access_allowed_for_regular": {"readonly": True},
+        "is_subscription_region_access_allowed_for_az": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
         "supports_availability_zone": {"key": "supportsAvailabilityZone", "type": "bool"},
         "is_residency_restricted": {"key": "isResidencyRestricted", "type": "bool"},
         "backup_storage_redundancies": {"key": "backupStorageRedundancies", "type": "[str]"},
+        "is_subscription_region_access_allowed_for_regular": {
+            "key": "isSubscriptionRegionAccessAllowedForRegular",
+            "type": "bool",
+        },
+        "is_subscription_region_access_allowed_for_az": {
+            "key": "isSubscriptionRegionAccessAllowedForAz",
+            "type": "bool",
+        },
+        "status": {"key": "status", "type": "str"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -5634,6 +5879,9 @@ class LocationProperties(_serialization.Model):
         self.supports_availability_zone = None
         self.is_residency_restricted = None
         self.backup_storage_redundancies = None
+        self.is_subscription_region_access_allowed_for_regular = None
+        self.is_subscription_region_access_allowed_for_az = None
+        self.status = None
 
 
 class ManagedCassandraManagedServiceIdentity(_serialization.Model):
@@ -8265,6 +8513,9 @@ class RestorableDatabaseAccountGetResult(_serialization.Model):
     :ivar deletion_time: The time at which the restorable database account has been deleted
      (ISO-8601 format).
     :vartype deletion_time: ~datetime.datetime
+    :ivar oldest_restorable_time: The least recent time at which the database account can be
+     restored to (ISO-8601 format).
+    :vartype oldest_restorable_time: ~datetime.datetime
     :ivar api_type: The API type of the restorable database account. Known values are: "MongoDB",
      "Gremlin", "Cassandra", "Table", "Sql", and "GremlinV2".
     :vartype api_type: str or ~azure.mgmt.cosmosdb.models.ApiType
@@ -8289,6 +8540,7 @@ class RestorableDatabaseAccountGetResult(_serialization.Model):
         "account_name": {"key": "properties.accountName", "type": "str"},
         "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
         "deletion_time": {"key": "properties.deletionTime", "type": "iso-8601"},
+        "oldest_restorable_time": {"key": "properties.oldestRestorableTime", "type": "iso-8601"},
         "api_type": {"key": "properties.apiType", "type": "str"},
         "restorable_locations": {"key": "properties.restorableLocations", "type": "[RestorableLocationResource]"},
     }
@@ -8300,6 +8552,7 @@ class RestorableDatabaseAccountGetResult(_serialization.Model):
         account_name: Optional[str] = None,
         creation_time: Optional[datetime.datetime] = None,
         deletion_time: Optional[datetime.datetime] = None,
+        oldest_restorable_time: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8312,6 +8565,9 @@ class RestorableDatabaseAccountGetResult(_serialization.Model):
         :keyword deletion_time: The time at which the restorable database account has been deleted
          (ISO-8601 format).
         :paramtype deletion_time: ~datetime.datetime
+        :keyword oldest_restorable_time: The least recent time at which the database account can be
+         restored to (ISO-8601 format).
+        :paramtype oldest_restorable_time: ~datetime.datetime
         """
         super().__init__(**kwargs)
         self.id = None
@@ -8321,6 +8577,7 @@ class RestorableDatabaseAccountGetResult(_serialization.Model):
         self.account_name = account_name
         self.creation_time = creation_time
         self.deletion_time = deletion_time
+        self.oldest_restorable_time = oldest_restorable_time
         self.api_type = None
         self.restorable_locations = None
 
@@ -12179,11 +12436,19 @@ class ThroughputSettingsResource(_serialization.Model):
     :vartype minimum_throughput: str
     :ivar offer_replace_pending: The throughput replace is pending.
     :vartype offer_replace_pending: str
+    :ivar instant_maximum_throughput: The offer throughput value to instantly scale up without
+     triggering splits.
+    :vartype instant_maximum_throughput: str
+    :ivar soft_allowed_maximum_throughput: The maximum throughput value or the maximum
+     maxThroughput value (for autoscale) that can be specified.
+    :vartype soft_allowed_maximum_throughput: str
     """
 
     _validation = {
         "minimum_throughput": {"readonly": True},
         "offer_replace_pending": {"readonly": True},
+        "instant_maximum_throughput": {"readonly": True},
+        "soft_allowed_maximum_throughput": {"readonly": True},
     }
 
     _attribute_map = {
@@ -12191,6 +12456,8 @@ class ThroughputSettingsResource(_serialization.Model):
         "autoscale_settings": {"key": "autoscaleSettings", "type": "AutoscaleSettingsResource"},
         "minimum_throughput": {"key": "minimumThroughput", "type": "str"},
         "offer_replace_pending": {"key": "offerReplacePending", "type": "str"},
+        "instant_maximum_throughput": {"key": "instantMaximumThroughput", "type": "str"},
+        "soft_allowed_maximum_throughput": {"key": "softAllowedMaximumThroughput", "type": "str"},
     }
 
     def __init__(
@@ -12213,6 +12480,8 @@ class ThroughputSettingsResource(_serialization.Model):
         self.autoscale_settings = autoscale_settings
         self.minimum_throughput = None
         self.offer_replace_pending = None
+        self.instant_maximum_throughput = None
+        self.soft_allowed_maximum_throughput = None
 
 
 class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource, ExtendedResourceProperties):
@@ -12237,6 +12506,12 @@ class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource, Extend
     :vartype minimum_throughput: str
     :ivar offer_replace_pending: The throughput replace is pending.
     :vartype offer_replace_pending: str
+    :ivar instant_maximum_throughput: The offer throughput value to instantly scale up without
+     triggering splits.
+    :vartype instant_maximum_throughput: str
+    :ivar soft_allowed_maximum_throughput: The maximum throughput value or the maximum
+     maxThroughput value (for autoscale) that can be specified.
+    :vartype soft_allowed_maximum_throughput: str
     """
 
     _validation = {
@@ -12245,6 +12520,8 @@ class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource, Extend
         "etag": {"readonly": True},
         "minimum_throughput": {"readonly": True},
         "offer_replace_pending": {"readonly": True},
+        "instant_maximum_throughput": {"readonly": True},
+        "soft_allowed_maximum_throughput": {"readonly": True},
     }
 
     _attribute_map = {
@@ -12255,6 +12532,8 @@ class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource, Extend
         "autoscale_settings": {"key": "autoscaleSettings", "type": "AutoscaleSettingsResource"},
         "minimum_throughput": {"key": "minimumThroughput", "type": "str"},
         "offer_replace_pending": {"key": "offerReplacePending", "type": "str"},
+        "instant_maximum_throughput": {"key": "instantMaximumThroughput", "type": "str"},
+        "soft_allowed_maximum_throughput": {"key": "softAllowedMaximumThroughput", "type": "str"},
     }
 
     def __init__(
@@ -12280,6 +12559,8 @@ class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource, Extend
         self.autoscale_settings = autoscale_settings
         self.minimum_throughput = None
         self.offer_replace_pending = None
+        self.instant_maximum_throughput = None
+        self.soft_allowed_maximum_throughput = None
 
 
 class ThroughputSettingsGetResults(ARMResourceProperties):

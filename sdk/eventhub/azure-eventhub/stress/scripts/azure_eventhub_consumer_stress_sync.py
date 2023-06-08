@@ -87,15 +87,19 @@ parser.add_argument("--pyamqp_logging_enable", help="pyamqp logging enable", act
 parser.add_argument("--print_console", help="print to console", action="store_true")
 parser.add_argument("--log_filename", help="log file name", type=str)
 parser.add_argument("--uamqp_mode", help="Flag for uamqp or pyamqp", action="store_true")
+parser.add_argument("--debug_level", help="Flag for setting a debug level, can be Info, Debug, Warning, Error or Critical", type=str, default="Error")
+
 
 args = parser.parse_args()
 starting_position = parse_starting_position(args)
 print_console = args.print_console or (os.environ.get("PRINT_CONSOLE") == "1")
+debug_level = getattr(logging, args.debug_level.upper(), None)
+
 
 LOGGER = get_logger(
     args.log_filename,
     "stress_receive_sync",
-    level=logging.INFO,
+    level=debug_level,
     print_console=print_console
 )
 LOG_PER_COUNT = args.output_interval

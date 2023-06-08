@@ -4,7 +4,7 @@
 
 from typing import Optional
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ImageLimitSettings as RestImageLimitSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ImageLimitSettings as RestImageLimitSettings
 from azure.ai.ml._utils.utils import from_iso_duration_format_mins, to_iso_duration_format_mins
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -93,9 +93,6 @@ class ImageLimitSettings(RestTranslatableMixin):
         :raises ValueError: If max_concurrent_trials is not None and is not a positive integer.
         :raises ValueError: If max_trials is not None and is not a positive integer.
         :raises ValueError: If timeout_minutes is not None and is not a positive integer.
-
-        :return: ImageLimitSettings object.
-        :rtype: ImageLimitSettings
         """
         self.max_concurrent_trials = max_concurrent_trials
         self.max_trials = max_trials
@@ -131,9 +128,10 @@ class ImageLimitSettings(RestTranslatableMixin):
     def __eq__(self, other: object) -> bool:
         """Check equality between two ImageLimitSettings objects.
 
-        _extended_summary_
+        This method check instances equality and returns True if both of
+            the instances have the same attributes with the same values.
 
-        :param other: ImageLimitSettings object
+        :param other: Any object
         :type other: object
         :return: True or False
         :rtype: bool
@@ -150,7 +148,7 @@ class ImageLimitSettings(RestTranslatableMixin):
     def __ne__(self, other: object) -> bool:
         """Check inequality between two ImageLimitSettings objects.
 
-        :param other: ImageLimitSettings object
+        :param other: Any object
         :type other: object
         :return: True or False
         :rtype: bool

@@ -123,8 +123,8 @@ class SignalROperations:
 
         :param location: the region. Required.
         :type location: str
-        :param parameters: Parameters supplied to the operation. Is either a model type or a IO type.
-         Required.
+        :param parameters: Parameters supplied to the operation. Is either a NameAvailabilityParameters
+         type or a IO type. Required.
         :type parameters: ~azure.mgmt.signalr.models.NameAvailabilityParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -145,11 +145,11 @@ class SignalROperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-08-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.NameAvailability]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.NameAvailability] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -171,9 +171,9 @@ class SignalROperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -191,7 +191,9 @@ class SignalROperations:
 
         return deserialized
 
-    check_name_availability.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.SignalRService/locations/{location}/checkNameAvailability"}  # type: ignore
+    check_name_availability.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.SignalRService/locations/{location}/checkNameAvailability"
+    }
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.SignalRResource"]:
@@ -205,10 +207,10 @@ class SignalROperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-08-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SignalRResourceList]
+        )
+        cls: ClsType[_models.SignalRResourceList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -229,7 +231,7 @@ class SignalROperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -245,7 +247,7 @@ class SignalROperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -253,13 +255,13 @@ class SignalROperations:
             deserialized = self._deserialize("SignalRResourceList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -273,7 +275,9 @@ class SignalROperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.SignalRService/signalR"}  # type: ignore
+    list_by_subscription.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.SignalRService/signalR"
+    }
 
     @distributed_trace
     def list_by_resource_group(
@@ -292,10 +296,10 @@ class SignalROperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-08-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SignalRResourceList]
+        )
+        cls: ClsType[_models.SignalRResourceList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -317,7 +321,7 @@ class SignalROperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -333,7 +337,7 @@ class SignalROperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -341,13 +345,13 @@ class SignalROperations:
             deserialized = self._deserialize("SignalRResourceList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -361,7 +365,9 @@ class SignalROperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR"}  # type: ignore
+    list_by_resource_group.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR"
+    }
 
     @distributed_trace_async
     async def get(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> _models.SignalRResource:
@@ -388,10 +394,10 @@ class SignalROperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-08-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SignalRResource]
+        )
+        cls: ClsType[_models.SignalRResource] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -403,9 +409,9 @@ class SignalROperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -423,7 +429,9 @@ class SignalROperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}"
+    }
 
     async def _create_or_update_initial(
         self,
@@ -443,11 +451,11 @@ class SignalROperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-08-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.SignalRResource]]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.SignalRResource]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -470,9 +478,9 @@ class SignalROperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -495,7 +503,9 @@ class SignalROperations:
 
         return deserialized
 
-    _create_or_update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}"}  # type: ignore
+    _create_or_update_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}"
+    }
 
     @overload
     async def begin_create_or_update(
@@ -584,8 +594,8 @@ class SignalROperations:
         :type resource_group_name: str
         :param resource_name: The name of the resource. Required.
         :type resource_name: str
-        :param parameters: Parameters for the create or update operation. Is either a model type or a
-         IO type. Required.
+        :param parameters: Parameters for the create or update operation. Is either a SignalRResource
+         type or a IO type. Required.
         :type parameters: ~azure.mgmt.signalr.models.SignalRResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -606,16 +616,16 @@ class SignalROperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-08-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SignalRResource]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SignalRResource] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._create_or_update_initial(  # type: ignore
+            raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 resource_name=resource_name,
                 parameters=parameters,
@@ -635,7 +645,7 @@ class SignalROperations:
             return deserialized
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))  # type: AsyncPollingMethod
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -647,9 +657,11 @@ class SignalROperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}"}  # type: ignore
+    begin_create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}"
+    }
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -665,10 +677,10 @@ class SignalROperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-08-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             resource_group_name=resource_group_name,
@@ -680,9 +692,9 @@ class SignalROperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -696,7 +708,9 @@ class SignalROperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}"}  # type: ignore
+    _delete_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}"
+    }
 
     @distributed_trace_async
     async def begin_delete(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -722,13 +736,13 @@ class SignalROperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-08-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
@@ -746,9 +760,9 @@ class SignalROperations:
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(
+            polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )  # type: AsyncPollingMethod
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -760,9 +774,11 @@ class SignalROperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}"}  # type: ignore
+    begin_delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}"
+    }
 
     async def _update_initial(
         self,
@@ -782,11 +798,11 @@ class SignalROperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-08-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.SignalRResource]]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.SignalRResource]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -809,9 +825,9 @@ class SignalROperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -831,7 +847,9 @@ class SignalROperations:
 
         return deserialized
 
-    _update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}"}  # type: ignore
+    _update_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}"
+    }
 
     @overload
     async def begin_update(
@@ -920,8 +938,8 @@ class SignalROperations:
         :type resource_group_name: str
         :param resource_name: The name of the resource. Required.
         :type resource_name: str
-        :param parameters: Parameters for the update operation. Is either a model type or a IO type.
-         Required.
+        :param parameters: Parameters for the update operation. Is either a SignalRResource type or a
+         IO type. Required.
         :type parameters: ~azure.mgmt.signalr.models.SignalRResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -942,16 +960,16 @@ class SignalROperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-08-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SignalRResource]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SignalRResource] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._update_initial(  # type: ignore
+            raw_result = await self._update_initial(
                 resource_group_name=resource_group_name,
                 resource_name=resource_name,
                 parameters=parameters,
@@ -971,7 +989,7 @@ class SignalROperations:
             return deserialized
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))  # type: AsyncPollingMethod
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -983,9 +1001,11 @@ class SignalROperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}"}  # type: ignore
+    begin_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}"
+    }
 
     @distributed_trace_async
     async def list_keys(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> _models.SignalRKeys:
@@ -1012,10 +1032,10 @@ class SignalROperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-08-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SignalRKeys]
+        )
+        cls: ClsType[_models.SignalRKeys] = kwargs.pop("cls", None)
 
         request = build_list_keys_request(
             resource_group_name=resource_group_name,
@@ -1027,9 +1047,9 @@ class SignalROperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1047,7 +1067,9 @@ class SignalROperations:
 
         return deserialized
 
-    list_keys.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/listKeys"}  # type: ignore
+    list_keys.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/listKeys"
+    }
 
     async def _regenerate_key_initial(
         self,
@@ -1067,11 +1089,11 @@ class SignalROperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-08-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SignalRKeys]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SignalRKeys] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1094,9 +1116,9 @@ class SignalROperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1114,7 +1136,9 @@ class SignalROperations:
 
         return deserialized
 
-    _regenerate_key_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/regenerateKey"}  # type: ignore
+    _regenerate_key_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/regenerateKey"
+    }
 
     @overload
     async def begin_regenerate_key(
@@ -1206,8 +1230,8 @@ class SignalROperations:
         :type resource_group_name: str
         :param resource_name: The name of the resource. Required.
         :type resource_name: str
-        :param parameters: Parameter that describes the Regenerate Key Operation. Is either a model
-         type or a IO type. Required.
+        :param parameters: Parameter that describes the Regenerate Key Operation. Is either a
+         RegenerateKeyParameters type or a IO type. Required.
         :type parameters: ~azure.mgmt.signalr.models.RegenerateKeyParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1228,16 +1252,16 @@ class SignalROperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-08-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SignalRKeys]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SignalRKeys] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._regenerate_key_initial(  # type: ignore
+            raw_result = await self._regenerate_key_initial(
                 resource_group_name=resource_group_name,
                 resource_name=resource_name,
                 parameters=parameters,
@@ -1257,10 +1281,10 @@ class SignalROperations:
             return deserialized
 
         if polling is True:
-            polling_method = cast(
+            polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
                 AsyncARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs),
-            )  # type: AsyncPollingMethod
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -1272,9 +1296,11 @@ class SignalROperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_regenerate_key.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/regenerateKey"}  # type: ignore
+    begin_regenerate_key.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/regenerateKey"
+    }
 
     async def _restart_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -1290,10 +1316,10 @@ class SignalROperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-08-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_restart_request(
             resource_group_name=resource_group_name,
@@ -1305,9 +1331,9 @@ class SignalROperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1321,7 +1347,9 @@ class SignalROperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _restart_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/restart"}  # type: ignore
+    _restart_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/restart"
+    }
 
     @distributed_trace_async
     async def begin_restart(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -1347,13 +1375,13 @@ class SignalROperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-08-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._restart_initial(  # type: ignore
                 resource_group_name=resource_group_name,
@@ -1371,10 +1399,10 @@ class SignalROperations:
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(
+            polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
                 AsyncARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs),
-            )  # type: AsyncPollingMethod
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -1386,9 +1414,11 @@ class SignalROperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_restart.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/restart"}  # type: ignore
+    begin_restart.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/restart"
+    }
 
     @distributed_trace_async
     async def list_skus(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> _models.SkuList:
@@ -1415,10 +1445,10 @@ class SignalROperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-08-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SkuList]
+        )
+        cls: ClsType[_models.SkuList] = kwargs.pop("cls", None)
 
         request = build_list_skus_request(
             resource_group_name=resource_group_name,
@@ -1430,9 +1460,9 @@ class SignalROperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1450,4 +1480,6 @@ class SignalROperations:
 
         return deserialized
 
-    list_skus.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/skus"}  # type: ignore
+    list_skus.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/signalR/{resourceName}/skus"
+    }

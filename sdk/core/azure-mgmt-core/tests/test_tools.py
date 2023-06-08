@@ -25,7 +25,12 @@
 
 import unittest
 
-from azure.mgmt.core.tools import parse_resource_id, is_valid_resource_id, resource_id, is_valid_resource_name
+from azure.mgmt.core.tools import (
+    parse_resource_id,
+    is_valid_resource_id,
+    resource_id,
+    is_valid_resource_name,
+)
 
 
 class TestTools(unittest.TestCase):
@@ -288,7 +293,11 @@ class TestTools(unittest.TestCase):
             },
             {
                 "resource_id": "/subscriptions/mySub/resourceGroups/myRg/" "providers/Microsoft.Provider1",
-                "id_args": {"subscription": "mySub", "resource_group": "myRg", "namespace": "Microsoft.Provider1"},
+                "id_args": {
+                    "subscription": "mySub",
+                    "resource_group": "myRg",
+                    "namespace": "Microsoft.Provider1",
+                },
             },
             {
                 "resource_id": "/subscriptions/mySub/resourceGroups/myRg",

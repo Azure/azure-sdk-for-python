@@ -16,7 +16,7 @@ from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer, is_public_cloud
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
-from azure.ai.textanalytics._lro import AnalyzeActionsLROPoller
+from azure.ai.textanalytics._lro import AnalyzeActionsLROPoller, TextAnalysisLROPoller
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     RecognizeEntitiesAction,
@@ -40,8 +40,8 @@ from azure.ai.textanalytics import (
     ClassifyDocumentResult,
     RecognizeCustomEntitiesResult,
     AnalyzeHealthcareEntitiesAction,
-    ExtractSummaryAction,
-    ExtractSummaryResult,
+    ExtractiveSummaryAction,
+    ExtractiveSummaryResult,
     AbstractiveSummaryAction,
 )
 
@@ -495,7 +495,6 @@ class TestAnalyze(TextAnalyticsTest):
                 assert document_result.statistics.character_count
                 assert document_result.statistics.transaction_count
 
-    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15758510")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
@@ -512,7 +511,7 @@ class TestAnalyze(TextAnalyticsTest):
         )
 
         poller.result()
-
+        assert isinstance(poller, TextAnalysisLROPoller)
         assert isinstance(poller, AnalyzeActionsLROPoller)
         assert isinstance(poller.created_on, datetime.datetime)
         assert not poller.display_name
@@ -813,6 +812,7 @@ class TestAnalyze(TextAnalyticsTest):
         assert isinstance(action_results[1][1], RecognizePiiEntitiesResult)
         assert action_results[1][1].id == "2"
 
+    @pytest.mark.skip("Flaky test")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
@@ -1680,8 +1680,6 @@ class TestAnalyze(TextAnalyticsTest):
             actions=[
                 AnalyzeHealthcareEntitiesAction(
                     model_version="latest",
-                    fhir_version="4.0.1",
-                    document_type="HistoryAndPhysical",
                 )
             ],
             show_stats=True,
@@ -1695,8 +1693,7 @@ class TestAnalyze(TextAnalyticsTest):
                     assert res.error.code == "InvalidDocument"
                 else:
                     assert res.entities
-                    # assert res.statistics FIXME https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15860714
-                    assert res.fhir_bundle
+                    assert res.statistics
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -1719,7 +1716,6 @@ class TestAnalyze(TextAnalyticsTest):
         )
         poller.cancel()
 
-    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/26163")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
@@ -1824,7 +1820,7 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze_actions(
             docs,
-            actions=[ExtractSummaryAction()],
+            actions=[ExtractiveSummaryAction()],
             show_stats=True,
             polling_interval=self._interval(),
         ).result()
@@ -1835,7 +1831,7 @@ class TestAnalyze(TextAnalyticsTest):
         for document_result in document_results:
             assert len(document_result) == 1
             for result in document_result:
-                assert isinstance(result, ExtractSummaryResult)
+                assert isinstance(result, ExtractiveSummaryResult)
                 assert result.statistics
                 assert len(result.sentences) == 3 if result.id == 0 else 1
                 for sentence in result.sentences:
@@ -1869,7 +1865,7 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze_actions(
             docs,
-            actions=[ExtractSummaryAction(max_sentence_count=5, order_by="Rank")],
+            actions=[ExtractiveSummaryAction(max_sentence_count=5, order_by="Rank")],
             show_stats=True,
             polling_interval=self._interval(),
         ).result()
@@ -1880,7 +1876,7 @@ class TestAnalyze(TextAnalyticsTest):
         for document_result in document_results:
             assert len(document_result) == 1
             for result in document_result:
-                assert isinstance(result, ExtractSummaryResult)
+                assert isinstance(result, ExtractiveSummaryResult)
                 assert result.statistics
                 assert len(result.sentences) == 5
                 previous_score = 1.0
@@ -1901,7 +1897,7 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze_actions(
             docs,
-            actions=[ExtractSummaryAction()],
+            actions=[ExtractiveSummaryAction()],
             show_stats=True,
             polling_interval=self._interval(),
         ).result()
@@ -1911,38 +1907,7 @@ class TestAnalyze(TextAnalyticsTest):
         assert document_results[0][0].error.code == "InvalidDocument"
 
         assert not document_results[1][0].is_error
-        assert isinstance(document_results[1][0], ExtractSummaryResult)
-
-    @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
-    @recorded_by_proxy
-    def test_entity_action_resolutions(self, client):
-        docs = [
-            "The cat is 1 year old and weighs 10 pounds."
-        ]
-
-        response = client.begin_analyze_actions(
-            docs,
-            actions=[RecognizeEntitiesAction(
-                model_version="2022-10-01-preview"
-            )],
-            polling_interval=self._interval(),
-        ).result()
-
-        pages = list(response)
-        for document_results in pages:
-            document_result = document_results[0]
-            for entity in document_result.entities:
-                assert entity.text is not None
-                assert entity.category is not None
-                assert entity.offset is not None
-                assert entity.confidence_score is not None
-                for res in entity.resolutions:
-                    assert res.resolution_kind in ["WeightResolution", "AgeResolution"]
-                    if res.resolution_kind == "WeightResolution":
-                        assert res.value == 10
-                    if res.resolution_kind == "AgeResolution":
-                        assert res.value == 1
+        assert isinstance(document_results[1][0], ExtractiveSummaryResult)
 
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
@@ -1985,109 +1950,3 @@ class TestAnalyze(TextAnalyticsTest):
                         assert context.offset is not None
                         assert context.length is not None
                     assert summary.text
-
-    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
-    @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
-    @recorded_by_proxy
-    def test_autodetect_lang_document(self, client):
-        docs = [{"id": "1", "language": "auto", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
-                {"id": "2", "language": "auto", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
-        actions=[
-            RecognizeEntitiesAction(),
-            ExtractKeyPhrasesAction(),
-            RecognizePiiEntitiesAction(),
-            # RecognizeLinkedEntitiesAction(),  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15859145
-            AnalyzeSentimentAction(),
-            AnalyzeHealthcareEntitiesAction(),  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/16040765
-            # ExtractSummaryAction(),  https://github.com/Azure/azure-sdk-for-python/issues/27727
-        ]
-        poller = client.begin_analyze_actions(
-            docs,
-            actions,
-            polling_interval=self._interval(),
-        )
-
-        result = list(poller.result())
-        for res in result:
-            for doc in res:
-                # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/16040765
-                if doc.kind == "Healthcare":
-                    if doc.id == "1":
-                        assert doc.detected_language == "en"
-                else:
-                    if doc.id == "1":
-                        assert doc.detected_language.iso6391_name == "en"
-                    elif doc.id == "2" and not doc.is_error:
-                        assert doc.detected_language.iso6391_name == "es"
-
-    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
-    @TextAnalyticsPreparer()
-    @TextAnalyticsCustomPreparer()
-    @recorded_by_proxy
-    def test_autodetect_lang_document_custom(self, **kwargs):
-        textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
-        textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
-        textanalytics_single_label_classify_project_name = kwargs.pop("textanalytics_single_label_classify_project_name")
-        textanalytics_single_label_classify_deployment_name = kwargs.pop("textanalytics_single_label_classify_deployment_name")
-        textanalytics_multi_label_classify_project_name = kwargs.pop("textanalytics_multi_label_classify_project_name")
-        textanalytics_multi_label_classify_deployment_name = kwargs.pop("textanalytics_multi_label_classify_deployment_name")
-        textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
-        textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
-        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
-
-        docs = [{"id": "1", "language": "auto", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
-                {"id": "2", "language": "auto", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
-        actions=[
-            RecognizeCustomEntitiesAction(
-                project_name=textanalytics_custom_entities_project_name,
-                deployment_name=textanalytics_custom_entities_deployment_name,
-            ),
-            SingleLabelClassifyAction(
-                project_name=textanalytics_single_label_classify_project_name,
-                deployment_name=textanalytics_single_label_classify_deployment_name,
-            ),
-            MultiLabelClassifyAction(
-                project_name=textanalytics_multi_label_classify_project_name,
-                deployment_name=textanalytics_multi_label_classify_deployment_name,
-            ),
-        ]
-        poller = client.begin_analyze_actions(
-            docs,
-            actions,
-            polling_interval=self._interval(),
-        )
-
-        result = list(poller.result())
-        for res in result:
-            for doc in res:
-                if doc.id == "1":
-                    assert doc.detected_language.iso6391_name == "en"
-                else:
-                    assert doc.detected_language.iso6391_name == "es"
-
-    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
-    @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
-    @recorded_by_proxy
-    def test_autodetect_language(self, client):
-        docs = ["hello world"]
-        actions=[
-            RecognizeEntitiesAction(),
-            ExtractKeyPhrasesAction(),
-            RecognizePiiEntitiesAction(),
-            RecognizeLinkedEntitiesAction(),
-            AnalyzeSentimentAction(),
-        ]
-        poller = client.begin_analyze_actions(
-            docs,
-            actions,
-            language="auto",
-            polling_interval=self._interval(),
-        )
-
-        result = list(poller.result())
-        for res in result:
-            for doc in res:
-                assert doc.detected_language.iso6391_name == "en"

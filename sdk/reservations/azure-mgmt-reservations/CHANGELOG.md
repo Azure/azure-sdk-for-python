@@ -1,5 +1,12 @@
 # Release History
 
+## 2.3.0 (2023-03-20)
+
+### Features Added
+
+  - Model CatalogMsrp has a new parameter p3_y
+  - Model CatalogMsrp has a new parameter p5_y
+
 ## 2.2.0 (2023-02-15)
 
 ### Features Added

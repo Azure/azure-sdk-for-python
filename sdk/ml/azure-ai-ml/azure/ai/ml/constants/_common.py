@@ -26,6 +26,7 @@ ARM_ID_FULL_PREFIX = "/subscriptions/"
 AZUREML_RESOURCE_PROVIDER = "Microsoft.MachineLearningServices"
 RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}"
 NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}"
+NAMED_RESOURCE_ID_FORMAT_WITH_PARENT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/{}/{}"
 LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/{}/{}"
 VERSIONED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/versions/{}"
 LABELLED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/labels/{}"
@@ -36,8 +37,16 @@ PROVIDER_RESOURCE_ID_WITH_VERSION = (
     "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/{}/{}/versions/{}"
 )
 SINGULARITY_ID_FORMAT = (
+    "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/virtualclusters/{}"
+)
+SINGULARITY_ID_REGEX_FORMAT = (
     "/subscriptions/.*/resourceGroups/.*/providers/Microsoft.MachineLearningServices/virtualclusters/.*"
 )
+SINGULARITY_FULL_NAME_REGEX_FORMAT = (
+    "^(azureml:)?//subscriptions/(?P<subscription_id>[^/]+)/resourceGroups/(?P<resource_group_name>[^/]+)/"
+    "virtualclusters/(?P<name>[^/]+)"
+)
+SINGULARITY_SHORT_NAME_REGEX_FORMAT = "^(azureml:)?//virtualclusters/(?P<name>[^/]+)"
 ASSET_ID_FORMAT = "azureml://locations/{}/workspaces/{}/{}/{}/versions/{}"
 VERSIONED_RESOURCE_NAME = "{}:{}"
 LABELLED_RESOURCE_NAME = "{}@{}"
@@ -128,7 +137,6 @@ API_URL_KEY = "api"
 ANONYMOUS_ENV_NAME = "CliV2AnonymousEnvironment"
 SKIP_VALIDATION_MESSAGE = "To skip this validation use the --skip-validation param"
 MLTABLE_METADATA_SCHEMA_URL_FALLBACK = "https://azuremlschemasprod.azureedge.net/latest/MLTable.schema.json"
-INVOCATION_ZIP_FILE = "invocation.zip"
 INVOCATION_BAT_FILE = "Invocation.bat"
 INVOCATION_BASH_FILE = "Invocation.sh"
 AZUREML_RUN_SETUP_DIR = "azureml-setup"
@@ -303,6 +311,7 @@ class ArmConstants:
     STORAGE = "StorageAccount"
     KEY_VAULT = "KeyVault"
     APP_INSIGHTS = "AppInsights"
+    LOG_ANALYTICS = "LogAnalytics"
     WORKSPACE = "Workspace"
 
     AZURE_MGMT_RESOURCE_API_VERSION = "2020-06-01"
@@ -438,7 +447,7 @@ class YAMLRefDocLinks:
     BATCH_DEPLOYMENT = "https://aka.ms/ml-cli-v2-deployment-batch-yaml-reference"
     COMMAND_COMPONENT = "https://aka.ms/ml-cli-v2-component-command-yaml-reference"
     PARALLEL_COMPONENT = "https://aka.ms/ml-cli-v2-component-parallel-yaml-reference"
-    SCHEDULE = "https://aka.ms/ml-cli-v2-schedule-yaml-reference"
+    JOB_SCHEDULE = "https://aka.ms/ml-cli-v2-schedule-yaml-reference"
     REGISTRY = "https://aka.ms/ml-cli-v2-registry-yaml-reference"
     FEATURE_STORE = "https://aka.ms/ml-cli-v2-featurestore-yaml-reference"
     FEATURE_SET = "https://aka.ms/ml-cli-v2-featureset-yaml-reference"
@@ -495,8 +504,8 @@ class YAMLRefDocSchemaNames:
     """Command component."""
     PARALLEL_COMPONENT = "ParallelComponent"
     """Parallel component."""
-    SCHEDULE = "Schedule"
-    """Schedule."""
+    JOB_SCHEDULE = "JobSchedule"
+    """Job Schedule."""
 
 
 class DockerTypes:
@@ -833,3 +842,25 @@ class Boolean:
     """True boolean type."""
     FALSE = "false"
     """False boolean type."""
+
+
+class InferenceServerType:
+    AZUREML_ONLINE = "azureml_online"
+    AZUREML_BATCH = "azureml_batch"
+    TRITON = "triton"
+    CUSTOM = "custom"
+
+
+class AzureDevopsArtifactsType:
+    ARTIFACT = "artifact"
+
+
+class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    JOB = "job"
+    MONITOR = "monitor"
+    DATA_IMPORT = "data_import"
+
+
+class AutoDeleteCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    CREATED_GREATER_THAN = "created_greater_than"
+    LAST_ACCESSED_GREATER_THAN = "last_accessed_greater_than"

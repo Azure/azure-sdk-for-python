@@ -240,7 +240,8 @@ class DatasetsOperations:
         :type factory_name: str
         :param dataset_name: The dataset name. Required.
         :type dataset_name: str
-        :param dataset: Dataset resource definition. Is either a model type or a IO type. Required.
+        :param dataset: Dataset resource definition. Is either a DatasetResource type or a IO type.
+         Required.
         :type dataset: ~azure.mgmt.datafactory.models.DatasetResource or IO
         :param if_match: ETag of the dataset entity.  Should only be specified for update, for which it
          should match existing entity or can be * for unconditional update. Default value is None.

@@ -29,13 +29,12 @@ def main():
         subscription_id="subid1",
     )
 
-    response = client.managed_clusters.begin_abort_latest_operation(
+    client.managed_clusters.begin_abort_latest_operation(
         resource_group_name="rg1",
         resource_name="clustername1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-01-01/examples/ManagedClustersAbortOperation.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-04-01/examples/ManagedClustersAbortOperation.json
 if __name__ == "__main__":
     main()

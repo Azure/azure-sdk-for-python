@@ -6,4 +6,4 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "29.2.0b1"
+VERSION = "30.0.0"

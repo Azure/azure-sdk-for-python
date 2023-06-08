@@ -21,7 +21,8 @@ from ._path_client_async import PathClient
 from .._shared.base_client_async import AsyncTransportWrapper
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from datetime import datetime
 
 
@@ -72,7 +73,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         self, account_url: str,
         file_system_name: str,
         directory_name: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
         super(DataLakeDirectoryClient, self).__init__(account_url, file_system_name, directory_name, # pylint: disable=specify-parameter-names-in-call
@@ -609,7 +610,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline)
+            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)
 
     def get_sub_directory_client(self, sub_directory  # type: Union[DirectoryProperties, str]
                                  ):
@@ -646,4 +647,4 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         return DataLakeDirectoryClient(
             self.url, self.file_system_name, directory_name=subdir_path, credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline)
+            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)

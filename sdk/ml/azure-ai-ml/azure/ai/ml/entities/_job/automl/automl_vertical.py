@@ -21,8 +21,6 @@ class AutoMLVertical(AutoMLJob):
     :type validation_data: Input
     :param test_data: Test data input, defaults to None
     :type test_data: typing.Optional[Input]
-    :param kwargs: Additional keyword arguments
-    :type kwargs: dict
     :raises ValueError: If task_type is not one of "classification", "regression", "forecasting".
     :raises ValueError: If training_data is not of type Input.
     :raises ValueError: If validation_data is not of type Input.
@@ -46,8 +44,6 @@ class AutoMLVertical(AutoMLJob):
         :type validation_data: Input
         :param test_data: Test data input, defaults to None
         :type test_data: typing.Optional[Input]
-        :param kwargs: Additional keyword arguments
-        :type kwargs: dict
         :raises ValueError: If task_type is not one of "classification", "regression", "forecasting".
         :raises ValueError: If training_data is not of type Input.
         :raises ValueError: If validation_data is not of type Input.

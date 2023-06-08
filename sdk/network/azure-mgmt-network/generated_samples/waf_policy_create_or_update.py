@@ -67,6 +67,23 @@ def main():
                         "priority": 2,
                         "ruleType": "MatchRule",
                     },
+                    {
+                        "action": "Block",
+                        "groupByUserSession": [{"groupByVariables": [{"variableName": "ClientAddr"}]}],
+                        "matchConditions": [
+                            {
+                                "matchValues": ["192.168.1.0/24", "10.0.0.0/24"],
+                                "matchVariables": [{"selector": None, "variableName": "RemoteAddr"}],
+                                "negationConditon": True,
+                                "operator": "IPMatch",
+                            }
+                        ],
+                        "name": "RateLimitRule3",
+                        "priority": 3,
+                        "rateLimitDuration": "OneMin",
+                        "rateLimitThreshold": 10,
+                        "ruleType": "RateLimitRule",
+                    },
                 ],
                 "managedRules": {
                     "exclusions": [
@@ -119,12 +136,31 @@ def main():
                         }
                     ],
                 },
+                "policySettings": {
+                    "logScrubbing": {
+                        "scrubbingRules": [
+                            {
+                                "matchVariable": "RequestArgNames",
+                                "selector": "test",
+                                "selectorMatchOperator": "Equals",
+                                "state": "Enabled",
+                            },
+                            {
+                                "matchVariable": "RequestIPAddress",
+                                "selector": "*",
+                                "selectorMatchOperator": "EqualsAny",
+                                "state": "Enabled",
+                            },
+                        ],
+                        "state": "Enabled",
+                    }
+                },
             },
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-07-01/examples/WafPolicyCreateOrUpdate.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/WafPolicyCreateOrUpdate.json
 if __name__ == "__main__":
     main()

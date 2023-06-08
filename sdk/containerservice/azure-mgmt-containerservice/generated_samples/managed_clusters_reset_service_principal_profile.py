@@ -29,14 +29,13 @@ def main():
         subscription_id="subid1",
     )
 
-    response = client.managed_clusters.begin_reset_service_principal_profile(
+    client.managed_clusters.begin_reset_service_principal_profile(
         resource_group_name="rg1",
         resource_name="clustername1",
         parameters={"clientId": "clientid", "secret": "secret"},
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-01-01/examples/ManagedClustersResetServicePrincipalProfile.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-04-01/examples/ManagedClustersResetServicePrincipalProfile.json
 if __name__ == "__main__":
     main()

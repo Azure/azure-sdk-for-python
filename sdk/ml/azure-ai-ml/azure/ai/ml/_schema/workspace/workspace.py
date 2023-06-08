@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields
+from marshmallow import fields, EXCLUDE
 
 from azure.ai.ml._schema._utils.utils import validate_arm_str
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
@@ -39,4 +39,5 @@ class WorkspaceSchema(PathAwareSchema):
     )
     identity = NestedField(IdentitySchema)
     primary_user_assigned_identity = fields.Str()
-    managed_network = ExperimentalField(NestedField(ManagedNetworkSchema))
+    managed_network = ExperimentalField(NestedField(ManagedNetworkSchema, unknown=EXCLUDE))
+    enable_data_isolation = fields.Bool()

@@ -31,7 +31,7 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
     :param Union[AsyncTokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
     :keyword api_version: Azure Communication Email API version.
-        Default value is "2021-10-01-preview".
+        Default value is "2023-03-31".
         Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """

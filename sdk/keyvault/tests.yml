@@ -16,7 +16,6 @@ stages:
         ServiceDirectory: keyvault
         BuildTargetingString: ${{ service }}
         JobName: ${{ replace(service, '-', '_') }}
-        TestTimeoutInMinutes: 240
         SupportedClouds: 'Public,UsGov,China'
         CloudConfig:
           Public:
@@ -29,12 +28,25 @@ stages:
             SubscriptionConfiguration: $(sub-config-cn-test-resources)
             MatrixFilters:
               - ArmTemplateParameters=^(?!.*enableHsm.*true)
-        ${{ if or(eq(service, 'azure-keyvault-keys'), eq(service, 'azure-keyvault-administration')) }}:
-          AdditionalMatrixConfigs:
-            - Name: keyvault_test_matrix_addons
+        ${{ if eq(service, 'azure-keyvault-keys') }}:
+          ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly') }}:
+            # Test azure-keyvault-keys on Managed HSM for weekly tests only
+            AdditionalMatrixConfigs:
+              - Name: keyvault_hsm_matrix_addons
+                Path: sdk/keyvault/azure-keyvault-keys/platform-matrix.json
+                Selection: sparse
+                GenerateVMJobs: true
+        ${{ if eq(service, 'azure-keyvault-administration') }}:
+          # Test azure-keyvault-administration on *only* Managed HSM for weekly tests only
+          MatrixConfigs:
+            - Name: keyvault_admin_weekly_matrix
               Path: sdk/keyvault/azure-keyvault-keys/platform-matrix.json
               Selection: sparse
               GenerateVMJobs: true
+          ${{ if not(contains(variables['Build.DefinitionName'], 'tests-weekly')) }}:
+            # For nightly tests, don't run live azure-keyvault-administration jobs since they require Managed HSM
+            MatrixFilters:
+              - OSVmImage=NonexistentImage
         EnvVars:
           AZURE_TEST_RUN_LIVE: true
           AZURE_SKIP_LIVE_RECORDING: 'True'

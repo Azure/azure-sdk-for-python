@@ -16,8 +16,8 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.models import EnvironmentVersionData, ListViewType
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._restclient.v2023_04_01_preview.models import EnvironmentVersion, ListViewType
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -54,7 +54,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient052022, ServiceClient102021Dataplane],
+        service_client: Union[ServiceClient042023Preview, ServiceClient102021Dataplane],
         all_operations: OperationsContainer,
         **kwargs: Any,
     ):
@@ -143,11 +143,6 @@ class EnvironmentOperations(_ScopeDependentOperations):
                         environment.version,
                     ),
                 )
-                if not sas_uri:  # This means the env already exists and we just get the env
-                    module_logger.debug(
-                        "Getting the existing asset name: %s, version: %s", environment.name, environment.version
-                    )
-                    return self.get(name=environment.name, version=environment.version)
 
             environment = _check_and_upload_env_build_context(
                 environment=environment, operations=self, sas_uri=sas_uri, show_progress=self._show_progress
@@ -181,7 +176,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
             else:
                 raise ex
 
-    def _get(self, name: str, version: Optional[str] = None) -> EnvironmentVersionData:
+    def _get(self, name: str, version: Optional[str] = None) -> EnvironmentVersion:
         if version:
             return (
                 self._version_operations.get(
@@ -378,6 +373,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
             self._version_operations,
             self._resource_group_name,
             self._workspace_name,
+            self._registry_name,
         )
         return Environment._from_rest_object(result)
 

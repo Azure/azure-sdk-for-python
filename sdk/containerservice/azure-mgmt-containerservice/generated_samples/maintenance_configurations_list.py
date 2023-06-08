@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-01-01/examples/MaintenanceConfigurationsList.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-04-01/examples/MaintenanceConfigurationsList.json
 if __name__ == "__main__":
     main()

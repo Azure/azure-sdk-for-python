@@ -141,9 +141,14 @@ def test_timeout():
     from subprocess import TimeoutExpired
 
     with mock.patch("shutil.which", return_value="az"):
-        with mock.patch(CHECK_OUTPUT, mock.Mock(side_effect=TimeoutExpired("", 42))):
+        with mock.patch(CHECK_OUTPUT, mock.Mock(side_effect=TimeoutExpired("", 42))) as check_output_mock:
             with pytest.raises(CredentialUnavailableError):
-                AzureCliCredential().get_token("scope")
+                AzureCliCredential(process_timeout=42).get_token("scope")
+
+    # Ensure custom timeout is passed to subprocess
+    _, kwargs = check_output_mock.call_args
+    assert "timeout" in kwargs
+    assert kwargs["timeout"] == 42
 
 
 def test_multitenant_authentication_class():

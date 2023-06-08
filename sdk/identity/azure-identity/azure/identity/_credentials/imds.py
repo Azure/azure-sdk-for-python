@@ -5,8 +5,6 @@
 import os
 from typing import Any, Optional, Dict
 
-import six
-
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessToken
@@ -61,7 +59,9 @@ class ImdsCredential(GetTokenMixin):
     def close(self) -> None:
         self.__exit__()
 
-    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Optional[AccessToken]:
         return self._client.get_cached_token(*scopes)
 
     def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
@@ -81,7 +81,7 @@ class ImdsCredential(GetTokenMixin):
                 self._error_message = (
                     "ManagedIdentityCredential authentication unavailable, no response from the IMDS endpoint."
                 )
-                six.raise_from(CredentialUnavailableError(self._error_message), ex)
+                raise CredentialUnavailableError(self._error_message) from ex
 
         if not self._endpoint_available:
             raise CredentialUnavailableError(self._error_message)
@@ -98,8 +98,8 @@ class ImdsCredential(GetTokenMixin):
                     self._error_message += "The requested identity has not been assigned to this resource."
                 else:
                     self._error_message += "No identity has been assigned to this resource."
-                six.raise_from(CredentialUnavailableError(message=self._error_message), ex)
+                raise CredentialUnavailableError(message=self._error_message) from ex
 
             # any other error is unexpected
-            six.raise_from(ClientAuthenticationError(message=ex.message, response=ex.response), ex)
+            raise ClientAuthenticationError(message=ex.message, response=ex.response) from ex
         return token

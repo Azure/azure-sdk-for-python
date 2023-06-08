@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from typing import Optional
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import NlpFixedParameters as RestNlpFixedParameters
+from azure.ai.ml._restclient.v2023_04_01_preview.models import NlpFixedParameters as RestNlpFixedParameters
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 

@@ -52,6 +52,15 @@ class EnvironmentCredential:
       - **AZURE_AUTHORITY_HOST**: authority of an Azure Active Directory endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
         when no value is given.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_environment_credential]
+            :end-before: [END create_environment_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create an EnvironmentCredential.
     """
 
     def __init__(self, **kwargs: Any) -> None:
@@ -128,7 +137,7 @@ class EnvironmentCredential:
         if not self._credential:
             message = (
                 "EnvironmentCredential authentication unavailable. Environment variables are not fully configured.\n"
-                "Visit https://aka.ms/azsdk/python/identity/environmentcredential/troubleshoot to troubleshoot."
+                "Visit https://aka.ms/azsdk/python/identity/environmentcredential/troubleshoot to troubleshoot "
                 "this issue."
             )
             raise CredentialUnavailableError(message=message)

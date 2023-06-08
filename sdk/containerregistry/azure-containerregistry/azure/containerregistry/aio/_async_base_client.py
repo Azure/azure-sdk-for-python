@@ -3,17 +3,16 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 
 from azure.core import CaseInsensitiveEnumMeta
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.transport import AsyncHttpTransport
 
 from ._async_authentication_policy import ContainerRegistryChallengePolicy
+from ._async_anonymous_exchange_client import AsyncAnonymousAccessCredential
 from .._generated.aio import ContainerRegistry
 from .._user_agent import USER_AGENT
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class ContainerRegistryApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -27,19 +26,19 @@ class ContainerRegistryBaseClient(object):
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
-    :param credential: AAD Token for authenticating requests with Azure
-    :type credential: ~azure.identity.DefaultTokenCredential
+    :param credential: Token credential for authenticating requests with Azure, or None in anonymous access
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential or None
     :keyword credential_scopes: URL for credential authentication if different from the default
     :paramtype credential_scopes: List[str]
     :keyword api_version: Api Version. Default value is "2021-07-01". Note that overriding this
-     default value may result in unsupported behavior.
+        default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Optional["AsyncTokenCredential"], **kwargs) -> None:
+    def __init__(self, endpoint: str, credential: Optional[AsyncTokenCredential], **kwargs) -> None:
         self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
-            credential=credential,
+            credential=credential or AsyncAnonymousAccessCredential(),
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=self._auth_policy,

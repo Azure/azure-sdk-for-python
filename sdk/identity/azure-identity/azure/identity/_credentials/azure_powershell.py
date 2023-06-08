@@ -4,11 +4,9 @@
 # ------------------------------------
 import base64
 import logging
-import platform
 import subprocess
 import sys
 from typing import List, Tuple, Optional, Any
-import six
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -51,16 +49,28 @@ class AzurePowerShellCredential:
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
+    :keyword int process_timeout: Seconds to wait for the Azure PowerShell process to respond. Defaults to 10 seconds.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_azure_power_shell_credential]
+            :end-before: [END create_azure_power_shell_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create an AzurePowerShellCredential.
     """
     def __init__(
         self,
         *,
         tenant_id: str = "",
-        additionally_allowed_tenants: Optional[List[str]] = None
+        additionally_allowed_tenants: Optional[List[str]] = None,
+        process_timeout: int = 10
     ) -> None:
 
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
+        self._process_timeout = process_timeout
 
     def __enter__(self):
         return self
@@ -96,17 +106,15 @@ class AzurePowerShellCredential:
             **kwargs
         )
         command_line = get_command_line(scopes, tenant_id)
-        output = run_command_line(command_line)
+        output = run_command_line(command_line, self._process_timeout)
         token = parse_token(output)
         return token
 
 
-def run_command_line(command_line: List[str]) -> str:
+def run_command_line(command_line: List[str], timeout: int) -> str:
     stdout = stderr = ""
     proc = None
-    kwargs = {}
-    if platform.python_version() >= "3.3":
-        kwargs["timeout"] = 10
+    kwargs = {"timeout": timeout}
 
     try:
         proc = start_process(command_line)
@@ -126,7 +134,7 @@ def run_command_line(command_line: List[str]) -> str:
             message="Failed to invoke PowerShell.\n"
                     "To mitigate this issue, please refer to the troubleshooting guidelines here at "
                     "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.")
-        six.raise_from(error, ex)
+        raise error from ex
 
     raise_for_error(proc.returncode, stdout, stderr)
     return stdout

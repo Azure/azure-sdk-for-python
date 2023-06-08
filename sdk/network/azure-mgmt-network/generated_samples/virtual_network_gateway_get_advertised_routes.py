@@ -32,11 +32,10 @@ def main():
     response = client.virtual_network_gateways.begin_get_advertised_routes(
         resource_group_name="rg1",
         virtual_network_gateway_name="vpngw",
-        peer="test",
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-07-01/examples/VirtualNetworkGatewayGetAdvertisedRoutes.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/VirtualNetworkGatewayGetAdvertisedRoutes.json
 if __name__ == "__main__":
     main()

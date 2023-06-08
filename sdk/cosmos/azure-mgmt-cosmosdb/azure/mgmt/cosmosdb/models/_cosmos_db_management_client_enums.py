@@ -36,6 +36,7 @@ class AuthenticationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NONE = "None"
     CASSANDRA = "Cassandra"
+    LDAP = "Ldap"
 
 
 class BackupPolicyMigrationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -91,6 +92,13 @@ class ConnectorOffer(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The cassandra connector offer type for the Cosmos DB C* database account."""
 
     SMALL = "Small"
+
+
+class ContinuousTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to indicate type of Continuous backup tier."""
+
+    CONTINUOUS7_DAYS = "Continuous7Days"
+    CONTINUOUS30_DAYS = "Continuous30Days"
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -161,6 +169,15 @@ class KeyKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SECONDARY = "secondary"
     PRIMARY_READONLY = "primaryReadonly"
     SECONDARY_READONLY = "secondaryReadonly"
+
+
+class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of the connection string key."""
+
+    PRIMARY = "Primary"
+    SECONDARY = "Secondary"
+    PRIMARY_READONLY = "PrimaryReadonly"
+    SECONDARY_READONLY = "SecondaryReadonly"
 
 
 class ManagedCassandraProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -263,6 +280,7 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+    SECURED_BY_PERIMETER = "SecuredByPerimeter"
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -336,6 +354,16 @@ class SpatialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MULTI_POLYGON = "MultiPolygon"
 
 
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to indicate current buildout status of the region."""
+
+    UNINITIALIZED = "Uninitialized"
+    INITIALIZING = "Initializing"
+    INTERNALLY_READY = "InternallyReady"
+    ONLINE = "Online"
+    DELETING = "Deleting"
+
+
 class TriggerOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation the trigger is associated with."""
 
@@ -351,6 +379,20 @@ class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     PRE = "Pre"
     POST = "Post"
+
+
+class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the connection string."""
+
+    SQL = "Sql"
+    TABLE = "Table"
+    MONGO_DB = "MongoDB"
+    CASSANDRA = "Cassandra"
+    CASSANDRA_CONNECTOR_METADATA = "CassandraConnectorMetadata"
+    GREMLIN = "Gremlin"
+    SQL_DEDICATED_GATEWAY = "SqlDedicatedGateway"
+    GREMLIN_V2 = "GremlinV2"
+    UNDEFINED = "Undefined"
 
 
 class UnitType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

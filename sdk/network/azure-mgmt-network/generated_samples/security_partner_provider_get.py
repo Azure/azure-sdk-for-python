@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-07-01/examples/SecurityPartnerProviderGet.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/SecurityPartnerProviderGet.json
 if __name__ == "__main__":
     main()

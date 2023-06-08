@@ -490,7 +490,7 @@ class CreationData(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar create_option: This enumerates the possible sources of a disk's creation. Required. Known
-     values are: "Empty", "Attach", "FromImage", "Import", "Copy", and "Restore".
+     values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", and "Import".
     :vartype create_option: str or ~azure.mgmt.compute.v2016_04_30_preview.models.DiskCreateOption
     :ivar storage_account_id: If createOption is Import, the Azure Resource Manager identifier of
      the storage account containing the blob to import as a disk. Required only if the blob is in a
@@ -531,7 +531,7 @@ class CreationData(_serialization.Model):
     ) -> None:
         """
         :keyword create_option: This enumerates the possible sources of a disk's creation. Required.
-         Known values are: "Empty", "Attach", "FromImage", "Import", "Copy", and "Restore".
+         Known values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", and "Import".
         :paramtype create_option: str or
          ~azure.mgmt.compute.v2016_04_30_preview.models.DiskCreateOption
         :keyword storage_account_id: If createOption is Import, the Azure Resource Manager identifier

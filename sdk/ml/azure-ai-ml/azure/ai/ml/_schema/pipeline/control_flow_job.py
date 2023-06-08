@@ -133,3 +133,15 @@ class ParallelForSchema(BaseLoopSchema):
             # use str to serialize input/output builder
             result._items = json.dumps(result.items, default=_binding_handler)
         return result
+
+
+class FLScatterGatherSchema(ControlFlowSchema):
+    # TODO determine serialization, or if this is actually needed
+
+    # @pre_dump
+    def serialize_items(self, data, **kwargs):
+        pass
+
+    # @pre_dump
+    def resolve_outputs(self, job, **kwargs):
+        pass

@@ -58,7 +58,7 @@ def main():
                     "transparentHugePageEnabled": "always",
                 },
                 "orchestratorVersion": "",
-                "osSKU": "CBLMariner",
+                "osSKU": "AzureLinux",
                 "osType": "Linux",
                 "vmSize": "Standard_DS2_v2",
             }
@@ -67,6 +67,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-01-01/examples/AgentPoolsCreate_OSSKU.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-04-01/examples/AgentPoolsCreate_OSSKU.json
 if __name__ == "__main__":
     main()

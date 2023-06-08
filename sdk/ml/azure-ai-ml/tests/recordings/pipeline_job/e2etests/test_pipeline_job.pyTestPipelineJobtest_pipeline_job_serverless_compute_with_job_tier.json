@@ -1,0 +1,327 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/000000000000000000000?api-version=2022-10-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "379",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-debian-bookworm-sid)"
+      },
+      "RequestBody": {
+        "properties": {
+          "properties": {},
+          "tags": {},
+          "isAnonymous": true,
+          "isArchived": false,
+          "componentSpec": {
+            "command": "echo \u0022Hello World\u0022",
+            "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest",
+            "resources": {
+              "instance_type": "Standard_D3_v2"
+            },
+            "name": "azureml_anonymous",
+            "version": "1",
+            "is_deterministic": true,
+            "type": "command",
+            "_source": "YAML.JOB"
+          }
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "951",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 24 Apr 2023 05:20:35 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/000000000000000000000?api-version=2022-10-01",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-f67ac020ccd938b1556643173cdb8a44-6d5a8d9961af5b82-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-eastus-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "a9e9faa7-73fa-40b5-937c-a4f53b00f2da",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "CANADACENTRAL:20230424T052035Z:a9e9faa7-73fa-40b5-937c-a4f53b00f2da",
+        "x-request-time": "0.925"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/01655a00-1079-4e1a-91b0-950463f75362",
+        "name": "01655a00-1079-4e1a-91b0-950463f75362",
+        "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
+        "properties": {
+          "description": null,
+          "tags": {},
+          "properties": {},
+          "isArchived": false,
+          "isAnonymous": true,
+          "componentSpec": {
+            "name": "azureml_anonymous",
+            "version": "1",
+            "is_deterministic": "True",
+            "type": "command",
+            "environment": "azureml://registries/azureml/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/33",
+            "resources": {
+              "instance_count": "1"
+            },
+            "command": "echo \u0022Hello World\u0022"
+          }
+        },
+        "systemData": {
+          "createdAt": "2023-04-22T08:57:04.1041669\u002B00:00",
+          "createdBy": "Firstname Lastname",
+          "createdByType": "User",
+          "lastModifiedAt": "2023-04-22T08:57:04.1819966\u002B00:00",
+          "lastModifiedBy": "Firstname Lastname",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2023-04-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "1258",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-debian-bookworm-sid)"
+      },
+      "RequestBody": {
+        "properties": {
+          "properties": {},
+          "tags": {},
+          "displayName": "Serverless Compute in Pipeline with Job Tier",
+          "experimentName": "Serverless-in-Pipeline",
+          "isArchived": false,
+          "jobType": "Pipeline",
+          "inputs": {},
+          "jobs": {
+            "spot_job_tier": {
+              "resources": {
+                "instance_type": "Standard_D3_v2"
+              },
+              "queue_settings": {
+                "job_tier": "Spot"
+              },
+              "name": "spot_job_tier",
+              "type": "command",
+              "_source": "YAML.JOB",
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/01655a00-1079-4e1a-91b0-950463f75362"
+            },
+            "standard_job_tier": {
+              "resources": {
+                "instance_type": "Standard_D3_v2"
+              },
+              "queue_settings": {
+                "job_tier": "Standard"
+              },
+              "name": "standard_job_tier",
+              "type": "command",
+              "_source": "YAML.JOB",
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/01655a00-1079-4e1a-91b0-950463f75362"
+            }
+          },
+          "outputs": {},
+          "settings": {
+            "default_compute": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/serverless",
+            "_source": "YAML.JOB"
+          }
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "2334",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 24 Apr 2023 05:20:44 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2023-04-01-preview",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-7afd43f32be8c4979e254e4b6bdfde0b-1a68251bd7eface4-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-eastus-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "690ce571-399d-480c-987f-33487759594c",
+        "x-ms-ratelimit-remaining-subscription-writes": "1198",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "CANADACENTRAL:20230424T052044Z:690ce571-399d-480c-987f-33487759594c",
+        "x-request-time": "0.890"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000",
+        "name": "000000000000000000000",
+        "type": "Microsoft.MachineLearningServices/workspaces/jobs",
+        "properties": {
+          "description": null,
+          "tags": {},
+          "properties": {},
+          "displayName": "Serverless Compute in Pipeline with Job Tier",
+          "status": "NotStarted",
+          "experimentName": "Serverless-in-Pipeline",
+          "services": {
+            "Tracking": {
+              "jobServiceType": "Tracking",
+              "port": null,
+              "endpoint": "azureml://eastus.api.azureml.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?",
+              "status": null,
+              "errorMessage": null,
+              "properties": null,
+              "nodes": null
+            },
+            "Studio": {
+              "jobServiceType": "Studio",
+              "port": null,
+              "endpoint": "https://ml.azure.com/runs/000000000000000000000?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
+              "status": null,
+              "errorMessage": null,
+              "properties": null,
+              "nodes": null
+            }
+          },
+          "computeId": null,
+          "isArchived": false,
+          "identity": null,
+          "componentId": null,
+          "notificationSetting": null,
+          "secretsConfiguration": null,
+          "jobType": "Pipeline",
+          "settings": {
+            "default_compute": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/serverless",
+            "_source": "YAML.JOB"
+          },
+          "jobs": {
+            "spot_job_tier": {
+              "resources": {
+                "instance_type": "Standard_D3_v2"
+              },
+              "queue_settings": {
+                "job_tier": "Spot"
+              },
+              "name": "spot_job_tier",
+              "type": "command",
+              "_source": "YAML.JOB",
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/01655a00-1079-4e1a-91b0-950463f75362"
+            },
+            "standard_job_tier": {
+              "resources": {
+                "instance_type": "Standard_D3_v2"
+              },
+              "queue_settings": {
+                "job_tier": "Standard"
+              },
+              "name": "standard_job_tier",
+              "type": "command",
+              "_source": "YAML.JOB",
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/01655a00-1079-4e1a-91b0-950463f75362"
+            }
+          },
+          "inputs": null,
+          "outputs": {},
+          "sourceJobId": null
+        },
+        "systemData": {
+          "createdAt": "2023-04-24T05:20:44.141833\u002B00:00",
+          "createdBy": "Firstname Lastname",
+          "createdByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000/cancel?api-version=2023-04-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-debian-bookworm-sid)"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1222",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 24 Apr 2023 05:21:06 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-eastus-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "7c4d2bc1-958a-4f9e-be37-e361af1462da",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-response-type": "error",
+        "x-ms-routing-request-id": "CANADACENTRAL:20230424T052107Z:7c4d2bc1-958a-4f9e-be37-e361af1462da",
+        "x-request-time": "15.165"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "UserError",
+          "message": "The pipeline run 000000000000000000000 is in terminal status, it can\u0027t be canceled.",
+          "details": [],
+          "additionalInfo": [
+            {
+              "type": "ComponentName",
+              "info": {
+                "value": "managementfrontend"
+              }
+            },
+            {
+              "type": "Correlation",
+              "info": {
+                "value": {
+                  "operation": "d61a1ee9c883e7a358e78e92b09e1434",
+                  "request": "1a86f4590f9b80e2"
+                }
+              }
+            },
+            {
+              "type": "Environment",
+              "info": {
+                "value": "eastus"
+              }
+            },
+            {
+              "type": "Location",
+              "info": {
+                "value": "eastus"
+              }
+            },
+            {
+              "type": "Time",
+              "info": {
+                "value": "2023-04-24T05:21:07.1927521\u002B00:00"
+              }
+            },
+            {
+              "type": "InnerError",
+              "info": {
+                "value": {
+                  "code": "BadArgument",
+                  "innerError": {
+                    "code": "ArgumentInvalid",
+                    "innerError": {
+                      "code": "CancelPipelineRunInTerminalStatus",
+                      "innerError": null
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

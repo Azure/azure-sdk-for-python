@@ -25,6 +25,7 @@ from azure.search.documents.indexes import SearchIndexerClient
 
 class TestSearchSkillset(AzureRecordedTestCase):
 
+    @pytest.mark.skip('The skills are deprecated')
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy

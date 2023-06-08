@@ -59,84 +59,84 @@ class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class HealthCheckName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the name of the health check operation performed."""
 
-    #: Verifies the SessionHost is joined to a domain. If this check fails is classified as fatal as
-    #: no connection can succeed if the SessionHost is not joined to the domain.
     DOMAIN_JOINED_CHECK = "DomainJoinedCheck"
-    #: Verifies the SessionHost is not experiencing domain trust issues that will prevent
+    """Verifies the SessionHost is joined to a domain. If this check fails is classified as fatal as
+    #: no connection can succeed if the SessionHost is not joined to the domain."""
+    DOMAIN_TRUST_CHECK = "DomainTrustCheck"
+    """Verifies the SessionHost is not experiencing domain trust issues that will prevent
     #: authentication on SessionHost at connection time when session is created. If this check fails
     #: is classified as fatal as no connection can succeed if we cannot reach the domain for
-    #: authentication on the SessionHost.
-    DOMAIN_TRUST_CHECK = "DomainTrustCheck"
-    #: Verifies the FSLogix service is up and running to make sure users' profiles are loaded in the
+    #: authentication on the SessionHost."""
+    FS_LOGIX_HEALTH_CHECK = "FSLogixHealthCheck"
+    """Verifies the FSLogix service is up and running to make sure users' profiles are loaded in the
     #: session. If this check fails is classified as fatal as even if the connection can succeed, user
     #: experience is bad as the user profile cannot be loaded and user will get a temporary profile in
-    #: the session.
-    FS_LOGIX_HEALTH_CHECK = "FSLogixHealthCheck"
-    #: Verifies that the SxS stack is up and running so connections can succeed. If this check fails
-    #: is classified as fatal as no connection can succeed if the SxS stack is not ready.
+    #: the session."""
     SX_S_STACK_LISTENER_CHECK = "SxSStackListenerCheck"
-    #: Verifies that the required WVD service and Geneva URLs are reachable from the SessionHost.
+    """Verifies that the SxS stack is up and running so connections can succeed. If this check fails
+    #: is classified as fatal as no connection can succeed if the SxS stack is not ready."""
+    URLS_ACCESSIBLE_CHECK = "UrlsAccessibleCheck"
+    """Verifies that the required WVD service and Geneva URLs are reachable from the SessionHost.
     #: These URLs are: RdTokenUri, RdBrokerURI, RdDiagnosticsUri and storage blob URLs for agent
     #: monitoring (geneva). If this check fails, it is non fatal and the machine still can service
     #: connections, main issue may be that monitoring agent is unable to store warm path data (logs,
-    #: operations ...).
-    URLS_ACCESSIBLE_CHECK = "UrlsAccessibleCheck"
-    #: Verifies that the required Geneva agent is running. If this check fails, it is non fatal and
-    #: the machine still can service connections, main issue may be that monitoring agent is missing
-    #: or running (possibly) older version.
+    #: operations ...)."""
     MONITORING_AGENT_CHECK = "MonitoringAgentCheck"
-    #: Verifies the domain the SessionHost is joined to is still reachable. If this check fails is
-    #: classified as fatal as no connection can succeed if the domain the SessionHost is joined is not
-    #: reachable at the time of connection.
+    """Verifies that the required Geneva agent is running. If this check fails, it is non fatal and
+    #: the machine still can service connections, main issue may be that monitoring agent is missing
+    #: or running (possibly) older version."""
     DOMAIN_REACHABLE = "DomainReachable"
-    #: Verifies whether the WebRTCRedirector component is healthy. The WebRTCRedirector component is
+    """Verifies the domain the SessionHost is joined to is still reachable. If this check fails is
+    #: classified as fatal as no connection can succeed if the domain the SessionHost is joined is not
+    #: reachable at the time of connection."""
+    WEB_RTC_REDIRECTOR_CHECK = "WebRTCRedirectorCheck"
+    """Verifies whether the WebRTCRedirector component is healthy. The WebRTCRedirector component is
     #: used to optimize video and audio performance in Microsoft Teams. This checks whether the
     #: component is still running, and whether there is a higher version available. If this check
     #: fails, it is non fatal and the machine still can service connections, main issue may be the
-    #: WebRTCRedirector component has to be restarted or updated.
-    WEB_RTC_REDIRECTOR_CHECK = "WebRTCRedirectorCheck"
-    #: Verifies the value of SecurityLayer registration key. If the value is 0 (SecurityLayer.RDP)
+    #: WebRTCRedirector component has to be restarted or updated."""
+    SUPPORTED_ENCRYPTION_CHECK = "SupportedEncryptionCheck"
+    """Verifies the value of SecurityLayer registration key. If the value is 0 (SecurityLayer.RDP)
     #: this check fails with Error code = NativeMethodErrorCode.E_FAIL and is fatal. If the value is 1
     #: (SecurityLayer.Negotiate) this check fails with Error code =
-    #: NativeMethodErrorCode.ERROR_SUCCESS and is non fatal.
-    SUPPORTED_ENCRYPTION_CHECK = "SupportedEncryptionCheck"
-    #: Verifies the metadata service is accessible and return compute properties.
+    #: NativeMethodErrorCode.ERROR_SUCCESS and is non fatal."""
     META_DATA_SERVICE_CHECK = "MetaDataServiceCheck"
-    #: Verifies that the AppAttachService is healthy (there were no issues during package staging).
+    """Verifies the metadata service is accessible and return compute properties."""
+    APP_ATTACH_HEALTH_CHECK = "AppAttachHealthCheck"
+    """Verifies that the AppAttachService is healthy (there were no issues during package staging).
     #: The AppAttachService is used to enable the staging/registration (and eventual
     #: deregistration/destaging) of MSIX apps that have been set up by the tenant admin. This checks
     #: whether the component had any failures during package staging. Failures in staging will prevent
     #: some MSIX apps from working properly for the end user. If this check fails, it is non fatal and
     #: the machine still can service connections, main issue may be certain apps will not work for
-    #: end-users.
-    APP_ATTACH_HEALTH_CHECK = "AppAttachHealthCheck"
+    #: end-users."""
 
 
 class HealthCheckResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the Health state of the health check we performed."""
 
-    #: Health check result is not currently known.
     UNKNOWN = "Unknown"
-    #: Health check passed.
+    """Health check result is not currently known."""
     HEALTH_CHECK_SUCCEEDED = "HealthCheckSucceeded"
-    #: Health check failed.
+    """Health check passed."""
     HEALTH_CHECK_FAILED = "HealthCheckFailed"
-    #: We received a Shutdown notification.
+    """Health check failed."""
     SESSION_HOST_SHUTDOWN = "SessionHostShutdown"
+    """We received a Shutdown notification."""
 
 
 class HostPoolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HostPool type for desktop."""
 
-    #: Users will be assigned a SessionHost either by administrators (PersonalDesktopAssignmentType =
-    #: Direct) or upon connecting to the pool (PersonalDesktopAssignmentType = Automatic). They will
-    #: always be redirected to their assigned SessionHost.
     PERSONAL = "Personal"
-    #: Users get a new (random) SessionHost every time it connects to the HostPool.
+    """Users will be assigned a SessionHost either by administrators (PersonalDesktopAssignmentType =
+    #: Direct) or upon connecting to the pool (PersonalDesktopAssignmentType = Automatic). They will
+    #: always be redirected to their assigned SessionHost."""
     POOLED = "Pooled"
-    #: Users assign their own machines, load balancing logic remains the same as Personal.
-    #: PersonalDesktopAssignmentType must be Direct.
+    """Users get a new (random) SessionHost every time it connects to the HostPool."""
     BYO_DESKTOP = "BYODesktop"
+    """Users assign their own machines, load balancing logic remains the same as Personal.
+    #: PersonalDesktopAssignmentType must be Direct."""
 
 
 class LoadBalancerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -180,8 +180,8 @@ class RemoteApplicationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ScalingHostPoolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HostPool type for desktop."""
 
-    #: Users get a new (random) SessionHost every time it connects to the HostPool.
     POOLED = "Pooled"
+    """Users get a new (random) SessionHost every time it connects to the HostPool."""
 
 
 class ScalingScheduleDaysOfWeekItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -199,10 +199,10 @@ class ScalingScheduleDaysOfWeekItem(str, Enum, metaclass=CaseInsensitiveEnumMeta
 class SessionHostComponentUpdateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of maintenance for session host components."""
 
-    #: Agent and other agent side components are delivery schedule is controlled by WVD Infra.
     DEFAULT = "Default"
-    #: TenantAdmin have opted in for Scheduled Component Update feature.
+    """Agent and other agent side components are delivery schedule is controlled by WVD Infra."""
     SCHEDULED = "Scheduled"
+    """TenantAdmin have opted in for Scheduled Component Update feature."""
 
 
 class SessionHostLoadBalancingAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -246,36 +246,36 @@ class SSOSecretType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status for a SessionHost."""
 
-    #: Session Host has passed all the health checks and is available to handle connections.
     AVAILABLE = "Available"
-    #: Session Host is either turned off or has failed critical health checks which is causing service
-    #: not to be able to route connections to this session host. Note this replaces previous
-    #: 'NoHeartBeat' status.
+    """Session Host has passed all the health checks and is available to handle connections."""
     UNAVAILABLE = "Unavailable"
-    #: Session Host is shutdown - RD Agent reported session host to be stopped or deallocated.
+    """Session Host is either turned off or has failed critical health checks which is causing service
+    #: not to be able to route connections to this session host. Note this replaces previous
+    #: 'NoHeartBeat' status."""
     SHUTDOWN = "Shutdown"
-    #: The Session Host is unavailable because it is currently disconnected.
+    """Session Host is shutdown - RD Agent reported session host to be stopped or deallocated."""
     DISCONNECTED = "Disconnected"
-    #: Session Host is unavailable because currently an upgrade of RDAgent/side-by-side stack is in
-    #: progress. Note: this state will be removed once the upgrade completes and the host is able to
-    #: accept connections.
+    """The Session Host is unavailable because it is currently disconnected."""
     UPGRADING = "Upgrading"
-    #: Session Host is unavailable because the critical component upgrade (agent, side-by-side stack,
-    #: etc.) failed.
+    """Session Host is unavailable because currently an upgrade of RDAgent/side-by-side stack is in
+    #: progress. Note: this state will be removed once the upgrade completes and the host is able to
+    #: accept connections."""
     UPGRADE_FAILED = "UpgradeFailed"
-    #: The Session Host is not heart beating.
+    """Session Host is unavailable because the critical component upgrade (agent, side-by-side stack,
+    #: etc.) failed."""
     NO_HEARTBEAT = "NoHeartbeat"
-    #: SessionHost is not joined to domain.
+    """The Session Host is not heart beating."""
     NOT_JOINED_TO_DOMAIN = "NotJoinedToDomain"
-    #: SessionHost's domain trust relationship lost
+    """SessionHost is not joined to domain."""
     DOMAIN_TRUST_RELATIONSHIP_LOST = "DomainTrustRelationshipLost"
-    #: SxS stack installed on the SessionHost is not ready to receive connections.
+    """SessionHost's domain trust relationship lost"""
     SX_S_STACK_LISTENER_NOT_READY = "SxSStackListenerNotReady"
-    #: FSLogix is in an unhealthy state on the session host.
+    """SxS stack installed on the SessionHost is not ready to receive connections."""
     FS_LOGIX_NOT_HEALTHY = "FSLogixNotHealthy"
-    #: New status to inform admins that the health on their endpoint needs to be fixed. The
-    #: connections might not fail, as these issues are not fatal.
+    """FSLogix is in an unhealthy state on the session host."""
     NEEDS_ASSISTANCE = "NeedsAssistance"
+    """New status to inform admins that the health on their endpoint needs to be fixed. The
+    #: connections might not fail, as these issues are not fatal."""
 
 
 class StopHostsWhen(str, Enum, metaclass=CaseInsensitiveEnumMeta):

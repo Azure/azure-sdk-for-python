@@ -53,7 +53,7 @@ class LogsIngestionClientConfiguration(Configuration):  # pylint: disable=too-ma
         self.credential = credential
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["user_impersonation"])
-        kwargs.setdefault("sdk_moniker", "logsingestionclient/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "monitor-ingestion/{}".format(VERSION))
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:

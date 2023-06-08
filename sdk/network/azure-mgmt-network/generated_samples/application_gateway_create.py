@@ -49,7 +49,7 @@ def main():
                     {
                         "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/backendAddressPools/appgwpool1",
                         "name": "appgwpool1",
-                        "properties": {"backendAddresses": ["10.0.0.1", "10.0.0.2"]},
+                        "properties": {"backendAddresses": [{"ipAddress": "10.0.0.1"}, {"ipAddress": "10.0.0.2"}]},
                     },
                 ],
                 "backendHttpSettingsCollection": [
@@ -121,34 +121,6 @@ def main():
                         },
                     },
                 ],
-                "loadDistributionPolicies": [
-                    {
-                        "name": "ldp1",
-                        "properties": {
-                            "loadDistributionAlgorithm": "RoundRobin",
-                            "loadDistributionTargets": [
-                                {
-                                    "name": "ld11",
-                                    "properties": {
-                                        "backendAddressPool": {
-                                            "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/backendAddressPools/appgwpool"
-                                        },
-                                        "weightPerServer": 40,
-                                    },
-                                },
-                                {
-                                    "name": "ld11",
-                                    "properties": {
-                                        "backendAddressPool": {
-                                            "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/backendAddressPools/appgwpool1"
-                                        },
-                                        "weightPerServer": 60,
-                                    },
-                                },
-                            ],
-                        },
-                    }
-                ],
                 "requestRoutingRules": [
                     {
                         "name": "appgwrule",
@@ -162,29 +134,13 @@ def main():
                             "httpListener": {
                                 "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/httpListeners/appgwhl"
                             },
-                            "loadDistributionPolicy": {
-                                "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/loadDistributionPolicies/ldp1"
-                            },
                             "priority": 10,
                             "rewriteRuleSet": {
                                 "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/rewriteRuleSets/rewriteRuleSet1"
                             },
                             "ruleType": "Basic",
                         },
-                    },
-                    {
-                        "name": "appgwPathBasedRule",
-                        "properties": {
-                            "httpListener": {
-                                "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/httpListeners/appgwhttplistener"
-                            },
-                            "priority": 20,
-                            "ruleType": "PathBasedRouting",
-                            "urlPathMap": {
-                                "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/urlPathMaps/pathMap1"
-                            },
-                        },
-                    },
+                    }
                 ],
                 "rewriteRuleSets": [
                     {
@@ -250,51 +206,12 @@ def main():
                     {"name": "rootcert", "properties": {"data": "****"}},
                     {"name": "rootcert1", "properties": {"keyVaultSecretId": "https://kv/secret"}},
                 ],
-                "urlPathMaps": [
-                    {
-                        "name": "pathMap1",
-                        "properties": {
-                            "defaultBackendAddressPool": {
-                                "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/backendAddressPools/appgwpool"
-                            },
-                            "defaultBackendHttpSettings": {
-                                "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/backendHttpSettingsCollection/appgwbhs"
-                            },
-                            "defaultLoadDistributionPolicy": {
-                                "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/loadDistributionPolicies/ldp1"
-                            },
-                            "defaultRewriteRuleSet": {
-                                "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/rewriteRuleSets/rewriteRuleSet1"
-                            },
-                            "pathRules": [
-                                {
-                                    "name": "apiPaths",
-                                    "properties": {
-                                        "backendAddressPool": {
-                                            "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/backendAddressPools/appgwpool"
-                                        },
-                                        "backendHttpSettings": {
-                                            "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/backendHttpSettingsCollection/appgwbhs"
-                                        },
-                                        "loadDistributionPolicy": {
-                                            "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/loadDistributionPolicies/ldp1"
-                                        },
-                                        "paths": ["/api", "/v1/api"],
-                                        "rewriteRuleSet": {
-                                            "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/rewriteRuleSets/rewriteRuleSet1"
-                                        },
-                                    },
-                                }
-                            ],
-                        },
-                    }
-                ],
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-07-01/examples/ApplicationGatewayCreate.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/ApplicationGatewayCreate.json
 if __name__ == "__main__":
     main()

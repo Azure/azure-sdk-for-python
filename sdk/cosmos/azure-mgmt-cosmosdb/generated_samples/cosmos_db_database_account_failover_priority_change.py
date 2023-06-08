@@ -42,6 +42,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2022-11-15/examples/CosmosDBDatabaseAccountFailoverPriorityChange.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-04-15/examples/CosmosDBDatabaseAccountFailoverPriorityChange.json
 if __name__ == "__main__":
     main()

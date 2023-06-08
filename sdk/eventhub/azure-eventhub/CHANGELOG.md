@@ -1,6 +1,6 @@
 # Release History
 
-## 5.11.2 (Unreleased)
+## 5.11.3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,26 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+ - Updated tracing ([#29934](https://github.com/Azure/azure-sdk-for-python/pull/29934)):
+   - Span names renamed:
+     - `Azure.EventHubs.send` to `EventHubs.send`
+     - `Azure.EventHubs.message` to `EventHubs.message`
+     - `Azure.EventHubs.process` to `EventHubs.process`
+   - An `EventHubs.receive` span will be created upon receiving events.
+   - Additional attributes added to spans:
+     - `messaging.system` - messaging system (i.e., `eventhubs`)
+     - `messaging.operation` - type of operation (i.e., `publish`, `receive`, or `process`)
+     - `messaging.batch.message_count` - number of messages sent, received, or processed (if more than one)
+   - The `component` attribute was removed from all spans.
+   - All `send` spans now contain links to `message` spans. Now, `message` spans will no longer contain a link to the `send` span.
+   - Message application properties will now contain values for `traceparent` (and `tracestate` if applicable)
+
+## 5.11.2 (2023-03-20)
+
+### Bugs Fixed
+
+- Fixed a bug that would prevent reconnect after a long idle period, network drop (issue #28996)
 
 ## 5.11.1 (2023-01-25)
 

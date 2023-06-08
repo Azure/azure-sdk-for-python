@@ -9,7 +9,6 @@ from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 from cryptography.hazmat.backends import default_backend
-import six
 
 from .._internal import validate_tenant_id
 from .._internal.client_credential_base import ClientCredentialBase
@@ -41,9 +40,25 @@ class CertificateCredential(ClientCredentialBase):
     :keyword cache_persistence_options: Configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
+    :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting
+        to authenticate. Setting this to true will completely disable both instance discovery and authority validation.
+        This functionality is intended for use in scenarios where the metadata endpoint cannot be reached, such as in
+        private clouds or Azure Stack. The process of instance discovery entails retrieving authority metadata from
+        https://login.microsoft.com/ to validate the authority. By setting this to **True**, the validation of the
+        authority is disabled. As a result, it is crucial to ensure that the configured authority host is valid and
+        trustworthy.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_certificate_credential]
+            :end-before: [END create_certificate_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create a CertificateCredential.
     """
 
     def __init__(
@@ -102,7 +117,7 @@ def load_pkcs12_certificate(
         )
     except ValueError as ex:
         # mentioning PEM here because we raise this error when certificate_data is garbage
-        six.raise_from(ValueError("Failed to deserialize certificate in PEM or PKCS12 format"), ex)
+        raise ValueError("Failed to deserialize certificate in PEM or PKCS12 format") from ex
     if not private_key:
         raise ValueError("The certificate must include its private key")
     if not cert:
@@ -138,8 +153,9 @@ def get_client_credential(
         raise ValueError('CertificateCredential requires a value for either "certificate_path" or "certificate_data"')
 
     if password:
-        # if password is already bytes, this won't change its encoding
-        password = six.ensure_binary(password, "utf-8")
+        # if password is already bytes, no need to encode.
+        if isinstance(password, str):
+            password = password.encode("utf-8")
     password = cast("Optional[bytes]", password)
 
     if b"-----BEGIN" in certificate_data:
@@ -159,9 +175,9 @@ def get_client_credential(
         try:
             # the JWT needs the whole chain but load_pem_x509_certificate deserializes only the signing cert
             chain = extract_cert_chain(cert.pem_bytes)
-            client_credential["public_certificate"] = six.ensure_str(chain)
+            client_credential["public_certificate"] = chain.decode("utf-8")
         except ValueError as ex:
             # we shouldn't land here--cryptography already loaded the cert and would have raised if it were malformed
-            six.raise_from(ValueError("Malformed certificate"), ex)
+            raise ValueError("Malformed certificate") from ex
 
     return client_credential

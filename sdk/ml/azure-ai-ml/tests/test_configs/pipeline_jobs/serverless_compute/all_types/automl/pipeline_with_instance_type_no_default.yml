@@ -38,6 +38,7 @@ jobs:
         type: mlflow_model
     resources:
       instance_type: Standard_NC6
+    compute: azureml:serverless
   register_model_node:
     type: command
     component: file:./components/component_register_model.yaml

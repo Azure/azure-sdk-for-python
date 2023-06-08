@@ -29,6 +29,15 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_authorization_code_credential_async]
+            :end-before: [END create_authorization_code_credential_async]
+            :language: python
+            :dedent: 4
+            :caption: Create an AuthorizationCodeCredential.
     """
 
     async def __aenter__(self):
@@ -50,13 +59,12 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
             redirect_uri: str,
             *,
             client_secret: Optional[str] = None,
-            client: Optional[AadClient] = None,
             **kwargs
     ) -> None:
         self._authorization_code: Optional[str] = authorization_code
         self._client_id = client_id
         self._client_secret = client_secret
-        self._client = client or AadClient(tenant_id, client_id, **kwargs)
+        self._client = kwargs.pop("client", None) or AadClient(tenant_id, client_id, **kwargs)
         self._redirect_uri = redirect_uri
         super().__init__()
 
@@ -80,7 +88,9 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
         """
         return await super().get_token(*scopes, **kwargs)
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    async def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:

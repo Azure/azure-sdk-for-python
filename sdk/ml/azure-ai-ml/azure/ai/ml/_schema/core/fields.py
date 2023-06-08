@@ -22,21 +22,20 @@ from marshmallow.utils import (
     resolve_field_instance,
 )
 
-from azure.ai.ml._schema.core.schema import PathAwareSchema
-from azure.ai.ml._utils._arm_id_utils import (
+from ..._utils._arm_id_utils import (
     AMLVersionedArmId,
     is_ARM_id_for_resource,
     parse_name_label,
     parse_name_version,
 )
-from azure.ai.ml._utils._experimental import _is_warning_cached
-from azure.ai.ml._utils.utils import (
+from ..._utils._experimental import _is_warning_cached
+from ..._utils.utils import (
     is_data_binding_expression,
     is_valid_node_name,
     load_file,
     load_yaml,
 )
-from azure.ai.ml.constants._common import (
+from ...constants._common import (
     ARM_ID_PREFIX,
     AZUREML_RESOURCE_PROVIDER,
     BASE_PATH_CONTEXT_KEY,
@@ -47,16 +46,16 @@ from azure.ai.ml.constants._common import (
     FILE_PREFIX,
     INTERNAL_REGISTRY_URI_FORMAT,
     LOCAL_COMPUTE_TARGET,
-    SERVERLESS_COMPUTE,
     LOCAL_PATH,
     REGISTRY_URI_FORMAT,
     RESOURCE_ID_FORMAT,
     AzureMLResourceType,
 )
-from azure.ai.ml.entities._job.pipeline._attr_dict import (
+from ...entities._job.pipeline._attr_dict import (
     try_get_non_arbitrary_attr_for_potential_attr_dict,
 )
-from azure.ai.ml.exceptions import ValidationException
+from ...exceptions import ValidationException
+from ..core.schema import PathAwareSchema
 
 module_logger = logging.getLogger(__name__)
 
@@ -143,8 +142,8 @@ class LocalPathField(fields.Str):
             result = result.resolve()
             if (self._allow_dir and result.is_dir()) or (self._allow_file and result.is_file()):
                 return result
-        except OSError:
-            raise self.make_error("invalid_path")
+        except OSError as e:
+            raise self.make_error("invalid_path") from e
         raise self.make_error("path_not_exist", path=result.as_posix(), allow_type=self.allowed_path_type)
 
     @property
@@ -258,8 +257,8 @@ class DateTimeStr(fields.Str):
     def _validate(self, value):
         try:
             from_iso_datetime(value)
-        except Exception:
-            raise ValidationError(f"Not a valid ISO8601-formatted datetime string: {value}")
+        except Exception as e:
+            raise ValidationError(f"Not a valid ISO8601-formatted datetime string: {value}") from e
 
 
 class ArmStr(Field):
@@ -336,7 +335,7 @@ class ArmVersionedStr(ArmStr):
         except ValidationException as e:
             # Schema will try to deserialize the value with all possible Schema & catch ValidationError
             # So raise ValidationError instead of ValidationException
-            raise ValidationError(e.message)
+            raise ValidationError(e.message) from e
 
         version = None
         if not label:
@@ -425,6 +424,11 @@ class NestedField(Nested):
         super().__init__(*args, **kwargs)
 
 
+# Note: Currently contains a bug where the order in which fields are inputted can potentially cause a bug
+# Example, the first line below works, but the second one fails upon calling load_from_dict
+# with the error " AttributeError: 'list' object has no attribute 'get'"
+# inputs = UnionField([fields.List(NestedField(DataSchema)), NestedField(DataSchema)])
+# inputs = UnionField([NestedField(DataSchema), fields.List(NestedField(DataSchema))])
 class UnionField(fields.Field):
     def __init__(self, union_fields: List[fields.Field], is_strict=False, **kwargs):
         super().__init__(**kwargs)
@@ -436,7 +440,7 @@ class UnionField(fields.Field):
             self.is_strict = is_strict  # S\When True, combine fields with oneOf instead of anyOf at schema generation
         except FieldInstanceResolutionError as error:
             raise ValueError(
-                'Elements of "union_fields" must be subclasses or ' "instances of marshmallow.base.FieldABC."
+                'Elements of "union_fields" must be subclasses or instances of marshmallow.base.FieldABC.'
             ) from error
 
     @property
@@ -643,7 +647,7 @@ def ComputeField(**kwargs):
     """
     return UnionField(
         [
-            StringTransformedEnum(allowed_values=[LOCAL_COMPUTE_TARGET, SERVERLESS_COMPUTE]),
+            StringTransformedEnum(allowed_values=[LOCAL_COMPUTE_TARGET]),
             ArmStr(azureml_type=AzureMLResourceType.COMPUTE),
             # Case for virtual clusters
             fields.Str(),
@@ -678,6 +682,7 @@ def DistributionField(**kwargs):
         MPIDistributionSchema,
         PyTorchDistributionSchema,
         TensorFlowDistributionSchema,
+        RayDistributionSchema,
     )
 
     return UnionField(
@@ -685,6 +690,7 @@ def DistributionField(**kwargs):
             NestedField(PyTorchDistributionSchema, **kwargs),
             NestedField(TensorFlowDistributionSchema, **kwargs),
             NestedField(MPIDistributionSchema, **kwargs),
+            ExperimentalField(NestedField(RayDistributionSchema, **kwargs)),
         ]
     )
 
@@ -775,8 +781,12 @@ class ExperimentalField(fields.Field):
             self.required = experimental_field.required
         except FieldInstanceResolutionError as error:
             raise ValueError(
-                '"experimental_field" must be subclasses or ' "instances of marshmallow.base.FieldABC."
+                '"experimental_field" must be subclasses or instances of marshmallow.base.FieldABC.'
             ) from error
+
+    @property
+    def experimental_field(self):
+        return self._experimental_field
 
     # This sets the parent for the schema and also handles nesting.
     def _bind_to_schema(self, field_name, schema):
@@ -855,7 +865,7 @@ class PythonFuncNameStr(fields.Str):
             raise ValidationError(
                 f"{self._get_field_name()} name should only contain "
                 "lower letter, number, underscore and start with a lower letter. "
-                "Currently got {name}."
+                f"Currently got {name}."
             )
         return name
 

@@ -366,6 +366,7 @@ class PublicIPAddressSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REGIONAL = "Regional"
     GLOBAL = "Global"
+    GLOBAL_ENUM = "Global"
 
 
 class PublicIPAllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):

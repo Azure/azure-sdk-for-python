@@ -5,6 +5,7 @@ from pathlib import Path
 from subprocess import check_call
 import shutil
 import re
+import os
 
 from .swaggertosdk.SwaggerToSdkCore import (
     CONFIG_FILE,
@@ -18,12 +19,20 @@ from .generate_utils import (
     format_samples,
     gen_dpg,
     dpg_relative_folder,
-    gen_cadl,
-    update_cadl_location,
+    gen_typespec,
+    update_typespec_location,
+    return_origin_path,
+    check_api_version_in_subfolder,
 )
 
 _LOGGER = logging.getLogger(__name__)
 
+
+@return_origin_path
+def multiapi_combiner(sdk_code_path: str):
+    os.chdir(sdk_code_path)
+    check_call(f"python {str(Path('../../../tools/azure-sdk-tools/packaging_tools/multiapi_combiner.py'))} --pkg-path={os.getcwd()}", shell=True)
+    check_call("pip install -e .", shell=True)
 
 def del_outdated_folder(readme: str):
     python_readme = Path(readme).parent / "readme.python.md"
@@ -40,15 +49,18 @@ def del_outdated_folder(readme: str):
         if all(p in line for p in pattern):
             # remove generated_samples
             sdk_folder = re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+", line)[0]
-            sample_folder = Path(f"sdk/{sdk_folder}/generated_samples") 
+            sample_folder = Path(f"sdk/{sdk_folder}/generated_samples")
             if sample_folder.exists():
-                shutil.rmtree(sample_folder)
-                _LOGGER.info(f"remove sample folder: {sample_folder}")
+                if "azure-mgmt-rdbms" not in str(sample_folder):
+                    shutil.rmtree(sample_folder)
+                    _LOGGER.info(f"remove sample folder: {sample_folder}")
+                else:
+                    _LOGGER.info(f"we don't remove sample folder for rdbms")
             else:
                 _LOGGER.info(f"sample folder does not exist: {sample_folder}")
             # remove old generated SDK code
             sdk_folder = re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+/[a-z]+/[a-z]+/[a-z]+", line)[0]
-            code_folder = Path(f"sdk/{sdk_folder}") 
+            code_folder = Path(f"sdk/{sdk_folder}")
             if is_multiapi and code_folder.exists():
                 if any(item in str(sdk_folder) for item in special_service):
                     for folder in code_folder.iterdir():
@@ -85,15 +97,15 @@ def main(generate_input, generate_output):
         readme_files = [input_readme]
     else:
         # ["specification/confidentialledger/ConfientialLedger"]
-        if isinstance(data["relatedCadlProjectFolder"], str):
-            readme_files = [data["relatedCadlProjectFolder"]]
+        if isinstance(data["relatedTypeSpecProjectFolder"], str):
+            readme_files = [data["relatedTypeSpecProjectFolder"]]
         else:
-            readme_files = data["relatedCadlProjectFolder"]
-        spec_word = "cadlProject"
+            readme_files = data["relatedTypeSpecProjectFolder"]
+        spec_word = "typespecProject"
 
     for input_readme in readme_files:
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
-        is_cadl = False
+        is_typespec = False
         if "resource-manager" in input_readme:
             relative_path_readme = str(Path(spec_folder, input_readme))
             del_outdated_folder(relative_path_readme)
@@ -109,11 +121,12 @@ def main(generate_input, generate_output):
         elif "data-plane" in input_readme:
             config = gen_dpg(input_readme, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
         else:
-            config = gen_cadl(input_readme, spec_folder)
-            is_cadl = True
+            config = gen_typespec(input_readme, spec_folder)
+            is_typespec = True
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
+        # folder_name: "sdk/containerservice"; package_name: "azure-mgmt-containerservice"
         for folder_name, package_name in package_names:
             if package_name in package_total:
                 continue
@@ -132,7 +145,7 @@ def main(generate_input, generate_output):
                 result[package_name][spec_word].append(input_readme)
 
             # Generate some necessary file for new service
-            init_new_service(package_name, folder_name, is_cadl)
+            init_new_service(package_name, folder_name, is_typespec)
             format_samples(sdk_code_path)
 
             # Update metadata
@@ -148,10 +161,10 @@ def main(generate_input, generate_output):
                 )
             except Exception as e:
                 _LOGGER.info(f"fail to update meta: {str(e)}")
-            
-            # update cadl-location.yaml
+
+            # update tsp-location.yaml
             try:
-                update_cadl_location(
+                update_typespec_location(
                     sdk_folder,
                     data,
                     config,
@@ -160,13 +173,23 @@ def main(generate_input, generate_output):
                     input_readme,
                 )
             except Exception as e:
-                _LOGGER.info(f"fail to update cadl-location: {str(e)}")
+                _LOGGER.info(f"fail to update tsp-location: {str(e)}")
 
             # Setup package locally
             check_call(
                 f"pip install --ignore-requires-python -e {sdk_code_path}",
                 shell=True,
             )
+
+            # check whether multiapi package has only one api-version in per subfolder
+            # skip check for network for https://github.com/Azure/azure-sdk-for-python/issues/30556#issuecomment-1571341309
+            if "azure-mgmt-network" not in sdk_code_path:
+                check_api_version_in_subfolder(sdk_code_path)
+
+            # use multiapi combiner to combine multiapi package
+            if package_name in ("azure-mgmt-network"):
+                _LOGGER.info(f"start to combine multiapi package: {package_name}")
+                multiapi_combiner(sdk_code_path)
 
     # remove duplicates
     for value in result.values():

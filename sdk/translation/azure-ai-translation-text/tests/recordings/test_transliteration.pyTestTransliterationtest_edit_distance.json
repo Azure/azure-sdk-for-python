@@ -1,0 +1,34 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeEndpoint.cognitive.microsofttranslator.com/transliterate?language=gu\u0026fromScript=Latn\u0026toScript=Gujr\u0026api-version=3.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "63",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Region": "fakeregion",
+        "User-Agent": "azsdk-python-ai-translation-text/1.0.0b1 Python/3.10.10 (Windows-10-10.0.19042-SP0)"
+      },
+      "RequestBody": "[{\u0022text\u0022: \u0022gujarat\u0022}, {\u0022text\u0022: \u0022hadman\u0022}, {\u0022text\u0022: \u0022hukkabar\u0022}]",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": [
+          "X-RequestId",
+          "X-Metered-Usage"
+        ],
+        "Content-Length": "148",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 03 Apr 2023 21:49:55 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Metered-Usage": "21",
+        "X-RequestId": "TLIT.MW1P.99BE.0403T2149.2FCA7B9"
+      },
+      "ResponseBody": "[{\u0022text\u0022:\u0022\u0A97\u0AC1\u0A9C\u0AB0\u0ABE\u0AA4\u0022,\u0022script\u0022:\u0022Gujr\u0022},{\u0022text\u0022:\u0022\u0AB9\u0AC7\u0AA1\u0AAE\u0AC7\u0AA8\u0022,\u0022script\u0022:\u0022Gujr\u0022},{\u0022text\u0022:\u0022\u0AB9\u0AC1\u0A95\u0ACD\u0A95\u0ABE\u0AAC\u0ABE\u0AB0\u0022,\u0022script\u0022:\u0022Gujr\u0022}]"
+    }
+  ],
+  "Variables": {}
+}

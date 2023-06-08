@@ -5972,8 +5972,8 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):  # pylint: disabl
     """Azure VM workload-specific protectable item.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureVmWorkloadSAPAseSystemProtectableItem, AzureVmWorkloadSAPHanaDBInstance,
-    AzureVmWorkloadSAPHanaDatabaseProtectableItem, AzureVmWorkloadSAPHanaHSR,
+    AzureVmWorkloadSAPHanaHSRProtectableItem, AzureVmWorkloadSAPAseSystemProtectableItem,
+    AzureVmWorkloadSAPHanaDBInstance, AzureVmWorkloadSAPHanaDatabaseProtectableItem,
     AzureVmWorkloadSAPHanaSystemProtectableItem,
     AzureVmWorkloadSQLAvailabilityGroupProtectableItem, AzureVmWorkloadSQLDatabaseProtectableItem,
     AzureVmWorkloadSQLInstanceProtectableItem
@@ -6035,10 +6035,10 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):  # pylint: disabl
 
     _subtype_map = {
         "protectable_item_type": {
+            "HanaHSRContainer": "AzureVmWorkloadSAPHanaHSRProtectableItem",
             "SAPAseSystem": "AzureVmWorkloadSAPAseSystemProtectableItem",
             "SAPHanaDBInstance": "AzureVmWorkloadSAPHanaDBInstance",
             "SAPHanaDatabase": "AzureVmWorkloadSAPHanaDatabaseProtectableItem",
-            "SAPHanaHSR": "AzureVmWorkloadSAPHanaHSR",
             "SAPHanaSystem": "AzureVmWorkloadSAPHanaSystemProtectableItem",
             "SQLAvailabilityGroupContainer": "AzureVmWorkloadSQLAvailabilityGroupProtectableItem",
             "SQLDataBase": "AzureVmWorkloadSQLDatabaseProtectableItem",
@@ -8060,8 +8060,10 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
         self.protected_item_type: str = "AzureVmWorkloadSAPHanaDBInstance"
 
 
-class AzureVmWorkloadSAPHanaHSR(AzureVmWorkloadProtectableItem):  # pylint: disable=too-many-instance-attributes
-    """Azure VM workload-specific protectable item representing SAP HANA Dbinstance.
+class AzureVmWorkloadSAPHanaHSRProtectableItem(
+    AzureVmWorkloadProtectableItem
+):  # pylint: disable=too-many-instance-attributes
+    """Azure VM workload-specific protectable item representing HANA HSR.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -8181,7 +8183,7 @@ class AzureVmWorkloadSAPHanaHSR(AzureVmWorkloadProtectableItem):  # pylint: disa
             prebackupvalidation=prebackupvalidation,
             **kwargs
         )
-        self.protectable_item_type: str = "SAPHanaHSR"
+        self.protectable_item_type: str = "HanaHSRContainer"
 
 
 class AzureVmWorkloadSAPHanaSystemProtectableItem(
@@ -13025,6 +13027,9 @@ class BMSRPQueryObject(_serialization.Model):
     :vartype extended_info: bool
     :ivar move_ready_rp_only: Whether the RP can be moved to another tier.
     :vartype move_ready_rp_only: bool
+    :ivar include_soft_deleted_rp: Flag to indicate whether Soft Deleted RPs should be
+     included/excluded from result.
+    :vartype include_soft_deleted_rp: bool
     """
 
     _attribute_map = {
@@ -13033,6 +13038,7 @@ class BMSRPQueryObject(_serialization.Model):
         "restore_point_query_type": {"key": "restorePointQueryType", "type": "str"},
         "extended_info": {"key": "extendedInfo", "type": "bool"},
         "move_ready_rp_only": {"key": "moveReadyRPOnly", "type": "bool"},
+        "include_soft_deleted_rp": {"key": "includeSoftDeletedRP", "type": "bool"},
     }
 
     def __init__(
@@ -13043,6 +13049,7 @@ class BMSRPQueryObject(_serialization.Model):
         restore_point_query_type: Optional[Union[str, "_models.RestorePointQueryType"]] = None,
         extended_info: Optional[bool] = None,
         move_ready_rp_only: Optional[bool] = None,
+        include_soft_deleted_rp: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -13060,6 +13067,9 @@ class BMSRPQueryObject(_serialization.Model):
         :paramtype extended_info: bool
         :keyword move_ready_rp_only: Whether the RP can be moved to another tier.
         :paramtype move_ready_rp_only: bool
+        :keyword include_soft_deleted_rp: Flag to indicate whether Soft Deleted RPs should be
+         included/excluded from result.
+        :paramtype include_soft_deleted_rp: bool
         """
         super().__init__(**kwargs)
         self.start_date = start_date
@@ -13067,6 +13077,7 @@ class BMSRPQueryObject(_serialization.Model):
         self.restore_point_query_type = restore_point_query_type
         self.extended_info = extended_info
         self.move_ready_rp_only = move_ready_rp_only
+        self.include_soft_deleted_rp = include_soft_deleted_rp
 
 
 class BMSWorkloadItemQueryObject(_serialization.Model):
@@ -14656,6 +14667,32 @@ class ExportJobsOperationResultInfo(OperationResultInfoBase):
         self.excel_file_blob_sas_key = excel_file_blob_sas_key
 
 
+class ExtendedLocation(_serialization.Model):
+    """The extended location of Recovery point where VM was present.
+
+    :ivar name: Name of the extended location.
+    :vartype name: str
+    :ivar type: Type of the extended location. Possible values include: 'EdgeZone'.
+    :vartype type: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: Name of the extended location.
+        :paramtype name: str
+        :keyword type: Type of the extended location. Possible values include: 'EdgeZone'.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.type = type
+
+
 class ExtendedProperties(_serialization.Model):
     """Extended Properties for Azure IaasVM Backup.
 
@@ -15392,9 +15429,14 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
     :ivar recovery_point_move_readiness_info: Eligibility of RP to be moved to another tier.
     :vartype recovery_point_move_readiness_info: dict[str,
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointMoveReadinessInfo]
+    :ivar security_type: Security Type of the Disk.
+    :vartype security_type: str
     :ivar recovery_point_properties: Properties of Recovery Point.
     :vartype recovery_point_properties:
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointProperties
+    :ivar is_private_access_enabled_on_any_disk: This flag denotes if any of the disks in the VM
+     are using Private access network setting.
+    :vartype is_private_access_enabled_on_any_disk: bool
     """
 
     _validation = {
@@ -15424,7 +15466,9 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
             "key": "recoveryPointMoveReadinessInfo",
             "type": "{RecoveryPointMoveReadinessInfo}",
         },
+        "security_type": {"key": "securityType", "type": "str"},
         "recovery_point_properties": {"key": "recoveryPointProperties", "type": "RecoveryPointProperties"},
+        "is_private_access_enabled_on_any_disk": {"key": "isPrivateAccessEnabledOnAnyDisk", "type": "bool"},
     }
 
     def __init__(
@@ -15445,7 +15489,9 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
         recovery_point_disk_configuration: Optional["_models.RecoveryPointDiskConfiguration"] = None,
         zones: Optional[List[str]] = None,
         recovery_point_move_readiness_info: Optional[Dict[str, "_models.RecoveryPointMoveReadinessInfo"]] = None,
+        security_type: Optional[str] = None,
         recovery_point_properties: Optional["_models.RecoveryPointProperties"] = None,
+        is_private_access_enabled_on_any_disk: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15488,9 +15534,14 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
         :keyword recovery_point_move_readiness_info: Eligibility of RP to be moved to another tier.
         :paramtype recovery_point_move_readiness_info: dict[str,
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointMoveReadinessInfo]
+        :keyword security_type: Security Type of the Disk.
+        :paramtype security_type: str
         :keyword recovery_point_properties: Properties of Recovery Point.
         :paramtype recovery_point_properties:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointProperties
+        :keyword is_private_access_enabled_on_any_disk: This flag denotes if any of the disks in the VM
+         are using Private access network setting.
+        :paramtype is_private_access_enabled_on_any_disk: bool
         """
         super().__init__(**kwargs)
         self.object_type: str = "IaasVMRecoveryPoint"
@@ -15509,7 +15560,9 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
         self.recovery_point_disk_configuration = recovery_point_disk_configuration
         self.zones = zones
         self.recovery_point_move_readiness_info = recovery_point_move_readiness_info
+        self.security_type = security_type
         self.recovery_point_properties = recovery_point_properties
+        self.is_private_access_enabled_on_any_disk = is_private_access_enabled_on_any_disk
 
 
 class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance-attributes
@@ -15586,6 +15639,17 @@ class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance
      using managed identity.
     :vartype identity_based_restore_details:
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.IdentityBasedRestoreDetails
+    :ivar extended_location: Target extended location where the VM should be restored,
+     should be null if restore is to be done in public cloud.
+    :vartype extended_location:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.ExtendedLocation
+    :ivar secured_vm_details: Stores Secured VM Details.
+    :vartype secured_vm_details:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.SecuredVMDetails
+    :ivar target_disk_network_access_settings: Specifies target network access settings for disks
+     of VM to be restored,.
+    :vartype target_disk_network_access_settings:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetDiskNetworkAccessSettings
     """
 
     _validation = {
@@ -15614,11 +15678,17 @@ class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance
         "zones": {"key": "zones", "type": "[str]"},
         "identity_info": {"key": "identityInfo", "type": "IdentityInfo"},
         "identity_based_restore_details": {"key": "identityBasedRestoreDetails", "type": "IdentityBasedRestoreDetails"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "secured_vm_details": {"key": "securedVMDetails", "type": "SecuredVMDetails"},
+        "target_disk_network_access_settings": {
+            "key": "targetDiskNetworkAccessSettings",
+            "type": "TargetDiskNetworkAccessSettings",
+        },
     }
 
     _subtype_map = {"object_type": {"IaasVMRestoreWithRehydrationRequest": "IaasVMRestoreWithRehydrationRequest"}}
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         recovery_point_id: Optional[str] = None,
@@ -15641,6 +15711,9 @@ class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance
         zones: Optional[List[str]] = None,
         identity_info: Optional["_models.IdentityInfo"] = None,
         identity_based_restore_details: Optional["_models.IdentityBasedRestoreDetails"] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        secured_vm_details: Optional["_models.SecuredVMDetails"] = None,
+        target_disk_network_access_settings: Optional["_models.TargetDiskNetworkAccessSettings"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15708,6 +15781,17 @@ class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance
          using managed identity.
         :paramtype identity_based_restore_details:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.IdentityBasedRestoreDetails
+        :keyword extended_location: Target extended location where the VM should be restored,
+         should be null if restore is to be done in public cloud.
+        :paramtype extended_location:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ExtendedLocation
+        :keyword secured_vm_details: Stores Secured VM Details.
+        :paramtype secured_vm_details:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.SecuredVMDetails
+        :keyword target_disk_network_access_settings: Specifies target network access settings for
+         disks of VM to be restored,.
+        :paramtype target_disk_network_access_settings:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetDiskNetworkAccessSettings
         """
         super().__init__(**kwargs)
         self.object_type: str = "IaasVMRestoreRequest"
@@ -15731,6 +15815,9 @@ class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance
         self.zones = zones
         self.identity_info = identity_info
         self.identity_based_restore_details = identity_based_restore_details
+        self.extended_location = extended_location
+        self.secured_vm_details = secured_vm_details
+        self.target_disk_network_access_settings = target_disk_network_access_settings
 
 
 class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):  # pylint: disable=too-many-instance-attributes
@@ -15804,6 +15891,17 @@ class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):  # pylint: disa
      using managed identity.
     :vartype identity_based_restore_details:
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.IdentityBasedRestoreDetails
+    :ivar extended_location: Target extended location where the VM should be restored,
+     should be null if restore is to be done in public cloud.
+    :vartype extended_location:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.ExtendedLocation
+    :ivar secured_vm_details: Stores Secured VM Details.
+    :vartype secured_vm_details:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.SecuredVMDetails
+    :ivar target_disk_network_access_settings: Specifies target network access settings for disks
+     of VM to be restored,.
+    :vartype target_disk_network_access_settings:
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetDiskNetworkAccessSettings
     :ivar recovery_point_rehydration_info: RP Rehydration Info.
     :vartype recovery_point_rehydration_info:
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointRehydrationInfo
@@ -15835,13 +15933,19 @@ class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):  # pylint: disa
         "zones": {"key": "zones", "type": "[str]"},
         "identity_info": {"key": "identityInfo", "type": "IdentityInfo"},
         "identity_based_restore_details": {"key": "identityBasedRestoreDetails", "type": "IdentityBasedRestoreDetails"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "secured_vm_details": {"key": "securedVMDetails", "type": "SecuredVMDetails"},
+        "target_disk_network_access_settings": {
+            "key": "targetDiskNetworkAccessSettings",
+            "type": "TargetDiskNetworkAccessSettings",
+        },
         "recovery_point_rehydration_info": {
             "key": "recoveryPointRehydrationInfo",
             "type": "RecoveryPointRehydrationInfo",
         },
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         recovery_point_id: Optional[str] = None,
@@ -15864,6 +15968,9 @@ class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):  # pylint: disa
         zones: Optional[List[str]] = None,
         identity_info: Optional["_models.IdentityInfo"] = None,
         identity_based_restore_details: Optional["_models.IdentityBasedRestoreDetails"] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        secured_vm_details: Optional["_models.SecuredVMDetails"] = None,
+        target_disk_network_access_settings: Optional["_models.TargetDiskNetworkAccessSettings"] = None,
         recovery_point_rehydration_info: Optional["_models.RecoveryPointRehydrationInfo"] = None,
         **kwargs: Any
     ) -> None:
@@ -15932,6 +16039,17 @@ class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):  # pylint: disa
          using managed identity.
         :paramtype identity_based_restore_details:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.IdentityBasedRestoreDetails
+        :keyword extended_location: Target extended location where the VM should be restored,
+         should be null if restore is to be done in public cloud.
+        :paramtype extended_location:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ExtendedLocation
+        :keyword secured_vm_details: Stores Secured VM Details.
+        :paramtype secured_vm_details:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.SecuredVMDetails
+        :keyword target_disk_network_access_settings: Specifies target network access settings for
+         disks of VM to be restored,.
+        :paramtype target_disk_network_access_settings:
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetDiskNetworkAccessSettings
         :keyword recovery_point_rehydration_info: RP Rehydration Info.
         :paramtype recovery_point_rehydration_info:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointRehydrationInfo
@@ -15957,6 +16075,9 @@ class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):  # pylint: disa
             zones=zones,
             identity_info=identity_info,
             identity_based_restore_details=identity_based_restore_details,
+            extended_location=extended_location,
+            secured_vm_details=secured_vm_details,
+            target_disk_network_access_settings=target_disk_network_access_settings,
             **kwargs
         )
         self.object_type: str = "IaasVMRestoreWithRehydrationRequest"
@@ -17823,8 +17944,8 @@ class OperationWorkerResponse(_serialization.Model):
      "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
      "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
      "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
-     "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout", and
-     "HttpVersionNotSupported".
+     "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
+     "HttpVersionNotSupported", and "Continue".
     :vartype status_code: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.HttpStatusCode
     :ivar headers: HTTP headers associated with this operation.
@@ -17853,8 +17974,8 @@ class OperationWorkerResponse(_serialization.Model):
          "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
          "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
          "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
-         "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout", and
-         "HttpVersionNotSupported".
+         "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
+         "HttpVersionNotSupported", and "Continue".
         :paramtype status_code: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.HttpStatusCode
         :keyword headers: HTTP headers associated with this operation.
@@ -17877,8 +17998,8 @@ class OperationResultInfoBaseResource(OperationWorkerResponse):
      "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
      "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
      "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
-     "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout", and
-     "HttpVersionNotSupported".
+     "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
+     "HttpVersionNotSupported", and "Continue".
     :vartype status_code: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.HttpStatusCode
     :ivar headers: HTTP headers associated with this operation.
@@ -17912,8 +18033,8 @@ class OperationResultInfoBaseResource(OperationWorkerResponse):
          "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
          "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
          "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
-         "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout", and
-         "HttpVersionNotSupported".
+         "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
+         "HttpVersionNotSupported", and "Continue".
         :paramtype status_code: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.HttpStatusCode
         :keyword headers: HTTP headers associated with this operation.
@@ -18572,6 +18693,9 @@ class PrivateEndpointConnection(_serialization.Model):
      connection.
     :vartype private_endpoint:
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.PrivateEndpoint
+    :ivar group_ids: Group Ids for the Private Endpoint.
+    :vartype group_ids: list[str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.VaultSubResourceType]
     :ivar private_link_service_connection_state: Gets or sets private link service connection
      state.
     :vartype private_link_service_connection_state:
@@ -18581,6 +18705,7 @@ class PrivateEndpointConnection(_serialization.Model):
     _attribute_map = {
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "private_endpoint": {"key": "privateEndpoint", "type": "PrivateEndpoint"},
+        "group_ids": {"key": "groupIds", "type": "[str]"},
         "private_link_service_connection_state": {
             "key": "privateLinkServiceConnectionState",
             "type": "PrivateLinkServiceConnectionState",
@@ -18592,6 +18717,7 @@ class PrivateEndpointConnection(_serialization.Model):
         *,
         provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+        group_ids: Optional[List[Union[str, "_models.VaultSubResourceType"]]] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
         **kwargs: Any
     ) -> None:
@@ -18604,6 +18730,9 @@ class PrivateEndpointConnection(_serialization.Model):
          connection.
         :paramtype private_endpoint:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.PrivateEndpoint
+        :keyword group_ids: Group Ids for the Private Endpoint.
+        :paramtype group_ids: list[str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.VaultSubResourceType]
         :keyword private_link_service_connection_state: Gets or sets private link service connection
          state.
         :paramtype private_link_service_connection_state:
@@ -18612,6 +18741,7 @@ class PrivateEndpointConnection(_serialization.Model):
         super().__init__(**kwargs)
         self.provisioning_state = provisioning_state
         self.private_endpoint = private_endpoint
+        self.group_ids = group_ids
         self.private_link_service_connection_state = private_link_service_connection_state
 
 
@@ -18687,14 +18817,14 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.PrivateEndpointConnectionStatus
     :ivar description: Gets or sets description.
     :vartype description: str
-    :ivar action_required: Gets or sets actions required.
-    :vartype action_required: str
+    :ivar actions_required: Gets or sets actions required.
+    :vartype actions_required: str
     """
 
     _attribute_map = {
         "status": {"key": "status", "type": "str"},
         "description": {"key": "description", "type": "str"},
-        "action_required": {"key": "actionRequired", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
     def __init__(
@@ -18702,7 +18832,7 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         *,
         status: Optional[Union[str, "_models.PrivateEndpointConnectionStatus"]] = None,
         description: Optional[str] = None,
-        action_required: Optional[str] = None,
+        actions_required: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -18712,13 +18842,13 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.PrivateEndpointConnectionStatus
         :keyword description: Gets or sets description.
         :paramtype description: str
-        :keyword action_required: Gets or sets actions required.
-        :paramtype action_required: str
+        :keyword actions_required: Gets or sets actions required.
+        :paramtype actions_required: str
         """
         super().__init__(**kwargs)
         self.status = status
         self.description = description
-        self.action_required = action_required
+        self.actions_required = actions_required
 
 
 class ProtectableContainerResource(Resource):
@@ -19494,23 +19624,36 @@ class RecoveryPointProperties(_serialization.Model):
     :vartype expiry_time: str
     :ivar rule_name: Rule name tagged on Recovery Point that governs life cycle.
     :vartype rule_name: str
+    :ivar is_soft_deleted: Bool to indicate whether RP is in soft delete state or not.
+    :vartype is_soft_deleted: bool
     """
 
     _attribute_map = {
         "expiry_time": {"key": "expiryTime", "type": "str"},
         "rule_name": {"key": "ruleName", "type": "str"},
+        "is_soft_deleted": {"key": "isSoftDeleted", "type": "bool"},
     }
 
-    def __init__(self, *, expiry_time: Optional[str] = None, rule_name: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        expiry_time: Optional[str] = None,
+        rule_name: Optional[str] = None,
+        is_soft_deleted: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword expiry_time: Expiry time of Recovery Point in UTC.
         :paramtype expiry_time: str
         :keyword rule_name: Rule name tagged on Recovery Point that governs life cycle.
         :paramtype rule_name: str
+        :keyword is_soft_deleted: Bool to indicate whether RP is in soft delete state or not.
+        :paramtype is_soft_deleted: bool
         """
         super().__init__(**kwargs)
         self.expiry_time = expiry_time
         self.rule_name = rule_name
+        self.is_soft_deleted = is_soft_deleted
 
 
 class RecoveryPointRehydrationInfo(_serialization.Model):
@@ -20057,6 +20200,28 @@ class RetentionDuration(_serialization.Model):
         self.duration_type = duration_type
 
 
+class SecuredVMDetails(_serialization.Model):
+    """Restore request parameters for Secured VMs.
+
+    :ivar secured_vmos_disk_encryption_set_id: Gets or Sets Disk Encryption Set Id for Secured VM
+     OS Disk.
+    :vartype secured_vmos_disk_encryption_set_id: str
+    """
+
+    _attribute_map = {
+        "secured_vmos_disk_encryption_set_id": {"key": "securedVMOsDiskEncryptionSetId", "type": "str"},
+    }
+
+    def __init__(self, *, secured_vmos_disk_encryption_set_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword secured_vmos_disk_encryption_set_id: Gets or Sets Disk Encryption Set Id for Secured
+         VM OS Disk.
+        :paramtype secured_vmos_disk_encryption_set_id: str
+        """
+        super().__init__(**kwargs)
+        self.secured_vmos_disk_encryption_set_id = secured_vmos_disk_encryption_set_id
+
+
 class SecurityPinBase(_serialization.Model):
     """Base class for get security pin request body.
 
@@ -20462,6 +20627,46 @@ class TargetAFSRestoreInfo(_serialization.Model):
         super().__init__(**kwargs)
         self.name = name
         self.target_resource_id = target_resource_id
+
+
+class TargetDiskNetworkAccessSettings(_serialization.Model):
+    """Specifies target network access settings for disks of VM to be restored.
+
+    :ivar target_disk_network_access_option: Network access settings to be used for restored disks.
+     Known values are: "SameAsOnSourceDisks", "EnablePrivateAccessForAllDisks", and
+     "EnablePublicAccessForAllDisks".
+    :vartype target_disk_network_access_option: str or
+     ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetDiskNetworkAccessOption
+    :ivar target_disk_access_id: Gets or sets the ARM resource ID of the target disk access to be
+     used when TargetDiskNetworkAccessOption is set to TargetDiskNetworkAccessOption.UseNew.
+    :vartype target_disk_access_id: str
+    """
+
+    _attribute_map = {
+        "target_disk_network_access_option": {"key": "targetDiskNetworkAccessOption", "type": "str"},
+        "target_disk_access_id": {"key": "targetDiskAccessId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        target_disk_network_access_option: Optional[Union[str, "_models.TargetDiskNetworkAccessOption"]] = None,
+        target_disk_access_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword target_disk_network_access_option: Network access settings to be used for restored
+         disks. Known values are: "SameAsOnSourceDisks", "EnablePrivateAccessForAllDisks", and
+         "EnablePublicAccessForAllDisks".
+        :paramtype target_disk_network_access_option: str or
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetDiskNetworkAccessOption
+        :keyword target_disk_access_id: Gets or sets the ARM resource ID of the target disk access to
+         be used when TargetDiskNetworkAccessOption is set to TargetDiskNetworkAccessOption.UseNew.
+        :paramtype target_disk_access_id: str
+        """
+        super().__init__(**kwargs)
+        self.target_disk_network_access_option = target_disk_network_access_option
+        self.target_disk_access_id = target_disk_access_id
 
 
 class TargetRestoreInfo(_serialization.Model):

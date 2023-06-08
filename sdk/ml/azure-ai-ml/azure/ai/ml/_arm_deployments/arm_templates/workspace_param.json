@@ -44,6 +44,12 @@
     "applicationInsightsName": {
         "value": ""
     },
+    "logAnalyticsName": {
+        "value": "none"
+    },
+    "logAnalyticsArmId": {
+        "value": ""
+    },
     "applicationInsightsResourceGroupName": {
         "value": ""
     },
@@ -142,5 +148,11 @@
     },
     "online_store_connection_name" : {
         "value": ""
+    },
+    "online_store_connection_target" : {
+        "value": ""
+    },
+    "enable_data_isolation": {
+        "value": "false"
     }
 }

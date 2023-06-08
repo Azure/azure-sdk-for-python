@@ -11,6 +11,7 @@ from ._models_py3 import ARMResourceProperties
 from ._models_py3 import AccountKeyMetadata
 from ._models_py3 import AnalyticalStorageConfiguration
 from ._models_py3 import ApiProperties
+from ._models_py3 import AuthenticationMethodLdapProperties
 from ._models_py3 import AutoUpgradePolicyResource
 from ._models_py3 import AutoscaleSettings
 from ._models_py3 import AutoscaleSettingsResource
@@ -22,6 +23,7 @@ from ._models_py3 import Capacity
 from ._models_py3 import CassandraClusterDataCenterNodeItem
 from ._models_py3 import CassandraClusterPublicStatus
 from ._models_py3 import CassandraClusterPublicStatusDataCentersItem
+from ._models_py3 import CassandraError
 from ._models_py3 import CassandraKeyspaceCreateUpdateParameters
 from ._models_py3 import CassandraKeyspaceGetPropertiesOptions
 from ._models_py3 import CassandraKeyspaceGetPropertiesResource
@@ -58,6 +60,7 @@ from ._models_py3 import ContainerPartitionKey
 from ._models_py3 import ContinuousBackupInformation
 from ._models_py3 import ContinuousBackupRestoreLocation
 from ._models_py3 import ContinuousModeBackupPolicy
+from ._models_py3 import ContinuousModeProperties
 from ._models_py3 import CorsPolicy
 from ._models_py3 import CreateUpdateOptions
 from ._models_py3 import DataCenterResource
@@ -280,6 +283,7 @@ from ._cosmos_db_management_client_enums import CompositePathSortOrder
 from ._cosmos_db_management_client_enums import ConflictResolutionMode
 from ._cosmos_db_management_client_enums import ConnectionState
 from ._cosmos_db_management_client_enums import ConnectorOffer
+from ._cosmos_db_management_client_enums import ContinuousTier
 from ._cosmos_db_management_client_enums import CreateMode
 from ._cosmos_db_management_client_enums import CreatedByType
 from ._cosmos_db_management_client_enums import DataType
@@ -288,6 +292,7 @@ from ._cosmos_db_management_client_enums import DefaultConsistencyLevel
 from ._cosmos_db_management_client_enums import IndexKind
 from ._cosmos_db_management_client_enums import IndexingMode
 from ._cosmos_db_management_client_enums import KeyKind
+from ._cosmos_db_management_client_enums import Kind
 from ._cosmos_db_management_client_enums import ManagedCassandraProvisioningState
 from ._cosmos_db_management_client_enums import ManagedCassandraResourceIdentityType
 from ._cosmos_db_management_client_enums import MinimalTlsVersion
@@ -308,8 +313,10 @@ from ._cosmos_db_management_client_enums import ServiceSize
 from ._cosmos_db_management_client_enums import ServiceStatus
 from ._cosmos_db_management_client_enums import ServiceType
 from ._cosmos_db_management_client_enums import SpatialType
+from ._cosmos_db_management_client_enums import Status
 from ._cosmos_db_management_client_enums import TriggerOperation
 from ._cosmos_db_management_client_enums import TriggerType
+from ._cosmos_db_management_client_enums import Type
 from ._cosmos_db_management_client_enums import UnitType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -321,6 +328,7 @@ __all__ = [
     "AccountKeyMetadata",
     "AnalyticalStorageConfiguration",
     "ApiProperties",
+    "AuthenticationMethodLdapProperties",
     "AutoUpgradePolicyResource",
     "AutoscaleSettings",
     "AutoscaleSettingsResource",
@@ -332,6 +340,7 @@ __all__ = [
     "CassandraClusterDataCenterNodeItem",
     "CassandraClusterPublicStatus",
     "CassandraClusterPublicStatusDataCentersItem",
+    "CassandraError",
     "CassandraKeyspaceCreateUpdateParameters",
     "CassandraKeyspaceGetPropertiesOptions",
     "CassandraKeyspaceGetPropertiesResource",
@@ -368,6 +377,7 @@ __all__ = [
     "ContinuousBackupInformation",
     "ContinuousBackupRestoreLocation",
     "ContinuousModeBackupPolicy",
+    "ContinuousModeProperties",
     "CorsPolicy",
     "CreateUpdateOptions",
     "DataCenterResource",
@@ -589,6 +599,7 @@ __all__ = [
     "ConflictResolutionMode",
     "ConnectionState",
     "ConnectorOffer",
+    "ContinuousTier",
     "CreateMode",
     "CreatedByType",
     "DataType",
@@ -597,6 +608,7 @@ __all__ = [
     "IndexKind",
     "IndexingMode",
     "KeyKind",
+    "Kind",
     "ManagedCassandraProvisioningState",
     "ManagedCassandraResourceIdentityType",
     "MinimalTlsVersion",
@@ -617,8 +629,10 @@ __all__ = [
     "ServiceStatus",
     "ServiceType",
     "SpatialType",
+    "Status",
     "TriggerOperation",
     "TriggerType",
+    "Type",
     "UnitType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

@@ -29,14 +29,13 @@ def main():
         subscription_id="subid1",
     )
 
-    response = client.private_endpoint_connections.begin_delete(
+    client.private_endpoint_connections.begin_delete(
         resource_group_name="rg1",
         resource_name="clustername1",
         private_endpoint_connection_name="privateendpointconnection1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-01-01/examples/PrivateEndpointConnectionsDelete.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-04-01/examples/PrivateEndpointConnectionsDelete.json
 if __name__ == "__main__":
     main()

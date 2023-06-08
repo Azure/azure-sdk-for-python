@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/appconfiguration/resource-manager/Microsoft.AppConfiguration/stable/2022-05-01/examples/CheckNameNotAvailable.json
+# x-ms-original-file: specification/appconfiguration/resource-manager/Microsoft.AppConfiguration/stable/2023-03-01/examples/CheckNameNotAvailable.json
 if __name__ == "__main__":
     main()

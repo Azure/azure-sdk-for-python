@@ -7,8 +7,10 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+* Fixed a bug in getting error attribute values when operations failed. ([#27410](https://github.com/Azure/azure-sdk-for-python/issues/27410))
 
 ### Other Changes
+* Adjusted dependency on `isodate` to `<1.0.0,>=0.6.1`.
 
 ## 12.4.2 (2023-02-07)
 

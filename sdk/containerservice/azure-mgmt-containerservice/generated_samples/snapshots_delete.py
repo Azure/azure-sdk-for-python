@@ -29,13 +29,12 @@ def main():
         subscription_id="subid1",
     )
 
-    response = client.snapshots.delete(
+    client.snapshots.delete(
         resource_group_name="rg1",
         resource_name="snapshot1",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-01-01/examples/SnapshotsDelete.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-04-01/examples/SnapshotsDelete.json
 if __name__ == "__main__":
     main()

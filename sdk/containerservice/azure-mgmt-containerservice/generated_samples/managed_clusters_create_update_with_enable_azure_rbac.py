@@ -71,6 +71,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-01-01/examples/ManagedClustersCreate_UpdateWithEnableAzureRBAC.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-04-01/examples/ManagedClustersCreate_UpdateWithEnableAzureRBAC.json
 if __name__ == "__main__":
     main()
