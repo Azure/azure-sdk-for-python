@@ -57,12 +57,11 @@
             "defaultAction": "Allow"
         },
         "accountSasProperties": {
-            "signedServices": "b",
+            "signedServices": "t",
             "signedPermission": "rwdlacu",
             "signedProtocol": "https",
             "signedExpiry": "[dateTimeAdd(parameters('baseTime'), 'PT500M')]",
-            "signedResourceTypes": "sco",
-            "keyToSign": "key1"
+            "signedResourceTypes": "sco"
         }
     },
     "resources": [
