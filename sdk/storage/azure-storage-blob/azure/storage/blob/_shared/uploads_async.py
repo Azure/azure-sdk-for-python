@@ -428,7 +428,7 @@ class AsyncIterStreamer():
     File-like streaming object for AsyncGenerators.
     """
     def __init__(self, generator: AsyncGenerator[Union[bytes, str], None], encoding: str = "UTF-8"):
-        self.iterator = generator.aiter()
+        self.iterator = generator.__aiter__()
         self.leftover = b""
         self.encoding = encoding
 
