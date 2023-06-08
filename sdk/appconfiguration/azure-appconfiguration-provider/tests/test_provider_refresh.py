@@ -12,11 +12,11 @@ from preparers import app_config_decorator_aad
 
 class TestAppConfigurationProvider(AzureRecordedTestCase):
     def build_provider_aad(
-        self, endpoint, trim_prefixes=[], selects={SettingSelector(key_filter="*", label_filter="\0")}, refresh_key="message"
+        self, endpoint, trim_prefixes=[], selects={SettingSelector(key_filter="*", label_filter="\0")}, refresh_key="message", refresh_all=True
     ):
         refresh_options = AzureAppConfigurationRefreshOptions()
         refresh_options.refresh_interval = 1
-        refresh_options.register(key_filter=refresh_key, refresh_all=True)
+        refresh_options.register(key_filter=refresh_key, refresh_all=refresh_all)
         refresh_options.callback = self.my_callback
         refresh_options.callback_on_fail = self.my_callback_on_fail
         cred = self.get_credential(AzureAppConfigurationClient)
@@ -26,8 +26,9 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
     @recorded_by_proxy
     @app_config_decorator_aad
     def test_refresh(self, appconfiguration_endpoint_string):
-        client = self.build_provider_aad(appconfiguration_endpoint_string, refresh_key="refresh_message")
+        client = self.build_provider_aad(appconfiguration_endpoint_string, refresh_key="refresh_message", refresh_all=False)
         assert client["refresh_message"] == "original value"
+        assert client["non_refreshed_message"] == "Static"
         assert client["my_json"]["key"] == "value"
         assert (
             client["FeatureManagementFeatureFlags"]["Alpha"]
@@ -36,12 +37,49 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         setting = client._client.get_configuration_setting(key="refresh_message")
         setting.value = "updated value"
         client._client.set_configuration_setting(setting)
+        static_setting = client._client.get_configuration_setting(key="non_refreshed_message")
+        static_setting.value = "updated static"
+        client._client.set_configuration_setting(static_setting)
         
         # Waiting for the refresh interval to pass
         time.sleep(2)
 
         client.refresh()
         assert client["refresh_message"] == "updated value"
+        assert client["non_refreshed_message"] == "Static"
+
+        setting.value = "original value"
+        client._client.set_configuration_setting(setting)
+        static_setting.value = "Static"
+        client._client.set_configuration_setting(static_setting)
+        
+        # Waiting for the refresh interval to pass
+        time.sleep(2)
+
+        client.refresh()
+        assert client["refresh_message"] == "original value"
+        assert client["non_refreshed_message"] == "Static"
+
+    # method: refresh
+    @recorded_by_proxy
+    @app_config_decorator_aad
+    def test_refresh_all(self, appconfiguration_endpoint_string):
+        client = self.build_provider_aad(appconfiguration_endpoint_string, refresh_key="refresh_all_message")
+        assert client["refresh_all_message"] == "original value"
+        assert client["my_json"]["key"] == "value"
+        assert (
+            client["FeatureManagementFeatureFlags"]["Alpha"]
+            == '{"enabled": false, "conditions": {"client_filters": []}}'
+        )
+        setting = client._client.get_configuration_setting(key="refresh_all_message")
+        setting.value = "updated value"
+        client._client.set_configuration_setting(setting)
+        
+        # Waiting for the refresh interval to pass
+        time.sleep(2)
+
+        client.refresh()
+        assert client["refresh_all_message"] == "updated value"
 
         setting.value = "original value"
         client._client.set_configuration_setting(setting)
@@ -50,7 +88,7 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         time.sleep(2)
 
         client.refresh()
-        assert client["refresh_message"] == "original value"
+        assert client["refresh_all_message"] == "original value"
     
     def my_callback(self):
         assert True
