@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=no-self-use
 
 from concurrent import futures
 from io import BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation
@@ -268,7 +267,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     def _upload_substream_block(self, index, block_stream):
         try:
-            block_id = f'BlockId{"%05d" % (index/self.chunk_size)}'
+            block_id = f'BlockId{(index/self.chunk_size):05}'
             self.service.stage_block(
                 block_id,
                 len(block_stream),
@@ -592,7 +591,7 @@ class IterStreamer(object):
         count = len(self.leftover)
         try:
             while count < size:
-                chunk = self.__next__()
+                chunk = self.next()
                 if isinstance(chunk, str):
                     chunk = chunk.encode(self.encoding)
                 data += chunk

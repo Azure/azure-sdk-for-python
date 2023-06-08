@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=no-self-use
 
 import asyncio
 import inspect
@@ -28,7 +27,7 @@ async def _async_parallel_uploads(uploader, pending, running):
         range_ids.extend([chunk.result() for chunk in done])
         try:
             for _ in range(0, len(done)):
-                next_chunk = await pending.__anext__()
+                next_chunk = await pending.anext()
                 running.add(asyncio.ensure_future(uploader(next_chunk)))
         except StopAsyncIteration:
             break
@@ -89,7 +88,7 @@ async def upload_data_chunks(
         running_futures = []
         for _ in range(max_concurrency):
             try:
-                chunk = await upload_tasks.__anext__()
+                chunk = await upload_tasks.anext()
                 running_futures.append(asyncio.ensure_future(uploader.process_chunk(chunk)))
             except StopAsyncIteration:
                 break
@@ -294,7 +293,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     async def _upload_substream_block(self, index, block_stream):
         try:
-            block_id = f'BlockId{"%05d" % (index/self.chunk_size)}'
+            block_id = f'BlockId{(index/self.chunk_size):05}'
             await self.service.stage_block(
                 block_id,
                 len(block_stream),
@@ -428,7 +427,7 @@ class AsyncIterStreamer():
     File-like streaming object for AsyncGenerators.
     """
     def __init__(self, generator: AsyncGenerator[Union[bytes, str], None], encoding: str = "UTF-8"):
-        self.iterator = generator.__aiter__()
+        self.iterator = generator.aiter()
         self.leftover = b""
         self.encoding = encoding
 
@@ -446,7 +445,7 @@ class AsyncIterStreamer():
         count = len(self.leftover)
         try:
             while count < size:
-                chunk = await self.iterator.__anext__()
+                chunk = await self.iterator.anext()
                 if isinstance(chunk, str):
                     chunk = chunk.encode(self.encoding)
                 data += chunk

@@ -407,7 +407,7 @@ class StorageRetryPolicy(HTTPPolicy):
         self.retry_to_secondary = kwargs.pop('retry_to_secondary', False)
         super(StorageRetryPolicy, self).__init__()
 
-    def _set_next_host_location(self, settings, request):  # pylint: disable=no-self-use
+    def _set_next_host_location(self, settings, request):
         """
         A function which sets the next host location on the request, if applicable.
 
@@ -425,7 +425,7 @@ class StorageRetryPolicy(HTTPPolicy):
             updated = url._replace(netloc=settings['hosts'].get(settings['mode']))
             request.url = updated.geturl()
 
-    def configure_retries(self, request):  # pylint: disable=no-self-use
+    def configure_retries(self, request):
         body_position = None
         if hasattr(request.http_request.body, 'read'):
             try:
@@ -448,7 +448,7 @@ class StorageRetryPolicy(HTTPPolicy):
             'history': []
         }
 
-    def get_backoff_time(self, settings):  # pylint: disable=unused-argument,no-self-use
+    def get_backoff_time(self, settings):  # pylint: disable=unused-argument
         """ Formula for computing the current backoff.
         Should be calculated by child class.
 
