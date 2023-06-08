@@ -191,14 +191,33 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
     
     @tables_decorator
     @recorded_by_proxy
-    def test_create_client_from_sas_url(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_client_with_sas_token(self, tables_storage_account_name, tables_primary_storage_account_key):
         base_url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
-        
-        with TableClient(base_url, table_name, credential=tables_primary_storage_account_key) as client:
-            client.create_table()
-        
         sas_token = os.getenv("TABLES_STORAGE_SAS_TOKEN")
+        
+        with TableServiceClient(base_url, credential=AzureSasCredential(sas_token)) as client:
+            client.create_table(table_name)
+            name_filter = "TableName eq '{}'".format(table_name)
+            result = client.query_tables(name_filter)
+            assert len(list(result)) == 1
+        
+        with TableClient(base_url, table_name, credential=AzureSasCredential(sas_token)) as client:
+            entities = client.query_entities(
+                query_filter='PartitionKey eq @pk',
+                parameters={'pk': 'dummy-pk'},
+            )
+            for e in entities:
+                pass
+        
+        with TableClient.from_table_url(f"{base_url}/{table_name}", credential=AzureSasCredential(sas_token)) as client:
+            entities = client.query_entities(
+                query_filter='PartitionKey eq @pk',
+                parameters={'pk': 'dummy-pk'},
+            )
+            for e in entities:
+                pass
+        
         sas_url = f"{base_url}/{table_name}?{sas_token}"
         with TableClient.from_table_url(sas_url) as client:
             entities = client.query_entities(
@@ -207,6 +226,7 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
             )
             for e in entities:
                 pass
+            client.delete_table()
 
 
 # --Helpers-----------------------------------------------------------------

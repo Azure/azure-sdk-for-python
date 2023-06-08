@@ -192,14 +192,36 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
     
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_create_client_from_sas_url(self, tables_storage_account_name, tables_primary_storage_account_key):
+    async def test_client_with_sas_token(self, tables_storage_account_name, tables_primary_storage_account_key):
         base_url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
-        
-        async with TableClient(base_url, table_name, credential=tables_primary_storage_account_key) as client:
-            await client.create_table()
-        
         sas_token = os.getenv("TABLES_STORAGE_SAS_TOKEN")
+        
+        async with TableServiceClient(base_url, credential=AzureSasCredential(sas_token)) as client:
+            await client.create_table(table_name)
+            name_filter = "TableName eq '{}'".format(table_name)
+            count = 0
+            result = client.query_tables(name_filter)
+            async for table in result:
+                count += 1
+            assert count == 1
+        
+        async with TableClient(base_url, table_name, credential=AzureSasCredential(sas_token)) as client:
+            entities = client.query_entities(
+                query_filter='PartitionKey eq @pk',
+                parameters={'pk': 'dummy-pk'},
+            )
+            async for e in entities:
+                pass
+        
+        async with TableClient.from_table_url(f"{base_url}/{table_name}", credential=AzureSasCredential(sas_token)) as client:
+            entities = client.query_entities(
+                query_filter='PartitionKey eq @pk',
+                parameters={'pk': 'dummy-pk'},
+            )
+            async for e in entities:
+                pass
+        
         sas_url = f"{base_url}/{table_name}?{sas_token}"
         async with TableClient.from_table_url(sas_url) as client:
             entities = client.query_entities(
@@ -208,6 +230,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
             )
             async for e in entities:
                 pass
+            await client.delete_table()
 
 
 class TestTableClientAsyncUnitTests(AsyncTableTestCase):
