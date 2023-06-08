@@ -12,8 +12,6 @@ import os
 import glob
 import shutil
 from tox_helper_tasks import (
-    unzip_sdist_to_directory,
-    move_and_rename,
     unzip_file_to_directory,
 )
 
@@ -35,8 +33,8 @@ def extract_whl(dist_dir, version):
     # Find whl for the package
     path_to_whl = glob.glob(os.path.join(dist_dir, "*{}*.whl".format(version)))[0]
 
-    # Cleanup any existing stale files if any and rename whl file to tar.gz
-    zip_file = path_to_whl.replace(".whl", ".tar.gz")
+    # Cleanup any existing stale files if any and rename whl file to zip for extraction later
+    zip_file = path_to_whl.replace(".whl", ".zip")
     cleanup(zip_file)
     os.rename(path_to_whl, zip_file)
 

@@ -57,7 +57,6 @@ def unzip_sdist_to_directory(containing_folder: str) -> str:
 
 
 def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
-
     if path_to_zip_file.endswith(".zip"):
         with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
             zip_ref.extractall(extract_location)
