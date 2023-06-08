@@ -152,8 +152,6 @@ class QuickQueryStreamer(object):
         self._download_offset += len(next_part)
         return next_part
 
-    next = __next__  # Python 2 compatibility.
-
     def tell(self):
         return self._point
 
@@ -171,7 +169,7 @@ class QuickQueryStreamer(object):
         try:
             # keep reading from the generator until the buffer of this stream has enough data to read
             while self._point + size > self._download_offset:
-                self._buf += self.next()
+                self._buf += self.__next__()
         except StopIteration:
             self.file_length = self._download_offset
 

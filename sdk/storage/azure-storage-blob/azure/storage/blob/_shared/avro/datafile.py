@@ -252,10 +252,6 @@ class DataFileReader(object):  # pylint: disable=too-many-instance-attributes
 
         return datum
 
-    # PY2
-    def next(self):
-        return self.next()
-
     def close(self):
         """Close this reader."""
         self.reader.close()

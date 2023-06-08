@@ -410,7 +410,7 @@ class DatumReader(object):
         index_of_schema = int(decoder.read_long())
         if index_of_schema >= len(writer_schema.schemas):
             fail_msg = (f"Can't access branch index {index_of_schema} "
-            f"for union with {len(writer_schema.schemas)} branches")
+                        f"for union with {len(writer_schema.schemas)} branches")
             raise SchemaResolutionException(fail_msg, writer_schema)
         selected_writer_schema = writer_schema.schemas[index_of_schema]
 
@@ -421,7 +421,7 @@ class DatumReader(object):
         index_of_schema = int(decoder.read_long())
         if index_of_schema >= len(writer_schema.schemas):
             fail_msg = (f"Can't access branch index {index_of_schema} "
-            f"for union with {len(writer_schema.schemas)} branches")
+                        f"for union with {len(writer_schema.schemas)} branches")
             raise SchemaResolutionException(fail_msg, writer_schema)
         return self.skip_data(writer_schema.schemas[index_of_schema], decoder)
 

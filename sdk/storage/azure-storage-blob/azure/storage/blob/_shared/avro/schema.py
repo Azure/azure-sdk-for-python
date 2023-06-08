@@ -809,22 +809,19 @@ class UnionSchema(Schema):
             filter(lambda schema: schema.type in NAMED_TYPES, self._schemas))
         unique_names = frozenset(map(lambda schema: schema.fullname, named_branches))
         if len(unique_names) != len(named_branches):
-            raise AvroException(
-                'Invalid union branches with duplicate schema name:%s'
-                % ''.join(map(lambda schema: ('\n\t - %s' % schema), self._schemas)))
+            schemas = ''.join(map(lambda schema: (f'\n\t - {schema}'), self._schemas))
+            raise AvroException(f'Invalid union branches with duplicate schema name:{schemas}')
 
         # Types are unique within unnamed schemas, and union is not allowed:
         unnamed_branches = tuple(
             filter(lambda schema: schema.type not in NAMED_TYPES, self._schemas))
         unique_types = frozenset(map(lambda schema: schema.type, unnamed_branches))
         if UNION in unique_types:
-            raise AvroException(
-                'Invalid union branches contain other unions:%s'
-                % ''.join(map(lambda schema: ('\n\t - %s' % schema), self._schemas)))
+            schemas = ''.join(map(lambda schema: (f'\n\t - {schema}'), self._schemas))
+            raise AvroException(f'Invalid union branches contain other unions:{schemas}')
         if len(unique_types) != len(unnamed_branches):
-            raise AvroException(
-                'Invalid union branches with duplicate type:%s'
-                % ''.join(map(lambda schema: ('\n\t - %s' % schema), self._schemas)))
+            schemas = ''.join(map(lambda schema: (f'\n\t - {schema}'), self._schemas))
+            raise AvroException(f'Invalid union branches with duplicate type:{schemas}')
 
     @property
     def schemas(self):
