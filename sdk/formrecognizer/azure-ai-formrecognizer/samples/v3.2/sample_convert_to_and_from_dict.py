@@ -1,3 +1,4 @@
+# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -22,6 +23,7 @@ USAGE:
 
 import os
 import json
+
 
 def convert_to_and_from_dict():
     path_to_sample_documents = os.path.abspath(
@@ -55,7 +57,7 @@ def convert_to_and_from_dict():
     # save the dictionary as JSON content in a JSON file, use the AzureJSONEncoder
     # to help make types, such as dates, JSON serializable
     # NOTE: AzureJSONEncoder is only available with azure.core>=1.18.0.
-    with open('data.json', 'w') as output_file:
+    with open("data.json", "w") as output_file:
         json.dump(analyze_result_dict, output_file, cls=AzureJSONEncoder)
 
     # convert the dictionary back to the original model
@@ -73,11 +75,14 @@ def convert_to_and_from_dict():
 if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         convert_to_and_from_dict()
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

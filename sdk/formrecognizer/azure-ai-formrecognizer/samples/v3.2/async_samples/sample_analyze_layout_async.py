@@ -1,3 +1,4 @@
+# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -79,7 +80,9 @@ async def analyze_layout_async():
             )
 
             for word in words:
-                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+                print(
+                    f"......Word '{word.content}' has a confidence of {word.confidence}"
+                )
 
         for selection_mark in page.selection_marks:
             print(
@@ -97,9 +100,13 @@ async def analyze_layout_async():
                 f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}"
             )
         for cell in table.cells:
-            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
+            print(
+                f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'"
+            )
             for region in cell.bounding_regions:
-                print(f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'")
+                print(
+                    f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'"
+                )
 
     print("----------------------------------------")
 
@@ -111,11 +118,14 @@ async def main():
 if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         asyncio.run(main())
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

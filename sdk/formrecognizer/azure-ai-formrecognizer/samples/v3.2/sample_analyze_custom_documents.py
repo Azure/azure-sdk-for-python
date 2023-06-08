@@ -1,3 +1,4 @@
+# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -63,7 +64,9 @@ def analyze_custom_documents(custom_model_id):
         print(f"Document was analyzed with model with ID {result.model_id}")
         for name, field in document.fields.items():
             field_value = field.value if field.value else field.content
-            print(f"......found field of type '{field.value_type}' with value '{field_value}' and with confidence {field.confidence}")
+            print(
+                f"......found field of type '{field.value_type}' with value '{field_value}' and with confidence {field.confidence}"
+            )
 
     # iterate over tables, lines, and selection marks on each page
     for page in result.pages:
@@ -75,14 +78,18 @@ def analyze_custom_documents(custom_model_id):
         if page.selection_marks:
             print(f"\nSelection marks found on page {page.page_number}")
             for selection_mark in page.selection_marks:
-                print(f"...Selection mark is '{selection_mark.state}' and has a confidence of {selection_mark.confidence}")
+                print(
+                    f"...Selection mark is '{selection_mark.state}' and has a confidence of {selection_mark.confidence}"
+                )
 
     for i, table in enumerate(result.tables):
         print(f"\nTable {i + 1} can be found on page:")
         for region in table.bounding_regions:
             print(f"...{region.page_number}")
         for cell in table.cells:
-            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
+            print(
+                f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'"
+            )
     print("-----------------------------------")
     # [END analyze_custom_documents]
 
@@ -90,17 +97,23 @@ def analyze_custom_documents(custom_model_id):
 if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         model_id = None
         if os.getenv("CONTAINER_SAS_URL") and not os.getenv("CUSTOM_BUILT_MODEL_ID"):
             from azure.core.credentials import AzureKeyCredential
-            from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
+            from azure.ai.formrecognizer import (
+                DocumentModelAdministrationClient,
+                ModelBuildMode,
+            )
 
             endpoint = os.getenv("AZURE_FORM_RECOGNIZER_ENDPOINT")
             key = os.getenv("AZURE_FORM_RECOGNIZER_KEY")
 
             if not endpoint or not key:
-                raise ValueError("Please provide endpoint and API key to run the samples.")
+                raise ValueError(
+                    "Please provide endpoint and API key to run the samples."
+                )
 
             document_model_admin_client = DocumentModelAdministrationClient(
                 endpoint=endpoint, credential=AzureKeyCredential(key)
@@ -113,8 +126,10 @@ if __name__ == "__main__":
                 model_id = model.model_id
         analyze_custom_documents(model_id)
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

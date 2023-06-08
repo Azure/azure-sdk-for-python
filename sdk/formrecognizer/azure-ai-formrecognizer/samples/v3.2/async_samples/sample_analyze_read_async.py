@@ -1,3 +1,4 @@
+# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -22,15 +23,21 @@ USAGE:
 import os
 import asyncio
 
+
 def format_bounding_region(bounding_regions):
     if not bounding_regions:
         return "N/A"
-    return ", ".join(f"Page #{region.page_number}: {format_polygon(region.polygon)}" for region in bounding_regions)
+    return ", ".join(
+        f"Page #{region.page_number}: {format_polygon(region.polygon)}"
+        for region in bounding_regions
+    )
+
 
 def format_polygon(polygon):
     if not polygon:
         return "N/A"
     return ", ".join([f"[{p.x}, {p.y}]" for p in polygon])
+
 
 async def analyze_read():
     path_to_sample_documents = os.path.abspath(
@@ -53,7 +60,7 @@ async def analyze_read():
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
-    
+
     async with document_analysis_client:
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_analysis_client.begin_analyze_document(
@@ -63,27 +70,51 @@ async def analyze_read():
 
     print("----Languages detected in the document----")
     for language in result.languages:
-        print(f"Language code: '{language.locale}' with confidence {language.confidence}")
+        print(
+            f"Language code: '{language.locale}' with confidence {language.confidence}"
+        )
 
     print("----Styles detected in the document----")
     for style in result.styles:
         if style.is_handwritten:
             print("Found the following handwritten content: ")
-            print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
+            print(
+                ",".join(
+                    [
+                        result.content[span.offset : span.offset + span.length]
+                        for span in style.spans
+                    ]
+                )
+            )
         if style.font_style:
-            print(f"The document contains '{style.font_style}' font style, applied to the following text: ")
-            print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
+            print(
+                f"The document contains '{style.font_style}' font style, applied to the following text: "
+            )
+            print(
+                ",".join(
+                    [
+                        result.content[span.offset : span.offset + span.length]
+                        for span in style.spans
+                    ]
+                )
+            )
 
     for page in result.pages:
         print(f"----Analyzing document from page #{page.page_number}----")
-        print(f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}")
+        print(
+            f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}"
+        )
 
         for line_idx, line in enumerate(page.lines):
             words = line.get_words()
-            print(f"...Line # {line_idx} has {len(words)} words and text '{line.content}' within bounding polygon '{format_polygon(line.polygon)}'")
+            print(
+                f"...Line # {line_idx} has {len(words)} words and text '{line.content}' within bounding polygon '{format_polygon(line.polygon)}'"
+            )
 
             for word in words:
-                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+                print(
+                    f"......Word '{word.content}' has a confidence of {word.confidence}"
+                )
 
         for selection_mark in page.selection_marks:
             print(
@@ -94,7 +125,9 @@ async def analyze_read():
     if len(result.paragraphs) > 0:
         print(f"----Detected #{len(result.paragraphs)} paragraphs in the document----")
         for paragraph in result.paragraphs:
-            print(f"Found paragraph with role: '{paragraph.role}' within {format_bounding_region(paragraph.bounding_regions)} bounding region")
+            print(
+                f"Found paragraph with role: '{paragraph.role}' within {format_bounding_region(paragraph.bounding_regions)} bounding region"
+            )
             print(f"...with content: '{paragraph.content}'")
 
     print("----------------------------------------")
@@ -103,14 +136,18 @@ async def analyze_read():
 async def main():
     await analyze_read()
 
+
 if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         asyncio.run(main())
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

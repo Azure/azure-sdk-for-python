@@ -74,11 +74,15 @@ async def analyze_business_card_async():
         departments = business_card.fields.get("Departments")
         if departments:
             for department in departments.value:
-                print(f"Department: {department.value} has confidence: {department.confidence}")
+                print(
+                    f"Department: {department.value} has confidence: {department.confidence}"
+                )
         job_titles = business_card.fields.get("JobTitles")
         if job_titles:
             for job_title in job_titles.value:
-                print(f"Job Title: {job_title.value} has confidence: {job_title.confidence}")
+                print(
+                    f"Job Title: {job_title.value} has confidence: {job_title.confidence}"
+                )
         emails = business_card.fields.get("Emails")
         if emails:
             for email in emails.value:
@@ -94,7 +98,9 @@ async def analyze_business_card_async():
         mobile_phones = business_card.fields.get("MobilePhones")
         if mobile_phones:
             for phone in mobile_phones.value:
-                print(f"Mobile phone number: {phone.content} has confidence: {phone.confidence}")
+                print(
+                    f"Mobile phone number: {phone.content} has confidence: {phone.confidence}"
+                )
         faxes = business_card.fields.get("Faxes")
         if faxes:
             for fax in faxes.value:
@@ -102,11 +108,15 @@ async def analyze_business_card_async():
         work_phones = business_card.fields.get("WorkPhones")
         if work_phones:
             for work_phone in work_phones.value:
-                print(f"Work phone number: {work_phone.content} has confidence: {work_phone.confidence}")
+                print(
+                    f"Work phone number: {work_phone.content} has confidence: {work_phone.confidence}"
+                )
         other_phones = business_card.fields.get("OtherPhones")
         if other_phones:
             for other_phone in other_phones.value:
-                print(f"Other phone number: {other_phone.value} has confidence: {other_phone.confidence}")
+                print(
+                    f"Other phone number: {other_phone.value} has confidence: {other_phone.confidence}"
+                )
 
 
 async def main():
@@ -116,11 +126,14 @@ async def main():
 if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         asyncio.run(main())
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

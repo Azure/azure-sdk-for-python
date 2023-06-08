@@ -1,3 +1,4 @@
+# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -24,6 +25,7 @@ USAGE:
 import os
 import asyncio
 
+
 def get_styles(element_spans, styles):
     result = []
     for span in element_spans:
@@ -34,6 +36,7 @@ def get_styles(element_spans, styles):
                 ) <= (span.offset + span.length):
                     result.append(style)
     return result
+
 
 def get_lines(element_spans, document_page):
     result = []
@@ -46,11 +49,13 @@ def get_lines(element_spans, document_page):
                     result.append(line)
     return result
 
+
 def get_page(page_number, pages):
     for page in pages:
         if page.page_number == page_number:
             return page
     raise ValueError("could not find the requested page")
+
 
 async def get_elements_with_spans_async():
     path_to_sample_documents = os.path.abspath(
@@ -95,11 +100,17 @@ async def get_elements_with_spans_async():
             if table.bounding_regions is not None:
                 for region in table.bounding_regions:
                     print(f"Table # {table_idx} location on page: {region.page_number}")
-                    lines.extend(get_lines(table.spans, get_page(region.page_number, result.pages)))
+                    lines.extend(
+                        get_lines(
+                            table.spans, get_page(region.page_number, result.pages)
+                        )
+                    )
 
             print(f"Found # {len(lines)} lines in the table")
             for line in lines:
-                print(f"...Line '{line.content}' is within bounding polygon: '{line.polygon}'")
+                print(
+                    f"...Line '{line.content}' is within bounding polygon: '{line.polygon}'"
+                )
 
     # Below is a method to search for the style of a particular element by using spans.
     # This example uses DocumentLine, but other elements that also have a `spans` or `span`
@@ -120,14 +131,17 @@ async def main():
     await get_elements_with_spans_async()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         asyncio.run(main())
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

@@ -1,3 +1,4 @@
+# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -39,27 +40,40 @@ import os
 def sample_compose_model():
     # [START composed_model]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
+    from azure.ai.formrecognizer import (
+        DocumentModelAdministrationClient,
+        ModelBuildMode,
+    )
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-    po_supplies = os.environ['PURCHASE_ORDER_OFFICE_SUPPLIES_SAS_URL']
-    po_equipment = os.environ['PURCHASE_ORDER_OFFICE_EQUIPMENT_SAS_URL']
-    po_furniture = os.environ['PURCHASE_ORDER_OFFICE_FURNITURE_SAS_URL']
-    po_cleaning_supplies = os.environ['PURCHASE_ORDER_OFFICE_CLEANING_SUPPLIES_SAS_URL']
+    po_supplies = os.environ["PURCHASE_ORDER_OFFICE_SUPPLIES_SAS_URL"]
+    po_equipment = os.environ["PURCHASE_ORDER_OFFICE_EQUIPMENT_SAS_URL"]
+    po_furniture = os.environ["PURCHASE_ORDER_OFFICE_FURNITURE_SAS_URL"]
+    po_cleaning_supplies = os.environ["PURCHASE_ORDER_OFFICE_CLEANING_SUPPLIES_SAS_URL"]
 
-    document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_model_admin_client = DocumentModelAdministrationClient(
+        endpoint=endpoint, credential=AzureKeyCredential(key)
+    )
     supplies_poller = document_model_admin_client.begin_build_document_model(
-        ModelBuildMode.TEMPLATE, blob_container_url=po_supplies, description="Purchase order-Office supplies"
+        ModelBuildMode.TEMPLATE,
+        blob_container_url=po_supplies,
+        description="Purchase order-Office supplies",
     )
     equipment_poller = document_model_admin_client.begin_build_document_model(
-        ModelBuildMode.TEMPLATE, blob_container_url=po_equipment, description="Purchase order-Office Equipment"
+        ModelBuildMode.TEMPLATE,
+        blob_container_url=po_equipment,
+        description="Purchase order-Office Equipment",
     )
     furniture_poller = document_model_admin_client.begin_build_document_model(
-        ModelBuildMode.TEMPLATE, blob_container_url=po_furniture, description="Purchase order-Furniture"
+        ModelBuildMode.TEMPLATE,
+        blob_container_url=po_furniture,
+        description="Purchase order-Furniture",
     )
     cleaning_supplies_poller = document_model_admin_client.begin_build_document_model(
-        ModelBuildMode.TEMPLATE, blob_container_url=po_cleaning_supplies, description="Purchase order-Cleaning Supplies"
+        ModelBuildMode.TEMPLATE,
+        blob_container_url=po_cleaning_supplies,
+        description="Purchase order-Cleaning Supplies",
     )
     supplies_model = supplies_poller.result()
     equipment_model = equipment_poller.result()
@@ -70,7 +84,7 @@ def sample_compose_model():
         supplies_model.model_id,
         equipment_model.model_id,
         furniture_model.model_id,
-        cleaning_supplies_model.model_id
+        cleaning_supplies_model.model_id,
     ]
 
     poller = document_model_admin_client.begin_compose_document_model(
@@ -94,14 +108,17 @@ def sample_compose_model():
     # [END composed_model]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         sample_compose_model()
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

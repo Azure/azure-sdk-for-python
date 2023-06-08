@@ -1,3 +1,4 @@
+# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -33,7 +34,9 @@ async def sample_get_operations_async():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_model_admin_client = DocumentModelAdministrationClient(
+        endpoint=endpoint, credential=AzureKeyCredential(key)
+    )
 
     async with document_model_admin_client:
         operations = document_model_admin_client.list_operations()
@@ -46,8 +49,10 @@ async def sample_get_operations_async():
             print(f"Operation percent completed: {operation.percent_completed}")
             print(f"Operation created on: {operation.created_on}")
             print(f"Operation last updated on: {operation.last_updated_on}")
-            print(f"Resource location of successful operation: {operation.resource_location}")
-    # [END list_operations_async]
+            print(
+                f"Resource location of successful operation: {operation.resource_location}"
+            )
+        # [END list_operations_async]
 
         # [START get_operation_async]
         # Get an operation by ID
@@ -55,7 +60,9 @@ async def sample_get_operations_async():
             first_operation = await operations.__anext__()
 
             print(f"\nGetting operation info by ID: {first_operation.operation_id}")
-            operation_info = await document_model_admin_client.get_operation(first_operation.operation_id)
+            operation_info = await document_model_admin_client.get_operation(
+                first_operation.operation_id
+            )
             if operation_info.status == "succeeded":
                 print(f"My {operation_info.kind} operation is completed.")
                 result = operation_info.result
@@ -75,18 +82,22 @@ async def sample_get_operations_async():
             print("No operations found.")
         # [END get_operation_async]
 
+
 async def main():
     await sample_get_operations_async()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         asyncio.run(main())
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

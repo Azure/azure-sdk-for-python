@@ -1,3 +1,4 @@
+# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -26,7 +27,8 @@ import asyncio
 
 
 def format_address_value(address_value):
-    return f'\n......House/building number: {address_value.house_number}\n......Road: {address_value.road}\n......City: {address_value.city}\n......State: {address_value.state}\n......Postal code: {address_value.postal_code}'
+    return f"\n......House/building number: {address_value.house_number}\n......Road: {address_value.road}\n......City: {address_value.city}\n......State: {address_value.state}\n......Postal code: {address_value.postal_code}"
+
 
 async def analyze_tax_us_w2_async():
     path_to_sample_documents = os.path.abspath(
@@ -59,8 +61,9 @@ async def analyze_tax_us_w2_async():
         print(f"--------Analyzing US Tax W-2 Form #{idx + 1}--------")
         form_variant = w2.fields.get("W2FormVariant")
         if form_variant:
-            print(f"Form variant: {form_variant.value} has confidence: "
-                  f"{form_variant.confidence}"
+            print(
+                f"Form variant: {form_variant.value} has confidence: "
+                f"{form_variant.confidence}"
             )
         tax_year = w2.fields.get("TaxYear")
         if tax_year:
@@ -73,10 +76,14 @@ async def analyze_tax_us_w2_async():
             print("Employee data:")
             employee_name = employee.value.get("Name")
             if employee_name:
-                print(f"...Name: {employee_name.value} has confidence: {employee_name.confidence}")
+                print(
+                    f"...Name: {employee_name.value} has confidence: {employee_name.confidence}"
+                )
             employee_ssn = employee.value.get("SocialSecurityNumber")
             if employee_ssn:
-                print(f"...SSN: {employee_ssn.value} has confidence: {employee_ssn.confidence}")
+                print(
+                    f"...SSN: {employee_ssn.value} has confidence: {employee_ssn.confidence}"
+                )
             employee_address = employee.value.get("Address")
             if employee_address:
                 print(f"...Address: {format_address_value(employee_address.value)}")
@@ -98,17 +105,23 @@ async def analyze_tax_us_w2_async():
             print("Employer data:")
             employer_name = employer.value.get("Name")
             if employer_name:
-                print(f"...Name: {employer_name.value} has confidence: {employer_name.confidence}")
+                print(
+                    f"...Name: {employer_name.value} has confidence: {employer_name.confidence}"
+                )
             employer_id = employer.value.get("IdNumber")
             if employer_id:
-                print(f"...ID Number: {employer_id.value} has confidence: {employer_id.confidence}")
+                print(
+                    f"...ID Number: {employer_id.value} has confidence: {employer_id.confidence}"
+                )
             employer_address = employer.value.get("Address")
             if employer_address:
                 print(f"...Address: {format_address_value(employer_address.value)}")
                 print(f"\n......has confidence: {employer_address.confidence}")
             employer_zipcode = employer.value.get("ZipCode")
             if employer_zipcode:
-                print(f"...Zipcode: {employer_zipcode.value} has confidence: {employer_zipcode.confidence}")
+                print(
+                    f"...Zipcode: {employer_zipcode.value} has confidence: {employer_zipcode.confidence}"
+                )
         wages_tips = w2.fields.get("WagesTipsAndOtherCompensation")
         if wages_tips:
             print(
@@ -182,7 +195,9 @@ async def analyze_tax_us_w2_async():
                     )
                 amount = item.value.get("Amount")
                 if amount:
-                    print(f"...Amount: {amount.value} has confidence: {amount.confidence}")
+                    print(
+                        f"...Amount: {amount.value} has confidence: {amount.confidence}"
+                    )
         is_statutory_employee = w2.fields.get("IsStatutoryEmployee")
         if is_statutory_employee:
             print(
@@ -216,13 +231,13 @@ async def analyze_tax_us_w2_async():
                         f"...Employer state ID number: {employer_state_id_number.value} has "
                         f"confidence: {employer_state_id_number.confidence}"
                     )
-                state_wages_tips  = tax.value.get("StateWagesTipsEtc")
+                state_wages_tips = tax.value.get("StateWagesTipsEtc")
                 if state_wages_tips:
                     print(
                         f"...State wages, tips, etc: {state_wages_tips.value} has confidence: "
                         f"{state_wages_tips.confidence}"
                     )
-                state_income_tax  = tax.value.get("StateIncomeTax")
+                state_income_tax = tax.value.get("StateIncomeTax")
                 if state_income_tax:
                     print(
                         f"...State income tax: {state_income_tax.value} has confidence: "
@@ -232,19 +247,19 @@ async def analyze_tax_us_w2_async():
         if local_tax_info:
             print("Local Tax info:")
             for tax in local_tax_info.value:
-                local_wages_tips  = tax.value.get("LocalWagesTipsEtc")
+                local_wages_tips = tax.value.get("LocalWagesTipsEtc")
                 if local_wages_tips:
                     print(
                         f"...Local wages, tips, etc: {local_wages_tips.value} has confidence: "
                         f"{local_wages_tips.confidence}"
                     )
-                local_income_tax  = tax.value.get("LocalIncomeTax")
+                local_income_tax = tax.value.get("LocalIncomeTax")
                 if local_income_tax:
                     print(
                         f"...Local income tax: {local_income_tax.value} has confidence: "
                         f"{local_income_tax.confidence}"
                     )
-                locality_name  = tax.value.get("LocalityName")
+                locality_name = tax.value.get("LocalityName")
                 if locality_name:
                     print(
                         f"...Locality name: {locality_name.value} has confidence: "
@@ -259,11 +274,14 @@ async def main():
 if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         asyncio.run(main())
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

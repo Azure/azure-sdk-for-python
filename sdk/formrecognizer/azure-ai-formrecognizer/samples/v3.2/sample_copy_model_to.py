@@ -1,3 +1,4 @@
+# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -30,6 +31,7 @@ USAGE:
 
 import os
 
+
 def sample_copy_model_to(custom_model_id):
     # [START begin_copy_document_model_to]
     from azure.core.credentials import AzureKeyCredential
@@ -41,16 +43,20 @@ def sample_copy_model_to(custom_model_id):
     target_key = os.environ["AZURE_FORM_RECOGNIZER_TARGET_KEY"]
     source_model_id = os.getenv("AZURE_SOURCE_MODEL_ID", custom_model_id)
 
-    target_client = DocumentModelAdministrationClient(endpoint=target_endpoint, credential=AzureKeyCredential(target_key))
+    target_client = DocumentModelAdministrationClient(
+        endpoint=target_endpoint, credential=AzureKeyCredential(target_key)
+    )
 
     target = target_client.get_copy_authorization(
         description="model copied from other resource"
     )
 
-    source_client = DocumentModelAdministrationClient(endpoint=source_endpoint, credential=AzureKeyCredential(source_key))
+    source_client = DocumentModelAdministrationClient(
+        endpoint=source_endpoint, credential=AzureKeyCredential(source_key)
+    )
     poller = source_client.begin_copy_document_model_to(
         model_id=source_model_id,
-        target=target  # output from target client's call to get_copy_authorization()
+        target=target,  # output from target client's call to get_copy_authorization()
     )
     copied_over_model = poller.result()
 
@@ -69,34 +75,43 @@ def sample_copy_model_to(custom_model_id):
     # [END begin_copy_document_model_to]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         model_id = None
         if os.getenv("CONTAINER_SAS_URL"):
-
             from azure.core.credentials import AzureKeyCredential
-            from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
+            from azure.ai.formrecognizer import (
+                DocumentModelAdministrationClient,
+                ModelBuildMode,
+            )
 
             endpoint = os.getenv("AZURE_FORM_RECOGNIZER_SOURCE_ENDPOINT")
             key = os.getenv("AZURE_FORM_RECOGNIZER_SOURCE_KEY")
 
             if not endpoint or not key:
-                raise ValueError("Please provide endpoint and API key to run the samples.")
+                raise ValueError(
+                    "Please provide endpoint and API key to run the samples."
+                )
 
             document_model_admin_client = DocumentModelAdministrationClient(
                 endpoint=endpoint, credential=AzureKeyCredential(key)
             )
             blob_container_sas_url = os.getenv("CONTAINER_SAS_URL")
             if blob_container_sas_url is not None:
-                model = document_model_admin_client.begin_build_document_model(ModelBuildMode.TEMPLATE, blob_container_url=blob_container_sas_url).result()
+                model = document_model_admin_client.begin_build_document_model(
+                    ModelBuildMode.TEMPLATE, blob_container_url=blob_container_sas_url
+                ).result()
                 model_id = model.model_id
 
         sample_copy_model_to(model_id)
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

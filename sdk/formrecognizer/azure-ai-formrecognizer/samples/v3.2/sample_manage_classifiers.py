@@ -1,3 +1,4 @@
+# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -36,23 +37,23 @@ def sample_manage_classifiers():
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     container_sas_url = os.environ["CLASSIFIER_CONTAINER_SAS_URL"]
 
-    document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_model_admin_client = DocumentModelAdministrationClient(
+        endpoint=endpoint, credential=AzureKeyCredential(key)
+    )
 
     # build a document classifier
     poller = document_model_admin_client.begin_build_document_classifier(
         doc_types={
             "IRS-1040-A": ClassifierDocumentTypeDetails(
                 azure_blob_source=AzureBlobContentSource(
-                    container_url=container_sas_url,
-                    prefix="IRS-1040-A/train"
+                    container_url=container_sas_url, prefix="IRS-1040-A/train"
                 )
             ),
             "IRS-1040-D": ClassifierDocumentTypeDetails(
                 azure_blob_source=AzureBlobContentSource(
-                    container_url=container_sas_url,
-                    prefix="IRS-1040-D/train"
+                    container_url=container_sas_url, prefix="IRS-1040-D/train"
                 )
-            )
+            ),
         },
     )
     classifier_model = poller.result()
@@ -68,7 +69,9 @@ def sample_manage_classifiers():
     # [END list_document_classifiers]
 
     # [START get_document_classifier]
-    my_classifier = document_model_admin_client.get_document_classifier(classifier_id=classifier_model.classifier_id)
+    my_classifier = document_model_admin_client.get_document_classifier(
+        classifier_id=classifier_model.classifier_id
+    )
     print(f"\nClassifier ID: {my_classifier.classifier_id}")
     print(f"Description: {my_classifier.description}")
     print(f"Classifier created on: {my_classifier.created_on}")
@@ -76,23 +79,30 @@ def sample_manage_classifiers():
 
     # Finally, we will delete this classifier by ID
     # [START delete_document_classifier]
-    document_model_admin_client.delete_document_classifier(classifier_id=my_classifier.classifier_id)
+    document_model_admin_client.delete_document_classifier(
+        classifier_id=my_classifier.classifier_id
+    )
 
     try:
-        document_model_admin_client.get_document_classifier(classifier_id=my_classifier.classifier_id)
+        document_model_admin_client.get_document_classifier(
+            classifier_id=my_classifier.classifier_id
+        )
     except ResourceNotFoundError:
         print(f"Successfully deleted classifier with ID {my_classifier.classifier_id}")
     # [END delete_document_classifier]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         sample_manage_classifiers()
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

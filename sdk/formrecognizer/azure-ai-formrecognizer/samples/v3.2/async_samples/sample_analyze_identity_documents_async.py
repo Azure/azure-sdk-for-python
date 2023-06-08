@@ -1,3 +1,4 @@
+# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -56,13 +57,19 @@ async def analyze_identity_documents_async():
         print(f"--------Analyzing ID document #{idx + 1}--------")
         first_name = id_document.fields.get("FirstName")
         if first_name:
-            print(f"First Name: {first_name.value} has confidence: {first_name.confidence}")
+            print(
+                f"First Name: {first_name.value} has confidence: {first_name.confidence}"
+            )
         last_name = id_document.fields.get("LastName")
         if last_name:
-            print(f"Last Name: {last_name.value} has confidence: {last_name.confidence}")
+            print(
+                f"Last Name: {last_name.value} has confidence: {last_name.confidence}"
+            )
         document_number = id_document.fields.get("DocumentNumber")
         if document_number:
-            print(f"Document Number: {document_number.value} has confidence: {document_number.confidence}")
+            print(
+                f"Document Number: {document_number.value} has confidence: {document_number.confidence}"
+            )
         dob = id_document.fields.get("DateOfBirth")
         if dob:
             print(f"Date of Birth: {dob.value} has confidence: {dob.confidence}")
@@ -77,7 +84,9 @@ async def analyze_identity_documents_async():
             print(f"Address: {address.value} has confidence: {address.confidence}")
         country_region = id_document.fields.get("CountryRegion")
         if country_region:
-            print(f"Country/Region: {country_region.value} has confidence: {country_region.confidence}")
+            print(
+                f"Country/Region: {country_region.value} has confidence: {country_region.confidence}"
+            )
         region = id_document.fields.get("Region")
         if region:
             print(f"Region: {region.value} has confidence: {region.confidence}")
@@ -90,11 +99,14 @@ async def main():
 if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         asyncio.run(main())
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

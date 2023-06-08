@@ -1,3 +1,4 @@
+# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -26,14 +27,19 @@ import os
 def sample_manage_models():
     from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import ResourceNotFoundError
-    from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
+    from azure.ai.formrecognizer import (
+        DocumentModelAdministrationClient,
+        ModelBuildMode,
+    )
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
     # [START get_resource_details]
-    document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_model_admin_client = DocumentModelAdministrationClient(
+        endpoint=endpoint, credential=AzureKeyCredential(key)
+    )
 
     account_details = document_model_admin_client.get_resource_details()
     print(
@@ -57,7 +63,11 @@ def sample_manage_models():
     # [END list_document_models]
 
     # let's build a model to use for this sample
-    poller = document_model_admin_client.begin_build_document_model(ModelBuildMode.TEMPLATE, blob_container_url=container_sas_url, description="model for sample")
+    poller = document_model_admin_client.begin_build_document_model(
+        ModelBuildMode.TEMPLATE,
+        blob_container_url=container_sas_url,
+        description="model for sample",
+    )
     model = poller.result()
 
     # [START get_document_model]
@@ -79,14 +89,17 @@ def sample_manage_models():
     # [END delete_document_model]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         sample_manage_models()
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

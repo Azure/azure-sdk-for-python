@@ -1,3 +1,4 @@
+# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -45,24 +46,36 @@ async def sample_compose_model_async():
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-    po_supplies = os.environ['PURCHASE_ORDER_OFFICE_SUPPLIES_SAS_URL']
-    po_equipment = os.environ['PURCHASE_ORDER_OFFICE_EQUIPMENT_SAS_URL']
-    po_furniture = os.environ['PURCHASE_ORDER_OFFICE_FURNITURE_SAS_URL']
-    po_cleaning_supplies = os.environ['PURCHASE_ORDER_OFFICE_CLEANING_SUPPLIES_SAS_URL']
+    po_supplies = os.environ["PURCHASE_ORDER_OFFICE_SUPPLIES_SAS_URL"]
+    po_equipment = os.environ["PURCHASE_ORDER_OFFICE_EQUIPMENT_SAS_URL"]
+    po_furniture = os.environ["PURCHASE_ORDER_OFFICE_FURNITURE_SAS_URL"]
+    po_cleaning_supplies = os.environ["PURCHASE_ORDER_OFFICE_CLEANING_SUPPLIES_SAS_URL"]
 
-    document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_model_admin_client = DocumentModelAdministrationClient(
+        endpoint=endpoint, credential=AzureKeyCredential(key)
+    )
     async with document_model_admin_client:
         supplies_poller = await document_model_admin_client.begin_build_document_model(
-            ModelBuildMode.TEMPLATE, blob_container_url=po_supplies, description="Purchase order-Office supplies"
+            ModelBuildMode.TEMPLATE,
+            blob_container_url=po_supplies,
+            description="Purchase order-Office supplies",
         )
         equipment_poller = await document_model_admin_client.begin_build_document_model(
-            ModelBuildMode.TEMPLATE, blob_container_url=po_equipment, description="Purchase order-Office Equipment"
+            ModelBuildMode.TEMPLATE,
+            blob_container_url=po_equipment,
+            description="Purchase order-Office Equipment",
         )
         furniture_poller = await document_model_admin_client.begin_build_document_model(
-            ModelBuildMode.TEMPLATE, blob_container_url=po_furniture, description="Purchase order-Furniture"
+            ModelBuildMode.TEMPLATE,
+            blob_container_url=po_furniture,
+            description="Purchase order-Furniture",
         )
-        cleaning_supplies_poller = await document_model_admin_client.begin_build_document_model(
-            ModelBuildMode.TEMPLATE, blob_container_url=po_cleaning_supplies, description="Purchase order-Cleaning Supplies"
+        cleaning_supplies_poller = (
+            await document_model_admin_client.begin_build_document_model(
+                ModelBuildMode.TEMPLATE,
+                blob_container_url=po_cleaning_supplies,
+                description="Purchase order-Cleaning Supplies",
+            )
         )
         supplies_model = await supplies_poller.result()
         equipment_model = await equipment_poller.result()
@@ -73,7 +86,7 @@ async def sample_compose_model_async():
             supplies_model.model_id,
             equipment_model.model_id,
             furniture_model.model_id,
-            cleaning_supplies_model.model_id
+            cleaning_supplies_model.model_id,
         ]
 
         poller = await document_model_admin_client.begin_compose_document_model(
@@ -100,14 +113,18 @@ async def sample_compose_model_async():
 async def main():
     await sample_compose_model_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         asyncio.run(main())
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

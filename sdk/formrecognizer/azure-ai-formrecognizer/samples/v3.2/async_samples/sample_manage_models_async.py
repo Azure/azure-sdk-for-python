@@ -1,3 +1,4 @@
+# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -35,7 +36,9 @@ async def sample_manage_models_async():
     container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
     # [START get_resource_details_async]
-    document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_model_admin_client = DocumentModelAdministrationClient(
+        endpoint=endpoint, credential=AzureKeyCredential(key)
+    )
 
     async with document_model_admin_client:
         account_details = await document_model_admin_client.get_resource_details()
@@ -60,11 +63,17 @@ async def sample_manage_models_async():
         # [END list_document_models_async]
 
         # let's build a model to use for this sample
-        poller = await document_model_admin_client.begin_build_document_model(ModelBuildMode.TEMPLATE, blob_container_url=container_sas_url, description="model for sample")
+        poller = await document_model_admin_client.begin_build_document_model(
+            ModelBuildMode.TEMPLATE,
+            blob_container_url=container_sas_url,
+            description="model for sample",
+        )
         model = await poller.result()
 
         # [START get_document_model_async]
-        my_model = await document_model_admin_client.get_document_model(model_id=model.model_id)
+        my_model = await document_model_admin_client.get_document_model(
+            model_id=model.model_id
+        )
         print(f"\nModel ID: {my_model.model_id}")
         print(f"Description: {my_model.description}")
         print(f"Model created on: {my_model.created_on}")
@@ -73,10 +82,14 @@ async def sample_manage_models_async():
 
         # Finally, we will delete this model by ID
         # [START delete_document_model_async]
-        await document_model_admin_client.delete_document_model(model_id=my_model.model_id)
+        await document_model_admin_client.delete_document_model(
+            model_id=my_model.model_id
+        )
 
         try:
-            await document_model_admin_client.get_document_model(model_id=my_model.model_id)
+            await document_model_admin_client.get_document_model(
+                model_id=my_model.model_id
+            )
         except ResourceNotFoundError:
             print(f"Successfully deleted model with ID {my_model.model_id}")
         # [END delete_document_model_async]
@@ -85,14 +98,18 @@ async def sample_manage_models_async():
 async def main():
     await sample_manage_models_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         asyncio.run(main())
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

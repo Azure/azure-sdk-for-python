@@ -1,3 +1,4 @@
+# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -43,17 +44,21 @@ async def sample_copy_model_to_async(custom_model_id):
     target_key = os.environ["AZURE_FORM_RECOGNIZER_TARGET_KEY"]
     source_model_id = os.getenv("AZURE_SOURCE_MODEL_ID", custom_model_id)
 
-    target_client = DocumentModelAdministrationClient(endpoint=target_endpoint, credential=AzureKeyCredential(target_key))
+    target_client = DocumentModelAdministrationClient(
+        endpoint=target_endpoint, credential=AzureKeyCredential(target_key)
+    )
     async with target_client:
         target = await target_client.get_copy_authorization(
             description="model copied from other resource"
         )
 
-    source_client = DocumentModelAdministrationClient(endpoint=source_endpoint, credential=AzureKeyCredential(source_key))
+    source_client = DocumentModelAdministrationClient(
+        endpoint=source_endpoint, credential=AzureKeyCredential(source_key)
+    )
     async with source_client:
         poller = await source_client.begin_copy_document_model_to(
             model_id=source_model_id,
-            target=target  # output from target client's call to get_copy_authorization()
+            target=target,  # output from target client's call to get_copy_authorization()
         )
         copied_over_model = await poller.result()
 
@@ -75,7 +80,6 @@ async def sample_copy_model_to_async(custom_model_id):
 async def main():
     model_id = None
     if os.getenv("CONTAINER_SAS_URL"):
-
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
         from azure.ai.formrecognizer import ModelBuildMode
@@ -93,20 +97,27 @@ async def main():
             blob_container_sas_url = os.getenv("CONTAINER_SAS_URL")
             if blob_container_sas_url is not None:
                 model = await (
-                    await document_model_admin_client.begin_build_document_model(ModelBuildMode.TEMPLATE, blob_container_url=blob_container_sas_url)
+                    await document_model_admin_client.begin_build_document_model(
+                        ModelBuildMode.TEMPLATE,
+                        blob_container_url=blob_container_sas_url,
+                    )
                 ).result()
                 model_id = model.model_id
 
     await sample_copy_model_to_async(model_id)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         asyncio.run(main())
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

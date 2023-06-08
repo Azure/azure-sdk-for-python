@@ -1,3 +1,4 @@
+# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -32,7 +33,9 @@ def sample_get_operations():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_model_admin_client = DocumentModelAdministrationClient(
+        endpoint=endpoint, credential=AzureKeyCredential(key)
+    )
 
     operations = list(document_model_admin_client.list_operations())
 
@@ -44,14 +47,18 @@ def sample_get_operations():
         print(f"Operation percent completed: {operation.percent_completed}")
         print(f"Operation created on: {operation.created_on}")
         print(f"Operation last updated on: {operation.last_updated_on}")
-        print(f"Resource location of successful operation: {operation.resource_location}")
+        print(
+            f"Resource location of successful operation: {operation.resource_location}"
+        )
     # [END list_operations]
 
     # [START get_operation]
     # Get an operation by ID
     if operations:
         print(f"\nGetting operation info by ID: {operations[0].operation_id}")
-        operation_info = document_model_admin_client.get_operation(operations[0].operation_id)
+        operation_info = document_model_admin_client.get_operation(
+            operations[0].operation_id
+        )
         if operation_info.status == "succeeded":
             print(f"My {operation_info.kind} operation is completed.")
             result = operation_info.result
@@ -71,14 +78,18 @@ def sample_get_operations():
         print("No operations found.")
     # [END get_operation]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         sample_get_operations()
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:
