@@ -31,8 +31,8 @@ def main():
 
     response = client.traffic_controller_interface.update(
         resource_group_name="rg1",
-        traffic_controller_name="TC1",
-        properties={"properties": {"configurationEndpoints": ["abc.eastus.trafficcontroller.azure.net"]}},
+        traffic_controller_name="tc1",
+        properties={"tags": {"key1": "value1"}},
     )
     print(response)
 

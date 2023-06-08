@@ -19,6 +19,7 @@ from azure.core.paging import ItemPaged
 from azure.core.credentials import AzureKeyCredential
 from azure.communication.jobrouter._shared.policy import HMACCredentialsPolicy
 
+from ._generated.models._patch import _convert_str_to_datetime  # pylint:disable=protected-access
 from ._generated._serialization import Serializer  # pylint:disable=protected-access
 from ._generated import AzureCommunicationJobRouterService
 from ._generated.models import (
@@ -31,6 +32,7 @@ from ._generated.models import (
     CancelJobRequest,
     CompleteJobRequest,
     CloseJobRequest,
+    DeclineJobOfferRequest,
     WorkerSelector,
     ChannelConfiguration,
     RouterWorker,
@@ -557,6 +559,8 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             labels: Optional[Dict[str, Union[int, float, str, bool]]],
             tags: Optional[Dict[str, Union[int, float, str, bool]]],
             notes: Optional[Dict[datetime, str]],
+            unavailable_for_matching: Optional[bool],
+            scheduled_time_utc: Optional[Union[str, datetime]],
             **kwargs: Any
     ) -> RouterJob:
         """ Update a job.
@@ -595,6 +599,15 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
 
         :keyword notes: Notes attached to a job, sorted by timestamp.
         :paramtype notes: Optional[Dict[~datetime.datetime, str]]
+
+        :keyword unavailable_for_matching: A flag indicating this job is not ready for being matched with
+         workers.
+         When set to true, job matching will not be started. If set to false, job matching will start
+         automatically.
+         :paramtype unavailable_for_matching: Optional[bool]
+
+         :keyword scheduled_time_utc: If set, job will be scheduled to be enqueued at a given time.
+         :paramtype scheduled_time_utc: Optional[Union[str, ~datetime.datetime]]
 
 
         :return: RouterJob
@@ -650,6 +663,15 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         :keyword notes: Notes attached to a job, sorted by timestamp.
         :paramtype notes: Optional[Dict[~datetime.datetime, str]]
 
+        :keyword unavailable_for_matching: A flag indicating this job is not ready for being matched with
+         workers.
+         When set to true, job matching will not be started. If set to false, job matching will start
+         automatically.
+         :paramtype unavailable_for_matching: Optional[bool]
+
+         :keyword scheduled_time_utc: If set, job will be scheduled to be enqueued at a given time.
+         :paramtype scheduled_time_utc: Optional[Union[str, ~datetime.datetime]]
+
 
         :return: RouterJob
         :rtype: ~azure.communication.jobrouter.RouterJob
@@ -682,7 +704,9 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                                                     router_job.requested_worker_selectors),
             labels = kwargs.pop('labels', router_job.labels),
             tags = kwargs.pop('tags', router_job.tags),
-            notes = kwargs.pop('notes', router_job.notes)
+            notes = kwargs.pop('notes', router_job.notes),
+            unavailable_for_matching = kwargs.pop('unavailable_for_matching', router_job.unavailable_for_matching),
+            scheduled_time_utc = kwargs.pop('scheduled_time_utc', router_job.scheduled_time_utc)
         )
 
         return self._client.job_router.upsert_job(
@@ -730,6 +754,8 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             channel_id: Optional[str] = None,
             queue_id: Optional[str] = None,
             classification_policy_id: Optional[str] = None,
+            scheduled_before: Optional[Union[str, datetime]] = None,
+            scheduled_after: Optional[Union[str, datetime]] = None,
             results_per_page: Optional[int] = None,
             **kwargs: Any
     ) -> ItemPaged[RouterJobItem]:
@@ -748,6 +774,15 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
 
         :keyword classification_policy_id: If specified, filter jobs by classificationPolicy. Default value is None.
         :paramtype classification_policy_id: Optional[str]
+
+        :keyword scheduled_before: If specified, filter on jobs that was scheduled before or
+         at given timestamp. Range: (-Inf, scheduledBefore]. Default value is None.
+        :paramtype scheduled_before: Optional[Union[str, ~datetime.datetime]]
+
+        :keyword scheduled_after: If specified, filter on jobs that was scheduled at or
+         after given value. Range: [scheduledAfter, +Inf). Default value is None.
+        :paramtype scheduled_after: Optional[Union[str, ~datetime.datetime]]
+
 
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
 
@@ -772,11 +807,26 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :language: python
                 :dedent: 8
                 :caption: Use a RouterClient to retrieve jobs in batches
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops.py
+                :start-after: [START list_scheduled_jobs]
+                :end-before: [END list_scheduled_jobs]
+                :language: python
+                :dedent: 8
+                :caption: Use a RouterClient to retrieve scheduled jobs
         """
 
         params = {}
         if results_per_page is not None:
             params['maxpagesize'] = _SERIALIZER.query("maxpagesize", results_per_page, 'int')
+
+        if scheduled_before is not None and isinstance(scheduled_before, str):
+            scheduled_before = _convert_str_to_datetime(scheduled_before)
+
+        if scheduled_after is not None and isinstance(scheduled_after, str):
+            scheduled_after = _convert_str_to_datetime(scheduled_after)
 
         return self._client.job_router.list_jobs(
             params = params,
@@ -784,6 +834,8 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             channel_id = channel_id,
             queue_id = queue_id,
             classification_policy_id = classification_policy_id,
+            scheduled_before = scheduled_before,
+            scheduled_after = scheduled_after,
             **kwargs
         )
 
@@ -1145,6 +1197,12 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         :param offer_id: Id of the offer.
         :type offer_id: str
 
+        :keyword reoffer_time_utc: If the reoffer time is not provided, then this job will not be re-offered to the
+        worker who declined this job unless the worker is de-registered and re-registered.  If a reoffer time is
+        provided, then the job will be re-matched to eligible workers after the reoffer time.  The worker that declined
+        the job will also be eligible for the job at that time.
+        :paramtype reoffer_time_utc: Optional[Union[str, ~datetime.datetime]]
+
         :return: DeclineJobOfferResult
         :rtype: ~azure.communication.jobrouter.DeclineJobOfferResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -1164,9 +1222,14 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         if not offer_id:
             raise ValueError("offer_id cannot be None.")
 
+        decline_job_offer_request = DeclineJobOfferRequest(
+            reoffer_time_utc = kwargs.pop('reoffer_time_utc', None)
+        )
+
         return self._client.job_router.decline_job_action(
             worker_id = worker_id,
             offer_id = offer_id,
+            decline_job_offer_request = decline_job_offer_request,
             # pylint:disable=protected-access
             cls = lambda http_response, deserialized_response, args: DeclineJobOfferResult(deserialized_response),
             **kwargs

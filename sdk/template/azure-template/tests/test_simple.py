@@ -10,7 +10,6 @@ from azure.template import template_main
 # `AzureRecordedTestCase` provides methods for client creation, resource naming, and more.
 # Tools from `devtools_testutils` are not required; plain `pytest` unit tests can be sufficient in some scenarios.
 class TestDataPlane(AzureRecordedTestCase):
-
     def setup_method(self, method):
         # Code in this optional method will be executed before each test in the class runs.
         # Fixtures can also perform test-specific setup: https://docs.pytest.org/latest/explanation/fixtures.html
@@ -24,7 +23,6 @@ class TestDataPlane(AzureRecordedTestCase):
 # This class should only be used by management-plane libraries in most cases. `azure-mgmt-*` libraries have their own
 # reference material for testing: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/tests.md.
 class TestMgmtPlane(AzureMgmtRecordedTestCase):
-
     def setup_method(self, method):
         pass
 

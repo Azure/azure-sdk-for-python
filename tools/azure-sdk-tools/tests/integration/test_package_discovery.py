@@ -109,3 +109,4 @@ def test_discovery_honors_override():
         "azure-core-tracing-opentelemetry",
         "azure-mgmt-core",
     ]
+    

@@ -10,7 +10,7 @@ from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
 import msal
 import pytest
-from six.moves.urllib_parse import urlparse
+from urllib.parse import urlparse
 
 from helpers import (
     build_aad_response,

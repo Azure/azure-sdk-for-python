@@ -53,7 +53,7 @@ from ..constants import (
     TLS_HEADER_FRAME,
     WEBSOCKET_PORT,
     AMQP_WS_SUBPROTOCOL,
-    TIMEOUT_INTERVAL,
+    CONNECT_TIMEOUT,
 )
 from .._transport import (
     AMQP_FRAME,
@@ -235,7 +235,6 @@ class AsyncTransport(
         host,
         *,
         port=AMQP_PORT,
-        connect_timeout=None,
         ssl_opts=False,
         socket_settings=None,
         raise_on_initial_eintr=True,
@@ -248,8 +247,6 @@ class AsyncTransport(
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
         self.host, self.port = to_host_port(host, port)
-
-        self.connect_timeout = connect_timeout
         self.socket_settings = socket_settings
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts
@@ -426,17 +423,17 @@ class WebSocketTransportAsync(
         host,
         *,
         port=WEBSOCKET_PORT,
-        connect_timeout=None,
+        socket_timeout=CONNECT_TIMEOUT,
         ssl_opts=None,
         **kwargs
     ):
         self._read_buffer = BytesIO()
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else None
-        self._connect_timeout = connect_timeout or TIMEOUT_INTERVAL
+        self.socket_timeout = socket_timeout
         self._custom_endpoint = kwargs.get("custom_endpoint")
         self.host, self.port = to_host_port(host, port)
-        self.ws = None
+        self.sock = None
         self.session = None
         self._http_proxy = kwargs.get("http_proxy", None)
         self.connected = False
@@ -486,9 +483,9 @@ class WebSocketTransportAsync(
             # https://github.com/aio-libs/aiohttp/pull/5860
             # https://github.com/aio-libs/aiohttp/issues/2309
 
-            self.ws = await self.session.ws_connect(
+            self.sock = await self.session.ws_connect(
                 url=url,
-                timeout=self._connect_timeout,
+                timeout=self.socket_timeout,    # timeout for connect
                 protocols=[AMQP_WS_SUBPROTOCOL],
                 autoclose=False,
                 proxy=http_proxy_host,
@@ -516,7 +513,7 @@ class WebSocketTransportAsync(
         toread -= nbytes
         try:
             while toread:
-                data = await self.ws.receive_bytes()
+                data = await self.sock.receive_bytes()
                 read_length = len(data)
                 if read_length <= toread:
                     view[length : length + read_length] = data
@@ -534,7 +531,7 @@ class WebSocketTransportAsync(
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
         async with self.socket_lock:
-            await self.ws.close()
+            await self.sock.close()
             await self.session.close()
             self.connected = False
 
@@ -544,4 +541,4 @@ class WebSocketTransportAsync(
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        await self.ws.send_bytes(s)
+        await self.sock.send_bytes(s)

@@ -130,6 +130,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         *,
         workspace_name: Optional[str] = None,
         include_spark: Optional[bool] = False,
+        **kwargs,
     ) -> LROPoller[ManagedNetworkProvisionStatus]:
         """Triggers the workspace to provision the managed network. Specifying spark enabled
         as true prepares the workspace managed network for supporting Spark.
@@ -147,6 +148,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             ManagedNetworkProvisionOptions(include_spark=include_spark),
             polling=True,
             cls=lambda response, deserialized, headers: ManagedNetworkProvisionStatus._from_rest_object(deserialized),
+            **kwargs,
         )
         module_logger.info("Provision network request initiated for workspace: %s\n", workspace_name)
         return poller
