@@ -409,14 +409,14 @@ class Component(
         rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
         init_kwargs = cls._load_with_schema(rest_component_version.component_spec, unknown=INCLUDE)
         init_kwargs.update(
-            dict(
-                id=obj.id,
-                is_anonymous=rest_component_version.is_anonymous,
-                creation_context=obj.system_data,
-                inputs=inputs,
-                outputs=outputs,
-                name=origin_name,
-            )
+            {
+                "id": obj.id,
+                "is_anonymous": rest_component_version.is_anonymous,
+                "creation_context": obj.system_data,
+                "inputs": inputs,
+                "outputs": outputs,
+                "name": origin_name,
+            }
         )
 
         # remove empty values, because some property only works for specific component, eg: distribution for command
@@ -428,10 +428,14 @@ class Component(
 
         same anonymous component(same code and interface) will have same name.
         """
-        component_interface_dict = self._to_dict()
         # omit version since anonymous component's version is random guid
         # omit name since name doesn't impact component's uniqueness
-        return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])
+        return self._get_component_hash(keys_to_omit=["name", "id", "version"])
+
+    def _get_component_hash(self, keys_to_omit=None) -> str:
+        """Return the hash of component."""
+        component_interface_dict = self._to_dict()
+        return hash_dict(component_interface_dict, keys_to_omit=keys_to_omit)
 
     @classmethod
     def _get_resource_type(cls) -> str:
@@ -510,7 +514,7 @@ class Component(
             component_spec=component,
             description=self.description,
             is_anonymous=self._is_anonymous,
-            properties=self.properties,
+            properties=dict(self.properties) if self.properties else {},
             tags=self.tags,
         )
         result = ComponentVersion(properties=properties)
@@ -518,6 +522,7 @@ class Component(
             result.name = ANONYMOUS_COMPONENT_NAME
         else:
             result.name = self.name
+            result.properties.properties["client_component_hash"] = self._get_component_hash(keys_to_omit=["version"])
         return result
 
     def _to_dict(self) -> Dict:

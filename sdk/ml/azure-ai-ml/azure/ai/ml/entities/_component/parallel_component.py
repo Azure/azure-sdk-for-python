@@ -79,7 +79,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
         Details will be provided in the error message.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         name: Optional[str] = None,
@@ -154,7 +154,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
 
             try:
                 self.mini_batch_size = int(self.mini_batch_size)
-            except ValueError:
+            except ValueError as e:
                 unit = self.mini_batch_size[-2:].lower()
                 if unit == "kb":
                     self.mini_batch_size = int(self.mini_batch_size[0:-2]) * 1024
@@ -163,7 +163,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
                 elif unit == "gb":
                     self.mini_batch_size = int(self.mini_batch_size[0:-2]) * 1024 * 1024 * 1024
                 else:
-                    raise ValueError("mini_batch_size unit must be kb, mb or gb")
+                    raise ValueError("mini_batch_size unit must be kb, mb or gb") from e
 
     @property
     def instance_count(self) -> int:

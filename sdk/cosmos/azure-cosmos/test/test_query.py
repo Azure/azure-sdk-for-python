@@ -10,6 +10,8 @@ from azure.cosmos.documents import _DistinctType
 import pytest
 import collections
 import test_config
+from unittest.mock import MagicMock
+from azure.cosmos import http_constants
 
 pytestmark = pytest.mark.cosmosEmulator
 
@@ -827,6 +829,23 @@ class QueryTest(unittest.TestCase):
         ], enable_cross_partition_query=True)
 
         self.assertListEqual(list(query_results), [None])
+
+    def side_effect_continuation_token_size_limit(self, *args, **kwargs):
+        # Extract request headers from args
+        self.assertTrue(args[2][http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] is 8)
+        raise StopIteration
+
+    def test_continuation_token_size_limit_query(self):
+        container = self.created_db.create_container_if_not_exists(
+            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+        cosmos_client_connection = container.client_connection
+        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
+            side_effect=self.side_effect_continuation_token_size_limit)
+        try:
+            query = "Select * from c"
+            container.query_items(query, response_continuation_token_limit_in_kb=8)
+        except StopIteration:
+            pass
 
     def _MockNextFunction(self):
         if self.count < len(self.payloads):
