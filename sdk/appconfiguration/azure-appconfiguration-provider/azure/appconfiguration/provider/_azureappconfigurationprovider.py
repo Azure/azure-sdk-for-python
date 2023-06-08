@@ -77,6 +77,8 @@ def load(
     :paramtype trim_prefixes: Optional[List[str]]
     :keyword key_vault_options: Options for resolving Key Vault references
     :paramtype key_vault_options: ~azure.appconfiguration.provider.AzureAppConfigurationKeyVaultOptions
+    :keyword refresh_options: Options for refreshing configuration settings
+    :paramtype refresh_options: ~azure.appconfiguration.provider.AzureAppConfigurationRefreshOptions
     """
     ...
 
@@ -101,6 +103,8 @@ def load(
     :paramtype trim_prefixes: Optional[List[str]]
     :keyword key_vault_options: Options for resolving Key Vault references
     :paramtype key_vault_options: ~azure.appconfiguration.provider.AzureAppConfigurationKeyVaultOptions
+    :keyword refresh_options: Options for refreshing configuration settings
+    :paramtype refresh_options: ~azure.appconfiguration.provider.AzureAppConfigurationRefreshOptions
     """
     ...
 
