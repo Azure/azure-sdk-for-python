@@ -76,7 +76,7 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
         validation_data = Input(type=AssetTypes.MLTABLE, path=val_path)
 
         properties = get_automl_job_properties()
-        properties["_pipeline_id_override"] = "azureml://registries/azmlft-dev-registry01/components/image_instance_segmentation_pipeline/versions/0.0.5"
+        properties["_pipeline_id_override"] = "azureml://registries/azmlft-dev-registry01/components/image_instance_segmentation_pipeline"
 
         # Make generic segmentation job
         image_instance_segmentation_job = automl.image_instance_segmentation(
@@ -99,6 +99,7 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
                     learning_rate=Uniform(0.0001, 0.001),
                     optimizer=Choice(["sgd", "adam", "adamw"]),
                     min_size=Choice([600, 800]),
+                    number_of_epochs=Choice([1]),
                 ),
             ]
         )
@@ -119,6 +120,7 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
                     model_name=Choice(["mask_rcnn_swin-s-p4-w7_fpn_fp16_ms-crop-3x_coco"]),
                     learning_rate=Uniform(0.0001, 0.001),
                     optimizer=Choice(["sgd", "adamw_hf", "adamw"]),
+                    number_of_epochs=Choice([1]),
                 ),
             ]
         )

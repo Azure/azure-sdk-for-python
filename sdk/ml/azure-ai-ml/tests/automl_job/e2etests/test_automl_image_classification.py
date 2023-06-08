@@ -84,7 +84,7 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
         training_data = Input(type=AssetTypes.MLTABLE, path=train_path)
         validation_data = Input(type=AssetTypes.MLTABLE, path=val_path)
         properties = get_automl_job_properties()
-        properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/image_classification_pipeline/versions/0.0.5"
+        properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/image_classification_pipeline"
 
         # Make generic classification job
         image_classification_job = automl.image_classification(
@@ -105,11 +105,12 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
                 SearchSpace(
                     model_name=Choice(["vitb16r224"]),
                     learning_rate=Uniform(0.001, 0.01),
-                    number_of_epochs=Choice([15, 30]),
+                    number_of_epochs=Choice([1]),
                 ),
                 SearchSpace(
                     model_name=Choice(["seresnext"]),
                     layers_to_freeze=Choice([0, 2]),
+                    number_of_epochs=Choice([1]),
                 ),
             ]
         )
@@ -127,7 +128,7 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
                 SearchSpace(
                     model_name=Choice(["microsoft/beit-base-patch16-224"]),
                     learning_rate=Uniform(0.001, 0.01),
-                    number_of_epochs=Choice([15, 30]),
+                    number_of_epochs=Choice([1]),
                 ),
             ]
         )

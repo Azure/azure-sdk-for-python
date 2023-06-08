@@ -117,7 +117,7 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
         validation_data = Input(type=AssetTypes.MLTABLE, path=val_path)
 
         properties = get_automl_job_properties()
-        properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/image_object_detection_pipeline/versions/0.0.5"
+        properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/image_object_detection_pipeline"
 
         # Make generic detection job
         image_object_detection_job = automl.image_object_detection(
@@ -140,12 +140,14 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
                     model_name=Choice(["yolov5"]),
                     learning_rate=Uniform(0.0001, 0.01),
                     model_size=Choice(["small", "medium"]),  # model-specific
+                    number_of_epochs=Choice([1]),
                 ),
                 SearchSpace(
                     model_name=Choice(["fasterrcnn_resnet50_fpn"]),
                     learning_rate=Uniform(0.0001, 0.001),
                     optimizer=Choice(["sgd", "adam", "adamw"]),
                     min_size=Choice([600, 800]),  # model-specific
+                    number_of_epochs=Choice([1]),
                 ),
             ]
         )
@@ -163,6 +165,7 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
                 SearchSpace(
                     model_name=Choice(["atss_r50_fpn_1x_coco"]),
                     learning_rate=Uniform(0.0001, 0.01),
+                    number_of_epochs=Choice([1]),
                 ),
             ]
         )

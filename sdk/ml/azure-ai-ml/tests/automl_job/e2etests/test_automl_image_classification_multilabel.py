@@ -89,7 +89,7 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
         training_data = Input(type=AssetTypes.MLTABLE, path=train_path)
         validation_data = Input(type=AssetTypes.MLTABLE, path=val_path)
         properties = get_automl_job_properties()
-        properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/image_classification_pipeline/versions/0.0.5"
+        properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/image_classification_pipeline"
 
         # Make generic multilabel classification job
         image_classification_multilabel_job = automl.image_classification_multilabel(
@@ -111,7 +111,7 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
                 SearchSpace(
                     model_name=Choice(["vitb16r224"]),
                     learning_rate=Uniform(0.005, 0.05),
-                    number_of_epochs=Choice([15, 30]),
+                    number_of_epochs=Choice([1]),
                     gradient_accumulation_step=Choice([1, 2]),
                 ),
                 SearchSpace(
@@ -121,6 +121,7 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
                     validation_resize_size=Choice([288, 320, 352]),
                     validation_crop_size=Choice([224, 256]),  # model-specific
                     training_crop_size=Choice([224, 256]),  # model-specific
+                    number_of_epochs=Choice([1]),
                 ),
             ]
         )
@@ -140,7 +141,7 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
                 SearchSpace(
                     model_name=Choice(["microsoft/beit-base-patch16-224"]),
                     learning_rate=Uniform(0.005, 0.05),
-                    number_of_epochs=Choice([15, 30]),
+                    number_of_epochs=Choice([1]),
                     gradient_accumulation_step=Choice([1, 2]),
                 ),
             ]
