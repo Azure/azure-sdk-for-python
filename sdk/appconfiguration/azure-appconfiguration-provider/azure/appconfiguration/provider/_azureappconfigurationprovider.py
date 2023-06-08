@@ -7,6 +7,7 @@ import os
 import json
 import random
 from datetime import datetime, timedelta
+from functools import wraps
 import logging
 from typing import (
     Any,
@@ -271,6 +272,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         self._configuration_refresh = self._ConfigurationRefresh(**kwargs)
 
     def drefresh(self, func):  # cspell:disable-line
+        @wraps(func)
         def refresh_wrapper(*args, **kwargs):
             self.refresh()
             return func(*args, **kwargs)
@@ -280,7 +282,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
     def refresh(self, **kwargs) -> None:
         # pylint:disable=protected-access
         refresh_registrations = self._configuration_refresh.refresh_options._refresh_registrations
-        if self._configuration_refresh.refresh_options is None or len(refresh_registrations) == 0:
+        if len(refresh_registrations) == 0:
             logging.debug("Refresh called but no refresh options set.")
             self._configuration_refresh.refresh_options._on_error()
             return
