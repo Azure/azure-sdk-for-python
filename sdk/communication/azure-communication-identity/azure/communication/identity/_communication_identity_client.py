@@ -5,8 +5,6 @@
 # ------------------------------------
 
 from typing import TYPE_CHECKING, Any, Tuple, Union
-from datetime import datetime
-from uuid import uuid1
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import AccessToken
 from ._generated._client\
@@ -15,18 +13,11 @@ from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._shared.models import CommunicationUserIdentifier
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
-from ._utils import convert_timedelta_to_mins
+from ._utils import convert_timedelta_to_mins, get_repeatability_headers
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureKeyCredential
     from ._generated.models import CommunicationTokenScope
-
-
-def get_repeatability_headers():
-    """ Initializes and returns Repeatability Headers """
-    repeatability_request_id = uuid1()
-    repeatability_first_sent = datetime.utcnow()
-    return repeatability_request_id, repeatability_first_sent
 
 
 class CommunicationIdentityClient(object):
