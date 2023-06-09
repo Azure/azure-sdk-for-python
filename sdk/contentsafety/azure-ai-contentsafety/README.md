@@ -5,7 +5,7 @@
 
 ## Getting started
 
-### Prerequisite
+### Prerequisites
 
 - Python 3.7 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
