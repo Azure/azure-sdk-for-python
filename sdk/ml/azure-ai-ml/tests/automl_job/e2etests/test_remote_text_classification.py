@@ -48,6 +48,7 @@ class TestTextClassification(AzureRecordedTestCase):
     ) -> None:
         training_data, validation_data, target_column_name = newsgroup
         properties = get_automl_job_properties()
+        properties["_aml_internal_automl_subgraph_orchestration"] = "true"
         properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/nlp_textclassification_multiclass"
 
         job = text_classification(

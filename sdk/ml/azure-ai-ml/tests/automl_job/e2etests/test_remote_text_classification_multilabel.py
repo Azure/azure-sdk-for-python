@@ -43,7 +43,8 @@ class TestTextClassificationMultilabel(AzureRecordedTestCase):
     ) -> None:
         training_data, validation_data, target_column_name = paper_categorization
         properties = get_automl_job_properties()
-        properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/nlp_textclassification_multilabel/versions/0.0.1"
+        properties["_aml_internal_automl_subgraph_orchestration"] = "true"
+        properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/nlp_textclassification_multilabel"
 
         job = text_classification_multilabel(
             training_data=training_data,

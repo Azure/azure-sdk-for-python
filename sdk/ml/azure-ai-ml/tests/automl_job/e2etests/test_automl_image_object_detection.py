@@ -191,7 +191,7 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
         validation_data = Input(type=AssetTypes.MLTABLE, path=val_path)
 
         properties = get_automl_job_properties()
-        properties["_aml_internal_automl_subgraph_orchestration"] = "true",
+        properties["_aml_internal_automl_subgraph_orchestration"] = "true"
         properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/image_object_detection_pipeline"
 
         # Make generic detection job
