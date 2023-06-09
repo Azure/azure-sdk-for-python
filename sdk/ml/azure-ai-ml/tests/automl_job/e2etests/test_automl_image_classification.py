@@ -154,7 +154,9 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
         validation_data = Input(type=AssetTypes.MLTABLE, path=val_path)
         properties = get_automl_job_properties()
         properties["_aml_internal_automl_subgraph_orchestration"] = "true"
-        properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/image_classification_pipeline"
+        properties[
+            "_pipeline_id_override"
+        ] = "azureml://registries/azmlft-dev-registry01/components/image_classification_pipeline"
 
         # Make generic classification job
         image_classification_job = automl.image_classification(
@@ -164,7 +166,7 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
             primary_metric="accuracy",
             compute="gpu-cluster",
             experiment_name="image-e2e-tests",
-            properties=properties
+            properties=properties,
         )
 
         # Configure regular sweep job

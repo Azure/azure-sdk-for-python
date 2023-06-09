@@ -167,7 +167,9 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
         validation_data = Input(type=AssetTypes.MLTABLE, path=val_path)
         properties = get_automl_job_properties()
         properties["_aml_internal_automl_subgraph_orchestration"] = "true"
-        properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/image_classification_pipeline"
+        properties[
+            "_pipeline_id_override"
+        ] = "azureml://registries/azmlft-dev-registry01/components/image_classification_pipeline"
 
         # Make generic multilabel classification job
         image_classification_multilabel_job = automl.image_classification_multilabel(
@@ -240,7 +242,9 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
 
         # Trigger regular sweep and then AutoMode job
         submitted_job_sweep = client.jobs.create_or_update(image_classification_multilabel_job_sweep)
-        submitted_job_component_sweep = client.jobs.create_or_update(image_classification_multilabel_job_component_sweep)
+        submitted_job_component_sweep = client.jobs.create_or_update(
+            image_classification_multilabel_job_component_sweep
+        )
         submitted_job_automode = client.jobs.create_or_update(image_classification_multilabel_job_automode)
 
         # Assert completion of regular sweep job

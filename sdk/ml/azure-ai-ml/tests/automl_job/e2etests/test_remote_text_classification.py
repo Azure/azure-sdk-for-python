@@ -32,7 +32,7 @@ class TestTextClassification(AzureRecordedTestCase):
             target_column_name=target_column_name,
             compute="gpu-cluster",
             experiment_name="DPv2-text-classification",
-            properties=get_automl_job_properties()
+            properties=get_automl_job_properties(),
         )
         job.set_limits(timeout_minutes=60, max_concurrent_trials=1)
         job.set_featurization(dataset_language="eng")
@@ -49,7 +49,9 @@ class TestTextClassification(AzureRecordedTestCase):
         training_data, validation_data, target_column_name = newsgroup
         properties = get_automl_job_properties()
         properties["_aml_internal_automl_subgraph_orchestration"] = "true"
-        properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/nlp_textclassification_multiclass"
+        properties[
+            "_pipeline_id_override"
+        ] = "azureml://registries/azmlft-dev-registry01/components/nlp_textclassification_multiclass"
 
         job = text_classification(
             training_data=training_data,

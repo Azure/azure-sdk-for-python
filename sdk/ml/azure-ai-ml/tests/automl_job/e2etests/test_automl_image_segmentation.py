@@ -127,7 +127,9 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
             submitted_job_automode, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600
         )
 
-    def test_image_segmentation_run_components(self, image_segmentation_dataset: Tuple[Input, Input], client: MLClient) -> None:
+    def test_image_segmentation_run_components(
+        self, image_segmentation_dataset: Tuple[Input, Input], client: MLClient
+    ) -> None:
         # Note: this test launches two jobs in order to avoid calling the dataset fixture more than once. Ideally, it
         # would have sufficed to mark the fixture with session scope, but pytest-xdist breaks this functionality:
         # https://github.com/pytest-dev/pytest-xdist/issues/271.
@@ -143,7 +145,9 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
 
         properties = get_automl_job_properties()
         properties["_aml_internal_automl_subgraph_orchestration"] = "true"
-        properties["_pipeline_id_override"] = "azureml://registries/azmlft-dev-registry01/components/image_instance_segmentation_pipeline"
+        properties[
+            "_pipeline_id_override"
+        ] = "azureml://registries/azmlft-dev-registry01/components/image_instance_segmentation_pipeline"
 
         # Make generic segmentation job
         image_instance_segmentation_job = automl.image_instance_segmentation(

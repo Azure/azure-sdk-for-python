@@ -806,6 +806,6 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                     "model_name": "choice('mask_rcnn_swin-s-p4-w7_fpn_fp16_ms-crop-3x_coco')",
                     "optimizer": "choice('sgd','adam','adamw')",
                     "min_size": "choice(600,800)",
-                }
-            ]
+                },
+            ],
         }

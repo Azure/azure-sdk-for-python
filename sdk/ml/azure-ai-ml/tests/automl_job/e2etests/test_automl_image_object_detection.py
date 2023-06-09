@@ -192,7 +192,9 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
 
         properties = get_automl_job_properties()
         properties["_aml_internal_automl_subgraph_orchestration"] = "true"
-        properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/image_object_detection_pipeline"
+        properties[
+            "_pipeline_id_override"
+        ] = "azureml://registries/azmlft-dev-registry01/components/image_object_detection_pipeline"
 
         # Make generic detection job
         image_object_detection_job = automl.image_object_detection(
