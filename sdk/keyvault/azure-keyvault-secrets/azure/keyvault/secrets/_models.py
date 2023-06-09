@@ -18,8 +18,8 @@ class SecretProperties(object):
 
     :param attributes: The secret's attributes.
     :type attributes: ~azure.keyvault.secrets._generated_models.SecretAttributes
-    :param id: The secret's ID.
-    :type id: str or None
+    :param secret_id: The secret's ID.
+    :type secret_id: str or None
 
     :keyword str content_type: The content type of the secret.
     :keyword str key_id: If this is a secret backing a KV certificate, then this field specifies the corresponding key
@@ -31,11 +31,11 @@ class SecretProperties(object):
     """
 
     def __init__(
-        self, attributes: "Optional[_models.SecretAttributes]", id: "Optional[str]", **kwargs
+        self, attributes: "Optional[_models.SecretAttributes]", secret_id: "Optional[str]", **kwargs
     ) -> None:
         self._attributes = attributes
-        self._id = id
-        self._vault_id = KeyVaultSecretIdentifier(id) if id else None
+        self._id = secret_id
+        self._vault_id = KeyVaultSecretIdentifier(secret_id) if secret_id else None
         self._content_type = kwargs.get("content_type", None)
         self._key_id = kwargs.get("key_id", None)
         self._managed = kwargs.get("managed", None)

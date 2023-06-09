@@ -55,7 +55,7 @@ class SymmetricEncryptionAlgorithm(Algorithm):
         raise NotImplementedError()
 
 
-class AuthenticatedSymmetricEncryptionAlgorithm(Algorithm):  # pylint:disable=name-too-long
+class AuthenticatedSymmetricEncryptionAlgorithm(Algorithm):  # pylint:disable=name-too-long,bad-option-value
     @abstractmethod
     def create_encryptor(self, key, iv, auth_data, auth_tag):
         raise NotImplementedError()

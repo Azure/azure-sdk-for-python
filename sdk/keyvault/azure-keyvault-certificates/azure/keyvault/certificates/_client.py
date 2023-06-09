@@ -199,7 +199,7 @@ class CertificateClient(KeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def begin_delete_certificate(self, certificate_name: str, **kwargs) -> LROPoller[DeletedCertificate]:  # pylint: disable=delete-operation-wrong-return-type
+    def begin_delete_certificate(self, certificate_name: str, **kwargs) -> LROPoller[DeletedCertificate]:  # pylint: disable=delete-operation-wrong-return-type,bad-option-value
         """Delete all versions of a certificate. Requires certificates/delete permission.
 
         When this method returns Key Vault has begun deleting the certificate. Deletion may take several seconds in a
@@ -705,7 +705,7 @@ class CertificateClient(KeyVaultClientBase):
         return [CertificateContact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace
-    def delete_contacts(self, **kwargs) -> "List[CertificateContact]":  # pylint: disable=delete-operation-wrong-return-type
+    def delete_contacts(self, **kwargs) -> "List[CertificateContact]":  # pylint: disable=delete-operation-wrong-return-type,bad-option-value
         """Deletes the certificate contacts for the key vault. Requires the certificates/managecontacts permission.
 
         :return: The deleted contacts for the key vault.
@@ -746,7 +746,7 @@ class CertificateClient(KeyVaultClientBase):
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace
-    def delete_certificate_operation(self, certificate_name: str, **kwargs) -> CertificateOperation:  # pylint: disable=delete-operation-wrong-return-type
+    def delete_certificate_operation(self, certificate_name: str, **kwargs) -> CertificateOperation:  # pylint: disable=delete-operation-wrong-return-type,bad-option-value
         """Deletes and stops the creation operation for a specific certificate.
 
         Requires the certificates/update permission.
@@ -989,7 +989,7 @@ class CertificateClient(KeyVaultClientBase):
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
-    def delete_issuer(self, issuer_name: str, **kwargs) -> CertificateIssuer:  # pylint: disable=delete-operation-wrong-return-type
+    def delete_issuer(self, issuer_name: str, **kwargs) -> CertificateIssuer:  # pylint: disable=delete-operation-wrong-return-type,bad-option-value
         """Deletes the specified certificate issuer.
 
         Requires certificates/manageissuers/deleteissuers permission.

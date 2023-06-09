@@ -5,7 +5,7 @@
 
 import asyncio
 import logging
-from typing import Any, Awaitable
+from typing import Any, Awaitable, Callable
 
 from azure.core.polling import AsyncPollingMethod
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
@@ -25,14 +25,16 @@ class AsyncDeleteRecoverPollingMethod(AsyncPollingMethod):
     resource; when it responds 2xx, the resource exists in the non-deleted collection, i.e. its recovery is complete.
 
     :param command: An awaitable to invoke when polling.
-    :type command: Awaitable
+    :type command: Callable
     :param final_resource: The final resource returned by the polling operation.
     :type final_resource: Any
     :param bool finished: Whether or not the polling operation is completed.
     :param int interval: The polling interval, in seconds.
     """
 
-    def __init__(self, command: Awaitable, final_resource: Any, finished: bool, interval: int = 2) -> None:
+    def __init__(
+            self, command: Callable, final_resource: Any, finished: bool, interval: int = 2
+        ) -> None:
         self._command = command
         self._resource = final_resource
         self._polling_interval = interval

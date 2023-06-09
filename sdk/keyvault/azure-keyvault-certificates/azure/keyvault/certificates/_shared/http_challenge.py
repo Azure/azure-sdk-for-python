@@ -102,7 +102,7 @@ class HttpChallenge(object):
         return value
 
     def get_resource(self) -> str:
-        """Returns the resource if present, otherwise anempty string.
+        """Returns the resource if present, otherwise an empty string.
 
         :returns: The challenge resource if present, otherwise an empty string.
         :rtype: str
@@ -131,9 +131,9 @@ class HttpChallenge(object):
         :returns: True if the challenge vault supports message protection; False otherwise.
         :rtype: bool
         """
-        return self.supports_pop() and self.server_encryption_key and self.server_signature_key
+        return self.supports_pop() and self.server_encryption_key and self.server_signature_key  # type: ignore
 
-    def _validate_challenge(self, challenge: str) -> str:
+    def _validate_challenge(self, challenge: str) -> str:  # pylint:disable=no-self-use
         """Verifies that the challenge is a valid auth challenge and returns the key=value pairs.
 
         :param str challenge: The WWW-Authenticate header of the challenge response.
@@ -146,7 +146,7 @@ class HttpChallenge(object):
 
         return challenge.strip()
 
-    def _validate_request_uri(self, uri: str) -> str:
+    def _validate_request_uri(self, uri: str) -> str:  # pylint:disable=no-self-use
         """Extracts the host authority from the given URI.
 
         :param str uri: The URI of the HTTP request that prompted the challenge.

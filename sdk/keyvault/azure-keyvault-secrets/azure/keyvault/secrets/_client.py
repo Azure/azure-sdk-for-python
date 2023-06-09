@@ -297,7 +297,7 @@ class SecretClient(KeyVaultClientBase):
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace
-    def begin_delete_secret(self, name: str, **kwargs) -> "LROPoller[DeletedSecret]":  # pylint:disable=delete-operation-wrong-return-type
+    def begin_delete_secret(self, name: str, **kwargs) -> "LROPoller[DeletedSecret]":  # pylint:disable=delete-operation-wrong-return-type,bad-option-value
         """Delete all versions of a secret. Requires secrets/delete permission.
 
         When this method returns Key Vault has begun deleting the secret. Deletion may take several seconds in a vault
