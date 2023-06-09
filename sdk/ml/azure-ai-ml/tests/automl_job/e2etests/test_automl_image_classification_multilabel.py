@@ -73,7 +73,7 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
                             # train annotation
                             train_f.write(json.dumps(json_line) + "\n")
 
-def test_image_classification_multilabel_run(
+    def test_image_classification_multilabel_run(
         self, image_classification_multilabel_dataset: Tuple[Input, Input], client: MLClient
     ) -> None:
         # Note: this test launches two jobs in order to avoid calling the dataset fixture more than once. Ideally, it

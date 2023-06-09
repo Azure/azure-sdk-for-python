@@ -19,7 +19,6 @@ from azure.ai.ml.operations._run_history_constants import JobStatus
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.skipif(condition=not is_live(), reason="Datasets downloaded by test are too large to record reliably")
 class TestTextClassificationMultilabel(AzureRecordedTestCase):
-
     def test_remote_run_text_classification_multilabel(
         self, paper_categorization: Tuple[Input, Input, str], client: MLClient
     ) -> None:
@@ -31,6 +30,7 @@ class TestTextClassificationMultilabel(AzureRecordedTestCase):
             target_column_name=target_column_name,
             compute="gpu-cluster",
             experiment_name="DPv2-text-classification-multilabel",
+            properties=get_automl_job_properties()
         )
         job.set_limits(timeout_minutes=60, max_concurrent_trials=1)
 

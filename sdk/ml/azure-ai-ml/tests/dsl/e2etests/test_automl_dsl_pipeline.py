@@ -277,7 +277,6 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 target_column_name="y",
                 primary_metric="accuracy",
                 featurization=NlpFeaturizationSettings(dataset_language="eng"),
-                properties=get_automl_job_properties()
             )
             text_classification_node.set_limits(max_concurrent_trials=1)
 
@@ -325,7 +324,6 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 validation_data=text_classification_multilabel_valid,
                 target_column_name="terms",
                 primary_metric="accuracy",
-                properties=get_automl_job_properties()
             )
             text_classification_multilabel_node.set_limits(max_concurrent_trials=1)
 
@@ -373,7 +371,6 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 validation_data=text_ner_valid,
                 target_column_name="label",
                 primary_metric="accuracy",
-                properties=get_automl_job_properties()
             )
             text_ner_node.set_limits(max_concurrent_trials=1)
 
@@ -418,7 +415,6 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 validation_data=image_multiclass_valid_data,
                 target_column_name="label",
                 primary_metric="Accuracy",
-                properties=get_automl_job_properties()
             )
             image_multiclass_node.set_limits(
                 timeout_minutes=60,
@@ -515,7 +511,6 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 validation_data=image_multilabel_valid_data,
                 target_column_name="label",
                 primary_metric="iou",
-                properties=get_automl_job_properties()
             )
             image_multilabel_node.set_limits(
                 timeout_minutes=60,
@@ -612,7 +607,6 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 validation_data=image_object_detection_valid_data,
                 target_column_name="label",
                 primary_metric="MeanAveragePrecision",
-                properties=get_automl_job_properties()
             )
 
             image_object_detection_node.extend_search_space(
@@ -724,7 +718,6 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 target_column_name="label",
                 training_data=image_instance_segmentation_train_data,
                 validation_data=image_instance_segmentation_valid_data,
-                properties=get_automl_job_properties()
             )
             image_instance_segmentation_node.set_limits(
                 timeout_minutes=60,

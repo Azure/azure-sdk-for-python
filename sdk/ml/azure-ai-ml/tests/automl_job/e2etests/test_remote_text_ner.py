@@ -19,7 +19,6 @@ from azure.ai.ml.operations._run_history_constants import JobStatus
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.skipif(condition=not is_live(), reason="Datasets downloaded by test are too large to record reliably")
 class TestTextNer(AzureRecordedTestCase):
-
     def test_remote_run_text_ner(
         self,
         conll: Tuple[Input, Input],
@@ -32,6 +31,7 @@ class TestTextNer(AzureRecordedTestCase):
             validation_data=validation_data,
             compute="gpu-cluster",
             experiment_name="DPv2-text-ner",
+            properties=get_automl_job_properties()
         )
         job.set_limits(timeout_minutes=60, max_concurrent_trials=1)
 
