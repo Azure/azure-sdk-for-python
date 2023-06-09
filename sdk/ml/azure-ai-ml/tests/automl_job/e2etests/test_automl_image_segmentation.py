@@ -75,7 +75,74 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
         training_data = Input(type=AssetTypes.MLTABLE, path=train_path)
         validation_data = Input(type=AssetTypes.MLTABLE, path=val_path)
 
+        # Make generic segmentation job
+        image_instance_segmentation_job = automl.image_instance_segmentation(
+            compute="gpu-cluster",
+            experiment_name="image-e2e-tests",
+            training_data=training_data,
+            validation_data=validation_data,
+            target_column_name="label",
+            primary_metric="MeanAveragePrecision",
+            properties=get_automl_job_properties(),
+        )
+
+        # Configure regular sweep job
+        image_instance_segmentation_job_sweep = copy.deepcopy(image_instance_segmentation_job)
+        image_instance_segmentation_job_sweep.set_training_parameters(early_stopping=True, evaluation_frequency=1)
+        image_instance_segmentation_job_sweep.extend_search_space(
+            [
+                SearchSpace(
+                    model_name=Choice(["maskrcnn_resnet50_fpn"]),
+                    learning_rate=Uniform(0.0001, 0.001),
+                    optimizer=Choice(["sgd", "adam", "adamw"]),
+                    min_size=Choice([600, 800]),
+                ),
+            ]
+        )
+        image_instance_segmentation_job_sweep.set_limits(max_trials=1, max_concurrent_trials=1)
+        image_instance_segmentation_job_sweep.set_sweep(
+            sampling_algorithm="Random",
+            early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
+        )
+
+        # Configure AutoMode job
+        image_instance_segmentation_job_automode = copy.deepcopy(image_instance_segmentation_job)
+        # TODO: after shipping the AutoMode feature, do not set flag and call `set_limits()` instead of changing
+        # the limits object directly.
+        image_instance_segmentation_job_automode.properties["enable_automode"] = True
+        image_instance_segmentation_job_automode.limits.max_trials = 2
+        image_instance_segmentation_job_automode.limits.max_concurrent_trials = 2
+
+        # Trigger regular sweep and then AutoMode job
+        submitted_job_sweep = client.jobs.create_or_update(image_instance_segmentation_job_sweep)
+        submitted_job_automode = client.jobs.create_or_update(image_instance_segmentation_job_automode)
+
+        # Assert completion of regular sweep job
+        assert_final_job_status(
+            submitted_job_sweep, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600
+        )
+
+        # Assert completion of Automode job
+        assert_final_job_status(
+            submitted_job_automode, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600
+        )
+
+    def test_image_segmentation_run_components(self, image_segmentation_dataset: Tuple[Input, Input], client: MLClient) -> None:
+        # Note: this test launches two jobs in order to avoid calling the dataset fixture more than once. Ideally, it
+        # would have sufficed to mark the fixture with session scope, but pytest-xdist breaks this functionality:
+        # https://github.com/pytest-dev/pytest-xdist/issues/271.
+
+        # Get training and validation data
+        train_path, val_path = image_segmentation_dataset
+
+        # Create jsonl file
+        self._create_jsonl_segmentation(client=client, train_path=train_path, val_path=val_path)
+
+        training_data = Input(type=AssetTypes.MLTABLE, path=train_path)
+        validation_data = Input(type=AssetTypes.MLTABLE, path=val_path)
+
         properties = get_automl_job_properties()
+        properties["_aml_internal_automl_subgraph_orchestration"] = "true",
         properties["_pipeline_id_override"] = "azureml://registries/azmlft-dev-registry01/components/image_instance_segmentation_pipeline"
 
         # Make generic segmentation job

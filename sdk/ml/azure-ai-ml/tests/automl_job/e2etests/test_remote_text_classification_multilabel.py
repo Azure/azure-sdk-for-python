@@ -19,12 +19,31 @@ from azure.ai.ml.operations._run_history_constants import JobStatus
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.skipif(condition=not is_live(), reason="Datasets downloaded by test are too large to record reliably")
 class TestTextClassificationMultilabel(AzureRecordedTestCase):
+
     def test_remote_run_text_classification_multilabel(
         self, paper_categorization: Tuple[Input, Input, str], client: MLClient
     ) -> None:
         training_data, validation_data, target_column_name = paper_categorization
+
+        job = text_classification_multilabel(
+            training_data=training_data,
+            validation_data=validation_data,
+            target_column_name=target_column_name,
+            compute="gpu-cluster",
+            experiment_name="DPv2-text-classification-multilabel",
+        )
+        job.set_limits(timeout_minutes=60, max_concurrent_trials=1)
+
+        created_job = client.jobs.create_or_update(job)
+
+        assert_final_job_status(created_job, client, TextClassificationMultilabelJob, JobStatus.COMPLETED)
+
+    def test_remote_run_text_classification_multilabel_components(
+        self, paper_categorization: Tuple[Input, Input, str], client: MLClient
+    ) -> None:
+        training_data, validation_data, target_column_name = paper_categorization
         properties = get_automl_job_properties()
-        properties['_pipeline_id_override'] = "azureml:/subscriptions/ed2cab61-14cc-4fb3-ac23-d72609214cfd/resourceGroups/training_rg/providers/Microsoft.MachineLearningServices/workspaces/rakoll-automlnlp-ws/components/nlp_textclassification_multilabel_pipelinecomponent_test/versions/0.0.2"
+        properties['_pipeline_id_override'] = "azureml://registries/azmlft-dev-registry01/components/nlp_textclassification_multilabel/versions/0.0.1"
 
         job = text_classification_multilabel(
             training_data=training_data,
