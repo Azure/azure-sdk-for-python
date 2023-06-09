@@ -107,21 +107,19 @@ def _urljoin(base_url: str, stub_url: str) -> str:
     :returns: The updated URL.
     :rtype: str
     """
-    parsed_based_url = urlparse(base_url)
+    parsed_base_url = urlparse(base_url)
     parsed_stub_url = urlparse(stub_url)
     # Note that _replace is a public API named that way to avoid to avoid conflicts in namedtuple
     # https://docs.python.org/3/library/collections.html?highlight=namedtuple#collections.namedtuple
-    parsed_based_url = parsed_based_url._replace(
-        path=parsed_based_url.path.rstrip("/") + "/" + parsed_stub_url.path,
+    parsed_base_url = parsed_base_url._replace(
+        path=parsed_base_url.path.rstrip("/") + "/" + parsed_stub_url.path,
     )
     if parsed_stub_url.query:
         query_params = [parsed_stub_url.query]
-        if parsed_based_url.query:
-            query_params.insert(0, parsed_based_url.query)
-        parsed_based_url = parsed_based_url._replace(
-            query="&".join(query_params)
-        )
-    return parsed_based_url.geturl()
+        if parsed_base_url.query:
+            query_params.insert(0, parsed_base_url.query)
+        parsed_base_url = parsed_base_url._replace(query="&".join(query_params))
+    return parsed_base_url.geturl()
 
 
 class HttpTransport(AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
