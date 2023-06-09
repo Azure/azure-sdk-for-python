@@ -53,7 +53,7 @@ class ArtifactCache:
     def check_artifact_extension():
         # check az extension azure-devops installed. Install it if not installed.
         result = subprocess.run(
-            ["az", "artifacts", "--help", "--yes"],
+            [shutil.which("az"), "artifacts", "--help", "--yes"],
             capture_output=True,
             check=False,
         )
@@ -102,7 +102,7 @@ class ArtifactCache:
         :rtype organization_url, project: str, str
         """
         result = subprocess.run(
-            ["git", "config", "--get", "remote.origin.url"],
+            [shutil.which("git"), "config", "--get", "remote.origin.url"],
             capture_output=True,
             encoding="utf-8",
             check=False,
@@ -299,7 +299,7 @@ class ArtifactCache:
         """
         tempdir = tempfile.mktemp()  # nosec B306
         download_cmd = [
-            "az",
+            shutil.which("az"),
             "artifacts",
             "universal",
             "download",
