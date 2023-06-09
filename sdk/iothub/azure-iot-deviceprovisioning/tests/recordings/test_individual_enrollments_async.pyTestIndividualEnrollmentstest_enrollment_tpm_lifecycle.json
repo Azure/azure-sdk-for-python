@@ -1,0 +1,277 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "284",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fazure-devices-provisioning.net%2F.default\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "95",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 19 May 2023 23:11:04 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.15427.9 - EUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollments/ind_enroll_tpm_fa373a5e?api-version=2021-10-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "808",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "registrationId": "ind_enroll_tpm_fa373a5e",
+        "attestation": {
+          "type": "tpm",
+          "tpm": {
+            "endorsementKey": "AToAAQALAAMAsgAgg3GXZ0SEs/gakMyNRqXXJP1S124GUgtk8qHaGzMUaaoABgCAAEMAEAgAAAAAAAEAibym9HQP9vxCGF5dVc1QQsAGe021aUGJzNol1/gycBx3jFsTpwmWbISRwnFvflWd0w2Mc44FAAZNaJOAAxwZvG8GvyLlHh6fGKdh\u002BmSBL4iLH2bZ4Ry22cB3CJVjXmdGoz9Y/j3/NwLndBxQC\u002BbaNvzvyVQZ4/A2YL7vzIIj2ik4y\u002Bve9ir7U0GbNdnxskqK1KFIITVVtkTIYyyFTIR0BySjPrRIDj7r7Mh5uF9HBppGKQCBoVSVV8dI91lNazmSdpGWyqCkO7iM4VvUMv2HT/ym53aYlUrau\u002BQq87Tu\u002BuQipWYgRdF11KDfcpMHqqzBQQ1NpOJVhrsTrhyJzO7KNw=="
+          }
+        },
+        "allocationPolicy": "static",
+        "capabilities": null,
+        "reprovisionPolicy": null,
+        "customAllocationDefinition": null,
+        "provisioningStatus": "enabled",
+        "deviceId": "device_fa373a5e",
+        "optionalDeviceInformation": null,
+        "iotHubs": null,
+        "iotHubHostName": null,
+        "initialTwin": null
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 19 May 2023 23:11:05 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": {
+        "registrationId": "ind_enroll_tpm_fa373a5e",
+        "deviceId": "device_fa373a5e",
+        "attestation": {
+          "type": "tpm",
+          "tpm": {
+            "endorsementKey": "AToAAQALAAMAsgAgg3GXZ0SEs/gakMyNRqXXJP1S124GUgtk8qHaGzMUaaoABgCAAEMAEAgAAAAAAAEAibym9HQP9vxCGF5dVc1QQsAGe021aUGJzNol1/gycBx3jFsTpwmWbISRwnFvflWd0w2Mc44FAAZNaJOAAxwZvG8GvyLlHh6fGKdh\u002BmSBL4iLH2bZ4Ry22cB3CJVjXmdGoz9Y/j3/NwLndBxQC\u002BbaNvzvyVQZ4/A2YL7vzIIj2ik4y\u002Bve9ir7U0GbNdnxskqK1KFIITVVtkTIYyyFTIR0BySjPrRIDj7r7Mh5uF9HBppGKQCBoVSVV8dI91lNazmSdpGWyqCkO7iM4VvUMv2HT/ym53aYlUrau\u002BQq87Tu\u002BuQipWYgRdF11KDfcpMHqqzBQQ1NpOJVhrsTrhyJzO7KNw=="
+          }
+        },
+        "etag": "IjAwMDA1OWVkLTAwMDAtMDgwMC0wMDAwLTY0NjgwMjA5MDAwMCI=",
+        "provisioningStatus": "enabled",
+        "createdDateTimeUtc": "2023-05-19T23:11:05.4386885Z",
+        "lastUpdatedDateTimeUtc": "2023-05-19T23:11:05.4386885Z",
+        "allocationPolicy": "static"
+      }
+    },
+    {
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollments/query?api-version=2021-10-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "21",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "query": "SELECT *"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 19 May 2023 23:11:05 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-item-type": "Enrollment"
+      },
+      "ResponseBody": "[{\u0022registrationId\u0022:\u0022ind_enroll_tpm_fa373a5e\u0022,\u0022deviceId\u0022:\u0022device_fa373a5e\u0022,\u0022attestation\u0022:{\u0022type\u0022:\u0022tpm\u0022,\u0022tpm\u0022:{\u0022endorsementKey\u0022:\u0022AToAAQALAAMAsgAgg3GXZ0SEs/gakMyNRqXXJP1S124GUgtk8qHaGzMUaaoABgCAAEMAEAgAAAAAAAEAibym9HQP9vxCGF5dVc1QQsAGe021aUGJzNol1/gycBx3jFsTpwmWbISRwnFvflWd0w2Mc44FAAZNaJOAAxwZvG8GvyLlHh6fGKdh\u002BmSBL4iLH2bZ4Ry22cB3CJVjXmdGoz9Y/j3/NwLndBxQC\u002BbaNvzvyVQZ4/A2YL7vzIIj2ik4y\u002Bve9ir7U0GbNdnxskqK1KFIITVVtkTIYyyFTIR0BySjPrRIDj7r7Mh5uF9HBppGKQCBoVSVV8dI91lNazmSdpGWyqCkO7iM4VvUMv2HT/ym53aYlUrau\u002BQq87Tu\u002BuQipWYgRdF11KDfcpMHqqzBQQ1NpOJVhrsTrhyJzO7KNw==\u0022}},\u0022etag\u0022:\u0022IjAwMDA1OWVkLTAwMDAtMDgwMC0wMDAwLTY0NjgwMjA5MDAwMCI=\u0022,\u0022provisioningStatus\u0022:\u0022enabled\u0022,\u0022createdDateTimeUtc\u0022:\u00222023-05-19T23:11:05.4386885Z\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-05-19T23:11:05.4386885Z\u0022,\u0022allocationPolicy\u0022:\u0022static\u0022}]"
+    },
+    {
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollments/ind_enroll_tpm_fa373a5e?api-version=2021-10-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 19 May 2023 23:11:05 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": {
+        "registrationId": "ind_enroll_tpm_fa373a5e",
+        "deviceId": "device_fa373a5e",
+        "registrationState": {
+          "registrationId": "ind_enroll_tpm_fa373a5e",
+          "status": "unassigned"
+        },
+        "attestation": {
+          "type": "tpm",
+          "tpm": {
+            "endorsementKey": "AToAAQALAAMAsgAgg3GXZ0SEs/gakMyNRqXXJP1S124GUgtk8qHaGzMUaaoABgCAAEMAEAgAAAAAAAEAibym9HQP9vxCGF5dVc1QQsAGe021aUGJzNol1/gycBx3jFsTpwmWbISRwnFvflWd0w2Mc44FAAZNaJOAAxwZvG8GvyLlHh6fGKdh\u002BmSBL4iLH2bZ4Ry22cB3CJVjXmdGoz9Y/j3/NwLndBxQC\u002BbaNvzvyVQZ4/A2YL7vzIIj2ik4y\u002Bve9ir7U0GbNdnxskqK1KFIITVVtkTIYyyFTIR0BySjPrRIDj7r7Mh5uF9HBppGKQCBoVSVV8dI91lNazmSdpGWyqCkO7iM4VvUMv2HT/ym53aYlUrau\u002BQq87Tu\u002BuQipWYgRdF11KDfcpMHqqzBQQ1NpOJVhrsTrhyJzO7KNw=="
+          }
+        },
+        "etag": "IjAwMDA1OWVkLTAwMDAtMDgwMC0wMDAwLTY0NjgwMjA5MDAwMCI=",
+        "provisioningStatus": "enabled",
+        "createdDateTimeUtc": "2023-05-19T23:11:05.4386885Z",
+        "lastUpdatedDateTimeUtc": "2023-05-19T23:11:05.4386885Z",
+        "allocationPolicy": "static"
+      }
+    },
+    {
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollments/ind_enroll_tpm_fa373a5e/attestationmechanism?api-version=2021-10-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 19 May 2023 23:11:05 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": {
+        "type": "tpm",
+        "tpm": {
+          "endorsementKey": "AToAAQALAAMAsgAgg3GXZ0SEs/gakMyNRqXXJP1S124GUgtk8qHaGzMUaaoABgCAAEMAEAgAAAAAAAEAibym9HQP9vxCGF5dVc1QQsAGe021aUGJzNol1/gycBx3jFsTpwmWbISRwnFvflWd0w2Mc44FAAZNaJOAAxwZvG8GvyLlHh6fGKdh\u002BmSBL4iLH2bZ4Ry22cB3CJVjXmdGoz9Y/j3/NwLndBxQC\u002BbaNvzvyVQZ4/A2YL7vzIIj2ik4y\u002Bve9ir7U0GbNdnxskqK1KFIITVVtkTIYyyFTIR0BySjPrRIDj7r7Mh5uF9HBppGKQCBoVSVV8dI91lNazmSdpGWyqCkO7iM4VvUMv2HT/ym53aYlUrau\u002BQq87Tu\u002BuQipWYgRdF11KDfcpMHqqzBQQ1NpOJVhrsTrhyJzO7KNw=="
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollments/ind_enroll_tpm_fa373a5e?api-version=2021-10-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "849",
+        "Content-Type": "application/json",
+        "If-Match": "IjAwMDA1OWVkLTAwMDAtMDgwMC0wMDAwLTY0NjgwMjA5MDAwMCI=",
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "registrationId": "ind_enroll_tpm_fa373a5e",
+        "attestation": {
+          "type": "tpm",
+          "tpm": {
+            "endorsementKey": "AToAAQALAAMAsgAgg3GXZ0SEs/gakMyNRqXXJP1S124GUgtk8qHaGzMUaaoABgCAAEMAEAgAAAAAAAEAibym9HQP9vxCGF5dVc1QQsAGe021aUGJzNol1/gycBx3jFsTpwmWbISRwnFvflWd0w2Mc44FAAZNaJOAAxwZvG8GvyLlHh6fGKdh\u002BmSBL4iLH2bZ4Ry22cB3CJVjXmdGoz9Y/j3/NwLndBxQC\u002BbaNvzvyVQZ4/A2YL7vzIIj2ik4y\u002Bve9ir7U0GbNdnxskqK1KFIITVVtkTIYyyFTIR0BySjPrRIDj7r7Mh5uF9HBppGKQCBoVSVV8dI91lNazmSdpGWyqCkO7iM4VvUMv2HT/ym53aYlUrau\u002BQq87Tu\u002BuQipWYgRdF11KDfcpMHqqzBQQ1NpOJVhrsTrhyJzO7KNw=="
+          }
+        },
+        "allocationPolicy": "static",
+        "capabilities": null,
+        "reprovisionPolicy": null,
+        "customAllocationDefinition": null,
+        "provisioningStatus": "disabled",
+        "deviceId": "device_fa373a5e",
+        "optionalDeviceInformation": {
+          "additionalProperties": {
+            "hello": "world"
+          }
+        },
+        "iotHubs": null,
+        "iotHubHostName": null,
+        "initialTwin": null
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 19 May 2023 23:11:05 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": {
+        "registrationId": "ind_enroll_tpm_fa373a5e",
+        "deviceId": "device_fa373a5e",
+        "optionalDeviceInformation": {
+          "additionalProperties": {
+            "hello": "world"
+          }
+        },
+        "attestation": {
+          "type": "tpm",
+          "tpm": {
+            "endorsementKey": "AToAAQALAAMAsgAgg3GXZ0SEs/gakMyNRqXXJP1S124GUgtk8qHaGzMUaaoABgCAAEMAEAgAAAAAAAEAibym9HQP9vxCGF5dVc1QQsAGe021aUGJzNol1/gycBx3jFsTpwmWbISRwnFvflWd0w2Mc44FAAZNaJOAAxwZvG8GvyLlHh6fGKdh\u002BmSBL4iLH2bZ4Ry22cB3CJVjXmdGoz9Y/j3/NwLndBxQC\u002BbaNvzvyVQZ4/A2YL7vzIIj2ik4y\u002Bve9ir7U0GbNdnxskqK1KFIITVVtkTIYyyFTIR0BySjPrRIDj7r7Mh5uF9HBppGKQCBoVSVV8dI91lNazmSdpGWyqCkO7iM4VvUMv2HT/ym53aYlUrau\u002BQq87Tu\u002BuQipWYgRdF11KDfcpMHqqzBQQ1NpOJVhrsTrhyJzO7KNw=="
+          }
+        },
+        "etag": "IjAwMDA1YWVkLTAwMDAtMDgwMC0wMDAwLTY0NjgwMjA5MDAwMCI=",
+        "provisioningStatus": "disabled",
+        "createdDateTimeUtc": "2023-05-19T23:11:05.4386885Z",
+        "lastUpdatedDateTimeUtc": "2023-05-19T23:11:05.7222493Z",
+        "allocationPolicy": "static"
+      }
+    },
+    {
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollments/ind_enroll_tpm_fa373a5e?api-version=2021-10-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Date": "Fri, 19 May 2023 23:11:05 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollments/query?api-version=2021-10-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "21",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "query": "SELECT *"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 19 May 2023 23:11:05 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-item-type": "Enrollment"
+      },
+      "ResponseBody": "[]"
+    }
+  ],
+  "Variables": {}
+}
