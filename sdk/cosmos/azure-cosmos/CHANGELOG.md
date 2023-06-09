@@ -1,14 +1,9 @@
 ## Release History
 
-### 4.4.0b3 (Unreleased)
+### 4.4.0 (2023-06-09)
 
 #### Features Added
-
-#### Breaking Changes
-
-#### Bugs Fixed
-
-#### Other Changes
+- GA release of Patch API and Delete All Items By Partition Key
 
 ### 4.4.0b2 (2023-05-22)
 
