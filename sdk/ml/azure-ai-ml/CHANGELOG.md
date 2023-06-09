@@ -52,11 +52,6 @@
 - Added Feature Store, its dedicated classes and updated the docstrings, now available in public interface. The classes added are `FeatureStoreOperations, FeatureSetOperations, FeatureStoreEntityOperations` with properties classes specific to the new features.
 - Support additional_includes in command component
 - Added experimental `distribution: ray` support in command job.
-<<<<<<< HEAD
-=======
-- Added support to enable data isolation feature at workspace creation stage.
-- Added auto_delete_setting support for asset version in data import job.
->>>>>>> parent of 3600711a11 (expose workspace connection secret expiryTime in sdk (#30170))
 
 ### Bugs Fixed
 
