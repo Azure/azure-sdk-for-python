@@ -1,7 +1,6 @@
 name: test_ws_conn_fs_sp
 type: feature_store
 target: azureml://featurestores/featurestore
-expiryTime: 01/05/2025 00:00:00
 credentials:
   type: service_principal
   client_id: client_id
