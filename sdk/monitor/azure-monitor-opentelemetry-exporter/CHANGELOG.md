@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Upgrading to OpenTelemetry SDK/API 1.18.
+    ([#30611](https://github.com/Azure/azure-sdk-for-python/pull/30611))
+
 ### Breaking Changes
 
 ### Bugs Fixed
