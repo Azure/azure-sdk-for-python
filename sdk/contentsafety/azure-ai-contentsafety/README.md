@@ -1,5 +1,6 @@
 
 # Azure AI Content Safety client library for Python
+
 [Azure AI Content Safety][contentsafety_overview] detects harmful user-generated and AI-generated content in applications and services. Content Safety includes text and image APIs that allow you to detect material that is harmful.
 
 ## Getting started
@@ -19,6 +20,7 @@ pip install azure-ai-contentsafety
 ### Authenticate the client
 
 #### Get the endpoint
+
 You can find the endpoint for your Azure AI Content Safety service resource using the [Azure Portal][azure_portal] or [Azure CLI][azure_cli_endpoint_lookup]:
 
 ```bash
@@ -50,6 +52,7 @@ client = ContentSafetyClient(endpoint, credential)
 ## Key concepts
 
 ### Available features
+
 There are different types of analysis available from this service. The following table describes the currently available APIs.
 
 |Feature  |Description  |
@@ -59,29 +62,33 @@ There are different types of analysis available from this service. The following
 | Text Blocklist Management APIs|The default AI classifiers are sufficient for most content safety needs. However, you might need to screen for terms that are specific to your use case. You can create blocklists of terms to use with the Text API.|
 
 ### Harm categories
+
 Content Safety recognizes four distinct categories of objectionable content.
 
 |Category|Description|
 |---------|---------|
-|Hate	|Hate refers to any content that attacks or uses pejorative or discriminatory language in reference to a person or identity group based on certain differentiating attributes of that group. This includes but is not limited to race, ethnicity, nationality, gender identity and expression, sexual orientation, religion, immigration status, ability status, personal appearance, and body size.|
-|Sexual	|Sexual describes content related to anatomical organs and genitals, romantic relationships, acts portrayed in erotic or affectionate terms, pregnancy, physical sexual acts—including those acts portrayed as an assault or a forced sexual violent act against one’s will—, prostitution, pornography, and abuse.|
-|Violence	|Violence describes content related to physical actions intended to hurt, injure, damage, or kill someone or something. It also includes weapons, guns and related entities, such as manufacturers, associations, legislation, and similar.|
-|Self-harm	|Self-harm describes content related to physical actions intended to purposely hurt, injure, or damage one’s body or kill oneself.|
+|Hate |Hate refers to any content that attacks or uses pejorative or discriminatory language in reference to a person or identity group based on certain differentiating attributes of that group. This includes but is not limited to race, ethnicity, nationality, gender identity and expression, sexual orientation, religion, immigration status, ability status, personal appearance, and body size.|
+|Sexual |Sexual describes content related to anatomical organs and genitals, romantic relationships, acts portrayed in erotic or affectionate terms, pregnancy, physical sexual acts—including those acts portrayed as an assault or a forced sexual violent act against one’s will—, prostitution, pornography, and abuse.|
+|Violence |Violence describes content related to physical actions intended to hurt, injure, damage, or kill someone or something. It also includes weapons, guns and related entities, such as manufacturers, associations, legislation, and similar.|
+|Self-harm |Self-harm describes content related to physical actions intended to purposely hurt, injure, or damage one’s body or kill oneself.|
 
 Classification can be multi-labeled. For example, when a text sample goes through the text moderation model, it could be classified as both Sexual content and Violence.
 
 ### Severity levels
+
 Every harm category the service applies also comes with a severity level rating. The severity level is meant to indicate the severity of the consequences of showing the flagged content.
 
 |Severity|Label|
 |---------|---------|
-|0	|Safe|
-|2	|Low|
-|4	|Medium|
-|6	|High|
+|0 |Safe|
+|2 |Low|
+|4 |Medium|
+|6 |High|
 
 ### Text blocklist management
+
 Following operations are supported to manage your text blocklist:
+
 - Create or modify a blocklist
 - List all blocklists
 - Get a blocklist by blocklistName
@@ -562,16 +569,16 @@ if response.violence_result:
 
 ### General
 
-Azure AI Content Safety client library will raise exceptions defined in [Azure Core][azure_core_exception]. Error codes are defined as below: 
+Azure AI Content Safety client library will raise exceptions defined in [Azure Core][azure_core_exception]. Error codes are defined as below:
 
-|Error Code	|Possible reasons	|Suggestions|
+|Error Code |Possible reasons |Suggestions|
 |-----------|-------------------|-----------|
-|InvalidRequestBody	|One or more fields in the request body do not match the API definition.	|1. Check the API version you specified in the API call.<br>2. Check the corresponding API definition for the API version you selected.|
-|InvalidResourceName	|The resource name you specified in the URL does not meet the requirements, like the blocklist name, blocklist term ID, etc.	|1. Check the API version you specified in the API call.<br>2. Check whether the given name has invalid characters according to the API definition.|
-|ResourceNotFound	|The resource you specified in the URL may not exist, like the blocklist name.	|1. Check the API version you specified in the API call.<br>2. Double check the existence of the resource specified in the URL.|
-|InternalError	|Some unexpected situations on the server side have been triggered.	|1. You may want to retry a few times after a small period and see it the issue happens again.<br>2. Contact Azure Support if this issue persists.|
-|ServerBusy	|The server side cannot process the request temporarily.	|1. You may want to retry a few times after a small period and see it the issue happens again.<br>2.Contact Azure Support if this issue persists.|
-|TooManyRequests	|The current RPS has exceeded the quota for your current SKU.	|1. Check the pricing table to understand the RPS quota.<br>2.Contact Azure Support if you need more QPS.|
+|InvalidRequestBody |One or more fields in the request body do not match the API definition. |1. Check the API version you specified in the API call.<br>2. Check the corresponding API definition for the API version you selected.|
+|InvalidResourceName |The resource name you specified in the URL does not meet the requirements, like the blocklist name, blocklist term ID, etc. |1. Check the API version you specified in the API call.<br>2. Check whether the given name has invalid characters according to the API definition.|
+|ResourceNotFound |The resource you specified in the URL may not exist, like the blocklist name. |1. Check the API version you specified in the API call.<br>2. Double check the existence of the resource specified in the URL.|
+|InternalError |Some unexpected situations on the server side have been triggered. |1. You may want to retry a few times after a small period and see it the issue happens again.<br>2. Contact Azure Support if this issue persists.|
+|ServerBusy |The server side cannot process the request temporarily. |1. You may want to retry a few times after a small period and see it the issue happens again.<br>2.Contact Azure Support if this issue persists.|
+|TooManyRequests |The current RPS has exceeded the quota for your current SKU. |1. Check the pricing table to understand the RPS quota.<br>2.Contact Azure Support if you need more QPS.|
 
 ### Logging
 
@@ -598,7 +605,7 @@ For more extensive documentation on Azure Content Safety, see the [Azure AI Cont
 This project welcomes contributions and suggestions. Most contributions require
 you to agree to a Contributor License Agreement (CLA) declaring that you have
 the right to, and actually do, grant us the rights to use your contribution.
-For details, visit https://cla.microsoft.com.
+For details, visit <https://cla.microsoft.com>.
 
 When you submit a pull request, a CLA-bot will automatically determine whether
 you need to provide a CLA and decorate the PR appropriately (e.g., label,
@@ -607,16 +614,11 @@ need to do this once across all repos using our CLA.
 
 This project has adopted the
 [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information,
-see the Code of Conduct FAQ or contact opencode@microsoft.com with any
+see the Code of Conduct FAQ or contact <opencode@microsoft.com> with any
 additional questions or comments.
 
 <!-- LINKS -->
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
-[authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
-[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
-[azure_identity_pip]: https://pypi.org/project/azure-identity/
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
 [contentsafety_overview]: https://aka.ms/acs-doc
 [azure_portal]: https://ms.portal.azure.com/
