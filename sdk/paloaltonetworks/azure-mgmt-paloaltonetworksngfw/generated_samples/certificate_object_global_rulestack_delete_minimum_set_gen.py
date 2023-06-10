@@ -29,11 +29,10 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.certificate_object_global_rulestack.begin_delete(
+    client.certificate_object_global_rulestack.begin_delete(
         global_rulestack_name="praval",
         name="armid1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/paloaltonetworks/resource-manager/PaloAltoNetworks.Cloudngfw/preview/2022-08-29-preview/examples/CertificateObjectGlobalRulestack_Delete_MinimumSet_Gen.json

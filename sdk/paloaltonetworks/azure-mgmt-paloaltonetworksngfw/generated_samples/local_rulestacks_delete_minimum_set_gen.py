@@ -29,11 +29,10 @@ def main():
         subscription_id="2bf4a339-294d-4c25-b0b2-ef649e9f5c27",
     )
 
-    response = client.local_rulestacks.begin_delete(
+    client.local_rulestacks.begin_delete(
         resource_group_name="rgopenapi",
         local_rulestack_name="lrs1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/paloaltonetworks/resource-manager/PaloAltoNetworks.Cloudngfw/preview/2022-08-29-preview/examples/LocalRulestacks_Delete_MinimumSet_Gen.json

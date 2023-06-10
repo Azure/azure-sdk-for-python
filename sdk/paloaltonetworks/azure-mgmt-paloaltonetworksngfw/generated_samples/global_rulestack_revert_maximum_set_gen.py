@@ -29,10 +29,9 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.global_rulestack.revert(
+    client.global_rulestack.revert(
         global_rulestack_name="praval",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/paloaltonetworks/resource-manager/PaloAltoNetworks.Cloudngfw/preview/2022-08-29-preview/examples/GlobalRulestack_revert_MaximumSet_Gen.json

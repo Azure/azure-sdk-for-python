@@ -29,10 +29,9 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.global_rulestack.begin_commit(
+    client.global_rulestack.begin_commit(
         global_rulestack_name="praval",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/paloaltonetworks/resource-manager/PaloAltoNetworks.Cloudngfw/preview/2022-08-29-preview/examples/GlobalRulestack_commit_MaximumSet_Gen.json
