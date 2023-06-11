@@ -2,9 +2,17 @@
 
 ## 1.9.0 (Unreleased)
 
+### Features Added
+
+### Bugs Fixed
+
+### Breaking Changes
+
 ### Other Changes
 
 - Improved the output when printing a workspace object to be more clean and readable. 
+- `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance. 
+  (instead of the default Python behavior which uses locale specific encodings)
 
 ## 1.8.0 (Unreleased)
 
