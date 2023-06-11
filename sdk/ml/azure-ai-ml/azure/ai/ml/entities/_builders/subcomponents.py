@@ -6,6 +6,7 @@
 # that are used within node constructors. Keep imports and
 # general complexity in this file to a minimum.
 
+from azure.ai.ml.constants._common import DefaultOpenEncoding
 from mldesigner import command_component, Output
 
 
@@ -25,7 +26,7 @@ def save_mltable_yaml(path, mltable_paths):
     # To the MLTable's inputs
     mltable_file_content = "\n".join(["paths:"] + [f"- folder : {path}" for path in mltable_paths])
 
-    with open(save_path, "w") as f:
+    with open(save_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
         f.write(mltable_file_content)
 
 

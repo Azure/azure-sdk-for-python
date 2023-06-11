@@ -56,7 +56,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
 from azure.ai.ml._restclient.v2023_04_01.models import PendingUploadRequestDto
 from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry, snake_to_camel
-from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, OrderString
+from azure.ai.ml.constants._common import DefaultOpenEncoding, MAX_AUTOINCREMENT_ATTEMPTS, OrderString
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -105,7 +105,7 @@ class IgnoreFile(object):
         if not self.exists():
             return []
         if self._file_exists():
-            with open(self._path, "r") as fh:
+            with open(self._path, "r", encoding=DefaultOpenEncoding.READ) as fh:
                 return [line.rstrip() for line in fh if line]
         return []
 

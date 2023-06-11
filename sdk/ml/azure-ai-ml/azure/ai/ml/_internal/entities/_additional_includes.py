@@ -5,6 +5,7 @@
 from pathlib import Path
 import yaml
 
+from ...constants._common import DefaultOpenEncoding
 from ...entities._component._additional_includes import (
     AdditionalIncludes,
     ADDITIONAL_INCLUDES_KEY,
@@ -21,7 +22,7 @@ class InternalAdditionalIncludes(AdditionalIncludes):
             if self.is_artifact_includes:
                 self._includes = self._load_artifact_additional_includes()
             else:
-                with open(self.additional_includes_file_path, "r") as f:
+                with open(self.additional_includes_file_path, "r", encoding=DefaultOpenEncoding.READ) as f:
                     lines = f.readlines()
                     self._includes = [line.strip() for line in lines if len(line.strip()) > 0]
         return self._includes
@@ -43,7 +44,7 @@ class InternalAdditionalIncludes(AdditionalIncludes):
     @property
     def is_artifact_includes(self):
         try:
-            with open(self.additional_includes_file_path) as f:
+            with open(self.additional_includes_file_path, encoding=DefaultOpenEncoding.READ) as f:
                 additional_includes_configs = yaml.safe_load(f)
                 return (
                     isinstance(additional_includes_configs, dict)

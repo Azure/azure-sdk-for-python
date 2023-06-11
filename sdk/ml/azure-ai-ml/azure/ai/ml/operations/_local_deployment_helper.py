@@ -26,7 +26,7 @@ from azure.ai.ml._local_endpoints.validators.model_validator import get_model_ar
 from azure.ai.ml._scope_dependent_operations import OperationsContainer
 from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
 from azure.ai.ml._utils.utils import DockerProxy
-from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType, DefaultOpenEncoding
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 from azure.ai.ml.entities import OnlineDeployment
 from azure.ai.ml.exceptions import InvalidLocalEndpointError, LocalEndpointNotFoundError, ValidationException
@@ -332,7 +332,7 @@ def _write_conda_file(conda_contents: str, directory_path: str, conda_file_name:
     """
     conda_file_path = f"{directory_path}/{conda_file_name}"
     p = Path(conda_file_path)
-    p.write_text(conda_contents)
+    p.write_text(conda_contents, encoding=DefaultOpenEncoding.WRITE)
 
 
 def _convert_json_to_deployment(deployment_json: dict, **kwargs) -> OnlineDeployment:

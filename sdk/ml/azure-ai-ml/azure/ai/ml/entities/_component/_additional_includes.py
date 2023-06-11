@@ -12,7 +12,7 @@ from typing import Union, List
 import yaml
 
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
-from azure.ai.ml.constants._common import AzureDevopsArtifactsType
+from azure.ai.ml.constants._common import AzureDevopsArtifactsType, DefaultOpenEncoding
 
 from .code import ComponentIgnoreFile
 from ._artifact_cache import ArtifactCache
@@ -239,7 +239,7 @@ class AdditionalIncludes:
             and self.additional_includes_file_path.suffix == ADDITIONAL_INCLUDES_SUFFIX
             and self.additional_includes_file_path.is_file()
         ):
-            with open(self.additional_includes_file_path) as f:
+            with open(self.additional_includes_file_path, encoding=DefaultOpenEncoding.READ) as f:
                 additional_includes_configs = yaml.safe_load(f)
                 additional_includes_configs = additional_includes_configs.get(ADDITIONAL_INCLUDES_KEY, [])
         else:

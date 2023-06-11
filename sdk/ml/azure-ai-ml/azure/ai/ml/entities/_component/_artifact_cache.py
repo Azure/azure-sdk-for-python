@@ -15,6 +15,7 @@ from io import BytesIO
 from pathlib import Path
 from threading import Lock
 
+from azure.ai.ml.constants._common import DefaultOpenEncoding
 import requests
 
 _logger = logging.getLogger(__name__)
@@ -225,7 +226,7 @@ class ArtifactCache:
             return False
         checksum_path = self._get_checksum_path(artifact_package_path)
         if checksum_path.exists():
-            with open(checksum_path, "r") as f:
+            with open(checksum_path, "r", encoding=DefaultOpenEncoding.READ) as f:
                 checksum = f.read()
                 file_list = [os.path.join(root, f) for root, _, files in os.walk(path) for f in files]
                 artifact_hash = self.hash_files_content(file_list)
@@ -343,7 +344,7 @@ class ArtifactCache:
             artifact_hash = self.hash_files_content(file_list)
             os.rename(tempdir, artifact_package_path)
             temp_checksum_file = os.path.join(tempfile.mkdtemp(), f"{version}_{self.POSTFIX_CHECKSUM}")
-            with open(temp_checksum_file, "w") as f:
+            with open(temp_checksum_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                 f.write(artifact_hash)
             os.rename(
                 temp_checksum_file,

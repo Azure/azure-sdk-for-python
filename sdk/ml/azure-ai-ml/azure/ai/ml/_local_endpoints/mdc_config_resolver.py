@@ -5,6 +5,7 @@ import json
 import os.path
 from pathlib import Path
 
+from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.ai.ml.entities._deployment.data_collector import DataCollector
 
 
@@ -71,7 +72,7 @@ class MdcConfigResolver(object):
             return
 
         mdc_setting_path = str(Path(directory_path, self.local_config_name).resolve())
-        with open(mdc_setting_path, "w") as f:
+        with open(mdc_setting_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
             d = json.dumps(self.mdc_config)
             f.write(f"{d}")
 
