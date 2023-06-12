@@ -590,7 +590,7 @@ class IterStreamer(object):
         count = len(self.leftover)
         try:
             while count < size:
-                chunk = self.__next__()
+                chunk = self.__next__()  # pylint: disable=unnecessary-dunder-call
                 if isinstance(chunk, str):
                     chunk = chunk.encode(self.encoding)
                 data += chunk
