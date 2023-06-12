@@ -8,9 +8,6 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: ''
-  - name: BuildDocs
-    type: boolean
-    default: true
   - name: Artifacts
     type: object
     default: []
@@ -47,7 +44,7 @@ steps:
       python -m pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
 
-  - template: ../steps/set-dev-build.yml
+  - template: set-dev-build.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
@@ -74,27 +71,9 @@ steps:
     displayName: 'Verify Readme'
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-    - template: ../steps/auth-dev-feed.yml
+    - template: auth-dev-feed.yml
       parameters:
         DevFeedName: ${{ parameters.DevFeedName }}
-
-  - task: PythonScript@0
-    displayName: 'Generate Docs'
-    condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
-    inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: >-
-        "$(TargetingString)" 
-        --service="${{ parameters.ServiceDirectory }}" 
-        --toxenv=sphinx
-
-  - pwsh: |
-      Write-Host "##vso[task.setvariable variable=PIP_INDEX_URL]https://pypi.python.org/simple"
-    displayName: Reset PIP Index For APIStubGen
-
-  - template: /eng/pipelines/templates/steps/run_apistub.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - ${{ parameters.BeforePublishSteps }}
 
@@ -102,12 +81,6 @@ steps:
     parameters:
       ArtifactPath: '$(Build.ArtifactStagingDirectory)'
       ArtifactName: 'packages'
-
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-    parameters:
-      ArtifactPath: '$(Build.SourcesDirectory)/_docs'
-      CustomCondition: ${{ parameters.BuildDocs }}
-      ArtifactName: 'documentation'
 
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
@@ -124,4 +97,4 @@ steps:
     - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
       parameters:
         ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
-        ArtifactName: 'manifest'
+        ArtifactName: 'packages_manifest'
