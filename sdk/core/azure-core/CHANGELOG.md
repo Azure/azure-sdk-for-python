@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fix url building for some complex query parameters scenarios  #30707
+
 ### Other Changes
 
 ## 1.27.0 (2023-06-01)
