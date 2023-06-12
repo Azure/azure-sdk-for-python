@@ -66,11 +66,15 @@ class ApplicationClient(ApplicationClientOperationsMixin):  # pylint: disable=cl
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.applications = ApplicationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.application_definitions = ApplicationDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+        self.applications = ApplicationsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-07-01"
         )
-        self.jit_requests = JitRequestsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.application_definitions = ApplicationDefinitionsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-07-01"
+        )
+        self.jit_requests = JitRequestsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-07-01"
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

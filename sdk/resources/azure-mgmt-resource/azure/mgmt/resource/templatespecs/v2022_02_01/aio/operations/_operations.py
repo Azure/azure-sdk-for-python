@@ -69,6 +69,7 @@ class TemplateSpecsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @overload
     async def create_or_update(
@@ -163,7 +164,7 @@ class TemplateSpecsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.TemplateSpec] = kwargs.pop("cls", None)
 
@@ -314,7 +315,7 @@ class TemplateSpecsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.TemplateSpec] = kwargs.pop("cls", None)
 
@@ -402,7 +403,7 @@ class TemplateSpecsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-02-01"))
         cls: ClsType[_models.TemplateSpec] = kwargs.pop("cls", None)
 
         request = build_template_specs_get_request(
@@ -469,7 +470,7 @@ class TemplateSpecsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_template_specs_delete_request(
@@ -522,7 +523,7 @@ class TemplateSpecsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-02-01"))
         cls: ClsType[_models.TemplateSpecsListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -619,7 +620,7 @@ class TemplateSpecsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-02-01"))
         cls: ClsType[_models.TemplateSpecsListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -723,7 +724,7 @@ class TemplateSpecsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-02-01"))
         cls: ClsType[_models.TemplateSpec] = kwargs.pop("cls", None)
 
         request = build_template_specs_get_built_in_request(
@@ -777,7 +778,7 @@ class TemplateSpecsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-02-01"))
         cls: ClsType[_models.TemplateSpecsListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -865,6 +866,7 @@ class TemplateSpecVersionsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @overload
     async def create_or_update(
@@ -970,7 +972,7 @@ class TemplateSpecVersionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.TemplateSpecVersion] = kwargs.pop("cls", None)
 
@@ -1131,7 +1133,7 @@ class TemplateSpecVersionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.TemplateSpecVersion] = kwargs.pop("cls", None)
 
@@ -1214,7 +1216,7 @@ class TemplateSpecVersionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-02-01"))
         cls: ClsType[_models.TemplateSpecVersion] = kwargs.pop("cls", None)
 
         request = build_template_spec_versions_get_request(
@@ -1283,7 +1285,7 @@ class TemplateSpecVersionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_template_spec_versions_delete_request(
@@ -1338,7 +1340,7 @@ class TemplateSpecVersionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-02-01"))
         cls: ClsType[_models.TemplateSpecVersionsListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1426,7 +1428,7 @@ class TemplateSpecVersionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-02-01"))
         cls: ClsType[_models.TemplateSpecVersionsListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1521,7 +1523,7 @@ class TemplateSpecVersionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-02-01"))
         cls: ClsType[_models.TemplateSpecVersion] = kwargs.pop("cls", None)
 
         request = build_template_spec_versions_get_built_in_request(

@@ -60,9 +60,11 @@ class TemplateSpecsClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.template_specs = TemplateSpecsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.template_specs = TemplateSpecsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-03-01-preview"
+        )
         self.template_spec_versions = TemplateSpecVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-03-01-preview"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:

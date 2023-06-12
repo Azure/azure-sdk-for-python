@@ -328,6 +328,7 @@ class PrivateLinkAssociationOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @overload
     def put(
@@ -411,7 +412,7 @@ class PrivateLinkAssociationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateLinkAssociation] = kwargs.pop("cls", None)
 
@@ -487,7 +488,7 @@ class PrivateLinkAssociationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-05-01"))
         cls: ClsType[_models.PrivateLinkAssociation] = kwargs.pop("cls", None)
 
         request = build_private_link_association_get_request(
@@ -549,7 +550,7 @@ class PrivateLinkAssociationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_private_link_association_delete_request(
@@ -603,7 +604,7 @@ class PrivateLinkAssociationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-05-01"))
         cls: ClsType[_models.PrivateLinkAssociationGetResult] = kwargs.pop("cls", None)
 
         request = build_private_link_association_list_request(
@@ -657,6 +658,7 @@ class ResourceManagementPrivateLinkOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @overload
     def put(
@@ -754,7 +756,7 @@ class ResourceManagementPrivateLinkOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ResourceManagementPrivateLink] = kwargs.pop("cls", None)
 
@@ -832,7 +834,7 @@ class ResourceManagementPrivateLinkOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-05-01"))
         cls: ClsType[_models.ResourceManagementPrivateLink] = kwargs.pop("cls", None)
 
         request = build_resource_management_private_link_get_request(
@@ -896,7 +898,7 @@ class ResourceManagementPrivateLinkOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_resource_management_private_link_delete_request(
@@ -950,7 +952,7 @@ class ResourceManagementPrivateLinkOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-05-01"))
         cls: ClsType[_models.ResourceManagementPrivateLinkListResult] = kwargs.pop("cls", None)
 
         request = build_resource_management_private_link_list_request(
@@ -1011,7 +1013,7 @@ class ResourceManagementPrivateLinkOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2020-05-01"))
         cls: ClsType[_models.ResourceManagementPrivateLinkListResult] = kwargs.pop("cls", None)
 
         request = build_resource_management_private_link_list_by_resource_group_request(

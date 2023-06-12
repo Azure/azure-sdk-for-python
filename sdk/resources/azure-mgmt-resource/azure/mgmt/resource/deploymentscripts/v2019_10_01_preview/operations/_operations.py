@@ -319,6 +319,7 @@ class DeploymentScriptsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     def _create_initial(
         self,
@@ -338,7 +339,9 @@ class DeploymentScriptsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2019-10-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DeploymentScript] = kwargs.pop("cls", None)
 
@@ -506,7 +509,9 @@ class DeploymentScriptsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2019-10-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DeploymentScript] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -649,7 +654,9 @@ class DeploymentScriptsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2019-10-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DeploymentScript] = kwargs.pop("cls", None)
 
@@ -727,7 +734,9 @@ class DeploymentScriptsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2019-10-01-preview")
+        )
         cls: ClsType[_models.DeploymentScript] = kwargs.pop("cls", None)
 
         request = build_deployment_scripts_get_request(
@@ -793,7 +802,9 @@ class DeploymentScriptsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2019-10-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_deployment_scripts_delete_request(
@@ -840,7 +851,9 @@ class DeploymentScriptsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2019-10-01-preview")
+        )
         cls: ClsType[_models.DeploymentScriptListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -936,7 +949,9 @@ class DeploymentScriptsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2019-10-01-preview")
+        )
         cls: ClsType[_models.ScriptLogsList] = kwargs.pop("cls", None)
 
         request = build_deployment_scripts_get_logs_request(
@@ -1005,7 +1020,9 @@ class DeploymentScriptsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2019-10-01-preview")
+        )
         cls: ClsType[_models.ScriptLog] = kwargs.pop("cls", None)
 
         request = build_deployment_scripts_get_logs_default_request(
@@ -1060,7 +1077,9 @@ class DeploymentScriptsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2019-10-01-preview")
+        )
         cls: ClsType[_models.DeploymentScriptListResult] = kwargs.pop("cls", None)
 
         error_map = {

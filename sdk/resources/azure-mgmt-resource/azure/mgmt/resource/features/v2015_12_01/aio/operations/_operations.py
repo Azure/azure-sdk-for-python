@@ -43,6 +43,12 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 
 class FeatureClientOperationsMixin(FeatureClientMixinABC):
+    def _api_version(self, op_name: str) -> str:  # pylint: disable=unused-argument
+        try:
+            return self._config.api_version
+        except:  # pylint: disable=bare-except
+            return ""
+
     @distributed_trace
     def list_operations(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
         """Lists all of the available Microsoft.Features REST API operations.
@@ -56,7 +62,9 @@ class FeatureClientOperationsMixin(FeatureClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-12-01"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version("list_operations") or "2015-12-01")
+        )
         cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -142,6 +150,7 @@ class FeaturesOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def list_all(self, **kwargs: Any) -> AsyncIterable["_models.FeatureResult"]:
@@ -156,7 +165,7 @@ class FeaturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-12-01"))
         cls: ClsType[_models.FeatureOperationsListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -241,7 +250,7 @@ class FeaturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-12-01"))
         cls: ClsType[_models.FeatureOperationsListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -336,7 +345,7 @@ class FeaturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-12-01"))
         cls: ClsType[_models.FeatureResult] = kwargs.pop("cls", None)
 
         request = build_features_get_request(
@@ -399,7 +408,7 @@ class FeaturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-12-01"))
         cls: ClsType[_models.FeatureResult] = kwargs.pop("cls", None)
 
         request = build_features_register_request(
@@ -462,7 +471,7 @@ class FeaturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-12-01"))
         cls: ClsType[_models.FeatureResult] = kwargs.pop("cls", None)
 
         request = build_features_unregister_request(

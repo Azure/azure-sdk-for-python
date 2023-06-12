@@ -196,6 +196,7 @@ class SubscriptionsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def list_locations(
@@ -220,7 +221,7 @@ class SubscriptionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.LocationListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -311,7 +312,7 @@ class SubscriptionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.Subscription] = kwargs.pop("cls", None)
 
         request = build_subscriptions_get_request(
@@ -357,7 +358,7 @@ class SubscriptionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.SubscriptionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -498,7 +499,7 @@ class SubscriptionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CheckZonePeersResult] = kwargs.pop("cls", None)
 
@@ -563,6 +564,7 @@ class TenantsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def list(self, **kwargs: Any) -> Iterable["_models.TenantIdDescription"]:
@@ -577,7 +579,7 @@ class TenantsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.TenantListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -646,6 +648,12 @@ class TenantsOperations:
 
 
 class SubscriptionClientOperationsMixin(SubscriptionClientMixinABC):
+    def _api_version(self, op_name: str) -> str:  # pylint: disable=unused-argument
+        try:
+            return self._config.api_version
+        except:  # pylint: disable=bare-except
+            return ""
+
     @overload
     def check_resource_name(
         self,
@@ -725,7 +733,9 @@ class SubscriptionClientOperationsMixin(SubscriptionClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-01"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version("check_resource_name") or "2021-01-01")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CheckResourceNameResult] = kwargs.pop("cls", None)
 

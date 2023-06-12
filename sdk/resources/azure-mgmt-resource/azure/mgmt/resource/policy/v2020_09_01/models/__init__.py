@@ -27,20 +27,15 @@ from ._models_py3 import PolicyDefinition
 from ._models_py3 import PolicyDefinitionGroup
 from ._models_py3 import PolicyDefinitionListResult
 from ._models_py3 import PolicyDefinitionReference
-from ._models_py3 import PolicyExemption
-from ._models_py3 import PolicyExemptionListResult
 from ._models_py3 import PolicySetDefinition
 from ._models_py3 import PolicySetDefinitionListResult
 from ._models_py3 import ResourceTypeAliases
-from ._models_py3 import SystemData
 
 from ._policy_client_enums import AliasPathAttributes
 from ._policy_client_enums import AliasPathTokenType
 from ._policy_client_enums import AliasPatternType
 from ._policy_client_enums import AliasType
-from ._policy_client_enums import CreatedByType
 from ._policy_client_enums import EnforcementMode
-from ._policy_client_enums import ExemptionCategory
 from ._policy_client_enums import ParameterType
 from ._policy_client_enums import PolicyType
 from ._policy_client_enums import ResourceIdentityType
@@ -70,19 +65,14 @@ __all__ = [
     "PolicyDefinitionGroup",
     "PolicyDefinitionListResult",
     "PolicyDefinitionReference",
-    "PolicyExemption",
-    "PolicyExemptionListResult",
     "PolicySetDefinition",
     "PolicySetDefinitionListResult",
     "ResourceTypeAliases",
-    "SystemData",
     "AliasPathAttributes",
     "AliasPathTokenType",
     "AliasPatternType",
     "AliasType",
-    "CreatedByType",
     "EnforcementMode",
-    "ExemptionCategory",
     "ParameterType",
     "PolicyType",
     "ResourceIdentityType",
