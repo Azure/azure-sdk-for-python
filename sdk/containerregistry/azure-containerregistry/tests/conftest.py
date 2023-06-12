@@ -4,6 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import logging
 import os
 import pytest
 from devtools_testutils import (
@@ -15,8 +16,11 @@ from devtools_testutils import (
 )
 from testcase import get_authority, import_image
 
+logger = logging.getLogger()
+
 @pytest.fixture(scope="session", autouse=True)
 def load_registry():
+    logger.warning("loading registry")
     if not is_live():
         return
     authority = get_authority(os.environ.get("CONTAINERREGISTRY_ENDPOINT"))
