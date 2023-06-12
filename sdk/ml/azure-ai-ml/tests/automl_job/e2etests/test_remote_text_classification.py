@@ -19,46 +19,25 @@ from azure.ai.ml.operations._run_history_constants import JobStatus
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.skipif(condition=not is_live(), reason="Datasets downloaded by test are too large to record reliably")
 class TestTextClassification(AzureRecordedTestCase):
+    @pytest.mark.parametrize("components", [(False), (True)])
     def test_remote_run_text_classification(
-        self,
-        newsgroup: Tuple[Input, Input, str],
-        client: MLClient,
+        self, newsgroup: Tuple[Input, Input, str], client: MLClient, components: bool
     ) -> None:
         training_data, validation_data, target_column_name = newsgroup
 
-        job = text_classification(
-            training_data=training_data,
-            validation_data=validation_data,
-            target_column_name=target_column_name,
-            compute="gpu-cluster",
-            experiment_name="DPv2-text-classification",
-            properties=get_automl_job_properties(),
-        )
-        job.set_limits(timeout_minutes=60, max_concurrent_trials=1)
-        job.set_featurization(dataset_language="eng")
-
-        created_job = client.jobs.create_or_update(job)
-
-        assert_final_job_status(created_job, client, TextClassificationJob, JobStatus.COMPLETED)
-
-    def test_remote_run_text_classification_components(
-        self,
-        newsgroup: Tuple[Input, Input, str],
-        client: MLClient,
-    ) -> None:
-        training_data, validation_data, target_column_name = newsgroup
         properties = get_automl_job_properties()
-        properties["_aml_internal_automl_subgraph_orchestration"] = "true"
-        properties[
-            "_pipeline_id_override"
-        ] = "azureml://registries/azmlft-dev-registry01/components/nlp_textclassification_multiclass"
+        if components:
+            properties["_aml_internal_automl_subgraph_orchestration"] = "true"
+            properties["_pipeline_id_override"] = (
+                "azureml://registries/azmlft-dev-registry01/" "components/nlp_textclassification_multiclass"
+            )
 
         job = text_classification(
             training_data=training_data,
             validation_data=validation_data,
             target_column_name=target_column_name,
             compute="gpu-cluster",
-            experiment_name="DPv2-text-classification",
+            experiment_name="DPv2-text-classification-v2",
             properties=properties,
         )
         job.set_limits(timeout_minutes=60, max_concurrent_trials=1)

@@ -19,37 +19,16 @@ from azure.ai.ml.operations._run_history_constants import JobStatus
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.skipif(condition=not is_live(), reason="Datasets downloaded by test are too large to record reliably")
 class TestTextNer(AzureRecordedTestCase):
-    def test_remote_run_text_ner(
-        self,
-        conll: Tuple[Input, Input],
-        client: MLClient,
-    ) -> None:
+    @pytest.mark.parametrize("components", [(False), (True)])
+    def test_remote_run_text_ner(self, conll: Tuple[Input, Input], client: MLClient, components: bool) -> None:
         training_data, validation_data = conll
 
-        job = text_ner(
-            training_data=training_data,
-            validation_data=validation_data,
-            compute="gpu-cluster",
-            experiment_name="DPv2-text-ner",
-            properties=get_automl_job_properties(),
-        )
-        job.set_limits(timeout_minutes=60, max_concurrent_trials=1)
-
-        created_job = client.jobs.create_or_update(job)
-
-        assert_final_job_status(created_job, client, TextNerJob, JobStatus.COMPLETED)
-
-    def test_remote_run_text_ner_components(
-        self,
-        conll: Tuple[Input, Input],
-        client: MLClient,
-    ) -> None:
-        training_data, validation_data = conll
         properties = get_automl_job_properties()
-        properties["_aml_internal_automl_subgraph_orchestration"] = "true"
-        properties[
-            "_pipeline_id_override"
-        ] = "azureml://registries/azmlft-dev-registry01/components/nlp_textclassification_ner"
+        if components:
+            properties["_aml_internal_automl_subgraph_orchestration"] = "true"
+            properties[
+                "_pipeline_id_override"
+            ] = "azureml://registries/azmlft-dev-registry01/components/nlp_textclassification_ner"
 
         job = text_ner(
             training_data=training_data,
