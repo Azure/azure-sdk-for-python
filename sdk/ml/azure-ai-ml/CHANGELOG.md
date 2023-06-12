@@ -11,10 +11,6 @@
 - Fixed an issue affecting authentication to registry-related services in sovereign regions.
 - Made job_tier and priority values case insensitive
 
-### Breaking Changes
-
-### Other Changes
-
 
 ## 1.7.2 (2023-05-18)
 
