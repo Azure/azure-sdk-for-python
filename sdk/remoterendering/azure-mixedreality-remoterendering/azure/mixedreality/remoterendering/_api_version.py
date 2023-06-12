@@ -5,9 +5,11 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
+from six import with_metaclass
 
+from azure.core import CaseInsensitiveEnumMeta
 
-class RemoteRenderingApiVersion(str, Enum):
+class RemoteRenderingApiVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Remote Rendering API versions supported by this package"""
 
     #: This is the default version
