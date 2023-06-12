@@ -14,6 +14,7 @@ from .early_termination_policy import (
     MedianStoppingPolicy,
     TruncationSelectionPolicy,
 )
+from ..job_resource_configuration import JobResourceConfiguration
 from .objective import Objective
 from .sampling_algorithm import (
     BayesianSamplingAlgorithm,
@@ -72,6 +73,7 @@ class ParameterizedSweep:
             ]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
+        resources: Optional[Union[dict, JobResourceConfiguration]] = None,
     ) -> None:
         """
         :param limits: Limits for sweep job.
@@ -89,17 +91,24 @@ class ParameterizedSweep:
         ~azure.ai.ml.sweep.Randint, ~azure.ai.ml.sweep.Uniform]]
         :param queue_settings: Queue settings for sweep job.
         :type queue_settings: ~azure.ai.ml.entities.QueueSettings
+        :param resources: Compute Resource configuration for the job.
+        :type resources: ~azure.ai.ml.entities.ResourceConfiguration
         """
         self.sampling_algorithm = sampling_algorithm
         self.early_termination = early_termination
         self._limits = limits
         self.search_space = search_space
         self.queue_settings = queue_settings
+        self.resources = resources
 
         if isinstance(objective, Dict):
             self.objective = Objective(**objective)
         else:
             self.objective = objective
+
+    @property
+    def resources(self) -> JobResourceConfiguration:
+        return self._resources
 
     @property
     def limits(self) -> SweepJobLimits:
@@ -109,6 +118,12 @@ class ParameterizedSweep:
         :rtype: ~azure.ai.ml.sweep.SweepJobLimits
         """
         return self._limits
+
+    @resources.setter
+    def resources(self, value):
+        if isinstance(value, dict):
+            value = JobResourceConfiguration(**value)
+        self._resources = value
 
     @limits.setter
     def limits(self, value: SweepJobLimits) -> None:

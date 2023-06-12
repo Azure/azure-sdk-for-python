@@ -10,6 +10,7 @@ from ..job.job_limits import SweepJobLimitsSchema
 from ..queue_settings import QueueSettingsSchema
 from .sweep_fields_provider import EarlyTerminationField, SamplingAlgorithmField, SearchSpaceField
 from .sweep_objective import SweepObjectiveSchema
+from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 
 
 class ParameterizedSweepSchema(PathAwareSchema):
@@ -28,3 +29,4 @@ class ParameterizedSweepSchema(PathAwareSchema):
         required=True,
     )
     queue_settings = ExperimentalField(NestedField(QueueSettingsSchema))
+    resources = NestedField(JobResourceConfigurationSchema)

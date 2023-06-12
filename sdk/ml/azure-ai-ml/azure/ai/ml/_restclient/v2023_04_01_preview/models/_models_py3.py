@@ -28138,6 +28138,8 @@ class SweepJob(JobBaseProperties):
     :vartype search_space: any
     :ivar trial: Required. [Required] Trial component definition.
     :vartype trial: ~azure.mgmt.machinelearningservices.models.TrialComponent
+    :ivar resources: Compute Resource configuration for the job.
+    :vartype resources: ~azure.mgmt.machinelearningservices.models.JobResourceConfiguration
     """
 
     _validation = {
@@ -28173,6 +28175,7 @@ class SweepJob(JobBaseProperties):
         'sampling_algorithm': {'key': 'samplingAlgorithm', 'type': 'SamplingAlgorithm'},
         'search_space': {'key': 'searchSpace', 'type': 'object'},
         'trial': {'key': 'trial', 'type': 'TrialComponent'},
+        'resources': {'key': 'resources', 'type': 'JobResourceConfiguration'},
     }
 
     def __init__(
@@ -28199,6 +28202,7 @@ class SweepJob(JobBaseProperties):
         limits: Optional["SweepJobLimits"] = None,
         outputs: Optional[Dict[str, "JobOutput"]] = None,
         queue_settings: Optional["QueueSettings"] = None,
+        resources: Optional["JobResourceConfiguration"] = None,
         **kwargs
     ):
         """
@@ -28251,6 +28255,8 @@ class SweepJob(JobBaseProperties):
         :paramtype search_space: any
         :keyword trial: Required. [Required] Trial component definition.
         :paramtype trial: ~azure.mgmt.machinelearningservices.models.TrialComponent
+        :keyword resources: Compute Resource configuration for the job.
+        :paramtype resources: ~azure.mgmt.machinelearningservices.models.JobResourceConfiguration
         """
         super(SweepJob, self).__init__(description=description, properties=properties, tags=tags, component_id=component_id, compute_id=compute_id, display_name=display_name, experiment_name=experiment_name, identity=identity, is_archived=is_archived, notification_setting=notification_setting, secrets_configuration=secrets_configuration, services=services, **kwargs)
         self.job_type = 'Sweep'  # type: str
@@ -28263,6 +28269,7 @@ class SweepJob(JobBaseProperties):
         self.sampling_algorithm = sampling_algorithm
         self.search_space = search_space
         self.trial = trial
+        self.resources = resources
 
 
 class SweepJobLimits(JobLimits):

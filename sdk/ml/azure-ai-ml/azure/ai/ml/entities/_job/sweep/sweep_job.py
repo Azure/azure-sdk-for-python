@@ -36,6 +36,7 @@ from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
 from azure.ai.ml.entities._job.sweep.sampling_algorithm import SamplingAlgorithm
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 
 # from ..identity import AmlToken, Identity, ManagedIdentity, UserIdentity
@@ -115,6 +116,8 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :type limits: ~azure.ai.ml.entities.SweepJobLimits
     :param queue_settings: Queue settings for the job.
     :type queue_settings: ~azure.ai.ml.entities.QueueSettings
+    :param resources: Compute Resource configuration for the job.
+    :type resources: ~azure.ai.ml.entities.ResourceConfiguration
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
@@ -157,6 +160,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         trial: Optional[Union[CommandJob, CommandComponent]] = None,
         early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
         queue_settings: Optional[QueueSettings] = None,
+        resources: Optional[Union[dict, JobResourceConfiguration]] = None,
         **kwargs: Any,
     ) -> None:
         """Sweep job for hyperparameter tuning.
@@ -234,6 +238,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             early_termination=early_termination,
             search_space=search_space,
             queue_settings=queue_settings,
+            resources=resources,
         )
 
     def _to_dict(self) -> Dict:
@@ -274,6 +279,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             outputs=to_rest_data_outputs(self.outputs),
             identity=self.identity._to_job_rest_object() if self.identity else None,
             queue_settings=self.queue_settings._to_rest_object() if self.queue_settings else None,
+            resources=self.resources._to_rest_object() if self.resources else None,
         )
         sweep_job_resource = JobBase(properties=sweep_job)
         sweep_job_resource.name = self.name
@@ -335,6 +341,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             if properties.identity
             else None,
             queue_settings=properties.queue_settings,
+            resources=properties.resources,
         )
 
     def _override_missing_properties_from_trial(self):
