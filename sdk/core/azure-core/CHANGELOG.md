@@ -1,16 +1,10 @@
 # Release History
 
-## 1.27.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.27.1 (2023-06-13)
 
 ### Bugs Fixed
 
 - Fix url building for some complex query parameters scenarios  #30707
-
-### Other Changes
 
 ## 1.27.0 (2023-06-01)
 
