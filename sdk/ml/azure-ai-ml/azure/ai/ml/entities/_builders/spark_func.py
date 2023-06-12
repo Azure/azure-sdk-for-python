@@ -140,12 +140,13 @@ def spark(
         ~azure.ai.ml.UserIdentityConfiguration]
     :param driver_cores: The number of cores to use for the driver process, only in cluster mode.
     :type driver_cores: int
-    :param driver_memory: The amount of memory to use for the driver process, (e.g. "2g").
+    :param driver_memory: The amount of memory to use for the driver process, formatted as strings with a size unit
+        suffix ("k", "m", "g" or "t") (e.g. "512m", "2g").
     :type driver_memory: str
     :param executor_cores: The number of cores to use on each executor.
     :type executor_cores: int
-    :param executor_memory: The amount of memory to use per executor process, in the same format as JVM memory strings
-        with a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g).
+    :param executor_memory: The amount of memory to use per executor process, formatted as strings with a size unit
+        suffix ("k", "m", "g" or "t") (e.g. "512m", "2g").
     :type executor_memory: str
     :param executor_instances: The initial number of executors.
     :type executor_instances: int
@@ -177,8 +178,18 @@ def spark(
         :class: tip
 
         .. literalinclude:: ../samples/ml_samples_spark_configurations.py
-            :start-after: [START spark_function_configuration]
-            :end-before: [END spark_function_configuration]
+            :start-after: [START spark_function_configuration_1]
+            :end-before: [END spark_function_configuration_1]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a SparkJob.
+    
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+            :start-after: [START spark_function_configuration_2]
+            :end-before: [END spark_function_configuration_2]
             :language: python
             :dedent: 8
             :caption: Configuring a SparkJob.

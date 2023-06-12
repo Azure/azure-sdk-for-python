@@ -151,7 +151,7 @@ class SparkConfigurationOptions(object):
 
         # [END synapse_spark_compute_configuration]
 
-        # [START spark_function_configuration]
+        # [START spark_function_configuration_1]
         from azure.ai.ml import Input, Output, spark
         from azure.ai.ml.entities import ManagedIdentityConfiguration
 
@@ -189,7 +189,28 @@ class SparkConfigurationOptions(object):
             },
         )
 
-        # [END spark_function_configuration]
+        # [END spark_function_configuration_1]
+
+        # [START spark_function_configuration_2]
+
+        node = spark(
+            code="./tests/test_configs/spark_job/basic_spark_job/src",
+            entry={"file": "./main.py"},
+            driver_cores=1,
+            driver_memory="2g",
+            executor_cores=2,
+            executor_memory="2g",
+            executor_instances=2,
+            resources={
+                "instance_type": "Standard_E8S_V3",
+                "runtime_version": "3.2.0",
+            },
+            identity={"type": "managed"},
+        )
+
+        # [END spark_function_configuration_2]
+
+
 
 
 if __name__ == "__main__":
