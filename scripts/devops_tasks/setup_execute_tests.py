@@ -121,7 +121,7 @@ def run_tests(targeted_packages, test_output_location, test_res, parsed_args):
         local_command_array = command_array[:]
 
         # Get code coverage params for current package
-        coverage_commands = create_code_coverage_params(parsed_args, package_name)
+        coverage_commands = create_code_coverage_params(parsed_args, target_package)
         # Create local copy of params to pass to execute
         local_command_array.extend(coverage_commands)
 

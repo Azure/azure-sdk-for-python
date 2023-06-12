@@ -18,6 +18,9 @@ from ._models_py3 import ElasticProperties
 from ._models_py3 import ElasticTrafficFilter
 from ._models_py3 import ElasticTrafficFilterResponse
 from ._models_py3 import ElasticTrafficFilterRule
+from ._models_py3 import ElasticVersionListFormat
+from ._models_py3 import ElasticVersionListProperties
+from ._models_py3 import ElasticVersionsListResponse
 from ._models_py3 import ErrorResponseBody
 from ._models_py3 import ExternalUserCreationResponse
 from ._models_py3 import ExternalUserInfo
@@ -40,6 +43,7 @@ from ._models_py3 import ResourceSku
 from ._models_py3 import SystemData
 from ._models_py3 import UpgradableVersionsList
 from ._models_py3 import UserApiKeyResponse
+from ._models_py3 import UserApiKeyResponseProperties
 from ._models_py3 import UserEmailId
 from ._models_py3 import UserInfo
 from ._models_py3 import VMCollectionUpdate
@@ -74,6 +78,9 @@ __all__ = [
     "ElasticTrafficFilter",
     "ElasticTrafficFilterResponse",
     "ElasticTrafficFilterRule",
+    "ElasticVersionListFormat",
+    "ElasticVersionListProperties",
+    "ElasticVersionsListResponse",
     "ErrorResponseBody",
     "ExternalUserCreationResponse",
     "ExternalUserInfo",
@@ -96,6 +103,7 @@ __all__ = [
     "SystemData",
     "UpgradableVersionsList",
     "UserApiKeyResponse",
+    "UserApiKeyResponseProperties",
     "UserEmailId",
     "UserInfo",
     "VMCollectionUpdate",

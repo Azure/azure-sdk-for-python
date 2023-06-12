@@ -5,11 +5,13 @@ from pathlib import Path
 
 import pytest
 import yaml
+
 from azure.ai.ml import Input, load_component, load_job
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml.entities import Component, PipelineComponent, PipelineJob
 from azure.ai.ml.entities._inputs_outputs import GroupInput
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
+from azure.ai.ml.operations import ComponentOperations
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -434,3 +436,30 @@ class TestPipelineComponentEntity:
             "component_a_job"
         ]
         assert obj_node_dict == node_dict
+
+    def test_divide_nodes_to_resolve_into_layers(self):
+        component_path = "./tests/test_configs/components/helloworld_multi_layer_pipeline_component.yml"
+        component: PipelineComponent = load_component(source=component_path)
+
+        node_name_list = []
+
+        def extra_operation(node, node_name: str) -> None:
+            node_name_list.append((node_name, node.type))
+
+        layers = ComponentOperations._divide_nodes_to_resolve_into_layers(component, [extra_operation])
+        # all 6 nodes has been processed by extra_operation
+        assert len(node_name_list) == 6
+
+        def get_layer_node_name_set(layer):
+            return set([node_name for node_name, _ in layer])
+
+        # 3 layers
+        assert len(layers) == 3
+        assert len(layers[0]) == 2
+        assert get_layer_node_name_set(layers[0]) == {"pipeline_component_1", "pipeline_component_2"}
+        assert len(layers[1]) == 1
+        assert get_layer_node_name_set(layers[1]) == {"pipeline_component"}
+        assert len(layers[2]) == 3
+        # all leaf nodes in last layer
+        # 2 leaf node of the same node name
+        assert get_layer_node_name_set(layers[2]) == {"command_component", "component_a_job"}

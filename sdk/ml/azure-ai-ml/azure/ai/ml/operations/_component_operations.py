@@ -10,11 +10,13 @@ from functools import partial
 from inspect import Parameter, signature
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
+from azure.core.exceptions import ResourceNotFoundError
+
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
-from azure.ai.ml._restclient.v2022_10_01.models import ListViewType
+from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion, ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -49,6 +51,7 @@ from ..entities._builders import BaseNode
 from ..entities._builders.condition_node import ConditionNode
 from ..entities._builders.control_flow_node import LoopNode
 from ..entities._component.automl_component import AutoMLComponent
+from ..entities._component.code import ComponentCodeMixin
 from ..entities._component.pipeline_component import PipelineComponent
 from ..entities._job.pipeline._attr_dict import has_attr_safe
 from ._code_operations import CodeOperations
@@ -167,6 +170,36 @@ class ComponentOperations(_ScopeDependentOperations):
             )
         )
 
+    @monitor_with_telemetry_mixin(logger, "ComponentVersion.Get", ActivityType.INTERNALCALL)
+    def _get_component_version(self, name: str, version: Optional[str] = DEFAULT_COMPONENT_VERSION) -> ComponentVersion:
+        """Returns ComponentVersion information about the specified component name and version.
+
+        :param name: Name of the code component.
+        :type name: str
+        :param version: Version of the component.
+        :type version: Optional[str]
+        :return: The ComponentVersion object of the specified component name and version.
+        :rtype: ~azure.ai.ml.entities.ComponentVersion
+        """
+        result = (
+            self._version_operation.get(
+                name=name,
+                version=version,
+                resource_group_name=self._resource_group_name,
+                registry_name=self._registry_name,
+                **self._init_args,
+            )
+            if self._registry_name
+            else self._version_operation.get(
+                name=name,
+                version=version,
+                resource_group_name=self._resource_group_name,
+                workspace_name=self._workspace_name,
+                **self._init_args,
+            )
+        )
+        return result
+
     @monitor_with_telemetry_mixin(logger, "Component.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Component:
         """Returns information about the specified component.
@@ -201,23 +234,7 @@ class ComponentOperations(_ScopeDependentOperations):
         if label:
             return _resolve_label_to_asset(self, name, label)
 
-        result = (
-            self._version_operation.get(
-                name=name,
-                version=version,
-                resource_group_name=self._resource_group_name,
-                registry_name=self._registry_name,
-                **self._init_args,
-            )
-            if self._registry_name
-            else self._version_operation.get(
-                name=name,
-                version=version,
-                resource_group_name=self._resource_group_name,
-                workspace_name=self._workspace_name,
-                **self._init_args,
-            )
-        )
+        result = self._get_component_version(name, version)
         component = Component._from_rest_object(result)
         self._resolve_dependencies_for_pipeline_component_jobs(
             component,
@@ -353,6 +370,26 @@ class ComponentOperations(_ScopeDependentOperations):
         name, version = component._get_rest_name_version()
         rest_component_resource = component._to_rest_object()
         result = None
+        try:
+            if not component._is_anonymous and kwargs.get("skip_if_no_change"):
+                client_component_hash = rest_component_resource.properties.properties.get("client_component_hash")
+                remote_component_version = self._get_component_version(name=name)  # will raise error if not found.
+                remote_component_hash = remote_component_version.properties.properties.get("client_component_hash")
+                if client_component_hash == remote_component_hash:
+                    component.version = remote_component_version.properties.component_spec.get(
+                        "version"
+                    )  # only update the default version component instead of creating a new version component
+                    version = component.version
+                    rest_component_resource = component._to_rest_object()
+                    logger.warning(
+                        "The component is not modified compared to the default version "
+                        "and the new version component registration is skipped."
+                    )
+        except ResourceNotFoundError as e:
+            logger.info("Failed to get component version, %s", e)
+        except Exception as e:  # pylint: disable=broad-except
+            logger.error("Failed to compare client_component_hash, %s", e)
+
         try:
             if self._registry_name:
                 start_time = time.time()
@@ -663,17 +700,21 @@ class ComponentOperations(_ScopeDependentOperations):
 
     @classmethod
     def _divide_nodes_to_resolve_into_layers(cls, component: PipelineComponent, extra_operations: List[Callable]):
-        """Traverse the pipeline component and divide nodes to resolve into layers.
+        """Traverse the pipeline component and divide nodes to resolve into layers. Note that all leaf nodes will be
+        put in the last layer.
         For example, for below pipeline component, assuming that all nodes need to be resolved:
           A
          /|\
         B C D
         | |
         E F
+        |
+        G
         return value will be:
         [
-          [("B", B), ("C", C), ("D", D)],
-          [("E", E), ("F", F)],
+          [("B", B), ("C", C)],
+          [("E", E)],
+          [("D", D), ("F", F), ("G", G)],
         ]
 
         :param component: The pipeline component to resolve.
@@ -683,32 +724,35 @@ class ComponentOperations(_ScopeDependentOperations):
         :return: A list of layers of nodes to resolve.
         :rtype: List[List[Tuple[str, BaseNode]]]
         """
-        # add an empty layer to mark the end of the first layer
-        layers, cur_layer_head, cur_layer = [list(component.jobs.items()), []], 0, 0
+        nodes_to_process = list(component.jobs.items())
+        layers = []
+        leaf_nodes = []
 
-        while cur_layer < len(layers) and cur_layer_head < len(layers[cur_layer]):
-            key, job_instance = layers[cur_layer][cur_layer_head]
-            cur_layer_head += 1
+        while nodes_to_process:
+            layers.append([])
+            new_nodes_to_process = []
+            for key, job_instance in nodes_to_process:
+                cls._resolve_binding_on_supported_fields_for_node(job_instance)
+                if isinstance(job_instance, LoopNode):
+                    job_instance = job_instance.body
 
-            cls._resolve_binding_on_supported_fields_for_node(job_instance)
-            if isinstance(job_instance, LoopNode):
-                job_instance = job_instance.body
+                for extra_operation in extra_operations:
+                    extra_operation(job_instance, key)
 
-            for extra_operation in extra_operations:
-                extra_operation(job_instance, key)
+                if isinstance(job_instance, BaseNode) and isinstance(job_instance._component, PipelineComponent):
+                    # candidates for next layer
+                    new_nodes_to_process.extend(job_instance.component.jobs.items())
+                    # use layers to store pipeline nodes in each layer for now
+                    layers[-1].append((key, job_instance))
+                else:
+                    # note that LoopNode has already been replaced by its body here
+                    leaf_nodes.append((key, job_instance))
+            nodes_to_process = new_nodes_to_process
 
-            if isinstance(job_instance, BaseNode) and isinstance(job_instance._component, PipelineComponent):
-                if cur_layer + 1 == len(layers):
-                    layers.append([])
-                layers[cur_layer + 1].extend(job_instance.component.jobs.items())
-
-            if cur_layer_head == len(layers[cur_layer]):
-                cur_layer += 1
-                cur_layer_head = 0
-
-        # if there is no subgraph, pop the empty layer inserted at the beginning
-        if len(layers[-1]) == 0:
+        # if there is subgraph, the last item in layers will be empty for now as all leaf nodes are stored in leaf_nodes
+        if len(layers) != 0:
             layers.pop()
+            layers.append(leaf_nodes)
 
         return layers
 
@@ -761,9 +805,6 @@ class ComponentOperations(_ScopeDependentOperations):
 
         for layer in reversed(layers):
             for _, job_instance in layer:
-                if isinstance(job_instance, LoopNode):
-                    job_instance = job_instance.body
-
                 if isinstance(job_instance, AutoMLJob):
                     # only compute is resolved here
                     self._job_operations._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)
@@ -858,7 +899,8 @@ def _refine_component(component_func: types.FunctionType) -> Component:
 
 
 def _try_resolve_code_for_component(component: Component, get_arm_id_and_fill_back: Callable) -> None:
-    with component._resolve_local_code() as code:
-        if code is None:
-            return
-        component.code = get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)
+    if isinstance(component, ComponentCodeMixin):
+        with component._build_code() as code:
+            if code is None:
+                return
+            component.code = get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)

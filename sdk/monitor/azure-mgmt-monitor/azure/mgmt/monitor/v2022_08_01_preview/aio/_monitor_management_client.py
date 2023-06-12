@@ -27,7 +27,7 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
 
     :ivar scheduled_query_rules: ScheduledQueryRulesOperations operations
     :vartype scheduled_query_rules:
-     $(python-base-namespace).v2022_08_01_preview.aio.operations.ScheduledQueryRulesOperations
+     azure.mgmt.monitor.v2022_08_01_preview.aio.operations.ScheduledQueryRulesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
