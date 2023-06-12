@@ -55,7 +55,7 @@ output EVENTGRID_KEY string = listKeys(resourceId('Microsoft.EventGrid/namespace
 // TODO: get this formatted properly
 output EVENTGRID_ENDPOINT string= 'https://${ns_resource.properties.topicsConfiguration.hostname}'
 
-output EVENTGRID_TOPIC string = topicName
-output EVENTGRID_SUBSCRIPTION string = subscriptionName
+output TOPIC_NAME string = topicName
+output EVENT_SUBSCRIPTION_NAME string = subscriptionName
 output RESOURCE_GROUP string = resourceGroup().name
 output AZURE_SUBSCRIPTION_ID string = subscription().subscriptionId
