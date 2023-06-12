@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Dict, Optional, TypeVar
 
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
@@ -18,6 +18,9 @@ if TYPE_CHECKING:
         AzureSasCredential,
     )
     from azure.core.pipeline import PipelineRequest, PipelineResponse
+    from azure.core.pipeline.policies._universal import HTTPRequestType
+
+HTTPResponseTypeVar = TypeVar("HTTPResponseTypeVar")
 
 
 # pylint:disable=too-few-public-methods
@@ -160,28 +163,37 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         return
 
 
-class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
+class AzureKeyCredentialPolicy(SansIOHTTPPolicy["HTTPRequestType", HTTPResponseTypeVar]):
     """Adds a key header for the provided credential.
 
     :param credential: The credential used to authenticate requests.
     :type credential: ~azure.core.credentials.AzureKeyCredential
     :param str name: The name of the key header used for the credential.
+    :keyword str prefix: The name of the prefix for the header value if any.
     :raises: ValueError or TypeError
     """
 
     def __init__(
-        self, credential: "AzureKeyCredential", name: str, **kwargs  # pylint: disable=unused-argument
+        self,
+        credential: "AzureKeyCredential",
+        name: str,
+        *,
+        prefix: Optional[str] = None,
+        **kwargs,  # pylint: disable=unused-argument
     ) -> None:
-        super(AzureKeyCredentialPolicy, self).__init__()
-        self._credential = credential
+        super().__init__()
+        if not hasattr(credential, "key"):
+            raise TypeError("String is not a supported credential input type. Use an instance of AzureKeyCredential.")
         if not name:
             raise ValueError("name can not be None or empty")
         if not isinstance(name, str):
             raise TypeError("name must be a string.")
+        self._credential = credential
         self._name = name
+        self._prefix = prefix + " " if prefix else ""
 
-    def on_request(self, request):
-        request.http_request.headers[self._name] = self._credential.key
+    def on_request(self, request: "PipelineRequest[HTTPRequestType]") -> None:
+        request.http_request.headers[self._name] = f"{self._prefix}{self._credential.key}"
 
 
 class AzureSasCredentialPolicy(SansIOHTTPPolicy):

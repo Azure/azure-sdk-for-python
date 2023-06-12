@@ -271,6 +271,31 @@ class TestOpentelemetryWrapper:
                 assert "attribute2" in link.attributes
                 assert link.attributes == attributes
 
+    def test_parent_context(self, tracer):
+        with tracer.start_as_current_span("Root"):
+            parent_header = {"traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01"}
+            span = OpenTelemetrySpan(name="test_span", context=parent_header)
+            assert span.span_instance.context.trace_id == int("2578531519ed94423ceae67588eff2c9", 16)
+            assert span.span_instance.parent.span_id == int("231ebdc614cb9ddd", 16)
+
+    def test_empty_parent_context(self, tracer):
+        with tracer.start_as_current_span("Root") as root:
+            span = OpenTelemetrySpan(name="test_span", context={})
+            # Parent of span should be current span context if context is empty.
+            assert span.span_instance.parent is root.context
+
+            span = OpenTelemetrySpan(name="test_span2", context=None)
+            # Parent of span should be current span context if context is None or not specified.
+            assert span.span_instance.parent is root.context
+
+            span = OpenTelemetrySpan(name="test_span3", context={"no_traceparent": "foo"})
+            # Parent of span should be None if context is not empty but does not contain traceparent.
+            assert span.span_instance.parent is None
+
+        span = OpenTelemetrySpan(name="test_span3")
+        # If no outer span and no context, parent should be None.
+        assert span.span_instance.parent is None
+
     def test_add_attribute(self, tracer):
         with tracer.start_as_current_span("Root") as parent:
             wrapped_class = OpenTelemetrySpan(span=parent)

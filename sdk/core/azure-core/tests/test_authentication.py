@@ -300,7 +300,7 @@ def test_azure_key_credential_policy(http_request):
 
 
 def test_azure_key_credential_policy_raises():
-    """Tests AzureKeyCredential and AzureKeyCredentialPolicy raises with non-string input parameters."""
+    """Tests AzureKeyCredential and AzureKeyCredentialPolicy raises with non-compliant input parameters."""
     api_key = 1234
     key_header = 5678
     with pytest.raises(TypeError):
@@ -309,6 +309,9 @@ def test_azure_key_credential_policy_raises():
     credential = AzureKeyCredential(str(api_key))
     with pytest.raises(TypeError):
         credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
+
+    with pytest.raises(TypeError):
+        credential_policy = AzureKeyCredentialPolicy(credential=str(api_key), name=key_header)
 
 
 def test_azure_key_credential_updates():
@@ -409,3 +412,22 @@ def test_azure_named_key_credential_raises():
 
     with pytest.raises(TypeError, match="Both name and key must be strings."):
         cred.update(1234, "newkey")
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_azure_http_credential_policy(http_request):
+    """Tests to see if we can create an AzureHttpKeyCredentialPolicy"""
+
+    prefix = "SharedAccessKey"
+    api_key = "test_key"
+    header_content = f"{prefix} {api_key}"
+
+    def verify_authorization_header(request):
+        assert request.headers["Authorization"] == header_content
+
+    transport = Mock(send=verify_authorization_header)
+    credential = AzureKeyCredential(api_key)
+    credential_policy = AzureKeyCredentialPolicy(credential=credential, name="Authorization", prefix=prefix)
+    pipeline = Pipeline(transport=transport, policies=[credential_policy])
+
+    pipeline.run(http_request("GET", "https://test_key_credential"))

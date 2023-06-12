@@ -2,9 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from pathlib import Path
-from typing import Dict, Optional, Union, List
-from contextlib import contextmanager
+from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -16,28 +14,25 @@ from azure.ai.ml.entities._job.distribution import (
     DistributionConfiguration,
     MpiDistribution,
     PyTorchDistribution,
-    TensorFlowDistribution,
     RayDistribution,
+    TensorFlowDistribution,
 )
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
-from .code import ComponentIgnoreFile
-from ._additional_includes import AdditionalIncludes
-
-from ...entities._assets import Code
 from ..._restclient.v2022_10_01.models import ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
 from .._validation import MutableValidationResult
+from ._additional_includes import AdditionalIncludesMixin
 from .component import Component
 
 # pylint: disable=protected-access
 
 
-class CommandComponent(Component, ParameterizedCommand):
+class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin):
     """Command component version, used to define a command component.
 
     :param name: Name of the component.
@@ -104,9 +99,6 @@ class CommandComponent(Component, ParameterizedCommand):
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
         kwargs[COMPONENT_TYPE] = NodeType.COMMAND
-        # Set default base path
-        if "base_path" not in kwargs:
-            kwargs["base_path"] = Path(".")
 
         # Component backend doesn't support environment_variables yet,
         # this is to support the case of CommandComponent being the trial of
@@ -145,21 +137,17 @@ class CommandComponent(Component, ParameterizedCommand):
             )
         self.instance_count = instance_count
         self.additional_includes = additional_includes or []
-        self.__additional_includes_obj = None
 
-    @property
-    def _additional_includes_obj(self):
-        if (
-            self.__additional_includes_obj is None
-            and self.additional_includes
-            and isinstance(self.additional_includes, list)
-        ):
-            # use property as `self._source_path` is set after __init__ now
-            # `self._source_path` is not None when enter this function
-            self.__additional_includes_obj = AdditionalIncludes(
-                code_path=self.code, yaml_path=self._source_path, additional_includes=self.additional_includes
-            )
-        return self.__additional_includes_obj
+    # region AdditionalIncludesMixin
+    def _get_origin_code_value(self) -> Union[str, os.PathLike, None]:
+        if self.code is not None and isinstance(self.code, str):
+            # directly return code given it will be validated in self._validate_additional_includes
+            return self.code
+
+        # self.code won't be a Code object, or it will fail schema validation according to CodeFields
+        return None
+
+    # endregion
 
     @property
     def instance_count(self) -> int:
@@ -208,14 +196,14 @@ class CommandComponent(Component, ParameterizedCommand):
             return self.environment.id
         return self.environment
 
+    # region SchemaValidatableMixin
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return CommandComponentSchema(context=context)
 
     def _customized_validate(self):
         validation_result = super(CommandComponent, self)._customized_validate()
-        if self._additional_includes_obj and self._additional_includes_obj.with_includes:
-            validation_result.merge_with(self._additional_includes_obj._validate())
+        self._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(validation_result)
         validation_result.merge_with(self._validate_command())
         validation_result.merge_with(self._validate_early_available_output())
         return validation_result
@@ -256,6 +244,8 @@ class CommandComponent(Component, ParameterizedCommand):
                     return False
         return True
 
+    # endregion
+
     @classmethod
     def _parse_args_description_from_docstring(cls, docstring):
         return parse_args_description_from_docstring(docstring)
@@ -265,46 +255,3 @@ class CommandComponent(Component, ParameterizedCommand):
             return self._to_yaml()
         except BaseException:  # pylint: disable=broad-except
             return super(CommandComponent, self).__str__()
-
-    @contextmanager
-    def _resolve_local_code(self) -> Optional[Code]:
-        """Try to create a Code object pointing to local code and yield it.
-
-        If there is no local code to upload, yield None. Otherwise, yield a Code object pointing to the code.
-        """
-        # if there is no local code, yield super()._resolve_local_code() and return early
-        if self.code is not None:
-            with super()._resolve_local_code() as code:
-                if not isinstance(code, Code) or code._is_remote:
-                    yield code
-                    return
-
-        # This is forbidden by schema CodeFields for now so won't happen.
-        if isinstance(self.code, Code):
-            yield code
-            return
-
-        if self._additional_includes_obj is not None:
-            self._additional_includes_obj.resolve()
-
-            # use absolute path in case temp folder & work dir are in different drive
-            tmp_code_dir = (
-                self._additional_includes_obj.code.absolute()
-                if self._additional_includes_obj.code
-                else self._additional_includes_obj.yaml_path.absolute()
-            )
-            rebased_ignore_file = ComponentIgnoreFile(
-                tmp_code_dir,
-            )
-
-            yield Code(
-                base_path=self._base_path,
-                path=tmp_code_dir,
-                ignore_file=rebased_ignore_file,
-            )
-
-            self._additional_includes_obj.cleanup()
-        elif self.code is not None:
-            yield code
-        else:
-            yield None

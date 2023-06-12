@@ -123,7 +123,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
         create_certificate_polling = CreateCertificatePollerAsync(
             get_certificate_command=get_certificate_command, interval=polling_interval
         )
-        return await async_poller(command, create_certificate_operation, None, create_certificate_polling)
+        def no_op(*_, **__) -> Any:  # The deserialization callback is ignored based on polling implementation
+            pass
+        return await async_poller(command, create_certificate_operation, no_op, create_certificate_polling)
 
     @distributed_trace_async
     async def get_certificate(self, certificate_name: str, **kwargs) -> KeyVaultCertificate:

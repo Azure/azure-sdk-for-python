@@ -271,12 +271,12 @@ class OperationGroup(VersionedObject):
         def _get_operation(code_model: "CodeModel", name: str) -> Operation:
             return Operation(code_model, name, operation_group=self)
 
-        self.operations = _combine_helper(
+        self.operations = [o for o in _combine_helper(
             code_model=self.code_model,
             sorted_api_versions=api_versions,
             get_cls=_get_operation,
             get_names_by_api_version=_get_names_by_api_version,
-        )
+        ) if o.name != "_api_version"]
 
     def doc(self, async_mode: bool) -> str:
         return strip_version_from_docs(self.generated_class(async_mode).__doc__)

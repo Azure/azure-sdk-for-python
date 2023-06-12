@@ -29,8 +29,8 @@ def _get_client_args(**kwargs) -> Optional[dict]:
 
     try:
         spark = SparkSession.builder.getOrCreate()
-    except Exception:
-        raise Exception("Fail to get spark session, please check if spark environment is set up.")
+    except Exception as e:
+        raise Exception("Fail to get spark session, please check if spark environment is set up.") from e
 
     spark_conf = spark.sparkContext.getConf()
     spark_conf_vars = {
@@ -56,6 +56,7 @@ def _get_client_args(**kwargs) -> Optional[dict]:
 
     token_service_endpoint = os.environ.get("AZUREML_SYNAPSE_TOKEN_SERVICE_ENDPOINT")
     obo_access_token = os.environ.get("AZUREML_OBO_CANARY_TOKEN")
+    obo_endpoint = os.environ.get("AZUREML_OBO_USER_TOKEN_FOR_SPARK_RETRIEVAL_API", "getuseraccesstokenforspark")
     subscription_id = os.environ.get("AZUREML_ARM_SUBSCRIPTION")
     resource_group = os.environ.get("AZUREML_ARM_RESOURCEGROUP")
     workspace_name = os.environ.get("AZUREML_ARM_WORKSPACE_NAME")
@@ -64,14 +65,11 @@ def _get_client_args(**kwargs) -> Optional[dict]:
         return None
 
     # pylint: disable=line-too-long
-    request_url_format = "https://{}/api/v1/proxy/obotoken/v1.0/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/getuseraccesstokenforrun"  # cspell:disable-line
+    request_url_format = "https://{}/api/v1/proxy/obotoken/v1.0/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/{}"  # cspell:disable-line
     # pylint: enable=line-too-long
 
     url = request_url_format.format(
-        token_service_endpoint,
-        subscription_id,
-        resource_group,
-        workspace_name,
+        token_service_endpoint, subscription_id, resource_group, workspace_name, obo_endpoint
     )
 
     return dict(

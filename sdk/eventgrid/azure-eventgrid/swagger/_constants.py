@@ -58,4 +58,4 @@ additional_events = {
     "ServiceBusDeadletterMessagesAvailableWithNoListenerEventName": "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners",
 }
 
-EXCEPTIONS = ["ContainerRegistryArtifactEventData", "ContainerRegistryEventData"]
+EXCEPTIONS = ['ContainerRegistryArtifactEventData', 'ContainerRegistryEventData', 'ContainerServiceClusterSupportEventData', 'ContainerServiceNodePoolRollingEventData']
