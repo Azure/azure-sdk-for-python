@@ -883,12 +883,14 @@ class TestCommandComponentEntity:
                 "artifacts_additional_includes_with_conflict.yml"
             )
             component = load_component(source=yaml_path)
-            validation_result = component._validate()
-            assert validation_result.passed is False
-            error_message = validation_result.error_messages["additional_includes"]
-            assert "There are conflict files in additional include" in error_message
-            assert "test_additional_include:version_1 in component-sdk-test-feed" in error_message
-            assert "test_additional_include:version_3 in component-sdk-test-feed" in error_message
+            with pytest.raises(
+                RuntimeError,
+                match="There are conflict files in additional include"
+                ".*test_additional_include:version_1 in component-sdk-test-feed"
+                ".*test_additional_include:version_3 in component-sdk-test-feed",
+            ):
+                with component._build_code():
+                    pass
 
     @pytest.mark.parametrize(
         "yaml_path,expected_error_msg_prefix",

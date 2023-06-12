@@ -717,7 +717,7 @@ class TestComponent:
                 "os": "Linux",
             }
 
-    def test_artifacts_in_additional_includes(self, mocker: MockFixture):
+    def test_artifacts_in_additional_includes(self):
         with mock_artifact_download_to_temp_directory():
             yaml_path = "./tests/test_configs/internal/component_with_additional_includes/with_artifacts.yml"
             component: InternalComponent = load_component(source=yaml_path)
@@ -741,15 +741,14 @@ class TestComponent:
                 "artifacts_additional_includes_with_conflict.yml"
             )
             component: InternalComponent = load_component(source=yaml_path)
-            validation_result = component._validate()
-            assert validation_result.passed is False
-            assert "There are conflict files in additional include" in validation_result.error_messages["*"]
-            assert (
-                "test_additional_include:version_1 in component-sdk-test-feed" in validation_result.error_messages["*"]
-            )
-            assert (
-                "test_additional_include:version_3 in component-sdk-test-feed" in validation_result.error_messages["*"]
-            )
+            with pytest.raises(
+                RuntimeError,
+                match="There are conflict files in additional include"
+                ".*test_additional_include:version_1 in component-sdk-test-feed"
+                ".*test_additional_include:version_3 in component-sdk-test-feed",
+            ):
+                with component._build_code():
+                    pass
 
     @pytest.mark.parametrize(
         "yaml_path,expected_error_msg_prefix",

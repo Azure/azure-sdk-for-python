@@ -154,15 +154,43 @@ class InternalComponent(Component, AdditionalIncludesMixin):
 
     @classmethod
     def _read_additional_include_configs(cls, yaml_path) -> List:
+        """Read additional include configs from the additional includes file.
+        The name of the file is the same as the component spec file, with a suffix of ".additional_includes".
+        It can be either a yaml file or a text file:
+        1. If it is a yaml file, yaml format of additional_includes looks like below:
+        ```
+        additional_includes:
+         - your/local/path
+         - type: artifact
+           organization: devops_organization
+           project: devops_project
+           feed: artifacts_feed_name
+           name: universal_package_name
+           version: package_version
+           scope: scope_type
+        ```
+        2. If it is a text file, each line is a path to include. Note that artifact config is not supported
+        in this format.
+        """
         additional_includes_config_path = yaml_path.with_suffix(_ADDITIONAL_INCLUDES_SUFFIX)
         if additional_includes_config_path.is_file():
             with open(additional_includes_config_path) as f:
                 file_content = f.read()
-                configs = yaml.safe_load(file_content)
-                if isinstance(configs, dict):
-                    return configs.get(_ADDITIONAL_INCLUDES_CONFIG_KEY, [])
+                try:
+                    configs = yaml.safe_load(file_content)
+                    if isinstance(configs, dict):
+                        return configs.get(_ADDITIONAL_INCLUDES_CONFIG_KEY, [])
+                except Exception:  # pylint: disable=broad-except
+                    # TODO: check if we should catch yaml.YamlError instead here
+                    pass
                 return [line.strip() for line in file_content.splitlines(keepends=False) if len(line.strip()) > 0]
         return []
+
+    @classmethod
+    def _get_additional_includes_field_name(cls) -> str:
+        # additional includes for internal components are configured by a file, which is not a field in the yaml
+        # return '*' as diagnostics yaml paths and override _get_all_additional_includes_configs.
+        return "*"
 
     def _get_all_additional_includes_configs(self) -> List:
         # internal components must have a source path
@@ -177,6 +205,11 @@ class InternalComponent(Component, AdditionalIncludesMixin):
 
     # endregion
 
+    @property
+    def _additional_includes(self):
+        """This property is kept for compatibility with old mldesigner sdk."""
+        return self._generate_additional_includes_obj()
+
     # region SchemaValidatableMixin
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
@@ -184,8 +217,9 @@ class InternalComponent(Component, AdditionalIncludesMixin):
 
     def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(InternalComponent, self)._customized_validate()
-        validation_result.merge_with(self._validate_code(), "code")
-        validation_result.merge_with(self._validate_additional_includes())
+        skip_path_validation = not self._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(
+            validation_result
+        )
         # resolving additional includes & update self._base_path can be dangerous,
         # so we just skip path validation if additional includes is provided.
         # note that there will still be client-side error on job submission (after code is resolved)
@@ -194,7 +228,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
             validation_result.merge_with(
                 self.environment.validate(
                     self._base_path,
-                    skip_path_validation=self._with_additional_includes(),
+                    skip_path_validation=skip_path_validation,
                 ),
                 field_name="environment",
             )
@@ -246,22 +280,13 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         return snapshot_id
 
     @contextmanager
-    def _build_code(self) -> Optional[Code]:
-        """Create a Code object if necessary based on origin code value and yield it.
-
-        If built code is the same as its origin value, do nothing and yield None.
-        Otherwise, yield a Code object pointing to the code.
+    def _try_build_local_code(self) -> Optional[Code]:
+        """Build final code when origin code is a local code.
         Will merge code path with additional includes into a temp folder if additional includes is specified.
         For internal components, file dependencies in environment will be resolved based on the final code.
         """
-        # if there is no local code, yield super()._build_code() and return early
-        # an internal component always has a default local code of its base path
-        if not self._with_local_code():
-            with super()._build_code() as code:
-                yield code
-                return
-
-        with self._merge_additional_includes() as tmp_code_dir:
+        # origin code value of internal component will never be None. check _get_origin_code_value for details
+        with self._generate_additional_includes_obj().merge_local_code_and_additional_includes() as tmp_code_dir:
             # use absolute path in case temp folder & work dir are in different drive
             tmp_code_dir = tmp_code_dir.absolute()
 

@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
@@ -140,10 +139,6 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         self.additional_includes = additional_includes or []
 
     # region AdditionalIncludesMixin
-    def _get_base_path_for_code(self) -> Path:
-        # self.base_path has a default value of os.getcwd() defined in Resource
-        return Path(self.base_path)
-
     def _get_origin_code_value(self) -> Union[str, os.PathLike, None]:
         if self.code is not None and isinstance(self.code, str):
             # directly return code given it will be validated in self._validate_additional_includes
@@ -151,9 +146,6 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
 
         # self.code won't be a Code object, or it will fail schema validation according to CodeFields
         return None
-
-    def _get_all_additional_includes_configs(self) -> List:
-        return self.additional_includes or []
 
     # endregion
 
@@ -211,8 +203,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
 
     def _customized_validate(self):
         validation_result = super(CommandComponent, self)._customized_validate()
-        validation_result.merge_with(self._validate_code(), field_name="code")
-        validation_result.merge_with(self._validate_additional_includes(), field_name="additional_includes")
+        self._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(validation_result)
         validation_result.merge_with(self._validate_command())
         validation_result.merge_with(self._validate_early_available_output())
         return validation_result

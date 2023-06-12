@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
@@ -144,16 +143,10 @@ class SparkComponent(
             "code": (str, os.PathLike),
         }
 
-    def _get_origin_code_value(self) -> Union[str, os.PathLike, None]:
-        return self.code
-
-    def _get_base_path_for_code(self) -> Path:
-        return Path(self.base_path)
-
     def _customized_validate(self) -> MutableValidationResult:
-        result = super()._customized_validate()
-        result.merge_with(self._validate_code(), field_name="code")
-        return result
+        validation_result = super()._customized_validate()
+        self._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(validation_result)
+        return validation_result
 
     def _to_dict(self) -> Dict:
         """Dump the spark component content into a dictionary."""
