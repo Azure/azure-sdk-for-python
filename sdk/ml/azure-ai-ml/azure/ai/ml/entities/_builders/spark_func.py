@@ -108,8 +108,7 @@ def spark(
     resources: Optional[Union[Dict, SparkResourceConfiguration]] = None,
     **kwargs,
 ) -> Spark:
-    """Creates a Spark object which can be used inside dsl.pipeline as a function and
-    can also be created as a standalone spark job.
+    """Creates a Spark object which can be used inside a dsl.pipeline function or used as a standalone Spark job.
 
     :param experiment_name:  The name of the experiment the job will be created under.
     :type experiment_name: str
@@ -120,13 +119,13 @@ def spark(
     :param description: The description of the job.
     :type description: str
     :param tags: The dictionary of tags for the job. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
+    :type tags: Dict[str, str]
     :param code: The source code to run the job.
     :type code: Union[str, os.PathLike]
     :param entry: The file or class entry point.
-    :type entry: dict[str, str]
+    :type entry: Union[Dict[str, str], ~azure.ai.ml.entities.SparkJobEntry]
     :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
-    :type py_files: Optional[List[str]]
+    :type py_files: List[str]
     :param jars: The list of .JAR files to include on the driver and executor classpaths.
     :type jars: List[str]
     :param files: The list of files to be placed in the working directory of each executor.
@@ -135,17 +134,19 @@ def spark(
     :type archives: List[str]
     :param identity: The identity that the Spark job will use while running on compute.
     :type identity: Union[
-        ~azure.ai.ml.ManagedIdentityConfiguration,
-        ~azure.ai.ml.AmlTokenConfiguration,
-        ~azure.ai.ml.UserIdentityConfiguration]
+        Dict[str, str],
+        ~azure.ai.ml.entities.ManagedIdentityConfiguration,
+        ~azure.ai.ml.entities.AmlTokenConfiguration,
+        ~azure.ai.ml.entities.UserIdentityConfiguration]
     :param driver_cores: The number of cores to use for the driver process, only in cluster mode.
     :type driver_cores: int
-    :param driver_memory: The amount of memory to use for the driver process, (e.g. "2g").
+    :param driver_memory: The amount of memory to use for the driver process, formatted as strings with a size unit
+        suffix ("k", "m", "g" or "t") (e.g. "512m", "2g").
     :type driver_memory: str
     :param executor_cores: The number of cores to use on each executor.
     :type executor_cores: int
-    :param executor_memory: The amount of memory to use per executor process, in the same format as JVM memory strings
-        with a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g).
+    :param executor_memory: The amount of memory to use per executor process, formatted as strings with a size unit
+        suffix ("k", "m", "g" or "t") (e.g. "512m", "2g").
     :type executor_memory: str
     :param executor_instances: The initial number of executors.
     :type executor_instances: int
@@ -159,13 +160,13 @@ def spark(
         enabled.
     :type dynamic_allocation_max_executors: int
     :param conf: A dictionary with pre-defined Spark configurations key and values.
-    :type conf: dict
+    :type conf: Dict[str, str]
     :param environment: The Azure ML environment to run the job in.
     :type environment: Union[str, ~azure.ai.ml.entities.Environment]
-    :param inputs: The mapping of input data bindings used in the job.
-    :type inputs: dict[str, ~azure.ai.ml.Inputs]
-    :param outputs: The mapping of output data bindings used in the job.
-    :type outputs: dict[str, ~azure.ai.ml.Outputs]
+    :param inputs: A mapping of input names to input data used in the job.
+    :type inputs: Dict[str, ~azure.ai.ml.Input]
+    :param outputs: A mapping of output names to output data used in the job.
+    :type outputs: Dict[str, ~azure.ai.ml.Output]
     :param args: The arguments for the job.
     :type args: str
     :param compute: The compute resource the job runs on.
@@ -177,11 +178,41 @@ def spark(
         :class: tip
 
         .. literalinclude:: ../samples/ml_samples_spark_configurations.py
-            :start-after: [START spark_function_configuration]
-            :end-before: [END spark_function_configuration]
+            :start-after: [START spark_function_configuration_1]
+            :end-before: [END spark_function_configuration_1]
             :language: python
             :dedent: 8
             :caption: Configuring a SparkJob.
+    
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+            :start-after: [START spark_function_configuration_2]
+            :end-before: [END spark_function_configuration_2]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a SparkJob.
+    
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+            :start-after: [START spark_function_configuration_2]
+            :end-before: [END spark_function_configuration_2]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a SparkJob.
+    
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+            :start-after: [START spark_dsl_pipeline]
+            :end-before: [END spark_dsl_pipeline]
+            :language: python
+            :dedent: 8
+            :caption: Building a Spark pipeline using the DSL pipeline decorator
     """
 
     inputs = inputs or {}

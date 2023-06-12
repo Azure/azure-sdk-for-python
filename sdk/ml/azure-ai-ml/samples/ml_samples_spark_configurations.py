@@ -151,7 +151,7 @@ class SparkConfigurationOptions(object):
 
         # [END synapse_spark_compute_configuration]
 
-        # [START spark_function_configuration]
+        # [START spark_function_configuration_1]
         from azure.ai.ml import Input, Output, spark
         from azure.ai.ml.entities import ManagedIdentityConfiguration
 
@@ -189,7 +189,76 @@ class SparkConfigurationOptions(object):
             },
         )
 
-        # [END spark_function_configuration]
+        # [END spark_function_configuration_1]
+
+        # [START spark_function_configuration_2]
+
+        node = spark(
+            code="./tests/test_configs/spark_job/basic_spark_job/src",
+            entry={"file": "./main.py"},
+            driver_cores=1,
+            driver_memory="2g",
+            executor_cores=2,
+            executor_memory="2g",
+            executor_instances=2,
+            resources={
+                "instance_type": "Standard_E8S_V3",
+                "runtime_version": "3.2.0",
+            },
+            identity={"type": "managed"},
+        )
+
+        # [END spark_function_configuration_2]
+
+        # [START spark_dsl_pipeline]
+        from azure.ai.ml import Input, Output, dsl, spark
+        from azure.ai.ml.constants import AssetTypes, InputOutputModes
+
+        # define the spark task
+        first_step = spark(
+            code="/src",
+            entry={"file": "add_greeting_column.py"},
+            py_files=["utils.zip"],
+            files=["my_files.txt"],
+            driver_cores=2,
+            driver_memory="1g",
+            executor_cores=1,
+            executor_memory="1g",
+            executor_instances=1,
+            inputs=dict(file_input=Input(path="/dataset/iris.csv", type=AssetTypes.URI_FILE, mode=InputOutputModes.DIRECT)),
+            args="--file_input ${{inputs.file_input}}",
+            resources={"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
+        )
+
+        second_step = spark(
+            code="/src",
+            entry={"file": "count_by_row.py"},
+            jars=["scalaproj.jar"],
+            files=["my_files.txt"],
+            driver_cores=2,
+            driver_memory="1g",
+            executor_cores=1,
+            executor_memory="1g",
+            executor_instances=1,
+            inputs=dict(file_input=Input(path="/dataset/iris.csv", type=AssetTypes.URI_FILE, mode=InputOutputModes.DIRECT)),
+            outputs=dict(output=Output(type="uri_folder", mode=InputOutputModes.DIRECT)),
+            args="--file_input ${{inputs.file_input}} --output ${{outputs.output}}",
+            resources={"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
+        )
+
+        # Define pipeline
+        @dsl.pipeline(description="submit a pipeline with spark job")
+        def spark_pipeline_from_builder(data):
+            add_greeting_column = first_step(file_input=data)
+            count_by_row = second_step(file_input=data)
+            return {"output": count_by_row.outputs.output}
+
+        pipeline = spark_pipeline_from_builder(
+            data=Input(path="/dataset/iris.csv", type=AssetTypes.URI_FILE, mode=InputOutputModes.DIRECT),
+        )
+        # [END spark_dsl_pipeline]
+
+
 
 
 if __name__ == "__main__":
