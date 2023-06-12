@@ -169,7 +169,7 @@ class QuickQueryStreamer(object):
         try:
             # keep reading from the generator until the buffer of this stream has enough data to read
             while self._point + size > self._download_offset:
-                self._buf += self.__next__()
+                self._buf += self.__next__()  # pylint: disable=unnecessary-dunder-call
         except StopIteration:
             self.file_length = self._download_offset
 
