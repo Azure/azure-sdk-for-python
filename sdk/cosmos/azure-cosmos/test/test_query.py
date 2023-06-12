@@ -10,8 +10,7 @@ from azure.cosmos.documents import _DistinctType
 import pytest
 import collections
 import test_config
-from unittest.mock import MagicMock
-from azure.cosmos import http_constants
+from sys import getsizeof
 
 pytestmark = pytest.mark.cosmosEmulator
 
@@ -830,22 +829,24 @@ class QueryTest(unittest.TestCase):
 
         self.assertListEqual(list(query_results), [None])
 
-    def side_effect_continuation_token_size_limit(self, *args, **kwargs):
-        # Extract request headers from args
-        self.assertTrue(args[2][http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] is 8)
-        raise StopIteration
-
     def test_continuation_token_size_limit_query(self):
         container = self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
-        cosmos_client_connection = container.client_connection
-        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
-            side_effect=self.side_effect_continuation_token_size_limit)
-        try:
-            query = "Select * from c"
-            container.query_items(query, response_continuation_token_limit_in_kb=8)
-        except StopIteration:
-            pass
+        for i in range(1, 1000):
+            container.create_item(body=dict(pk='123', id=str(i), some_value=str(i % 3)))
+        query = "Select * from c where c.some_value='2'"
+        response_query = container.query_items(query, partition_key='123', max_item_count=100,
+                                               response_continuation_token_limit_in_kb=1)
+        pager = response_query.by_page()
+        pager.next()
+        token = pager.continuation_token
+        # Continuation token size should be below 1kb
+        self.assertLessEqual(getsizeof(token), 1024)
+        pager.next()
+        token = pager.continuation_token
+        # verify a second time
+        self.assertLessEqual(getsizeof(token), 1024)
+        self.created_db.delete_container(container)
 
     def _MockNextFunction(self):
         if self.count < len(self.payloads):

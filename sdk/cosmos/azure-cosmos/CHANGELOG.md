@@ -3,6 +3,8 @@
 ### 4.4.1 (Unreleased)
 
 #### Features Added
+* Added **provisional** ability to limit Continuation Token size when querying for items.
+
 
 #### Breaking Changes
 
@@ -19,7 +21,6 @@
 
 #### Features Added
 * Added conditional patching for Patch operations. See [PR 30455](https://github.com/Azure/azure-sdk-for-python/pull/30455).
-* Added **provisional** ability to limit Continuation Token size when querying for items. See [PR 30600](https://github.com/Azure/azure-sdk-for-python/pull/30600)
 
 #### Bugs Fixed
 * Fixed bug with non english locales causing an error with the RFC 1123 Date Format. See [PR 30125](https://github.com/Azure/azure-sdk-for-python/pull/30125).
