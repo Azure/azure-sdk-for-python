@@ -316,8 +316,12 @@ class PipelineExpression(PipelineExpressionMixin):
                     _postfix = _update_postfix(_postfix, _name, _new_name)
                     _expression_inputs[_new_name] = ExpressionInput(_new_name, _seen_input.type, _seen_input)
             _postfix.append(_name)
+
+            param_input = pipeline_inputs
+            for group_name in _pipeline_input._group_names:
+                param_input = param_input[group_name].values
             _expression_inputs[_name] = ExpressionInput(
-                _name, pipeline_inputs[_pipeline_input._port_name].type, _pipeline_input
+                _name, param_input[_pipeline_input._port_name].type, _pipeline_input
             )
             return _postfix, _expression_inputs
 

@@ -12,6 +12,7 @@ import os
 import random
 import re
 import string
+import tempfile
 import time
 import warnings
 from collections import OrderedDict
@@ -19,7 +20,7 @@ from contextlib import contextmanager
 from datetime import timedelta
 from functools import singledispatch, wraps
 from os import PathLike
-from pathlib import PosixPath, PureWindowsPath
+from pathlib import Path, PosixPath, PureWindowsPath
 from typing import IO, Any, AnyStr, Callable, Dict, List, Optional, Tuple, Union
 from urllib.parse import urlparse
 from uuid import UUID
@@ -1002,3 +1003,14 @@ def get_valid_dot_keys_with_wildcard(
     """
     left_reversed_parts = dot_key_wildcard.split(".")[::-1]
     return _get_valid_dot_keys_with_wildcard_impl(left_reversed_parts, root, validate_func=validate_func)
+
+
+def get_base_directory_for_cache() -> Path:
+    return Path(tempfile.gettempdir()).joinpath("azure-ai-ml")
+
+
+def get_versioned_base_directory_for_cache() -> Path:
+    # import here to avoid circular import
+    from azure.ai.ml._version import VERSION
+
+    return get_base_directory_for_cache().joinpath(VERSION)

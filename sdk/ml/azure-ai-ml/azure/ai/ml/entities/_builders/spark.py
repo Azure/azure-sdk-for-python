@@ -314,7 +314,9 @@ class Spark(BaseNode, SparkJobEntryMixin):
 
         :rtype: Union[str, PathLike]
         """
-        return self.component.code if hasattr(self.component, "code") else None
+        if isinstance(self.component, Component):
+            return self.component.code
+        return None
 
     @code.setter
     def code(self, value: str) -> None:

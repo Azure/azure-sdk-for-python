@@ -1115,9 +1115,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         combine multiple text analysis actions into one call. Otherwise, we recommend you use
         the action specific endpoints, for example :func:`analyze_sentiment`.
 
-        .. note:: The abstractive summarization feature is part of a gated preview. Request access here:
-            https://aka.ms/applyforgatedsummarizationfeatures
-
         .. note:: See the service documentation for regional support of custom action features:
             https://aka.ms/azsdk/textanalytics/customfunctionalities
 

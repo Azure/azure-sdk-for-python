@@ -1,5 +1,11 @@
 # Release History
 
+## 10.2.0b10 (2023-06-08)
+
+### Other Changes
+
+  - Updated auto-generated samples
+
 ## 10.2.0b9 (2023-05-26)
 
 ### Features Added

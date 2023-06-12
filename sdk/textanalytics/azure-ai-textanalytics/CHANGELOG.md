@@ -27,6 +27,10 @@ This version of the client library defaults to the service API version `2023-04-
   `ClassifyDocumentResult`, `ExtractSummaryResult`, and `AbstractSummaryResult`.
 - Removed property `script` from `DetectedLanguage`.
 
+### Features Added
+
+- New enum values added for `HealthcareEntityCategory` and `HealthcareEntityRelation`.
+
 ## 5.3.0b2 (2023-03-07)
 
 This version of the client library defaults to the service API version `2022-10-01-preview`.
