@@ -37,7 +37,7 @@ class TestTextClassification(AzureRecordedTestCase):
             validation_data=validation_data,
             target_column_name=target_column_name,
             compute="gpu-cluster",
-            experiment_name="DPv2-text-classification-v2",
+            experiment_name="DPv2-text-classification",
             properties=properties,
         )
         job.set_limits(timeout_minutes=60, max_concurrent_trials=1)
