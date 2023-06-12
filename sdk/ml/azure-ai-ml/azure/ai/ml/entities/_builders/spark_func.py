@@ -208,6 +208,16 @@ def spark(
         :class: tip
 
         .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+            :start-after: [START spark_function_configuration_2]
+            :end-before: [END spark_function_configuration_2]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a SparkJob.
+    
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_dsl_pipeline]
             :end-before: [END spark_dsl_pipeline]
             :language: python
