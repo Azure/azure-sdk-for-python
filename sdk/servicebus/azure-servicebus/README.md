@@ -457,7 +457,7 @@ If your code runs in an environment with a firewall/proxy, ensure that the traff
 - **SessionCannotBeLockedError:** Attempt to connect to a session with a specific session ID, but the session is currently locked by another client.
 Make sure the session is unlocked by other clients.
 - **AutoLockRenewFailed:** An attempt to renew a lock on a message or session in the background has failed.
-This could happen when the receiver used by `AutoLockRenerer` is closed or the lock of the renewable has expired.
+This could happen when the receiver used by `AutoLockRenewer` is closed or the lock of the renewable has expired.
 It is recommended to re-register the renewable message or session by receiving the message or connect to the sessionful entity again.
 - **AutoLockRenewTimeout:** The time allocated to renew the message or session lock has elapsed. You could re-register the object that wants be auto lock renewed or extend the timeout in advance.
 - **ServiceBusError:** All other Service Bus related errors. It is the root error class of all the errors described above.
