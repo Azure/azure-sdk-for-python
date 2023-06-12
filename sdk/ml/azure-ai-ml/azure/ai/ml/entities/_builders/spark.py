@@ -277,7 +277,9 @@ class Spark(BaseNode, SparkJobEntryMixin):
 
     @property
     def code(self) -> Optional[Union[str, PathLike]]:
-        return self.component.code if hasattr(self.component, "code") else None
+        if isinstance(self.component, Component):
+            return self.component.code
+        return None
 
     @code.setter
     def code(self, value: str) -> None:
@@ -436,12 +438,12 @@ class Spark(BaseNode, SparkJobEntryMixin):
         rest_obj = super()._to_rest_object(**kwargs)
         rest_obj.update(
             convert_ordered_dict_to_dict(
-                dict(
-                    componentId=self._get_component_id(),
-                    identity=get_rest_dict_for_node_attrs(self.identity),
-                    resources=get_rest_dict_for_node_attrs(self.resources),
-                    entry=get_rest_dict_for_node_attrs(self.entry),
-                )
+                {
+                    "componentId": self._get_component_id(),
+                    "identity": get_rest_dict_for_node_attrs(self.identity),
+                    "resources": get_rest_dict_for_node_attrs(self.resources),
+                    "entry": get_rest_dict_for_node_attrs(self.entry),
+                }
             )
         )
         return rest_obj

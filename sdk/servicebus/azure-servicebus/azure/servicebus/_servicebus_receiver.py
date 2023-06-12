@@ -133,8 +133,12 @@ class ServiceBusReceiver(
      In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
      (if provided) within its request to the service.
     :keyword str client_identifier: A string-based identifier to uniquely identify the client instance.
-      Service Bus will associate it with some error messages for easier correlation of errors.
-      If not specified, a unique id will be generated.
+     Service Bus will associate it with some error messages for easier correlation of errors.
+     If not specified, a unique id will be generated.
+    :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+     wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+     and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
+     a larger than default value may need to be passed in.
     """
 
     def __init__(

@@ -8,6 +8,7 @@ from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._condition import condition
 from azure.ai.ml.dsl._do_while import do_while
+from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.dsl._parallel_for import parallel_for
 from azure.ai.ml.entities._builders.parallel_for import ParallelFor
 from azure.ai.ml.entities._job.pipeline._io import InputOutputBase, PipelineInput
@@ -206,6 +207,42 @@ class TestIfElseUT(TestControlFlowPipelineUT):
                 "type": "command",
             },
             "result": {"_source": "YAML.COMPONENT", "name": "result", "type": "command"},
+        }
+
+    def test_condition_with_group_input(self):
+        hello_world_component_no_paths = load_component(
+            source=r"./tests/test_configs/components/helloworld_component_no_paths.yml"
+        )
+
+        @group
+        class SubGroup:
+            num: int
+
+        @group
+        class ParentGroup:
+            input_group: SubGroup
+
+        @pipeline(
+            compute="cpu-cluster",
+        )
+        def condition_pipeline(group_input: ParentGroup):
+            node1 = hello_world_component_no_paths(component_in_number=1)
+            condition(condition=group_input.input_group.num < 100, true_block=node1)
+
+        pipeline_job = condition_pipeline(group_input=ParentGroup(input_group=SubGroup(num=10)))
+        omit_fields = [
+            "name",
+            "properties.display_name",
+            "properties.jobs.*.componentId",
+            "properties.settings",
+        ]
+        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        assert dsl_pipeline_job_dict["properties"]["jobs"]["expression_component"] == {
+            "environment_variables": {"AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED": "true"},
+            "name": "expression_component",
+            "type": "command",
+            "inputs": {"num": {"job_input_type": "literal", "value": "${{parent.inputs.group_input.input_group.num}}"}},
+            "_source": "YAML.COMPONENT",
         }
 
 

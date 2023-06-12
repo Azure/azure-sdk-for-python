@@ -58,6 +58,8 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     :paramtype kind: ~azure.core.tracing.SpanKind
     :keyword links: The list of links to be added to the span.
     :paramtype links: list[~azure.core.tracing.Link]
+    :keyword context: Context headers of parent span that should be used when creating a new span.
+    :paramtype context: Dict[str, str]
     """
 
     def __init__(self, span: Optional[Span] = None, name: str = "span", **kwargs: Any) -> None:
@@ -122,6 +124,12 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
                 # We will just send the links as is if it's not ~azure.core.tracing.Link without any validation
                 # assuming user knows what they are doing.
                 kwargs.setdefault("links", links)
+
+        parent_context = kwargs.pop("context", None)
+        if parent_context:
+            # Create OpenTelemetry Context object from dict.
+            kwargs["context"] = extract(parent_context)
+
         self._span_instance = current_tracer.start_span(name=name, kind=otel_kind, **kwargs)  # type: ignore
 
     @property

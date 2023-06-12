@@ -44,14 +44,14 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.2/async_samples/sample_authentication_async.py
             :start-after: [START create_da_client_with_key_async]
             :end-before: [END create_da_client_with_key_async]
             :language: python
             :dedent: 4
             :caption: Creating the DocumentAnalysisClient with an endpoint and API key.
 
-        .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.2/async_samples/sample_authentication_async.py
             :start-after: [START create_da_client_with_aad_async]
             :end-before: [END create_da_client_with_aad_async]
             :language: python
@@ -103,14 +103,14 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_analyze_invoices_async.py
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_analyze_invoices_async.py
                 :start-after: [START analyze_invoices_async]
                 :end-before: [END analyze_invoices_async]
                 :language: python
                 :dedent: 4
                 :caption: Analyze an invoice. For more samples see the `samples` folder.
 
-            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_analyze_custom_documents_async.py
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_analyze_custom_documents_async.py
                 :start-after: [START analyze_custom_documents_async]
                 :end-before: [END analyze_custom_documents_async]
                 :language: python
@@ -179,7 +179,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_analyze_receipts_from_url_async.py
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_analyze_receipts_from_url_async.py
                 :start-after: [START analyze_receipts_from_url_async]
                 :end-before: [END analyze_receipts_from_url_async]
                 :language: python
@@ -242,7 +242,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_classify_document_async.py
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_classify_document_async.py
                 :start-after: [START classify_document_async]
                 :end-before: [END classify_document_async]
                 :language: python
@@ -292,7 +292,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_classify_document_from_url_async.py
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_classify_document_from_url_async.py
                 :start-after: [START classify_document_from_url_async]
                 :end-before: [END classify_document_from_url_async]
                 :language: python

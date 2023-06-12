@@ -417,6 +417,12 @@
       ]
     },
     {
+      "filename": "doc/dev/pylint_checking.md",
+      "words": [
+        "pylintrc"
+      ]
+    },
+    {
       "filename": "tools/azure-sdk-tools/devtools_testutils/proxy_startup.py",
       "words": [
         "certifi",
@@ -1480,6 +1486,13 @@
       "words": [
         "mros",
         "deserializers",
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
+      "filename": "sdk/iothub/azure-iot-deviceprovisioning/azure/iot/deviceprovisioning/_serialization.py",
+      "words": [
         "ctxt",
         "wday"
       ]

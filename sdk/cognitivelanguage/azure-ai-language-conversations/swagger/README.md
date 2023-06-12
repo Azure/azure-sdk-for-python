@@ -408,5 +408,5 @@ directive:
       to: LoadSnapshot
   - rename-operation:
       from: ConversationalAnalysisAuthoring_GetLoadSnapshotStatus
-      to: GetLoadSnapshotStatus
+      to: GetLoadSnapshotJobStatus
 ```

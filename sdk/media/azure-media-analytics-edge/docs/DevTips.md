@@ -11,26 +11,8 @@
 
 Tox is the testing and virtual environment management tool that is used to verify our sdk will be installed correctly with different Python versions and interpreters. To run tox follow these instructions
 
-```
-pip install tox tox-monorepo
-cd path/to/target/folder
-tox -c eng/tox/tox.ini
-```
-To run a specific tox command from your directory use the following commands:
-```bash
-> tox -c ../../../eng/tox/tox.ini -e sphinx
-> tox -c ../../../eng/tox/tox.ini -e pylint
-> tox -c ../../../eng/tox/tox.ini -e mypy
-> tox -c ../../../eng/tox/tox.ini -e whl
-> tox -c ../../../eng/tox/tox.ini -e sdist
-```
-A quick description of the five commands above:
-* sphinx: documentation generation using the inline comments written in our code
-* lint: runs pylint to make sure our code adheres to the style guidance
-* mypy: runs the mypy static type checker for Python to make sure that our types are valid
-* whl: creates a whl package for installing our package
-* sdist: creates a zipped distribution of our files that the end user could install with pip
-
+Please see the repo's [contributing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md#building-and-testing) for instructions
+on how to install and run `tox`.
 
 ### Troubleshooting tox errors
 

@@ -188,7 +188,7 @@ class ArmDeploymentExecutor(object):
             ):
                 status_in_resource_dict = self._resources_being_deployed[target_resource.resource_name][1]
                 module_logger.debug(
-                    ("\n LOCK STATUS :  %s,  " "Status in the resources dict : %s ,  " "Already in printed set: %s\n"),
+                    ("\n LOCK STATUS :  %s,  Status in the resources dict : %s ,  Already in printed set: %s\n"),
                     self._lock,
                     status_in_resource_dict,
                     self._printed_set,

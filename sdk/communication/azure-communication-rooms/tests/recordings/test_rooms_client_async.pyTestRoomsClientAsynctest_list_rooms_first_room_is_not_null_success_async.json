@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms?api-version=2023-03-31-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms?api-version=2023-06-14",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -11,7 +11,7 @@
         "Content-Type": "application/json",
         "Repeatability-First-Sent": "sanitized",
         "Repeatability-Request-ID": "sanitized",
-        "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
@@ -24,33 +24,34 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "api-deprecated-versions": "2021-04-07",
-        "api-supported-versions": "2022-02-01, 2023-03-31-preview",
+        "api-supported-versions": "2022-02-01, 2023-03-31-preview, 2023-06-14",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
-        "Location": "99466618790685946",
+        "Location": "99481901787710787",
         "MS-CV": "sanitized",
         "Repeatability-Result": "accepted",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "sanitized",
+        "x-azure-ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
-        "id": "99466618790685946",
-        "createdAt": "2023-05-10T21:43:41.1711235\u002B00:00",
-        "validFrom": "2023-05-10T21:43:41.0707\u002B00:00",
-        "validUntil": "2023-11-06T21:43:41.0707\u002B00:00"
+        "id": "99481901787710787",
+        "createdAt": "2023-06-05T22:44:11.0728511\u002B00:00",
+        "validFrom": "2023-06-05T22:44:11.0344369\u002B00:00",
+        "validUntil": "2023-12-02T22:44:11.0344369\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms?api-version=2023-03-31-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms?api-version=2023-06-14",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
@@ -60,209 +61,211 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-deprecated-versions": "2021-04-07",
-        "api-supported-versions": "2022-02-01, 2023-03-31-preview",
+        "api-supported-versions": "2022-02-01, 2023-03-31-preview, 2023-06-14",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "sanitized",
+        "x-azure-ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
         "value": [
           {
-            "id": "99496156714023166",
-            "createdAt": "2023-05-10T21:32:04.9583665\u002B00:00",
-            "validFrom": "2023-05-10T21:32:04.9139326\u002B00:00",
-            "validUntil": "2023-11-06T21:32:04.9139326\u002B00:00"
+            "id": "99420295844209048",
+            "createdAt": "2023-05-31T01:22:10.8244311\u002B00:00",
+            "validFrom": "2023-05-31T01:22:10.6094032\u002B00:00",
+            "validUntil": "2023-05-31T02:22:10.6094032\u002B00:00"
           },
           {
-            "id": "99455149037945602",
-            "createdAt": "2023-05-02T15:53:10.2777404\u002B00:00",
-            "validFrom": "2023-05-03T00:00:00\u002B00:00",
-            "validUntil": "2023-05-04T00:00:00\u002B00:00"
+            "id": "99417717041039249",
+            "createdAt": "2023-05-30T23:06:09.9272003\u002B00:00",
+            "validFrom": "2023-05-30T23:06:09.7698357\u002B00:00",
+            "validUntil": "2023-05-31T00:06:09.7698357\u002B00:00"
           },
           {
-            "id": "99433006544407447",
-            "createdAt": "2023-05-10T19:49:24.0962397\u002B00:00",
-            "validFrom": "2023-05-10T19:49:24.0665596\u002B00:00",
-            "validUntil": "2023-11-06T19:49:24.0665596\u002B00:00"
+            "id": "99493087858596840",
+            "createdAt": "2023-05-31T02:26:14.3310278\u002B00:00",
+            "validFrom": "2023-05-31T02:26:11.3138579\u002B00:00",
+            "validUntil": "2023-05-31T03:26:11.3138579\u002B00:00"
           },
           {
-            "id": "99487853259175005",
-            "createdAt": "2023-05-10T19:50:08.9992104\u002B00:00",
-            "validFrom": "2023-05-10T19:50:08.7431165\u002B00:00",
-            "validUntil": "2023-11-06T19:50:08.7431165\u002B00:00"
+            "id": "99475278205545283",
+            "createdAt": "2023-05-30T23:06:12.9821545\u002B00:00",
+            "validFrom": "2023-05-30T23:06:09.7698357\u002B00:00",
+            "validUntil": "2023-05-31T00:06:09.7698357\u002B00:00"
           },
           {
-            "id": "99472016179571401",
-            "createdAt": "2023-05-10T19:49:03.3253029\u002B00:00",
-            "validFrom": "2023-05-10T19:49:03.2117529\u002B00:00",
-            "validUntil": "2023-11-06T19:49:03.2117529\u002B00:00"
+            "id": "99461710909195569",
+            "createdAt": "2023-05-31T01:22:11.7807603\u002B00:00",
+            "validFrom": "2023-05-31T01:22:10.6094032\u002B00:00",
+            "validUntil": "2023-05-31T02:22:10.6094032\u002B00:00"
           },
           {
-            "id": "99416039267771889",
-            "createdAt": "2023-05-10T21:26:06.1186195\u002B00:00",
-            "validFrom": "2023-05-10T21:26:05.9282092\u002B00:00",
-            "validUntil": "2023-11-06T21:26:05.9282092\u002B00:00"
+            "id": "99432568375368869",
+            "createdAt": "2023-05-30T23:06:10.9821435\u002B00:00",
+            "validFrom": "2023-05-30T23:06:09.7698357\u002B00:00",
+            "validUntil": "2023-05-31T00:06:09.7698357\u002B00:00"
           },
           {
-            "id": "99475250586524729",
-            "createdAt": "2023-05-10T19:57:23.8744356\u002B00:00",
-            "validFrom": "2023-05-10T19:57:25.4418445\u002B00:00",
-            "validUntil": "2023-05-11T19:57:25.4418445\u002B00:00"
+            "id": "99443922277035168",
+            "createdAt": "2023-05-31T04:04:13.8655206\u002B00:00",
+            "validFrom": "2023-05-31T04:04:12.5428084\u002B00:00",
+            "validUntil": "2023-05-31T05:04:12.5428084\u002B00:00"
           },
           {
-            "id": "9944601711736342",
-            "createdAt": "2023-05-10T19:57:21.7336579\u002B00:00",
-            "validFrom": "2023-05-10T19:57:23.1810395\u002B00:00",
-            "validUntil": "2023-05-11T19:57:23.1810395\u002B00:00"
+            "id": "99491918448737769",
+            "createdAt": "2023-05-31T04:00:17.7966987\u002B00:00",
+            "validFrom": "2023-05-31T04:00:11.4699093\u002B00:00",
+            "validUntil": "2023-05-31T05:00:11.4699093\u002B00:00"
           },
           {
-            "id": "99460348995447781",
-            "createdAt": "2023-05-10T21:16:38.3213552\u002B00:00",
-            "validFrom": "2023-05-10T21:16:38.1226439\u002B00:00",
-            "validUntil": "2023-11-06T21:16:38.1226439\u002B00:00"
+            "id": "99440353669076380",
+            "createdAt": "2023-05-31T02:26:17.5504363\u002B00:00",
+            "validFrom": "2023-05-31T02:26:11.3138579\u002B00:00",
+            "validUntil": "2023-05-31T03:26:11.3138579\u002B00:00"
           },
           {
-            "id": "99491252858348283",
-            "createdAt": "2023-05-10T19:53:33.0887706\u002B00:00",
-            "validFrom": "2023-05-10T19:53:32.619051\u002B00:00",
-            "validUntil": "2023-11-06T19:53:32.619051\u002B00:00"
+            "id": "99440691250767403",
+            "createdAt": "2023-05-31T02:26:12.8152748\u002B00:00",
+            "validFrom": "2023-05-31T02:26:11.3138579\u002B00:00",
+            "validUntil": "2023-05-31T03:26:11.3138579\u002B00:00"
           },
           {
-            "id": "99438314419323724",
-            "createdAt": "2023-05-10T19:57:26.913271\u002B00:00",
-            "validFrom": "2023-05-10T19:57:28.2460805\u002B00:00",
-            "validUntil": "2023-05-11T19:57:28.2460805\u002B00:00"
+            "id": "99476151581713529",
+            "createdAt": "2023-05-31T02:26:11.736549\u002B00:00",
+            "validFrom": "2023-05-31T02:26:11.3138579\u002B00:00",
+            "validUntil": "2023-05-31T03:26:11.3138579\u002B00:00"
           },
           {
-            "id": "99431199111869645",
-            "createdAt": "2023-05-10T19:50:03.8729222\u002B00:00",
-            "validFrom": "2023-05-10T19:50:03.614821\u002B00:00",
-            "validUntil": "2023-11-06T19:50:03.614821\u002B00:00"
+            "id": "99449979073177089",
+            "createdAt": "2023-05-31T03:02:11.9224672\u002B00:00",
+            "validFrom": "2023-05-31T03:02:11.5807496\u002B00:00",
+            "validUntil": "2023-05-31T04:02:11.5807496\u002B00:00"
           },
           {
-            "id": "99417790539429429",
-            "createdAt": "2023-05-10T21:16:22.9079783\u002B00:00",
-            "validFrom": "2023-05-10T21:16:22.836505\u002B00:00",
-            "validUntil": "2023-11-06T21:16:22.836505\u002B00:00"
+            "id": "99462345840146444",
+            "createdAt": "2023-05-31T04:02:18.7504742\u002B00:00",
+            "validFrom": "2023-05-31T04:02:11.5874163\u002B00:00",
+            "validUntil": "2023-05-31T05:02:11.5874163\u002B00:00"
           },
           {
-            "id": "99466606317282463",
-            "createdAt": "2023-05-10T21:16:47.540176\u002B00:00",
-            "validFrom": "2023-05-10T21:16:47.3451239\u002B00:00",
-            "validUntil": "2023-11-06T21:16:47.3451239\u002B00:00"
+            "id": "99457519896105645",
+            "createdAt": "2023-05-31T04:02:13.1631581\u002B00:00",
+            "validFrom": "2023-05-31T04:02:11.5874163\u002B00:00",
+            "validUntil": "2023-05-31T05:02:11.5874163\u002B00:00"
           },
           {
-            "id": "99422209231295249",
-            "createdAt": "2023-05-10T19:52:13.6807579\u002B00:00",
-            "validFrom": "2023-05-10T19:52:13.5807828\u002B00:00",
-            "validUntil": "2023-11-06T19:52:13.5807828\u002B00:00"
+            "id": "99425548135192380",
+            "createdAt": "2023-05-31T03:02:13.0163309\u002B00:00",
+            "validFrom": "2023-05-31T03:02:11.5807496\u002B00:00",
+            "validUntil": "2023-05-31T04:02:11.5807496\u002B00:00"
           },
           {
-            "id": "99472091184478768",
-            "createdAt": "2023-05-10T19:55:00.5094849\u002B00:00",
-            "validFrom": "2023-05-10T19:55:00.4236565\u002B00:00",
-            "validUntil": "2023-11-06T19:55:00.4236565\u002B00:00"
+            "id": "99480210078871443",
+            "createdAt": "2023-05-31T04:02:12.1034094\u002B00:00",
+            "validFrom": "2023-05-31T04:02:11.5874163\u002B00:00",
+            "validUntil": "2023-05-31T05:02:11.5874163\u002B00:00"
           },
           {
-            "id": "99474230520927921",
-            "createdAt": "2023-05-10T21:16:48.8526973\u002B00:00",
-            "validFrom": "2023-05-10T21:16:48.6589635\u002B00:00",
-            "validUntil": "2023-11-06T21:16:48.6589635\u002B00:00"
+            "id": "99484775359436283",
+            "createdAt": "2023-05-31T02:48:17.4280039\u002B00:00",
+            "validFrom": "2023-05-31T02:48:10.9892607\u002B00:00",
+            "validUntil": "2023-05-31T03:48:10.9892607\u002B00:00"
           },
           {
-            "id": "99479377727555281",
-            "createdAt": "2023-05-10T21:31:42.5970887\u002B00:00",
-            "validFrom": "2023-05-10T21:31:42.5212153\u002B00:00",
-            "validUntil": "2023-11-06T21:31:42.5212153\u002B00:00"
+            "id": "99432727613114162",
+            "createdAt": "2023-05-31T04:04:12.7829095\u002B00:00",
+            "validFrom": "2023-05-31T04:04:12.5428084\u002B00:00",
+            "validUntil": "2023-05-31T05:04:12.5428084\u002B00:00"
           },
           {
-            "id": "99427159481005340",
-            "createdAt": "2023-05-10T21:31:56.6913228\u002B00:00",
-            "validFrom": "2023-05-10T21:31:56.6550904\u002B00:00",
-            "validUntil": "2023-11-06T21:31:56.6550904\u002B00:00"
+            "id": "99455054196698605",
+            "createdAt": "2023-05-31T04:02:15.2024855\u002B00:00",
+            "validFrom": "2023-05-31T04:02:11.5874163\u002B00:00",
+            "validUntil": "2023-05-31T05:02:11.5874163\u002B00:00"
           },
           {
-            "id": "99462007368993002",
-            "createdAt": "2023-05-10T21:25:48.959744\u002B00:00",
-            "validFrom": "2023-05-10T21:25:48.7569484\u002B00:00",
-            "validUntil": "2023-11-06T21:25:48.7569484\u002B00:00"
+            "id": "99447721311034961",
+            "createdAt": "2023-05-31T02:48:11.5994362\u002B00:00",
+            "validFrom": "2023-05-31T02:48:10.9892607\u002B00:00",
+            "validUntil": "2023-05-31T03:48:10.9892607\u002B00:00"
           },
           {
-            "id": "99450369004484444",
-            "createdAt": "2023-05-10T21:43:24.9204359\u002B00:00",
-            "validFrom": "2023-05-10T21:43:24.8179987\u002B00:00",
-            "validUntil": "2023-11-06T21:43:24.8179987\u002B00:00"
+            "id": "99474385293889043",
+            "createdAt": "2023-05-31T03:02:14.8759402\u002B00:00",
+            "validFrom": "2023-05-31T03:02:11.5807496\u002B00:00",
+            "validUntil": "2023-05-31T04:02:11.5807496\u002B00:00"
           },
           {
-            "id": "99437809945919000",
-            "createdAt": "2023-05-10T21:26:17.5290013\u002B00:00",
-            "validFrom": "2023-05-10T21:26:17.3391393\u002B00:00",
-            "validUntil": "2023-11-06T21:26:17.3391393\u002B00:00"
+            "id": "99416063908978842",
+            "createdAt": "2023-05-31T02:48:12.7088485\u002B00:00",
+            "validFrom": "2023-05-31T02:48:10.9892607\u002B00:00",
+            "validUntil": "2023-05-31T03:48:10.9892607\u002B00:00"
           },
           {
-            "id": "99470896660099209",
-            "createdAt": "2023-05-10T21:32:06.1466281\u002B00:00",
-            "validFrom": "2023-05-10T21:32:06.1113329\u002B00:00",
-            "validUntil": "2023-11-06T21:32:06.1113329\u002B00:00"
+            "id": "9942259570295115",
+            "createdAt": "2023-05-31T01:22:13.8257287\u002B00:00",
+            "validFrom": "2023-05-31T01:22:10.6094032\u002B00:00",
+            "validUntil": "2023-05-31T02:22:10.6094032\u002B00:00"
           },
           {
-            "id": "99475178464325686",
-            "createdAt": "2023-05-10T21:26:16.1382796\u002B00:00",
-            "validFrom": "2023-05-10T21:26:15.9229336\u002B00:00",
-            "validUntil": "2023-11-06T21:26:15.9229336\u002B00:00"
+            "id": "99499124574297167",
+            "createdAt": "2023-05-31T01:22:17.2316055\u002B00:00",
+            "validFrom": "2023-05-31T01:22:10.6094032\u002B00:00",
+            "validUntil": "2023-05-31T02:22:10.6094032\u002B00:00"
           },
           {
-            "id": "99415290601942826",
-            "createdAt": "2023-05-10T19:57:29.3195933\u002B00:00",
-            "validFrom": "2023-05-10T19:57:30.3879487\u002B00:00",
-            "validUntil": "2023-05-11T19:57:30.3879487\u002B00:00"
+            "id": "99421548078167962",
+            "createdAt": "2023-05-30T23:06:16.9406287\u002B00:00",
+            "validFrom": "2023-05-30T23:06:09.7698357\u002B00:00",
+            "validUntil": "2023-05-31T00:06:09.7698357\u002B00:00"
           },
           {
-            "id": "99413247635662663",
-            "createdAt": "2023-05-10T21:29:40.0876094\u002B00:00",
-            "validFrom": "2023-05-10T21:29:39.8584018\u002B00:00",
-            "validUntil": "2023-11-06T21:29:39.8584018\u002B00:00"
+            "id": "99440561260311208",
+            "createdAt": "2023-05-31T02:48:14.3184476\u002B00:00",
+            "validFrom": "2023-05-31T02:48:10.9892607\u002B00:00",
+            "validUntil": "2023-05-31T03:48:10.9892607\u002B00:00"
           },
           {
-            "id": "99466618790685946",
-            "createdAt": "2023-05-10T21:43:41.1711235\u002B00:00",
-            "validFrom": "2023-05-10T21:43:41.0707\u002B00:00",
-            "validUntil": "2023-11-06T21:43:41.0707\u002B00:00"
+            "id": "9946594879461721",
+            "createdAt": "2023-05-31T03:02:18.6582094\u002B00:00",
+            "validFrom": "2023-05-31T03:02:11.5807496\u002B00:00",
+            "validUntil": "2023-05-31T04:02:11.5807496\u002B00:00"
           },
           {
-            "id": "99486102865546982",
-            "createdAt": "2023-05-10T21:43:36.7642016\u002B00:00",
-            "validFrom": "2023-05-10T21:43:36.6663856\u002B00:00",
-            "validUntil": "2023-11-06T21:43:36.6663856\u002B00:00"
+            "id": "99477286037829363",
+            "createdAt": "2023-05-31T04:00:14.2232917\u002B00:00",
+            "validFrom": "2023-05-31T04:00:11.4699093\u002B00:00",
+            "validUntil": "2023-05-31T05:00:11.4699093\u002B00:00"
           },
           {
-            "id": "99475373142819564",
-            "createdAt": "2023-05-10T21:43:35.5298118\u002B00:00",
-            "validFrom": "2023-05-10T21:43:35.4383321\u002B00:00",
-            "validUntil": "2023-11-06T21:43:35.4383321\u002B00:00"
+            "id": "99459496412203887",
+            "createdAt": "2023-05-31T04:00:11.7123337\u002B00:00",
+            "validFrom": "2023-05-31T04:00:11.4699093\u002B00:00",
+            "validUntil": "2023-05-31T05:00:11.4699093\u002B00:00"
           },
           {
-            "id": "99473381439613808",
-            "createdAt": "2023-05-02T19:53:22.4971377\u002B00:00",
-            "validFrom": "2023-05-02T19:10:54.8559153\u002B00:00",
-            "validUntil": "2023-05-03T19:10:54.8559216\u002B00:00"
+            "id": "99464237224862541",
+            "createdAt": "2023-05-31T04:00:12.6736832\u002B00:00",
+            "validFrom": "2023-05-31T04:00:11.4699093\u002B00:00",
+            "validUntil": "2023-05-31T05:00:11.4699093\u002B00:00"
           }
-        ]
+        ],
+        "nextLink": "https://sanitized.communication.azure.com/rooms?nextLink=W3sidG9rZW4iOiIrUklEOn5OM1VKQU5WeFl3eDJxUjRBQUFBQUNBPT0jUlQ6MSNUUkM6MzAjSVNWOjIjSUVPOjY1NTY3I1FDRjo4I0ZQQzpBZ2g2QUFBQUFDQUFBSHNBQUFBQUlBQUFlZ0FBQUFBZ0FBQTBBbkVwd0FHQ0FBREFBd0JQZ0FYQUJ3QUFEd0FBOEFBQThDRUE4QUJpQUFEZ0FRQ0JBT0FmTlFEZ0FRQ0FCd0FBd0FNZUVRQUE4QkVBUEFBU0FBRGdBUUJ4QUFBZU1JQVNBQURBL3dNL2dBUEFCd0FBQUFCNFVRRHdBR0lBQVBBQUhtTUJIc0JEd3dNQUlRQUFEeGtBOEFEdy93OEFBQjRBSGc4QUFCN0FBd0FlSWdBQThBQVBFZ0FBd0FNUEZBQWVqMzhBRCtBQkFCSUE0QUhnQVJFQUhnQWpBRHdBNElISEF6RUFEendjQUEvZ0FRQ1BCLzd4QUI0UDRBRUFBUEFBL29FSEFPQWZBQkVBRHdBa0FJRC9md0FQNEI4UFV3QUpBQjRQL0FNZEFEeUFCd0FBL3dDQUIvQVA0QUVBQVBBUFBBRGcvd0hnOFFEd0VRQUFlQmdBQU1CNzRBRThBTURqQVEvQVAzaDRlQlFBQU9BQi9oOEFIbmdoQUg4ZkVnQVBBTUFESlFBQUR6d0EvQU40L0Q4QVA0QWZRUDhBZ0Fmd0FQQVAvQU9BQi9EQUE0Ly9menorOFFEK0h3ODgvb0VISG5IQStIL3dEL3ovQTlVLzhBRHcvLytQeHorQXh6OGVBUENQZnp3ZUFBRDgvejhBL3ZIQVB4Ny9lSGo4NHgrLzhRL2dnY2ZqSDhEL1AvRDRCL0NQZnp6d2dILzg0LzhmL3Y4QjRQK0J4d09QL3dlQWZ6eitId0R3ajhmakgzZ0Evdzg4SHYrUGZ3RC8vd0FBQUk5Ly9EOGUrTWMvSHZoLzRCL0FBNC9IUDRBSDhIZ0EvOERqQVFEL3dBUC8vd0FBLy9oL0FQakgvOFBqSHdEK2VmeDdBQUFBNEFFQWVBREFBNC8vQi80ZkR3RC9BUENQL3p3ZS8vOFA0Qi80L3dmKy8vRVBBUGpIUC9CNEFBQWVlRHdBUFA3eGVBREE0eC8vL3c4QUR3RC9qd2YrQVFBQS9uc0FBQUFBSUFBQXFBQTl3UEhBNC84ZkQvei80NEgvLzhjLy92OEIvUC8vQXc4QS8vai94LzhEandkNFBQRC8vL2gvQVBENGYvei9Bdy84UC9CNC9PUHh3RC93QUI0OFBBRGcvL0VBL3YvL0g0OS9QUEI0dkg4OEFQNGZnSDg4QUkvSHcvLy92MzhBZUFBUDRQRjRQQjRBQUR6dy80OG5BUCtQL3dmK0FRREFBM2c4QUFJQVVRRENCeG1BQWNENEI0SUJBT0FDQUNxRWtSSUFOaElBR3dBd0JqUUFBTEFCQU5nQUFHeFJBQWp6SUVBPSIsInJhbmdlIjp7Im1pbiI6IjA1QzFDRkZGRkZGRkY4IiwibWF4IjoiMDVDMURGRkZGRkZGRjgifX1d\u0026api-version=2023-06-14"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99466618790685946?api-version=2023-03-31-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99481901787710787?api-version=2023-06-14",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-rooms/1.0.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
@@ -272,11 +275,12 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "api-deprecated-versions": "2021-04-07",
-        "api-supported-versions": "2022-02-01, 2023-03-31-preview",
+        "api-supported-versions": "2022-02-01, 2023-03-31-preview, 2023-06-14",
+        "Connection": "keep-alive",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Request-Context": "appId=",
-        "X-Azure-Ref": "sanitized",
+        "x-azure-ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null

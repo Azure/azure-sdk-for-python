@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
@@ -17,10 +16,14 @@ from azure.ai.ml.entities._job.parameterized_spark import ParameterizedSpark
 from ..._schema import PathAwareSchema
 from .._job.spark_job_entry_mixin import SparkJobEntry, SparkJobEntryMixin
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
+from .._validation import MutableValidationResult
+from .code import ComponentCodeMixin
 from .component import Component
 
 
-class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pylint: disable=too-many-instance-attributes
+class SparkComponent(
+    Component, ParameterizedSpark, SparkJobEntryMixin, ComponentCodeMixin
+):  # pylint: disable=too-many-instance-attributes
     """Spark component version, used to define a spark component.
 
     :param code: The source code to run the job.
@@ -93,9 +96,6 @@ class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pyli
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
         kwargs[COMPONENT_TYPE] = NodeType.SPARK
-        # Set default base path
-        if "base_path" not in kwargs:
-            kwargs["base_path"] = Path(".")
 
         super().__init__(
             inputs=inputs,
@@ -103,7 +103,7 @@ class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pyli
             **kwargs,
         )
 
-        self.code = code
+        self.code: Union[str, os.PathLike] = code
         self.entry = entry
         self.py_files = py_files
         self.jars = jars
@@ -142,6 +142,11 @@ class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pyli
             "environment": (str, Environment),
             "code": (str, os.PathLike),
         }
+
+    def _customized_validate(self) -> MutableValidationResult:
+        validation_result = super()._customized_validate()
+        self._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(validation_result)
+        return validation_result
 
     def _to_dict(self) -> Dict:
         """Dump the spark component content into a dictionary."""

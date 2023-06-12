@@ -9,7 +9,6 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 from cryptography.hazmat.backends import default_backend
-import six
 
 
 class AadClientCertificate:
@@ -30,7 +29,7 @@ class AadClientCertificate:
 
         cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())
         fingerprint = cert.fingerprint(hashes.SHA1())  # nosec
-        self._thumbprint = six.ensure_str(base64.urlsafe_b64encode(fingerprint), encoding="utf-8")
+        self._thumbprint = base64.urlsafe_b64encode(fingerprint).decode("utf-8")
 
     @property
     def thumbprint(self) -> str:

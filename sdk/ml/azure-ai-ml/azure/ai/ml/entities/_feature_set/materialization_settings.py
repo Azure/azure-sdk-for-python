@@ -4,15 +4,13 @@
 
 from typing import Dict, Optional
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
-    MaterializationSettings as RestMaterializationSettings,
-    MaterializationStoreType,
-)
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.entities._schedule.trigger import RecurrenceTrigger
-from azure.ai.ml.entities._notification.notification import Notification
-from azure.ai.ml.entities._feature_set.materialization_compute_resource import MaterializationComputeResource
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MaterializationSettings as RestMaterializationSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MaterializationStoreType
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.entities._feature_set.materialization_compute_resource import MaterializationComputeResource
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.entities._notification.notification import Notification
+from azure.ai.ml.entities._schedule.trigger import RecurrenceTrigger
 
 
 @experimental

@@ -116,9 +116,9 @@ class Import(BaseNode):
         rest_obj = super()._to_rest_object(**kwargs)
         rest_obj.update(
             convert_ordered_dict_to_dict(
-                dict(
-                    componentId=self._get_component_id(),
-                )
+                {
+                    "componentId": self._get_component_id(),
+                }
             )
         )
         return rest_obj
