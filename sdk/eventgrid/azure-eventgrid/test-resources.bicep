@@ -2,7 +2,7 @@
 param baseName string = resourceGroup().name
 
 @description('The resource location')
-param location string = resourceGroup().location
+param location string = 'centraluseuap'
 
 var namespaceName = '${baseName}-2'
 var topicName = 'testtopic1'
@@ -16,7 +16,7 @@ resource ns_resource 'Microsoft.EventGrid/namespaces@2023-06-01-preview' = {
     capacity: 1
   }
   properties: {
-    isZoneRedundant: true
+    isZoneRedundant: false
     publicNetworkAccess: 'Enabled'
   }
 }

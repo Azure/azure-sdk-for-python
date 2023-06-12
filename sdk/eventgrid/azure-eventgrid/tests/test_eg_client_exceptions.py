@@ -13,13 +13,13 @@ from azure.core.messaging import CloudEvent
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
-from .eventgrid_preparer import EventGridBetaPreparer
+from eventgrid_preparer import EventGridBetaPreparer
 
 
 class TestEGClientExceptions(AzureRecordedTestCase):
     def create_eg_client(self, endpoint, key):
         client = EventGridClient(
-            endpoint=endpoint, credential=AzureKeyCredential(eventgrid_key)
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         return client
 
