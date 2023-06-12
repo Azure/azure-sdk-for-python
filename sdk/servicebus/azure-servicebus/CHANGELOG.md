@@ -1,6 +1,6 @@
 # Release History
 
-## 7.11.0 (2023-06-06)
+## 7.11.0 (2023-06-12)
 
 ### Features Added
 

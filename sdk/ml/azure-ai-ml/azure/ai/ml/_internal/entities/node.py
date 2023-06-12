@@ -124,10 +124,10 @@ class InternalBaseNode(BaseNode):
 
         base_dict.update(
             convert_ordered_dict_to_dict(
-                dict(
-                    componentId=self._get_component_id(),
-                    type=self.type,
-                )
+                {
+                    "componentId": self._get_component_id(),
+                    "type": self.type,
+                }
             )
         )
         return base_dict

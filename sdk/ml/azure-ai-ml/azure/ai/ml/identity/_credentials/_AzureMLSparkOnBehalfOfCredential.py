@@ -29,8 +29,8 @@ def _get_client_args(**kwargs) -> Optional[dict]:
 
     try:
         spark = SparkSession.builder.getOrCreate()
-    except Exception:
-        raise Exception("Fail to get spark session, please check if spark environment is set up.")
+    except Exception as e:
+        raise Exception("Fail to get spark session, please check if spark environment is set up.") from e
 
     spark_conf = spark.sparkContext.getConf()
     spark_conf_vars = {
