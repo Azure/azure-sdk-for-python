@@ -52,7 +52,7 @@ pip install azure-iot-deviceprovisioning
     - Delete enrollment group
 
 
-- [Individual Enrollments](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioningservice/dps_service_sample_individual_enrollments.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioningservice/dps_service_sample_individual_enrollments_async.py)):
+- [Individual Enrollments](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioning/samples/dps_service_sample_individual_enrollments.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioning/samples/dps_service_sample_individual_enrollments_async.py)):
     - Create a symmetric key individual enrollment with initial twin properties
     - Create a TPM attestation individual enrollment
     - Create an x509 certificate individual enrollment
