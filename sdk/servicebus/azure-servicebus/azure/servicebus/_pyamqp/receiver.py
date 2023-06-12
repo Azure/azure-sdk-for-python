@@ -121,4 +121,5 @@ class ReceiverLink(Link):
         if self._is_closed:
             raise ValueError("Link already closed.")
         self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable)
-        self._wait_for_response(wait)
+        if not settled:
+            self._wait_for_response(wait)
