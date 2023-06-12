@@ -28,7 +28,7 @@ async def _async_parallel_uploads(uploader, pending, running):
         range_ids.extend([chunk.result() for chunk in done])
         try:
             for _ in range(0, len(done)):
-                next_chunk = await pending.__anext__()  # pylint: disable=unnecessary-dunder-call
+                next_chunk = await pending.__anext__()
                 running.add(asyncio.ensure_future(uploader(next_chunk)))
         except StopAsyncIteration:
             break
@@ -89,7 +89,7 @@ async def upload_data_chunks(
         running_futures = []
         for _ in range(max_concurrency):
             try:
-                chunk = await upload_tasks.__anext__()  # pylint: disable=unnecessary-dunder-call
+                chunk = await upload_tasks.__anext__()
                 running_futures.append(asyncio.ensure_future(uploader.process_chunk(chunk)))
             except StopAsyncIteration:
                 break
@@ -446,7 +446,7 @@ class AsyncIterStreamer():
         count = len(self.leftover)
         try:
             while count < size:
-                chunk = await self.iterator.__anext__()  # pylint: disable=unnecessary-dunder-call
+                chunk = await self.iterator.__anext__()
                 if isinstance(chunk, str):
                     chunk = chunk.encode(self.encoding)
                 data += chunk
