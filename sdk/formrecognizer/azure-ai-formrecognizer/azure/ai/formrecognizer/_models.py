@@ -310,7 +310,7 @@ class TextAppearance:
     def __repr__(self) -> str:
         return f"TextAppearance(style_name={self.style_name}, style_confidence={self.style_confidence})"
 
-    def to_dict(self) -> Dict[str, Union[str, float]]:
+    def to_dict(self) -> Dict[str, Any]:
         """Returns a dict representation of TextAppearance."""
         return {
             "style_name": self.style_name,
@@ -318,7 +318,7 @@ class TextAppearance:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Union[str, float]]) -> "TextAppearance":
+    def from_dict(cls, data: Dict[str, Any]) -> "TextAppearance":
         """Converts a dict in the shape of a TextAppearance to the model itself.
 
         :param Dict data: A dictionary in the shape of TextAppearance.
@@ -1335,12 +1335,12 @@ class CustomFormModelField:
     def __repr__(self) -> str:
         return f"CustomFormModelField(label={self.label}, name={self.name}, accuracy={self.accuracy})"[:1024]
 
-    def to_dict(self) -> Dict[str, Union[str, float]]:
+    def to_dict(self) -> Dict[str, Any]:
         """Returns a dict representation of CustomFormModelField."""
         return {"label": self.label, "accuracy": self.accuracy, "name": self.name}
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Union[str, float]]) -> "CustomFormModelField":
+    def from_dict(cls, data: Dict[str, Any) -> "CustomFormModelField":
         """Converts a dict in the shape of a CustomFormModelField to the model itself.
 
         :param Dict data: A dictionary in the shape of CustomFormModelField.
@@ -2155,7 +2155,7 @@ class CurrencyValue:
     def __repr__(self) -> str:
         return f"CurrencyValue(amount={self.amount}, symbol={self.symbol}, code={self.code})"
 
-    def to_dict(self) -> Dict[str, Union[str, float]]:
+    def to_dict(self) -> Dict[str, Any]:
         """Returns a dict representation of CurrencyValue."""
         return {
             "amount": self.amount,
@@ -2164,7 +2164,7 @@ class CurrencyValue:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Union[str, float]]) -> "CurrencyValue":
+    def from_dict(cls, data: Dict[str, Any) -> "CurrencyValue":
         """Converts a dict in the shape of a CurrencyValue to the model itself.
 
         :param Dict data: A dictionary in the shape of CurrencyValue.
@@ -4498,7 +4498,7 @@ class QuotaDetails:
             quota_resets_on=info.quota_reset_date_time
         )
 
-    def to_dict(self) -> Dict[str, Union[int, datetime.datetime]]:
+    def to_dict(self) -> Dict[str, Any]:
         """Returns a dict representation of QuotaDetails."""
         return {
                 "used": self.used,
@@ -4507,7 +4507,7 @@ class QuotaDetails:
             }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Union[int, datetime.datetime]]) -> "QuotaDetails":
+    def from_dict(cls, data: Dict[str, Any) -> "QuotaDetails":
         """Converts a dict in the shape of a QuotaDetails to the model itself.
 
         :param Dict data: A dictionary in the shape of QuotaDetails.
@@ -4554,7 +4554,7 @@ class ResourceDetails:
             if custom_neural_builds else None,
         )
 
-    def to_dict(self) -> Dict[str, Union[CustomDocumentModelsDetails, QuotaDetails]]:
+    def to_dict(self) -> Dict[str, Any]:
         """Returns a dict representation of ResourceDetails."""
         return {
                 "custom_document_models": self.custom_document_models.to_dict()
@@ -4566,7 +4566,7 @@ class ResourceDetails:
             }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Union[CustomDocumentModelsDetails, QuotaDetails]]) -> "ResourceDetails":
+    def from_dict(cls, data: Dict[str, Any) -> "ResourceDetails":
         """Converts a dict in the shape of a ResourceDetails to the model itself.
 
         :param Dict data: A dictionary in the shape of ResourceDetails.
