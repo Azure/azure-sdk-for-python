@@ -10,7 +10,6 @@ from azure.cosmos.documents import _DistinctType
 import pytest
 import collections
 import test_config
-from sys import getsizeof
 
 pytestmark = pytest.mark.cosmosEmulator
 
@@ -841,11 +840,12 @@ class QueryTest(unittest.TestCase):
         pager.next()
         token = pager.continuation_token
         # Continuation token size should be below 1kb
-        self.assertLessEqual(getsizeof(token), 1024)
+        self.assertLessEqual(len(token.encode('utf-8')), 1024)
         pager.next()
         token = pager.continuation_token
+
         # verify a second time
-        self.assertLessEqual(getsizeof(token), 1024)
+        self.assertLessEqual(len(token.encode('utf-8')), 1024)
         self.created_db.delete_container(container)
 
     def _MockNextFunction(self):
