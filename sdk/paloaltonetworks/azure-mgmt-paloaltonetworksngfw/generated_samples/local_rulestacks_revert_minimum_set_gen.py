@@ -29,13 +29,12 @@ def main():
         subscription_id="2bf4a339-294d-4c25-b0b2-ef649e9f5c27",
     )
 
-    response = client.local_rulestacks.revert(
+    client.local_rulestacks.revert(
         resource_group_name="rgopenapi",
         local_rulestack_name="lrs1",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/paloaltonetworks/resource-manager/PaloAltoNetworks.Cloudngfw/preview/2022-08-29-preview/examples/LocalRulestacks_revert_MinimumSet_Gen.json
+# x-ms-original-file: specification/paloaltonetworks/resource-manager/PaloAltoNetworks.Cloudngfw/stable/2022-08-29/examples/LocalRulestacks_revert_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()
