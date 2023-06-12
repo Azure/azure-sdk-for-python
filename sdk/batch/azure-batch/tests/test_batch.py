@@ -17,6 +17,10 @@ import requests
 import six
 import os
 
+
+from wsgiref.handlers import format_date_time
+from time import mktime
+
 import azure.core.exceptions
 import azure.batch
 from azure.batch import models
@@ -85,14 +89,14 @@ class TestBatch(AzureMgmtRecordedTestCase):
         client = self.create_basic_client(
             azure.batch.BatchServiceClient,
             credentials=credentials,
-            batch_url=self._batch_url(batch_account)
+            endpoint=self._batch_url(batch_account)
         )
         return client
 
     def create_sharedkey_client(self, batch_account, credentials, **kwargs):
         client = azure.batch.BatchServiceClient(
             credentials=credentials,
-            batch_url=self._batch_url(batch_account)
+            endpoint=self._batch_url(batch_account)
         )
         return client
 
@@ -875,6 +879,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         file_length = 0
         with io.BytesIO() as file_handle:
             response = client.file.get_from_compute_node(batch_pool.name, node, only_files[0].name)
+            lenght = len(response)
             for data in response:
                 file_length += len(data)
         assert file_length ==  int(props.headers['Content-Length'])
@@ -1140,7 +1145,15 @@ class TestBatch(AzureMgmtRecordedTestCase):
             job_preparation_task=job_prep,
             job_release_task=job_release
         )
-        response = client.job.add(job_param)
+        
+        now = datetime.datetime.now()
+        stamp = mktime(now.timetuple())
+        currenttime =  format_date_time(stamp) #--> Wed, 22 Oct 2008 10:52:40 GMT
+        
+        response = client.job.add(job=job_param,ocp_date=currenttime)
+        
+        #response = client.job.add(job=job_param,ocp_date="Wed, 3 May 2023 21:49:13 GMT")
+        #response = client.job.add(job=job_param,ocp_date=datetime.datetime.utcnow())
         assert response is None
 
         # Test Update Job

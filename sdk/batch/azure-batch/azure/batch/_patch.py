@@ -16,6 +16,8 @@ from typing import TYPE_CHECKING
 from typing import List
 from ._version import VERSION
 from ._client import BatchServiceClient as GenerateBatchServiceClient
+from azure.identity import ClientSecretCredential
+from azure.core.credentials import TokenCredential
 from ._configuration import BatchServiceClientConfiguration
 
 # from ._batch_service_client import BatchServiceClient as GenerateBatchServiceClient
@@ -25,7 +27,7 @@ from azure.core.pipeline import policies
 from azure.core import PipelineClient
 from azure.core.configuration import Configuration
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -46,13 +48,14 @@ from .operations import (
     TaskOperations,
 )
 
+from typing import TypeVar, Any, Union
+
 try:
     from urlparse import urlparse, parse_qs
 except ImportError:
     from urllib.parse import urlparse, parse_qs
 __all__ = [
     "BatchServiceClient",
-    "SharedKeyCredentials",
 ]  # Add all objects you want publicly available to users at this package level
 
 if TYPE_CHECKING:
@@ -72,35 +75,6 @@ if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest
 
 
-class SharedKeyCredentials:
-    """Credential type used for authenticating to an Azure Metrics Advisor service.
-
-    :param str subscription_key: The subscription key
-    :param str api_key: The api key
-    :raises: TypeError
-    """
-
-    def __init__(self, account_name: str, key: str) -> None:
-
-        self._account_name: str = account_name
-        self._key: str = key
-
-    @property
-    def account_name(self) -> str:
-        """The value of the api key.
-
-        :rtype: str
-        """
-        return self._account_name
-
-    @property
-    def key(self) -> str:
-        """The value of the api key.
-
-        :rtype: str
-        """
-        return self._key
-
 
 class BatchSharedKeyAuthPolicy(SansIOHTTPPolicy):
 
@@ -118,10 +92,10 @@ class BatchSharedKeyAuthPolicy(SansIOHTTPPolicy):
         "range",
     ]
 
-    def __init__(self, credential: SharedKeyCredentials):
+    def __init__(self, credential: AzureNamedKeyCredential):
         super(BatchSharedKeyAuthPolicy, self).__init__()
-        self._account_name = credential.account_name
-        self._key = credential.key
+        self._account_name = credential.named_key.name
+        self._key = credential.named_key.key
 
     def on_request(self, request: PipelineRequest):
         if not request.http_request.headers.get("ocp-date"):
@@ -193,19 +167,25 @@ class BatchServiceClient(GenerateBatchServiceClient):
      alpha-numeric characters or underscore.
     :type hub: str
     :param credentials: Credential needed for the client to connect to Azure.
-    :type credentials: ~azure.batch.SharedKeyCredentials or ~azure.core.credentials.AzureKeyCredential
+    :type credentials: ~azure.identity.ClientSecretCredential, ~azure.core.credentials.AzureNamedKeyCredential, 
+     or ~azure.identity.TokenCredentials
     :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, batch_url: str, credentials: str, **kwargs):
+    def __init__(self, endpoint: str, credentials: Union[ClientSecretCredential, AzureNamedKeyCredential, TokenCredential], **kwargs):
         super().__init__(
-            endpoint=batch_url,
+            endpoint=endpoint,
             credential=credentials,
-            authentication_policy=kwargs.pop("authentication_policy", BatchSharedKeyAuthPolicy(credentials)),
+            authentication_policy=kwargs.pop("authentication_policy", self._format_shared_key_credential("",credentials)),
             **kwargs
         )
+
+    def _format_shared_key_credential(self,account_name, credential):
+        if isinstance(credential, AzureNamedKeyCredential):
+            return BatchSharedKeyAuthPolicy(credential)
+        return None
 
 
 class CreateTasksErrorException(Exception):

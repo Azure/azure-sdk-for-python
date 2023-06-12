@@ -6,25 +6,67 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 # coding: utf-8
-from setuptools import setup, find_packages
-
+import re
+import os.path
+from io import open
+from setuptools import find_packages, setup
 
 PACKAGE_NAME = "azure-batch"
-version = "1.0.0b"
+PACKAGE_PPRINT_NAME = "Batch"
+
+# a-b-c => a/b/c
+package_folder_path = PACKAGE_NAME.replace('-', '/')
+# a-b-c => a.b.c
+namespace_name = PACKAGE_NAME.replace('-', '.')
+
+# Version extraction inspired from 'requests'
+with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
+
+if not version:
+    raise RuntimeError('Cannot find version information')
+
+with open('README.md', encoding='utf-8') as f:
+    readme = f.read()
+with open('CHANGELOG.md', encoding='utf-8') as f:
+    changelog = f.read()
+    
 setup(
     name=PACKAGE_NAME,
     version=version,
-    description="azure-batch",
-    author_email="",
-    url="",
-    keywords="azure, azure sdk",
-    packages=find_packages(),
-    include_package_data=True,
-    install_requires=[
-        "isodate<1.0.0,>=0.6.1",
-        "azure-core<2.0.0,>=1.24.0",
+    description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
+    long_description=readme + '\n\n' + changelog,
+    long_description_content_type='text/markdown',
+    license='MIT License',
+    author='Microsoft Corporation',
+    author_email='azpysdkhelp@microsoft.com',
+    url='https://github.com/Azure/azure-sdk-for-python',
+    classifiers=[
+        "Development Status :: 5 - Production/Stable",
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'License :: OSI Approved :: MIT License',
     ],
-    long_description="""\
-    A client for issuing REST requests to the Azure Batch service.
-    """,
+    zip_safe=False,
+    packages=find_packages(exclude=[
+        'tests',
+        # Exclude packages that will be covered by PEP420 or nspkg
+        'azure',
+    ]),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
+    python_requires=">=3.7",
+    install_requires=[
+        'msrestazure>=0.4.32,<2.0.0',
+        'azure-common~=1.1',
+    ],
 )

@@ -6,7 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Optional, Any
+from typing import List, Iterable, Optional, Any
 import collections
 import importlib
 import logging
@@ -433,7 +433,7 @@ def build_new_get_from_task(original_get):
         if__unmodified__since: Optional[str] = None,
         ocp_range: Optional[str] = None,
         **kwargs: Any
-    ) -> bytes:
+    ) -> Iterable[bytes]:
         """Returns the content of the specified Compute Node file.
 
         :param pool_id: The ID of the Pool that contains the Compute Node. Required.
@@ -472,8 +472,8 @@ def build_new_get_from_task(original_get):
         :paramtype ocp_range: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: bytes
-        :rtype: bytes
+        :return: ~azure.core.paging.ItemPaged[bytes]
+        :rtype: ~azure.core.paging.ItemPaged[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -504,7 +504,7 @@ def build_new_get_from_compute_node(original_get):
         if__unmodified__since: Optional[str] = None,
         ocp_range: Optional[str] = None,
         **kwargs: Any
-    ) -> bytes:
+    ) -> Iterable[bytes]:
         """Returns the content of the specified Compute Node file.
 
         :param pool_id: The ID of the Pool that contains the Compute Node. Required.
@@ -543,8 +543,8 @@ def build_new_get_from_compute_node(original_get):
         :paramtype ocp_range: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: bytes
-        :rtype: bytes
+        :return: ~azure.core.paging.ItemPaged[bytes]
+        :rtype: ~azure.core.paging.ItemPaged[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -571,7 +571,7 @@ def build_new_get_remote_desktop(original_get):
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
-    ) -> bytes:
+    ) -> Iterable[bytes]:
         """Gets the Remote Desktop Protocol file for the specified Compute Node.
 
         Before you can access a Compute Node by using the RDP file, you must create a
@@ -600,8 +600,8 @@ def build_new_get_remote_desktop(original_get):
         :paramtype ocp_date: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: bytes
-        :rtype: bytes
+        :return: ~azure.core.paging.ItemPaged[bytes]
+        :rtype: ~azure.core.paging.ItemPaged[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 

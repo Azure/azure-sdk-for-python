@@ -8,7 +8,8 @@ import azure.core.exceptions
 import azure.mgmt.batch
 from azure.mgmt.batch import models
 import azure.batch
-from azure.batch import SharedKeyCredentials
+from azure.identity import ClientSecretCredential
+from azure.core.credentials import AzureNamedKeyCredential
 
 from azure_devtools.scenario_tests.preparers import (
     AbstractPreparer,
@@ -104,7 +105,7 @@ class AccountPreparer(AzureMgmtPreparer):
                 group.name,
                 name
             )
-            credentials = SharedKeyCredentials(
+            credentials = AzureNamedKeyCredential(
                 keys.account_name,
                 keys.primary)
             if storage:
@@ -121,7 +122,7 @@ class AccountPreparer(AzureMgmtPreparer):
             self.resource = FakeAccount(
                 name=name,
                 account_endpoint="https://{}{}.{}.batch.azure.com".format(name, env_prefix, self.location))
-            credentials = SharedKeyCredentials(
+            credentials = AzureNamedKeyCredential(
                 name,
                 'ZmFrZV9hY29jdW50X2tleQ==')
         return {
@@ -271,7 +272,7 @@ class JobPreparer(AzureMgmtPreparer):
             account = kwargs[self.batch_account_parameter_name]
             credentials = kwargs[self.batch_credentials_parameter_name]
             return azure.batch.BatchServiceClient(
-                credentials=credentials, batch_url='https://' + account.account_endpoint)
+                credentials=credentials, endpoint='https://' + account.account_endpoint)
         except KeyError:
             template = 'To create a batch job, a batch account is required. Please add ' \
                        'decorator @AccountPreparer in front of this job preparer.'
