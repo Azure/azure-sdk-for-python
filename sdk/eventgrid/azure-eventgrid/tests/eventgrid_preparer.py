@@ -51,3 +51,10 @@ EventGridPreparer = functools.partial(
     eventgrid_custom_event_topic_endpoint="https://fakeresource.westus2-1.eventgrid.azure.net/api/events",
     eventgrid_custom_event_topic_key="fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyA=",
 )
+
+EventGridBetaPreparer = functools.partial(
+    PowerShellPreparer,
+    "eventgrid",
+    eventgrid_endpoint="https://fakeresource.westus2-1.eventgrid.azure.net/api/events",
+    eventgrid_key="fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyA=",
+)
