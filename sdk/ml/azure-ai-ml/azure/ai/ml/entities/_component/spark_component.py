@@ -26,23 +26,24 @@ class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pyli
     :param code: The source code to run the job.
     :type code: Union[str, os.PathLike]
     :param entry: The file or class entry point.
-    :type entry: dict[str, str]
+    :type entry: Dict[str, str]
     :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
-    :type py_files: Optional[typing.List[str]]
+    :type py_files: List[str]
     :param jars: The list of .JAR files to include on the driver and executor classpaths.
-    :type jars: Optional[typing.List[str]]
+    :type jars: List[str]
     :param files: The list of files to be placed in the working directory of each executor.
-    :type files: Optional[typing.List[str]]
+    :type files: List[str]
     :param archives: The list of archives to be extracted into the working directory of each executor.
-    :type archives: Optional[typing.List[str]]
+    :type archives: List[str]
     :param driver_cores: The number of cores to use for the driver process, only in cluster mode.
     :type driver_cores: int
-    :param driver_memory: The amount of memory to use for the driver process, (e.g. "2g").
+    :param driver_memory: The amount of memory to use for the driver process, formatted as strings with a size unit
+        suffix ("k", "m", "g" or "t") (e.g. "512m", "2g").
     :type driver_memory: str
     :param executor_cores: The number of cores to use on each executor.
     :type executor_cores: int
-    :param executor_memory: The amount of memory to use per executor process, in the same format as JVM memory strings
-        with a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g).
+    :param executor_memory: The amount of memory to use per executor process, formatted as strings with a size unit
+        suffix ("k", "m", "g" or "t") (e.g. "512m", "2g").
     :type executor_memory: str
     :param executor_instances: The initial number of executors.
     :type executor_instances: int
@@ -55,14 +56,23 @@ class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pyli
     :param dynamic_allocation_max_executors: The upper bound for the number of executors if dynamic allocation is
         enabled.
     :type dynamic_allocation_max_executors: int
-    :param conf: A dict with pre-defined spark configurations key and values.
-    :type conf: dict
+    :param conf: A dictionary with pre-defined Spark configurations key and values.
+    :type conf: Dict[str, str]
     :param environment: The Azure ML environment to run the job in.
     :type environment: Union[str, azure.ai.ml.entities.Environment]
-    :param inputs: The mapping of input data bindings used in the job.
-    :type inputs: dict
-    :param outputs: The mapping of output data bindings used in the job.
-    :type outputs: dict
+    :param inputs: A mapping of input names to input data sources used in the job.
+    :type inputs: Dict[str, Union[
+        ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
+        ~azure.ai.ml.Input,
+        str,
+        bool,
+        int,
+        float,
+        Enum,
+        ]
+    ]
+    :param outputs: A mapping of output names to output data sources used in the job.
+    :type outputs: Dict[str, Union[str, ~azure.ai.ml.Output]]
     :param args: The arguments for the job.
     :type args: str
 

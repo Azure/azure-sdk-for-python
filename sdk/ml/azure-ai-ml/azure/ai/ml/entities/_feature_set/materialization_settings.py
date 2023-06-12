@@ -28,7 +28,7 @@ class MaterializationSettings(RestTranslatableMixin):
     :param resource: The compute resource settings.
     :type resource: ~azure.ai.ml.entities.MaterializationComputeResource
     :param spark_configuration: The spark compute settings.
-    :type spark_configuration: dict[str, str]
+    :type spark_configuration: Dict[str, str]
 
     .. admonition:: Example:
         :class: tip
@@ -51,7 +51,7 @@ class MaterializationSettings(RestTranslatableMixin):
         resource: Optional[MaterializationComputeResource] = None,
         spark_configuration: Optional[Dict[str, str]] = None,
         **kwargs  # pylint: disable=unused-argument
-    ):
+    ) -> None:
         self.schedule = schedule
         self.offline_enabled = offline_enabled
         self.online_enabled = online_enabled

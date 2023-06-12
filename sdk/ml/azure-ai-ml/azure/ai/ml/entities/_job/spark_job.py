@@ -50,12 +50,13 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
 
     :param driver_cores: The number of cores to use for the driver process, only in cluster mode.
     :type driver_cores: int
-    :param driver_memory: The amount of memory to use for the driver process, (e.g. "2g").
+    :param driver_memory: The amount of memory to use for the driver process, formatted as strings with a size unit
+        suffix ("k", "m", "g" or "t") (e.g. "512m", "2g").
     :type driver_memory: str
     :param executor_cores: The number of cores to use on each executor.
     :type executor_cores: int
-    :param executor_memory: The amount of memory to use per executor process, in the same format as JVM memory strings
-        with a size unit suffix ("k", "m", "g" or "t") (e.g. 512m, 2g).
+    :param executor_memory: The amount of memory to use per executor process, formatted as strings with a size unit
+        suffix ("k", "m", "g" or "t") (e.g. "512m", "2g").
     :type executor_memory: str
     :param executor_instances: The initial number of executors.
     :type executor_instances: int
@@ -69,9 +70,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         enabled.
     :type dynamic_allocation_max_executors: int
     :param inputs: The mapping of input data bindings used in the job.
-    :type inputs: dict[str, ~azure.ai.ml.Inputs]
+    :type inputs: Dict[str, ~azure.ai.ml.Input]
     :param outputs: The mapping of output data bindings used in the job.
-    :type outputs: dict[str, ~azure.ai.ml.Outputs]
+    :type outputs: Dict[str, ~azure.ai.ml.Output]
     :param compute: The compute resource the job runs on.
     :type compute: str
     :param identity: The identity that the Spark job will use while running on compute.
@@ -79,6 +80,8 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         ~azure.ai.ml.ManagedIdentityConfiguration,
         ~azure.ai.ml.AmlTokenConfiguration,
         ~azure.ai.ml.UserIdentityConfiguration]
+    :param resources: The compute resource configuration for the job.
+    :type resources: Union[Dict, ~azure.ai.ml.entities.SparkResourceConfiguration]
     :param experiment_name: The name of the experiment the job will be created under.
     :type experiment_name: str
     :param name: The name of the job.
@@ -88,11 +91,11 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     :param description: The description of the job.
     :type description: str
     :param tags: The tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
+    :type tags: Dict[str, str]
     :param code: The source code to run the job.
     :type code: Union[str, os.PathLike]
     :param entry: The file or class entry point.
-    :type entry: dict[str, str]
+    :type entry: Dict[str, str]
     :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
     :type py_files: List[str]
     :param jars: The list of .JAR files to include on the driver and executor classpaths.
@@ -102,13 +105,11 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     :param archives: The list of archives to be extracted into the working directory of each executor.
     :type archives: List[str]
     :param conf: A dictionary with pre-defined Spark configurations key and values.
-    :type conf: dict
+    :type conf: Dict[str, str]
     :param environment: The Azure ML environment to run the job in.
     :type environment: Union[str, ~azure.ai.ml.entities.Environment]
     :param args: The arguments for the job.
     :type args: str
-    :param resources: The compute resource configuration for the job.
-    :type resources: Union[Dict, ~azure.ai.ml.entities.SparkResourceConfiguration]
 
     .. admonition:: Example:
         :class: tip
@@ -166,7 +167,6 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     def resources(self) -> Optional[SparkResourceConfiguration]:
         """The compute resource configuration for the job.
 
-        :return: The compute resource configuration for the job.
         :rtype: ~azure.ai.ml.entities.SparkResourceConfiguration
         """
         return self._resources
@@ -188,7 +188,6 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
         """The identity that the Spark job will use while running on compute.
 
-        :return: The identity that the Spark job will use while running on compute.
         :rtype: Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
             ~azure.ai.ml.UserIdentityConfiguration]
         """
@@ -204,7 +203,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         """Sets the identity that the Spark job will use while running on compute.
 
         :param value: The identity that the Spark job will use while running on compute.
-        :type value: Union[Dict, ~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
+        :type value: Union[Dict[str, str], ~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
             ~azure.ai.ml.UserIdentityConfiguration]
         """
         if isinstance(value, dict):

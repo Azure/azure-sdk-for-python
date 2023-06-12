@@ -111,27 +111,27 @@ class SynapseSparkCompute(Compute):
     :param name: The name of the compute.
     :type name: str
     :param description: The description of the resource.
-    :type description: Optional[str]
-    :param tags: The set of tags. Contains resource tags defined as key/value pairs.
-    :type tags: Optional[dict[str, str]]
+    :type description: str
+    :param tags: The set of resource tags defined as key/value pairs.
+    :type tags: Dict[str, str]
     :param node_count: The number of nodes in the compute.
-    :type node_count: Optional[int]
+    :type node_count: int
     :param node_family: The node family of the compute.
-    :type node_family: Optional[str]
+    :type node_family: str
     :param node_size: The size of the node.
-    :type node_size: Optional[str]
+    :type node_size: str
     :param spark_version: The version of Spark to use.
-    :type spark_version: Optional[str]
+    :type spark_version: str
     :param identity: The configuration of identities that are associated with the compute cluster.
-    :type identity: Optional[IdentityConfiguration]
+    :type identity: ~azure.ai.ml.entities.IdentityConfiguration
     :param scale_settings: The scale settings for the compute.
-    :type scale_settings: Optional[AutoScaleSettings]
+    :type scale_settings: ~azure.ai.ml.entities.AutoScaleSettings
     :param auto_pause_settings: The auto pause settings for the compute.
-    :type auto_pause_settings: Optional[AutoPauseSettings]
+    :type auto_pause_settings: ~azure.ai.ml.entities.AutoPauseSettings
     :param location: The resource location.
-    :type location: Optional[str]
-    :param resource_id: The ARM resource id of the underlying compute.
-    :type resource_id: Optional[str]
+    :type location: str
+    :param resource_id: The ARM resource ID of the underlying compute.
+    :type resource_id: str
 
     .. admonition:: Example:
         :class: tip
@@ -149,7 +149,7 @@ class SynapseSparkCompute(Compute):
         *,
         name: str,
         description: Optional[str] = None,
-        tags: Optional[dict] = None,
+        tags: Optional[Dict[str, str]] = None,
         node_count: Optional[int] = None,
         node_family: Optional[str] = None,
         node_size: Optional[str] = None,

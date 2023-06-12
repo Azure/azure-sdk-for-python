@@ -48,7 +48,7 @@ class MonitorDefinition(RestTranslatableMixin):
         , ~azure.ai.ml.entities.DataQualitySignal, ~azure.ai.ml.entities.PredictionDriftSignal
         , ~azure.ai.ml.entities.FeatureAttributionDriftSignal
         , ~azure.ai.ml.entities.CustomMonitoringSignal]]
-    :param alert_notification: The alert configuration for the monitor
+    :param alert_notification: The alert configuration for the monitor.
     :type alert_notification: Union[Literal['azmonitoring'], ~azure.ai.ml.entities.AlertNotification]
 
     .. admonition:: Example:
