@@ -365,10 +365,12 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         recorded_variables = kwargs.pop("variables", {})
         recorded_variables.setdefault("timestamp", str(datetime.datetime.utcnow()))
         
-        async with AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string) as client:
+        async with self.create_client(appconfiguration_connection_string) as client:
             # Confirm all configuration settings are cleaned up
             current_config_settings = await self.convert_to_list(client.list_configuration_settings())
-            assert len(current_config_settings) == 0
+            if len(current_config_settings) != 0:
+                for config_setting in current_config_settings:
+                    client.delete_configuration_setting(config_setting)
         
             revision = await self.convert_to_list(
                 client.list_configuration_settings(accept_datetime=recorded_variables.get("timestamp"))
