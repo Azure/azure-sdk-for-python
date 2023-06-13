@@ -26,7 +26,7 @@
 import platform
 import sys
 import pytest
-from devtools_testutils import add_general_string_sanitizer, test_proxy
+from devtools_testutils import add_general_string_sanitizer, test_proxy, add_body_key_sanitizer, add_header_regex_sanitizer, add_uri_regex_sanitizer, add_oauth_response_sanitizer
 from devtools_testutils.sanitizers import (
     add_remove_header_sanitizer,
     add_general_regex_sanitizer,
@@ -35,17 +35,6 @@ from devtools_testutils.sanitizers import (
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    add_general_regex_sanitizer(
-        value="my_client_id",
-        regex="(?<=client_id=).*?(?=&)",
-    )
-    add_general_regex_sanitizer(
-        value="my_client_secret",
-        regex="(?<=client_secret=).*?(?=&)",
-    )
-
-@pytest.fixture(scope="session", autouse=True)
-def add_aeg_sanitizer(test_proxy):
     # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
     set_custom_default_matcher(
         compare_bodies=False,
@@ -54,5 +43,13 @@ def add_aeg_sanitizer(test_proxy):
     add_remove_header_sanitizer(headers="aeg-sas-key, aeg-sas-token")
     add_general_regex_sanitizer(
         value="fakeresource",
-        regex="(?<=\\/\\/)[a-z-]+(?=\\.westus2-1\\.eventgrid\\.azure\\.net/api/events)",
+        regex="(?<=\\/\\/)[a-z-]+(?=\\.eastus-1\\.eventgrid\\.azure\\.net/api/events)",
     )
+    add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
+    add_header_regex_sanitizer(key="Cookie", value="cookie;")
+    add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+    add_oauth_response_sanitizer()
+    # add_general_regex_sanitizer(
+    #     value=":https://login.microsoftonline.com/",
+    #     regex=r"https://login.microsoftonline.com/(.+)/"
+    # )
