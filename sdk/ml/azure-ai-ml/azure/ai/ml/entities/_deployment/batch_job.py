@@ -24,7 +24,7 @@ class BatchJob(object):
     :type id: str
     :param name: The name of the batch job resource.
     :type name: str
-    :param type: Type of the batch job.
+    :param type: Type of the batch job resource.
     :type type: str
     :param status: Status of the job. Possible values include: "NotStarted", "Starting",
      "Provisioning", "Preparing", "Queued", "Running", "Finalizing", "CancelRequested", "Completed",
@@ -42,7 +42,7 @@ class BatchJob(object):
         -1 value indicates, ignore all failures during batch inference
         For FileDataset count of file failures
         For TabularDataset, this is the count of record failures, defaults to -1
-    :type error_thershold: int
+    :type error_threshold: int
     :param input_data: Input data for the job.
     :type input_data: Dict[str, JobInput]
     :param logging_level: Logging level for batch inference operation. Possible values include:
@@ -54,7 +54,7 @@ class BatchJob(object):
     :type mini_batch_size: int
     :param job_name: Name of the batch job.
     :type job_name: str
-    :param ouptut_data: Job output data location.
+    :param output_data: Job output data location.
     :type output_data: Dict[str, JobOutputV2]
     :param output_dataset: Output dataset location
     :type output_dataset: DataVersion
@@ -70,10 +70,6 @@ class BatchJob(object):
     :type system_data: SystemData
     :param tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
     :type tags: Dict[str,str]
-
-
-
-
 
     This class shouldn't be instantiated directly. Instead, it is used as the return type of batch deployment/endpoint
     invocation and job listing.
