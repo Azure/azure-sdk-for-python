@@ -374,7 +374,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
         channel_name = os.environ["EVENTGRID_PARTNER_CHANNEL_NAME"]
         credential = AzureKeyCredential(eventgrid_partner_namespace_key)
         client = EventGridPublisherClient(
-            eventgrid_partner_namespace_endpoint, eventgrid_partner_namespace_key
+            eventgrid_partner_namespace_endpoint, credential
         )
         cloud_event = CloudEvent(
             source="http://samplesource.dev",
@@ -383,7 +383,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
         )
 
         def callback(request):
-            req = json.loads(request.http_request.headers)
+            req = request.http_request.headers
             assert req.get("aeg-channel-name") == channel_name
 
         await client.send(

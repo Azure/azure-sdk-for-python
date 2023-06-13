@@ -2,7 +2,7 @@
 param baseName string = resourceGroup().name
 
 @description('The resource location')
-param location string = 'centraluseuap'
+param location string = resourceGroup().location
 
 var namespaceName = '${baseName}-2'
 var topicName = 'testtopic1'
@@ -16,7 +16,7 @@ resource ns_resource 'Microsoft.EventGrid/namespaces@2023-06-01-preview' = {
     capacity: 1
   }
   properties: {
-    isZoneRedundant: false
+    isZoneRedundant: true
     publicNetworkAccess: 'Enabled'
   }
 }
@@ -59,3 +59,4 @@ output TOPIC_NAME string = topicName
 output EVENT_SUBSCRIPTION_NAME string = subscriptionName
 output RESOURCE_GROUP string = resourceGroup().name
 output AZURE_SUBSCRIPTION_ID string = subscription().subscriptionId
+
