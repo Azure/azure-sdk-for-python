@@ -364,19 +364,19 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     async def test_list_configuration_settings_only_accepttime(self, appconfiguration_connection_string, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
         recorded_variables.setdefault("timestamp", str(datetime.datetime.utcnow()))
-        
+
         async with self.create_client(appconfiguration_connection_string) as client:
             # Confirm all configuration settings are cleaned up
             current_config_settings = await self.convert_to_list(client.list_configuration_settings())
             if len(current_config_settings) != 0:
                 for config_setting in current_config_settings:
                     client.delete_configuration_setting(config_setting)
-        
+
             revision = await self.convert_to_list(
                 client.list_configuration_settings(accept_datetime=recorded_variables.get("timestamp"))
             )
             assert len(revision) >= 0
-                
+
         return recorded_variables
 
     # method: list_revisions
