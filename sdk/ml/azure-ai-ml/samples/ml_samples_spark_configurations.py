@@ -225,7 +225,9 @@ class SparkConfigurationOptions(object):
             executor_cores=1,
             executor_memory="1g",
             executor_instances=1,
-            inputs=dict(file_input=Input(path="/dataset/iris.csv", type=AssetTypes.URI_FILE, mode=InputOutputModes.DIRECT)),
+            inputs=dict(
+                file_input=Input(path="/dataset/iris.csv", type=AssetTypes.URI_FILE, mode=InputOutputModes.DIRECT)
+            ),
             args="--file_input ${{inputs.file_input}}",
             resources={"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
         )
@@ -233,14 +235,16 @@ class SparkConfigurationOptions(object):
         second_step = spark(
             code="/src",
             entry={"file": "count_by_row.py"},
-            jars=["scalaproj.jar"],
+            jars=["scala_project.jar"],
             files=["my_files.txt"],
             driver_cores=2,
             driver_memory="1g",
             executor_cores=1,
             executor_memory="1g",
             executor_instances=1,
-            inputs=dict(file_input=Input(path="/dataset/iris.csv", type=AssetTypes.URI_FILE, mode=InputOutputModes.DIRECT)),
+            inputs=dict(
+                file_input=Input(path="/dataset/iris.csv", type=AssetTypes.URI_FILE, mode=InputOutputModes.DIRECT)
+            ),
             outputs=dict(output=Output(type="uri_folder", mode=InputOutputModes.DIRECT)),
             args="--file_input ${{inputs.file_input}} --output ${{outputs.output}}",
             resources={"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
@@ -257,8 +261,6 @@ class SparkConfigurationOptions(object):
             data=Input(path="/dataset/iris.csv", type=AssetTypes.URI_FILE, mode=InputOutputModes.DIRECT),
         )
         # [END spark_dsl_pipeline]
-
-
 
 
 if __name__ == "__main__":

@@ -183,7 +183,7 @@ def spark(
             :language: python
             :dedent: 8
             :caption: Configuring a SparkJob.
-    
+
     .. admonition:: Example:
         :class: tip
 
@@ -193,7 +193,7 @@ def spark(
             :language: python
             :dedent: 8
             :caption: Configuring a SparkJob.
-    
+
     .. admonition:: Example:
         :class: tip
 

@@ -287,9 +287,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
     @identity.setter
     def identity(
         self,
-        value: Union[
-            Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration
-        ]
+        value: Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration],
     ):
         """Sets the identity that the Spark job will use while running on compute.
 
