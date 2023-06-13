@@ -7,10 +7,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class DigitalTwinModelsAddOptions(msrest.serialization.Model):
@@ -879,7 +883,7 @@ class Error(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        innererror: Optional["InnerError"] = None,
+        innererror: Optional["_models.InnerError"] = None,
         **kwargs
     ):
         """
@@ -897,9 +901,15 @@ class Error(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Error response.
 
-    :ivar error: The error details.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar error: Required. The error details.
     :vartype error: ~azure.digitaltwins.core.models.Error
     """
+
+    _validation = {
+        'error': {'required': True},
+    }
 
     _attribute_map = {
         'error': {'key': 'error', 'type': 'Error'},
@@ -908,11 +918,11 @@ class ErrorResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["Error"] = None,
+        error: "_models.Error",
         **kwargs
     ):
         """
-        :keyword error: The error details.
+        :keyword error: Required. The error details.
         :paramtype error: ~azure.digitaltwins.core.models.Error
         """
         super(ErrorResponse, self).__init__(**kwargs)
@@ -922,11 +932,17 @@ class ErrorResponse(msrest.serialization.Model):
 class EventRouteCollection(msrest.serialization.Model):
     """A collection of EventRoute objects.
 
-    :ivar value: The EventRoute objects.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. The EventRoute objects.
     :vartype value: list[~azure.digitaltwins.core.models.DigitalTwinsEventRoute]
     :ivar next_link: A URI to retrieve the next page of results.
     :vartype next_link: str
     """
+
+    _validation = {
+        'value': {'required': True},
+    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[DigitalTwinsEventRoute]'},
@@ -936,12 +952,12 @@ class EventRouteCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["DigitalTwinsEventRoute"]] = None,
+        value: List["_models.DigitalTwinsEventRoute"],
         next_link: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword value: The EventRoute objects.
+        :keyword value: Required. The EventRoute objects.
         :paramtype value: list[~azure.digitaltwins.core.models.DigitalTwinsEventRoute]
         :keyword next_link: A URI to retrieve the next page of results.
         :paramtype next_link: str
@@ -1096,6 +1112,310 @@ class EventRoutesListOptions(msrest.serialization.Model):
         self.max_items_per_page = max_items_per_page
 
 
+class ImportJob(msrest.serialization.Model):
+    """A job which contains a reference to the operations to perform, results, and execution metadata.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The identifier of the import job.
+    :vartype id: str
+    :ivar input_blob_uri: Required. The path to the input Azure storage blob that contains file(s)
+     describing the operations to perform in the job.
+    :vartype input_blob_uri: str
+    :ivar output_blob_uri: Required. The path to the output Azure storage blob that will contain
+     the errors and progress logs of import job.
+    :vartype output_blob_uri: str
+    :ivar status: Status of the job. Known values are: "notstarted", "running", "failed",
+     "succeeded", "cancelling", "cancelled".
+    :vartype status: str or ~azure.digitaltwins.core.models.Status
+    :ivar created_date_time: Start time of the job. The timestamp is in RFC3339 format:
+     ``yyyy-MM-ddTHH:mm:ssZ``.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_action_date_time: Last time service performed any action from the job. The timestamp
+     is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+    :vartype last_action_date_time: ~datetime.datetime
+    :ivar finished_date_time: End time of the job. The timestamp is in RFC3339 format:
+     ``yyyy-MM-ddTHH:mm:ssZ``.
+    :vartype finished_date_time: ~datetime.datetime
+    :ivar purge_date_time: Time at which job will be purged by the service from the system. The
+     timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+    :vartype purge_date_time: ~datetime.datetime
+    :ivar error: Details of the error(s) that occurred executing the import job.
+    :vartype error: ~azure.digitaltwins.core.models.Error
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'input_blob_uri': {'required': True},
+        'output_blob_uri': {'required': True},
+        'status': {'readonly': True},
+        'created_date_time': {'readonly': True},
+        'last_action_date_time': {'readonly': True},
+        'finished_date_time': {'readonly': True},
+        'purge_date_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'input_blob_uri': {'key': 'inputBlobUri', 'type': 'str'},
+        'output_blob_uri': {'key': 'outputBlobUri', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
+        'finished_date_time': {'key': 'finishedDateTime', 'type': 'iso-8601'},
+        'purge_date_time': {'key': 'purgeDateTime', 'type': 'iso-8601'},
+        'error': {'key': 'error', 'type': 'Error'},
+    }
+
+    def __init__(
+        self,
+        *,
+        input_blob_uri: str,
+        output_blob_uri: str,
+        error: Optional["_models.Error"] = None,
+        **kwargs
+    ):
+        """
+        :keyword input_blob_uri: Required. The path to the input Azure storage blob that contains
+         file(s) describing the operations to perform in the job.
+        :paramtype input_blob_uri: str
+        :keyword output_blob_uri: Required. The path to the output Azure storage blob that will contain
+         the errors and progress logs of import job.
+        :paramtype output_blob_uri: str
+        :keyword error: Details of the error(s) that occurred executing the import job.
+        :paramtype error: ~azure.digitaltwins.core.models.Error
+        """
+        super(ImportJob, self).__init__(**kwargs)
+        self.id = None
+        self.input_blob_uri = input_blob_uri
+        self.output_blob_uri = output_blob_uri
+        self.status = None
+        self.created_date_time = None
+        self.last_action_date_time = None
+        self.finished_date_time = None
+        self.purge_date_time = None
+        self.error = error
+
+
+class ImportJobCollection(msrest.serialization.Model):
+    """A collection of import job objects.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. The list of import job objects.
+    :vartype value: list[~azure.digitaltwins.core.models.ImportJob]
+    :ivar next_link: A URI to retrieve the next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ImportJob]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["_models.ImportJob"],
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: Required. The list of import job objects.
+        :paramtype value: list[~azure.digitaltwins.core.models.ImportJob]
+        :keyword next_link: A URI to retrieve the next page of results.
+        :paramtype next_link: str
+        """
+        super(ImportJobCollection, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class ImportJobsAddOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :vartype tracestate: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        traceparent: Optional[str] = None,
+        tracestate: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        """
+        super(ImportJobsAddOptions, self).__init__(**kwargs)
+        self.traceparent = traceparent
+        self.tracestate = tracestate
+
+
+class ImportJobsCancelOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :vartype tracestate: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        traceparent: Optional[str] = None,
+        tracestate: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        """
+        super(ImportJobsCancelOptions, self).__init__(**kwargs)
+        self.traceparent = traceparent
+        self.tracestate = tracestate
+
+
+class ImportJobsDeleteOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :vartype tracestate: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        traceparent: Optional[str] = None,
+        tracestate: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        """
+        super(ImportJobsDeleteOptions, self).__init__(**kwargs)
+        self.traceparent = traceparent
+        self.tracestate = tracestate
+
+
+class ImportJobsGetByIdOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :vartype tracestate: str
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        traceparent: Optional[str] = None,
+        tracestate: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        """
+        super(ImportJobsGetByIdOptions, self).__init__(**kwargs)
+        self.traceparent = traceparent
+        self.tracestate = tracestate
+
+
+class ImportJobsListOptions(msrest.serialization.Model):
+    """Parameter group.
+
+    :ivar traceparent: Identifies the request in a distributed tracing system.
+    :vartype traceparent: str
+    :ivar tracestate: Provides vendor-specific trace identification information and is a companion
+     to traceparent.
+    :vartype tracestate: str
+    :ivar max_items_per_page: The maximum number of items to retrieve per request. The server may
+     choose to return less than the requested number.
+    :vartype max_items_per_page: int
+    """
+
+    _attribute_map = {
+        'traceparent': {'key': 'traceparent', 'type': 'str'},
+        'tracestate': {'key': 'tracestate', 'type': 'str'},
+        'max_items_per_page': {'key': 'MaxItemsPerPage', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        *,
+        traceparent: Optional[str] = None,
+        tracestate: Optional[str] = None,
+        max_items_per_page: Optional[int] = None,
+        **kwargs
+    ):
+        """
+        :keyword traceparent: Identifies the request in a distributed tracing system.
+        :paramtype traceparent: str
+        :keyword tracestate: Provides vendor-specific trace identification information and is a
+         companion to traceparent.
+        :paramtype tracestate: str
+        :keyword max_items_per_page: The maximum number of items to retrieve per request. The server
+         may choose to return less than the requested number.
+        :paramtype max_items_per_page: int
+        """
+        super(ImportJobsListOptions, self).__init__(**kwargs)
+        self.traceparent = traceparent
+        self.tracestate = tracestate
+        self.max_items_per_page = max_items_per_page
+
+
 class IncomingRelationship(msrest.serialization.Model):
     """An incoming relationship.
 
@@ -1149,11 +1469,17 @@ class IncomingRelationship(msrest.serialization.Model):
 class IncomingRelationshipCollection(msrest.serialization.Model):
     """A collection of incoming relationships which relate digital twins together.
 
-    :ivar value:
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required.
     :vartype value: list[~azure.digitaltwins.core.models.IncomingRelationship]
     :ivar next_link: A URI to retrieve the next page of objects.
     :vartype next_link: str
     """
+
+    _validation = {
+        'value': {'required': True},
+    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[IncomingRelationship]'},
@@ -1163,12 +1489,12 @@ class IncomingRelationshipCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["IncomingRelationship"]] = None,
+        value: List["_models.IncomingRelationship"],
         next_link: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword value:
+        :keyword value: Required.
         :paramtype value: list[~azure.digitaltwins.core.models.IncomingRelationship]
         :keyword next_link: A URI to retrieve the next page of objects.
         :paramtype next_link: str
@@ -1197,7 +1523,7 @@ class InnerError(msrest.serialization.Model):
         self,
         *,
         code: Optional[str] = None,
-        innererror: Optional["InnerError"] = None,
+        innererror: Optional["_models.InnerError"] = None,
         **kwargs
     ):
         """
@@ -1215,11 +1541,17 @@ class InnerError(msrest.serialization.Model):
 class PagedDigitalTwinsModelDataCollection(msrest.serialization.Model):
     """A collection of DigitalTwinsModelData objects.
 
-    :ivar value: The DigitalTwinsModelData objects.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. The DigitalTwinsModelData objects.
     :vartype value: list[~azure.digitaltwins.core.models.DigitalTwinsModelData]
     :ivar next_link: A URI to retrieve the next page of objects.
     :vartype next_link: str
     """
+
+    _validation = {
+        'value': {'required': True},
+    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[DigitalTwinsModelData]'},
@@ -1229,12 +1561,12 @@ class PagedDigitalTwinsModelDataCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["DigitalTwinsModelData"]] = None,
+        value: List["_models.DigitalTwinsModelData"],
         next_link: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword value: The DigitalTwinsModelData objects.
+        :keyword value: Required. The DigitalTwinsModelData objects.
         :paramtype value: list[~azure.digitaltwins.core.models.DigitalTwinsModelData]
         :keyword next_link: A URI to retrieve the next page of objects.
         :paramtype next_link: str
@@ -1247,12 +1579,18 @@ class PagedDigitalTwinsModelDataCollection(msrest.serialization.Model):
 class QueryResult(msrest.serialization.Model):
     """The results of a query operation and an optional continuation token.
 
-    :ivar value: The query results.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. The query results.
     :vartype value: list[any]
     :ivar continuation_token: A token which can be used to construct a new QuerySpecification to
      retrieve the next set of results.
     :vartype continuation_token: str
     """
+
+    _validation = {
+        'value': {'required': True},
+    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[object]'},
@@ -1262,12 +1600,12 @@ class QueryResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List[Any]] = None,
+        value: List[Any],
         continuation_token: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword value: The query results.
+        :keyword value: Required. The query results.
         :paramtype value: list[any]
         :keyword continuation_token: A token which can be used to construct a new QuerySpecification to
          retrieve the next set of results.
@@ -1359,11 +1697,17 @@ class QueryTwinsOptions(msrest.serialization.Model):
 class RelationshipCollection(msrest.serialization.Model):
     """A collection of relationships which relate digital twins together.
 
-    :ivar value: The relationship objects.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. The relationship objects.
     :vartype value: list[any]
     :ivar next_link: A URI to retrieve the next page of objects.
     :vartype next_link: str
     """
+
+    _validation = {
+        'value': {'required': True},
+    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[object]'},
@@ -1373,12 +1717,12 @@ class RelationshipCollection(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List[Any]] = None,
+        value: List[Any],
         next_link: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword value: The relationship objects.
+        :keyword value: Required. The relationship objects.
         :paramtype value: list[any]
         :keyword next_link: A URI to retrieve the next page of objects.
         :paramtype next_link: str

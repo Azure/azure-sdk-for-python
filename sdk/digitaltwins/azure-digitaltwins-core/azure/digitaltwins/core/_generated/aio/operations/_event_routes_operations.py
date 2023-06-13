@@ -15,6 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
@@ -35,19 +36,19 @@ class EventRoutesOperations:
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
-        args = list(args)
-        self._client = args.pop(0) if args else kwargs.pop("client")
-        self._config = args.pop(0) if args else kwargs.pop("config")
-        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
-        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
 
     @distributed_trace
     def list(
         self,
-        event_routes_list_options: Optional["_models.EventRoutesListOptions"] = None,
+        event_routes_list_options: Optional[_models.EventRoutesListOptions] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.EventRouteCollection"]:
+    ) -> AsyncIterable[_models.EventRouteCollection]:
         """Retrieves all event routes.
         Status codes:
 
@@ -63,13 +64,16 @@ class EventRoutesOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.models.EventRouteCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EventRouteCollection"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.EventRouteCollection]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 _traceparent = None
@@ -86,9 +90,11 @@ class EventRoutesOperations:
                     tracestate=_tracestate,
                     max_items_per_page=_max_items_per_page,
                     template_url=self.list.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 _traceparent = None
@@ -105,9 +111,11 @@ class EventRoutesOperations:
                     tracestate=_tracestate,
                     max_items_per_page=_max_items_per_page,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -145,9 +153,9 @@ class EventRoutesOperations:
     async def get_by_id(
         self,
         id: str,
-        event_routes_get_by_id_options: Optional["_models.EventRoutesGetByIdOptions"] = None,
+        event_routes_get_by_id_options: Optional[_models.EventRoutesGetByIdOptions] = None,
         **kwargs: Any
-    ) -> "_models.DigitalTwinsEventRoute":
+    ) -> _models.DigitalTwinsEventRoute:
         """Retrieves an event route.
         Status codes:
 
@@ -166,13 +174,16 @@ class EventRoutesOperations:
         :rtype: ~azure.digitaltwins.core.models.DigitalTwinsEventRoute
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DigitalTwinsEventRoute"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DigitalTwinsEventRoute]
 
         _traceparent = None
         _tracestate = None
@@ -186,11 +197,13 @@ class EventRoutesOperations:
             traceparent=_traceparent,
             tracestate=_tracestate,
             template_url=self.get_by_id.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -216,8 +229,8 @@ class EventRoutesOperations:
     async def add(  # pylint: disable=inconsistent-return-statements
         self,
         id: str,
-        event_route: Optional["_models.DigitalTwinsEventRoute"] = None,
-        event_routes_add_options: Optional["_models.EventRoutesAddOptions"] = None,
+        event_route: _models.DigitalTwinsEventRoute,
+        event_routes_add_options: Optional[_models.EventRoutesAddOptions] = None,
         **kwargs: Any
     ) -> None:
         """Adds or replaces an event route.
@@ -234,7 +247,7 @@ class EventRoutesOperations:
 
         :param id: The id for an event route. The id is unique within event routes and case sensitive.
         :type id: str
-        :param event_route: The event route data. Default value is None.
+        :param event_route: The event route data.
         :type event_route: ~azure.digitaltwins.core.models.DigitalTwinsEventRoute
         :param event_routes_add_options: Parameter group. Default value is None.
         :type event_routes_add_options: ~azure.digitaltwins.core.models.EventRoutesAddOptions
@@ -243,24 +256,24 @@ class EventRoutesOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _traceparent = None
         _tracestate = None
         if event_routes_add_options is not None:
             _traceparent = event_routes_add_options.traceparent
             _tracestate = event_routes_add_options.tracestate
-        if event_route is not None:
-            _json = self._serialize.body(event_route, 'DigitalTwinsEventRoute')
-        else:
-            _json = None
+        _json = self._serialize.body(event_route, 'DigitalTwinsEventRoute')
 
         request = build_add_request(
             id=id,
@@ -270,11 +283,13 @@ class EventRoutesOperations:
             traceparent=_traceparent,
             tracestate=_tracestate,
             template_url=self.add.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -296,7 +311,7 @@ class EventRoutesOperations:
     async def delete(  # pylint: disable=inconsistent-return-statements
         self,
         id: str,
-        event_routes_delete_options: Optional["_models.EventRoutesDeleteOptions"] = None,
+        event_routes_delete_options: Optional[_models.EventRoutesDeleteOptions] = None,
         **kwargs: Any
     ) -> None:
         """Deletes an event route.
@@ -317,13 +332,16 @@ class EventRoutesOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _traceparent = None
         _tracestate = None
@@ -337,11 +355,13 @@ class EventRoutesOperations:
             traceparent=_traceparent,
             tracestate=_tracestate,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs

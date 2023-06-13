@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-identity/1.13.0 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:03:44 GMT",
+        "Date": "Thu, 01 Jun 2023 20:37:04 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13777.6 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15427.11 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -100,7 +100,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-identity/1.13.0 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -110,12 +110,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:03:44 GMT",
+        "Date": "Thu, 01 Jun 2023 20:37:05 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13777.5 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15427.11 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,17 +172,18 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Length": "226",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:03:45 GMT",
-        "mise-correlation-id": "42e6fea4-ad51-46a6-b4b3-92f65cfb2daa",
+        "Date": "Thu, 01 Jun 2023 20:37:05 GMT",
+        "mise-correlation-id": "3e02c857-ba64-4b5e-b678-9d1fb01bad92",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-12ce0733a864b1002a08a2984da2e133-597e0c0ea7eb8782-01"
+        "traceresponse": "00-0ee728a85a9f0bb000b3e70bec7a9c6e-b320116bd9a2d0c3-01",
+        "x-ms-error-code": "ModelNotFound"
       },
       "ResponseBody": {
         "error": {
@@ -200,19 +201,19 @@
         "Connection": "keep-alive",
         "Content-Length": "301",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": "[{\u0022@id\u0022: \u0022dtmi:com:samples:ComponentModel574a3169;1\u0022, \u0022@type\u0022: \u0022Interface\u0022, \u0022@context\u0022: [\u0022dtmi:dtdl:context;2\u0022], \u0022displayName\u0022: \u0022Component1\u0022, \u0022contents\u0022: [{\u0022@type\u0022: \u0022Property\u0022, \u0022name\u0022: \u0022ComponentProp1\u0022, \u0022schema\u0022: \u0022string\u0022}, {\u0022@type\u0022: \u0022Telemetry\u0022, \u0022name\u0022: \u0022ComponentTelemetry1\u0022, \u0022schema\u0022: \u0022integer\u0022}]}]",
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "175",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:03:45 GMT",
-        "mise-correlation-id": "fcde6705-32c2-4453-aa6d-0db6ee41919b",
+        "Date": "Thu, 01 Jun 2023 20:37:05 GMT",
+        "mise-correlation-id": "3da3fafa-a7ef-4bf0-ba45-ecde2c28031e",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-8e6cafc444319a2d6a257bcf68736261-cc2bdf0d42b99a6a-01"
+        "traceresponse": "00-f9984b0700298cd11c658d0ebcfe48ed-e2a8dcc4ba8da8f6-01"
       },
-      "ResponseBody": "[{\u0022id\u0022:\u0022dtmi:com:samples:ComponentModel574a3169;1\u0022,\u0022description\u0022:{},\u0022displayName\u0022:{\u0022en\u0022:\u0022Component1\u0022},\u0022decommissioned\u0022:false,\u0022uploadTime\u0022:\u00222022-09-29T04:03:45.1494126\u002B00:00\u0022}]"
+      "ResponseBody": "[{\u0022id\u0022:\u0022dtmi:com:samples:ComponentModel574a3169;1\u0022,\u0022description\u0022:{},\u0022displayName\u0022:{\u0022en\u0022:\u0022Component1\u0022},\u0022decommissioned\u0022:false,\u0022uploadTime\u0022:\u00222023-06-01T20:37:06.3278315\u002B00:00\u0022}]"
     },
     {
       "RequestUri": "https://fake.api.wcus.digitaltwins.azure.net/models?includeModelDefinition=true\u0026api-version=2022-05-31",
@@ -221,17 +222,17 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "3716",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:03:45 GMT",
-        "mise-correlation-id": "858b5249-02bb-4b7a-be67-6bc12eb0968a",
+        "Date": "Thu, 01 Jun 2023 20:37:05 GMT",
+        "mise-correlation-id": "9f176bf6-1e6d-411a-8846-b86dfe444ea7",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-f7510b972268db7641d59cc50dd6235e-6d492a98b4288303-01"
+        "traceresponse": "00-32e311044cf0a796f78e3ff200e757f0-45de2d50cabeae26-01"
       },
       "ResponseBody": {
         "value": [
@@ -242,7 +243,7 @@
               "en": "Building"
             },
             "decommissioned": false,
-            "uploadTime": "2022-09-29T04:03:26.5096707\u002B00:00",
+            "uploadTime": "2023-06-01T20:34:16.7384645\u002B00:00",
             "model": {
               "@id": "dtmi:samples:DTTestBuilding;1",
               "@type": "Interface",
@@ -269,7 +270,7 @@
               "en": "Component1"
             },
             "decommissioned": false,
-            "uploadTime": "2022-09-29T04:03:41.7727664\u002B00:00",
+            "uploadTime": "2023-06-01T20:36:59.0125539\u002B00:00",
             "model": {
               "@id": "dtmi:com:samples:ComponentModelbbab2b7e;1",
               "@type": "Interface",
@@ -296,7 +297,7 @@
               "en": "TempModel"
             },
             "decommissioned": false,
-            "uploadTime": "2022-09-29T04:03:41.7727928\u002B00:00",
+            "uploadTime": "2023-06-01T20:36:59.0125794\u002B00:00",
             "model": {
               "@id": "dtmi:com:samples:TempModelbbab2b7e;1",
               "@type": "Interface",
@@ -328,7 +329,7 @@
               "en": "TempModel"
             },
             "decommissioned": false,
-            "uploadTime": "2022-09-29T04:03:42.2335772\u002B00:00",
+            "uploadTime": "2023-06-01T20:37:00.0371053\u002B00:00",
             "model": {
               "@id": "dtmi:com:samples:TempModel2d712ed5;1",
               "@type": "Interface",
@@ -355,7 +356,7 @@
               "en": "Component1"
             },
             "decommissioned": false,
-            "uploadTime": "2022-09-29T04:03:43.5258184\u002B00:00",
+            "uploadTime": "2023-06-01T20:37:02.7424286\u002B00:00",
             "model": {
               "@id": "dtmi:com:samples:ComponentModeld0629d7;1",
               "@type": "Interface",
@@ -382,7 +383,7 @@
               "en": "Component1"
             },
             "decommissioned": false,
-            "uploadTime": "2022-09-29T04:03:43.9442885\u002B00:00",
+            "uploadTime": "2023-06-01T20:37:03.7085627\u002B00:00",
             "model": {
               "@id": "dtmi:com:samples:ComponentModelf035307a;1",
               "@type": "Interface",
@@ -411,7 +412,7 @@
               "en": "Component1"
             },
             "decommissioned": false,
-            "uploadTime": "2022-09-29T04:03:44.6658794\u002B00:00",
+            "uploadTime": "2023-06-01T20:37:05.3607214\u002B00:00",
             "model": {
               "@id": "dtmi:com:samples:ComponentModel651c2ac6;1",
               "@type": "Interface",
@@ -440,7 +441,7 @@
               "en": "Component1"
             },
             "decommissioned": false,
-            "uploadTime": "2022-09-29T04:03:45.1494126\u002B00:00",
+            "uploadTime": "2023-06-01T20:37:06.3278315\u002B00:00",
             "model": {
               "@id": "dtmi:com:samples:ComponentModel574a3169;1",
               "@type": "Interface",

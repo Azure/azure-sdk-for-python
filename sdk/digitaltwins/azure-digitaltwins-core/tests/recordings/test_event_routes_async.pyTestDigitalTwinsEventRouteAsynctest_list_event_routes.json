@@ -6,17 +6,17 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "28",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:03:39 GMT",
-        "mise-correlation-id": "bace8fe2-4720-4733-a5ce-8496a370378c",
+        "Date": "Thu, 01 Jun 2023 20:36:56 GMT",
+        "mise-correlation-id": "c8333965-97b3-474a-9b4f-6e74a2cf60dc",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-fa6736e7320c601a8ee005da2cb2cfa4-4a56f4d849bc648b-01"
+        "traceresponse": "00-ea302e7631a37363b3f38bd6da8012f4-02bafc9e37a68335-01"
       },
       "ResponseBody": {
         "value": [],

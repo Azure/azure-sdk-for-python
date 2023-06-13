@@ -8,17 +8,18 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "54",
         "Content-Type": "application/json-patch\u002Bjson",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": "[{\u0022op\u0022: \u0022replace\u0022, \u0022path\u0022: \u0022/Property1\u0022, \u0022value\u0022: 42}]",
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Length": "274",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:03:26 GMT",
-        "mise-correlation-id": "33bfa8e7-3706-4f6a-95b8-11b1f9a9bba6",
+        "Date": "Thu, 01 Jun 2023 20:34:17 GMT",
+        "mise-correlation-id": "d035293f-4826-48fe-9989-b8e2ab0fb838",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-5ff31df69d02540692d5eaa9f5eb1415-66e28d6a272150a2-01"
+        "traceresponse": "00-a56d74dcf4378281c9c7fb77c87a2b60-4045401752ae54c6-01",
+        "x-ms-error-code": "DigitalTwinNotFound"
       },
       "ResponseBody": {
         "error": {

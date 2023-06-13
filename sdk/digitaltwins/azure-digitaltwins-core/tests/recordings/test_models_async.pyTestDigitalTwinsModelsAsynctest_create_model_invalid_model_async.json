@@ -6,17 +6,18 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Length": "226",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:03:49 GMT",
-        "mise-correlation-id": "8d2ec149-4e4b-4a67-b9cc-ca419ea19641",
+        "Date": "Thu, 01 Jun 2023 20:37:16 GMT",
+        "mise-correlation-id": "09c0a3aa-fb50-4e56-9309-39f89911f9fa",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-f190701527b52bead16e920bbda00ffc-a7ca6ba2c7825b10-01"
+        "traceresponse": "00-350ca453d3f032f95eba48ae38b399e7-94a9a5c022cf9186-01",
+        "x-ms-error-code": "ModelNotFound"
       },
       "ResponseBody": {
         "error": {
@@ -33,17 +34,18 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "307",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": "[{\u0022@context\u0022: \u0022dtmi:dtdl:context;2\u0022, \u0022displayName\u0022: \u0022TempModel\u0022, \u0022contents\u0022: [{\u0022@type\u0022: \u0022Property\u0022, \u0022name\u0022: \u0022Prop1\u0022, \u0022schema\u0022: \u0022string\u0022}, {\u0022@type\u0022: \u0022Component\u0022, \u0022name\u0022: \u0022Component1\u0022, \u0022schema\u0022: \u0022dtmi:com:samples:ComponentModelb0e437b9;1\u0022}, {\u0022@type\u0022: \u0022Telemetry\u0022, \u0022name\u0022: \u0022Telemetry1\u0022, \u0022schema\u0022: \u0022integer\u0022}]}]",
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Length": "434",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:03:49 GMT",
-        "mise-correlation-id": "d3f260cf-b44d-4f40-8de1-d08a1c90b09e",
+        "Date": "Thu, 01 Jun 2023 20:37:16 GMT",
+        "mise-correlation-id": "07c9ca88-ddd8-486e-81a6-09ac4a565da2",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-761bb5db5a815b414838a87f2cc3066d-486dbb458082f9e5-01"
+        "traceresponse": "00-6be0c66caf73b3f51aadc6b7f6d785eb-79eefd52e68a8ae6-01",
+        "x-ms-error-code": "DTDLParserError"
       },
       "ResponseBody": {
         "error": {

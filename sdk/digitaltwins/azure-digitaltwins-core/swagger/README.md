@@ -4,8 +4,10 @@
 
 ### Settings
 ``` yaml
-input-file: https://github.com/Azure/azure-rest-api-specs/blob/3026119ab41bbce77275cfa3a1afbabf43af5aea/specification/digitaltwins/data-plane/Microsoft.DigitalTwins/preview/2021-06-30-preview/digitaltwins.json
+input-file: https://github.com/Azure/azure-rest-api-specs/blob/2c0f2c7d585b99af7428435aa065d5ea4276119a/specification/digitaltwins/data-plane/Microsoft.DigitalTwins/stable/2023-06-30/digitaltwins.json
 output-folder: ../azure/digitaltwins/core/_generated
+use-extension: 
+  "@autorest/python": "5.16.0"
 namespace: azure.digitaltwins.core
 no-namespace-folders: true
 add-credentials: true
@@ -13,7 +15,9 @@ credential-scopes: "https://digitaltwins.azure.net/.default"
 license-header: MICROSOFT_MIT_NO_VERSION
 enable-xml: true
 vanilla: true
+combine-operation-files: false
 clear-output-folder: true
+models-mode: msrest
 python: true
 ```
 

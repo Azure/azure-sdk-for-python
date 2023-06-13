@@ -6,4 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.2.0"
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
+
+
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the job.
+    """
+
+    NOTSTARTED = "notstarted"
+    RUNNING = "running"
+    FAILED = "failed"
+    SUCCEEDED = "succeeded"
+    CANCELLING = "cancelling"
+    CANCELLED = "cancelled"

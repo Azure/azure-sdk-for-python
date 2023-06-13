@@ -8,22 +8,23 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "65",
         "Content-Type": "application/json-patch\u002Bjson",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": "[{\u0022op\u0022: \u0022replace\u0022, \u0022path\u0022: \u0022/ComponentProp1\u0022, \u0022value\u0022: \u0022value2\u0022}]",
       "StatusCode": 400,
       "ResponseHeaders": {
-        "Content-Length": "214",
+        "Content-Length": "205",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:02:50 GMT",
-        "mise-correlation-id": "f2713594-687f-474e-9497-629080302396",
+        "Date": "Thu, 01 Jun 2023 20:30:43 GMT",
+        "mise-correlation-id": "7b219fef-5366-44c5-a325-3634ca3cb86d",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-c78b1cf650426522edf9959de4d9cd06-935d77edcf4beb06-01"
+        "traceresponse": "00-787c176357f6928e1d6c1b188df8689a-cd15189f40f303af-01",
+        "x-ms-error-code": "JsonPatchInvalid"
       },
       "ResponseBody": {
         "error": {
           "code": "JsonPatchInvalid",
-          "message": "Could not resolve path /Component2/ComponentProp1. Please provide a valid patch document. See section on update apis in the documentation https://aka.ms/adtv2twins."
+          "message": "/Component2/ComponentProp1 was not found. Please provide a valid patch document. See section on update apis in the documentation https://aka.ms/adtv2twins."
         }
       }
     },
@@ -35,17 +36,18 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "65",
         "Content-Type": "application/json-patch\u002Bjson",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": "[{\u0022op\u0022: \u0022replace\u0022, \u0022path\u0022: \u0022/ComponentProp1\u0022, \u0022value\u0022: \u0022value2\u0022}]",
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Length": "257",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:02:50 GMT",
-        "mise-correlation-id": "7200d9d3-cbeb-425e-ab5a-1121c8e96305",
+        "Date": "Thu, 01 Jun 2023 20:30:43 GMT",
+        "mise-correlation-id": "88cd7a64-a0db-4db8-95f7-58b3bb32b35a",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-36522bf33d67c614b0aaf125d6dae377-09ce67370b3da7db-01"
+        "traceresponse": "00-4587141697129a00b599cbab3b7fc36f-2f50f92bac3a3281-01",
+        "x-ms-error-code": "DigitalTwinNotFound"
       },
       "ResponseBody": {
         "error": {

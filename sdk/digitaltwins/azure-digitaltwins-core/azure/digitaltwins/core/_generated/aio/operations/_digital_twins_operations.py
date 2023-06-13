@@ -15,6 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
@@ -35,20 +36,20 @@ class DigitalTwinsOperations:
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
-        args = list(args)
-        self._client = args.pop(0) if args else kwargs.pop("client")
-        self._config = args.pop(0) if args else kwargs.pop("config")
-        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
-        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
 
     @distributed_trace_async
     async def get_by_id(
         self,
         id: str,
-        digital_twins_get_by_id_options: Optional["_models.DigitalTwinsGetByIdOptions"] = None,
+        digital_twins_get_by_id_options: Optional[_models.DigitalTwinsGetByIdOptions] = None,
         **kwargs: Any
-    ) -> Any:
+    ) -> Dict[str, Any]:
         """Retrieves a digital twin.
         Status codes:
 
@@ -68,17 +69,20 @@ class DigitalTwinsOperations:
         :type digital_twins_get_by_id_options:
          ~azure.digitaltwins.core.models.DigitalTwinsGetByIdOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: any, or the result of cls(response)
-        :rtype: any
+        :return: dict mapping str to any, or the result of cls(response)
+        :rtype: dict[str, any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[Dict[str, Any]]
 
         _traceparent = None
         _tracestate = None
@@ -92,11 +96,13 @@ class DigitalTwinsOperations:
             traceparent=_traceparent,
             tracestate=_tracestate,
             template_url=self.get_by_id.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -111,7 +117,7 @@ class DigitalTwinsOperations:
         response_headers = {}
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
 
-        deserialized = self._deserialize('object', pipeline_response)
+        deserialized = self._deserialize('{object}', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -126,9 +132,9 @@ class DigitalTwinsOperations:
         self,
         id: str,
         twin: Any,
-        digital_twins_add_options: Optional["_models.DigitalTwinsAddOptions"] = None,
+        digital_twins_add_options: Optional[_models.DigitalTwinsAddOptions] = None,
         **kwargs: Any
-    ) -> Optional[Any]:
+    ) -> Dict[str, Any]:
         """Adds or replaces a digital twin.
         Status codes:
 
@@ -152,18 +158,21 @@ class DigitalTwinsOperations:
         :param digital_twins_add_options: Parameter group. Default value is None.
         :type digital_twins_add_options: ~azure.digitaltwins.core.models.DigitalTwinsAddOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: any, or the result of cls(response)
-        :rtype: any or None
+        :return: dict mapping str to any, or the result of cls(response)
+        :rtype: dict[str, any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Dict[str, Any]]
 
         _traceparent = None
         _tracestate = None
@@ -183,28 +192,28 @@ class DigitalTwinsOperations:
             tracestate=_tracestate,
             if_none_match=_if_none_match,
             template_url=self.add.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = None
         response_headers = {}
-        if response.status_code == 200:
-            response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-            
-            deserialized = self._deserialize('object', pipeline_response)
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+
+        deserialized = self._deserialize('{object}', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -218,7 +227,7 @@ class DigitalTwinsOperations:
     async def delete(  # pylint: disable=inconsistent-return-statements
         self,
         id: str,
-        digital_twins_delete_options: Optional["_models.DigitalTwinsDeleteOptions"] = None,
+        digital_twins_delete_options: Optional[_models.DigitalTwinsDeleteOptions] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a digital twin. All relationships referencing the digital twin must already be deleted.
@@ -248,13 +257,16 @@ class DigitalTwinsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _traceparent = None
         _tracestate = None
@@ -271,11 +283,13 @@ class DigitalTwinsOperations:
             tracestate=_tracestate,
             if_match=_if_match,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -298,7 +312,7 @@ class DigitalTwinsOperations:
         self,
         id: str,
         patch_document: List[Any],
-        digital_twins_update_options: Optional["_models.DigitalTwinsUpdateOptions"] = None,
+        digital_twins_update_options: Optional[_models.DigitalTwinsUpdateOptions] = None,
         **kwargs: Any
     ) -> None:
         """Updates a digital twin.
@@ -333,14 +347,17 @@ class DigitalTwinsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
-        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json-patch+json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _traceparent = None
         _tracestate = None
@@ -360,26 +377,27 @@ class DigitalTwinsOperations:
             tracestate=_tracestate,
             if_match=_if_match,
             template_url=self.update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        if response.status_code == 204:
-            response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-            
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -392,9 +410,9 @@ class DigitalTwinsOperations:
         self,
         id: str,
         relationship_id: str,
-        digital_twins_get_relationship_by_id_options: Optional["_models.DigitalTwinsGetRelationshipByIdOptions"] = None,
+        digital_twins_get_relationship_by_id_options: Optional[_models.DigitalTwinsGetRelationshipByIdOptions] = None,
         **kwargs: Any
-    ) -> Any:
+    ) -> Dict[str, Any]:
         """Retrieves a relationship between two digital twins.
         Status codes:
 
@@ -418,17 +436,20 @@ class DigitalTwinsOperations:
         :type digital_twins_get_relationship_by_id_options:
          ~azure.digitaltwins.core.models.DigitalTwinsGetRelationshipByIdOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: any, or the result of cls(response)
-        :rtype: any
+        :return: dict mapping str to any, or the result of cls(response)
+        :rtype: dict[str, any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[Dict[str, Any]]
 
         _traceparent = None
         _tracestate = None
@@ -443,11 +464,13 @@ class DigitalTwinsOperations:
             traceparent=_traceparent,
             tracestate=_tracestate,
             template_url=self.get_relationship_by_id.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -462,7 +485,7 @@ class DigitalTwinsOperations:
         response_headers = {}
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
 
-        deserialized = self._deserialize('object', pipeline_response)
+        deserialized = self._deserialize('{object}', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -478,9 +501,9 @@ class DigitalTwinsOperations:
         id: str,
         relationship_id: str,
         relationship: Any,
-        digital_twins_add_relationship_options: Optional["_models.DigitalTwinsAddRelationshipOptions"] = None,
+        digital_twins_add_relationship_options: Optional[_models.DigitalTwinsAddRelationshipOptions] = None,
         **kwargs: Any
-    ) -> Any:
+    ) -> Dict[str, Any]:
         """Adds a relationship between two digital twins.
         Status codes:
 
@@ -513,18 +536,21 @@ class DigitalTwinsOperations:
         :type digital_twins_add_relationship_options:
          ~azure.digitaltwins.core.models.DigitalTwinsAddRelationshipOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: any, or the result of cls(response)
-        :rtype: any
+        :return: dict mapping str to any, or the result of cls(response)
+        :rtype: dict[str, any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Dict[str, Any]]
 
         _traceparent = None
         _tracestate = None
@@ -545,11 +571,13 @@ class DigitalTwinsOperations:
             tracestate=_tracestate,
             if_none_match=_if_none_match,
             template_url=self.add_relationship.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -564,7 +592,7 @@ class DigitalTwinsOperations:
         response_headers = {}
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
 
-        deserialized = self._deserialize('object', pipeline_response)
+        deserialized = self._deserialize('{object}', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -579,7 +607,7 @@ class DigitalTwinsOperations:
         self,
         id: str,
         relationship_id: str,
-        digital_twins_delete_relationship_options: Optional["_models.DigitalTwinsDeleteRelationshipOptions"] = None,
+        digital_twins_delete_relationship_options: Optional[_models.DigitalTwinsDeleteRelationshipOptions] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a relationship between two digital twins.
@@ -613,13 +641,16 @@ class DigitalTwinsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _traceparent = None
         _tracestate = None
@@ -637,11 +668,13 @@ class DigitalTwinsOperations:
             tracestate=_tracestate,
             if_match=_if_match,
             template_url=self.delete_relationship.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -665,7 +698,7 @@ class DigitalTwinsOperations:
         id: str,
         relationship_id: str,
         patch_document: List[Any],
-        digital_twins_update_relationship_options: Optional["_models.DigitalTwinsUpdateRelationshipOptions"] = None,
+        digital_twins_update_relationship_options: Optional[_models.DigitalTwinsUpdateRelationshipOptions] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties on a relationship between two digital twins.
@@ -708,14 +741,17 @@ class DigitalTwinsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
-        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json-patch+json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _traceparent = None
         _tracestate = None
@@ -736,11 +772,13 @@ class DigitalTwinsOperations:
             tracestate=_tracestate,
             if_match=_if_match,
             template_url=self.update_relationship.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -767,9 +805,9 @@ class DigitalTwinsOperations:
         self,
         id: str,
         relationship_name: Optional[str] = None,
-        digital_twins_list_relationships_options: Optional["_models.DigitalTwinsListRelationshipsOptions"] = None,
+        digital_twins_list_relationships_options: Optional[_models.DigitalTwinsListRelationshipsOptions] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.RelationshipCollection"]:
+    ) -> AsyncIterable[_models.RelationshipCollection]:
         """Retrieves the relationships from a digital twin.
         Status codes:
 
@@ -797,13 +835,16 @@ class DigitalTwinsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.models.RelationshipCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RelationshipCollection"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.RelationshipCollection]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 _traceparent = None
@@ -819,9 +860,11 @@ class DigitalTwinsOperations:
                     tracestate=_tracestate,
                     relationship_name=relationship_name,
                     template_url=self.list_relationships.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 _traceparent = None
@@ -837,9 +880,11 @@ class DigitalTwinsOperations:
                     tracestate=_tracestate,
                     relationship_name=relationship_name,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -877,9 +922,9 @@ class DigitalTwinsOperations:
     def list_incoming_relationships(
         self,
         id: str,
-        digital_twins_list_incoming_relationships_options: Optional["_models.DigitalTwinsListIncomingRelationshipsOptions"] = None,
+        digital_twins_list_incoming_relationships_options: Optional[_models.DigitalTwinsListIncomingRelationshipsOptions] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.IncomingRelationshipCollection"]:
+    ) -> AsyncIterable[_models.IncomingRelationshipCollection]:
         """Retrieves all incoming relationship for a digital twin.
         Status codes:
 
@@ -906,13 +951,16 @@ class DigitalTwinsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.models.IncomingRelationshipCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IncomingRelationshipCollection"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.IncomingRelationshipCollection]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 _traceparent = None
@@ -927,9 +975,11 @@ class DigitalTwinsOperations:
                     traceparent=_traceparent,
                     tracestate=_tracestate,
                     template_url=self.list_incoming_relationships.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 _traceparent = None
@@ -944,9 +994,11 @@ class DigitalTwinsOperations:
                     traceparent=_traceparent,
                     tracestate=_tracestate,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -987,7 +1039,7 @@ class DigitalTwinsOperations:
         message_id: str,
         telemetry: Any,
         telemetry_source_time: Optional[str] = None,
-        digital_twins_send_telemetry_options: Optional["_models.DigitalTwinsSendTelemetryOptions"] = None,
+        digital_twins_send_telemetry_options: Optional[_models.DigitalTwinsSendTelemetryOptions] = None,
         **kwargs: Any
     ) -> None:
         """Sends telemetry on behalf of a digital twin.
@@ -1022,14 +1074,17 @@ class DigitalTwinsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _traceparent = None
         _tracestate = None
@@ -1048,11 +1103,13 @@ class DigitalTwinsOperations:
             tracestate=_tracestate,
             telemetry_source_time=telemetry_source_time,
             template_url=self.send_telemetry.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1078,7 +1135,7 @@ class DigitalTwinsOperations:
         message_id: str,
         telemetry: Any,
         telemetry_source_time: Optional[str] = None,
-        digital_twins_send_component_telemetry_options: Optional["_models.DigitalTwinsSendComponentTelemetryOptions"] = None,
+        digital_twins_send_component_telemetry_options: Optional[_models.DigitalTwinsSendComponentTelemetryOptions] = None,
         **kwargs: Any
     ) -> None:
         """Sends telemetry on behalf of a component in a digital twin.
@@ -1116,14 +1173,17 @@ class DigitalTwinsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _traceparent = None
         _tracestate = None
@@ -1143,11 +1203,13 @@ class DigitalTwinsOperations:
             tracestate=_tracestate,
             telemetry_source_time=telemetry_source_time,
             template_url=self.send_component_telemetry.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1170,9 +1232,9 @@ class DigitalTwinsOperations:
         self,
         id: str,
         component_path: str,
-        digital_twins_get_component_options: Optional["_models.DigitalTwinsGetComponentOptions"] = None,
+        digital_twins_get_component_options: Optional[_models.DigitalTwinsGetComponentOptions] = None,
         **kwargs: Any
-    ) -> Any:
+    ) -> Dict[str, Any]:
         """Retrieves a component from a digital twin.
         Status codes:
 
@@ -1195,17 +1257,20 @@ class DigitalTwinsOperations:
         :type digital_twins_get_component_options:
          ~azure.digitaltwins.core.models.DigitalTwinsGetComponentOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: any, or the result of cls(response)
-        :rtype: any
+        :return: dict mapping str to any, or the result of cls(response)
+        :rtype: dict[str, any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[Dict[str, Any]]
 
         _traceparent = None
         _tracestate = None
@@ -1220,11 +1285,13 @@ class DigitalTwinsOperations:
             traceparent=_traceparent,
             tracestate=_tracestate,
             template_url=self.get_component.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -1239,7 +1306,7 @@ class DigitalTwinsOperations:
         response_headers = {}
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
 
-        deserialized = self._deserialize('object', pipeline_response)
+        deserialized = self._deserialize('{object}', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -1255,7 +1322,7 @@ class DigitalTwinsOperations:
         id: str,
         component_path: str,
         patch_document: List[Any],
-        digital_twins_update_component_options: Optional["_models.DigitalTwinsUpdateComponentOptions"] = None,
+        digital_twins_update_component_options: Optional[_models.DigitalTwinsUpdateComponentOptions] = None,
         **kwargs: Any
     ) -> None:
         """Updates a component on a digital twin.
@@ -1293,14 +1360,17 @@ class DigitalTwinsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
-        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json-patch+json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _traceparent = None
         _tracestate = None
@@ -1321,26 +1391,27 @@ class DigitalTwinsOperations:
             tracestate=_tracestate,
             if_match=_if_match,
             template_url=self.update_component.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        if response.status_code == 204:
-            response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-            
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)

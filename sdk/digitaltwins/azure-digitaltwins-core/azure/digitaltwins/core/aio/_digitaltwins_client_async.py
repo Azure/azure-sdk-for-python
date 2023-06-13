@@ -37,7 +37,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from .._generated.models import (
         IncomingRelationship,
-        DigitalTwinsEventRoute
+        DigitalTwinsEventRoute,
+        ImportJobCollection
     )
 
 
@@ -695,4 +696,76 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         return AsyncItemPaged(
             get_next,
             extract_data
+        )
+    
+    @distributed_trace
+    def list_import_jobs(self, **kwargs) -> AsyncItemPaged['ImportJobCollection']:
+        # type: (**Any) -> AsyncItemPaged[ImportJobCollection]
+        """Retrieves all import jobs.
+
+        :keyword int results_per_page: The maximum number of items to retrieve per request.
+            The server may choose to return less than the requested max.
+        :return: An iterator like instance of either ImportJobCollection or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.models.ImportJobCollection]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        import_jobs_list_options = None
+        results_per_page = kwargs.pop('results_per_page', None)
+        if results_per_page is not None:
+            import_jobs_list_options = {'max_item_count': results_per_page}
+
+        return self._client.import_jobs.list(
+            import_jobs_list_options=import_jobs_list_options,
+            **kwargs
+        )
+    
+    @distributed_trace_async
+    async def upsert_import_job(self, import_job_id, import_job, **kwargs):
+        # type: (str, ImportJob, **Any) -> None
+        """Create or update an import job.
+
+        :param str import_job_id: The ID of the import job to create or update.
+        :param ~azure.digitaltwins.core.models.ImportJob import_job: The import job data.
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return await self._client.import_jobs.add(
+            import_job_id,
+            import_job=import_job,
+            **kwargs
+        )
+    
+    @distributed_trace_async
+    async def delete_import_job(self, import_job_id, **kwargs):
+        # type: (str, **Any) -> None
+        """Delete an import job.
+
+        :param str import_job_id: The ID of the import job to delete.
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.ResourceNotFoundError: There is no
+            import job with the provided ID.
+        """
+        return await self._client.import_jobs.delete(
+            import_job_id,
+            **kwargs
+        )
+    
+    @distributed_trace_async
+    async def cancel_import_job(self, import_job_id, **kwargs):
+        # type: (str, **Any) -> ImportJob
+        """Cancel an import job.
+
+        :param str import_job_id: The ID of the import job to cancel.
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.ResourceNotFoundError: There is no
+            import job with the provided ID.
+        """
+        return await self._client.import_jobs.cancel(
+            import_job_id,
+            **kwargs
         )

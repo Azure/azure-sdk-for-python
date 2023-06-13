@@ -11,14 +11,13 @@ from typing import TYPE_CHECKING
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
-from ._version import VERSION
-
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
     from azure.core.credentials import TokenCredential
 
+VERSION = "unknown"
 
 class AzureDigitalTwinsAPIConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for AzureDigitalTwinsAPI.
@@ -28,8 +27,8 @@ class AzureDigitalTwinsAPIConfiguration(Configuration):  # pylint: disable=too-m
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2022-05-31". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-06-30". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -40,7 +39,7 @@ class AzureDigitalTwinsAPIConfiguration(Configuration):  # pylint: disable=too-m
     ):
         # type: (...) -> None
         super(AzureDigitalTwinsAPIConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        api_version = kwargs.pop('api_version', "2023-06-30")  # type: str
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

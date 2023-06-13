@@ -7,17 +7,18 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-digitaltwins-core/1.2.1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Length": "220",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Sep 2022 04:03:52 GMT",
-        "mise-correlation-id": "3c3632b0-6211-4e19-b57c-8e31f733f754",
+        "Date": "Thu, 01 Jun 2023 20:37:23 GMT",
+        "mise-correlation-id": "f3bbd49e-2a4b-4a19-b857-ad80166f7692",
         "Strict-Transport-Security": "max-age=2592000",
-        "traceresponse": "00-a7a6d9506708f0b70787ed6ead709510-e5acec6b0676fe86-01"
+        "traceresponse": "00-286cb8941c3d678e75d218c888c6bab1-2b4116cdb024ea7c-01",
+        "x-ms-error-code": "ModelNotFound"
       },
       "ResponseBody": {
         "error": {

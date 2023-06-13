@@ -15,6 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
@@ -35,20 +36,20 @@ class DigitalTwinModelsOperations:
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
-        args = list(args)
-        self._client = args.pop(0) if args else kwargs.pop("client")
-        self._config = args.pop(0) if args else kwargs.pop("config")
-        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
-        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
 
     @distributed_trace_async
     async def add(
         self,
-        models: Optional[List[Any]] = None,
-        digital_twin_models_add_options: Optional["_models.DigitalTwinModelsAddOptions"] = None,
+        models: List[Any],
+        digital_twin_models_add_options: Optional[_models.DigitalTwinModelsAddOptions] = None,
         **kwargs: Any
-    ) -> List["_models.DigitalTwinsModelData"]:
+    ) -> List[_models.DigitalTwinsModelData]:
         """Uploads one or more models. When any error occurs, no models are uploaded.
         Status codes:
 
@@ -66,7 +67,7 @@ class DigitalTwinModelsOperations:
 
           * ModelAlreadyExists - The model provided already exists.
 
-        :param models: An array of models to add. Default value is None.
+        :param models: An array of models to add.
         :type models: list[any]
         :param digital_twin_models_add_options: Parameter group. Default value is None.
         :type digital_twin_models_add_options:
@@ -76,24 +77,24 @@ class DigitalTwinModelsOperations:
         :rtype: list[~azure.digitaltwins.core.models.DigitalTwinsModelData]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.DigitalTwinsModelData"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List[_models.DigitalTwinsModelData]]
 
         _traceparent = None
         _tracestate = None
         if digital_twin_models_add_options is not None:
             _traceparent = digital_twin_models_add_options.traceparent
             _tracestate = digital_twin_models_add_options.tracestate
-        if models is not None:
-            _json = self._serialize.body(models, '[object]')
-        else:
-            _json = None
+        _json = self._serialize.body(models, '[object]')
 
         request = build_add_request(
             api_version=api_version,
@@ -102,11 +103,13 @@ class DigitalTwinModelsOperations:
             traceparent=_traceparent,
             tracestate=_tracestate,
             template_url=self.add.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -133,9 +136,9 @@ class DigitalTwinModelsOperations:
         self,
         dependencies_for: Optional[List[str]] = None,
         include_model_definition: Optional[bool] = False,
-        digital_twin_models_list_options: Optional["_models.DigitalTwinModelsListOptions"] = None,
+        digital_twin_models_list_options: Optional[_models.DigitalTwinModelsListOptions] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PagedDigitalTwinsModelDataCollection"]:
+    ) -> AsyncIterable[_models.PagedDigitalTwinsModelDataCollection]:
         """Retrieves model metadata and, optionally, model definitions.
         Status codes:
 
@@ -151,8 +154,8 @@ class DigitalTwinModelsOperations:
 
           * ModelNotFound - The model was not found.
 
-        :param dependencies_for: The set of the models which will have their dependencies retrieved. If
-         omitted, all models are retrieved. Default value is None.
+        :param dependencies_for: If specified, only return the set of the specified models along with
+         their dependencies. If omitted, all models are retrieved. Default value is None.
         :type dependencies_for: list[str]
         :param include_model_definition: When true the model definition will be returned as part of the
          result. Default value is False.
@@ -167,13 +170,16 @@ class DigitalTwinModelsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.core.models.PagedDigitalTwinsModelDataCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PagedDigitalTwinsModelDataCollection"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PagedDigitalTwinsModelDataCollection]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 _traceparent = None
@@ -192,9 +198,11 @@ class DigitalTwinModelsOperations:
                     include_model_definition=include_model_definition,
                     max_items_per_page=_max_items_per_page,
                     template_url=self.list.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 _traceparent = None
@@ -213,9 +221,11 @@ class DigitalTwinModelsOperations:
                     include_model_definition=include_model_definition,
                     max_items_per_page=_max_items_per_page,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -254,9 +264,9 @@ class DigitalTwinModelsOperations:
         self,
         id: str,
         include_model_definition: Optional[bool] = False,
-        digital_twin_models_get_by_id_options: Optional["_models.DigitalTwinModelsGetByIdOptions"] = None,
+        digital_twin_models_get_by_id_options: Optional[_models.DigitalTwinModelsGetByIdOptions] = None,
         **kwargs: Any
-    ) -> "_models.DigitalTwinsModelData":
+    ) -> _models.DigitalTwinsModelData:
         """Retrieves model metadata and optionally the model definition.
         Status codes:
 
@@ -284,13 +294,16 @@ class DigitalTwinModelsOperations:
         :rtype: ~azure.digitaltwins.core.models.DigitalTwinsModelData
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DigitalTwinsModelData"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DigitalTwinsModelData]
 
         _traceparent = None
         _tracestate = None
@@ -305,11 +318,13 @@ class DigitalTwinModelsOperations:
             tracestate=_tracestate,
             include_model_definition=include_model_definition,
             template_url=self.get_by_id.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -336,7 +351,7 @@ class DigitalTwinModelsOperations:
         self,
         id: str,
         update_model: List[Any],
-        digital_twin_models_update_options: Optional["_models.DigitalTwinModelsUpdateOptions"] = None,
+        digital_twin_models_update_options: Optional[_models.DigitalTwinModelsUpdateOptions] = None,
         **kwargs: Any
     ) -> None:
         """Updates the metadata for a model.
@@ -371,14 +386,17 @@ class DigitalTwinModelsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
-        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json-patch+json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _traceparent = None
         _tracestate = None
@@ -395,11 +413,13 @@ class DigitalTwinModelsOperations:
             traceparent=_traceparent,
             tracestate=_tracestate,
             template_url=self.update.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -421,7 +441,7 @@ class DigitalTwinModelsOperations:
     async def delete(  # pylint: disable=inconsistent-return-statements
         self,
         id: str,
-        digital_twin_models_delete_options: Optional["_models.DigitalTwinModelsDeleteOptions"] = None,
+        digital_twin_models_delete_options: Optional[_models.DigitalTwinModelsDeleteOptions] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a model. A model can only be deleted if no other models reference it.
@@ -452,13 +472,16 @@ class DigitalTwinModelsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-05-31")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-06-30"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _traceparent = None
         _tracestate = None
@@ -472,11 +495,13 @@ class DigitalTwinModelsOperations:
             traceparent=_traceparent,
             tracestate=_tracestate,
             template_url=self.delete.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs

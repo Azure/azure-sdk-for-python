@@ -16,7 +16,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .. import models
 from ._configuration import AzureDigitalTwinsAPIConfiguration
-from .operations import DigitalTwinModelsOperations, DigitalTwinsOperations, EventRoutesOperations, QueryOperations
+from .operations import DigitalTwinModelsOperations, DigitalTwinsOperations, EventRoutesOperations, ImportJobsOperations, QueryOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -34,12 +34,14 @@ class AzureDigitalTwinsAPI:
     :vartype digital_twins: azure.digitaltwins.core.aio.operations.DigitalTwinsOperations
     :ivar event_routes: EventRoutesOperations operations
     :vartype event_routes: azure.digitaltwins.core.aio.operations.EventRoutesOperations
+    :ivar import_jobs: ImportJobsOperations operations
+    :vartype import_jobs: azure.digitaltwins.core.aio.operations.ImportJobsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param base_url: Service URL. Default value is "https://digitaltwins-hostname".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-05-31". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-06-30". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -56,10 +58,21 @@ class AzureDigitalTwinsAPI:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.digital_twin_models = DigitalTwinModelsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.query = QueryOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.digital_twins = DigitalTwinsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.event_routes = EventRoutesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.digital_twin_models = DigitalTwinModelsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.query = QueryOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.digital_twins = DigitalTwinsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.event_routes = EventRoutesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.import_jobs = ImportJobsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

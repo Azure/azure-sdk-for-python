@@ -8,6 +8,7 @@ import pytest
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
 from azure.digitaltwins.core import DigitalTwinsClient, DigitalTwinsModelData
 from devtools_testutils import AzureRecordedTestCase
+from msrest.exceptions import ValidationError
 
 
 class TestDigitalTwinsModels(AzureRecordedTestCase):
