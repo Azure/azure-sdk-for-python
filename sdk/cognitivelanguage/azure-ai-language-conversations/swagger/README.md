@@ -89,11 +89,11 @@ directive:
 - where-operation: AnalyzeConversation_SubmitJob
   transform: |
     var apiVersion = $doc.info.version + "/";
-    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/" + apiVersion + "conversation-analysis-runtime/submit-job for more information.";
+    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/" + apiVersion + "analyze-conversation/submit-job for more information.";
 - where-operation: ConversationAnalysis_AnalyzeConversation
   transform: |
     var apiVersion = $doc.info.version + "/";
-    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/" + apiVersion + "conversation-analysis/analyze-conversation for more information.";
+    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/" + apiVersion + "conversation-analysis-runtime/analyze-conversation for more information.";
 
 # Work around https://github.com/Azure/azure-sdk-for-net/issues/29141
 - from: swagger-document
