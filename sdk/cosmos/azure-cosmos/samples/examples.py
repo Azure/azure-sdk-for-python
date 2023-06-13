@@ -128,11 +128,11 @@ print(json.dumps(properties, indent=True))
 
 # Modify the properties of an existing container
 # This example sets the default time to live (TTL) for items in the
-# container to 1800 seconds (1/2 hour). An item in container is deleted
+# container to 3600 seconds (1 hour). An item in container is deleted
 # when the TTL has elapsed since it was last edited.
 # [START reset_container_properties]
-# Set the TTL on the container to 1800 seconds (half an hour)
-database.replace_container(container, partition_key=PartitionKey(path='/productName'), default_ttl=1800)
+# Set the TTL on the container to 3600 seconds (one hour)
+database.replace_container(container, partition_key=PartitionKey(path='/productName'), default_ttl=3600)
 
 # Display the new TTL setting for the container
 container_props = database.get_container_client(container_name).read()
