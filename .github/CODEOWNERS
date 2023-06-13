@@ -262,8 +262,8 @@
 /sdk/maps/                                                           @alextts627
 
 # PRLabel: %Mixed Reality
-/sdk/mixedreality/azure-mixedreality-authentication/                 @crtreasu
-/sdk/remoterendering/                                                @rikogeln
+/sdk/mixedreality/azure-mixedreality-authentication/                 @RamonArguelles
+/sdk/remoterendering/                                                @FlorianBorn71
 
 # PRLabel: %Open AI
 /sdk/openai                                                          @kristapratico @glecaros
