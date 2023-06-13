@@ -29,11 +29,10 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.security_partner_providers.begin_delete(
+    client.security_partner_providers.begin_delete(
         resource_group_name="rg1",
         security_partner_provider_name="securityPartnerProvider",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/SecurityPartnerProviderDelete.json
