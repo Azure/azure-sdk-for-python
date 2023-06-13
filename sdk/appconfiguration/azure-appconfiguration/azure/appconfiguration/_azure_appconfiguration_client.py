@@ -165,8 +165,8 @@ class AzureAppConfigurationClient:
         :param label_filter: filter results based on their label. '*' can be
             used as wildcard in the beginning or end of the filter
         :type label_filter: str
-        :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
-        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :keyword datetime accept_datetime: retrieve ConfigurationSetting existed at this datetime
+        :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
@@ -177,7 +177,7 @@ class AzureAppConfigurationClient:
 
             from datetime import datetime, timedelta
 
-            accept_datetime = datetime.today() + timedelta(days=-1)
+            accept_datetime = datetime.utcnow() + timedelta(days=-1)
 
             all_listed = client.list_configuration_settings()
             for item in all_listed:
@@ -228,7 +228,7 @@ class AzureAppConfigurationClient:
         :type etag: str or None
         :param match_condition: The match condition to use upon the etag
         :type match_condition: :class:`~azure.core.MatchConditions`
-        :keyword datetime accept_datetime: the retrieved ConfigurationSetting that created no later than this datetime
+        :keyword datetime accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :return: The matched ConfigurationSetting object
         :rtype: :class:`~azure.appconfiguration.ConfigurationSetting`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, \
@@ -443,8 +443,8 @@ class AzureAppConfigurationClient:
         :param label_filter: filter results based on their label. '*' can be
             used as wildcard in the beginning or end of the filter
         :type label_filter: str
-        :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
-        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :keyword datetime accept_datetime: retrieve ConfigurationSetting existed at this datetime
+        :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
@@ -455,7 +455,7 @@ class AzureAppConfigurationClient:
 
             from datetime import datetime, timedelta
 
-            accept_datetime = datetime.today() + timedelta(days=-1)
+            accept_datetime = datetime.utcnow() + timedelta(days=-1)
 
             all_revisions = client.list_revisions()
             for item in all_revisions:

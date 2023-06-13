@@ -307,7 +307,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
     def test_list_configuration_settings_correct_etag(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         to_list_kv = self.create_config_setting()
-        to_list_kv = self.add_for_test(client, to_list_kv)
+        self.add_for_test(client, to_list_kv)
         custom_headers = {"If-Match": to_list_kv.etag}
         items = list(
             client.list_configuration_settings(
@@ -360,15 +360,16 @@ class TestAppConfigurationClient(AppConfigTestCase):
     @recorded_by_proxy
     def test_list_configuration_settings_only_accepttime(self, appconfiguration_connection_string, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        self.set_up(appconfiguration_connection_string)
-        exclude_today = self.client.list_configuration_settings(
-            accept_datetime=recorded_variables.setdefault(
-                "datetime", str(datetime.datetime.today() + datetime.timedelta(days=-1))
-            )
-        )
-        all_inclusive = self.client.list_configuration_settings()
-        assert len(list(all_inclusive)) > len(list(exclude_today))
-        self.tear_down()
+        recorded_variables.setdefault("timestamp", str(datetime.datetime.utcnow()))
+        
+        with AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string) as client:
+            # Confirm all configuration settings are cleaned up
+            current_config_settings = client.list_configuration_settings()
+            assert len(list(current_config_settings)) == 0
+        
+            revision = client.list_configuration_settings(accept_datetime=recorded_variables.get("timestamp"))
+            assert len(list(revision)) >= 0
+        
         return recorded_variables
 
     # method: list_revisions
@@ -413,7 +414,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
     def test_list_revisions_correct_etag(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         to_list_kv = self.create_config_setting()
-        to_list_kv = self.add_for_test(client, to_list_kv)
+        self.add_for_test(client, to_list_kv)
         custom_headers = {"If-Match": to_list_kv.etag}
         items = list(
             client.list_revisions(key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers)

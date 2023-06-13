@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.exceptions import ResourceExistsError
 from testcase import AppConfigTestCase
 from typing import List
 
@@ -23,13 +24,10 @@ class AsyncAppConfigTestCase(AppConfigTestCase):
         return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string, api_version="1.0")
 
     async def add_for_test(self, client, config_setting):
-        exist_list = await self.convert_to_list(
-            client.list_configuration_settings(key_filter=config_setting.key, label_filter=config_setting.label)
-        )
-        exist = bool(exist_list)
-        if exist:
-            await client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
-        return await client.add_configuration_setting(config_setting)
+        try:
+            await client.add_configuration_setting(config_setting)
+        except ResourceExistsError:
+            pass
 
     async def convert_to_list(self, config_settings: AsyncItemPaged) -> List:
         list = []

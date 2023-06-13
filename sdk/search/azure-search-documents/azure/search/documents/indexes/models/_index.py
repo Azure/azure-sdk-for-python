@@ -371,7 +371,7 @@ def SearchableField(**kw):
     :paramtype filterable: bool
     :keyword sortable: A value indicating whether to enable the field to be referenced in $orderby
      expressions. By default Azure Cognitive Search sorts results by score, but in many experiences
-     users will want to sort by fields in the documents.  The default is true False.
+     users will want to sort by fields in the documents.  The default is False.
     :paramtype sortable: bool
     :keyword facetable: A value indicating whether to enable the field to be referenced in facet
      queries. Typically used in a presentation of search results that includes hit count by category

@@ -27,6 +27,7 @@ class ReceiverLink(Link):
         super(ReceiverLink, self).__init__(session, handle, name, role, source_address=source_address, **kwargs)
         self._on_transfer = kwargs.pop("on_transfer")
         self._received_payload = bytearray()
+        self._first_frame = None
 
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
@@ -56,6 +57,8 @@ class ReceiverLink(Link):
         self.current_link_credit -= 1
         self.delivery_count += 1
         self.received_delivery_id = frame[1]  # delivery_id
+        if self.received_delivery_id is not None:
+            self._first_frame = frame
         if not self.received_delivery_id and not self._received_payload:
             pass  # TODO: delivery error
         if self._received_payload or frame[5]:  # more
@@ -66,11 +69,11 @@ class ReceiverLink(Link):
                 self._received_payload = bytearray()
             else:
                 message = decode_payload(frame[11])
-            delivery_state = self._process_incoming_message(frame, message)
+            delivery_state = self._process_incoming_message(self._first_frame, message)
             if not frame[4] and delivery_state:  # settled
                 self._outgoing_disposition(
-                    first=frame[1],
-                    last=frame[1],
+                    first=self._first_frame[1],
+                    last=self._first_frame[1],
                     settled=True,
                     state=delivery_state,
                     batchable=None
@@ -118,4 +121,5 @@ class ReceiverLink(Link):
         if self._is_closed:
             raise ValueError("Link already closed.")
         self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable)
-        self._wait_for_response(wait)
+        if not settled:
+            self._wait_for_response(wait)

@@ -12,6 +12,7 @@ from azure.appconfiguration import (
     SecretReferenceConfigurationSetting,
     Snapshot,
 )
+from azure.core.exceptions import ResourceExistsError
 from consts import (
     KEY,
     LABEL,
@@ -51,12 +52,10 @@ class AppConfigTestCase(AzureRecordedTestCase):
         )
 
     def add_for_test(self, client, config_setting):
-        key = config_setting.key
-        label = config_setting.label
-        exist = bool(list(client.list_configuration_settings(key_filter=key, label_filter=label)))
-        if exist:
-            client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
-        return client.add_configuration_setting(config_setting)
+        try:
+            client.add_configuration_setting(config_setting)
+        except ResourceExistsError:
+            pass
 
     def set_up(self, appconfiguration_string, is_aad=False):
         if is_aad:

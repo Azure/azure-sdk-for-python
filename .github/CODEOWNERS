@@ -147,6 +147,9 @@
 /sdk/datalake/                                                       @ro-joowan
 /sdk/datadatamigration/                                              @vchske
 
+# PRLabel: %Device Provisioning
+/sdk/iothub/azure-iot-deviceprovisioning                             @c-ryan-k @digimaun
+
 # PRLabel: %Device Update
 /sdk/deviceupdate/                                                   @dpokluda @sedols
 
@@ -261,6 +264,9 @@
 # PRLabel: %Mixed Reality
 /sdk/mixedreality/azure-mixedreality-authentication/                 @crtreasu
 /sdk/remoterendering/                                                @rikogeln
+
+# PRLabel: %Open AI
+/sdk/openai                                                          @kristapratico @glecaros
 
 # PRLabel: %Purview
 /sdk/purview/                                                        @iscai-msft @msyyc

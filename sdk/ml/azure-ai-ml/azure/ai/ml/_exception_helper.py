@@ -25,7 +25,7 @@ def _find_deepest_dictionary(data):
     Find deepest dictionary in nested dictionary.
     Used here to get nested error message. Can't be in utils.py due to circular import.
     """
-    if not any([isinstance(data.get(key), dict) for key in data]):
+    if not any(isinstance(data.get(key), dict) for key in data):
         return data
     for key in data:
         if isinstance(data.get(key), dict):
@@ -49,7 +49,7 @@ def get_entity_type(error: Union[SchemaValidationError, ValidationException]) ->
             entity_type = ErrorTarget.ENVIRONMENT
         elif "CodeAssetSchema" in error_name:
             entity_type = ErrorTarget.CODE
-        elif any([x in error_name for x in DATASTORE_SCHEMA_TYPES]):
+        elif any(x in error_name for x in DATASTORE_SCHEMA_TYPES):
             entity_type = ErrorTarget.DATASTORE
         elif "BaseJobSchema" in error_name:
             entity_type = ErrorTarget.JOB
