@@ -11,8 +11,7 @@ from ._generated.models import (
     TextSource as TextSourceInternal,
     SsmlSource as SsmlSourceInternal,
     PlaySource as PlaySourceInternal,
-    Choice as ChoiceInternal
-    PlaySource as PlaySourceInternal,
+    Choice as ChoiceInternal,
     ChannelAffinity as ChannelAffinityInternal
 )
 from ._shared.models import (
