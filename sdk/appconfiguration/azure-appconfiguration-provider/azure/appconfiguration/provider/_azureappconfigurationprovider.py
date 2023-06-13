@@ -275,7 +275,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         self._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
         self._configuration_refresh = self._ConfigurationRefresh(**kwargs)
 
-    def drefresh(self, func):  # cspell:disable-line
+    def refresh_configuration_settings(self, func):
         @wraps(func)
         def refresh_wrapper(*args, **kwargs):
             self.refresh()
@@ -498,7 +498,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             self.next_refresh_time = datetime.now() + timedelta(microseconds=self.calculate_backoff())
             self.attempts += 1
             self.refresh_options._on_error()
-
 
         def calculate_backoff(self):
             max_attempts = 30
