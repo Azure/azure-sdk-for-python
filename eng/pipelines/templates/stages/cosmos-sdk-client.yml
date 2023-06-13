@@ -8,6 +8,9 @@ parameters:
 - name: EmulatorMsiUrl
   type: string
   default: https://aka.ms/cosmosdb-emulator
+- name: InjectedPackages
+  type: string
+  default: ''
 - name: StartParameters
   type: string
   default: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Strong'
@@ -23,34 +26,34 @@ extends:
     InjectedPackages: ${{parameters.InjectedPackages}}
     Artifacts: ${{parameters.Artifacts}}
 
-stages:
-  - stage: Test_Emulator
-    displayName: Test Emulator
-    dependsOn: []
-    jobs:
-    - job: Emulator
-      strategy:
-        matrix:
-          Windows_Python36:
-            OSVmImage: 'windows-2022'
-            PythonVersion: '3.6'
-      pool:
-        vmImage: $(OSVmImage)
 
-      steps:
-        - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
-          parameters:
-            EmulatorMsiUrl: ${{ parameters.EmulatorMsiUrl }}
-            StartParameters: ${{ parameters.StartParameters }}
+  stage: Test_Emulator
+  displayName: Test Emulator
+  dependsOn: []
+  jobs:
+  - job: Emulator
+    strategy:
+      matrix:
+        Windows_Python36:
+          OSVmImage: 'windows-2022'
+          PythonVersion: '3.6'
+    pool:
+      vmImage: $(OSVmImage)
 
-        - template: /eng/pipelines/templates/steps/build-test.yml
-          parameters:
-            TestMarkArgument: not globaldb
-            EnvVars:
-              ACCOUNT_HOST: 'https://localhost:8081/'
-              ACCOUNT_KEY: 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
-            ServiceDirectory: ${{ parameters.ServiceDirectory }}
-            PythonVersion: $(PythonVersion)
-            OSVmImage: $(OSVmImage)
-            ToxTestEnv: 'whl,sdist'
-            InjectedPackages: ${{parameters.InjectedPackages}}
+    steps:
+      - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
+        parameters:
+          EmulatorMsiUrl: ${{ parameters.EmulatorMsiUrl }}
+          StartParameters: ${{ parameters.StartParameters }}
+
+      - template: /eng/pipelines/templates/steps/build-test.yml
+        parameters:
+          TestMarkArgument: not globaldb
+          EnvVars:
+            ACCOUNT_HOST: 'https://localhost:8081/'
+            ACCOUNT_KEY: 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          PythonVersion: $(PythonVersion)
+          OSVmImage: $(OSVmImage)
+          ToxTestEnv: 'whl,sdist'
+          InjectedPackages: ${{parameters.InjectedPackages}}
