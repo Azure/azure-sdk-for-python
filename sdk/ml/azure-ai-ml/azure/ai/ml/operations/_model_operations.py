@@ -219,7 +219,7 @@ class ModelOperations(_ScopeDependentOperations):
                         target=ErrorTarget.MODEL,
                         no_personal_data_message=CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
                         error_category=ErrorCategory.USER_ERROR,
-                    )
+                    ) from e
                 raise e
 
             model = Model._from_rest_object(result)

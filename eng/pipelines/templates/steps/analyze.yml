@@ -113,7 +113,7 @@ steps:
   - task: DownloadPipelineArtifact@2
     condition: succeededOrFailed()
     inputs:
-      artifactName: 'packages'
+      artifactName: 'packages_extended'
       targetPath: $(Build.ArtifactStagingDirectory)
 
   - template: ../steps/run_bandit.yml
@@ -137,10 +137,12 @@ steps:
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
       GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
+      ArtifactName: "packages_extended"
 
   - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
+      ArtifactName: "packages_extended"
 
   - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
 

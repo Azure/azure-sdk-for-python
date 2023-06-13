@@ -46,7 +46,7 @@ def process_sdk_component_job_io(
             path = io_value.path
             name = io_value.name if hasattr(io_value, "name") else None
             version = io_value.version if hasattr(io_value, "version") else None
-            if any([re.match(item, path) for item in io_binding_regex_list]):
+            if any(re.match(item, path) for item in io_binding_regex_list):
                 # Yaml syntax requires using ${{}} to enclose inputs and outputs bindings
                 # io_bindings[io_name] = io_value
                 io_bindings.update({io_name: {"value": path}})
@@ -66,7 +66,7 @@ def process_sdk_component_job_io(
                     # when the output should be registered,
                     # we add io_value to dataset_literal_io for further to_rest_data_outputs
                     dataset_literal_io[io_name] = io_value
-            elif any([re.match(item, path) for item in legacy_io_binding_regex_list]):
+            elif any(re.match(item, path) for item in legacy_io_binding_regex_list):
                 new_format = path.replace("{{", "{{parent.")
                 msg = "{} has changed to {}, please change to use new format."
                 raise ValidationException(
@@ -112,7 +112,7 @@ def from_dict_to_rest_io(
             io_mode = val.get("mode", None)
             io_name = val.get("name", None)
             io_version = val.get("version", None)
-            if any([re.match(item, io_value) for item in io_binding_regex_list]):
+            if any(re.match(item, io_value) for item in io_binding_regex_list):
                 io_bindings.update({key: {"path": io_value}})
                 # add mode to literal value for binding input
                 if io_mode:

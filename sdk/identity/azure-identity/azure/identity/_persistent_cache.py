@@ -7,8 +7,6 @@ import os
 import sys
 from typing import TYPE_CHECKING, Any
 
-import six
-
 if TYPE_CHECKING:
     import msal_extensions
 
@@ -107,7 +105,7 @@ def _get_persistence(allow_unencrypted, account_name, cache_name):
                     + ' more information. Specify "allow_unencrypted_storage=True" to store the cache unencrypted'
                     + " instead of raising this exception."
                 )
-                six.raise_from(error, ex)
+                raise error from ex
         return msal_extensions.FilePersistence(file_path)
 
     raise NotImplementedError("A persistent cache is not available in this environment.")
