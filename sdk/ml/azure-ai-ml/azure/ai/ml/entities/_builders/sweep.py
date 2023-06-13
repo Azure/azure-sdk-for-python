@@ -51,6 +51,8 @@ from azure.ai.ml.sweep import SweepJob
 from ..._schema import PathAwareSchema
 from ..._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
 from ..._utils.utils import camel_to_snake
+from .._job.job_resource_configuration import JobResourceConfiguration
+from .._util import get_rest_dict_for_node_attrs
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
@@ -100,6 +102,8 @@ class Sweep(ParameterizedSweep, BaseNode):
         UserIdentityConfiguration]
     :param queue_settings: Queue settings for the job.
     :type queue_settings: QueueSettings
+    :param resources: Resource requirements for the job.
+    :type resources: JobResourceConfiguration
     """
 
     def __init__(
@@ -125,6 +129,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
+        resources: Optional[JobResourceConfiguration] = None,
         **kwargs,
     ):
         # TODO: get rid of self._job_inputs, self._job_outputs once we have general Input
@@ -152,12 +157,25 @@ class Sweep(ParameterizedSweep, BaseNode):
             queue_settings=queue_settings,
         )
 
+        self._resources = resources
         self.identity = identity
         self._init = False
 
     @property
+    def resources(self) -> JobResourceConfiguration:
+        if self._resources is None:
+            self._resources = JobResourceConfiguration()
+        return self._resources
+
+    @resources.setter
+    def resources(self, value: Union[Dict, JobResourceConfiguration]):
+        if isinstance(value, dict):
+            value = JobResourceConfiguration(**value)
+        self._resources = value
+
+    @property
     def trial(self):
-        """Id or instance of the command component/job to be run for the step."""
+        """ID or instance of the command component/job to be run for the step."""
         return self._component
 
     @property
@@ -213,6 +231,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             "early_termination",
             "search_space",
             "queue_settings",
+            "resources",
         ]
 
     def _to_rest_object(self, **kwargs) -> dict:
@@ -226,6 +245,10 @@ class Sweep(ParameterizedSweep, BaseNode):
         # the change
         if "early_termination" in rest_obj:
             rest_obj["early_termination"] = self.early_termination._to_rest_object().as_dict()
+
+        # check _resources instead of resources to avoid calling property resources if it's never set
+        if self._resources is not None:
+            rest_obj["resources"] = get_rest_dict_for_node_attrs(self.resources)
 
         rest_obj.update(
             {
@@ -258,6 +281,10 @@ class Sweep(ParameterizedSweep, BaseNode):
         # trial
         trial_component_id = pydash.get(obj, "trial.componentId", None)
         obj["trial"] = trial_component_id  # check this
+
+        # resources
+        if "resources" in obj:
+            obj["resources"] = JobResourceConfiguration(**obj["resources"])
 
         return obj
 

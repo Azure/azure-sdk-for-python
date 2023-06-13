@@ -8,24 +8,27 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase
 from mock import mock
 from pytest_mock import MockFixture
-
-from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 from test_utilities.utils import (
     _PYTEST_TIMEOUT_METHOD,
     assert_job_cancel,
-    submit_and_cancel_new_dsl_pipeline,
     omit_with_wildcard,
+    submit_and_cancel_new_dsl_pipeline,
 )
 
-from azure.ai.ml import (
-    Input,
-    MLClient,
-    dsl,
-    load_component,
-)
+from azure.ai.ml import Input, MLClient, dsl, load_component
 from azure.ai.ml.constants._common import AssetTypes
-from azure.ai.ml.entities import CommandComponent, Command, Choice, Sweep, Component, Environment, PipelineComponent
-from azure.ai.ml.entities import PipelineJob
+from azure.ai.ml.entities import (
+    Choice,
+    Command,
+    CommandComponent,
+    Component,
+    Environment,
+    JobResourceConfiguration,
+    PipelineComponent,
+    PipelineJob,
+    Sweep,
+)
+from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -184,6 +187,7 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
             )
             sweep_job1.compute = "gpu-cluster"
             sweep_job1.set_limits(max_total_trials=10)  # max_total_trials
+            sweep_job1.resources = JobResourceConfiguration(instance_count=2)
 
             cmd_node2: Command = component_to_sweep(
                 component_in_number=Choice([2, 3, 4, 5]), component_in_path=raw_data
@@ -195,6 +199,7 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
                 max_total_trials=10,
             )
             sweep_job2.compute = "gpu-cluster"
+            sweep_job2.resources = {"instance_count": 2}
 
             sweep_job3: Sweep = component_to_sweep(
                 component_in_number=Choice([2, 3, 4, 5]), component_in_path=raw_data
@@ -222,6 +227,9 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
         )
         pipeline.settings.default_compute = "cpu-cluster"
         created_pipeline = assert_job_cancel(pipeline, client)
+        assert created_pipeline.jobs["sweep_job1"].resources.instance_count == 2
+        assert created_pipeline.jobs["sweep_job2"].resources.instance_count == 2
+
         name, version = created_pipeline.jobs["sweep_job1"].trial.split(":")
         created_component = client.components.get(name, version)
         # keep original component display name to guarantee reuse

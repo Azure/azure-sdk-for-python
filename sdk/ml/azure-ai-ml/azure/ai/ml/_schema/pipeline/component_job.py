@@ -52,6 +52,7 @@ from ..job.services import (
     TensorBoardJobServiceSchema,
     VsCodeJobServiceSchema,
 )
+from ..job_resource_configuration import JobResourceConfigurationSchema
 from ..pipeline.pipeline_job_io import OutputBindingStr
 from ..spark_resource_configuration import SparkResourceConfigurationSchema
 
@@ -232,6 +233,8 @@ class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
         ],
         required=True,
     )
+    # TODO: this should be moved to ParameterizedSweepSchema after sweep job contract is refactored
+    resources = NestedField(JobResourceConfigurationSchema)
 
     @post_load
     def make(self, data, **kwargs) -> "Sweep":
