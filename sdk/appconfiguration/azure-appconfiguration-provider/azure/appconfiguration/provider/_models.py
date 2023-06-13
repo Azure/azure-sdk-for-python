@@ -77,8 +77,8 @@ class AzureAppConfigurationRefreshOptions:
 
     def _callback(self):
         if callable(self.callback):
-            self.callback() # pylint:disable=not-callable
+            self.callback()  # pylint:disable=not-callable
 
     def _on_error(self):
         if callable(self.on_error):
-            self.on_error() # pylint:disable=not-callable
+            self.on_error()  # pylint:disable=not-callable

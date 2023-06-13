@@ -346,7 +346,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                 # pylint:disable=protected-access
                 self._configuration_refresh.refresh_options._refresh_registrations = updated_registrations
                 self._configuration_refresh.updated_configurations()
-        except Exception as error: # pylint:disable=broad-except
+        except Exception as error:  # pylint:disable=broad-except
             # refresh should never throw an exception
             self._configuration_refresh.failed_update(
                 error,
@@ -473,8 +473,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         for client in self._secret_clients.values():
             client.__exit__()
 
-    class _ConfigurationRefresh():
-
+    class _ConfigurationRefresh:
         def __init__(self, **kwargs):
             self.refresh_options: Optional[AzureAppConfigurationRefreshOptions] = kwargs.pop(
                 "refresh_options", AzureAppConfigurationRefreshOptions()
