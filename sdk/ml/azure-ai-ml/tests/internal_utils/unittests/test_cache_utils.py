@@ -5,6 +5,7 @@ from typing import Union
 
 import mock
 import pytest
+
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._utils._cache_utils import CachedNodeResolver
 from azure.ai.ml.entities import Component, PipelineJob
@@ -30,10 +31,7 @@ class TestCacheUtils:
     def create_resolver(client: MLClient) -> CachedNodeResolver:
         return CachedNodeResolver(
             resolver=TestCacheUtils._mock_resolver,
-            subscription_id=client.subscription_id,
-            resource_group_name=client.resource_group_name,
-            workspace_name=client.workspace_name,
-            registry_name=client._operation_scope.registry_name,
+            client_key=client.components._get_client_key(),
         )
 
     @staticmethod
