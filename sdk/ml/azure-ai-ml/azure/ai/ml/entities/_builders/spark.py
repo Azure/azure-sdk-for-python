@@ -65,7 +65,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
     """Base class for spark node, used for spark component version consumption.
 
     You should not instantiate this class directly. Instead, you should
-    create from builder function: spark.
+    create it from the builder function: spark.
 
     :param component: The ID or instance of the Spark component or job to be run during the step.
     :type component: Union[str, ~azure.ai.ml.entities.SparkComponent]

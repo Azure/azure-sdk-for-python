@@ -22,11 +22,11 @@ class AutoScaleSettings:
     """Auto-scale settings for Synapse Spark compute.
 
     :param min_node_count: The minimum compute node count.
-    :type min_node_count: Optional[int]
+    :type min_node_count: int
     :param max_node_count: The maximum compute node count.
-    :type max_node_count: Optional[int]
-    :param enabled: Specifies if Auto-scale is enabled.
-    :type enabled: Optional[bool]
+    :type max_node_count: int
+    :param enabled: Specifies if auto-scale is enabled.
+    :type enabled: bool
 
     .. admonition:: Example:
         :class: tip
@@ -70,10 +70,10 @@ class AutoScaleSettings:
 class AutoPauseSettings:
     """Auto pause settings for Synapse Spark compute.
 
-    :param delay_in_minutes: The time delay in minutes before pause cluster
-    :type delay_in_minutes: Optional[int]
-    :param enabled:  Specifies if auto pause is enabled.
-    :type enabled: Optional[bool]
+    :param delay_in_minutes: The time delay in minutes before pausing cluster.
+    :type delay_in_minutes: int
+    :param enabled:  Specifies if auto-pause is enabled.
+    :type enabled: bool
 
     .. admonition:: Example:
         :class: tip
