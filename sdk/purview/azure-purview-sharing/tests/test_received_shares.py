@@ -24,8 +24,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_all_detached_shares(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "1c63a285-4649-4a5b-b9aa-6e9c356f70fc"
-        sent_share_invitation_id = "4d4f6be0-addd-4d5b-98be-ed09c38cdf49"
+        sent_share_id = "5cd2c587-2fb4-496a-b6c9-04ebef84c5d2"
+        sent_share_invitation_id = "623fe4bf-d2cb-4b9f-9243-abe16b65d8a8"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -83,8 +83,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_received_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "1060e96e-a2df-483d-9919-317a3ab4ef49"
-        sent_share_invitation_id = "5bf02e34-ae34-48e5-8cc6-13aec7f15cd2"
+        sent_share_id = "5cd2c587-2fb4-496a-b6c9-04ebef84c5d2"
+        sent_share_invitation_id = "623fe4bf-d2cb-4b9f-9243-abe16b65d8a8"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -146,8 +146,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_delete_received_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "50244d25-4359-4310-97be-99b1569ebcb4"
-        sent_share_invitation_id = "2c1560f9-7390-450d-b2ac-12cdaa94bb75"
+        sent_share_id = "5cd2c587-2fb4-496a-b6c9-04ebef84c5d2"
+        sent_share_invitation_id = "623fe4bf-d2cb-4b9f-9243-abe16b65d8a8"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -210,8 +210,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_attach_received_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "0c2a884a-5b4c-4b41-b4f8-d364d20c4ae1"
-        sent_share_invitation_id = "1118c292-a591-4b46-875b-2332e7a3d2b3"
+        sent_share_id = "5cd2c587-2fb4-496a-b6c9-04ebef84c5d2"
+        sent_share_invitation_id = "623fe4bf-d2cb-4b9f-9243-abe16b65d8a8"
         sent_share = self.prepare_sent_share()
 
         # cspell:disable-next-line
