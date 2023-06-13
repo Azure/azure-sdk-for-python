@@ -119,6 +119,7 @@ from ._batch_management_client_enums import CertificateStoreLocation
 from ._batch_management_client_enums import CertificateVisibility
 from ._batch_management_client_enums import ComputeNodeDeallocationOption
 from ._batch_management_client_enums import ComputeNodeFillType
+from ._batch_management_client_enums import ContainerType
 from ._batch_management_client_enums import ContainerWorkingDirectory
 from ._batch_management_client_enums import DiskEncryptionTarget
 from ._batch_management_client_enums import DynamicVNetAssignmentScope
@@ -144,7 +145,7 @@ from ._batch_management_client_enums import PublicNetworkAccessType
 from ._batch_management_client_enums import ResourceIdentityType
 from ._batch_management_client_enums import StorageAccountType
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -260,6 +261,7 @@ __all__ = [
     "CertificateVisibility",
     "ComputeNodeDeallocationOption",
     "ComputeNodeFillType",
+    "ContainerType",
     "ContainerWorkingDirectory",
     "DiskEncryptionTarget",
     "DynamicVNetAssignmentScope",

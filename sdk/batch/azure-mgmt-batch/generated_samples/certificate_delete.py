@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.certificate.begin_delete(
+    client.certificate.begin_delete(
         resource_group_name="default-azurebatch-japaneast",
         account_name="sampleacct",
         certificate_name="sha1-0a0e4f50d51beadeac1d35afc5116098e7902e6e",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/batch/resource-manager/Microsoft.Batch/stable/2022-10-01/examples/CertificateDelete.json
+# x-ms-original-file: specification/batch/resource-manager/Microsoft.Batch/stable/2023-05-01/examples/CertificateDelete.json
 if __name__ == "__main__":
     main()

@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.batch_account.begin_delete(
+    client.batch_account.begin_delete(
         resource_group_name="default-azurebatch-japaneast",
         account_name="sampleacct",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/batch/resource-manager/Microsoft.Batch/stable/2022-10-01/examples/BatchAccountDelete.json
+# x-ms-original-file: specification/batch/resource-manager/Microsoft.Batch/stable/2023-05-01/examples/BatchAccountDelete.json
 if __name__ == "__main__":
     main()

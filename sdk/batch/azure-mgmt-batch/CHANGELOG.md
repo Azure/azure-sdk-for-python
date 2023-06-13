@@ -1,5 +1,12 @@
 # Release History
 
+## 17.1.0 (2023-07-21)
+
+### Features Added
+
+  - Model NetworkConfiguration has a new parameter enable_accelerated_networking
+  - Model VMExtension has a new parameter enable_automatic_upgrade
+
 ## 17.0.0 (2022-11-23)
 
 ### Features Added
