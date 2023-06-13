@@ -19,10 +19,7 @@ from ._shared.models import (
     CommunicationUserIdentifier,
     PhoneNumberIdentifier,
 )
-from ._generated.models._enums import (
-    PlaySourceType,
-    DtmfTone
-)
+from ._generated.models._enums import PlaySourceType
 from ._utils import (
     deserialize_phone_identifier,
     deserialize_identifier,
@@ -36,7 +33,8 @@ if TYPE_CHECKING:
         MediaStreamingAudioChannelType,
         CallConnectionState,
         RecordingState,
-        Gender
+        Gender,
+        DtmfTone
     )
     from ._generated.models  import (
         CallParticipant as CallParticipantRest,
@@ -256,18 +254,18 @@ class TextSource(object):
         self.voice_gender = voice_gender
         self.voice_name = voice_name
         self.play_source_id = play_source_id
-    
+
     def _to_generated(self):
         return PlaySourceInternal(
             source_type=PlaySourceType.TEXT,
             text_source=TextSourceInternal(
-            text=self.text, 
-            source_locale=self.source_locale, 
-            voice_gender=self.voice_gender, 
+            text=self.text,
+            source_locale=self.source_locale,
+            voice_gender=self.voice_gender,
             voice_name=self.voice_name),
             play_source_id=self.play_source_id
         )
-    
+
 class SsmlSource(object):
     """SsmlSource to be played in actions such as Play media.
 
@@ -545,7 +543,7 @@ class TransferCallResult(object):
     @classmethod
     def _from_generated(cls, transfer_result_generated: 'TransferParticipantResultRest'):
         return cls(operation_context=transfer_result_generated.operation_context)
-    
+
 class Choice(object):
     """
     An IvR choice for the recognize operation.
@@ -570,6 +568,6 @@ class Choice(object):
         self.label = label
         self.phrases = phrases
         self.tone = tone
-    
+
     def _to_generated(self):
         return ChoiceInternal(label=self.label, phrases=self.phrases, tone=self.tone)
