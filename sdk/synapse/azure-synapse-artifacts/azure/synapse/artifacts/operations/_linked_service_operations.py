@@ -27,7 +27,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import ArtifactsClientMixinABC, _convert_request, _format_url_section
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -36,7 +36,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_get_linked_services_by_workspace_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_get_linked_services_by_workspace_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -55,7 +55,7 @@ def build_get_linked_services_by_workspace_request(**kwargs: Any) -> HttpRequest
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_or_update_linked_service_request(  # pylint: disable=name-too-long
+def build_create_or_update_linked_service_request(
     linked_service_name: str, *, if_match: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})

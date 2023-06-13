@@ -42,6 +42,7 @@ from ...operations._link_connection_operations import (
     build_stop_request,
     build_update_landing_zone_credential_request,
 )
+from .._vendor import ArtifactsClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -80,7 +81,7 @@ class LinkConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[_models.LinkConnectionListResponse] = kwargs.pop("cls", None)
 
         error_map = {
@@ -219,7 +220,7 @@ class LinkConnectionOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LinkConnectionResource] = kwargs.pop("cls", None)
 
@@ -289,7 +290,7 @@ class LinkConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[_models.LinkConnectionResource] = kwargs.pop("cls", None)
 
         request = build_get_request(
@@ -349,7 +350,7 @@ class LinkConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
@@ -407,7 +408,7 @@ class LinkConnectionOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -470,7 +471,7 @@ class LinkConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_start_request(
@@ -527,7 +528,7 @@ class LinkConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_stop_request(
@@ -583,7 +584,7 @@ class LinkConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[_models.LinkConnectionDetailedStatus] = kwargs.pop("cls", None)
 
         request = build_get_detailed_status_request(
@@ -641,7 +642,7 @@ class LinkConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[_models.LinkTableListResponse] = kwargs.pop("cls", None)
 
         request = build_list_link_tables_request(
@@ -758,7 +759,7 @@ class LinkConnectionOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LinkConnectionQueryTableStatus] = kwargs.pop("cls", None)
 
@@ -832,7 +833,7 @@ class LinkConnectionOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -897,7 +898,7 @@ class LinkConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_pause_request(
@@ -954,7 +955,7 @@ class LinkConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_resume_request(

@@ -29,17 +29,25 @@ class ArtifactsClientConfiguration(Configuration):  # pylint: disable=too-many-i
     :param endpoint: The workspace development endpoint, for example
      https://myworkspace.dev.azuresynapse.net. Required.
     :type endpoint: str
+    :param user_agent_parameter: User-Agent request header for servers to identify application.
+     Required.
+    :type user_agent_parameter: str
     """
 
-    def __init__(self, credential: "AsyncTokenCredential", endpoint: str, **kwargs: Any) -> None:
+    def __init__(
+        self, credential: "AsyncTokenCredential", endpoint: str, user_agent_parameter: str, **kwargs: Any
+    ) -> None:
         super(ArtifactsClientConfiguration, self).__init__(**kwargs)
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
+        if user_agent_parameter is None:
+            raise ValueError("Parameter 'user_agent_parameter' must not be None.")
 
         self.credential = credential
         self.endpoint = endpoint
+        self.user_agent_parameter = user_agent_parameter
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://dev.azuresynapse.net/.default"])
         kwargs.setdefault("sdk_moniker", "synapse-artifacts/{}".format(VERSION))
         self._configure(**kwargs)

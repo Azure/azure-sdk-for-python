@@ -16,6 +16,7 @@ from . import models as _models
 from ._configuration import ArtifactsClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
+    ArtifactsClientOperationsMixin,
     BigDataPoolsOperations,
     DataFlowDebugSessionOperations,
     DataFlowOperations,
@@ -31,6 +32,7 @@ from .operations import (
     NotebookOperations,
     PipelineOperations,
     PipelineRunOperations,
+    RunNotebookOperations,
     SparkConfigurationOperations,
     SparkJobDefinitionOperations,
     SqlPoolsOperations,
@@ -46,11 +48,15 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
-    """ArtifactsClient.
+class ArtifactsClient(
+    ArtifactsClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+    """SyMS API Service Client.
 
     :ivar link_connection: LinkConnectionOperations operations
     :vartype link_connection: azure.synapse.artifacts.operations.LinkConnectionOperations
+    :ivar run_notebook: RunNotebookOperations operations
+    :vartype run_notebook: azure.synapse.artifacts.operations.RunNotebookOperations
     :ivar kql_scripts: KqlScriptsOperations operations
     :vartype kql_scripts: azure.synapse.artifacts.operations.KqlScriptsOperations
     :ivar kql_script: KqlScriptOperations operations
@@ -103,13 +109,18 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
     :param endpoint: The workspace development endpoint, for example
      https://myworkspace.dev.azuresynapse.net. Required.
     :type endpoint: str
+    :param user_agent_parameter: User-Agent request header for servers to identify application.
+     Required.
+    :type user_agent_parameter: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
-    def __init__(self, credential: "TokenCredential", endpoint: str, **kwargs: Any) -> None:
+    def __init__(self, credential: "TokenCredential", endpoint: str, user_agent_parameter: str, **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
-        self._config = ArtifactsClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
+        self._config = ArtifactsClientConfiguration(
+            credential=credential, endpoint=endpoint, user_agent_parameter=user_agent_parameter, **kwargs
+        )
         self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
@@ -117,6 +128,7 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.link_connection = LinkConnectionOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.run_notebook = RunNotebookOperations(self._client, self._config, self._serialize, self._deserialize)
         self.kql_scripts = KqlScriptsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.kql_script = KqlScriptOperations(self._client, self._config, self._serialize, self._deserialize)
         self.metastore = MetastoreOperations(self._client, self._config, self._serialize, self._deserialize)

@@ -35,6 +35,7 @@ from ...operations._spark_configuration_operations import (
     build_get_spark_configurations_by_workspace_request,
     build_rename_spark_configuration_request,
 )
+from .._vendor import ArtifactsClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -141,7 +142,7 @@ class SparkConfigurationOperations:
 
     get_spark_configurations_by_workspace.metadata = {"url": "/sparkconfigurations"}
 
-    async def _create_or_update_spark_configuration_initial(  # pylint: disable=name-too-long
+    async def _create_or_update_spark_configuration_initial(
         self,
         spark_configuration_name: str,
         properties: _models.SparkConfiguration,
@@ -205,7 +206,7 @@ class SparkConfigurationOperations:
     _create_or_update_spark_configuration_initial.metadata = {"url": "/sparkconfigurations/{sparkConfigurationName}"}
 
     @distributed_trace_async
-    async def begin_create_or_update_spark_configuration(  # pylint: disable=name-too-long
+    async def begin_create_or_update_spark_configuration(
         self,
         spark_configuration_name: str,
         properties: _models.SparkConfiguration,

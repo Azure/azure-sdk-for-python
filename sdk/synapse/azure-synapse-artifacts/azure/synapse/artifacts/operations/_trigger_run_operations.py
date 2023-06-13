@@ -25,7 +25,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import ArtifactsClientMixinABC, _convert_request, _format_url_section
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -98,7 +98,7 @@ def build_cancel_trigger_instance_request(trigger_name: str, run_id: str, **kwar
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_query_trigger_runs_by_workspace_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_query_trigger_runs_by_workspace_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 

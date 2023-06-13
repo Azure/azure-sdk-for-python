@@ -36,6 +36,7 @@ from ...operations._data_flow_debug_session_operations import (
     build_execute_command_request,
     build_query_data_flow_debug_sessions_by_workspace_request,
 )
+from .._vendor import ArtifactsClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -261,7 +262,7 @@ class DataFlowDebugSessionOperations:
     begin_create_data_flow_debug_session.metadata = {"url": "/createDataFlowDebugSession"}
 
     @distributed_trace
-    def query_data_flow_debug_sessions_by_workspace(  # pylint: disable=name-too-long
+    def query_data_flow_debug_sessions_by_workspace(
         self, **kwargs: Any
     ) -> AsyncIterable["_models.DataFlowDebugSessionInfo"]:
         """Query all active data flow debug sessions.
