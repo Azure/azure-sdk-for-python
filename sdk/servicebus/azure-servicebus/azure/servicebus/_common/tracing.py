@@ -83,7 +83,6 @@ class TraceAttributes:
     TRACE_MESSAGING_OPERATION_ATTRIBUTE = "messaging.operation"
     TRACE_MESSAGING_BATCH_COUNT_ATTRIBUTE = "messaging.batch.message_count"
 
-    LEGACY_TRACE_COMPONENT_ATTRIBUTE = "component"
     LEGACY_TRACE_MESSAGE_BUS_DESTINATION_ATTRIBUTE = "message_bus.destination"
     LEGACY_TRACE_PEER_ADDRESS_ATTRIBUTE = "peer.address"
 
@@ -216,10 +215,10 @@ def get_receive_links(messages: Union[ReceiveMessageTypes, Iterable[ReceiveMessa
     links = []
     try:
         for message in trace_messages:
+            headers = {}
             if message.application_properties:
-                headers = {}
-
-                traceparent = message.application_properties.get(TRACE_PARENT_PROPERTY, b"")
+                traceparent = (message.application_properties.get(TRACE_PARENT_PROPERTY, b"") or
+                               message.application_properties.get(TRACE_DIAGNOSTIC_ID_PROPERTY, b""))
                 if hasattr(traceparent, "decode"):
                     traceparent = traceparent.decode(TRACE_PROPERTY_ENCODING)
                 if traceparent:
@@ -231,11 +230,9 @@ def get_receive_links(messages: Union[ReceiveMessageTypes, Iterable[ReceiveMessa
                 if tracestate:
                     headers["tracestate"] = cast(str, tracestate)
 
-                enqueued_time = message.raw_amqp_message.annotations.get(TRACE_ENQUEUED_TIME_PROPERTY)
-                attributes = {SPAN_ENQUEUED_TIME_PROPERTY: enqueued_time} if enqueued_time else None
-
-                if headers:
-                    links.append(Link(headers, attributes=attributes))
+            enqueued_time = message.raw_amqp_message.annotations.get(TRACE_ENQUEUED_TIME_PROPERTY)
+            attributes = {SPAN_ENQUEUED_TIME_PROPERTY: enqueued_time} if enqueued_time else None
+            links.append(Link(headers, attributes=attributes))
     except AttributeError:
         pass
     return links
@@ -260,7 +257,8 @@ def get_span_link_from_message(message: Union[uamqp_Message, pyamqp_Message, Ser
     headers = {}
     try:
         if message.application_properties:
-            traceparent = message.application_properties.get(TRACE_PARENT_PROPERTY, b"")
+            traceparent = (message.application_properties.get(TRACE_PARENT_PROPERTY, b"") or
+                           message.application_properties.get(TRACE_DIAGNOSTIC_ID_PROPERTY, b""))
             if hasattr(traceparent, "decode"):
                 traceparent = traceparent.decode(TRACE_PROPERTY_ENCODING)
             if traceparent:
@@ -273,7 +271,7 @@ def get_span_link_from_message(message: Union[uamqp_Message, pyamqp_Message, Ser
                 headers["tracestate"] = cast(str, tracestate)
     except AttributeError :
         return None
-    return Link(headers) if headers else None
+    return Link(headers)
 
 
 def add_span_attributes(
@@ -293,7 +291,6 @@ def add_span_attributes(
 
     if operation_type in (TraceOperationTypes.PUBLISH, TraceOperationTypes.RECEIVE):
         # Maintain legacy attributes for backwards compatibility.
-        span.add_attribute(TraceAttributes.LEGACY_TRACE_COMPONENT_ATTRIBUTE, TraceAttributes.TRACE_MESSAGING_SYSTEM)
         span.add_attribute(TraceAttributes.LEGACY_TRACE_MESSAGE_BUS_DESTINATION_ATTRIBUTE, handler._entity_name)  # pylint: disable=protected-access
         span.add_attribute(TraceAttributes.LEGACY_TRACE_PEER_ADDRESS_ATTRIBUTE, handler.fully_qualified_namespace)
 

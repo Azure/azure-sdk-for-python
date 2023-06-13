@@ -16,6 +16,7 @@ USAGE: python hello_world_advanced_sample.py
 from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting
 from util import print_configuration_setting, get_connection_string
 
+
 def main():
     CONNECTION_STRING = get_connection_string()
 
@@ -25,11 +26,7 @@ def main():
     print("Add new configuration setting")
     # [START create_config_setting]
     config_setting = ConfigurationSetting(
-        key="MyKey",
-        label="MyLabel",
-        value="my value",
-        content_type="my content type",
-        tags={"my tag": "my tag value"}
+        key="MyKey", label="MyLabel", value="my value", content_type="my content type", tags={"my tag": "my tag value"}
     )
     added_config_setting = client.add_configuration_setting(config_setting)
     # [END create_config_setting]
@@ -60,6 +57,7 @@ def main():
         label="MyLabel",
     )
     # [END delete_config_setting]
+
 
 if __name__ == "__main__":
     main()

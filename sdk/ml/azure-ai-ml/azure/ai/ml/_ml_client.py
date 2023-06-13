@@ -216,6 +216,9 @@ class MLClient:
             )
         module_logger.debug("Cloud configured in MLClient: '%s'.", cloud_name)
 
+        # Add cloud information to kwargs
+        kwargs.update(_get_cloud_information_from_metadata(cloud_name))
+
         # registry_name is present when the operations need referring assets from registry.
         # the subscription, resource group, if provided, will be ignored and replaced by
         # whatever is received from the registry discovery service.
@@ -248,7 +251,6 @@ class MLClient:
 
         base_url = _get_base_url_from_metadata(cloud_name=cloud_name, is_local_mfe=True)
         self._base_url = base_url
-        kwargs.update(_get_cloud_information_from_metadata(cloud_name))
         self._kwargs = kwargs
 
         self._operation_container = OperationsContainer()
@@ -841,7 +843,7 @@ class MLClient:
         # Checking the keys in the config.json file to check for required parameters.
         scope = config.get("Scope")
         if not scope:
-            if not all([k in config.keys() for k in ("subscription_id", "resource_group", "workspace_name")]):
+            if not all(k in config.keys() for k in ("subscription_id", "resource_group", "workspace_name")):
                 msg = (
                     "The config file found in: {} does not seem to contain the required "
                     "parameters. Please make sure it contains your subscription_id, "

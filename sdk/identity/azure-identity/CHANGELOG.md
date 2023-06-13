@@ -1,6 +1,27 @@
 # Release History
 
-## 1.13.0 (2023-05-09)
+## 1.14.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.14.0b1 (2023-06-06)
+
+### Features Added
+
+- Continue attempt next credential when finding an expired token from cached token credential in DefaultAzureCredential. ([#30441](https://github.com/Azure/azure-sdk-for-python/pull/30441))
+
+### Other Changes
+
+- VisualStudioCodeCredential prints an informative error message when used (as it is currently broken) ([#30385](https://github.com/Azure/azure-sdk-for-python/pull/30385))
+- Removed dependency on `six`. ([#30613](https://github.com/Azure/azure-sdk-for-python/pull/30613))
+
+## 1.13.0 (2023-05-11)
 
 ### Breaking Changes
 

@@ -31,16 +31,9 @@ def main():
 
     response = client.frontends_interface.begin_create_or_update(
         resource_group_name="rg1",
-        traffic_controller_name="TC1",
-        frontend_name="publicIp1",
-        resource={
-            "location": "West US",
-            "properties": {
-                "ipAddressVersion": "IPv4",
-                "mode": "public",
-                "publicIPAddress": {"id": "resourceUriAsString"},
-            },
-        },
+        traffic_controller_name="tc1",
+        frontend_name="fe1",
+        resource={"location": "NorthCentralUS", "properties": {}},
     ).result()
     print(response)
 

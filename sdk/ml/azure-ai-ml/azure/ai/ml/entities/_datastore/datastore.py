@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access,redefined-builtin,arguments-renamed
 
-from abc import ABC, abstractclassmethod, abstractmethod
+from abc import ABC, abstractmethod
 from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
@@ -174,7 +174,8 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
             error_category=ErrorCategory.SYSTEM_ERROR,
         )
 
-    @abstractclassmethod
+    @classmethod
+    @abstractmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Datastore":
         pass
 

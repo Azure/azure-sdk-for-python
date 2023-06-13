@@ -31,7 +31,7 @@ def main():
 
     response = client.frontends_interface.list_by_traffic_controller(
         resource_group_name="rg1",
-        traffic_controller_name="TC1",
+        traffic_controller_name="tc1",
     )
     for item in response:
         print(item)

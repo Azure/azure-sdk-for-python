@@ -453,4 +453,4 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 "public URI, a registered data asset, or a local folder path.",
                 error=e,
                 error_type=ValidationErrorType.INVALID_VALUE,
-            )
+            ) from e

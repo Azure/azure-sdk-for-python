@@ -70,8 +70,8 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
             try:
                 for runtime in runtime_arr:
                     int(runtime)
-            except ValueError:
-                raise ValueError("runtime_version should only contain numbers")
+            except ValueError as e:
+                raise ValueError("runtime_version should only contain numbers") from e
             if len(runtime_arr) <= 1:
                 msg = "runtime version should be either 3.2 or 3.3"
                 raise ValidationException(

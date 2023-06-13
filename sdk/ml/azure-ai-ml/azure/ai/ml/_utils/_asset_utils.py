@@ -19,29 +19,24 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Un
 
 from colorama import Fore
 from tqdm import TqdmWarning, tqdm
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
-from azure.ai.ml._restclient.v2023_04_01.models import PendingUploadRequestDto
 from azure.ai.ml._artifacts._constants import (
     AML_IGNORE_FILE_NAME,
     ARTIFACT_ORIGIN,
+    AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA,
     BLOB_STORAGE_CLIENT_NAME,
     CHUNK_SIZE,
     DEFAULT_CONNECTION_TIMEOUT,
     EMPTY_DIRECTORY_ERROR,
     GEN2_STORAGE_CLIENT_NAME,
     GIT_IGNORE_FILE_NAME,
+    INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA,
     MAX_CONCURRENCY,
     PROCESSES_PER_CORE,
     UPLOAD_CONFIRMATION,
     WORKSPACE_MANAGED_DATASTORE,
     WORKSPACE_MANAGED_DATASTORE_WITH_SLASH,
-    AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA,
-    INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA,
-)
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    DataVersionBaseData,
-    ModelVersionData,
-    ModelVersionResourceArmPaginatedResult,
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: disable = unused-import
     ComponentContainersOperations,
@@ -53,6 +48,12 @@ from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: 
     ModelContainersOperations,
     ModelVersionsOperations,
 )
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    DataVersionBaseData,
+    ModelVersionData,
+    ModelVersionResourceArmPaginatedResult,
+)
+from azure.ai.ml._restclient.v2023_04_01.models import PendingUploadRequestDto
 from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry, snake_to_camel
 from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, OrderString
@@ -65,7 +66,6 @@ from azure.ai.ml.exceptions import (
     ValidationErrorType,
     ValidationException,
 )
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 if TYPE_CHECKING:
     from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
@@ -360,9 +360,11 @@ def traverse_directory(
     :return: Zipped list of tuples representing the local path and remote destination path for each file
     :rtype: Iterable[Tuple[str, Union[str, Any]]]
     """
-    # Normalize Windows paths
-    root = convert_windows_path_to_unix(root)
-    source = convert_windows_path_to_unix(source)
+    # Normalize Windows paths. Note that path should be resolved first as long part will be converted to a shortcut in
+    # Windows. For example, C:\Users\too-long-user-name\test will be converted to C:\Users\too-lo~1\test by default.
+    # Refer to https://en.wikipedia.org/wiki/8.3_filename for more details.
+    root = convert_windows_path_to_unix(Path(root).resolve())
+    source = convert_windows_path_to_unix(Path(source).resolve())
     working_dir = convert_windows_path_to_unix(os.getcwd())
     project_dir = root[len(str(working_dir)) :] + "/"
     file_paths = [
@@ -740,7 +742,7 @@ def _get_latest_version_from_container(
         )
         version = container.properties.latest_version
 
-    except ResourceNotFoundError:
+    except ResourceNotFoundError as e:
         message = (
             f"Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
@@ -757,7 +759,7 @@ def _get_latest_version_from_container(
             target=ErrorTarget.ASSET,
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
-        )
+        ) from e
     return version
 
 

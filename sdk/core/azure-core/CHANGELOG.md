@@ -1,14 +1,21 @@
 # Release History
 
-## 1.26.5 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.27.1 (2023-06-13)
 
 ### Bugs Fixed
 
-### Other Changes
+- Fix url building for some complex query parameters scenarios  #30707
+
+## 1.27.0 (2023-06-01)
+
+### Features Added
+
+- Added support to use sync credentials in `AsyncBearerTokenCredentialPolicy`. #30381
+- Added "prefix" parameter to AzureKeyCredentialPolicy #29901
+
+### Bugs Fixed
+
+- Improve error message when providing the wrong credential type for AzureKeyCredential  #30380
 
 ## 1.26.4 (2023-04-06)
 

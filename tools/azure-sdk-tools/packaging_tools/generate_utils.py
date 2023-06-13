@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import re
+from functools import wraps
 
 from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
@@ -23,8 +24,33 @@ DEFAULT_DEST_FOLDER = "./dist"
 _DPG_README = "README.md"
 
 
+def check_api_version_in_subfolder(sdk_code_path: str):
+    folders = glob(f"{sdk_code_path}/**/_configuration.py", recursive=True)
+    configs = [str(Path(f)) for f in folders if re.compile("v\d{4}_\d{2}_\d{2}").search(f)]
+    if configs:
+        result = []
+        for config in configs:
+            with open(config, "r") as file_in:
+                content = file_in.readlines()
+                if "self.api_version = api_version" not in "".join(content):
+                    result.append(config)
+        if result:
+            raise Exception("Found files that do not set api_version: \n" + "\n".join(result))
+
+
 def dpg_relative_folder(spec_folder: str) -> str:
     return ("../" * 4) + spec_folder + "/"
+
+
+def return_origin_path(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        current_path = os.getcwd()
+        result = func(*args, **kwargs)
+        os.chdir(current_path)
+        return result
+
+    return wrapper
 
 
 def get_package_names(sdk_folder):

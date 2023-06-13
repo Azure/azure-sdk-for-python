@@ -20,7 +20,7 @@ from azure.identity._credentials.azure_cli import AzureCliCredential
 from azure.identity._credentials.azd_cli import AzureDeveloperCliCredential
 from azure.identity._credentials.managed_identity import ManagedIdentityCredential
 import pytest
-from six.moves.urllib_parse import urlparse
+from urllib.parse import urlparse
 
 from helpers import mock_response, Request, validating_transport
 from test_shared_cache_credential import build_aad_response, get_account_event, populated_cache
@@ -374,14 +374,14 @@ def test_interactive_browser_client_id():
     validate_client_id(mock_credential)
 
 
-def test_developer_credential_timeout():
+def test_process_timeout():
     """the credential should allow configuring a process timeout for Azure CLI and PowerShell by kwarg"""
 
     timeout = 42
 
     with patch(DefaultAzureCredential.__module__ + ".AzureCliCredential") as mock_cli_credential:
         with patch(DefaultAzureCredential.__module__ + ".AzurePowerShellCredential") as mock_pwsh_credential:
-            DefaultAzureCredential(developer_credential_timeout=timeout)
+            DefaultAzureCredential(process_timeout=timeout)
 
     for credential in (mock_cli_credential, mock_pwsh_credential):
         _, kwargs = credential.call_args
@@ -389,7 +389,7 @@ def test_developer_credential_timeout():
         assert kwargs["process_timeout"] == timeout
 
 
-def test_developer_credential_timeout_default():
+def test_process_timeout_default():
     """the credential should allow configuring a process timeout for Azure CLI and PowerShell by kwarg"""
 
     with patch(DefaultAzureCredential.__module__ + ".AzureCliCredential") as mock_cli_credential:

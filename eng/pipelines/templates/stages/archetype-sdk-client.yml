@@ -120,7 +120,7 @@ stages:
         Artifacts: ${{ parameters.Artifacts }}
         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
           TestPipeline: true
-        ArtifactName: packages
+        ArtifactName: packages_extended
         DocArtifact: documentation
         TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
         TargetDocRepoName: ${{ parameters.TargetDocRepoName }}

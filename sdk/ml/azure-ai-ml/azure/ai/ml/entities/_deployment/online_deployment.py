@@ -9,7 +9,7 @@ import os
 import typing
 from abc import abstractmethod
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml._restclient.v2023_04_01_preview.models import EndpointComputeType
@@ -587,6 +587,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
             data_collector=DataCollector._from_rest_object(deployment.data_collector)
             if hasattr(deployment, "data_collector") and deployment.data_collector
             else None,
+            provisioning_state=deployment.provisioning_state if hasattr(deployment, "provisioning_state") else None,
         )
 
 
@@ -827,6 +828,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
             data_collector=DataCollector._from_rest_object(deployment.data_collector)
             if hasattr(deployment, "data_collector") and deployment.data_collector
             else None,
+            provisioning_state=deployment.provisioning_state if hasattr(deployment, "provisioning_state") else None,
         )
 
     def _merge_with(self, other: "ManagedOnlineDeployment") -> None:

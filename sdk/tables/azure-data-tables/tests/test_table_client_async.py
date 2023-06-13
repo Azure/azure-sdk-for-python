@@ -12,7 +12,8 @@ from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ClientAuthenticationError
+from azure.identity.aio import DefaultAzureCredential
 from azure.data.tables.aio import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
 from azure.data.tables._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
@@ -173,6 +174,21 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
         assert ("URI does not match number of key properties for the resource") in str(exc.value)
         assert ("Please check your account URL.") in str(exc.value)
         await valid_tc.delete_table()
+    
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_error_handling(self, tables_storage_account_name, tables_primary_storage_account_key):
+        async with TableServiceClient(
+            self.account_url(tables_storage_account_name, "table"),
+            credential=DefaultAzureCredential(
+                exclude_shared_token_cache_credential=True,
+                exclude_powershell_credential=True,
+                exclude_cli_credential=True,
+                exclude_environment_credential=True,
+            )
+        ) as service_client:
+            with pytest.raises(ClientAuthenticationError):
+                await service_client.create_table_if_not_exists(table_name="TestInsert")
 
 
 class TestTableClientAsyncUnitTests(AsyncTableTestCase):
