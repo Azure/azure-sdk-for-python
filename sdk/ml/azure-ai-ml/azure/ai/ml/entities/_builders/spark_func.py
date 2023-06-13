@@ -120,7 +120,7 @@ def spark(
     :type description: str
     :param tags: The dictionary of tags for the job. Tags can be added, removed, and updated.
     :type tags: Dict[str, str]
-    :param code: The source code to run the job.
+    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing to a remote location.
     :type code: Union[str, os.PathLike]
     :param entry: The file or class entry point.
     :type entry: Union[Dict[str, str], ~azure.ai.ml.entities.SparkJobEntry]

@@ -16,7 +16,7 @@ DUMMY_IMAGE = "conda/miniconda3"
 class ParameterizedSpark(SparkJobEntryMixin):
     """Spark component that contains supporting parameters.
 
-    :param code: The source code to run the job.
+    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing to a remote location.
     :type code: str
     :param entry: Entry.
     :type entry: str

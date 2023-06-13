@@ -26,7 +26,7 @@ class SparkComponent(
 ):  # pylint: disable=too-many-instance-attributes
     """Spark component version, used to define a Spark Component or Job.
 
-    :param code: The source code to run the job.
+    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing to a remote location.
     :type code: Union[str, os.PathLike]
     :param entry: The file or class entry point.
     :type entry: Dict[str, str]
