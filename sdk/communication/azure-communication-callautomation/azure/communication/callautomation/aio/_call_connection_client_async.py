@@ -34,6 +34,7 @@ from .._generated.models import (
     SendDtmfRequest,
     CustomContext,
     DtmfOptions,
+    SpeechOptions,
     PlayOptions,
     RecognizeOptions,
 )
@@ -46,7 +47,10 @@ if TYPE_CHECKING:
     from ._call_automation_client_async import CallAutomationClient
     from .._models  import (
         FileSource,
-        CallInvite
+        TextSource,
+        SsmlSource,
+        CallInvite,
+        Choice
     )
     from azure.core.credentials_async import (
         AsyncTokenCredential
@@ -320,7 +324,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace_async
     async def play_media(
         self,
-        play_source: 'FileSource',
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
         play_to: List['CommunicationIdentifier'],
         *,
         loop: Optional[bool] = False,
@@ -354,7 +358,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace_async
     async def play_media_to_all(
         self,
-        play_source: 'FileSource',
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
         *,
         loop: Optional[bool] = False,
         operation_context: Optional[str] = None,
@@ -380,7 +384,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace_async
     async def start_recognizing_media(
         self,
-        input_type : Union[str, 'RecognizeInputType'],
+        input_type: Union[str, 'RecognizeInputType'],
         target_participant: 'CommunicationIdentifier',
         *,
         initial_silence_timeout: Optional[int] = None,
@@ -391,6 +395,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         dtmf_inter_tone_timeout: Optional[int] = None,
         dtmf_max_tones_to_collect: Optional[str] = None,
         dtmf_stop_tones: Optional[List[str or 'DtmfTone']] = None,
+        choices: Optional[List["Choice"]] = None,
+        end_silence_timeout_in_ms: Optional[int] = None,
         **kwargs
     ) -> None:
         """Recognize tones from specific participant in the call.
@@ -423,13 +429,35 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         options = RecognizeOptions(
             interrupt_prompt=interrupt_prompt,
             initial_silence_timeout_in_seconds=initial_silence_timeout,
-            target_participant=serialize_identifier(target_participant),
-            dtmf_options= DtmfOptions(
+            target_participant=serialize_identifier(target_participant)
+        )
+
+        if isinstance(input_type, str):
+            input_type = RecognizeInputType[input_type.upper()]
+
+        if input_type == RecognizeInputType.DTMF:
+            dtmf_options=DtmfOptions(
                 inter_tone_timeout_in_seconds=dtmf_inter_tone_timeout,
                 max_tones_to_collect=dtmf_max_tones_to_collect,
                 stop_tones=dtmf_stop_tones
             )
-        )
+            options.dtmf_options = dtmf_options
+        elif input_type == RecognizeInputType.SPEECH:
+            speech_options = SpeechOptions(end_silence_timeout_in_ms=end_silence_timeout_in_ms)
+            options.speech_options = speech_options
+        elif input_type == RecognizeInputType.SPEECH_OR_DTMF:
+            dtmf_options=DtmfOptions(
+                inter_tone_timeout_in_seconds=dtmf_inter_tone_timeout,
+                max_tones_to_collect=dtmf_max_tones_to_collect,
+                stop_tones=dtmf_stop_tones
+            )
+            speech_options = SpeechOptions(end_silence_timeout_in_ms=end_silence_timeout_in_ms)
+            options.dtmf_options = dtmf_options
+            options.speech_options = speech_options
+        elif input_type == RecognizeInputType.CHOICES:
+            options.choices = choices
+        else:
+            raise NotImplementedError(f"{type(input_type).__name__} is not supported")
 
         recognize_request = RecognizeRequest(
             recognize_input_type=input_type,
