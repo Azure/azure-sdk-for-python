@@ -29,13 +29,13 @@ parameters:
 
 jobs:
 - job: ${{ parameters.BuildCI }}
-  variables:
-    sde:
+#  variables:
+#    sde:
   pool:
-    name:
-    vmImage:
+    name: "azsdk-pool-mms-win-2022-general"
+    vmImage: "windows-2022"
   steps:
-    template: /eng/pipelines/templates/jobs/ci.yml
+  - template: /eng/pipelines/templates/jobs/ci.yml
     parameters:
       ServiceDirectory: ${{parameters.ServiceDirectory}}
       Artifacts: ${{ parameters.Artifacts }}
@@ -56,7 +56,7 @@ jobs:
 - job: TestEmulator
   displayName: Test Emulator
   steps:
-    template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:
       JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
 #        MatrixConfigs:
@@ -79,7 +79,7 @@ jobs:
         TestGoals: 'clean verify'
         TestOptions: '$(ProfileFlag) $(AdditionalArgs)'
 
-  PreSteps:
+  PreGenerationSteps:
     template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
     parameters:
       StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Strong'
