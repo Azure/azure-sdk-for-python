@@ -896,6 +896,11 @@ class CertificateListOptions(Model):
 class CertificateReference(Model):
     """A reference to a Certificate to be installed on Compute Nodes in a Pool.
 
+    Warning: This object is deprecated and will be removed after February,
+    2024. Please use the [Azure KeyVault
+    Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+    instead.
+
     All required parameters must be populated in order to send to Azure.
 
     :param thumbprint: Required.
@@ -1362,6 +1367,10 @@ class CloudPool(Model):
      location. For Certificates with visibility of 'remoteUser', a 'certs'
      directory is created in the user's home directory (e.g.,
      /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February,
+     2024. Please use the [Azure KeyVault
+     Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+     instead.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
     :param application_package_references: Changes to Package references
@@ -1822,6 +1831,10 @@ class ComputeNode(Model):
      location. For Certificates with visibility of 'remoteUser', a 'certs'
      directory is created in the user's home directory (e.g.,
      /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February,
+     2024. Please use the [Azure KeyVault
+     Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+     instead.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
     :param errors:
@@ -2580,13 +2593,11 @@ class ComputeNodeUser(Model):
 class ContainerConfiguration(Model):
     """The configuration for container-enabled Pools.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required.  Default value: "dockerCompatible" .
-    :vartype type: str
+    :param type: Required. Possible values include: 'dockerCompatible',
+     'criCompatible'
+    :type type: str or ~azure.batch.models.ContainerType
     :param container_image_names: This is the full Image reference, as would
      be specified to "docker pull". An Image will be sourced from the default
      Docker registry unless the Image is fully qualified with an alternative
@@ -2599,7 +2610,7 @@ class ContainerConfiguration(Model):
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
     }
 
     _attribute_map = {
@@ -2608,10 +2619,9 @@ class ContainerConfiguration(Model):
         'container_registries': {'key': 'containerRegistries', 'type': '[ContainerRegistry]'},
     }
 
-    type = "dockerCompatible"
-
-    def __init__(self, *, container_image_names=None, container_registries=None, **kwargs) -> None:
+    def __init__(self, *, type, container_image_names=None, container_registries=None, **kwargs) -> None:
         super(ContainerConfiguration, self).__init__(**kwargs)
+        self.type = type
         self.container_image_names = container_image_names
         self.container_registries = container_registries
 
@@ -3816,9 +3826,8 @@ class JobConstraints(Model):
      limit. For example, if the maximum retry count is 3, Batch tries a Task up
      to 4 times (one initial try and 3 retries). If the maximum retry count is
      0, the Batch service does not retry Tasks. If the maximum retry count is
-     -1, the Batch service retries the Task without limit, however this is not
-     recommended for a start task or any task. The default value is 0 (no
-     retries)
+     -1, the Batch service retries Tasks without limit. The default value is 0
+     (no retries).
     :type max_task_retry_count: int
     """
 
@@ -4097,40 +4106,6 @@ class JobExecutionInformation(Model):
         self.pool_id = pool_id
         self.scheduling_error = scheduling_error
         self.terminate_reason = terminate_reason
-
-
-class JobGetAllLifetimeStatisticsOptions(Model):
-    """Additional parameters for get_all_lifetime_statistics operation.
-
-    :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
-    :type timeout: int
-    :param client_request_id: The caller-generated request identity, in the
-     form of a GUID with no decoration such as curly braces, e.g.
-     9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
-    :type client_request_id: str
-    :param return_client_request_id: Whether the server should return the
-     client-request-id in the response. Default value: False .
-    :type return_client_request_id: bool
-    :param ocp_date: The time the request was issued. Client libraries
-     typically set this to the current system clock time; set it explicitly if
-     you are calling the REST API directly.
-    :type ocp_date: datetime
-    """
-
-    _attribute_map = {
-        'timeout': {'key': '', 'type': 'int'},
-        'client_request_id': {'key': '', 'type': 'str'},
-        'return_client_request_id': {'key': '', 'type': 'bool'},
-        'ocp_date': {'key': '', 'type': 'rfc-1123'},
-    }
-
-    def __init__(self, *, timeout: int=30, client_request_id: str=None, return_client_request_id: bool=False, ocp_date=None, **kwargs) -> None:
-        super(JobGetAllLifetimeStatisticsOptions, self).__init__(**kwargs)
-        self.timeout = timeout
-        self.client_request_id = client_request_id
-        self.return_client_request_id = return_client_request_id
-        self.ocp_date = ocp_date
 
 
 class JobGetOptions(Model):
@@ -6687,6 +6662,12 @@ class NetworkConfiguration(Model):
      only supported on Pools with the virtualMachineConfiguration property.
     :type public_ip_address_configuration:
      ~azure.batch.models.PublicIPAddressConfiguration
+    :param enable_accelerated_networking: Whether this pool should enable
+     accelerated networking. Accelerated networking enables single root I/O
+     virtualization (SR-IOV) to a VM, which may lead to improved networking
+     performance. For more details, see:
+     https://learn.microsoft.com/azure/virtual-network/accelerated-networking-overview.
+    :type enable_accelerated_networking: bool
     """
 
     _attribute_map = {
@@ -6694,14 +6675,16 @@ class NetworkConfiguration(Model):
         'dynamic_vnet_assignment_scope': {'key': 'dynamicVNetAssignmentScope', 'type': 'DynamicVNetAssignmentScope'},
         'endpoint_configuration': {'key': 'endpointConfiguration', 'type': 'PoolEndpointConfiguration'},
         'public_ip_address_configuration': {'key': 'publicIPAddressConfiguration', 'type': 'PublicIPAddressConfiguration'},
+        'enable_accelerated_networking': {'key': 'enableAcceleratedNetworking', 'type': 'bool'},
     }
 
-    def __init__(self, *, subnet_id: str=None, dynamic_vnet_assignment_scope=None, endpoint_configuration=None, public_ip_address_configuration=None, **kwargs) -> None:
+    def __init__(self, *, subnet_id: str=None, dynamic_vnet_assignment_scope=None, endpoint_configuration=None, public_ip_address_configuration=None, enable_accelerated_networking: bool=None, **kwargs) -> None:
         super(NetworkConfiguration, self).__init__(**kwargs)
         self.subnet_id = subnet_id
         self.dynamic_vnet_assignment_scope = dynamic_vnet_assignment_scope
         self.endpoint_configuration = endpoint_configuration
         self.public_ip_address_configuration = public_ip_address_configuration
+        self.enable_accelerated_networking = enable_accelerated_networking
 
 
 class NetworkSecurityGroupRule(Model):
@@ -7413,6 +7396,10 @@ class PoolAddParameter(Model):
      location. For Certificates with visibility of 'remoteUser', a 'certs'
      directory is created in the user's home directory (e.g.,
      /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February,
+     2024. Please use the [Azure KeyVault
+     Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+     instead.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
     :param application_package_references: When creating a pool, the package's
@@ -7845,40 +7832,6 @@ class PoolExistsOptions(Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class PoolGetAllLifetimeStatisticsOptions(Model):
-    """Additional parameters for get_all_lifetime_statistics operation.
-
-    :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
-    :type timeout: int
-    :param client_request_id: The caller-generated request identity, in the
-     form of a GUID with no decoration such as curly braces, e.g.
-     9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
-    :type client_request_id: str
-    :param return_client_request_id: Whether the server should return the
-     client-request-id in the response. Default value: False .
-    :type return_client_request_id: bool
-    :param ocp_date: The time the request was issued. Client libraries
-     typically set this to the current system clock time; set it explicitly if
-     you are calling the REST API directly.
-    :type ocp_date: datetime
-    """
-
-    _attribute_map = {
-        'timeout': {'key': '', 'type': 'int'},
-        'client_request_id': {'key': '', 'type': 'str'},
-        'return_client_request_id': {'key': '', 'type': 'bool'},
-        'ocp_date': {'key': '', 'type': 'rfc-1123'},
-    }
-
-    def __init__(self, *, timeout: int=30, client_request_id: str=None, return_client_request_id: bool=False, ocp_date=None, **kwargs) -> None:
-        super(PoolGetAllLifetimeStatisticsOptions, self).__init__(**kwargs)
-        self.timeout = timeout
-        self.client_request_id = client_request_id
-        self.return_client_request_id = return_client_request_id
-        self.ocp_date = ocp_date
-
-
 class PoolGetOptions(Model):
     """Additional parameters for get operation.
 
@@ -8203,6 +8156,10 @@ class PoolPatchParameter(Model):
      location. For Certificates with visibility of 'remoteUser', a 'certs'
      directory is created in the user's home directory (e.g.,
      /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February,
+     2024. Please use the [Azure KeyVault
+     Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+     instead.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
     :param application_package_references: Changes to Package references
@@ -8496,6 +8453,10 @@ class PoolSpecification(Model):
      location. For Certificates with visibility of 'remoteUser', a 'certs'
      directory is created in the user's home directory (e.g.,
      /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February,
+     2024. Please use the [Azure KeyVault
+     Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+     instead.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
     :param application_package_references: When creating a pool, the package's
@@ -8743,6 +8704,10 @@ class PoolUpdatePropertiesParameter(Model):
      'remoteUser', a 'certs' directory is created in the user's home directory
      (e.g., /home/{user-name}/certs) and Certificates are placed in that
      directory.
+     Warning: This property is deprecated and will be removed after February,
+     2024. Please use the [Azure KeyVault
+     Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+     instead.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
     :param application_package_references: Required. The list replaces any
@@ -9184,7 +9149,7 @@ class StartTask(Model):
      the Batch service does not retry the Task. If the maximum retry count is
      -1, the Batch service retries the Task without limit, however this is not
      recommended for a start task or any task. The default value is 0 (no
-     retries)
+     retries).
     :type max_task_retry_count: int
     :param wait_for_success: Whether the Batch service should wait for the
      StartTask to complete successfully (that is, to exit with exit code 0)
@@ -9725,7 +9690,7 @@ class TaskConstraints(Model):
      does not retry the Task after the first attempt. If the maximum retry
      count is -1, the Batch service retries the Task without limit, however
      this is not recommended for a start task or any task. The default value is
-     0 (no retries)
+     0 (no retries).
     :type max_task_retry_count: int
     """
 
@@ -11035,6 +11000,10 @@ class VMExtension(Model):
      deployed, however, the extension will not upgrade minor versions unless
      redeployed, even with this property set to true.
     :type auto_upgrade_minor_version: bool
+    :param enable_automatic_upgrade: Indicates whether the extension should be
+     automatically upgraded by the platform if there is a newer version of the
+     extension available.
+    :type enable_automatic_upgrade: bool
     :param settings:
     :type settings: object
     :param protected_settings: The extension can contain either
@@ -11058,18 +11027,20 @@ class VMExtension(Model):
         'type': {'key': 'type', 'type': 'str'},
         'type_handler_version': {'key': 'typeHandlerVersion', 'type': 'str'},
         'auto_upgrade_minor_version': {'key': 'autoUpgradeMinorVersion', 'type': 'bool'},
+        'enable_automatic_upgrade': {'key': 'enableAutomaticUpgrade', 'type': 'bool'},
         'settings': {'key': 'settings', 'type': 'object'},
         'protected_settings': {'key': 'protectedSettings', 'type': 'object'},
         'provision_after_extensions': {'key': 'provisionAfterExtensions', 'type': '[str]'},
     }
 
-    def __init__(self, *, name: str, publisher: str, type: str, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, provision_after_extensions=None, **kwargs) -> None:
+    def __init__(self, *, name: str, publisher: str, type: str, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, enable_automatic_upgrade: bool=None, settings=None, protected_settings=None, provision_after_extensions=None, **kwargs) -> None:
         super(VMExtension, self).__init__(**kwargs)
         self.name = name
         self.publisher = publisher
         self.type = type
         self.type_handler_version = type_handler_version
         self.auto_upgrade_minor_version = auto_upgrade_minor_version
+        self.enable_automatic_upgrade = enable_automatic_upgrade
         self.settings = settings
         self.protected_settings = protected_settings
         self.provision_after_extensions = provision_after_extensions

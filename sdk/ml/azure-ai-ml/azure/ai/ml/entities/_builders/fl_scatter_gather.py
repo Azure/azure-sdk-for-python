@@ -792,5 +792,5 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
     def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
         """Convert self to a rest object for remote call."""
         rest_node = super(FLScatterGather, self)._to_rest_object(**kwargs)
-        rest_node.update(dict(outputs=self._to_rest_outputs()))
+        rest_node.update({"outputs": self._to_rest_outputs()})
         return convert_ordered_dict_to_dict(rest_node)

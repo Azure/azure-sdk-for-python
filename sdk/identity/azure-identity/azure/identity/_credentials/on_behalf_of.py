@@ -5,7 +5,6 @@
 import time
 from typing import Any, Optional
 
-import six
 import msal
 
 from azure.core.credentials import AccessToken
@@ -89,7 +88,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                 message = (
                     '"client_certificate" is not a valid certificate in PEM or PKCS12 format'
                 )
-                six.raise_from(ValueError(message), ex)
+                raise ValueError(message) from ex
         elif client_secret:
             credential = client_secret
         else:

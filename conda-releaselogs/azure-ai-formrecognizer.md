@@ -1,5 +1,11 @@
 # Azure Form Recognizer client library for Python (conda)
 
+## 2023.06.01
+
+### Packages included
+
+- azure-ai-formrecognizer-3.2.1
+
 ## 2023.03.01
 
 ### Packages included

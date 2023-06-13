@@ -61,6 +61,7 @@ class TestSparkComponentEntity:
         omit_fields = [
             "properties.component_spec.$schema",
             "properties.component_spec._source",
+            "properties.properties.client_component_hash",
         ]
         component_dict = component._to_rest_object().as_dict()
         component_dict = pydash.omit(component_dict, *omit_fields)

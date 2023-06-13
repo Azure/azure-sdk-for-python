@@ -256,6 +256,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         profile: KnownProfiles = KnownProfiles.default,
         **kwargs: Any
     ) -> None:
+        if api_version:
+            kwargs.setdefault('api_version', api_version)
         self._config = NetworkManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(NetworkManagementClient, self).__init__(

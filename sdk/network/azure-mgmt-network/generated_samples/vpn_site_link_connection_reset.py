@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.vpn_link_connections.begin_reset_connection(
+    client.vpn_link_connections.begin_reset_connection(
         resource_group_name="rg1",
         gateway_name="gateway1",
         connection_name="vpnConnection1",
         link_connection_name="Connection-Link1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/VpnSiteLinkConnectionReset.json

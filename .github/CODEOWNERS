@@ -147,6 +147,9 @@
 /sdk/datalake/                                                       @ro-joowan
 /sdk/datadatamigration/                                              @vchske
 
+# PRLabel: %Device Provisioning
+/sdk/iothub/azure-iot-deviceprovisioning                             @c-ryan-k @digimaun
+
 # PRLabel: %Device Update
 /sdk/deviceupdate/                                                   @dpokluda @sedols
 
@@ -259,8 +262,11 @@
 /sdk/maps/                                                           @alextts627
 
 # PRLabel: %Mixed Reality
-/sdk/mixedreality/azure-mixedreality-authentication/                 @crtreasu
-/sdk/remoterendering/                                                @rikogeln
+/sdk/mixedreality/azure-mixedreality-authentication/                 @RamonArguelles
+/sdk/remoterendering/                                                @FlorianBorn71
+
+# PRLabel: %Open AI
+/sdk/openai                                                          @kristapratico @glecaros
 
 # PRLabel: %Purview
 /sdk/purview/                                                        @iscai-msft @msyyc

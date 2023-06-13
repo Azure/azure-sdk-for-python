@@ -538,13 +538,13 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             component = properties.component_id
         else:
             component = PipelineComponent._load_from_rest_pipeline_job(
-                dict(
-                    inputs=from_rest_inputs,
-                    outputs=from_rest_outputs,
-                    display_name=properties.display_name,
-                    description=properties.description,
-                    jobs=sub_nodes,
-                )
+                {
+                    "inputs": from_rest_inputs,
+                    "outputs": from_rest_outputs,
+                    "display_name": properties.display_name,
+                    "description": properties.description,
+                    "jobs": sub_nodes,
+                }
             )
 
         job = PipelineJob(

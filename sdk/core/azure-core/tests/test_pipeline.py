@@ -196,6 +196,12 @@ def test_format_url_no_base_url():
     assert formatted == "https://google.com/subpath/bar"
 
 
+def test_format_url_double_query():
+    client = PipelineClientBase("https://bing.com/path?query=testvalue&x=2ndvalue")
+    formatted = client.format_url("/subpath?a=X&c=Y")
+    assert formatted == "https://bing.com/path/subpath?query=testvalue&x=2ndvalue&a=X&c=Y"
+
+
 def test_format_incorrect_endpoint():
     # https://github.com/Azure/azure-sdk-for-python/pull/12106
     client = PipelineClientBase("{Endpoint}/text/analytics/v3.0")
