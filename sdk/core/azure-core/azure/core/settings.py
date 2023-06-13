@@ -33,6 +33,7 @@ import os
 import sys
 from typing import Type, Optional, Callable, cast, Union, Dict
 from azure.core.tracing import AbstractSpan
+from ._azure_clouds import AzureClouds
 
 
 __all__ = ("settings", "Settings")
@@ -105,6 +106,23 @@ def convert_logging(value: Union[str, int]) -> int:
     if not level:
         raise ValueError("Cannot convert {} to log level, valid values are: {}".format(value, ", ".join(_levels)))
     return level
+
+
+def convert_azure_cloud(value: Union[str, AzureClouds]) -> AzureClouds:
+    """Convert a string to an Azure Cloud
+
+    :param value: the value to convert
+    :type value: string
+    :returns: AzureClouds
+    :raises ValueError: If conversion to AzureClouds fails
+
+    """
+    if isinstance(value, str):
+        azure_clouds = {cloud.name: cloud for cloud in AzureClouds}
+        if value in azure_clouds:
+            return azure_clouds[value]
+        raise ValueError("Cannot convert {} to Azure Cloud, valid values are: {}".format(value, ", ".join(azure_clouds.keys())))
+    return value
 
 
 def _get_opencensus_span() -> Optional[Type[AbstractSpan]]:
@@ -297,7 +315,7 @@ class Settings:
 
     .. code-block:: python
 
-        from azure.common.settings import settings
+        from azure.core.settings import settings
         settings.log_level = log_level = logging.DEBUG
 
     The following methods are searched in order for a setting:
@@ -441,6 +459,13 @@ class Settings:
         env_var="AZURE_SDK_TRACING_IMPLEMENTATION",
         convert=convert_tracing_impl,
         default=None,
+    )
+
+    azure_cloud = PrioritizedSetting(
+        "azure_cloud",
+        env_var="AZURE_CLOUD",
+        convert=convert_azure_cloud,
+        default=AzureClouds.AzurePublicCloud,
     )
 
 
