@@ -23,12 +23,9 @@ parameters:
 - name: SDKType
   type: string
   default: not-specified
-- name: BuildCI
-  type: string
-  default: 'Build CI'
 
 jobs:
-- job: ${{ parameters.BuildCI }}
+- job: BuildCI
 #  variables:
 #    sde:
   pool:
@@ -52,6 +49,16 @@ jobs:
       MatrixReplace:
         - AZURE_TEST.*=.*/
       BuildParallelization: 1
+
+- job: BuildEmulator
+  displayName: Build Emulator
+  steps:
+  - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
+    parameters:
+      StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Strong'
+      powershell: |
+        $Key = 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
+        $password = ConvertTo-SecureString -String $Key -Force -AsPlainText
 
 - job: TestEmulator
   displayName: Test Emulator
@@ -78,11 +85,3 @@ jobs:
         TimeoutInMinutes: 90
         TestGoals: 'clean verify'
         TestOptions: '$(ProfileFlag) $(AdditionalArgs)'
-
-  PreGenerationSteps:
-    template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
-    parameters:
-      StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Strong'
-      powershell: |
-        $Key = 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
-        $password = ConvertTo-SecureString -String $Key -Force -AsPlainText
