@@ -152,7 +152,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         rest_node = super(ParallelFor, self)._to_rest_object(**kwargs)
         # convert items to rest object
         rest_items = self._to_rest_items(items=self.items)
-        rest_node.update(dict(items=rest_items, outputs=self._to_rest_outputs()))
+        rest_node.update({"items": rest_items, "outputs": self._to_rest_outputs()})
         return convert_ordered_dict_to_dict(rest_node)
 
     @classmethod

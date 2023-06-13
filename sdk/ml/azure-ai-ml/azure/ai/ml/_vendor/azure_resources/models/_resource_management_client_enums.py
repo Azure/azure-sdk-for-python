@@ -23,8 +23,8 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
         """
         try:
             return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+        except KeyError as e:
+            raise AttributeError(name) from e
 
 
 class AliasPathAttributes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):

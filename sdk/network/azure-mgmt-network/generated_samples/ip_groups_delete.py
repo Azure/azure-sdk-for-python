@@ -29,11 +29,10 @@ def main():
         subscription_id="subId",
     )
 
-    response = client.ip_groups.begin_delete(
+    client.ip_groups.begin_delete(
         resource_group_name="myResourceGroup",
         ip_groups_name="ipGroups1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/IpGroupsDelete.json

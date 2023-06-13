@@ -3,7 +3,7 @@ from pathlib import Path
 import pydash
 import pytest
 from devtools_testutils import AzureRecordedTestCase
-from test_utilities.utils import cancel_job
+from test_utilities.utils import cancel_job, get_automl_job_properties
 
 from azure.ai.ml import Input, MLClient, automl, dsl, Output
 from azure.ai.ml.automl import (
@@ -429,6 +429,10 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                         model_name=Choice(["seresnext"]),
                         learning_rate=Uniform(0.001, 0.01),
                     ),
+                    SearchSpace(
+                        model_name=Choice(["microsoft/beit-base-patch16-224"]),
+                        learning_rate=Uniform(0.001, 0.01),
+                    ),
                 ]
             )
             image_multiclass_node.set_sweep(
@@ -489,6 +493,10 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                     "learning_rate": "uniform(0.001,0.01)",
                     "model_name": "choice('seresnext')",
                 },
+                {
+                    "learning_rate": "uniform(0.001,0.01)",
+                    "model_name": "choice('microsoft/beit-base-patch16-224')",
+                },
             ],
         }
 
@@ -515,6 +523,10 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                     ),
                     SearchSpace(
                         model_name=Choice(["seresnext"]),
+                        learning_rate=Uniform(0.001, 0.01),
+                    ),
+                    SearchSpace(
+                        model_name=Choice(["microsoft/beit-base-patch16-224"]),
                         learning_rate=Uniform(0.001, 0.01),
                     ),
                 ]
@@ -577,6 +589,10 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                     "model_name": "choice('seresnext')",
                     "learning_rate": "uniform(0.001,0.01)",
                 },
+                {
+                    "model_name": "choice('microsoft/beit-base-patch16-224')",
+                    "learning_rate": "uniform(0.001,0.01)",
+                },
             ],
         }
 
@@ -602,6 +618,12 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                     ),
                     SearchSpace(
                         model_name=Choice(["fasterrcnn_resnet50_fpn"]),
+                        learning_rate=Uniform(0.0001, 0.001),
+                        optimizer=Choice(["sgd", "adam", "adamw"]),
+                        min_size=Choice([600, 800]),  # model-specific
+                    ),
+                    SearchSpace(
+                        model_name=Choice(["atss_r50_fpn_1x_coco"]),
                         learning_rate=Uniform(0.0001, 0.001),
                         optimizer=Choice(["sgd", "adam", "adamw"]),
                         min_size=Choice([600, 800]),  # model-specific
@@ -676,6 +698,12 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                     "model_name": "choice('fasterrcnn_resnet50_fpn')",
                     "optimizer": "choice('sgd','adam','adamw')",
                 },
+                {
+                    "learning_rate": "uniform(0.0001,0.001)",
+                    "min_size": "choice(600,800)",
+                    "model_name": "choice('atss_r50_fpn_1x_coco')",
+                    "optimizer": "choice('sgd','adam','adamw')",
+                },
             ],
         }
 
@@ -699,6 +727,12 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 [
                     SearchSpace(
                         model_name=Choice(["maskrcnn_resnet50_fpn"]),
+                        learning_rate=Uniform(0.0001, 0.001),
+                        optimizer=Choice(["sgd", "adam", "adamw"]),
+                        min_size=Choice([600, 800]),
+                    ),
+                    SearchSpace(
+                        model_name=Choice(["mask_rcnn_swin-s-p4-w7_fpn_fp16_ms-crop-3x_coco"]),
                         learning_rate=Uniform(0.0001, 0.001),
                         optimizer=Choice(["sgd", "adam", "adamw"]),
                         min_size=Choice([600, 800]),
@@ -766,6 +800,12 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                     "model_name": "choice('maskrcnn_resnet50_fpn')",
                     "optimizer": "choice('sgd','adam','adamw')",
                     "min_size": "choice(600,800)",
-                }
+                },
+                {
+                    "learning_rate": "uniform(0.0001,0.001)",
+                    "model_name": "choice('mask_rcnn_swin-s-p4-w7_fpn_fp16_ms-crop-3x_coco')",
+                    "optimizer": "choice('sgd','adam','adamw')",
+                    "min_size": "choice(600,800)",
+                },
             ],
         }

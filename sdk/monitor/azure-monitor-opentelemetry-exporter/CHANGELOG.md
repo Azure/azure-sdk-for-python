@@ -1,5 +1,12 @@
 # Release History
 
+## 1.0.0b14 (2023-06-09)
+
+### Features Added
+
+- Upgrading to OpenTelemetry SDK/API 1.18.
+    ([#30611](https://github.com/Azure/azure-sdk-for-python/pull/30611))
+
 ## 1.0.0b13 (2023-04-11)
 
 ### Features Added

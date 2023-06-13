@@ -207,7 +207,7 @@ def pipeline(
                 built_pipeline = Pipeline(_from_component_func=True, **common_init_args)
                 if job_settings:
                     module_logger.warning(
-                        ("Job settings %s on pipeline function %r are ignored " "when using inside PipelineJob."),
+                        ("Job settings %s on pipeline function %r are ignored when using inside PipelineJob."),
                         job_settings,
                         func.__name__,
                     )

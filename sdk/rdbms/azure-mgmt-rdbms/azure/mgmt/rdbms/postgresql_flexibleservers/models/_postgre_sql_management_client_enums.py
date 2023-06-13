@@ -24,6 +24,41 @@ class ArmServerKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_KEY_VAULT = "AzureKeyVault"
 
 
+class AzureManagedDiskPerformanceTiers(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Name of storage tier for IOPS."""
+
+    P1 = "P1"
+    P2 = "P2"
+    P3 = "P3"
+    P4 = "P4"
+    P6 = "P6"
+    P10 = "P10"
+    P15 = "P15"
+    P20 = "P20"
+    P30 = "P30"
+    P40 = "P40"
+    P50 = "P50"
+    P60 = "P60"
+    P70 = "P70"
+    P80 = "P80"
+
+
+class CancelEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """To trigger cancel for entire migration we need to send this flag as True."""
+
+    TRUE = "True"
+    FALSE = "False"
+
+
+class CapabilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the capability."""
+
+    VISIBLE = "Visible"
+    AVAILABLE = "Available"
+    DEFAULT = "Default"
+    DISABLED = "Disabled"
+
+
 class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason why the given name is not available."""
 
@@ -58,6 +93,7 @@ class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     POINT_IN_TIME_RESTORE = "PointInTimeRestore"
     GEO_RESTORE = "GeoRestore"
     REPLICA = "Replica"
+    REVIVE_DROPPED = "ReviveDropped"
 
 
 class CreateModeForUpdate(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -65,6 +101,15 @@ class CreateModeForUpdate(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DEFAULT = "Default"
     UPDATE = "Update"
+
+
+class ExecutionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Service-set extensible enum indicating the status of operation."""
+
+    RUNNING = "Running"
+    CANCELLED = "Cancelled"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
 
 
 class FailoverMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -76,11 +121,36 @@ class FailoverMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FORCED_SWITCHOVER = "ForcedSwitchover"
 
 
+class FastProvisioningSupportedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets a value indicating whether fast provisioning is supported. "Enabled" means fast
+    provisioning is supported. "Disabled" stands for fast provisioning is not supported.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
+class GeoBackupSupportedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Determines if geo-backup is supported in this region. "Enabled" means geo-backup is supported.
+    "Disabled" stands for geo-back is not supported.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
 class GeoRedundantBackupEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A value indicating whether Geo-Redundant backup is enabled on the server."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+
+class HaMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """HA mode supported for a server."""
+
+    SAME_ZONE = "SameZone"
+    ZONE_REDUNDANT = "ZoneRedundant"
 
 
 class HighAvailabilityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -92,13 +162,90 @@ class HighAvailabilityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """the types of identities associated with this resource; currently restricted to 'SystemAssigned
-    and UserAssigned'.
+    """the types of identities associated with this resource; currently restricted to 'None and
+    UserAssigned'.
     """
 
     NONE = "None"
-    SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
+
+
+class KeyStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Primary encryption key status for Data encryption enabled server."""
+
+    VALID = "Valid"
+    INVALID = "Invalid"
+
+
+class LogicalReplicationOnSourceDbEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether to setup LogicalReplicationOnSourceDb, if needed."""
+
+    TRUE = "True"
+    FALSE = "False"
+
+
+class MigrationDetailsLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Migration details level."""
+
+    DEFAULT = "Default"
+    SUMMARY = "Summary"
+    FULL = "Full"
+
+
+class MigrationListFilter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MigrationListFilter."""
+
+    ACTIVE = "Active"
+    ALL = "All"
+
+
+class MigrationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """There are two types of migration modes Online and Offline."""
+
+    OFFLINE = "Offline"
+    ONLINE = "Online"
+
+
+class MigrationNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Migration name availability reason."""
+
+    INVALID = "Invalid"
+    ALREADY_EXISTS = "AlreadyExists"
+
+
+class MigrationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Migration state."""
+
+    IN_PROGRESS = "InProgress"
+    WAITING_FOR_USER_ACTION = "WaitingForUserAction"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+
+
+class MigrationSubState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Migration sub state."""
+
+    PERFORMING_PRE_REQUISITE_STEPS = "PerformingPreRequisiteSteps"
+    WAITING_FOR_LOGICAL_REPLICATION_SETUP_REQUEST_ON_SOURCE_DB = "WaitingForLogicalReplicationSetupRequestOnSourceDB"
+    WAITING_FOR_DBS_TO_MIGRATE_SPECIFICATION = "WaitingForDBsToMigrateSpecification"
+    WAITING_FOR_TARGET_DB_OVERWRITE_CONFIRMATION = "WaitingForTargetDBOverwriteConfirmation"
+    WAITING_FOR_DATA_MIGRATION_SCHEDULING = "WaitingForDataMigrationScheduling"
+    WAITING_FOR_DATA_MIGRATION_WINDOW = "WaitingForDataMigrationWindow"
+    MIGRATING_DATA = "MigratingData"
+    WAITING_FOR_CUTOVER_TRIGGER = "WaitingForCutoverTrigger"
+    COMPLETING_MIGRATION = "CompletingMigration"
+    COMPLETED = "Completed"
+
+
+class OnlineResizeSupportedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A value indicating whether online resize is supported in this region for the given
+    subscription. "Enabled" means storage online resize is supported. "Disabled" means storage
+    online resize is not supported.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 
 class OperationOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -113,6 +260,16 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Backup type."""
 
     FULL = "Full"
+
+
+class OverwriteDbsInTargetEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether the databases on the target server can be overwritten, if already present. If
+    set to False, the migration workflow will wait for a confirmation, if it detects that the
+    database already exists.
+    """
+
+    TRUE = "True"
+    FALSE = "False"
 
 
 class PasswordAuthEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -138,6 +295,15 @@ class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PRIMARY = "Primary"
     ASYNC_REPLICA = "AsyncReplica"
     GEO_ASYNC_REPLICA = "GeoAsyncReplica"
+
+
+class RestrictedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A value indicating whether this region is restricted. "Enabled" means region is restricted.
+    "Disabled" stands for region is not restricted.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 
 class ServerHAState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -173,6 +339,7 @@ class ServerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The version of a server."""
 
+    FIFTEEN = "15"
     FOURTEEN = "14"
     THIRTEEN = "13"
     TWELVE = "12"
@@ -185,3 +352,52 @@ class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BURSTABLE = "Burstable"
     GENERAL_PURPOSE = "GeneralPurpose"
     MEMORY_OPTIMIZED = "MemoryOptimized"
+
+
+class StartDataMigrationEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether the data migration should start right away."""
+
+    TRUE = "True"
+    FALSE = "False"
+
+
+class StorageAutoGrow(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Flag to enable / disable Storage Auto grow for flexible server."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
+class StorageAutoGrowthSupportedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A value indicating whether storage auto-grow is supported in this region. "Enabled" means
+    storage auto-grow is supported. "Disabled" stands for storage auto-grow is not supported.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
+class TriggerCutoverEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """To trigger cutover for entire migration we need to send this flag as True."""
+
+    TRUE = "True"
+    FALSE = "False"
+
+
+class ZoneRedundantHaAndGeoBackupSupportedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A value indicating whether Zone Redundant HA and Geo-backup is supported in this region.
+    "Enabled" means zone redundant HA and geo-backup is supported. "Disabled" stands for zone
+    redundant HA and geo-backup is not supported.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
+class ZoneRedundantHaSupportedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A value indicating whether Zone Redundant HA is supported in this region. "Enabled" means zone
+    redundant HA is supported. "Disabled" stands for zone redundant HA is not supported.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"

@@ -1490,6 +1490,13 @@
         "ctxt",
         "wday"
       ]
+    },
+    {
+      "filename": "sdk/iothub/azure-iot-deviceprovisioning/azure/iot/deviceprovisioning/_serialization.py",
+      "words": [
+        "ctxt",
+        "wday"
+      ]
     }
   ],
   "allowCompoundWords": true

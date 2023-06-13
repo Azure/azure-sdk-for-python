@@ -208,6 +208,23 @@ async def delete_all_items_by_partition_key(db, partitionkey):
     for doc in item_list:
         print('Item Id: {0}; Partition Key: {1}'.format(doc.get('id'), doc.get("company")))
 
+
+async def query_items_with_continuation_token_size_limit(container, doc_id):
+    print('\n1.11 Query Items With Continuation Token Size Limit.\n')
+
+    size_limit_in_kb = 8
+    sales_order = get_sales_order(doc_id)
+    await container.create_item(body=sales_order)
+
+    # set response_continuation_token_limit_in_kb to 8 to limit size to 8KB
+    items = container.query_items(
+        query="SELECT * FROM r",
+        partition_key=doc_id,
+        response_continuation_token_limit_in_kb=size_limit_in_kb
+    )
+
+    print('Continuation Token size has been limited to {}KB.'.format(size_limit_in_kb))
+
 def get_sales_order(item_id):
     order1 = {'id' : item_id,
             'account_number' : 'Account1',
@@ -278,6 +295,7 @@ async def run_sample():
             await patch_item(container, 'SalesOrder1')
             await delete_item(container, 'SalesOrder1')
             await delete_all_items_by_partition_key(db, "CompanyA")
+            await query_items_with_continuation_token_size_limit(container, 'SalesOrder1')
 
             # cleanup database after sample
             try:

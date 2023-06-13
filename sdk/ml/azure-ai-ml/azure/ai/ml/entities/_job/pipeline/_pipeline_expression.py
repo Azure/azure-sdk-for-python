@@ -49,7 +49,7 @@ _SUPPORTED_OPERATORS = {
 
 def _enumerate_operation_combination() -> Dict[str, Union[str, Exception]]:
     """Enumerate, leverage `eval` to validate operation and get its result type."""
-    res = dict()
+    res = {}
     primitive_types_values = {
         NONE_PARAMETER_TYPE: repr(None),
         ComponentParameterTypes.BOOLEAN: repr(True),
@@ -260,7 +260,7 @@ class PipelineExpression(PipelineExpressionMixin):
         return self._to_data_binding()
 
     def _to_infix(self) -> str:
-        stack = list()
+        stack = []
         for token in self._postfix:
             if token not in _SUPPORTED_OPERATORS:
                 stack.append(token)
@@ -316,8 +316,12 @@ class PipelineExpression(PipelineExpressionMixin):
                     _postfix = _update_postfix(_postfix, _name, _new_name)
                     _expression_inputs[_new_name] = ExpressionInput(_new_name, _seen_input.type, _seen_input)
             _postfix.append(_name)
+
+            param_input = pipeline_inputs
+            for group_name in _pipeline_input._group_names:
+                param_input = param_input[group_name].values
             _expression_inputs[_name] = ExpressionInput(
-                _name, pipeline_inputs[_pipeline_input._port_name].type, _pipeline_input
+                _name, param_input[_pipeline_input._port_name].type, _pipeline_input
             )
             return _postfix, _expression_inputs
 
@@ -387,7 +391,7 @@ class PipelineExpression(PipelineExpressionMixin):
         from azure.ai.ml.dsl._pipeline_component_builder import _definition_builder_stack
 
         pipeline_inputs = _definition_builder_stack.top().inputs
-        postfix, inputs = list(), dict()
+        postfix, inputs = [], {}
         postfix, inputs = PipelineExpression._handle_operand(operand1, postfix, inputs, pipeline_inputs)
         postfix, inputs = PipelineExpression._handle_operand(operand2, postfix, inputs, pipeline_inputs)
         postfix.append(operator)
@@ -420,7 +424,7 @@ class PipelineExpression(PipelineExpressionMixin):
             )
             raise UserErrorException(message=error_message, no_personal_data_message=error_message)
 
-        stack = list()
+        stack = []
         for token in self._postfix:
             if token != PipelineExpressionOperator.ADD:
                 if token in self._inputs:
@@ -487,7 +491,7 @@ class PipelineExpression(PipelineExpressionMixin):
     def _component_code(self) -> str:
         def _generate_function_code_lines() -> Tuple[List[str], str]:
             """Return lines of code and return type."""
-            _inter_id, _code, _stack, _line_recorder = 0, list(), list(), dict()
+            _inter_id, _code, _stack, _line_recorder = 0, [], [], {}
             for _token in self._postfix:
                 if _token not in _SUPPORTED_OPERATORS:
                     _type = self._get_operand_type(_token)
@@ -550,7 +554,7 @@ class PipelineExpression(PipelineExpressionMixin):
             with open(_data_folder / "expression_component_template.yml", "r") as _f:
                 _data = load_yaml(_f)
             _data["display_name"] = f"Expression: {self.expression}"
-            _data["inputs"] = dict()
+            _data["inputs"] = {}
             _data["outputs"]["output"]["type"] = self._result_type
             _command_inputs_items = []
             for _name in sorted(self._inputs):

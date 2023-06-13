@@ -83,15 +83,15 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :param experiment_name:  Name of the experiment the job will be created under, if None is provided,
         job will be created under experiment 'Default'.
     :type experiment_name: str
-    :param identity: Identity that training job will use while running on compute.
+    :param identity: Identity that the training job will use while running on compute.
     :type identity: Union[
-        azure.ai.ml.ManagedIdentityConfiguration,
-        azure.ai.ml.AmlTokenConfiguration,
-        azure.ai.ml.UserIdentityConfiguration]
+        ~azure.ai.ml.ManagedIdentityConfiguration,
+        ~azure.ai.ml.AmlTokenConfiguration,
+        ~azure.ai.ml.UserIdentityConfiguration]
     :param inputs: Inputs to the command.
     :type inputs: dict
     :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: dict[str, azure.ai.ml.Output]
+    :type outputs: dict[str, ~azure.ai.ml.Output]
     :param sampling_algorithm: The hyperparameter sampling algorithm to use over the `search_space`.
         Defaults to "random".
     :type sampling_algorithm: str
@@ -104,8 +104,8 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :type compute: str
     :param trial: The job configuration for each trial. Each trial will be provided with a different combination
         of hyperparameter values that the system samples from the search_space.
-    :type trial: Union[azure.ai.ml.entities.CommandJob, azure.ai.ml.entities.CommandComponent]
-    :param early_termination: The early termination policy to use.A trial job is canceled
+    :type trial: Union[~azure.ai.ml.entities.CommandJob, ~azure.ai.ml.entities.CommandComponent]
+    :param early_termination: The early termination policy to use. A trial job is canceled
         when the criteria of the specified policy are met. If omitted, no early termination policy will be applied.
     :type early_termination:  Union[
     ~azure.mgmt.machinelearningservices.models.BanditPolicy,
@@ -114,9 +114,19 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :param limits: Limits for the sweep job.
     :type limits: ~azure.ai.ml.entities.SweepJobLimits
     :param queue_settings: Queue settings for the job.
-    :type queue_settings: QueueSettings
+    :type queue_settings: ~azure.ai.ml.entities.QueueSettings
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]
+            :end-before: [END configure_sweep_job_bayesian_sampling_algorithm]
+            :language: python
+            :dedent: 8
+            :caption: Creating a SweepJob
     """
 
     def __init__(
@@ -148,7 +158,57 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
         queue_settings: Optional[QueueSettings] = None,
         **kwargs: Any,
-    ):
+    ) -> None:
+        """Sweep job for hyperparameter tuning.
+
+        :param name: Name of the job.
+        :type name: str
+        :param display_name: Display name of the job.
+        :type display_name: str
+        :param description: Description of the job.
+        :type description: str
+        :param tags: Tag dictionary. Tags can be added, removed, and updated.
+        :type tags: dict[str, str]
+        :param properties: The asset property dictionary.
+        :type properties: dict[str, str]
+        :param experiment_name:  Name of the experiment the job will be created under. If None is provided,
+            job will be created under experiment 'Default'.
+        :type experiment_name: str
+        :param identity: Identity that the training job will use while running on compute.
+        :type identity: Union[
+            ~azure.ai.ml.ManagedIdentityConfiguration,
+            ~azure.ai.ml.AmlTokenConfiguration,
+            ~azure.ai.ml.UserIdentityConfiguration]
+        :param inputs: Inputs to the command.
+        :type inputs: dict
+        :param outputs: Mapping of output data bindings used in the job.
+        :type outputs: dict[str, ~azure.ai.ml.Output]
+        :param sampling_algorithm: The hyperparameter sampling algorithm to use over the `search_space`.
+            Defaults to "random".
+        :type sampling_algorithm: str
+        :param search_space: Dictionary of the hyperparameter search space. The key is the name of the
+            hyperparameter and the value is the parameter expression.
+        :type search_space: Dict
+        :param objective: Metric to optimize for.
+        :type objective: Objective
+        :param compute: The compute target the job runs on.
+        :type compute: str
+        :param trial: The job configuration for each trial. Each trial will be provided with a different combination
+            of hyperparameter values that the system samples from the search_space.
+        :type trial: Union[~azure.ai.ml.entities.CommandJob, ~azure.ai.ml.entities.CommandComponent]
+        :param early_termination: The early termination policy to use. A trial job is canceled
+            when the criteria of the specified policy are met. If omitted, no early termination policy will be applied.
+        :type early_termination:  Union[
+        ~azure.mgmt.machinelearningservices.models.BanditPolicy,
+        ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
+        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
+        :param limits: Limits for the sweep job.
+        :type limits: ~azure.ai.ml.entities.SweepJobLimits
+        :param queue_settings: Queue settings for the job.
+        :type queue_settings: ~azure.ai.ml.entities.QueueSettings
+        :param kwargs: A dictionary of additional configuration parameters.
+        :type kwargs: dict
+        """
         kwargs[TYPE] = JobType.SWEEP
 
         Job.__init__(
