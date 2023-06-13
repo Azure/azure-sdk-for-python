@@ -97,12 +97,12 @@ async def examples_async():
         # gets all items whose product model hasn't been discontinued.
         # The asynchronous client returns asynchronous iterators for its query methods;
         # as such, we iterate over it by using an async for loop
+        # Since we don't explicitly pass a partition key for the query, we perform a cross-partition query.
         # [START query_items]
         import json
 
         async for item in container.query_items(
-                query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"',
-                enable_cross_partition_query=True,
+                query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"'
         ):
             print(json.dumps(item, indent=True))
         # [END query_items]
