@@ -29,11 +29,10 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.ddos_custom_policies.begin_delete(
+    client.ddos_custom_policies.begin_delete(
         resource_group_name="rg1",
         ddos_custom_policy_name="test-ddos-custom-policy",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/DdosCustomPolicyDelete.json
