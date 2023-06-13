@@ -37,6 +37,7 @@ from .._generated.models import (
     PlayOptions,
     RecognizeOptions,
 )
+from .._generated.models._enums import RecognizeInputType
 from .._shared.utils import (
     get_authentication_policy,
     parse_connection_str
@@ -56,10 +57,7 @@ if TYPE_CHECKING:
     from .._shared.models import (
         CommunicationIdentifier,
     )
-    from .._generated.models._enums import (
-        DtmfTone,
-        RecognizeInputType
-    )
+    from .._generated.models._enums import DtmfTone
     from azure.core.exceptions import HttpResponseError
 
 class CallConnectionClient(object): # pylint: disable=client-accepts-api-version-keyword
