@@ -77,7 +77,7 @@ To resolve this issue:
 1. Check that the application or user making the request has sufficient permissions:
    * See this document to [manage access to data collection rule][dcr_role_permissions].
    * To ingest logs, ensure the user or service principal is assigned the **Monitoring Metrics Publisher** role for the DCR.
-1. If the user or application is granted sufficient privileges to upload logs, ensure you're authenticating as that user/application. If you're authenticating using the [DefaultAzureCredential](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/identity/azure-identity/README.md#authenticating-with-defaultazurecredential), check the logs to verify that the credential used is the one you expected. To enable logging, see the [Enable client logging](#enable-client-logging) section.
+1. If the user or application is granted sufficient privileges to upload logs, ensure you're authenticating as that user/application. If you're authenticating using the [DefaultAzureCredential][defaultazurecredential], check the logs to verify that the credential used is the one you expected. To enable logging, see the [Enable client logging](#enable-client-logging) section.
 1. The permissions may take up to 30 minutes to propagate. So, if the permissions were granted recently, retry after some time.
 
 ### Troubleshooting missing logs
