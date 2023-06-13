@@ -23,59 +23,66 @@ parameters:
 - name: SDKType
   type: string
   default: not-specified
+- name: BuildCI
+  type: string
+  default: 'Build CI'
 
-stages:
-  - stage: Build
-    jobs:
-    - template: /eng/pipelines/templates/jobs/ci.yml
-      parameters:
-        ServiceDirectory: ${{parameters.ServiceDirectory}}
-        Artifacts: ${{ parameters.Artifacts }}
-        AdditionalModules: ${{ parameters.AdditionalModules }}
-        SDKType: ${{parameters.SDKType}}
-        MatrixConfigs:
-          - Name: Cosmos_ci_test
-            Path: eng/pipelines/templates/stages/platform-matrix.json
-            Selection: sparse
-            NonSparseParameters: Agent
-            GenerateVMJobs: true
-        MatrixFilters:
-          - TestFromSource=^$|false
-        MatrixReplace:
-          - AZURE_TEST.*=.*/
-        BuildParallelization: 1
+jobs:
+- job: ${{ parameters.BuildCI }}
+  variables:
+    sde:
+  pool:
+    name:
+    vmImage:
+  steps:
+    template: /eng/pipelines/templates/jobs/ci.yml
+    parameters:
+      ServiceDirectory: ${{parameters.ServiceDirectory}}
+      Artifacts: ${{ parameters.Artifacts }}
+      AdditionalModules: ${{ parameters.AdditionalModules }}
+      SDKType: ${{parameters.SDKType}}
+      MatrixConfigs:
+        - Name: Cosmos_ci_test
+          Path: eng/pipelines/templates/stages/platform-matrix.json
+          Selection: sparse
+          NonSparseParameters: Agent
+          GenerateVMJobs: true
+      MatrixFilters:
+        - TestFromSource=^$|false
+      MatrixReplace:
+        - AZURE_TEST.*=.*/
+      BuildParallelization: 1
 
-  - stage: TestEmulator
-    displayName: Test Emulator
-    dependsOn: []
-    jobs:
-    - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
-      parameters:
-        JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
+- job: TestEmulator
+  displayName: Test Emulator
+  steps:
+    template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+    parameters:
+      JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
 #        MatrixConfigs:
 #          - Name: Cosmos_emulator_integration
 #            Path: eng/pipelines/templates/stages/cosmos-emulator-matrix.json
 #            Selection: all
 #            GenerateVMJobs: true
-        AdditionalParameters:
-          BuildParallelization: 1
-          DisableAzureResourceCreation: true
-          ServiceDirectory: cosmos
-          Artifacts: ${{ parameters.Artifacts }}
-          AdditionalModules: ${{ parameters.AdditionalModules }}
-          ACCOUNT_HOST: 'https://localhost:8081/'
-          ACCOUNT_KEY: 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
-          SECONDARY_ACCOUNT_KEY: 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
-          # Increased timeout to 90 because of cosmos emulator taking 25-30 mins to download emulator
-          # Issue filed to improve download speed: https://github.com/Azure/azure-sdk-for-java/issues/12970
-          TimeoutInMinutes: 90
-          TestGoals: 'clean verify'
-          TestOptions: '$(ProfileFlag) $(AdditionalArgs)'
+      AdditionalParameters:
+        BuildParallelization: 1
+        DisableAzureResourceCreation: true
+        ServiceDirectory: cosmos
+        Artifacts: ${{ parameters.Artifacts }}
+        AdditionalModules: ${{ parameters.AdditionalModules }}
+        ACCOUNT_HOST: 'https://localhost:8081/'
+        ACCOUNT_KEY: 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
+        SECONDARY_ACCOUNT_KEY: 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
+        # Increased timeout to 90 because of cosmos emulator taking 25-30 mins to download emulator
+        # Issue filed to improve download speed: https://github.com/Azure/azure-sdk-for-java/issues/12970
+        TimeoutInMinutes: 90
+        TestGoals: 'clean verify'
+        TestOptions: '$(ProfileFlag) $(AdditionalArgs)'
 
-          PreSteps:
-          - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
-            parameters:
-              StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Strong'
-          - powershell: |
-              $Key = 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
-              $password = ConvertTo-SecureString -String $Key -Force -AsPlainText
+  PreSteps:
+    template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
+    parameters:
+      StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Strong'
+      powershell: |
+        $Key = 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
+        $password = ConvertTo-SecureString -String $Key -Force -AsPlainText
