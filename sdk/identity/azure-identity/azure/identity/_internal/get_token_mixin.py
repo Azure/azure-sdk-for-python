@@ -62,6 +62,8 @@ class GetTokenMixin(abc.ABC):
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword bool enable_cae: enables configuring "CP1" client capabilities to support Continuous
+            Access Evaluation (CAE). Defaults to False.
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
