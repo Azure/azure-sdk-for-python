@@ -1,8 +1,10 @@
 # Release History
 
-## 1.27.2 (Unreleased)
+## 1.28.0 (Unreleased)
 
 ### Features Added
+
+- Add header name parameter to RequestIdPolicy
 
 ### Breaking Changes
 
