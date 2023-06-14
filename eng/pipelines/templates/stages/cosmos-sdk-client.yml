@@ -19,14 +19,14 @@ parameters:
   type: boolean
   default: false
 
-extends:
-  template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
-  parameters:
-    ServiceDirectory: ${{ parameters.ServiceDirectory }}
-    # Skip emulator tests in the CI run
-    TestMarkArgument: not cosmosEmulator
-    InjectedPackages: ${{parameters.InjectedPackages}}
-    Artifacts: ${{parameters.Artifacts}}
+#extends:
+#  template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
+#  parameters:
+#    ServiceDirectory: ${{ parameters.ServiceDirectory }}
+#    # Skip emulator tests in the CI run
+#    TestMarkArgument: not cosmosEmulator
+#    InjectedPackages: ${{parameters.InjectedPackages}}
+#    Artifacts: ${{parameters.Artifacts}}
 
 jobs:
   job: Emulator
