@@ -268,7 +268,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     def _upload_substream_block(self, index, block_stream):
         try:
-            block_id = f'BlockId{"%05d" % (index/self.chunk_size)}'
+            block_id = f'BlockId{(index/self.chunk_size):05}'
             self.service.stage_block(
                 block_id,
                 len(block_stream),
@@ -578,8 +578,6 @@ class IterStreamer(object):
 
     def __next__(self):
         return next(self.iterator)
-
-    next = __next__  # Python 2 compatibility.
 
     def tell(self, *args, **kwargs):
         raise UnsupportedOperation("Data generator does not support tell.")
