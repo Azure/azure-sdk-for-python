@@ -28,9 +28,6 @@ extends:
     InjectedPackages: ${{parameters.InjectedPackages}}
     Artifacts: ${{parameters.Artifacts}}
 
-stages:
-- stage: Test_Emulator
-  dependsOn: []
   jobs:
   - job: Emulator
     strategy:
