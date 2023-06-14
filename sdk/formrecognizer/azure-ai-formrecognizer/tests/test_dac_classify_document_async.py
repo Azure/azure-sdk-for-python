@@ -8,7 +8,7 @@ import pytest
 import functools
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
-from azure.ai.formrecognizer._generated.v2023_02_28_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2023_07_31.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
 from azure.ai.formrecognizer import AnalyzeResult, ClassifierDocumentTypeDetails, AzureBlobContentSource
 from preparers import FormRecognizerPreparer

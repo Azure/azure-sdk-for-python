@@ -8,7 +8,7 @@ import pytest
 import functools
 from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import HttpResponseError
-from azure.ai.formrecognizer._generated.v2023_02_28_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2023_07_31.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import AnalysisFeature, AnalyzeResult, DocumentAnalysisClient
 from preparers import FormRecognizerPreparer
 from testcase import FormRecognizerTest
