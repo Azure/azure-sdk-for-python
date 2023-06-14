@@ -38,21 +38,21 @@ jobs:
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         Artifacts: ${{ parameters.Artifacts }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+#        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+#        TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+#        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
-        BuildDocs: ${{ parameters.BuildDocs }}
-        DevFeedName: ${{ parameters.DevFeedName }}
-        MatrixConfigs:
-          - ${{ each config in parameters.MatrixConfigs }}:
-            -  ${{ config }}
-          - ${{ each config in parameters.AdditionalMatrixConfigs }}:
-            -  ${{ config }}
-        MatrixFilters: ${{ parameters.MatrixFilters }}
-        MatrixReplace: ${{ parameters.MatrixReplace }}
-        VerifyAutorest: ${{ parameters.VerifyAutorest }}
-        ValidateFormatting: ${{ parameters.ValidateFormatting }}
+#        BuildDocs: ${{ parameters.BuildDocs }}
+#        DevFeedName: ${{ parameters.DevFeedName }}
+#        MatrixConfigs:
+#          - ${{ each config in parameters.MatrixConfigs }}:
+#            -  ${{ config }}
+#          - ${{ each config in parameters.AdditionalMatrixConfigs }}:
+#            -  ${{ config }}
+#        MatrixFilters: ${{ parameters.MatrixFilters }}
+#        MatrixReplace: ${{ parameters.MatrixReplace }}
+#        VerifyAutorest: ${{ parameters.VerifyAutorest }}
+#        ValidateFormatting: ${{ parameters.ValidateFormatting }}
         TestProxy: ${{ parameters.TestProxy }}
 
 - job: Emulator
