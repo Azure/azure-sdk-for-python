@@ -106,7 +106,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
                 **kwargs)
         else:
             self._client = call_automation_client
- 
+
         self._call_connection_id = call_connection_id
         self._call_connection_client = self._client.call_connection
         self._call_media_client = self._client.call_media
