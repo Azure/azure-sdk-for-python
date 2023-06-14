@@ -12,7 +12,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 import pytest
-from six.moves.urllib_parse import urlparse
+from urllib.parse import urlparse
 
 from helpers import build_aad_response, mock_response, Request, validating_transport
 

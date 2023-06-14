@@ -29,11 +29,10 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.p2_svpn_gateways.begin_delete(
+    client.p2_svpn_gateways.begin_delete(
         resource_group_name="rg1",
         gateway_name="p2sVpnGateway1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/P2SVpnGatewayDelete.json

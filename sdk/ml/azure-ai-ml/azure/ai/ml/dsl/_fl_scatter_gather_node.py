@@ -17,12 +17,12 @@ def _check_for_import(package_name):
     try:
         # pylint: disable=unused-import
         importlib.import_module(package_name)
-    except ImportError:
+    except ImportError as e:
         raise ImportError(
             "The DSL FL Node has an additional requirement above the rest of the "
             + "AML SDK repo in that the mldesigner package is required. Please run `pip install mldesigner` "
             + "and try again."
-        )
+        ) from e
 
 
 @experimental

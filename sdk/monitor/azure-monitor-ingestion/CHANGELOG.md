@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Allow for custom authentication policies or credential scopes to be passed to the client. ([#30739](https://github.com/Azure/azure-sdk-for-python/pull/30739/))
+
 ## 1.0.1 (2023-04-11)
 
 ### Bugs Fixed
