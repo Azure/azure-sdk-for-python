@@ -35,7 +35,7 @@ def _parse_http_date(text):
     return datetime.datetime(*parsed_date[:6], tzinfo=_FixedOffset(parsed_date[9] / 60))
 
 
-def parse_retry_after(retry_after):
+def parse_retry_after(retry_after: str):
     """Helper to parse Retry-After and get value in seconds.
 
     :param str retry_after: Retry-After header

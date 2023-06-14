@@ -120,7 +120,7 @@ class RetryPolicyBase:
             backoff_value = settings["backoff"] * (2 ** (consecutive_errors_len - 1))
         return min(settings["max_backoff"], backoff_value)
 
-    def parse_retry_after(self, retry_after):
+    def parse_retry_after(self, retry_after: str):
         """Helper to parse Retry-After and get value in seconds.
 
         :param str retry_after: Retry-After header
@@ -248,7 +248,7 @@ class RetryPolicyBase:
 
         else:
             # Incrementing because of a server error like a 500 in
-            # status_forcelist and a the given method is in the allowlist
+            # status_forcelist and the given method is in the allowlist
             if response:
                 settings["status"] -= 1
                 if hasattr(response, "http_request") and hasattr(response, "http_response"):
