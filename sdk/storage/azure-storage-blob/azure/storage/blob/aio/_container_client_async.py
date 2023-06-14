@@ -213,7 +213,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             kwargs['source_lease_id'] = lease
         try:
             renamed_container = ContainerClient(
-                "{}://{}".format(self.scheme, self.primary_hostname), container_name=new_name,
+                f"{self.scheme}://{self.primary_hostname}", container_name=new_name,
                 credential=self.credential, api_version=self.api_version, _configuration=self._config,
                 _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
                 require_encryption=self.require_encryption, encryption_version=self.encryption_version,
@@ -511,7 +511,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         else:
             _pipeline = self._pipeline  # pylint: disable = protected-access
         return BlobServiceClient(
-            "{}://{}".format(self.scheme, self.primary_hostname),
+            f"{self.scheme}://{self.primary_hostname}",
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
             _location_mode=self._location_mode, _hosts=self._hosts, require_encryption=self.require_encryption,
             encryption_version=self.encryption_version, key_encryption_key=self.key_encryption_key,
@@ -1247,7 +1247,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
                 :caption: Deleting multiple blobs.
         """
         if len(blobs) == 0:
-            return iter(list())
+            return iter([])
 
         reqs, options = self._generate_delete_blobs_options(*blobs, **kwargs)
 
