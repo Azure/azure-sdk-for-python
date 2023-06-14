@@ -94,10 +94,12 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     """A client-side logical representation of an Azure Cosmos DB account.
 
     Use this client to configure and execute requests to the Azure Cosmos DB service.
-    
-    Its recommended to maintain a single instance of CosmosClient per lifetime of the application which enables efficient connection management and performance.
-    
-    CosmosClient initialization is a heavy operation - don't use initialization CosmosClient instances as credentials or network connectivity validations.
+
+    Its recommended to maintain a single instance of CosmosClient per lifetime of the application which enables 
+    efficient connection management and performance.
+
+    CosmosClient initialization is a heavy operation - don't use initialization CosmosClient instances as 
+    credentials or network connectivity validations.
 
     :param str url: The URL of the Cosmos DB account.
     :param credential: Can be the account key, or a dictionary of resource tokens.
