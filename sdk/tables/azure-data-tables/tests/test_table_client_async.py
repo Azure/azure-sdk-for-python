@@ -195,7 +195,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
     async def test_client_with_sas_token(self, tables_storage_account_name, tables_primary_storage_account_key):
         base_url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
-        sas_token = os.getenv("TABLES_STORAGE_SAS_TOKEN", "fake_sas_token")
+        sas_token = os.getenv("TABLES_STORAGE_SAS_TOKEN", "sv=2015-04-05&ss=t&srt=sco&sp=rwdlacu&se=2023-06-15T07%3A06%3A03.0000000Z&spr=https&sig=FakeSig")
         
         async with TableServiceClient(base_url, credential=AzureSasCredential(sas_token)) as client:
             await client.create_table(table_name)

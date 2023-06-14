@@ -47,6 +47,10 @@ def add_sanitizers(test_proxy):
     # sanitizes tenant ID
     tenant_id = os.environ.get("TABLES_TENANT_ID", "00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(value="00000000-0000-0000-0000-000000000000", regex=tenant_id)
+    # sanitizes SAS token
+    fake_sas_token = "sv=2015-04-05&ss=t&srt=sco&sp=rwdlacu&se=2023-06-15T07%3A06%3A03.0000000Z&spr=https&sig=FakeSig"
+    sas_token = os.environ.get("TABLES_STORAGE_SAS_TOKEN", fake_sas_token)
+    add_general_regex_sanitizer(value=fake_sas_token, regex=sas_token)
     # sanitizes tenant ID used in test_challenge_auth(_async).py tests
     challenge_tenant_id = os.environ.get("CHALLENGE_TABLES_TENANT_ID", "00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(value="00000000-0000-0000-0000-000000000000", regex=challenge_tenant_id)
