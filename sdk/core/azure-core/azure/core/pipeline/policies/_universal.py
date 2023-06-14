@@ -35,7 +35,7 @@ import xml.etree.ElementTree as ET
 import types
 import re
 import uuid
-from typing import IO, cast, Union, Optional, AnyStr, Dict, MutableMapping
+from typing import IO, cast, Union, Optional, AnyStr, Dict, MutableMapping, Set
 import urllib.parse
 from typing_extensions import Protocol
 
@@ -382,11 +382,11 @@ class _HiddenClassProperties(type):
     # https://github.com/Azure/azure-sdk-for-python/issues/26331
 
     @property
-    def DEFAULT_HEADERS_WHITELIST(cls):
+    def DEFAULT_HEADERS_WHITELIST(cls) -> Set[str]:
         return cls.DEFAULT_HEADERS_ALLOWLIST
 
     @DEFAULT_HEADERS_WHITELIST.setter
-    def DEFAULT_HEADERS_WHITELIST(cls, value):
+    def DEFAULT_HEADERS_WHITELIST(cls, value) -> None:
         cls.DEFAULT_HEADERS_ALLOWLIST = value
 
 
@@ -431,7 +431,7 @@ class HttpLoggingPolicy(
     def __init__(self, logger=None, **kwargs):  # pylint: disable=unused-argument
         self.logger = logger or logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
         self.allowed_query_params = set()
-        self.allowed_header_names = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
+        self.allowed_header_names: Set[str] = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
 
     def _redact_query_param(self, key, value):
         lower_case_allowed_query_params = [param.lower() for param in self.allowed_query_params]
