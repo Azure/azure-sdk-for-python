@@ -62,7 +62,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
     ) -> None:
-        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2023_02_28_PREVIEW)
+        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2023_07_31)
         super().__init__(
             endpoint=endpoint, credential=credential, api_version=api_version, client_kind="document", **kwargs
         )
@@ -98,7 +98,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.formrecognizer.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: 2023-02-28-preview
+        .. versionadded:: 2023-07-31
             The *features* and *query_fields* keyword arguments.
 
         .. admonition:: Example:
@@ -128,11 +128,11 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
             _client_op_path = self._client
             if kwargs.pop("features", None):
                 raise ValueError(
-                    "Keyword argument 'features' is only available for API version V2023_02_28_PREVIEW and later."
+                    "Keyword argument 'features' is only available for API version V2023_07_31 and later."
                 )
             if kwargs.pop("query_fields", None):
                 raise ValueError(
-                    "Keyword argument 'query_fields' is only available for API version V2023_02_28_PREVIEW and later."
+                    "Keyword argument 'query_fields' is only available for API version V2023_07_31 and later."
                 )
         else:
             _client_op_path = self._client.document_models
@@ -174,7 +174,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.formrecognizer.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: 2023-02-28-preview
+        .. versionadded:: 2023-07-31
             The *features* and *query_fields* keyword arguments.
 
         .. admonition:: Example:
@@ -204,11 +204,11 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
             _client_op_path = self._client
             if kwargs.pop("features", None):
                 raise ValueError(
-                    "Keyword argument 'features' is only available for API version V2023_02_28_PREVIEW and later."
+                    "Keyword argument 'features' is only available for API version V2023_07_31 and later."
                 )
             if kwargs.pop("query_fields", None):
                 raise ValueError(
-                    "Keyword argument 'query_fields' is only available for API version V2023_02_28_PREVIEW and later."
+                    "Keyword argument 'query_fields' is only available for API version V2023_07_31 and later."
                 )
         else:
             _client_op_path = self._client.document_models
@@ -237,7 +237,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.formrecognizer.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: 2023-02-28-preview
+        .. versionadded:: 2023-07-31
             The *begin_classify_document* client method.
 
         .. admonition:: Example:
@@ -252,7 +252,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
 
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             raise ValueError("Method 'begin_classify_document()' is only available for API version "
-                             "V2023_02_28_PREVIEW and later")
+                             "V2023_07_31 and later")
 
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
@@ -287,7 +287,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.formrecognizer.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: 2023-02-28-preview
+        .. versionadded:: 2023-07-31
             The *begin_classify_document_from_url* client method.
 
         .. admonition:: Example:
@@ -302,7 +302,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
 
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             raise ValueError("Method 'begin_classify_document_from_url()' is only available for API version "
-                             "V2023_02_28_PREVIEW and later")
+                             "V2023_07_31 and later")
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
 

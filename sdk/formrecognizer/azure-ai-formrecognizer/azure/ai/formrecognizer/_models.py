@@ -10,7 +10,7 @@ from typing import Dict, Iterable, List, NewType, Any, Union, Sequence, Optional
 from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
-from ._generated.v2023_02_28_preview.models import (
+from ._generated.v2023_07_31.models import (
     DocumentModelDetails as ModelDetails,
     DocumentClassifierDetails as ClassifierDetails,
     Error
@@ -1988,7 +1988,7 @@ class BoundingRegion:
 class AddressValue:  # pylint: disable=too-many-instance-attributes
     """An address field value.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The *unit*, *city_district*, *state_district*, *suburb*, *house*,
         and *level*  properties.
     """
@@ -2122,7 +2122,7 @@ class AddressValue:  # pylint: disable=too-many-instance-attributes
 class CurrencyValue:
     """A currency value element.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The *code*  property.
     """
 
@@ -2236,7 +2236,7 @@ class DocumentLanguage:
 class DocumentField:
     """An object representing the content and location of a document field value.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The `boolean` value_type and `bool` value
     """
 
@@ -2521,7 +2521,7 @@ class DocumentKeyValueElement:
 class DocumentKeyValuePair:
     """An object representing a document field with distinct field label (key) and field value (may be empty).
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The *common_name*  property.
     """
 
@@ -2799,7 +2799,7 @@ class DocumentLine:
 class DocumentParagraph:
     """A paragraph object generally consisting of contiguous lines with common alignment and spacing.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The `formulaBlock` role.
     """
 
@@ -3145,7 +3145,7 @@ class DocumentImage:
 class DocumentPage:  # pylint: disable=too-many-instance-attributes
     """Content and layout elements extracted from a page of the input.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The *kind*, *annotations*, *barcodes*, *formulas*, and *images* properties.
     """
 
@@ -3343,7 +3343,7 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
 class DocumentStyle:
     """An object representing observed text styles.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The *similar_font_family*, *font_style*, *font_weight*, *color*, and *background_color* properties.
     """
 
@@ -3691,7 +3691,7 @@ class DocumentModelSummary:
     """A summary of document model information including the model ID,
     its description, and when the model was created.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The *expires_on* property.
     """
     model_id: str
@@ -3847,7 +3847,7 @@ class DocumentClassifierDetails:
 class DocumentModelDetails(DocumentModelSummary):
     """Document model information. Includes the doc types that the model can analyze.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The *expires_on* property.
     """
 
@@ -4061,7 +4061,7 @@ class OperationSummary:
     :func:`~get_document_classifier`, :func:`~list_document_classifiers` APIs.
     To find out why an operation failed, use :func:`~get_operation` and provide the `operation_id`.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The `documentClassifierBuild` kind.
     """
     operation_id: str
@@ -4161,7 +4161,7 @@ class OperationDetails(OperationSummary):
     the model can also be accessed using the :func:`~get_document_model`, :func:`~list_document_models`,
     :func:`~get_document_classifier`, :func:`~list_document_classifiers` APIs.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The `documentClassifierBuild` kind and `DocumentClassifierDetails` result.
     """
     operation_id: str
@@ -4524,7 +4524,7 @@ class QuotaDetails:
 class ResourceDetails:
     """Details regarding the Form Recognizer resource.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The *custom_neural_document_model_builds* property.
     """
 

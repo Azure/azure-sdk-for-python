@@ -85,7 +85,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
-        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2023_02_28_PREVIEW)
+        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2023_07_31)
         super().__init__(
             endpoint=endpoint, credential=credential, api_version=api_version, client_kind="document", **kwargs
         )
@@ -153,7 +153,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :rtype: ~azure.ai.formrecognizer.DocumentModelAdministrationLROPoller[DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: 2023-02-28-preview
+        .. versionadded:: 2023-07-31
             The *file_list* keyword argument.
 
         .. admonition:: Example:
@@ -205,7 +205,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
             _client_op_path = self._client.begin_build_document_model
             if file_list:
                 raise ValueError(
-                    "Keyword argument 'file_list' is only available for API version V2023_02_28_PREVIEW and later."
+                    "Keyword argument 'file_list' is only available for API version V2023_07_31 and later."
                 )
         else:
             _client_op_path = self._client.document_models.begin_build_model
@@ -601,7 +601,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :rtype: ~azure.ai.formrecognizer.DocumentModelAdministrationLROPoller[DocumentClassifierDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: 2023-02-28-preview
+        .. versionadded:: 2023-07-31
             The *begin_build_document_classifier* client method.
 
         .. admonition:: Example:
@@ -621,7 +621,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             raise ValueError("Method 'begin_build_document_classifier()' is only available for API version "
-                             "V2023_02_28_PREVIEW and later")
+                             "V2023_07_31 and later")
         cls = kwargs.pop("cls", callback)
         continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
@@ -651,7 +651,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :rtype: ~azure.ai.formrecognizer.DocumentClassifierDetails
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
 
-        .. versionadded:: 2023-02-28-preview
+        .. versionadded:: 2023-07-31
             The *get_document_classifier* client method.
 
         .. admonition:: Example:
@@ -669,7 +669,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             raise ValueError("Method 'get_document_classifier()' is only available for API version "
-                             "V2023_02_28_PREVIEW and later")
+                             "V2023_07_31 and later")
         response = self._client.document_classifiers.get_classifier(classifier_id=classifier_id, **kwargs)
         return DocumentClassifierDetails._from_generated(response)
 
@@ -682,7 +682,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :rtype: ~azure.core.paging.ItemPaged[DocumentClassifierDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: 2023-02-28-preview
+        .. versionadded:: 2023-07-31
             The *list_document_classifiers* client method.
 
         .. admonition:: Example:
@@ -697,7 +697,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             raise ValueError("Method 'list_document_classifiers()' is only available for API version "
-                             "V2023_02_28_PREVIEW and later")
+                             "V2023_07_31 and later")
         return self._client.document_classifiers.list_classifiers(  # type: ignore
             cls=kwargs.pop(
                 "cls",
@@ -714,7 +714,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
 
-        .. versionadded:: 2023-02-28-preview
+        .. versionadded:: 2023-07-31
             The *delete_document_classifier* client method.
 
         .. admonition:: Example:
@@ -732,7 +732,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             raise ValueError("Method 'delete_document_classifier()' is only available for API version "
-                             "V2023_02_28_PREVIEW and later")
+                             "V2023_07_31 and later")
         return self._client.document_classifiers.delete_classifier(classifier_id=classifier_id, **kwargs)
 
     def get_document_analysis_client(self, **kwargs: Any) -> DocumentAnalysisClient:
