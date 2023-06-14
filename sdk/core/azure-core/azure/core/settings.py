@@ -213,7 +213,7 @@ class PrioritizedSetting:
 
     """
 
-    def __init__(self, name, env_var=None, system_hook=None, default=_Unset, convert=None):
+    def __init__(self, name: str, env_var: str = None, system_hook=None, default=_Unset, convert=None):
 
         self._name = name
         self._env_var = env_var
