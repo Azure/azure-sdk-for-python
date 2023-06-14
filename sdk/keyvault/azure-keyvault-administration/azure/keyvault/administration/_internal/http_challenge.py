@@ -133,7 +133,7 @@ class HttpChallenge(object):
         """
         return self.supports_pop() and self.server_encryption_key and self.server_signature_key  # type: ignore
 
-    def _validate_challenge(self, challenge: str) -> str:  # pylint:disable=no-self-use
+    def _validate_challenge(self, challenge: str) -> str:  # pylint:disable=useless-option-value,no-self-use
         """Verifies that the challenge is a valid auth challenge and returns the key=value pairs.
 
         :param str challenge: The WWW-Authenticate header of the challenge response.
@@ -146,7 +146,7 @@ class HttpChallenge(object):
 
         return challenge.strip()
 
-    def _validate_request_uri(self, uri: str) -> str:  # pylint:disable=no-self-use
+    def _validate_request_uri(self, uri: str) -> str:  # pylint:disable=useless-option-value,no-self-use
         """Extracts the host authority from the given URI.
 
         :param str uri: The URI of the HTTP request that prompted the challenge.
