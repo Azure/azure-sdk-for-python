@@ -268,7 +268,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     def _upload_substream_block(self, index, block_stream):
         try:
-            block_id = f'BlockId{"%05d" % (index/self.chunk_size)}'
+            block_id = f'BlockId{(index/self.chunk_size):05}'
             self.service.stage_block(
                 block_id,
                 len(block_stream),
@@ -597,10 +597,11 @@ class IterStreamer(object):
                     chunk = chunk.encode(self.encoding)
                 data += chunk
                 count += len(chunk)
+        # This means count < size and what's leftover will be returned in this call.
         except StopIteration:
-            pass
+            self.leftover = b""
 
-        if count > size:
+        if count >= size:
             self.leftover = data[size:]
 
         return data[:size]
