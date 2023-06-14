@@ -84,7 +84,7 @@ def _convert_to_isoformat(date_time):
     return deserialized
 
 
-def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping:
+def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping[str, Any]:
     """Return a case-insensitive mutable mapping from an inputted mapping structure.
 
     :return: A case-insensitive mutable mapping object.
