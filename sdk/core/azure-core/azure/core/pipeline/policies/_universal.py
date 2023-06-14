@@ -103,7 +103,7 @@ class HeadersPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         self._headers.update(kwargs.pop("headers", {}))
 
     @property
-    def headers(self):
+    def headers(self) -> Dict[str, str]:
         """The current headers collection."""
         return self._headers
 
@@ -283,7 +283,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTy
             :caption: Configuring a network trace logging policy.
     """
 
-    def __init__(self, logging_enable=False, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, logging_enable: bool = False, **kwargs):  # pylint: disable=unused-argument
         self.enable_http_logger = logging_enable
 
     def on_request(
