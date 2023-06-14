@@ -394,7 +394,7 @@ class ChangeFeedStreamer(object):
         self._chunk_size_snapshot = blob_client.get_blob_properties().size
         length = self._chunk_size_snapshot - self._chunk_file_start
         self._iterator = blob_client.download_blob(offset=self._chunk_file_start,
-                                                   length=length).chunks() if length > 0 else iter(list())
+                                                   length=length).chunks() if length > 0 else iter([])
 
     def __len__(self):
         return self._download_offset
