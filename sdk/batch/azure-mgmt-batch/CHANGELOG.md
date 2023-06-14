@@ -6,6 +6,7 @@
 
   - Model NetworkConfiguration has a new parameter enable_accelerated_networking
   - Model VMExtension has a new parameter enable_automatic_upgrade
+  - Model ContainerConfiguration allows two possible values: `dockerCompatible` and `criCompatible` instead of fixed value `dockerCompatible`
 
 ## 17.0.0 (2022-11-23)
 
