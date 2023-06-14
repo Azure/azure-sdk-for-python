@@ -194,7 +194,7 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
     def test_client_with_sas_token(self, tables_storage_account_name, tables_primary_storage_account_key):
         base_url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
-        sas_token = os.getenv("TABLES_STORAGE_SAS_TOKEN")
+        sas_token = os.getenv("TABLES_STORAGE_SAS_TOKEN", "fake_sas_token")
         
         with TableServiceClient(base_url, credential=AzureSasCredential(sas_token)) as client:
             client.create_table(table_name)
