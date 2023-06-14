@@ -311,7 +311,7 @@ class KeyClient(KeyVaultClientBase):
         return self.create_key(name, key_type="oct-HSM" if hsm else "oct", **kwargs)
 
     @distributed_trace
-    def begin_delete_key(self, name: str, **kwargs) -> "LROPoller[DeletedKey]":  # pylint:disable=delete-operation-wrong-return-type,bad-option-value
+    def begin_delete_key(self, name: str, **kwargs) -> "LROPoller[DeletedKey]":  # pylint:disable=bad-option-value,delete-operation-wrong-return-type
         """Delete all versions of a key and its cryptographic material.
 
         Requires keys/delete permission. When this method returns Key Vault has begun deleting the key. Deletion may

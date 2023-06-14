@@ -5,7 +5,7 @@
 
 import asyncio
 import logging
-from typing import Any, Awaitable, Callable
+from typing import Any, Callable
 
 from azure.core.polling import AsyncPollingMethod
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
@@ -32,7 +32,9 @@ class AsyncDeleteRecoverPollingMethod(AsyncPollingMethod):
     :param int interval: The polling interval, in seconds.
     """
 
-    def __init__(self, command: Callable, final_resource: Any, finished: bool, interval: int = 2) -> None:
+    def __init__(
+            self, command: Callable, final_resource: Any, finished: bool, interval: int = 2
+        ) -> None:
         self._command = command
         self._resource = final_resource
         self._polling_interval = interval
