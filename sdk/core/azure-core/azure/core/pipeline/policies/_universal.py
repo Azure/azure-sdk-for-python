@@ -35,7 +35,7 @@ import xml.etree.ElementTree as ET
 import types
 import re
 import uuid
-from typing import IO, cast, Union, Optional, AnyStr, Dict, MutableMapping
+from typing import IO, cast, Union, Optional, AnyStr, Dict, MutableMapping, Any
 import urllib.parse
 from typing_extensions import Protocol
 
@@ -153,7 +153,12 @@ class RequestIdPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """
 
     def __init__(
-        self, *, request_id=_Unset, auto_request_id=True, request_id_header_name="x-ms-client-request-id", **kwargs
+        self,
+        *,
+        request_id=_Unset,
+        auto_request_id: bool = True,
+        request_id_header_name: str = "x-ms-client-request-id",
+        **kwargs: Any  # pylint: disable=unused-argument
     ) -> None:
         super()
         self._request_id = request_id

@@ -26,7 +26,7 @@
 from typing import Union, Optional
 
 
-class Configuration:
+class Configuration:  # pylint: disable=too-many-instance-attributes
     """Provides the home for all of the configurable policies in the pipeline.
 
     A new Configuration object provides no default policies and does not specify in what
