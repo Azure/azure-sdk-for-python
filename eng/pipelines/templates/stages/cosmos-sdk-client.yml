@@ -29,6 +29,16 @@ parameters:
 #    Artifacts: ${{parameters.Artifacts}}
 
 jobs:
+- job: Build CI
+  steps:
+    - template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        # Skip emulator tests in the CI run
+        TestMarkArgument: not cosmosEmulator
+        InjectedPackages: ${{parameters.InjectedPackages}}
+        Artifacts: ${{parameters.Artifacts}}
+
 - job: Emulator
   strategy:
     matrix:
