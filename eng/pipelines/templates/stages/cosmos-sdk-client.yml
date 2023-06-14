@@ -28,33 +28,33 @@ extends:
     InjectedPackages: ${{parameters.InjectedPackages}}
     Artifacts: ${{parameters.Artifacts}}
 
-  stages:
-  - stage: Test_Emulator
-    dependsOn: []
-    jobs:
-    - job: Emulator
-      strategy:
-        matrix:
-          Windows_Python36:
-            OSVmImage: 'windows-2022'
-            PythonVersion: '3.9'
-      pool:
-        vmImage: $(OSVmImage)
+stages:
+- stage: Test_Emulator
+  dependsOn: []
+  jobs:
+  - job: Emulator
+    strategy:
+      matrix:
+        Windows_Python36:
+          OSVmImage: 'windows-2022'
+          PythonVersion: '3.9'
+    pool:
+      vmImage: $(OSVmImage)
 
-      steps:
-        - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
-          parameters:
-            EmulatorMsiUrl: ${{ parameters.EmulatorMsiUrl }}
-            StartParameters: ${{ parameters.EmulatorStartParameters }}
+    steps:
+      - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
+        parameters:
+          EmulatorMsiUrl: ${{ parameters.EmulatorMsiUrl }}
+          StartParameters: ${{ parameters.EmulatorStartParameters }}
 
-        - template: /eng/pipelines/templates/steps/build-test.yml
-          parameters:
-            TestMarkArgument: not globaldb
-            EnvVars:
-              ACCOUNT_HOST: https://localhost:8081/
-              ACCOUNT_KEY: C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
-            ServiceDirectory: ${{ parameters.ServiceDirectory }}
-            PythonVersion: $(PythonVersion)
-            OSVmImage: $(OSVmImage)
-            ToxTestEnv: 'whl,sdist'
-            InjectedPackages: ${{parameters.InjectedPackages}}
+      - template: /eng/pipelines/templates/steps/build-test.yml
+        parameters:
+          TestMarkArgument: not globaldb
+          EnvVars:
+            ACCOUNT_HOST: https://localhost:8081/
+            ACCOUNT_KEY: C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          PythonVersion: $(PythonVersion)
+          OSVmImage: $(OSVmImage)
+          ToxTestEnv: 'whl,sdist'
+          InjectedPackages: ${{parameters.InjectedPackages}}

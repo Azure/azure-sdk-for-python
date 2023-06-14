@@ -1,7 +1,7 @@
 parameters:
   EmulatorInstallPath: "$(Agent.HomeDirectory)/../../Program Files/Azure Cosmos DB Emulator/Microsoft.Azure.Cosmos.Emulator.exe"
   EmulatorMsiUrl: "https://aka.ms/cosmosdb-emulator"
-  StartParameters: ''
+  StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Strong'
 
 steps:
   - task: Powershell@2
