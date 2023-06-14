@@ -29,7 +29,7 @@ parameters:
 #    Artifacts: ${{parameters.Artifacts}}
 
 jobs:
-  job: Emulator
+- job: Emulator
   strategy:
     matrix:
       Windows_Python36:
