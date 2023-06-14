@@ -46,6 +46,7 @@ class Configuration:
      User-Agent header.
     :ivar authentication_policy: Provides configuration parameters for adding a bearer token Authorization
      header to requests.
+    :ivar request_id_policy: Provides configuration parameters for adding a request id to requests.
     :keyword polling_interval: Polling interval while doing LRO operations, if Retry-After is not set.
 
     .. admonition:: Example:
@@ -84,6 +85,9 @@ class Configuration:
 
         # Authentication configuration
         self.authentication_policy = None
+
+        # Request ID policy
+        self.request_id_policy = None
 
         # Polling interval if no retry-after in polling calls results
         self.polling_interval = kwargs.get("polling_interval", 30)
