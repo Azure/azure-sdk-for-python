@@ -30,14 +30,30 @@ parameters:
 
 jobs:
 - job: Build CI
+  pool:
+    name: "azsdk-pool-mms-win-2022-general"
+    vmImage: "windows-2022"
   steps:
-    - template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
+    - template: /eng/pipelines/templates/jobs/ci.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        # Skip emulator tests in the CI run
-        TestMarkArgument: not cosmosEmulator
-        InjectedPackages: ${{parameters.InjectedPackages}}
-        Artifacts: ${{parameters.Artifacts}}
+        Artifacts: ${{ parameters.Artifacts }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+        InjectedPackages: ${{ parameters.InjectedPackages }}
+        BuildDocs: ${{ parameters.BuildDocs }}
+        DevFeedName: ${{ parameters.DevFeedName }}
+        MatrixConfigs:
+          - ${{ each config in parameters.MatrixConfigs }}:
+            -  ${{ config }}
+          - ${{ each config in parameters.AdditionalMatrixConfigs }}:
+            -  ${{ config }}
+        MatrixFilters: ${{ parameters.MatrixFilters }}
+        MatrixReplace: ${{ parameters.MatrixReplace }}
+        VerifyAutorest: ${{ parameters.VerifyAutorest }}
+        ValidateFormatting: ${{ parameters.ValidateFormatting }}
+        TestProxy: ${{ parameters.TestProxy }}
 
 - job: Emulator
   strategy:
