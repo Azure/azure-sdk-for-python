@@ -180,27 +180,25 @@ class AnalyzeResult(msrest.serialization.Model):
     :vartype model_id: str
     :ivar string_index_type: Required. Method used to compute string offset and length. Known
      values are: "textElements", "unicodeCodePoint", "utf16CodeUnit".
-    :vartype string_index_type: str or
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.StringIndexType
+    :vartype string_index_type: str or ~azure.ai.formrecognizer.v2023_07_31.models.StringIndexType
     :ivar content: Required. Concatenate string representation of all textual and visual elements
      in reading order.
     :vartype content: str
     :ivar pages: Required. Analyzed pages.
-    :vartype pages: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentPage]
+    :vartype pages: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentPage]
     :ivar paragraphs: Extracted paragraphs.
-    :vartype paragraphs:
-     list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentParagraph]
+    :vartype paragraphs: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentParagraph]
     :ivar tables: Extracted tables.
-    :vartype tables: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentTable]
+    :vartype tables: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentTable]
     :ivar key_value_pairs: Extracted key-value pairs.
     :vartype key_value_pairs:
-     list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentKeyValuePair]
+     list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentKeyValuePair]
     :ivar styles: Extracted font styles.
-    :vartype styles: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentStyle]
+    :vartype styles: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentStyle]
     :ivar languages: Detected languages.
-    :vartype languages: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentLanguage]
+    :vartype languages: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentLanguage]
     :ivar documents: Extracted documents.
-    :vartype documents: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.Document]
+    :vartype documents: list[~azure.ai.formrecognizer.v2023_07_31.models.Document]
     """
 
     _validation = {
@@ -249,27 +247,25 @@ class AnalyzeResult(msrest.serialization.Model):
         :keyword string_index_type: Required. Method used to compute string offset and length. Known
          values are: "textElements", "unicodeCodePoint", "utf16CodeUnit".
         :paramtype string_index_type: str or
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.StringIndexType
+         ~azure.ai.formrecognizer.v2023_07_31.models.StringIndexType
         :keyword content: Required. Concatenate string representation of all textual and visual
          elements in reading order.
         :paramtype content: str
         :keyword pages: Required. Analyzed pages.
-        :paramtype pages: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentPage]
+        :paramtype pages: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentPage]
         :keyword paragraphs: Extracted paragraphs.
-        :paramtype paragraphs:
-         list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentParagraph]
+        :paramtype paragraphs: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentParagraph]
         :keyword tables: Extracted tables.
-        :paramtype tables: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentTable]
+        :paramtype tables: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentTable]
         :keyword key_value_pairs: Extracted key-value pairs.
         :paramtype key_value_pairs:
-         list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentKeyValuePair]
+         list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentKeyValuePair]
         :keyword styles: Extracted font styles.
-        :paramtype styles: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentStyle]
+        :paramtype styles: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentStyle]
         :keyword languages: Detected languages.
-        :paramtype languages:
-         list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentLanguage]
+        :paramtype languages: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentLanguage]
         :keyword documents: Extracted documents.
-        :paramtype documents: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.Document]
+        :paramtype documents: list[~azure.ai.formrecognizer.v2023_07_31.models.Document]
         """
         super(AnalyzeResult, self).__init__(**kwargs)
         self.api_version = api_version
@@ -293,16 +289,16 @@ class AnalyzeResultOperation(msrest.serialization.Model):
     :ivar status: Required. Operation status. Known values are: "notStarted", "running", "failed",
      "succeeded".
     :vartype status: str or
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.AnalyzeResultOperationStatus
+     ~azure.ai.formrecognizer.v2023_07_31.models.AnalyzeResultOperationStatus
     :ivar created_date_time: Required. Date and time (UTC) when the analyze operation was
      submitted.
     :vartype created_date_time: ~datetime.datetime
     :ivar last_updated_date_time: Required. Date and time (UTC) when the status was last updated.
     :vartype last_updated_date_time: ~datetime.datetime
     :ivar error: Encountered error during document analysis.
-    :vartype error: ~azure.ai.formrecognizer.v2023_02_28_preview.models.Error
+    :vartype error: ~azure.ai.formrecognizer.v2023_07_31.models.Error
     :ivar analyze_result: Document analysis result.
-    :vartype analyze_result: ~azure.ai.formrecognizer.v2023_02_28_preview.models.AnalyzeResult
+    :vartype analyze_result: ~azure.ai.formrecognizer.v2023_07_31.models.AnalyzeResult
     """
 
     _validation = {
@@ -333,7 +329,7 @@ class AnalyzeResultOperation(msrest.serialization.Model):
         :keyword status: Required. Operation status. Known values are: "notStarted", "running",
          "failed", "succeeded".
         :paramtype status: str or
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.AnalyzeResultOperationStatus
+         ~azure.ai.formrecognizer.v2023_07_31.models.AnalyzeResultOperationStatus
         :keyword created_date_time: Required. Date and time (UTC) when the analyze operation was
          submitted.
         :paramtype created_date_time: ~datetime.datetime
@@ -341,9 +337,9 @@ class AnalyzeResultOperation(msrest.serialization.Model):
          updated.
         :paramtype last_updated_date_time: ~datetime.datetime
         :keyword error: Encountered error during document analysis.
-        :paramtype error: ~azure.ai.formrecognizer.v2023_02_28_preview.models.Error
+        :paramtype error: ~azure.ai.formrecognizer.v2023_07_31.models.Error
         :keyword analyze_result: Document analysis result.
-        :paramtype analyze_result: ~azure.ai.formrecognizer.v2023_02_28_preview.models.AnalyzeResult
+        :paramtype analyze_result: ~azure.ai.formrecognizer.v2023_07_31.models.AnalyzeResult
         """
         super(AnalyzeResultOperation, self).__init__(**kwargs)
         self.status = status
@@ -529,7 +525,7 @@ class BuildDocumentClassifierRequest(msrest.serialization.Model):
     :vartype description: str
     :ivar doc_types: Required. List of document types to classify against.
     :vartype doc_types: dict[str,
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.ClassifierDocumentTypeDetails]
+     ~azure.ai.formrecognizer.v2023_07_31.models.ClassifierDocumentTypeDetails]
     """
 
     _validation = {
@@ -559,7 +555,7 @@ class BuildDocumentClassifierRequest(msrest.serialization.Model):
         :paramtype description: str
         :keyword doc_types: Required. List of document types to classify against.
         :paramtype doc_types: dict[str,
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.ClassifierDocumentTypeDetails]
+         ~azure.ai.formrecognizer.v2023_07_31.models.ClassifierDocumentTypeDetails]
         """
         super(BuildDocumentClassifierRequest, self).__init__(**kwargs)
         self.classifier_id = classifier_id
@@ -578,14 +574,12 @@ class BuildDocumentModelRequest(msrest.serialization.Model):
     :vartype description: str
     :ivar build_mode: Required. Custom document model build mode. Known values are: "template",
      "neural".
-    :vartype build_mode: str or
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentBuildMode
+    :vartype build_mode: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentBuildMode
     :ivar azure_blob_source: Azure Blob Storage location containing the training data.
-    :vartype azure_blob_source:
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.AzureBlobContentSource
+    :vartype azure_blob_source: ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobContentSource
     :ivar azure_blob_file_list_source: Azure Blob Storage file list specifying the training data.
     :vartype azure_blob_file_list_source:
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.AzureBlobFileListSource
+     ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobFileListSource
     :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     """
@@ -623,15 +617,14 @@ class BuildDocumentModelRequest(msrest.serialization.Model):
         :paramtype description: str
         :keyword build_mode: Required. Custom document model build mode. Known values are: "template",
          "neural".
-        :paramtype build_mode: str or
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentBuildMode
+        :paramtype build_mode: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentBuildMode
         :keyword azure_blob_source: Azure Blob Storage location containing the training data.
         :paramtype azure_blob_source:
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.AzureBlobContentSource
+         ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobContentSource
         :keyword azure_blob_file_list_source: Azure Blob Storage file list specifying the training
          data.
         :paramtype azure_blob_file_list_source:
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.AzureBlobFileListSource
+         ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobFileListSource
         :keyword tags: A set of tags. List of key-value tag attributes associated with the document
          model.
         :paramtype tags: dict[str, str]
@@ -649,11 +642,10 @@ class ClassifierDocumentTypeDetails(msrest.serialization.Model):
     """Training data source.
 
     :ivar azure_blob_source: Azure Blob Storage location containing the training data.
-    :vartype azure_blob_source:
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.AzureBlobContentSource
+    :vartype azure_blob_source: ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobContentSource
     :ivar azure_blob_file_list_source: Azure Blob Storage file list specifying the training data.
     :vartype azure_blob_file_list_source:
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.AzureBlobFileListSource
+     ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobFileListSource
     """
 
     _attribute_map = {
@@ -671,11 +663,11 @@ class ClassifierDocumentTypeDetails(msrest.serialization.Model):
         """
         :keyword azure_blob_source: Azure Blob Storage location containing the training data.
         :paramtype azure_blob_source:
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.AzureBlobContentSource
+         ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobContentSource
         :keyword azure_blob_file_list_source: Azure Blob Storage file list specifying the training
          data.
         :paramtype azure_blob_file_list_source:
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.AzureBlobFileListSource
+         ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobFileListSource
         """
         super(ClassifierDocumentTypeDetails, self).__init__(**kwargs)
         self.azure_blob_source = azure_blob_source
@@ -756,7 +748,7 @@ class ComposeDocumentModelRequest(msrest.serialization.Model):
     :vartype description: str
     :ivar component_models: Required. List of component document models to compose.
     :vartype component_models:
-     list[~azure.ai.formrecognizer.v2023_02_28_preview.models.ComponentDocumentModelDetails]
+     list[~azure.ai.formrecognizer.v2023_07_31.models.ComponentDocumentModelDetails]
     :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     """
@@ -790,7 +782,7 @@ class ComposeDocumentModelRequest(msrest.serialization.Model):
         :paramtype description: str
         :keyword component_models: Required. List of component document models to compose.
         :paramtype component_models:
-         list[~azure.ai.formrecognizer.v2023_02_28_preview.models.ComponentDocumentModelDetails]
+         list[~azure.ai.formrecognizer.v2023_07_31.models.ComponentDocumentModelDetails]
         :keyword tags: A set of tags. List of key-value tag attributes associated with the document
          model.
         :paramtype tags: dict[str, str]
@@ -972,12 +964,11 @@ class Document(msrest.serialization.Model):
     :ivar doc_type: Required. Document type.
     :vartype doc_type: str
     :ivar bounding_regions: Bounding regions covering the document.
-    :vartype bounding_regions:
-     list[~azure.ai.formrecognizer.v2023_02_28_preview.models.BoundingRegion]
+    :vartype bounding_regions: list[~azure.ai.formrecognizer.v2023_07_31.models.BoundingRegion]
     :ivar spans: Required. Location of the document in the reading order concatenated content.
-    :vartype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+    :vartype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
     :ivar fields: Dictionary of named field values.
-    :vartype fields: dict[str, ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentField]
+    :vartype fields: dict[str, ~azure.ai.formrecognizer.v2023_07_31.models.DocumentField]
     :ivar confidence: Required. Confidence of correctly extracting the document.
     :vartype confidence: float
     """
@@ -1010,12 +1001,11 @@ class Document(msrest.serialization.Model):
         :keyword doc_type: Required. Document type.
         :paramtype doc_type: str
         :keyword bounding_regions: Bounding regions covering the document.
-        :paramtype bounding_regions:
-         list[~azure.ai.formrecognizer.v2023_02_28_preview.models.BoundingRegion]
+        :paramtype bounding_regions: list[~azure.ai.formrecognizer.v2023_07_31.models.BoundingRegion]
         :keyword spans: Required. Location of the document in the reading order concatenated content.
-        :paramtype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+        :paramtype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
         :keyword fields: Dictionary of named field values.
-        :paramtype fields: dict[str, ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentField]
+        :paramtype fields: dict[str, ~azure.ai.formrecognizer.v2023_07_31.models.DocumentField]
         :keyword confidence: Required. Confidence of correctly extracting the document.
         :paramtype confidence: float
         """
@@ -1033,8 +1023,7 @@ class DocumentAnnotation(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: Required. Annotation kind. Known values are: "check", "cross".
-    :vartype kind: str or
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentAnnotationKind
+    :vartype kind: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentAnnotationKind
     :ivar polygon: Required. Bounding polygon of the annotation.
     :vartype polygon: list[float]
     :ivar confidence: Required. Confidence of correctly extracting the annotation.
@@ -1063,8 +1052,7 @@ class DocumentAnnotation(msrest.serialization.Model):
     ):
         """
         :keyword kind: Required. Annotation kind. Known values are: "check", "cross".
-        :paramtype kind: str or
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentAnnotationKind
+        :paramtype kind: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentAnnotationKind
         :keyword polygon: Required. Bounding polygon of the annotation.
         :paramtype polygon: list[float]
         :keyword confidence: Required. Confidence of correctly extracting the annotation.
@@ -1084,13 +1072,13 @@ class DocumentBarcode(msrest.serialization.Model):
     :ivar kind: Required. Barcode kind. Known values are: "QRCode", "PDF417", "UPCA", "UPCE",
      "Code39", "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar", "DataBarExpanded", "ITF",
      "MicroQRCode", "Aztec", "DataMatrix", "MaxiCode".
-    :vartype kind: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentBarcodeKind
+    :vartype kind: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentBarcodeKind
     :ivar value: Required. Barcode value.
     :vartype value: str
     :ivar polygon: Bounding polygon of the barcode.
     :vartype polygon: list[float]
     :ivar span: Required. Location of the barcode in the reading order concatenated content.
-    :vartype span: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan
+    :vartype span: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan
     :ivar confidence: Required. Confidence of correctly extracting the barcode.
     :vartype confidence: float
     """
@@ -1124,13 +1112,13 @@ class DocumentBarcode(msrest.serialization.Model):
         :keyword kind: Required. Barcode kind. Known values are: "QRCode", "PDF417", "UPCA", "UPCE",
          "Code39", "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar", "DataBarExpanded", "ITF",
          "MicroQRCode", "Aztec", "DataMatrix", "MaxiCode".
-        :paramtype kind: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentBarcodeKind
+        :paramtype kind: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentBarcodeKind
         :keyword value: Required. Barcode value.
         :paramtype value: str
         :keyword polygon: Bounding polygon of the barcode.
         :paramtype polygon: list[float]
         :keyword span: Required. Location of the barcode in the reading order concatenated content.
-        :paramtype span: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan
+        :paramtype span: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan
         :keyword confidence: Required. Confidence of correctly extracting the barcode.
         :paramtype confidence: float
         """
@@ -1154,7 +1142,7 @@ class OperationDetails(msrest.serialization.Model):
     :vartype operation_id: str
     :ivar status: Required. Operation status. Known values are: "notStarted", "running", "failed",
      "succeeded", "canceled".
-    :vartype status: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.OperationStatus
+    :vartype status: str or ~azure.ai.formrecognizer.v2023_07_31.models.OperationStatus
     :ivar percent_completed: Operation progress (0-100).
     :vartype percent_completed: int
     :ivar created_date_time: Required. Date and time (UTC) when the operation was created.
@@ -1170,7 +1158,7 @@ class OperationDetails(msrest.serialization.Model):
     :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar error: Encountered error.
-    :vartype error: ~azure.ai.formrecognizer.v2023_02_28_preview.models.Error
+    :vartype error: ~azure.ai.formrecognizer.v2023_07_31.models.Error
     """
 
     _validation = {
@@ -1219,7 +1207,7 @@ class OperationDetails(msrest.serialization.Model):
         :paramtype operation_id: str
         :keyword status: Required. Operation status. Known values are: "notStarted", "running",
          "failed", "succeeded", "canceled".
-        :paramtype status: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.OperationStatus
+        :paramtype status: str or ~azure.ai.formrecognizer.v2023_07_31.models.OperationStatus
         :keyword percent_completed: Operation progress (0-100).
         :paramtype percent_completed: int
         :keyword created_date_time: Required. Date and time (UTC) when the operation was created.
@@ -1235,7 +1223,7 @@ class OperationDetails(msrest.serialization.Model):
          model.
         :paramtype tags: dict[str, str]
         :keyword error: Encountered error.
-        :paramtype error: ~azure.ai.formrecognizer.v2023_02_28_preview.models.Error
+        :paramtype error: ~azure.ai.formrecognizer.v2023_07_31.models.Error
         """
         super(OperationDetails, self).__init__(**kwargs)
         self.operation_id = operation_id
@@ -1259,7 +1247,7 @@ class DocumentClassifierBuildOperationDetails(OperationDetails):
     :vartype operation_id: str
     :ivar status: Required. Operation status. Known values are: "notStarted", "running", "failed",
      "succeeded", "canceled".
-    :vartype status: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.OperationStatus
+    :vartype status: str or ~azure.ai.formrecognizer.v2023_07_31.models.OperationStatus
     :ivar percent_completed: Operation progress (0-100).
     :vartype percent_completed: int
     :ivar created_date_time: Required. Date and time (UTC) when the operation was created.
@@ -1275,9 +1263,9 @@ class DocumentClassifierBuildOperationDetails(OperationDetails):
     :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar error: Encountered error.
-    :vartype error: ~azure.ai.formrecognizer.v2023_02_28_preview.models.Error
+    :vartype error: ~azure.ai.formrecognizer.v2023_07_31.models.Error
     :ivar result: Operation result upon success.
-    :vartype result: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentClassifierDetails
+    :vartype result: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentClassifierDetails
     """
 
     _validation = {
@@ -1324,7 +1312,7 @@ class DocumentClassifierBuildOperationDetails(OperationDetails):
         :paramtype operation_id: str
         :keyword status: Required. Operation status. Known values are: "notStarted", "running",
          "failed", "succeeded", "canceled".
-        :paramtype status: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.OperationStatus
+        :paramtype status: str or ~azure.ai.formrecognizer.v2023_07_31.models.OperationStatus
         :keyword percent_completed: Operation progress (0-100).
         :paramtype percent_completed: int
         :keyword created_date_time: Required. Date and time (UTC) when the operation was created.
@@ -1340,10 +1328,9 @@ class DocumentClassifierBuildOperationDetails(OperationDetails):
          model.
         :paramtype tags: dict[str, str]
         :keyword error: Encountered error.
-        :paramtype error: ~azure.ai.formrecognizer.v2023_02_28_preview.models.Error
+        :paramtype error: ~azure.ai.formrecognizer.v2023_07_31.models.Error
         :keyword result: Operation result upon success.
-        :paramtype result:
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentClassifierDetails
+        :paramtype result: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentClassifierDetails
         """
         super(DocumentClassifierBuildOperationDetails, self).__init__(operation_id=operation_id, status=status, percent_completed=percent_completed, created_date_time=created_date_time, last_updated_date_time=last_updated_date_time, resource_location=resource_location, api_version=api_version, tags=tags, error=error, **kwargs)
         self.kind = 'documentClassifierBuild'  # type: str
@@ -1368,7 +1355,7 @@ class DocumentClassifierDetails(msrest.serialization.Model):
     :vartype api_version: str
     :ivar doc_types: Required. List of document types to classify against.
     :vartype doc_types: dict[str,
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.ClassifierDocumentTypeDetails]
+     ~azure.ai.formrecognizer.v2023_07_31.models.ClassifierDocumentTypeDetails]
     """
 
     _validation = {
@@ -1413,7 +1400,7 @@ class DocumentClassifierDetails(msrest.serialization.Model):
         :paramtype api_version: str
         :keyword doc_types: Required. List of document types to classify against.
         :paramtype doc_types: dict[str,
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.ClassifierDocumentTypeDetails]
+         ~azure.ai.formrecognizer.v2023_07_31.models.ClassifierDocumentTypeDetails]
         """
         super(DocumentClassifierDetails, self).__init__(**kwargs)
         self.classifier_id = classifier_id
@@ -1432,7 +1419,7 @@ class DocumentField(msrest.serialization.Model):
     :ivar type: Required. Data type of the field value. Known values are: "string", "date", "time",
      "phoneNumber", "number", "integer", "selectionMark", "countryRegion", "signature", "array",
      "object", "currency", "address", "boolean".
-    :vartype type: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentFieldType
+    :vartype type: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentFieldType
     :ivar value_string: String value.
     :vartype value_string: str
     :ivar value_date: Date value in YYYY-MM-DD format (ISO 8601).
@@ -1447,30 +1434,28 @@ class DocumentField(msrest.serialization.Model):
     :vartype value_integer: long
     :ivar value_selection_mark: Selection mark value. Known values are: "selected", "unselected".
     :vartype value_selection_mark: str or
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.SelectionMarkState
+     ~azure.ai.formrecognizer.v2023_07_31.models.SelectionMarkState
     :ivar value_signature: Presence of signature. Known values are: "signed", "unsigned".
     :vartype value_signature: str or
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSignatureType
+     ~azure.ai.formrecognizer.v2023_07_31.models.DocumentSignatureType
     :ivar value_country_region: 3-letter country code value (ISO 3166-1 alpha-3).
     :vartype value_country_region: str
     :ivar value_array: Array of field values.
-    :vartype value_array: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentField]
+    :vartype value_array: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentField]
     :ivar value_object: Dictionary of named field values.
-    :vartype value_object: dict[str,
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentField]
+    :vartype value_object: dict[str, ~azure.ai.formrecognizer.v2023_07_31.models.DocumentField]
     :ivar value_currency: Currency value.
-    :vartype value_currency: ~azure.ai.formrecognizer.v2023_02_28_preview.models.CurrencyValue
+    :vartype value_currency: ~azure.ai.formrecognizer.v2023_07_31.models.CurrencyValue
     :ivar value_address: Address value.
-    :vartype value_address: ~azure.ai.formrecognizer.v2023_02_28_preview.models.AddressValue
+    :vartype value_address: ~azure.ai.formrecognizer.v2023_07_31.models.AddressValue
     :ivar value_boolean: Boolean value.
     :vartype value_boolean: bool
     :ivar content: Field content.
     :vartype content: str
     :ivar bounding_regions: Bounding regions covering the field.
-    :vartype bounding_regions:
-     list[~azure.ai.formrecognizer.v2023_02_28_preview.models.BoundingRegion]
+    :vartype bounding_regions: list[~azure.ai.formrecognizer.v2023_07_31.models.BoundingRegion]
     :ivar spans: Location of the field in the reading order concatenated content.
-    :vartype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+    :vartype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
     :ivar confidence: Confidence of correctly extracting the field.
     :vartype confidence: float
     """
@@ -1530,7 +1515,7 @@ class DocumentField(msrest.serialization.Model):
         :keyword type: Required. Data type of the field value. Known values are: "string", "date",
          "time", "phoneNumber", "number", "integer", "selectionMark", "countryRegion", "signature",
          "array", "object", "currency", "address", "boolean".
-        :paramtype type: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentFieldType
+        :paramtype type: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentFieldType
         :keyword value_string: String value.
         :paramtype value_string: str
         :keyword value_date: Date value in YYYY-MM-DD format (ISO 8601).
@@ -1546,30 +1531,28 @@ class DocumentField(msrest.serialization.Model):
         :keyword value_selection_mark: Selection mark value. Known values are: "selected",
          "unselected".
         :paramtype value_selection_mark: str or
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.SelectionMarkState
+         ~azure.ai.formrecognizer.v2023_07_31.models.SelectionMarkState
         :keyword value_signature: Presence of signature. Known values are: "signed", "unsigned".
         :paramtype value_signature: str or
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSignatureType
+         ~azure.ai.formrecognizer.v2023_07_31.models.DocumentSignatureType
         :keyword value_country_region: 3-letter country code value (ISO 3166-1 alpha-3).
         :paramtype value_country_region: str
         :keyword value_array: Array of field values.
-        :paramtype value_array: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentField]
+        :paramtype value_array: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentField]
         :keyword value_object: Dictionary of named field values.
-        :paramtype value_object: dict[str,
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentField]
+        :paramtype value_object: dict[str, ~azure.ai.formrecognizer.v2023_07_31.models.DocumentField]
         :keyword value_currency: Currency value.
-        :paramtype value_currency: ~azure.ai.formrecognizer.v2023_02_28_preview.models.CurrencyValue
+        :paramtype value_currency: ~azure.ai.formrecognizer.v2023_07_31.models.CurrencyValue
         :keyword value_address: Address value.
-        :paramtype value_address: ~azure.ai.formrecognizer.v2023_02_28_preview.models.AddressValue
+        :paramtype value_address: ~azure.ai.formrecognizer.v2023_07_31.models.AddressValue
         :keyword value_boolean: Boolean value.
         :paramtype value_boolean: bool
         :keyword content: Field content.
         :paramtype content: str
         :keyword bounding_regions: Bounding regions covering the field.
-        :paramtype bounding_regions:
-         list[~azure.ai.formrecognizer.v2023_02_28_preview.models.BoundingRegion]
+        :paramtype bounding_regions: list[~azure.ai.formrecognizer.v2023_07_31.models.BoundingRegion]
         :keyword spans: Location of the field in the reading order concatenated content.
-        :paramtype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+        :paramtype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
         :keyword confidence: Confidence of correctly extracting the field.
         :paramtype confidence: float
         """
@@ -1603,16 +1586,15 @@ class DocumentFieldSchema(msrest.serialization.Model):
     :ivar type: Required. Semantic data type of the field value. Known values are: "string",
      "date", "time", "phoneNumber", "number", "integer", "selectionMark", "countryRegion",
      "signature", "array", "object", "currency", "address", "boolean".
-    :vartype type: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentFieldType
+    :vartype type: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentFieldType
     :ivar description: Field description.
     :vartype description: str
     :ivar example: Example field content.
     :vartype example: str
     :ivar items: Field type schema of each array element.
-    :vartype items: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentFieldSchema
+    :vartype items: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentFieldSchema
     :ivar properties: Named sub-fields of the object field.
-    :vartype properties: dict[str,
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentFieldSchema]
+    :vartype properties: dict[str, ~azure.ai.formrecognizer.v2023_07_31.models.DocumentFieldSchema]
     """
 
     _validation = {
@@ -1641,16 +1623,16 @@ class DocumentFieldSchema(msrest.serialization.Model):
         :keyword type: Required. Semantic data type of the field value. Known values are: "string",
          "date", "time", "phoneNumber", "number", "integer", "selectionMark", "countryRegion",
          "signature", "array", "object", "currency", "address", "boolean".
-        :paramtype type: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentFieldType
+        :paramtype type: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentFieldType
         :keyword description: Field description.
         :paramtype description: str
         :keyword example: Example field content.
         :paramtype example: str
         :keyword items: Field type schema of each array element.
-        :paramtype items: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentFieldSchema
+        :paramtype items: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentFieldSchema
         :keyword properties: Named sub-fields of the object field.
         :paramtype properties: dict[str,
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentFieldSchema]
+         ~azure.ai.formrecognizer.v2023_07_31.models.DocumentFieldSchema]
         """
         super(DocumentFieldSchema, self).__init__(**kwargs)
         self.type = type
@@ -1666,13 +1648,13 @@ class DocumentFormula(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: Required. Formula kind. Known values are: "inline", "display".
-    :vartype kind: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentFormulaKind
+    :vartype kind: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentFormulaKind
     :ivar value: Required. LaTex expression describing the formula.
     :vartype value: str
     :ivar polygon: Bounding polygon of the formula.
     :vartype polygon: list[float]
     :ivar span: Required. Location of the formula in the reading order concatenated content.
-    :vartype span: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan
+    :vartype span: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan
     :ivar confidence: Required. Confidence of correctly extracting the formula.
     :vartype confidence: float
     """
@@ -1704,13 +1686,13 @@ class DocumentFormula(msrest.serialization.Model):
     ):
         """
         :keyword kind: Required. Formula kind. Known values are: "inline", "display".
-        :paramtype kind: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentFormulaKind
+        :paramtype kind: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentFormulaKind
         :keyword value: Required. LaTex expression describing the formula.
         :paramtype value: str
         :keyword polygon: Bounding polygon of the formula.
         :paramtype polygon: list[float]
         :keyword span: Required. Location of the formula in the reading order concatenated content.
-        :paramtype span: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan
+        :paramtype span: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan
         :keyword confidence: Required. Confidence of correctly extracting the formula.
         :paramtype confidence: float
         """
@@ -1722,60 +1704,6 @@ class DocumentFormula(msrest.serialization.Model):
         self.confidence = confidence
 
 
-class DocumentImage(msrest.serialization.Model):
-    """An image object detected in the page.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar polygon: Bounding polygon of the image.
-    :vartype polygon: list[float]
-    :ivar span: Required. Location of the image in the reading order concatenated content.
-    :vartype span: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan
-    :ivar page_number: Required. 1-based page number of the page that contains the image.
-    :vartype page_number: int
-    :ivar confidence: Required. Confidence of correctly identifying the image.
-    :vartype confidence: float
-    """
-
-    _validation = {
-        'span': {'required': True},
-        'page_number': {'required': True, 'minimum': 1},
-        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
-    }
-
-    _attribute_map = {
-        'polygon': {'key': 'polygon', 'type': '[float]'},
-        'span': {'key': 'span', 'type': 'DocumentSpan'},
-        'page_number': {'key': 'pageNumber', 'type': 'int'},
-        'confidence': {'key': 'confidence', 'type': 'float'},
-    }
-
-    def __init__(
-        self,
-        *,
-        span: "_models.DocumentSpan",
-        page_number: int,
-        confidence: float,
-        polygon: Optional[List[float]] = None,
-        **kwargs
-    ):
-        """
-        :keyword polygon: Bounding polygon of the image.
-        :paramtype polygon: list[float]
-        :keyword span: Required. Location of the image in the reading order concatenated content.
-        :paramtype span: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan
-        :keyword page_number: Required. 1-based page number of the page that contains the image.
-        :paramtype page_number: int
-        :keyword confidence: Required. Confidence of correctly identifying the image.
-        :paramtype confidence: float
-        """
-        super(DocumentImage, self).__init__(**kwargs)
-        self.polygon = polygon
-        self.span = span
-        self.page_number = page_number
-        self.confidence = confidence
-
-
 class DocumentKeyValueElement(msrest.serialization.Model):
     """An object representing the field key or value in a key-value pair.
 
@@ -1784,11 +1712,10 @@ class DocumentKeyValueElement(msrest.serialization.Model):
     :ivar content: Required. Concatenated content of the key-value element in reading order.
     :vartype content: str
     :ivar bounding_regions: Bounding regions covering the key-value element.
-    :vartype bounding_regions:
-     list[~azure.ai.formrecognizer.v2023_02_28_preview.models.BoundingRegion]
+    :vartype bounding_regions: list[~azure.ai.formrecognizer.v2023_07_31.models.BoundingRegion]
     :ivar spans: Required. Location of the key-value element in the reading order concatenated
      content.
-    :vartype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+    :vartype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
     """
 
     _validation = {
@@ -1814,11 +1741,10 @@ class DocumentKeyValueElement(msrest.serialization.Model):
         :keyword content: Required. Concatenated content of the key-value element in reading order.
         :paramtype content: str
         :keyword bounding_regions: Bounding regions covering the key-value element.
-        :paramtype bounding_regions:
-         list[~azure.ai.formrecognizer.v2023_02_28_preview.models.BoundingRegion]
+        :paramtype bounding_regions: list[~azure.ai.formrecognizer.v2023_07_31.models.BoundingRegion]
         :keyword spans: Required. Location of the key-value element in the reading order concatenated
          content.
-        :paramtype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+        :paramtype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
         """
         super(DocumentKeyValueElement, self).__init__(**kwargs)
         self.content = content
@@ -1832,11 +1758,9 @@ class DocumentKeyValuePair(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar key: Required. Field label of the key-value pair.
-    :vartype key: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentKeyValueElement
+    :vartype key: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentKeyValueElement
     :ivar value: Field value of the key-value pair.
-    :vartype value: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentKeyValueElement
-    :ivar common_name: Common name of the key-value pair.
-    :vartype common_name: str
+    :vartype value: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentKeyValueElement
     :ivar confidence: Required. Confidence of correctly extracting the key-value pair.
     :vartype confidence: float
     """
@@ -1849,7 +1773,6 @@ class DocumentKeyValuePair(msrest.serialization.Model):
     _attribute_map = {
         'key': {'key': 'key', 'type': 'DocumentKeyValueElement'},
         'value': {'key': 'value', 'type': 'DocumentKeyValueElement'},
-        'common_name': {'key': 'commonName', 'type': 'str'},
         'confidence': {'key': 'confidence', 'type': 'float'},
     }
 
@@ -1859,23 +1782,19 @@ class DocumentKeyValuePair(msrest.serialization.Model):
         key: "_models.DocumentKeyValueElement",
         confidence: float,
         value: Optional["_models.DocumentKeyValueElement"] = None,
-        common_name: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword key: Required. Field label of the key-value pair.
-        :paramtype key: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentKeyValueElement
+        :paramtype key: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentKeyValueElement
         :keyword value: Field value of the key-value pair.
-        :paramtype value: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentKeyValueElement
-        :keyword common_name: Common name of the key-value pair.
-        :paramtype common_name: str
+        :paramtype value: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentKeyValueElement
         :keyword confidence: Required. Confidence of correctly extracting the key-value pair.
         :paramtype confidence: float
         """
         super(DocumentKeyValuePair, self).__init__(**kwargs)
         self.key = key
         self.value = value
-        self.common_name = common_name
         self.confidence = confidence
 
 
@@ -1889,7 +1808,7 @@ class DocumentLanguage(msrest.serialization.Model):
     :vartype locale: str
     :ivar spans: Required. Location of the text elements in the concatenated content the language
      applies to.
-    :vartype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+    :vartype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
     :ivar confidence: Required. Confidence of correctly identifying the language.
     :vartype confidence: float
     """
@@ -1920,7 +1839,7 @@ class DocumentLanguage(msrest.serialization.Model):
         :paramtype locale: str
         :keyword spans: Required. Location of the text elements in the concatenated content the
          language applies to.
-        :paramtype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+        :paramtype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
         :keyword confidence: Required. Confidence of correctly identifying the language.
         :paramtype confidence: float
         """
@@ -1940,7 +1859,7 @@ class DocumentLine(msrest.serialization.Model):
     :ivar polygon: Bounding polygon of the line.
     :vartype polygon: list[float]
     :ivar spans: Required. Location of the line in the reading order concatenated content.
-    :vartype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+    :vartype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
     """
 
     _validation = {
@@ -1968,7 +1887,7 @@ class DocumentLine(msrest.serialization.Model):
         :keyword polygon: Bounding polygon of the line.
         :paramtype polygon: list[float]
         :keyword spans: Required. Location of the line in the reading order concatenated content.
-        :paramtype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+        :paramtype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
         """
         super(DocumentLine, self).__init__(**kwargs)
         self.content = content
@@ -1985,7 +1904,7 @@ class DocumentModelBuildOperationDetails(OperationDetails):
     :vartype operation_id: str
     :ivar status: Required. Operation status. Known values are: "notStarted", "running", "failed",
      "succeeded", "canceled".
-    :vartype status: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.OperationStatus
+    :vartype status: str or ~azure.ai.formrecognizer.v2023_07_31.models.OperationStatus
     :ivar percent_completed: Operation progress (0-100).
     :vartype percent_completed: int
     :ivar created_date_time: Required. Date and time (UTC) when the operation was created.
@@ -2001,9 +1920,9 @@ class DocumentModelBuildOperationDetails(OperationDetails):
     :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar error: Encountered error.
-    :vartype error: ~azure.ai.formrecognizer.v2023_02_28_preview.models.Error
+    :vartype error: ~azure.ai.formrecognizer.v2023_07_31.models.Error
     :ivar result: Operation result upon success.
-    :vartype result: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentModelDetails
+    :vartype result: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentModelDetails
     """
 
     _validation = {
@@ -2050,7 +1969,7 @@ class DocumentModelBuildOperationDetails(OperationDetails):
         :paramtype operation_id: str
         :keyword status: Required. Operation status. Known values are: "notStarted", "running",
          "failed", "succeeded", "canceled".
-        :paramtype status: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.OperationStatus
+        :paramtype status: str or ~azure.ai.formrecognizer.v2023_07_31.models.OperationStatus
         :keyword percent_completed: Operation progress (0-100).
         :paramtype percent_completed: int
         :keyword created_date_time: Required. Date and time (UTC) when the operation was created.
@@ -2066,9 +1985,9 @@ class DocumentModelBuildOperationDetails(OperationDetails):
          model.
         :paramtype tags: dict[str, str]
         :keyword error: Encountered error.
-        :paramtype error: ~azure.ai.formrecognizer.v2023_02_28_preview.models.Error
+        :paramtype error: ~azure.ai.formrecognizer.v2023_07_31.models.Error
         :keyword result: Operation result upon success.
-        :paramtype result: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentModelDetails
+        :paramtype result: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentModelDetails
         """
         super(DocumentModelBuildOperationDetails, self).__init__(operation_id=operation_id, status=status, percent_completed=percent_completed, created_date_time=created_date_time, last_updated_date_time=last_updated_date_time, resource_location=resource_location, api_version=api_version, tags=tags, error=error, **kwargs)
         self.kind = 'documentModelBuild'  # type: str
@@ -2084,7 +2003,7 @@ class DocumentModelComposeOperationDetails(OperationDetails):
     :vartype operation_id: str
     :ivar status: Required. Operation status. Known values are: "notStarted", "running", "failed",
      "succeeded", "canceled".
-    :vartype status: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.OperationStatus
+    :vartype status: str or ~azure.ai.formrecognizer.v2023_07_31.models.OperationStatus
     :ivar percent_completed: Operation progress (0-100).
     :vartype percent_completed: int
     :ivar created_date_time: Required. Date and time (UTC) when the operation was created.
@@ -2100,9 +2019,9 @@ class DocumentModelComposeOperationDetails(OperationDetails):
     :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar error: Encountered error.
-    :vartype error: ~azure.ai.formrecognizer.v2023_02_28_preview.models.Error
+    :vartype error: ~azure.ai.formrecognizer.v2023_07_31.models.Error
     :ivar result: Operation result upon success.
-    :vartype result: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentModelDetails
+    :vartype result: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentModelDetails
     """
 
     _validation = {
@@ -2149,7 +2068,7 @@ class DocumentModelComposeOperationDetails(OperationDetails):
         :paramtype operation_id: str
         :keyword status: Required. Operation status. Known values are: "notStarted", "running",
          "failed", "succeeded", "canceled".
-        :paramtype status: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.OperationStatus
+        :paramtype status: str or ~azure.ai.formrecognizer.v2023_07_31.models.OperationStatus
         :keyword percent_completed: Operation progress (0-100).
         :paramtype percent_completed: int
         :keyword created_date_time: Required. Date and time (UTC) when the operation was created.
@@ -2165,9 +2084,9 @@ class DocumentModelComposeOperationDetails(OperationDetails):
          model.
         :paramtype tags: dict[str, str]
         :keyword error: Encountered error.
-        :paramtype error: ~azure.ai.formrecognizer.v2023_02_28_preview.models.Error
+        :paramtype error: ~azure.ai.formrecognizer.v2023_07_31.models.Error
         :keyword result: Operation result upon success.
-        :paramtype result: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentModelDetails
+        :paramtype result: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentModelDetails
         """
         super(DocumentModelComposeOperationDetails, self).__init__(operation_id=operation_id, status=status, percent_completed=percent_completed, created_date_time=created_date_time, last_updated_date_time=last_updated_date_time, resource_location=resource_location, api_version=api_version, tags=tags, error=error, **kwargs)
         self.kind = 'documentModelCompose'  # type: str
@@ -2183,7 +2102,7 @@ class DocumentModelCopyToOperationDetails(OperationDetails):
     :vartype operation_id: str
     :ivar status: Required. Operation status. Known values are: "notStarted", "running", "failed",
      "succeeded", "canceled".
-    :vartype status: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.OperationStatus
+    :vartype status: str or ~azure.ai.formrecognizer.v2023_07_31.models.OperationStatus
     :ivar percent_completed: Operation progress (0-100).
     :vartype percent_completed: int
     :ivar created_date_time: Required. Date and time (UTC) when the operation was created.
@@ -2199,9 +2118,9 @@ class DocumentModelCopyToOperationDetails(OperationDetails):
     :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar error: Encountered error.
-    :vartype error: ~azure.ai.formrecognizer.v2023_02_28_preview.models.Error
+    :vartype error: ~azure.ai.formrecognizer.v2023_07_31.models.Error
     :ivar result: Operation result upon success.
-    :vartype result: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentModelDetails
+    :vartype result: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentModelDetails
     """
 
     _validation = {
@@ -2248,7 +2167,7 @@ class DocumentModelCopyToOperationDetails(OperationDetails):
         :paramtype operation_id: str
         :keyword status: Required. Operation status. Known values are: "notStarted", "running",
          "failed", "succeeded", "canceled".
-        :paramtype status: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.OperationStatus
+        :paramtype status: str or ~azure.ai.formrecognizer.v2023_07_31.models.OperationStatus
         :keyword percent_completed: Operation progress (0-100).
         :paramtype percent_completed: int
         :keyword created_date_time: Required. Date and time (UTC) when the operation was created.
@@ -2264,9 +2183,9 @@ class DocumentModelCopyToOperationDetails(OperationDetails):
          model.
         :paramtype tags: dict[str, str]
         :keyword error: Encountered error.
-        :paramtype error: ~azure.ai.formrecognizer.v2023_02_28_preview.models.Error
+        :paramtype error: ~azure.ai.formrecognizer.v2023_07_31.models.Error
         :keyword result: Operation result upon success.
-        :paramtype result: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentModelDetails
+        :paramtype result: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentModelDetails
         """
         super(DocumentModelCopyToOperationDetails, self).__init__(operation_id=operation_id, status=status, percent_completed=percent_completed, created_date_time=created_date_time, last_updated_date_time=last_updated_date_time, resource_location=resource_location, api_version=api_version, tags=tags, error=error, **kwargs)
         self.kind = 'documentModelCopyTo'  # type: str
@@ -2291,8 +2210,7 @@ class DocumentModelDetails(msrest.serialization.Model):
     :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar doc_types: Supported document types.
-    :vartype doc_types: dict[str,
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentTypeDetails]
+    :vartype doc_types: dict[str, ~azure.ai.formrecognizer.v2023_07_31.models.DocumentTypeDetails]
     """
 
     _validation = {
@@ -2339,7 +2257,7 @@ class DocumentModelDetails(msrest.serialization.Model):
         :paramtype tags: dict[str, str]
         :keyword doc_types: Supported document types.
         :paramtype doc_types: dict[str,
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentTypeDetails]
+         ~azure.ai.formrecognizer.v2023_07_31.models.DocumentTypeDetails]
         """
         super(DocumentModelDetails, self).__init__(**kwargs)
         self.model_id = model_id
@@ -2425,9 +2343,6 @@ class DocumentPage(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: Required. Kind of document page. Known values are: "document", "sheet", "slide",
-     "image".
-    :vartype kind: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentPageKind
     :ivar page_number: Required. 1-based page number in the input document.
     :vartype page_number: int
     :ivar angle: The general orientation of the content in clockwise direction, measured in degrees
@@ -2439,30 +2354,26 @@ class DocumentPage(msrest.serialization.Model):
     :vartype height: float
     :ivar unit: The unit used by the width, height, and polygon properties. For images, the unit is
      "pixel". For PDF, the unit is "inch". Known values are: "pixel", "inch".
-    :vartype unit: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.LengthUnit
+    :vartype unit: str or ~azure.ai.formrecognizer.v2023_07_31.models.LengthUnit
     :ivar spans: Required. Location of the page in the reading order concatenated content.
-    :vartype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+    :vartype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
     :ivar words: Extracted words from the page.
-    :vartype words: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentWord]
+    :vartype words: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentWord]
     :ivar selection_marks: Extracted selection marks from the page.
     :vartype selection_marks:
-     list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSelectionMark]
+     list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSelectionMark]
     :ivar lines: Extracted lines from the page, potentially containing both textual and visual
      elements.
-    :vartype lines: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentLine]
+    :vartype lines: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentLine]
     :ivar annotations: Extracted annotations from the page.
-    :vartype annotations:
-     list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentAnnotation]
+    :vartype annotations: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentAnnotation]
     :ivar barcodes: Extracted barcodes from the page.
-    :vartype barcodes: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentBarcode]
+    :vartype barcodes: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentBarcode]
     :ivar formulas: Extracted formulas from the page.
-    :vartype formulas: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentFormula]
-    :ivar images: Extracted images from the page.
-    :vartype images: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentImage]
+    :vartype formulas: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentFormula]
     """
 
     _validation = {
-        'kind': {'required': True},
         'page_number': {'required': True, 'minimum': 1},
         'angle': {'maximum': 180, 'minimum_ex': -180},
         'width': {'minimum': 0},
@@ -2471,7 +2382,6 @@ class DocumentPage(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
         'page_number': {'key': 'pageNumber', 'type': 'int'},
         'angle': {'key': 'angle', 'type': 'float'},
         'width': {'key': 'width', 'type': 'float'},
@@ -2484,13 +2394,11 @@ class DocumentPage(msrest.serialization.Model):
         'annotations': {'key': 'annotations', 'type': '[DocumentAnnotation]'},
         'barcodes': {'key': 'barcodes', 'type': '[DocumentBarcode]'},
         'formulas': {'key': 'formulas', 'type': '[DocumentFormula]'},
-        'images': {'key': 'images', 'type': '[DocumentImage]'},
     }
 
     def __init__(
         self,
         *,
-        kind: Union[str, "_models.DocumentPageKind"],
         page_number: int,
         spans: List["_models.DocumentSpan"],
         angle: Optional[float] = None,
@@ -2503,13 +2411,9 @@ class DocumentPage(msrest.serialization.Model):
         annotations: Optional[List["_models.DocumentAnnotation"]] = None,
         barcodes: Optional[List["_models.DocumentBarcode"]] = None,
         formulas: Optional[List["_models.DocumentFormula"]] = None,
-        images: Optional[List["_models.DocumentImage"]] = None,
         **kwargs
     ):
         """
-        :keyword kind: Required. Kind of document page. Known values are: "document", "sheet", "slide",
-         "image".
-        :paramtype kind: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentPageKind
         :keyword page_number: Required. 1-based page number in the input document.
         :paramtype page_number: int
         :keyword angle: The general orientation of the content in clockwise direction, measured in
@@ -2521,29 +2425,25 @@ class DocumentPage(msrest.serialization.Model):
         :paramtype height: float
         :keyword unit: The unit used by the width, height, and polygon properties. For images, the unit
          is "pixel". For PDF, the unit is "inch". Known values are: "pixel", "inch".
-        :paramtype unit: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.LengthUnit
+        :paramtype unit: str or ~azure.ai.formrecognizer.v2023_07_31.models.LengthUnit
         :keyword spans: Required. Location of the page in the reading order concatenated content.
-        :paramtype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+        :paramtype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
         :keyword words: Extracted words from the page.
-        :paramtype words: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentWord]
+        :paramtype words: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentWord]
         :keyword selection_marks: Extracted selection marks from the page.
         :paramtype selection_marks:
-         list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSelectionMark]
+         list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSelectionMark]
         :keyword lines: Extracted lines from the page, potentially containing both textual and visual
          elements.
-        :paramtype lines: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentLine]
+        :paramtype lines: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentLine]
         :keyword annotations: Extracted annotations from the page.
-        :paramtype annotations:
-         list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentAnnotation]
+        :paramtype annotations: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentAnnotation]
         :keyword barcodes: Extracted barcodes from the page.
-        :paramtype barcodes: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentBarcode]
+        :paramtype barcodes: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentBarcode]
         :keyword formulas: Extracted formulas from the page.
-        :paramtype formulas: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentFormula]
-        :keyword images: Extracted images from the page.
-        :paramtype images: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentImage]
+        :paramtype formulas: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentFormula]
         """
         super(DocumentPage, self).__init__(**kwargs)
-        self.kind = kind
         self.page_number = page_number
         self.angle = angle
         self.width = width
@@ -2556,7 +2456,6 @@ class DocumentPage(msrest.serialization.Model):
         self.annotations = annotations
         self.barcodes = barcodes
         self.formulas = formulas
-        self.images = images
 
 
 class DocumentParagraph(msrest.serialization.Model):
@@ -2566,14 +2465,13 @@ class DocumentParagraph(msrest.serialization.Model):
 
     :ivar role: Semantic role of the paragraph. Known values are: "pageHeader", "pageFooter",
      "pageNumber", "title", "sectionHeading", "footnote", "formulaBlock".
-    :vartype role: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.ParagraphRole
+    :vartype role: str or ~azure.ai.formrecognizer.v2023_07_31.models.ParagraphRole
     :ivar content: Required. Concatenated content of the paragraph in reading order.
     :vartype content: str
     :ivar bounding_regions: Bounding regions covering the paragraph.
-    :vartype bounding_regions:
-     list[~azure.ai.formrecognizer.v2023_02_28_preview.models.BoundingRegion]
+    :vartype bounding_regions: list[~azure.ai.formrecognizer.v2023_07_31.models.BoundingRegion]
     :ivar spans: Required. Location of the paragraph in the reading order concatenated content.
-    :vartype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+    :vartype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
     """
 
     _validation = {
@@ -2600,14 +2498,13 @@ class DocumentParagraph(msrest.serialization.Model):
         """
         :keyword role: Semantic role of the paragraph. Known values are: "pageHeader", "pageFooter",
          "pageNumber", "title", "sectionHeading", "footnote", "formulaBlock".
-        :paramtype role: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.ParagraphRole
+        :paramtype role: str or ~azure.ai.formrecognizer.v2023_07_31.models.ParagraphRole
         :keyword content: Required. Concatenated content of the paragraph in reading order.
         :paramtype content: str
         :keyword bounding_regions: Bounding regions covering the paragraph.
-        :paramtype bounding_regions:
-         list[~azure.ai.formrecognizer.v2023_02_28_preview.models.BoundingRegion]
+        :paramtype bounding_regions: list[~azure.ai.formrecognizer.v2023_07_31.models.BoundingRegion]
         :keyword spans: Required. Location of the paragraph in the reading order concatenated content.
-        :paramtype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+        :paramtype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
         """
         super(DocumentParagraph, self).__init__(**kwargs)
         self.role = role
@@ -2622,11 +2519,11 @@ class DocumentSelectionMark(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar state: Required. State of the selection mark. Known values are: "selected", "unselected".
-    :vartype state: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.SelectionMarkState
+    :vartype state: str or ~azure.ai.formrecognizer.v2023_07_31.models.SelectionMarkState
     :ivar polygon: Bounding polygon of the selection mark.
     :vartype polygon: list[float]
     :ivar span: Required. Location of the selection mark in the reading order concatenated content.
-    :vartype span: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan
+    :vartype span: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan
     :ivar confidence: Required. Confidence of correctly extracting the selection mark.
     :vartype confidence: float
     """
@@ -2656,12 +2553,12 @@ class DocumentSelectionMark(msrest.serialization.Model):
         """
         :keyword state: Required. State of the selection mark. Known values are: "selected",
          "unselected".
-        :paramtype state: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.SelectionMarkState
+        :paramtype state: str or ~azure.ai.formrecognizer.v2023_07_31.models.SelectionMarkState
         :keyword polygon: Bounding polygon of the selection mark.
         :paramtype polygon: list[float]
         :keyword span: Required. Location of the selection mark in the reading order concatenated
          content.
-        :paramtype span: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan
+        :paramtype span: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan
         :keyword confidence: Required. Confidence of correctly extracting the selection mark.
         :paramtype confidence: float
         """
@@ -2722,16 +2619,16 @@ class DocumentStyle(msrest.serialization.Model):
      families, with fallback fonts following CSS convention (ex. 'Arial, sans-serif').
     :vartype similar_font_family: str
     :ivar font_style: Font style. Known values are: "normal", "italic".
-    :vartype font_style: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.FontStyle
+    :vartype font_style: str or ~azure.ai.formrecognizer.v2023_07_31.models.FontStyle
     :ivar font_weight: Font weight. Known values are: "normal", "bold".
-    :vartype font_weight: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.FontWeight
+    :vartype font_weight: str or ~azure.ai.formrecognizer.v2023_07_31.models.FontWeight
     :ivar color: Foreground color in #rrggbb hexadecimal format.
     :vartype color: str
     :ivar background_color: Background color in #rrggbb hexadecimal format..
     :vartype background_color: str
     :ivar spans: Required. Location of the text elements in the concatenated content the style
      applies to.
-    :vartype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+    :vartype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
     :ivar confidence: Required. Confidence of correctly identifying the style.
     :vartype confidence: float
     """
@@ -2774,16 +2671,16 @@ class DocumentStyle(msrest.serialization.Model):
          families, with fallback fonts following CSS convention (ex. 'Arial, sans-serif').
         :paramtype similar_font_family: str
         :keyword font_style: Font style. Known values are: "normal", "italic".
-        :paramtype font_style: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.FontStyle
+        :paramtype font_style: str or ~azure.ai.formrecognizer.v2023_07_31.models.FontStyle
         :keyword font_weight: Font weight. Known values are: "normal", "bold".
-        :paramtype font_weight: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.FontWeight
+        :paramtype font_weight: str or ~azure.ai.formrecognizer.v2023_07_31.models.FontWeight
         :keyword color: Foreground color in #rrggbb hexadecimal format.
         :paramtype color: str
         :keyword background_color: Background color in #rrggbb hexadecimal format..
         :paramtype background_color: str
         :keyword spans: Required. Location of the text elements in the concatenated content the style
          applies to.
-        :paramtype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+        :paramtype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
         :keyword confidence: Required. Confidence of correctly identifying the style.
         :paramtype confidence: float
         """
@@ -2808,12 +2705,11 @@ class DocumentTable(msrest.serialization.Model):
     :ivar column_count: Required. Number of columns in the table.
     :vartype column_count: int
     :ivar cells: Required. Cells contained within the table.
-    :vartype cells: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentTableCell]
+    :vartype cells: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentTableCell]
     :ivar bounding_regions: Bounding regions covering the table.
-    :vartype bounding_regions:
-     list[~azure.ai.formrecognizer.v2023_02_28_preview.models.BoundingRegion]
+    :vartype bounding_regions: list[~azure.ai.formrecognizer.v2023_07_31.models.BoundingRegion]
     :ivar spans: Required. Location of the table in the reading order concatenated content.
-    :vartype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+    :vartype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
     """
 
     _validation = {
@@ -2847,12 +2743,11 @@ class DocumentTable(msrest.serialization.Model):
         :keyword column_count: Required. Number of columns in the table.
         :paramtype column_count: int
         :keyword cells: Required. Cells contained within the table.
-        :paramtype cells: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentTableCell]
+        :paramtype cells: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentTableCell]
         :keyword bounding_regions: Bounding regions covering the table.
-        :paramtype bounding_regions:
-         list[~azure.ai.formrecognizer.v2023_02_28_preview.models.BoundingRegion]
+        :paramtype bounding_regions: list[~azure.ai.formrecognizer.v2023_07_31.models.BoundingRegion]
         :keyword spans: Required. Location of the table in the reading order concatenated content.
-        :paramtype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+        :paramtype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
         """
         super(DocumentTable, self).__init__(**kwargs)
         self.row_count = row_count
@@ -2869,7 +2764,7 @@ class DocumentTableCell(msrest.serialization.Model):
 
     :ivar kind: Table cell kind. Known values are: "content", "rowHeader", "columnHeader",
      "stubHead", "description". Default value: "content".
-    :vartype kind: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentTableCellKind
+    :vartype kind: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentTableCellKind
     :ivar row_index: Required. Row index of the cell.
     :vartype row_index: int
     :ivar column_index: Required. Column index of the cell.
@@ -2881,10 +2776,9 @@ class DocumentTableCell(msrest.serialization.Model):
     :ivar content: Required. Concatenated content of the table cell in reading order.
     :vartype content: str
     :ivar bounding_regions: Bounding regions covering the table cell.
-    :vartype bounding_regions:
-     list[~azure.ai.formrecognizer.v2023_02_28_preview.models.BoundingRegion]
+    :vartype bounding_regions: list[~azure.ai.formrecognizer.v2023_07_31.models.BoundingRegion]
     :ivar spans: Required. Location of the table cell in the reading order concatenated content.
-    :vartype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+    :vartype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
     """
 
     _validation = {
@@ -2923,8 +2817,7 @@ class DocumentTableCell(msrest.serialization.Model):
         """
         :keyword kind: Table cell kind. Known values are: "content", "rowHeader", "columnHeader",
          "stubHead", "description". Default value: "content".
-        :paramtype kind: str or
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentTableCellKind
+        :paramtype kind: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentTableCellKind
         :keyword row_index: Required. Row index of the cell.
         :paramtype row_index: int
         :keyword column_index: Required. Column index of the cell.
@@ -2936,10 +2829,9 @@ class DocumentTableCell(msrest.serialization.Model):
         :keyword content: Required. Concatenated content of the table cell in reading order.
         :paramtype content: str
         :keyword bounding_regions: Bounding regions covering the table cell.
-        :paramtype bounding_regions:
-         list[~azure.ai.formrecognizer.v2023_02_28_preview.models.BoundingRegion]
+        :paramtype bounding_regions: list[~azure.ai.formrecognizer.v2023_07_31.models.BoundingRegion]
         :keyword spans: Required. Location of the table cell in the reading order concatenated content.
-        :paramtype spans: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan]
+        :paramtype spans: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan]
         """
         super(DocumentTableCell, self).__init__(**kwargs)
         self.kind = kind
@@ -2960,12 +2852,11 @@ class DocumentTypeDetails(msrest.serialization.Model):
     :ivar description: Document model description.
     :vartype description: str
     :ivar build_mode: Custom document model build mode. Known values are: "template", "neural".
-    :vartype build_mode: str or
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentBuildMode
+    :vartype build_mode: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentBuildMode
     :ivar field_schema: Required. Description of the document semantic schema using a JSON Schema
      style syntax.
     :vartype field_schema: dict[str,
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentFieldSchema]
+     ~azure.ai.formrecognizer.v2023_07_31.models.DocumentFieldSchema]
     :ivar field_confidence: Estimated confidence for each field.
     :vartype field_confidence: dict[str, float]
     """
@@ -2995,12 +2886,11 @@ class DocumentTypeDetails(msrest.serialization.Model):
         :keyword description: Document model description.
         :paramtype description: str
         :keyword build_mode: Custom document model build mode. Known values are: "template", "neural".
-        :paramtype build_mode: str or
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentBuildMode
+        :paramtype build_mode: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentBuildMode
         :keyword field_schema: Required. Description of the document semantic schema using a JSON
          Schema style syntax.
         :paramtype field_schema: dict[str,
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentFieldSchema]
+         ~azure.ai.formrecognizer.v2023_07_31.models.DocumentFieldSchema]
         :keyword field_confidence: Estimated confidence for each field.
         :paramtype field_confidence: dict[str, float]
         """
@@ -3021,7 +2911,7 @@ class DocumentWord(msrest.serialization.Model):
     :ivar polygon: Bounding polygon of the word.
     :vartype polygon: list[float]
     :ivar span: Required. Location of the word in the reading order concatenated content.
-    :vartype span: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan
+    :vartype span: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan
     :ivar confidence: Required. Confidence of correctly extracting the word.
     :vartype confidence: float
     """
@@ -3054,7 +2944,7 @@ class DocumentWord(msrest.serialization.Model):
         :keyword polygon: Bounding polygon of the word.
         :paramtype polygon: list[float]
         :keyword span: Required. Location of the word in the reading order concatenated content.
-        :paramtype span: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentSpan
+        :paramtype span: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentSpan
         :keyword confidence: Required. Confidence of correctly extracting the word.
         :paramtype confidence: float
         """
@@ -3077,9 +2967,9 @@ class Error(msrest.serialization.Model):
     :ivar target: Target of the error.
     :vartype target: str
     :ivar details: List of detailed errors.
-    :vartype details: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.Error]
+    :vartype details: list[~azure.ai.formrecognizer.v2023_07_31.models.Error]
     :ivar innererror: Detailed error.
-    :vartype innererror: ~azure.ai.formrecognizer.v2023_02_28_preview.models.InnerError
+    :vartype innererror: ~azure.ai.formrecognizer.v2023_07_31.models.InnerError
     """
 
     _validation = {
@@ -3113,9 +3003,9 @@ class Error(msrest.serialization.Model):
         :keyword target: Target of the error.
         :paramtype target: str
         :keyword details: List of detailed errors.
-        :paramtype details: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.Error]
+        :paramtype details: list[~azure.ai.formrecognizer.v2023_07_31.models.Error]
         :keyword innererror: Detailed error.
-        :paramtype innererror: ~azure.ai.formrecognizer.v2023_02_28_preview.models.InnerError
+        :paramtype innererror: ~azure.ai.formrecognizer.v2023_07_31.models.InnerError
         """
         super(Error, self).__init__(**kwargs)
         self.code = code
@@ -3131,7 +3021,7 @@ class ErrorResponse(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar error: Required. Error info.
-    :vartype error: ~azure.ai.formrecognizer.v2023_02_28_preview.models.Error
+    :vartype error: ~azure.ai.formrecognizer.v2023_07_31.models.Error
     """
 
     _validation = {
@@ -3150,7 +3040,7 @@ class ErrorResponse(msrest.serialization.Model):
     ):
         """
         :keyword error: Required. Error info.
-        :paramtype error: ~azure.ai.formrecognizer.v2023_02_28_preview.models.Error
+        :paramtype error: ~azure.ai.formrecognizer.v2023_07_31.models.Error
         """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
@@ -3162,8 +3052,7 @@ class GetDocumentClassifiersResponse(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: Required. List of document classifiers.
-    :vartype value:
-     list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentClassifierDetails]
+    :vartype value: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentClassifierDetails]
     :ivar next_link: Link to the next page of document classifiers.
     :vartype next_link: str
     """
@@ -3186,8 +3075,7 @@ class GetDocumentClassifiersResponse(msrest.serialization.Model):
     ):
         """
         :keyword value: Required. List of document classifiers.
-        :paramtype value:
-         list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentClassifierDetails]
+        :paramtype value: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentClassifierDetails]
         :keyword next_link: Link to the next page of document classifiers.
         :paramtype next_link: str
         """
@@ -3202,7 +3090,7 @@ class GetDocumentModelsResponse(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: Required. List of document models.
-    :vartype value: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentModelSummary]
+    :vartype value: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentModelSummary]
     :ivar next_link: Link to the next page of document models.
     :vartype next_link: str
     """
@@ -3225,8 +3113,7 @@ class GetDocumentModelsResponse(msrest.serialization.Model):
     ):
         """
         :keyword value: Required. List of document models.
-        :paramtype value:
-         list[~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentModelSummary]
+        :paramtype value: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentModelSummary]
         :keyword next_link: Link to the next page of document models.
         :paramtype next_link: str
         """
@@ -3241,7 +3128,7 @@ class GetOperationsResponse(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: Required. List of operations.
-    :vartype value: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.OperationSummary]
+    :vartype value: list[~azure.ai.formrecognizer.v2023_07_31.models.OperationSummary]
     :ivar next_link: Link to the next page of operations.
     :vartype next_link: str
     """
@@ -3264,7 +3151,7 @@ class GetOperationsResponse(msrest.serialization.Model):
     ):
         """
         :keyword value: Required. List of operations.
-        :paramtype value: list[~azure.ai.formrecognizer.v2023_02_28_preview.models.OperationSummary]
+        :paramtype value: list[~azure.ai.formrecognizer.v2023_07_31.models.OperationSummary]
         :keyword next_link: Link to the next page of operations.
         :paramtype next_link: str
         """
@@ -3283,7 +3170,7 @@ class InnerError(msrest.serialization.Model):
     :ivar message: Error message.
     :vartype message: str
     :ivar innererror: Detailed error.
-    :vartype innererror: ~azure.ai.formrecognizer.v2023_02_28_preview.models.InnerError
+    :vartype innererror: ~azure.ai.formrecognizer.v2023_07_31.models.InnerError
     """
 
     _validation = {
@@ -3310,7 +3197,7 @@ class InnerError(msrest.serialization.Model):
         :keyword message: Error message.
         :paramtype message: str
         :keyword innererror: Detailed error.
-        :paramtype innererror: ~azure.ai.formrecognizer.v2023_02_28_preview.models.InnerError
+        :paramtype innererror: ~azure.ai.formrecognizer.v2023_07_31.models.InnerError
         """
         super(InnerError, self).__init__(**kwargs)
         self.code = code
@@ -3327,7 +3214,7 @@ class OperationSummary(msrest.serialization.Model):
     :vartype operation_id: str
     :ivar status: Required. Operation status. Known values are: "notStarted", "running", "failed",
      "succeeded", "canceled".
-    :vartype status: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.OperationStatus
+    :vartype status: str or ~azure.ai.formrecognizer.v2023_07_31.models.OperationStatus
     :ivar percent_completed: Operation progress (0-100).
     :vartype percent_completed: int
     :ivar created_date_time: Required. Date and time (UTC) when the operation was created.
@@ -3336,7 +3223,7 @@ class OperationSummary(msrest.serialization.Model):
     :vartype last_updated_date_time: ~datetime.datetime
     :ivar kind: Required. Type of operation. Known values are: "documentModelBuild",
      "documentModelCompose", "documentModelCopyTo", "documentClassifierBuild".
-    :vartype kind: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.OperationKind
+    :vartype kind: str or ~azure.ai.formrecognizer.v2023_07_31.models.OperationKind
     :ivar resource_location: Required. URL of the resource targeted by this operation.
     :vartype resource_location: str
     :ivar api_version: API version used to create this operation.
@@ -3386,7 +3273,7 @@ class OperationSummary(msrest.serialization.Model):
         :paramtype operation_id: str
         :keyword status: Required. Operation status. Known values are: "notStarted", "running",
          "failed", "succeeded", "canceled".
-        :paramtype status: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.OperationStatus
+        :paramtype status: str or ~azure.ai.formrecognizer.v2023_07_31.models.OperationStatus
         :keyword percent_completed: Operation progress (0-100).
         :paramtype percent_completed: int
         :keyword created_date_time: Required. Date and time (UTC) when the operation was created.
@@ -3396,7 +3283,7 @@ class OperationSummary(msrest.serialization.Model):
         :paramtype last_updated_date_time: ~datetime.datetime
         :keyword kind: Required. Type of operation. Known values are: "documentModelBuild",
          "documentModelCompose", "documentModelCopyTo", "documentClassifierBuild".
-        :paramtype kind: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.OperationKind
+        :paramtype kind: str or ~azure.ai.formrecognizer.v2023_07_31.models.OperationKind
         :keyword resource_location: Required. URL of the resource targeted by this operation.
         :paramtype resource_location: str
         :keyword api_version: API version used to create this operation.
@@ -3472,11 +3359,11 @@ class ResourceDetails(msrest.serialization.Model):
 
     :ivar custom_document_models: Required. Details regarding custom document models.
     :vartype custom_document_models:
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.CustomDocumentModelsDetails
+     ~azure.ai.formrecognizer.v2023_07_31.models.CustomDocumentModelsDetails
     :ivar custom_neural_document_model_builds: Required. Quota used, limit, and next reset
      date/time.
     :vartype custom_neural_document_model_builds:
-     ~azure.ai.formrecognizer.v2023_02_28_preview.models.QuotaDetails
+     ~azure.ai.formrecognizer.v2023_07_31.models.QuotaDetails
     """
 
     _validation = {
@@ -3499,11 +3386,11 @@ class ResourceDetails(msrest.serialization.Model):
         """
         :keyword custom_document_models: Required. Details regarding custom document models.
         :paramtype custom_document_models:
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.CustomDocumentModelsDetails
+         ~azure.ai.formrecognizer.v2023_07_31.models.CustomDocumentModelsDetails
         :keyword custom_neural_document_model_builds: Required. Quota used, limit, and next reset
          date/time.
         :paramtype custom_neural_document_model_builds:
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.QuotaDetails
+         ~azure.ai.formrecognizer.v2023_07_31.models.QuotaDetails
         """
         super(ResourceDetails, self).__init__(**kwargs)
         self.custom_document_models = custom_document_models

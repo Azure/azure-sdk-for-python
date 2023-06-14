@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2023-02-28-preview",
-    "total_api_version_list": ["2023-02-28-preview"],
+    "chosen_version": "2023-07-31",
+    "total_api_version_list": ["2023-07-31"],
     "client": {
         "name": "FormRecognizerClient",
         "filename": "_form_recognizer_client",

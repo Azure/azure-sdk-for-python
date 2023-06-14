@@ -31,7 +31,6 @@ from ._models_py3 import DocumentClassifierDetails
 from ._models_py3 import DocumentField
 from ._models_py3 import DocumentFieldSchema
 from ._models_py3 import DocumentFormula
-from ._models_py3 import DocumentImage
 from ._models_py3 import DocumentKeyValueElement
 from ._models_py3 import DocumentKeyValuePair
 from ._models_py3 import DocumentLanguage
@@ -71,7 +70,6 @@ from ._form_recognizer_client_enums import (
     DocumentBuildMode,
     DocumentFieldType,
     DocumentFormulaKind,
-    DocumentPageKind,
     DocumentSignatureType,
     DocumentTableCellKind,
     FontStyle,
@@ -112,7 +110,6 @@ __all__ = [
     'DocumentField',
     'DocumentFieldSchema',
     'DocumentFormula',
-    'DocumentImage',
     'DocumentKeyValueElement',
     'DocumentKeyValuePair',
     'DocumentLanguage',
@@ -149,7 +146,6 @@ __all__ = [
     'DocumentBuildMode',
     'DocumentFieldType',
     'DocumentFormulaKind',
-    'DocumentPageKind',
     'DocumentSignatureType',
     'DocumentTableCellKind',
     'FontStyle',

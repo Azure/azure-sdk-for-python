@@ -32,7 +32,7 @@ class DocumentClassifiersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.formrecognizer.v2023_02_28_preview.aio.FormRecognizerClient`'s
+        :class:`~azure.ai.formrecognizer.v2023_07_31.aio.FormRecognizerClient`'s
         :attr:`document_classifiers` attribute.
     """
 
@@ -59,7 +59,7 @@ class DocumentClassifiersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-02-28-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
@@ -111,8 +111,7 @@ class DocumentClassifiersOperations:
         Builds a custom document classifier.
 
         :param build_request: Building request parameters.
-        :type build_request:
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.BuildDocumentClassifierRequest
+        :type build_request: ~azure.ai.formrecognizer.v2023_07_31.models.BuildDocumentClassifierRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -129,7 +128,7 @@ class DocumentClassifiersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-02-28-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -192,13 +191,13 @@ class DocumentClassifiersOperations:
         :return: An iterator like instance of either GetDocumentClassifiersResponse or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.formrecognizer.v2023_02_28_preview.models.GetDocumentClassifiersResponse]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.formrecognizer.v2023_07_31.models.GetDocumentClassifiersResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-02-28-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.GetDocumentClassifiersResponse]
 
         error_map = {
@@ -284,7 +283,7 @@ class DocumentClassifiersOperations:
         :type classifier_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DocumentClassifierDetails, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2023_02_28_preview.models.DocumentClassifierDetails
+        :rtype: ~azure.ai.formrecognizer.v2023_07_31.models.DocumentClassifierDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -295,7 +294,7 @@ class DocumentClassifiersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-02-28-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DocumentClassifierDetails]
 
         
@@ -359,7 +358,7 @@ class DocumentClassifiersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-02-28-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
@@ -411,7 +410,7 @@ class DocumentClassifiersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-02-28-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         _json = None
@@ -483,11 +482,10 @@ class DocumentClassifiersOperations:
         :type classifier_id: str
         :param string_index_type: Method used to compute string offset and length. Default value is
          None.
-        :type string_index_type: str or
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.formrecognizer.v2023_07_31.models.StringIndexType
         :param classify_request: Classify request parameters. Default value is None.
         :type classify_request: IO or str or
-         ~azure.ai.formrecognizer.v2023_02_28_preview.models.ClassifyDocumentRequest
+         ~azure.ai.formrecognizer.v2023_07_31.models.ClassifyDocumentRequest
         :keyword content_type: Media type of the body sent to the API. Known values are:
          "application/octet-stream", "application/pdf",
          "application/vnd.openxmlformats-officedocument.presentationml.presentation",
@@ -495,7 +493,7 @@ class DocumentClassifiersOperations:
          "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "image/bmp",
          "image/heif", "image/jpeg", "image/png", "image/tiff", "text/html", and "application/json".
          Default value is "application/json".
-        :paramtype content_type: str or ~azure.ai.formrecognizer.v2023_02_28_preview.models.ContentType
+        :paramtype content_type: str or ~azure.ai.formrecognizer.v2023_07_31.models.ContentType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -511,7 +509,7 @@ class DocumentClassifiersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-02-28-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop(
@@ -579,7 +577,7 @@ class DocumentClassifiersOperations:
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeResultOperation, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2023_02_28_preview.models.AnalyzeResultOperation
+        :rtype: ~azure.ai.formrecognizer.v2023_07_31.models.AnalyzeResultOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -590,7 +588,7 @@ class DocumentClassifiersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-02-28-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeResultOperation]
 
         
