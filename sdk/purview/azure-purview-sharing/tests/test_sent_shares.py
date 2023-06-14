@@ -24,7 +24,7 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_create_sent_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "5cd2c587-2fb4-496a-b6c9-04ebef84c5d2"
+        sent_share_id = "85e57d9e-9f5c-4304-bfe5-973627039bf8"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -47,7 +47,7 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_create_sent_share_user_invitation(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "5cd2c587-2fb4-496a-b6c9-04ebef84c5d2"
+        sent_share_id = "087fa116-287d-4dd3-894d-0b635aaff683"
         sent_share_invitation_id = "8cea274b-bd71-4c60-9865-08df5780aa11"
         sent_share = self.prepare_sent_share()
 
@@ -93,7 +93,7 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_sent_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "5cd2c587-2fb4-496a-b6c9-04ebef84c5d2"
+        sent_share_id = "3f55ca37-78a5-4641-a6ab-14b4249ec5c5"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -120,7 +120,7 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_all_sent_shares(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "5cd2c587-2fb4-496a-b6c9-04ebef84c5d2"
+        sent_share_id = "08c1b2a2-880c-4db7-9afe-140683fd1aed"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -151,7 +151,7 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_delete_sent_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "5cd2c587-2fb4-496a-b6c9-04ebef84c5d2"
+        sent_share_id = "9550f86d-dc04-4c85-9ff0-db8978cd728e"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -161,8 +161,8 @@ class TestSentShares(TestPurviewSharing):
         
         response = client.send_request(request)
 
-        # assert response is not None
-        # assert response.status_code == 201, "Invalid Status Code " + str(response.status_code)
+        assert response is not None
+        assert response.status_code == 201, "Invalid Status Code " + str(response.status_code)
 
         delete_request = build_sent_shares_delete_request(sent_share_id=sent_share_id)
         delete_response = client.send_request(delete_request)
@@ -180,8 +180,8 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_create_sent_share_service_invitation(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "5cd2c587-2fb4-496a-b6c9-04ebef84c5d2"
-        sent_share_invitation_id = "623fe4bf-d2cb-4b9f-9243-abe16b65d8a8"
+        sent_share_id = "f638f1e7-f9e8-4a96-9c2b-cb07cd1caa11"
+        sent_share_invitation_id = "bb85371e-7360-43ef-a0d1-65e4058253b7"
         sent_share = self.prepare_sent_share()
         
         request = build_sent_shares_create_or_replace_request(
@@ -227,7 +227,7 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_all_sent_share_service_invitation(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "5cd2c587-2fb4-496a-b6c9-04ebef84c5d2"
+        sent_share_id = "7eb8ba5b-e550-46c4-b877-097835d0cc80"
         sent_share_invitation_id = "623fe4bf-d2cb-4b9f-9243-abe16b65d8a8"
         sent_share = self.prepare_sent_share()
 
@@ -283,7 +283,7 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_delete_sent_share_service_invitation(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "5cd2c587-2fb4-496a-b6c9-04ebef84c5d2"
+        sent_share_id = "17253ebb-2a2b-48da-8c9f-fa99c699d6c4"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(

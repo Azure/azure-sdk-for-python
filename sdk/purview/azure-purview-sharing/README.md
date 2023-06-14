@@ -2,7 +2,7 @@
 
 Microsoft Purview Share is a fully managed cloud service.
 
-**Please rely heavily on the [service's documentation][sharing_product_documentation] and our [protocol client docs][protocol_client_quickstart] to use this library**
+**Please rely heavily on the [service's documentation][sharing_product_documentation] and our [protocol client docs][request_builders_and_client] to use this library**
 
 [Source code][source_code] | [Package (PyPI)][client_pypi_package] | [Product documentation][sharing_product_documentation]
 
@@ -25,7 +25,7 @@ pip install azure-purview-sharing
 
 #### Using Azure Active Directory
 
-This document demonstrates using [DefaultAzureCredential][default_cred_ref] to authenticate via Azure Active Directory. However, any of the credentials offered by the [azure_identity][azure_identity] will be accepted.  See the [azure_identity][azure_identity] documentation for more information about other credentials.
+This document demonstrates using [DefaultAzureCredential][default_azure_credential] to authenticate via Azure Active Directory. However, any of the credentials offered by the [azure_identity][azure_identity_pip] will be accepted.  See the [azure_identity][azure_identity_credentials] documentation for more information about other credentials.
 
 Once you have chosen and configured your credential, you can create instances of the `PurviewSharingClient`.
 
@@ -192,7 +192,7 @@ for list_response in list_request:
     print(list_response)
 ```
 
-### List received shares
+### List detached received shares
 
 ```python Snippet:get_all_detached_received_shares
 import os
