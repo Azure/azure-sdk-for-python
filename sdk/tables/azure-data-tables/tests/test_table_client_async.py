@@ -8,7 +8,7 @@ import platform
 import os
 
 from datetime import datetime, timedelta
-from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
+from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -194,7 +194,6 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_client_with_sas_token(self, tables_storage_account_name, tables_primary_storage_account_key):
-        set_custom_default_matcher(ignore_query_ordering=True)
         base_url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
         sas_token = self.generate_sas(
