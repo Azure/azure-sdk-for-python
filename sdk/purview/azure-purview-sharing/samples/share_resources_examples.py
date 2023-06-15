@@ -21,3 +21,13 @@ credential = DefaultAzureCredential()
 
 client = PurviewSharingClient(endpoint=endpoint, credential=credential)
 # [END create_a_share_client]
+
+# List share resources
+# [START list_share_resources]
+### TODO need a filter param example for list share resources
+list_request = client.share_resources.list(
+    orderby="properties/createdAt desc")
+
+for list_response in list_request:
+    print(list_response)
+#[END list_share_resources]

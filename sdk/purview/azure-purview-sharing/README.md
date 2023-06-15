@@ -493,7 +493,17 @@ The following code examples demonstrate how to use the Microsoft Azure Python SD
 **NEW** A list of share resources can be retrieved to view all resources within an account where sharing activities have taken place.
 
 ```python Snippet:list_a_share_resource
-<placeholder for code sample>
+import os
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint,credential=credential)
+
+list_request = client placeholder waiting so that I dont forget to put final version here
 ```
 
 ## Troubleshooting
