@@ -3,17 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.core.credentials import AzureNamedKeyCredential
 import pytest
 import platform
 import os
 
+from datetime import datetime, timedelta
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ClientAuthenticationError
 from azure.identity.aio import DefaultAzureCredential
+from azure.data.tables import AccountSasPermissions, ResourceTypes, generate_account_sas
 from azure.data.tables.aio import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
 from azure.data.tables._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
@@ -195,7 +196,13 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
     async def test_client_with_sas_token(self, tables_storage_account_name, tables_primary_storage_account_key):
         base_url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
-        sas_token = os.getenv("TABLES_STORAGE_SAS_TOKEN", "sv=2015-04-05&ss=t&srt=sco&sp=rwdlacu&se=2023-06-15T07%3A06%3A03.0000000Z&spr=https&sig=FakeSig")
+        sas_token = self.generate_sas(
+            generate_account_sas,
+            tables_primary_storage_account_key,
+            resource_types=ResourceTypes.from_string("sco"),
+            permission=AccountSasPermissions.from_string("rwdlacu"),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
         
         async with TableServiceClient(base_url, credential=AzureSasCredential(sas_token)) as client:
             await client.create_table(table_name)

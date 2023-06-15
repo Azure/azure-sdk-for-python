@@ -7,12 +7,13 @@ import pytest
 import platform
 import os
 
+from datetime import datetime, timedelta
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
-from azure.data.tables._error import _validate_storage_tablename
-from azure.data.tables import TableServiceClient, TableClient
+from azure.data.tables import TableServiceClient, TableClient, AccountSasPermissions, ResourceTypes, generate_account_sas
 from azure.data.tables import __version__ as VERSION
 from azure.data.tables._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
+from azure.data.tables._error import _validate_storage_tablename
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ClientAuthenticationError
 from azure.identity import DefaultAzureCredential
@@ -194,7 +195,13 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
     def test_client_with_sas_token(self, tables_storage_account_name, tables_primary_storage_account_key):
         base_url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
-        sas_token = os.getenv("TABLES_STORAGE_SAS_TOKEN", "sv=2015-04-05&ss=t&srt=sco&sp=rwdlacu&se=2023-06-15T07%3A06%3A03.0000000Z&spr=https&sig=FakeSig")
+        sas_token = self.generate_sas(
+            generate_account_sas,
+            tables_primary_storage_account_key,
+            resource_types=ResourceTypes.from_string("sco"),
+            permission=AccountSasPermissions.from_string("rwdlacu"),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
         
         with TableServiceClient(base_url, credential=AzureSasCredential(sas_token)) as client:
             client.create_table(table_name)
