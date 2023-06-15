@@ -10,6 +10,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+* Bumped minimum dependency on `azure-core` to `>=1.27.1`.
 
 ## 12.4.3 (2023-06-13)
 
