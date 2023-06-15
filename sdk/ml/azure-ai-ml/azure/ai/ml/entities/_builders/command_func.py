@@ -145,10 +145,9 @@ def command(
     priority: Optional[str] = None,
     **kwargs,
 ) -> Command:
-    """Create a Command object which can be used inside a dsl.pipeline function or can be created as a
-    standalone Command Job.
+    """Creates a Command object which can be used inside a dsl.pipeline function or used as a standalone Command job.
 
-    :param name: The naame of the Command job or component.
+    :param name: The name of the Command job or component.
     :type name: str
     :param description: The description of the Command.
     :type description: str
@@ -219,10 +218,20 @@ def command(
         ~azure.ai.ml.entities.VsCodeJobService]]
     :param job_tier: The job tier. Accepted values are "Spot", "Basic", "Standard", or "Premium".
     :type job_tier: str
-    :param priority:  The priority of the job on the compute. Defaults to "Medium".
+    :param priority: The priority of the job on the compute. Defaults to "Medium".
     :type priority: str
     :return: A Command object.
     :rtype: ~azure.ai.ml.entities.Command
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_command_configurations.py
+            :start-after: [START command_function]
+            :end-before: [END command_function]
+            :language: python
+            :dedent: 8
+            :caption: Creating a Command Job using the command() builder method.
     """
     # pylint: disable=too-many-locals
     inputs = inputs or {}

@@ -44,6 +44,24 @@ class CommandConfigurationOptions(object):
         )
         # [END command_job_definition]
 
+        # [START command_function]
+        from azure.ai.ml import Input, Output, command
+
+        train_func = command(
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            command='echo "hello world"',
+            distribution={"type": "Pytorch", "process_count_per_instance": 2},
+            inputs={
+            "training_data": Input(type="uri_folder"),
+            "max_epochs": 20,
+            "learning_rate": 1.8,
+            "learning_rate_schedule": "time-based",
+        },
+            outputs={"model_output": Output(type="uri_folder")},
+        )
+        # [END command_function]
+
+
 
 if __name__ == "__main__":
     sample = CommandConfigurationOptions()
