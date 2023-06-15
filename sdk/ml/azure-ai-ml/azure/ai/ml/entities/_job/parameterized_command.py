@@ -38,18 +38,24 @@ OLD_INPUT_BINDING_PREFIX = "AZURE_ML_INPUT"
 
 
 class ParameterizedCommand:
-    """Command component that contains the training command and supporting parameters for the command.
+    """Command component version that contains the training command and supporting parameters for a Command component or job.
 
-    :param command: Command to be executed in training.
+    :param command: The command to be executed during training.
     :type command: str
-    :param code: A local or remote path pointing at source code.
+    :param resources: The compute resource configuration for the command.
+    :type resources: [dict, ~azure.ai.ml.entities.JobResourceConfiguration]
+    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing to a remote location.
     :type code: str
-    :param distribution: Distribution configuration for distributed training.
-    :type distribution: Union[Dict, PyTorchDistribution, MpiDistribution, TensorFlowDistribution]
-    :param environment: Environment that training job will run in.
-    :type environment: Union[Environment, str]
-    :param resources: Compute Resource configuration for the job.
-    :type resources: Union[Dict, ~azure.ai.ml.entities.JobResourceConfiguration]
+    :param environment_variables:  A dictionary of environment variable names and values.
+        These environment variables are set on the process where user script is being executed.
+    :type environment_variables: dict[str, str]
+    :param distribution: The configuration for distributed training.
+    :type distribution: Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
+    :param environment: The environment that training job will run in.
+    :type environment: Union[str, ~azure.ai.ml.entities.Environment]
+    :param queue_settings: Queue settings for the job.
+    :type queue_settings: ~azure.ai.ml.entities.QueueSettings
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -72,7 +78,7 @@ class ParameterizedCommand:
         environment: Optional[Union[Environment, str]] = None,
         queue_settings: Optional[QueueSettings] = None,
         **kwargs,
-    ):
+    ) -> None:
         super().__init__(**kwargs)
         self.command = command
         self.code = code
@@ -91,10 +97,21 @@ class ParameterizedCommand:
     def distribution(
         self,
     ) -> Union[MpiDistribution, TensorFlowDistribution, PyTorchDistribution, RayDistribution]:
+        """The configuration for the distributed command component or job.
+
+        :rtype: Union[~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
+        """
         return self._distribution
 
     @distribution.setter
-    def distribution(self, value):
+    def distribution(self, value) -> None:
+        """Sets the configuration for the distributed command component or job.
+
+        :param value: The configuration for distributed training.
+        :type value: Union[Dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
+        """
         if isinstance(value, dict):
             dist_schema = UnionField(
                 [
@@ -109,10 +126,19 @@ class ParameterizedCommand:
 
     @property
     def resources(self) -> JobResourceConfiguration:
+        """The compute resource configuration for the command component or job.
+        
+        :rtype: ~azure.ai.ml.entities.JobResourceConfiguration
+        """
         return self._resources
 
     @resources.setter
-    def resources(self, value):
+    def resources(self, value) -> None:
+        """Sets the compute resource configuration for the command component or job.
+    
+        :param value: The compute resource configuration for the command component or job.
+        :type value: Union[Dict, ~azure.ai.ml.entities.JobResourceConfiguration]
+        """
         if isinstance(value, dict):
             value = JobResourceConfiguration(**value)
         self._resources = value
