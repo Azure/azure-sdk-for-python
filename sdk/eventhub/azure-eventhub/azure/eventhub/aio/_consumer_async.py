@@ -82,7 +82,7 @@ class EventHubConsumer(
         event_position = kwargs.get("event_position", None)
         prefetch = kwargs.get("prefetch", 300)
         owner_level = kwargs.get("owner_level", None)
-        keep_alive = kwargs.get("keep_alive", 30)
+        keep_alive = kwargs.get("keep_alive", 0)
         auto_reconnect = kwargs.get("auto_reconnect", True)
         track_last_enqueued_event_properties = kwargs.get(
             "track_last_enqueued_event_properties", False

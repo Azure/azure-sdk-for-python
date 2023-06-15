@@ -94,7 +94,7 @@ class EventHubProducer(
         self._amqp_transport = kwargs.pop("amqp_transport")
         partition = kwargs.get("partition", None)
         send_timeout = kwargs.get("send_timeout", 60)
-        keep_alive = kwargs.get("keep_alive", 30)
+        keep_alive = kwargs.get("keep_alive", 0)
         auto_reconnect = kwargs.get("auto_reconnect", True)
         idle_timeout = kwargs.get("idle_timeout", None)
 
