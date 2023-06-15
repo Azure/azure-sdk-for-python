@@ -24,13 +24,6 @@
           "metadata": {
               "description": "The url suffix to use when accessing the cosmos data plane."
           }
-        },
-        "baseTime": {
-            "type": "string",
-            "defaultValue": "[utcNow('u')]",
-            "metadata": {
-                "description": "The base time to add 500 minutes to for SAS token expiration. The default is the current time."
-            }
         }
     },
     "variables": {
@@ -55,13 +48,6 @@
             "virtualNetworkRules": [],
             "ipRules": [],
             "defaultAction": "Allow"
-        },
-        "accountSasProperties": {
-            "signedServices": "t",
-            "signedPermission": "rwdlacu",
-            "signedProtocol": "https",
-            "signedExpiry": "[dateTimeAdd(parameters('baseTime'), 'PT500M')]",
-            "signedResourceTypes": "sco"
         }
     },
     "resources": [
@@ -146,10 +132,6 @@
         "TABLES_PRIMARY_STORAGE_ACCOUNT_KEY": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('primaryAccountName')), variables('mgmtApiVersion')).keys[0].value]"
-        },
-        "TABLES_STORAGE_SAS_TOKEN": {
-            "type": "string",
-            "value": "[listAccountSas(resourceId('Microsoft.Storage/storageAccounts', variables('primaryAccountName')), variables('mgmtApiVersion'), variables('accountSasProperties')).accountSasToken]"
         },
         "TABLES_COSMOS_ENDPOINT_SUFFIX": {
             "type": "string",
