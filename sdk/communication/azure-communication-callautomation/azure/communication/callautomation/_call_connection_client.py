@@ -329,7 +329,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """Play media to specific participant(s) in this call.
 
         :param play_source: A PlaySource representing the source to play.
-        :type play_source: ~azure.communication.callautomation.FileSource or 
+        :type play_source: ~azure.communication.callautomation.FileSource or
         ~azure.communication.callautomation.TextSource or ~azure.communication.callautomation.SsmlSource
         :param play_to: The targets to play media to.
         :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
@@ -363,7 +363,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """Play media to all participants in this call.
 
         :param play_source: A PlaySource representing the source to play.
-        :type play_source: ~azure.communication.callautomation.FileSource or 
+        :type play_source: ~azure.communication.callautomation.FileSource or
         ~azure.communication.callautomation.TextSource or ~azure.communication.callautomation.SsmlSource
         :keyword loop: if the media should be repeated until cancelled.
         :paramtype loop: bool
@@ -406,7 +406,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :keyword initial_silence_timeout: Time to wait for first input after prompt in seconds (if any).
         :paramtype initial_silence_timeout: int
         :keyword play_prompt: The source of the audio to be played for recognition.
-        :paramtype play_prompt: ~azure.communication.callautomation.FileSource or 
+        :paramtype play_prompt: ~azure.communication.callautomation.FileSource or
         ~azure.communication.callautomation.TextSource or ~azure.communication.callautomation.SsmlSource
         :keyword interrupt_call_media_operation:
          If set recognize can barge into other existing queued-up/currently-processing requests.
