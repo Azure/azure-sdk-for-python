@@ -20,14 +20,24 @@ request_id_set_values = ("bar", None, "_unset")
 request_id_req_values = ("baz", None, "_unset")
 request_id_header_name_values = ("client-request-id", "_unset")
 full_combination = list(
-    product(auto_request_id_values, request_id_init_values, request_id_set_values, request_id_req_values, request_id_header_name_values, HTTP_REQUESTS)
+    product(
+        auto_request_id_values,
+        request_id_init_values,
+        request_id_set_values,
+        request_id_req_values,
+        request_id_header_name_values,
+        HTTP_REQUESTS,
+    )
 )
 
 
 @pytest.mark.parametrize(
-    "auto_request_id, request_id_init, request_id_set, request_id_req, request_id_header_name, http_request", full_combination
+    "auto_request_id, request_id_init, request_id_set, request_id_req, request_id_header_name, http_request",
+    full_combination,
 )
-def test_request_id_policy(auto_request_id, request_id_init, request_id_set, request_id_req, request_id_header_name, http_request):
+def test_request_id_policy(
+    auto_request_id, request_id_init, request_id_set, request_id_req, request_id_header_name, http_request
+):
     """Test policy with no other policy and happy path"""
     kwargs = {}
     if request_id_header_name != "_unset":
