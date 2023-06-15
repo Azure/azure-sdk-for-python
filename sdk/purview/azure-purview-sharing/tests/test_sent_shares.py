@@ -16,6 +16,7 @@ from azure.purview.sharing.operations._operations import (
     build_sent_shares_get_request,
     build_sent_shares_list_request,
     build_sent_shares_delete_request,
+    build_sent_shares_delete_invitation_request,
     build_sent_shares_list_invitations_request,
     build_sent_shares_get_invitation_request
 )
@@ -280,12 +281,16 @@ class TestSentShares(TestPurviewSharing):
          
         list = json.loads(list_response.content)['value']
         assert len([x for x in list if x['id'] == str(sent_share_invitation_id)]) == 1
-
+    ###     ###
+    ### NEW ###
+    ###     ###
+    ### TODO make a delete_sent_share_user_invitation test?? does the difference matter?
     @PurviewSharingPowerShellPreparer()
     @recorded_by_proxy
     def test_delete_sent_share_service_invitation(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "17253ebb-2a2b-48da-8c9f-fa99c699d6c4"
+        sent_share_id = uuid4()
+        sent_share_invitation_id = uuid4()
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -298,7 +303,33 @@ class TestSentShares(TestPurviewSharing):
         assert response is not None
         assert response.status_code == 201, "Invalid Status Code " + str(response.status_code)
 
-        delete_request = build_sent_shares_delete_request(sent_share_id=sent_share_id)
+        targetActiveDirectoryId = uuid4()
+        targetObjectId = uuid4()
+
+        sent_share_invitation = {
+            "invitationKind": "Service",
+            "properties": {
+                "targetActiveDirectoryId": str(targetActiveDirectoryId),
+                "targetObjectId": str(targetObjectId)
+            }
+        }
+
+        invitation_request = build_sent_shares_create_invitation_request(
+            sent_share_id=sent_share_id,
+            sent_share_invitation_id=sent_share_invitation_id,
+            content_type="application/json",
+            content=json.dumps(sent_share_invitation))
+        
+        invitation_response = client.send_request(invitation_request)
+
+        assert invitation_response is not None
+        assert invitation_response.status_code == 201, "Invalid status code 2 " + str(invitation_response.status_code)
+        assert invitation_response.content is not None
+
+        delete_request = build_sent_shares_delete_invitation_request(
+            sent_share_id=sent_share_id, 
+            sent_share_invitation_id=sent_share_invitation_id)
+        
         delete_response = client.send_request(delete_request)
 
         assert delete_response is not None
@@ -309,9 +340,7 @@ class TestSentShares(TestPurviewSharing):
         except HttpResponseError as e:
             print("Exception " + str(e))
             print("Response " + delete_response.text())
-    ###     ###
-    ### NEW ###
-    ###     ###
+
     @PurviewSharingPowerShellPreparer()
     @recorded_by_proxy
     def test_get_sent_share_invitation(self, purviewsharing_endpoint):

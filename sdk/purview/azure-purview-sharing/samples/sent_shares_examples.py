@@ -120,7 +120,7 @@ delete_request = client.sent_shares.begin_delete(sent_share_id=str(sent_share_id
 delete_response = delete_request.result()
 # [END delete_a_sent_share]
 
-# Get a sent share invitation
+# Get a sent share invitation (new)
 # [START get_a_sent_share_invitation]
 get_invitation_request = client.sent_shares.get_invitation(
     sent_share_id=str(sent_share_id), 
@@ -131,3 +131,11 @@ get_invitation_request = client.sent_shares.get_invitation(
 # [START view_sent_invitations]
 list_request = client.sent_shares.list_invitations(sent_share_id=str(sent_share_id))
 # [END view_sent_invitations]
+
+# Delete a sent share invitation (new)
+# [START delete_a_sent_share_invitation]
+delete_invitation_request = client.sent_shares.begin_delete_invitation(
+    sent_share_id=str(sent_share_id),
+    sent_share_invitation_id=str(sent_share_invitation_id))
+delete_invitation_response = delete_invitation_request.result()
+# [END delete_a_sent_share_invitation]

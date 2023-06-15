@@ -162,7 +162,7 @@ print(created_invitation)
 
 **NEW** Data providers can also extend invitations to services or applications by specifying the tenant id and object id of the service. _The object id used for sending an invitation to a service must be the object id associated with the Enterprise Application (not the application registration)._
 
-```python Snippet:create_sent_share_to_service
+```python Snippet:send_a_service_invitation
 import os
 
 from azure.purview.sharing import PurviewSharingClient
@@ -263,7 +263,7 @@ print(delete_response)
 
 **NEW** After creating a sent share invitation, data providers can retrieve it.
 
-```python Snippet:get_sent_share_invitation
+```python Snippet:get_a_sent_share_invitation
 import os, uuid, json
 
 from azure.purview.sharing import PurviewSharingClient
@@ -312,8 +312,25 @@ for list_response in list_request:
 
 **NEW** An individual sent share invitation can be deleted by the data provider to stop sharing their data with the specific data consumer to whom the invitation was addressed.
 
-```python Snippet:delete_sent_share_invite
-<placeholder for code sample>
+```python Snippet:delete_a_sent_share_invitation
+import os, uuid, json
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint,credential=credential)
+
+sent_share_id = uuid.uuid4()
+sent_share_invitation_id = uuid.uuid4()
+
+delete_invitation_request = client.sent_shares.begin_delete_invitation(
+    sent_share_id=str(sent_share_id),
+    sent_share_invitation_id=str(sent_share_invitation_id))
+delete_invitation_response = delete_invitation_request.result()
+print(delete_invitation_response)
 ```
 
 ## Data Consumer Examples
