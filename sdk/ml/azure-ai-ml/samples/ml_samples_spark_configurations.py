@@ -24,12 +24,12 @@ class SparkConfigurationOptions(object):
 
         from azure.ai.ml import MLClient
 
-        # subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
-        # resource_group = os.environ["RESOURCE_GROUP_NAME"]
-        subscription_id = "e9b2ec51-5c94-4fa8-809a-dc1e695e4896"
-        resource_group = "dipeck-rg1"
+        subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+        resource_group = os.environ["RESOURCE_GROUP_NAME"]
         credential = DefaultAzureCredential()
-        ml_client = MLClient(credential, subscription_id, resource_group, workspace_name="r-bug-bash")
+        ml_client = MLClient(credential, subscription_id, resource_group, workspace_name="test-ws1")
+
+        cpu_cluster = ml_client.compute.get("cpu-cluster")
 
         # [START spark_monitor_definition]
         from azure.ai.ml.entities import (
