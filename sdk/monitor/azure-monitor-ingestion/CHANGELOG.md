@@ -1,16 +1,10 @@
 # Release History
 
-## 1.0.2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.2 (2023-06-15)
 
 ### Bugs Fixed
 
-### Other Changes
-
-- Allow for custom authentication policies or credential scopes to be passed to the client. ([#30739](https://github.com/Azure/azure-sdk-for-python/pull/30739/))
+- Fixed issue preventing custom authentication policies or credential scopes to be passed to the client. ([#30739](https://github.com/Azure/azure-sdk-for-python/pull/30739/))
 
 ## 1.0.1 (2023-04-11)
 
