@@ -216,7 +216,7 @@ class TextSource(object):
         https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
     :vartype source_locale: str
     :ivar voice_gender: Voice gender type. Known values are: "male" and "female".
-    :vartype voice_gender: str or 'Gender'
+    :vartype voice_gender: str or 'azure.communication.callautomation.Gender'
     :ivar voice_name: Voice name to be played. Refer to available Text-to-speech voices here:
         https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
     :vartype voice_name: str
@@ -241,7 +241,7 @@ class TextSource(object):
             https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
         :paramtype source_locale: str
         :keyword voice_gender: Voice gender type. Known values are: "male" and "female".
-        :paramtype voice_gender: str or 'Gender'
+        :paramtype voice_gender: str or 'azure.communication.callautomation.Gender'
         :keyword voice_name: Voice name to be played. Refer to available Text-to-speech voices here:
             https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
         :paramtype voice_name: str
@@ -546,7 +546,7 @@ class TransferCallResult(object):
 
 class Choice(object):
     """
-    An IvR choice for the recognize operation.
+    An IVR choice for the recognize operation.
 
     :ivar label: Identifier for a given choice.
     :vartype label: str
@@ -554,7 +554,7 @@ class Choice(object):
     :vartype phrases: list[str]
     :ivar tone: Known values are: "zero", "one", "two", "three", "four", "five", "six", "seven",
      "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
-    :vartype tone: str or ~azure.communication.callautomation.models.DtmfTone
+    :vartype tone: str or ~azure.communication.callautomation.DtmfTone
     """
     def __init__(
             self,
