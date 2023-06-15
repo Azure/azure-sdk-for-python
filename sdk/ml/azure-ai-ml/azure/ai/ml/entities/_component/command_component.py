@@ -67,7 +67,6 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     :type additional_includes: list
     :param properties: Properties of the component. Contents inside will pass through to backend as a dictionary.
     :type properties: dict
-
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated.
         Details will be provided in the error message.
     """
