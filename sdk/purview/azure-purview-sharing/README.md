@@ -45,7 +45,10 @@ client = PurviewSharingClient(endpoint="https://<my-account-name>.purview.azure.
 
 ## Examples
 
-<!-- The following section shows you how to initialize and authenticate your client and share data. -->
+Table of Example Contents: 
+- [Data Provider](#data-provider-examples)
+- [Data Consumer](#data-consumer-examples)
+- [Shared Sources](#share-resource-examples)
 
 ## Data Provider Examples
 
@@ -419,6 +422,17 @@ delete_received_share_response = delete_received_share_request.result()
 print(delete_received_share_response)
 ```
 
+## Share Resource Examples
+
+The following code examples demonstrate how to use the Microsoft Azure Python SDK for Purview Sharing to view share resources. A share resource is the underlying resource from which a provider shares data or the destination where a consumer attaches data shared with them.
+
+### List Share Resources
+
+A list of share resources can be retrieved to view all resources within an account where sharing activities have taken place.
+
+```python Snippet:list_a_share_resource
+<placeholder for code sample>
+```
 
 ## Troubleshooting
 
