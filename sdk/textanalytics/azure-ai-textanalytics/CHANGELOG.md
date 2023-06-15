@@ -1,6 +1,6 @@
 # Release History
 
-## 5.3.0 (Unreleased)
+## 5.3.0 (2023-06-15)
 
 This version of the client library defaults to the service API version `2023-04-01`.
 
