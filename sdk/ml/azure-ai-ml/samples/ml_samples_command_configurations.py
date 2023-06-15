@@ -61,6 +61,22 @@ class CommandConfigurationOptions(object):
         )
         # [END command_function]
 
+        # [START command_component_definition]
+        from azure.ai.ml.entities import CommandComponent
+
+        component = CommandComponent(
+            name="sample_command_component_basic",
+            display_name="CommandComponentBasic",
+            description="This is the basic command component",
+            tags={"tag": "tagvalue", "owner": "sdkteam"},
+            version="1",
+            outputs={"component_out_path": {"type": "uri_folder"}},
+            command="echo Hello World",
+            code="./src",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+        )
+        # [END command_component_definition]
+
 
 
 if __name__ == "__main__":
