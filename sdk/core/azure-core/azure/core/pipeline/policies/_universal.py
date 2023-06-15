@@ -97,7 +97,7 @@ class HeadersPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """
 
     def __init__(
-        self, base_headers: Optional[Dict[str, str]] = None, **kwargs
+        self, base_headers: Optional[Dict[str, str]] = None, **kwargs: Any
     ) -> None:  # pylint: disable=super-init-not-called
         self._headers: Dict[str, str] = base_headers or {}
         self._headers.update(kwargs.pop("headers", {}))
@@ -223,7 +223,7 @@ class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     _ENV_ADDITIONAL_USER_AGENT = "AZURE_HTTP_USER_AGENT"
 
     def __init__(
-        self, base_user_agent: Optional[str] = None, **kwargs
+        self, base_user_agent: Optional[str] = None, **kwargs: Any
     ) -> None:  # pylint: disable=super-init-not-called
         self.overwrite = kwargs.pop("user_agent_overwrite", False)
         self.use_env = kwargs.pop("user_agent_use_env", True)
@@ -293,7 +293,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTy
             :caption: Configuring a network trace logging policy.
     """
 
-    def __init__(self, logging_enable=False, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, logging_enable=False, **kwargs: Any):  # pylint: disable=unused-argument
         self.enable_http_logger = logging_enable
 
     def on_request(
@@ -438,7 +438,7 @@ class HttpLoggingPolicy(
     REDACTED_PLACEHOLDER = "REDACTED"
     MULTI_RECORD_LOG = "AZURE_SDK_LOGGING_MULTIRECORD"
 
-    def __init__(self, logger=None, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, logger=None, **kwargs: Any):  # pylint: disable=unused-argument
         self.logger = logger or logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
         self.allowed_query_params = set()
         self.allowed_header_names = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
@@ -574,7 +574,9 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     # Name used in context
     CONTEXT_NAME = "deserialized_data"
 
-    def __init__(self, response_encoding: Optional[str] = None, **kwargs) -> None:  # pylint: disable=unused-argument
+    def __init__(
+        self, response_encoding: Optional[str] = None, **kwargs: Any  # pylint: disable=unused-argument
+    ) -> None:
         self._response_encoding = response_encoding
 
     @classmethod
@@ -743,7 +745,7 @@ class ProxyPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
             :caption: Configuring a proxy policy.
     """
 
-    def __init__(self, proxies=None, **kwargs):  # pylint: disable=unused-argument,super-init-not-called
+    def __init__(self, proxies=None, **kwargs: Any):  # pylint: disable=unused-argument,super-init-not-called
         self.proxies = proxies
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
