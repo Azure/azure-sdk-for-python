@@ -37,17 +37,13 @@ stages:
 
       steps:
         - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
-          parameters:
-            EmulatorMsiUrl: ${{ parameters.EmulatorMsiUrl }}
-            StartParameters: ${{ parameters.EmulatorStartParameters }}
 
         - template: /eng/pipelines/templates/steps/build-test.yml
           parameters:
             TestMarkArgument: not globaldb
             EnvVars:
               ACCOUNT_HOST: https://localhost:8081/
-            ServiceDirectory: ${{ parameters.ServiceDirectory }}
+            ServiceDirectory: cosmos
             PythonVersion: $(PythonVersion)
             OSVmImage: $(OSVmImage)
             ToxTestEnv: 'whl,sdist'
-            InjectedPackages: ${{parameters.InjectedPackages}}
