@@ -22,28 +22,23 @@ pr:
     include:
     - sdk/cosmos/
 
+variables:
+  ACCOUNT_HOST: https://localhost:8081/
+  PythonVersion: 3.9
+  Pool: azsdk-pool-mms-ubuntu-2004-general
+  OSVmImage: MMSUbuntu20.04
+  toxenv: 'whl,sdist'
+
 stages:
   - stage: Test_Emulator
     dependsOn: []
     jobs:
-    - job: Emulator
-      strategy:
-        matrix:
-          Windows_Python36:
-            OSVmImage: 'windows-2022'
-            PythonVersion: '3.6'
-      pool:
-        vmImage: $(OSVmImage)
-
-      steps:
-        - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
-
-        - template: /eng/pipelines/templates/steps/build-test.yml
-          parameters:
-            TestMarkArgument: not globaldb
-            EnvVars:
-              ACCOUNT_HOST: https://localhost:8081/
-            ServiceDirectory: cosmos
-            PythonVersion: $(PythonVersion)
-            OSVmImage: $(OSVmImage)
-            ToxTestEnv: 'whl,sdist'
+    - template: /eng/pipelines/templates/jobs/ci.tests.yml
+      parameters:
+        ServiceDirectory: cosmos
+        BeforeTestSteps:
+          - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
+            parameters:
+              StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Strong'
+        BuildTargetingString: azure-cosmos
+        TestMarkArgument: not globaldb
