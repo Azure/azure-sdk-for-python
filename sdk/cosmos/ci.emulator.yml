@@ -34,13 +34,10 @@ extends:
           StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Strong'
     TestMarkArgument: not cosmosEmulator
     MatrixConfigs:
-      - name: MatrixConfigs
-        type: object
-        default:
-          - Name: Python_cosmos_emulator
-            Path: sdk/cosmos/emulator-matrix.json
-            Selection: sparse
-            GenerateVMJobs: true
+      - Name: Python_cosmos_emulator
+        Path: sdk/cosmos/emulator-matrix.json
+        Selection: sparse
+        GenerateVMJobs: true
     Artifacts:
     - name: azure-cosmos
       safeName: azurecosmos
