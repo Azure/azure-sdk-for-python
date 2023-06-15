@@ -9,6 +9,7 @@ trigger:
   paths:
     include:
     - sdk/cosmos/
+    - sdk/core/
 
 pr:
   branches:
@@ -21,24 +22,25 @@ pr:
   paths:
     include:
     - sdk/cosmos/
+    - sdk/core/
 
-variables:
-  ACCOUNT_HOST: https://localhost:8081/
-  PythonVersion: 3.9
-  Pool: azsdk-pool-mms-ubuntu-2004-general
-  OSVmImage: MMSUbuntu20.04
-  toxenv: 'whl,sdist'
-
-stages:
-  - stage: Test_Emulator
-    dependsOn: []
-    jobs:
-    - template: /eng/pipelines/templates/jobs/ci.tests.yml
-      parameters:
-        ServiceDirectory: cosmos
-        BeforeTestSteps:
-          - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
-            parameters:
-              StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Strong'
-        BuildTargetingString: azure-cosmos
-        TestMarkArgument: not globaldb
+extends:
+  template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: cosmos
+    BeforeTestSteps:
+      - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
+        parameters:
+          StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Strong'
+    TestMarkArgument: not cosmosEmulator
+    MatrixConfigs:
+      - name: MatrixConfigs
+        type: object
+        default:
+          - Name: Python_cosmos_emulator
+            Path: sdk/cosmos/emulator-matrix.json
+            Selection: sparse
+            GenerateVMJobs: true
+    Artifacts:
+    - name: azure-cosmos
+      safeName: azurecosmos
