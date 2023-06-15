@@ -1,6 +1,16 @@
 # Release History
 
-## 12.4.3 (2023-06-08)
+## 12.4.4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 12.4.3 (2023-06-13)
 
 ### Bugs Fixed
 * Fixed a bug in getting error attribute values when operations failed. ([#27410](https://github.com/Azure/azure-sdk-for-python/issues/27410))

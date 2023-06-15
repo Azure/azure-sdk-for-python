@@ -69,6 +69,15 @@ Remove-Item -Recurse -Force .\.assets\
 
 After running tests again, a new `.assets` directory will be created and tests should run normally.
 
+If the problem persists, try removing both the `.assets` folder and your local test proxy tool. `cd` into the root of
+`azure-sdk-for-python` and run the following PowerShell commands:
+```powershell
+Remove-Item -Recurse -Force .\.assets\
+Remove-Item -Recurse -Force .\.proxy\
+```
+
+These folders will be freshly recreated the next time you run tests.
+
 ## Playback failures from body matching errors
 
 In the old, `vcrpy`-based testing system, request and response bodies weren't compared in playback mode by default in

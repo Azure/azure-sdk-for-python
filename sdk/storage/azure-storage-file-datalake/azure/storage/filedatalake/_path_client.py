@@ -78,7 +78,7 @@ class PathClient(StorageAccountHostsMixin):
         if not (file_system_name and path_name):
             raise ValueError("Please specify a file system name and file path.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+            raise ValueError(f"Invalid URL: {account_url}")
 
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
         self._blob_account_url = blob_account_url
@@ -131,12 +131,8 @@ class PathClient(StorageAccountHostsMixin):
         file_system_name = self.file_system_name
         if isinstance(file_system_name, str):
             file_system_name = file_system_name.encode('UTF-8')
-        return "{}://{}/{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(file_system_name),
-            quote(self.path_name, safe='~'),
-            self._query_str)
+        return (f"{self.scheme}://{hostname}/{quote(file_system_name)}/"
+                f"{quote(self.path_name, safe='~')}{self._query_str}")
 
     def _create_path_options(self, resource_type,
                              content_settings=None,  # type: Optional[ContentSettings]

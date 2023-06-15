@@ -28,7 +28,7 @@ try:
     try:
         ver = azure.storage.__version__
         raise Exception(
-            'This package is incompatible with azure-storage=={}. '.format(ver) +
+            f'This package is incompatible with azure-storage=={ver}. ' +
             ' Uninstall it with "pip uninstall azure-storage".'
         )
     except AttributeError:
@@ -48,7 +48,7 @@ setup(
     name=PACKAGE_NAME,
     version=version,
     include_package_data=True,
-    description='Microsoft {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
+    description=f'Microsoft {PACKAGE_PPRINT_NAME} Client Library for Python',
     long_description=open('README.md', 'r').read(),
     long_description_content_type='text/markdown',
     license='MIT License',

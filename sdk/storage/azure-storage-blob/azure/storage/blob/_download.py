@@ -373,11 +373,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self.properties.size = self.size
 
         # Overwrite the content range to the user requested range
-        self.properties.content_range = "bytes {0}-{1}/{2}".format(
-            self._start_range,
-            self._end_range,
-            self._file_size
-        )
+        self.properties.content_range = f"bytes {self._start_range}-{self._end_range}/{self._file_size}"
 
         # Overwrite the content MD5 as it is the MD5 for the last range instead
         # of the stored MD5
@@ -456,8 +452,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                             download_stream_current=0,
                             **self._request_options
                         )
-                    except HttpResponseError as error:
-                        process_storage_error(error)
+                    except HttpResponseError as e:
+                        process_storage_error(e)
 
                     # Set the download size to empty
                     self.size = 0
