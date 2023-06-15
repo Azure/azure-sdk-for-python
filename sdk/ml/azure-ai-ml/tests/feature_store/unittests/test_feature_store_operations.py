@@ -1,12 +1,12 @@
 from unittest.mock import DEFAULT, Mock
 
 import pytest
-from azure.core.polling import LROPoller
 from pytest_mock import MockFixture
 
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import FeatureStore, Workspace
 from azure.ai.ml.operations._feature_store_operations import FeatureStoreOperations
+from azure.core.polling import LROPoller
 
 
 @pytest.fixture
