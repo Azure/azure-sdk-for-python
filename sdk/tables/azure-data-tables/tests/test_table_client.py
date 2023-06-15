@@ -8,7 +8,7 @@ import platform
 import os
 
 from datetime import datetime, timedelta
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, set_custom_default_matcher
 
 from azure.data.tables import TableServiceClient, TableClient, AccountSasPermissions, ResourceTypes, generate_account_sas
 from azure.data.tables import __version__ as VERSION
@@ -193,6 +193,7 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_client_with_sas_token(self, tables_storage_account_name, tables_primary_storage_account_key):
+        set_custom_default_matcher(ignore_query_ordering=True)
         base_url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
         sas_token = self.generate_sas(
