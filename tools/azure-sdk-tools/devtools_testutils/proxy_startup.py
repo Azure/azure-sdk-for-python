@@ -19,13 +19,12 @@ import certifi
 from dotenv import load_dotenv, find_dotenv
 import pytest
 import subprocess
-from urllib3 import PoolManager, Retry
 from urllib3.exceptions import SSLError
 
 from ci_tools.variables import in_ci
 
 from .config import PROXY_URL
-from .helpers import is_live_and_not_recording
+from .helpers import get_http_client, is_live_and_not_recording
 from .sanitizers import add_remove_header_sanitizer, set_custom_default_matcher
 
 
@@ -82,15 +81,6 @@ PROXY_DOWNLOAD_URL = "https://github.com/Azure/azure-sdk-tools/releases/download
 
 discovered_roots = []
 
-if os.getenv("REQUESTS_CA_BUNDLE"):
-    http_client = PoolManager(
-        retries=Retry(total=3, raise_on_status=False),
-        cert_reqs="CERT_REQUIRED",
-        ca_certs=os.getenv("REQUESTS_CA_BUNDLE"),
-    )
-else:
-    http_client = PoolManager(retries=Retry(total=1, raise_on_status=False))
-
 
 def get_target_version(repo_root: str) -> str:
     """Gets the target test-proxy version from the target_version.txt file in /eng/common/testproxy"""
@@ -143,6 +133,7 @@ def ascend_to_root(start_dir_or_file: str) -> str:
 def check_availability() -> None:
     """Attempts request to /Info/Available. If a test-proxy instance is responding, we should get a response."""
     try:
+        http_client = get_http_client(raise_on_status=False)
         response = http_client.request(method="GET", url=PROXY_CHECK_URL, timeout=10)
         return response.status
     # We get an SSLError if the container is started but the endpoint isn't available yet
@@ -237,7 +228,7 @@ def prepare_local_tool(repo_root: str) -> str:
                 download_url = PROXY_DOWNLOAD_URL.format(target_proxy_version, target_info["file_name"])
                 download_file = os.path.join(download_folder, target_info["file_name"])
 
-                http_client = PoolManager()
+                http_client = get_http_client()
                 with open(download_file, "wb") as out:
                     r = http_client.request("GET", download_url, preload_content=False)
                     shutil.copyfileobj(r, out)
@@ -329,7 +320,7 @@ def start_test_proxy(request) -> None:
 
     # Wait for the proxy server to become available
     check_proxy_availability()
-    # remove headers from recordings if we don't need them, and ignore them if present
+    # Remove headers from recordings if we don't need them, and ignore them if present
     # Authorization, for example, can contain sensitive info and can cause matching failures during challenge auth
     headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id"
     add_remove_header_sanitizer(headers=headers_to_ignore)

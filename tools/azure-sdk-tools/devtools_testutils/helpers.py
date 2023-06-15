@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import os
 import sys
+from urllib3 import PoolManager, Retry
 
 from azure_devtools.scenario_tests.config import TestConfig
 
@@ -13,6 +14,24 @@ from azure_devtools.scenario_tests.config import TestConfig
 # we map test IDs to recording IDs, rather than storing only the current test's recording ID, for parallelization
 this = sys.modules[__name__]
 this.recording_ids = {}
+
+
+def get_http_client(**kwargs):
+    """Returns a `urllib3` client that provides the test proxy's self-signed certificate if it's available.
+
+    This helper method was implemented since the REQUESTS_CA_BUNDLE environment variable is only automatically set after
+    `proxy_startup.py` starts up the tool. Module-level HTTP clients could be created before this variable is set and
+    therefore fail subsequent SSL requests.
+    """
+    if os.getenv("REQUESTS_CA_BUNDLE"):
+        http_client = PoolManager(
+            retries=Retry(total=3, raise_on_status=kwargs.get("raise_on_status", True)),
+            cert_reqs="CERT_REQUIRED",
+            ca_certs=os.getenv("REQUESTS_CA_BUNDLE"),
+        )
+    else:
+        http_client = PoolManager(retries=Retry(total=3, raise_on_status=kwargs.get("raise_on_status", True)))
+    return http_client
 
 
 def get_recording_id():
@@ -26,8 +45,7 @@ def set_recording_id(test_id, recording_id):
     this.recording_ids[test_id] = recording_id
 
 
-def get_test_id():
-    # type: () -> str
+def get_test_id() -> str:
     # pytest sets the current running test in an environment variable
     # the path to the test can depend on the environment, so we can't assume this is the path from the repo root
     setting_value = os.getenv("PYTEST_CURRENT_TEST")
