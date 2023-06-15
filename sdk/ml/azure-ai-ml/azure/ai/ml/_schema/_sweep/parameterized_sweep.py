@@ -5,12 +5,12 @@
 # pylint: disable=unused-argument,no-self-use
 
 from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField, PathAwareSchema
+from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 
 from ..job.job_limits import SweepJobLimitsSchema
 from ..queue_settings import QueueSettingsSchema
 from .sweep_fields_provider import EarlyTerminationField, SamplingAlgorithmField, SearchSpaceField
 from .sweep_objective import SweepObjectiveSchema
-from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 
 
 class ParameterizedSweepSchema(PathAwareSchema):

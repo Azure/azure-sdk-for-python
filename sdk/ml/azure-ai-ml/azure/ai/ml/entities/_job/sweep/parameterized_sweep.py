@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Optional, Type, Union
+from typing import Dict, List, Optional, Type, Union
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -120,7 +120,12 @@ class ParameterizedSweep:
         return self._limits
 
     @resources.setter
-    def resources(self, value):
+    def resources(self, value: JobResourceConfiguration):
+        """Set Resources for sweep job.
+
+        :param resources: Compute Resource configuration for the job.
+        :type resources: ~azure.ai.ml.entities.ResourceConfiguration
+        """
         if isinstance(value, dict):
             value = JobResourceConfiguration(**value)
         self._resources = value
@@ -142,6 +147,34 @@ class ParameterizedSweep:
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
         self._limits = value
+
+    def set_resources(
+        self,
+        *,
+        instance_type: Optional[Union[str, List[str]]] = None,
+        instance_count: Optional[int] = None,
+        locations: Optional[List[str]] = None,
+        properties: Optional[Dict] = None,
+        docker_args: Optional[str] = None,
+        shm_size: Optional[str] = None,
+        **kwargs,  # pylint: disable=unused-argument
+    ):
+        """Set resources for Sweep."""
+        if self.resources is None:
+            self.resources = JobResourceConfiguration()
+
+        if locations is not None:
+            self.resources.locations = locations
+        if instance_type is not None:
+            self.resources.instance_type = instance_type
+        if instance_count is not None:
+            self.resources.instance_count = instance_count
+        if properties is not None:
+            self.resources.properties = properties
+        if docker_args is not None:
+            self.resources.docker_args = docker_args
+        if shm_size is not None:
+            self.resources.shm_size = shm_size
 
     def set_limits(
         self,

@@ -210,6 +210,8 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         :type limits: ~azure.ai.ml.entities.SweepJobLimits
         :param queue_settings: Queue settings for the job.
         :type queue_settings: ~azure.ai.ml.entities.QueueSettings
+        :param resources: Compute Resource configuration for the job.
+        :type resources: ~azure.ai.ml.entities.ResourceConfiguration
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """

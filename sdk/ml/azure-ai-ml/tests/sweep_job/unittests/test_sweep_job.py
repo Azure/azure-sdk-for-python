@@ -364,7 +364,7 @@ class TestSweepJob:
         assert sweep_job.inputs == sweep.inputs
         assert sweep_job.outputs == sweep.outputs
         assert sweep_job.identity == sweep.identity
-        if 'instance_type' in sweep.resources:
-            assert sweep_job.resources.instance_type == sweep.resources['instance_type']
-        if 'instance_count' in sweep.resources:
-            assert sweep_job.resources.instance_count == sweep.resources['instance_count']
+        if "instance_type" in sweep.resources:
+            assert sweep_job.resources.instance_type == sweep.resources["instance_type"]
+        if "instance_count" in sweep.resources:
+            assert sweep_job.resources.instance_count == sweep.resources["instance_count"]

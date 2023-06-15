@@ -106,7 +106,10 @@ class TestSweepJobSchema:
     @pytest.mark.parametrize(
         "expected_resources, rest_resources",
         [
-            (JobResourceConfiguration(instance_type="d2", instance_count=2), {"instance_type": "d2", "instance_count": 2}),
+            (
+                JobResourceConfiguration(instance_type="d2", instance_count=2),
+                {"instance_type": "d2", "instance_count": 2},
+            ),
             (JobResourceConfiguration(instance_type="d2"), {"instance_type": "d2"}),
             (JobResourceConfiguration(instance_count=2), {"instance_count": 2}),
         ],
@@ -119,7 +122,12 @@ class TestSweepJobSchema:
             compute="local",
             environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
-        sweep = SweepJob(sampling_algorithm="random", trial=command_job, search_space={"ss": Choice([1.0, 2.0, 3.0])}, resources=rest_resources)
+        sweep = SweepJob(
+            sampling_algorithm="random",
+            trial=command_job,
+            search_space={"ss": Choice([1.0, 2.0, 3.0])},
+            resources=rest_resources,
+        )
 
         rest = sweep._to_rest_object()
         rest.properties.resources = rest_resources
@@ -129,7 +137,10 @@ class TestSweepJobSchema:
     @pytest.mark.parametrize(
         "rest_resources, expected_resources",
         [
-            (JobResourceConfiguration(instance_type="d2", instance_count=2), {"instance_type": "d2", "instance_count": 2}),
+            (
+                JobResourceConfiguration(instance_type="d2", instance_count=2),
+                {"instance_type": "d2", "instance_count": 2},
+            ),
             (JobResourceConfiguration(instance_type="d2"), {"instance_type": "d2"}),
             (JobResourceConfiguration(instance_count=2), {"instance_count": 2}),
         ],
@@ -143,13 +154,18 @@ class TestSweepJobSchema:
             environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
 
-        sweep = SweepJob(sampling_algorithm="random", trial=command_job, search_space={"ss": Choice([1.0, 2.0, 3.0])}, resources=rest_resources)
+        sweep = SweepJob(
+            sampling_algorithm="random",
+            trial=command_job,
+            search_space={"ss": Choice([1.0, 2.0, 3.0])},
+            resources=rest_resources,
+        )
         rest = sweep._to_rest_object()
 
-        if 'instance_count' in expected_resources:
-            assert rest.properties.resources.instance_count == expected_resources['instance_count']
-        if 'instance_type' in expected_resources:
-            assert rest.properties.resources.instance_type == expected_resources['instance_type']
+        if "instance_count" in expected_resources:
+            assert rest.properties.resources.instance_count == expected_resources["instance_count"]
+        if "instance_type" in expected_resources:
+            assert rest.properties.resources.instance_type == expected_resources["instance_type"]
 
     def test_sweep_with_ints(self):
         expected_rest = ["quniform", [1, 100, 1]]
