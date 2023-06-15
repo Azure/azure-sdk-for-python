@@ -153,12 +153,12 @@ class RequestIdPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         *,
-        request_id=_Unset,
+        request_id: Union[str, Any] = _Unset,
         auto_request_id: bool = True,
         request_id_header_name: str = "x-ms-client-request-id",
-        **kwargs: Any  # pylint: disable=unused-argument
+        **kwargs: Any
     ) -> None:
         super()
         self._request_id = request_id
