@@ -344,7 +344,6 @@ class TestDSLPipelineJobValidate:
         }
         validate_result.resolve_location_for_diagnostics(source_path=pipeline2.component._source_path)
 
-
     def test_pipeline_with_none_parameter_no_default_optional_false(self) -> None:
         default_optional_func = load_component(str(components_dir / "default_optional_component.yml"))
 
