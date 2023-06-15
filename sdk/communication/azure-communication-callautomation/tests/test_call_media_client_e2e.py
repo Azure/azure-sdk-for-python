@@ -152,11 +152,12 @@ class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase)
                 self.connection_str)  # answering call, all other actions
             unique_id = self.service_bus_with_new_call(caller_phone, target_phone)
             self.clean_old_messages(unique_id)
+            callback_url = self.dispatcher_callback + "?q={}".format(unique_id)
 
             # create a call
             call_invite = CallInvite(target=target_phone, source_caller_id_number=caller_phone)
             create_call_result = call_automation_client_caller.create_call(target_participant=call_invite,
-                                                                           callback_url=(self.dispatcher_callback + "?q={}".format(unique_id)))
+                                                                           callback_url=callback_url)
             if create_call_result is None:
                 raise ValueError("Invalid create_call result")
 
@@ -173,7 +174,7 @@ class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase)
 
             # answer the call
             answer_call_result = call_automation_client_target.answer_call(incoming_call_context=incoming_call_context,
-                                                                           callback_url=(self.dispatcher_callback + "?q={}".format(unique_id)))
+                                                                           callback_url=callback_url)
             if answer_call_result is None:
                 raise ValueError("Invalid answer_call result")
 
