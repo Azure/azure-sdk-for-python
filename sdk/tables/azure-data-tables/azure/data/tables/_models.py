@@ -541,7 +541,8 @@ class ResourceTypes(object):
     def __init__(self, **kwargs) -> None:
         self.service = kwargs.get('service', False)
         self.object = kwargs.get('object', False)
-        self._str = ("s" if self.service else "") + ("o" if self.object else "")
+        self.container = kwargs.get('container', False)
+        self._str = ("s" if self.service else "") + ("o" if self.object else "") + ("c" if self.container else "")
 
     def __str__(self):
         return self._str
@@ -561,8 +562,9 @@ class ResourceTypes(object):
         """
         res_service = "s" in string
         res_object = "o" in string
+        res_container = "c" in string
 
-        parsed = cls(service=res_service, object=res_object)
+        parsed = cls(service=res_service, object=res_object, container=res_container)
         parsed._str = string  # pylint: disable = protected-access
         return parsed
 

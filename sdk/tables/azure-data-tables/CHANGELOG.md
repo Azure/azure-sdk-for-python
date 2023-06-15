@@ -3,6 +3,7 @@
 ## 12.4.4 (Unreleased)
 
 ### Features Added
+* Enabled to specify resource type `container` in account SAS access.
 
 ### Breaking Changes
 
