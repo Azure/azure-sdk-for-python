@@ -194,7 +194,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                 return self.begin_update(
                     feature_store=feature_store, update_dependent_resources=update_dependent_resources, kwargs=kwargs
                 )
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             pass
 
         if feature_store.offline_store and feature_store.offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE:

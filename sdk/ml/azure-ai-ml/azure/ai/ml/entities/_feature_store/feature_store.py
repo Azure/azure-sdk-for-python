@@ -111,13 +111,6 @@ class FeatureStore(Workspace):
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
-        """
-        if offline_store and not materialization_identity:
-            raise ValidationError("materialization_identity is required to setup offline store")
-
-        if online_store and not materialization_identity:
-            raise ValidationError("materialization_identity is required to setup online store")
-        """
 
         feature_store_settings = FeatureStoreSettings(
             compute_runtime=compute_runtime
