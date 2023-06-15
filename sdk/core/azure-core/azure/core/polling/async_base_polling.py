@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, TypeVar, cast
+from typing import TYPE_CHECKING, TypeVar, cast, Union
 from ..exceptions import HttpResponseError
 from .base_polling import (
     _failed,
@@ -35,17 +35,17 @@ from .base_polling import (
 )
 from ._async_poller import AsyncPollingMethod
 from ..pipeline._tools import is_rest
+from .. import AsyncPipelineClient
+from ..pipeline import PipelineResponse
+from ..pipeline.transport import HttpRequest as LegacyHttpRequest, AsyncHttpTransport
+from ..pipeline.transport._base import _HttpResponseBase as LegacySansIOHttpResponse
+from .._pipeline_client_async import _AsyncContextManagerCloseable
+from ..rest import HttpRequest
+from ..rest._rest_py3 import _HttpResponseBase as SansIOHttpResponse
 
-
-if TYPE_CHECKING:
-    from azure.core import AsyncPipelineClient
-    from azure.core.pipeline import PipelineResponse
-    from azure.core.pipeline.transport import AsyncHttpTransport
-    from azure.core._pipeline_client_async import _AsyncContextManagerCloseable
-    from azure.core.pipeline.policies._universal import HTTPRequestType, HTTPResponseType
-
-    AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", bound="_AsyncContextManagerCloseable")
-    AsyncPipelineResponseType = PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]
+HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
+AsyncHTTPResponseType = Union[LegacySansIOHttpResponse, SansIOHttpResponse]
+AsyncPipelineResponseType = PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]
 
 PollingReturnType = TypeVar("PollingReturnType")
 
@@ -66,10 +66,10 @@ class AsyncLROBasePolling(
     If your polling need are more specific, you could implement a PollingMethod directly
     """
 
-    _initial_response: "AsyncPipelineResponseType"
+    _initial_response: AsyncPipelineResponseType
     """Store the initial response."""
 
-    _pipeline_response: "AsyncPipelineResponseType"
+    _pipeline_response: AsyncPipelineResponseType
     """Store the latest received HTTP response, initialized by the first answer."""
 
     @property
@@ -135,7 +135,7 @@ class AsyncLROBasePolling(
         _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
 
-    async def request_status(self, status_link: str) -> "AsyncPipelineResponseType":
+    async def request_status(self, status_link: str) -> AsyncPipelineResponseType:
         """Do a simple GET to this status link.
 
         This method re-inject 'x-ms-client-request-id'.
@@ -150,20 +150,21 @@ class AsyncLROBasePolling(
         if is_rest(self._initial_response.http_response):
             # if I am a azure.core.rest.HttpResponse
             # want to keep making azure.core.rest calls
-            from azure.core.rest import HttpRequest as RestHttpRequest
 
-            request = RestHttpRequest("GET", status_link)
+            rest_request = HttpRequest("GET", status_link)
             # Need a cast, as "_return_pipeline_response" mutate the return type, and that return type is not
             # declared in the typing of "send_request"
             return cast(
-                "AsyncPipelineResponseType",
-                await self._client.send_request(request, _return_pipeline_response=True, **self._operation_config),
+                AsyncPipelineResponseType,
+                await self._client.send_request(rest_request, _return_pipeline_response=True, **self._operation_config),
             )
-        # if I am a azure.core.pipeline.transport.HttpResponse
-        legacy_request = self._client.get(status_link)
 
+        # Legacy HttpRequest and AsyncHttpResponse from azure.core.pipeline.transport
+        # "Type ignore"-ing things here, as we don't want the typing system to know
+        # about the legacy APIs.
+        request = self._client.get(status_link)
         return await self._client._pipeline.run(  # pylint: disable=protected-access
-            legacy_request, stream=False, **self._operation_config
+            request, stream=False, **self._operation_config
         )
 
 

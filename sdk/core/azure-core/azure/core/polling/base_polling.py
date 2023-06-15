@@ -27,22 +27,24 @@ import abc
 import base64
 import json
 from enum import Enum
-from typing import TYPE_CHECKING, Optional, Any, Tuple, Callable, Dict, List, Generic, TypeVar, cast
+from typing import Optional, Any, Tuple, Callable, Dict, List, Generic, TypeVar, cast, Union
 
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
 from ..pipeline.policies._utils import get_retry_after
 from ..pipeline._tools import is_rest
 from .._enum_meta import CaseInsensitiveEnumMeta
+from .. import PipelineClient
+from ..pipeline import PipelineResponse
+from ..pipeline.transport import HttpRequest as LegacyHttpRequest, HttpTransport
+from ..pipeline.transport._base import _HttpResponseBase as LegacySansIOHttpResponse
+from ..rest import HttpRequest
+from ..rest._rest_py3 import _HttpResponseBase as SansIOHttpResponse
 
 
-if TYPE_CHECKING:
-    from azure.core import PipelineClient
-    from azure.core.pipeline import PipelineResponse
-    from azure.core.pipeline.transport import HttpTransport
-    from azure.core.pipeline.policies._universal import HTTPResponseType, HTTPRequestType
-
-    PipelineResponseType = PipelineResponse[HTTPRequestType, HTTPResponseType]
+HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
+HTTPResponseType = Union[LegacySansIOHttpResponse, SansIOHttpResponse]
+PipelineResponseType = PipelineResponse[HTTPRequestType, HTTPResponseType]
 
 
 ABC = abc.ABC
@@ -52,6 +54,19 @@ PipelineClientType = TypeVar("PipelineClientType")
 _FINISHED = frozenset(["succeeded", "canceled", "failed"])
 _FAILED = frozenset(["canceled", "failed"])
 _SUCCEEDED = frozenset(["succeeded"])
+
+
+
+def _get_content(response: HTTPResponseType) -> bytes:
+    """Get the content of this response. This is designed specifically to avoid
+    a warning of mypy for body() access, as this method is deprecated.
+
+    :param response: The response object.
+    :rtype: bytes
+    """
+    if isinstance(response, LegacySansIOHttpResponse):
+        return response.body()
+    return response.content
 
 
 def _finished(status):
@@ -84,7 +99,7 @@ class OperationFailed(Exception):
     pass
 
 
-def _as_json(response: "HTTPResponseType") -> Dict[str, Any]:
+def _as_json(response: HTTPResponseType) -> Dict[str, Any]:
     """Assuming this is not empty, return the content as JSON.
 
     Result/exceptions is not determined if you call this method without testing _is_empty.
@@ -97,7 +112,7 @@ def _as_json(response: "HTTPResponseType") -> Dict[str, Any]:
         raise DecodeError("Error occurred in deserializing the response body.")
 
 
-def _raise_if_bad_http_status_and_method(response: "HTTPResponseType") -> None:
+def _raise_if_bad_http_status_and_method(response: HTTPResponseType) -> None:
     """Check response status code is valid.
 
     Must be 200, 201, 202, or 204.
@@ -110,12 +125,12 @@ def _raise_if_bad_http_status_and_method(response: "HTTPResponseType") -> None:
     raise BadStatus("Invalid return status {!r} for {!r} operation".format(code, response.request.method))
 
 
-def _is_empty(response: "HTTPResponseType") -> bool:
+def _is_empty(response: HTTPResponseType) -> bool:
     """Check if response body contains meaningful content.
 
     :rtype: bool
     """
-    return not bool(response.body())
+    return not bool(_get_content(response))
 
 
 class LongRunningOperation(ABC):
@@ -257,7 +272,7 @@ class OperationResourcePolling(LongRunningOperation):
             return "InProgress"
         raise OperationFailed("Operation failed or canceled")
 
-    def _set_async_url_if_present(self, response: "HTTPResponseType") -> None:
+    def _set_async_url_if_present(self, response: HTTPResponseType) -> None:
         self._async_url = response.headers[self._operation_location_header]
 
         location_url = response.headers.get("location")
@@ -597,16 +612,17 @@ class LROBasePolling(
         if is_rest(self._initial_response.http_response):
             # if I am a azure.core.rest.HttpResponse
             # want to keep making azure.core.rest calls
-            from azure.core.rest import HttpRequest as RestHttpRequest
-
-            rest_request = RestHttpRequest("GET", status_link)
+            rest_request = HttpRequest("GET", status_link)
             # Need a cast, as "_return_pipeline_response" mutate the return type, and that return type is not
             # declared in the typing of "send_request"
             return cast(
                 "PipelineResponseType",
                 self._client.send_request(rest_request, _return_pipeline_response=True, **self._operation_config),
             )
-        # if I am a azure.core.pipeline.transport.HttpResponse
+
+        # Legacy HttpRequest and HttpResponse from azure.core.pipeline.transport
+        # "Type ignore"-ing things here, as we don't want the typing system to know
+        # about the legacy APIs.
         request = self._client.get(status_link)
         return self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **self._operation_config

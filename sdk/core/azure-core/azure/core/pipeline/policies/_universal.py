@@ -35,7 +35,7 @@ import xml.etree.ElementTree as ET
 import types
 import re
 import uuid
-from typing import IO, cast, Union, Optional, AnyStr, Dict, MutableMapping
+from typing import IO, cast, Union, Optional, AnyStr, Dict, MutableMapping, Any
 import urllib.parse
 from typing_extensions import Protocol, runtime_checkable
 
@@ -45,45 +45,16 @@ from azure.core.exceptions import DecodeError, raise_with_traceback
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from ._base import SansIOHTTPPolicy
 
+from ..transport import HttpRequest as LegacyHttpRequest
+from ..transport._base import _HttpResponseBase as LegacySansIOHttpResponse
+from ...rest import HttpRequest
+from ...rest._rest_py3 import _HttpResponseBase as SansIOHttpResponse
 
 _LOGGER = logging.getLogger(__name__)
 
-
-@runtime_checkable
-class HTTPRequestType(Protocol):
-    """Protocol compatible with new rest request and legacy transport request"""
-
-    headers: MutableMapping[str, str]
-    url: str
-    method: str
-    body: Optional[Union[bytes, Dict[str, Union[str, int]]]]
-
-
-@runtime_checkable
-class HTTPResponseType(Protocol):
-    """Protocol compatible with new rest response and legacy transport response"""
-
-    @property
-    def headers(self) -> MutableMapping[str, str]:
-        ...
-
-    @property
-    def status_code(self) -> int:
-        ...
-
-    @property
-    def content_type(self) -> Optional[str]:
-        ...
-
-    @property
-    def request(self) -> HTTPRequestType:
-        ...
-
-    def text(self, encoding: Optional[str] = None) -> str:
-        ...
-
-    def body(self) -> bytes:
-        ...
+HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
+HTTPResponseType = Union[LegacySansIOHttpResponse, SansIOHttpResponse]
+PipelineResponseType = PipelineResponse[HTTPRequestType, HTTPResponseType]
 
 
 class HeadersPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
