@@ -13,6 +13,8 @@ license-header: MICROSOFT_MIT_NO_VERSION
 no-namespace-folders: true
 output-folder: ../azure/monitor/ingestion
 source-code-folder-path: ./azure/monitor/ingestion
+add-credential: true
+credential-scopes: https://monitor.azure.com//.default
 input-file:
     - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/monitor/data-plane/ingestion/stable/2023-01-01/DataCollectionRules.json
 python: true
