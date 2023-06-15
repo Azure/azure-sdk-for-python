@@ -5,12 +5,12 @@
 # pylint: disable=protected-access
 
 from typing import Dict, Iterable, Optional
-from marshmallow import ValidationError
 
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
+from marshmallow import ValidationError
 
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
@@ -188,11 +188,14 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
         resource_group = kwargs.get("resource_group", self._resource_group_name)
-        rest_workspace_obj = self._operation.get(resource_group, feature_store.name)
-        if rest_workspace_obj:
-            return self.begin_update(
-                feature_store=feature_store, update_dependent_resources=update_dependent_resources, kwargs=kwargs
-            )
+        try:
+            rest_workspace_obj = self._operation.get(resource_group, feature_store.name)
+            if rest_workspace_obj:
+                return self.begin_update(
+                    feature_store=feature_store, update_dependent_resources=update_dependent_resources, kwargs=kwargs
+                )
+        except Exception:
+            pass
 
         if feature_store.offline_store and feature_store.offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE:
             raise ValidationError("offline store type should be azure_data_lake_gen2")
@@ -253,15 +256,18 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         offline_store = kwargs.get("offline_store", feature_store.offline_store)
         online_store = kwargs.get("online_store", feature_store.online_store)
-        materialization_identity = kwargs.get("materialization_identity", feature_store.materialization_identity)
         existing_materialization_identity = None
-        identity = IdentityConfiguration._from_workspace_rest_object(rest_workspace_obj.identity)
-        if (
-            feature_store.identity
-            and feature_store.identity.user_assigned_identities
-            and isinstance(feature_store.identity.user_assigned_identities[0], ManagedIdentityConfiguration)
-        ):
-            existing_materialization_identity = feature_store.identity.user_assigned_identities[0]
+        if rest_workspace_obj.identity:
+            identity = IdentityConfiguration._from_workspace_rest_object(rest_workspace_obj.identity)
+            if (
+                identity
+                and identity.user_assigned_identities
+                and isinstance(identity.user_assigned_identities[0], ManagedIdentityConfiguration)
+            ):
+                existing_materialization_identity = identity.user_assigned_identities[0]
+        materialization_identity = kwargs.get(
+            "materialization_identity", feature_store.materialization_identity or existing_materialization_identity
+        )
 
         if offline_store and offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE:
             raise ValidationError("offline store type should be azure_data_lake_gen2")
@@ -283,7 +289,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                         "any data that was materialized "
                         "earlier will not be available. You have to run backfill again."
                     )
-            elif not materialization_identity and not existing_materialization_identity:
+            elif not materialization_identity:
                 raise ValidationError("Materialization identity is required to setup offline store connection")
 
         if online_store and online_store.type != ONLINE_MATERIALIZATION_STORE_TYPE:
@@ -306,7 +312,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                         "any data that was materialized earlier "
                         "will not be available. You have to run backfill again."
                     )
-            elif not materialization_identity and not existing_materialization_identity:
+            elif not materialization_identity:
                 raise ValidationError("Materialization identity is required to setup online store connection")
 
         feature_store_settings = FeatureStoreSettings._from_rest_object(rest_workspace_obj.feature_store_settings)
