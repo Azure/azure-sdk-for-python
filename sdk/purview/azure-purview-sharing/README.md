@@ -45,10 +45,10 @@ client = PurviewSharingClient(endpoint="https://<my-account-name>.purview.azure.
 
 ## Examples
 
-Table of Example Contents: 
+Table of Contents: 
 - [Data Provider](#data-provider-examples)
 - [Data Consumer](#data-consumer-examples)
-- [Shared Sources](#share-resource-examples)
+- [Share Resource](#share-resource-examples)
 
 ## Data Provider Examples
 
@@ -160,10 +160,34 @@ print(created_invitation)
 ```
 ### Create a sent share to a Service
 
-Data providers can also extend invitations to services or applications by specifying the tenant id and object id of the service. __The object id used for sending an invitation to a service must be the object id associated with the Enterprise Application (not the application registration).__
+Data providers can also extend invitations to services or applications by specifying the tenant id and object id of the service. _The object id used for sending an invitation to a service must be the object id associated with the Enterprise Application (not the application registration)._
 
 ```python Snippet:create_sent_share_to_service
-<placeholder for code sample>
+import os
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint, credential=credential)
+
+targetActiverDirectoryId = uuid.uuid4()
+targetObjectId = uuid.uuid4()
+
+sent_share_invitation = {
+    "invitationKind": "Service",
+    "properties": {
+        "targetActiveDirectoryId": targetActiverDirectoryId,
+        "targetObjectId": targetObjectId
+    }
+}
+
+invitation_response = client.sent_shares.create_invitation(
+    sent_share_id=str(sent_share_id),
+    sent_share_invitation_id=str(sent_share_invitation_id),
+    sent_share_invitation=sent_share_invitation)
 ```
 
 ### Get sent share
