@@ -23,7 +23,12 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Union, Optional
+from typing import Union, Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .pipeline.policies import HTTPPolicy, AsyncHTTPPolicy
+
+    AnyPolicy = Union[HTTPPolicy, AsyncHTTPPolicy]
 
 
 class Configuration:  # pylint: disable=too-many-instance-attributes
@@ -60,37 +65,37 @@ class Configuration:  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, **kwargs):
         # Headers (sent with every request)
-        self.headers_policy = None
+        self.headers_policy: "Optional[AnyPolicy]" = None
 
         # Proxy settings (Currently used to configure transport, could be pipeline policy instead)
-        self.proxy_policy = None
+        self.proxy_policy: "Optional[AnyPolicy]" = None
 
         # Redirect configuration
-        self.redirect_policy = None
+        self.redirect_policy: "Optional[AnyPolicy]" = None
 
         # Retry configuration
-        self.retry_policy = None
+        self.retry_policy: "Optional[AnyPolicy]" = None
 
         # Custom hook configuration
-        self.custom_hook_policy = None
+        self.custom_hook_policy: "Optional[AnyPolicy]" = None
 
         # Logger configuration
-        self.logging_policy = None
+        self.logging_policy: "Optional[AnyPolicy]" = None
 
         # Http logger configuration
-        self.http_logging_policy = None
+        self.http_logging_policy: "Optional[AnyPolicy]" = None
 
         # User Agent configuration
-        self.user_agent_policy = None
+        self.user_agent_policy: "Optional[AnyPolicy]" = None
 
         # Authentication configuration
-        self.authentication_policy = None
+        self.authentication_policy: "Optional[AnyPolicy]" = None
 
         # Request ID policy
-        self.request_id_policy = None
+        self.request_id_policy: "Optional[AnyPolicy]" = None
 
         # Polling interval if no retry-after in polling calls results
-        self.polling_interval = kwargs.get("polling_interval", 30)
+        self.polling_interval: float = kwargs.get("polling_interval", 30)
 
 
 class ConnectionConfiguration:

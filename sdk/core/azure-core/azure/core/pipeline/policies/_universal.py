@@ -35,7 +35,7 @@ import xml.etree.ElementTree as ET
 import types
 import re
 import uuid
-from typing import IO, cast, Union, Optional, AnyStr, Dict, MutableMapping, Any, Set
+from typing import IO, cast, Union, Optional, AnyStr, Dict, MutableMapping, Any, Set, Mapping
 import urllib.parse
 from typing_extensions import Protocol
 
@@ -103,7 +103,7 @@ class HeadersPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         self._headers.update(kwargs.pop("headers", {}))
 
     @property
-    def headers(self):
+    def headers(self) -> Dict[str, str]:
         """The current headers collection."""
         return self._headers
 
@@ -225,10 +225,10 @@ class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     def __init__(
         self, base_user_agent: Optional[str] = None, **kwargs: Any
     ) -> None:  # pylint: disable=super-init-not-called
-        self.overwrite = kwargs.pop("user_agent_overwrite", False)
-        self.use_env = kwargs.pop("user_agent_use_env", True)
-        application_id = kwargs.pop("user_agent", None)
-        sdk_moniker = kwargs.pop("sdk_moniker", "core/{}".format(azcore_version))
+        self.overwrite: bool = kwargs.pop("user_agent_overwrite", False)
+        self.use_env: bool = kwargs.pop("user_agent_use_env", True)
+        application_id: Optional[str] = kwargs.pop("user_agent", None)
+        sdk_moniker: str = kwargs.pop("sdk_moniker", "core/{}".format(azcore_version))
 
         if base_user_agent:
             self._user_agent = base_user_agent
@@ -293,7 +293,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTy
             :caption: Configuring a network trace logging policy.
     """
 
-    def __init__(self, logging_enable=False, **kwargs: Any):  # pylint: disable=unused-argument
+    def __init__(self, logging_enable: bool = False, **kwargs: Any):  # pylint: disable=unused-argument
         self.enable_http_logger = logging_enable
 
     def on_request(
@@ -392,11 +392,11 @@ class _HiddenClassProperties(type):
     # https://github.com/Azure/azure-sdk-for-python/issues/26331
 
     @property
-    def DEFAULT_HEADERS_WHITELIST(cls):
+    def DEFAULT_HEADERS_WHITELIST(cls) -> Set[str]:
         return cls.DEFAULT_HEADERS_ALLOWLIST
 
     @DEFAULT_HEADERS_WHITELIST.setter
-    def DEFAULT_HEADERS_WHITELIST(cls, value):
+    def DEFAULT_HEADERS_WHITELIST(cls, value: Set[str]):
         cls.DEFAULT_HEADERS_ALLOWLIST = value
 
 
@@ -406,7 +406,7 @@ class HttpLoggingPolicy(
 ):
     """The Pipeline policy that handles logging of HTTP requests and responses."""
 
-    DEFAULT_HEADERS_ALLOWLIST = set(
+    DEFAULT_HEADERS_ALLOWLIST: Set[str] = set(
         [
             "x-ms-request-id",
             "x-ms-client-request-id",
@@ -435,19 +435,19 @@ class HttpLoggingPolicy(
             "WWW-Authenticate",  # OAuth Challenge header.
         ]
     )
-    REDACTED_PLACEHOLDER = "REDACTED"
-    MULTI_RECORD_LOG = "AZURE_SDK_LOGGING_MULTIRECORD"
+    REDACTED_PLACEHOLDER: str = "REDACTED"
+    MULTI_RECORD_LOG: str = "AZURE_SDK_LOGGING_MULTIRECORD"
 
-    def __init__(self, logger=None, **kwargs: Any):  # pylint: disable=unused-argument
-        self.logger = logger or logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
+    def __init__(self, logger: Optional[logging.Logger] = None, **kwargs: Any):  # pylint: disable=unused-argument
+        self.logger: logging.Logger = logger or logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
         self.allowed_query_params: Set[str] = set()
         self.allowed_header_names: Set[str] = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
 
-    def _redact_query_param(self, key, value):
+    def _redact_query_param(self, key: str, value: str) -> str:
         lower_case_allowed_query_params = [param.lower() for param in self.allowed_query_params]
         return value if key.lower() in lower_case_allowed_query_params else HttpLoggingPolicy.REDACTED_PLACEHOLDER
 
-    def _redact_header(self, key, value):
+    def _redact_header(self, key: str, value: str) -> str:
         lower_case_allowed_header_names = [header.lower() for header in self.allowed_header_names]
         return value if key.lower() in lower_case_allowed_header_names else HttpLoggingPolicy.REDACTED_PLACEHOLDER
 
@@ -585,7 +585,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         data: Optional[Union[AnyStr, IO]],
         mime_type: Optional[str] = None,
         response: Optional[HTTPResponseType] = None,
-    ):
+    ) -> Optional[Any]:
         """Decode response data according to content-type.
 
         Accept a stream of data as well, but will be load at once in memory for now.
@@ -596,7 +596,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         :param str mime_type: The mime type. As mime type, charset is not expected.
         :param response: If passed, exception will be annotated with that response
         :raises ~azure.core.exceptions.DecodeError: If deserialization fails
-        :returns: A dict or XML tree, depending of the mime_type
+        :returns: A dict (JSON), XML tree or str, depending of the mime_type
         """
         if not data:
             return None
@@ -655,7 +655,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         cls,
         response: HTTPResponseType,
         encoding: Optional[str] = None,
-    ):
+    ) -> Optional[Any]:
         """Deserialize from HTTP response.
 
         Headers will tested for "content-type"
@@ -663,7 +663,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         :param response: The HTTP response
         :param encoding: The encoding to use if known for this service (will disable auto-detection)
         :raises ~azure.core.exceptions.DecodeError: If deserialization fails
-        :returns: A dict or XML tree, depending of the mime-type
+        :returns: A dict (JSON), XML tree or str, depending of the mime_type
         """
         # Try to use content-type from headers if available
         if response.content_type:
@@ -745,7 +745,9 @@ class ProxyPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
             :caption: Configuring a proxy policy.
     """
 
-    def __init__(self, proxies=None, **kwargs: Any):  # pylint: disable=unused-argument,super-init-not-called
+    def __init__(
+        self, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
+    ):  # pylint: disable=unused-argument,super-init-not-called
         self.proxies = proxies
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
