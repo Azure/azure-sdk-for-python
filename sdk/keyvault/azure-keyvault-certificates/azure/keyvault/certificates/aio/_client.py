@@ -879,7 +879,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         else:
             issuer_credentials = None
         if admin_contacts:
-            admin_details = [
+            admin_details: Optional[List[Any]] = [
                 self._models.AdministratorDetails(
                     first_name=contact.first_name,
                     last_name=contact.last_name,
@@ -887,7 +887,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                     phone=contact.phone,
                 )
                 for contact in admin_contacts
-            ]  # type: Optional[List[Any]]
+            ]
         else:
             admin_details = None
         if organization_id or admin_details:
@@ -943,7 +943,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         else:
             issuer_credentials = None
         if admin_contacts:
-            admin_details = list(
+            admin_details: Optional[List[Any]] = list(
                 self._models.AdministratorDetails(
                     first_name=contact.first_name,
                     last_name=contact.last_name,
@@ -951,7 +951,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                     phone=contact.phone,
                 )
                 for contact in admin_contacts
-            )  # type: Optional[List[Any]]
+            )
         else:
             admin_details = None
         if organization_id or admin_details:
