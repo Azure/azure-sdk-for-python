@@ -62,6 +62,10 @@ class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
+        # "insecure_domain_change" is used to indicate that a redirect
+        # has occurred to a different domain. This tells the SensitiveHeaderCleanupPolicy
+        # to clean up sensitive headers. We need to remove it before sending the request
+        # to the transport layer.
         insecure_domain_change = request.context.options.pop("insecure_domain_change", False)
         if not self._disable_cleanup and insecure_domain_change:
             for header in self._block_headers_list:
