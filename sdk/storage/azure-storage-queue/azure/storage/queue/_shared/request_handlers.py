@@ -42,9 +42,7 @@ def serialize_iso(attr):
         if utc.tm_year > 9999 or utc.tm_year < 1:
             raise OverflowError("Hit max or min date")
 
-        date = "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}".format(
-            utc.tm_year, utc.tm_mon, utc.tm_mday,
-            utc.tm_hour, utc.tm_min, utc.tm_sec)
+        date = f"{utc.tm_year:04}-{utc.tm_mon:02}-{utc.tm_mday:02}T{utc.tm_hour:02}:{utc.tm_min:02}:{utc.tm_sec:02}"
         return date + 'Z'
     except (ValueError, OverflowError) as err:
         msg = "Unable to serialize datetime object."
@@ -178,7 +176,7 @@ def serialize_batch_body(requests, batch_id):
 
     delimiter_bytes = (_get_batch_request_delimiter(batch_id, True, False) + _HTTP_LINE_ENDING).encode('utf-8')
     newline_bytes = _HTTP_LINE_ENDING.encode('utf-8')
-    batch_body = list()
+    batch_body = []
 
     content_index = 0
     for request in requests:
@@ -237,7 +235,7 @@ def _make_body_from_sub_request(sub_request):
      """
 
     # put the sub-request's headers into a list for efficient str concatenation
-    sub_request_body = list()
+    sub_request_body = []
 
     # get headers for ease of manipulation; remove headers as they are used
     headers = sub_request.headers
