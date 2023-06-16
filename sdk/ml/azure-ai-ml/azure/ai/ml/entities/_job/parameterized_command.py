@@ -38,13 +38,15 @@ OLD_INPUT_BINDING_PREFIX = "AZURE_ML_INPUT"
 
 
 class ParameterizedCommand:
-    """Command component version that contains the training command and supporting parameters for a Command component or job.
+    """Command component version that contains the training command and supporting parameters for a Command component
+        or job.
 
     :param command: The command to be executed during training.
     :type command: str
     :param resources: The compute resource configuration for the command.
     :type resources: [dict, ~azure.ai.ml.entities.JobResourceConfiguration]
-    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing to a remote location.
+    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
+        to a remote location.
     :type code: str
     :param environment_variables:  A dictionary of environment variable names and values.
         These environment variables are set on the process where user script is being executed.

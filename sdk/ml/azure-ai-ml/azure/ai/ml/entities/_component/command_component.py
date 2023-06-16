@@ -47,7 +47,8 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     :type display_name: str
     :param command: The command to be executed during training.
     :type command: str
-    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing to a remote location.
+    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
+        to a remote location.
     :type code: str
     :param environment: The environment that training job will run in.
     :type environment: Union[str, ~azure.ai.ml.entities.Environment]
@@ -70,12 +71,13 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     :type outputs: dict[str, Union[str, ~azure.ai.ml.Output]]
     :param instance_count: The number of instances or nodes to be used by the compute target. Defaults to 1.
     :type instance_count: int
-    :param is_deterministic: Specifies whether the Command will return the same output given the same input. Defaults to True.
-        When True, if a Command (component) is deterministic and has been run before in the current workspace with the same input and settings,
-        it will reuse results from a previous submitted job when used as a node or step in a pipeline. In that scenario, no compute resources will be used.
+    :param is_deterministic: Specifies whether the Command will return the same output given the same input.
+        Defaults to True. When True, if a Command (component) is deterministic and has been run before in the
+        current workspace with the same input and settings, it will reuse results from a previous submitted job
+        when used as a node or step in a pipeline. In that scenario, no compute resources will be used.
     :type is_deterministic: bool
     :param additional_includes: A list of shared additional files to be included in the component.
-    :type additional_includes: List[str]
+    :type additional_includes: list[str]
     :param properties: The job property dictionary.
     :type properties: dict[str, str]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated.
