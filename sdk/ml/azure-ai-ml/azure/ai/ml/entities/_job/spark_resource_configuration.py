@@ -12,6 +12,14 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
+    """Compute resource configuration for Spark component or job.
+
+    :param instance_type: The type of VM to be used by the compute target.
+    :type instance_type: str
+    :param runtime_version: The Spark runtime version.
+    :type runtime_version: str
+    """
+
     instance_type_list = [
         "standard_e4s_v3",
         "standard_e8s_v3",
@@ -20,7 +28,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
         "standard_e64s_v3",
     ]
 
-    def __init__(self, *, instance_type: Optional[str] = None, runtime_version: Optional[str] = None):
+    def __init__(self, *, instance_type: Optional[str] = None, runtime_version: Optional[str] = None) -> None:
         self.instance_type = instance_type
         self.runtime_version = runtime_version
 

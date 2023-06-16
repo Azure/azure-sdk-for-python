@@ -70,9 +70,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         enabled.
     :type dynamic_allocation_max_executors: int
     :param inputs: The mapping of input data bindings used in the job.
-    :type inputs: Dict[str, ~azure.ai.ml.Input]
+    :type inputs: dict[str, ~azure.ai.ml.Input]
     :param outputs: The mapping of output data bindings used in the job.
-    :type outputs: Dict[str, ~azure.ai.ml.Output]
+    :type outputs: dict[str, ~azure.ai.ml.Output]
     :param compute: The compute resource the job runs on.
     :type compute: str
     :param identity: The identity that the Spark job will use while running on compute.
@@ -81,7 +81,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         ~azure.ai.ml.AmlTokenConfiguration,
         ~azure.ai.ml.UserIdentityConfiguration]
     :param resources: The compute resource configuration for the job.
-    :type resources: Union[Dict, ~azure.ai.ml.entities.SparkResourceConfiguration]
+    :type resources: Union[dict, ~azure.ai.ml.entities.SparkResourceConfiguration]
     :param experiment_name: The name of the experiment the job will be created under.
     :type experiment_name: str
     :param name: The name of the job.
@@ -91,21 +91,21 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     :param description: The description of the job.
     :type description: str
     :param tags: The tag dictionary. Tags can be added, removed, and updated.
-    :type tags: Dict[str, str]
+    :type tags: dict[str, str]
     :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing to a remote location.
     :type code: Union[str, os.PathLike]
     :param entry: The file or class entry point.
-    :type entry: Dict[str, str]
+    :type entry: dict[str, str]
     :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
-    :type py_files: List[str]
+    :type py_files: list[str]
     :param jars: The list of .JAR files to include on the driver and executor classpaths.
-    :type jars: List[str]
+    :type jars: list[str]
     :param files: The list of files to be placed in the working directory of each executor.
-    :type files: List[str]
+    :type files: list[str]
     :param archives: The list of archives to be extracted into the working directory of each executor.
-    :type archives: List[str]
+    :type archives: list[str]
     :param conf: A dictionary with pre-defined Spark configurations key and values.
-    :type conf: Dict[str, str]
+    :type conf: dict[str, str]
     :param environment: The Azure ML environment to run the job in.
     :type environment: Union[str, ~azure.ai.ml.entities.Environment]
     :param args: The arguments for the job.
@@ -176,7 +176,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         """Sets the compute resource configuration for the job.
 
         :param value: The compute resource configuration for the job.
-        :type value: Union[Dict, ~azure.ai.ml.entities.SparkResourceConfiguration]
+        :type value: Union[dict, ~azure.ai.ml.entities.SparkResourceConfiguration]
         """
         if isinstance(value, dict):
             value = SparkResourceConfiguration(**value)
@@ -203,7 +203,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         """Sets the identity that the Spark job will use while running on compute.
 
         :param value: The identity that the Spark job will use while running on compute.
-        :type value: Union[Dict[str, str], ~azure.ai.ml.ManagedIdentityConfiguration,
+        :type value: Union[dict[str, str], ~azure.ai.ml.ManagedIdentityConfiguration,
             ~azure.ai.ml.AmlTokenConfiguration, ~azure.ai.ml.UserIdentityConfiguration]
         """
         if isinstance(value, dict):
@@ -226,7 +226,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         listed in ~azure.ai.ml._schema.job.parameterized_spark.CONF_KEY_MAP and returns them in their own dictionary.
 
         :return: A dictionary of the conf fields that are not Spark configuration fields.
-        :rtype: Dict[str, str]
+        :rtype: dict[str, str]
         """
         if self.conf is None:
             return {}

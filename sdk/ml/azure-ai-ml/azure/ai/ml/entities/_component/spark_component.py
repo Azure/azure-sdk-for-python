@@ -29,7 +29,7 @@ class SparkComponent(
     :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing to a remote location.
     :type code: Union[str, os.PathLike]
     :param entry: The file or class entry point.
-    :type entry: Dict[str, str]
+    :type entry: dict[str, str]
     :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
     :type py_files: List[str]
     :param jars: The list of .JAR files to include on the driver and executor classpaths.
@@ -60,11 +60,11 @@ class SparkComponent(
         enabled.
     :type dynamic_allocation_max_executors: int
     :param conf: A dictionary with pre-defined Spark configurations key and values.
-    :type conf: Dict[str, str]
+    :type conf: dict[str, str]
     :param environment: The Azure ML environment to run the job in.
     :type environment: Union[str, azure.ai.ml.entities.Environment]
     :param inputs: A mapping of input names to input data sources used in the job.
-    :type inputs: Dict[str, Union[
+    :type inputs: dict[str, Union[
         ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
         ~azure.ai.ml.Input,
         str,
@@ -75,7 +75,7 @@ class SparkComponent(
         ]
     ]
     :param outputs: A mapping of output names to output data sources used in the job.
-    :type outputs: Dict[str, Union[str, ~azure.ai.ml.Output]]
+    :type outputs: dict[str, Union[str, ~azure.ai.ml.Output]]
     :param args: The arguments for the job.
     :type args: str
 

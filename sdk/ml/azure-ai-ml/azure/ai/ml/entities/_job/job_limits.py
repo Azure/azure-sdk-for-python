@@ -16,13 +16,14 @@ module_logger = logging.getLogger(__name__)
 
 
 class JobLimits(RestTranslatableMixin, ABC):
-    """Base class for Job limits. 
+    """Base class for Job limits.
 
     This class should not be instantiated directly. Instead, one of its child classes should be used.
-    
+
     :param type: The job type.
     :type type: ~azure.ai.ml.constants.JobType
     """
+
     def __init__(
         self,
     ) -> None:

@@ -29,8 +29,8 @@ class CommandConfigurationOptions(object):
         credential = DefaultAzureCredential()
         ml_client = MLClient(credential, subscription_id, resource_group, workspace_name="test-ws1")
 
-        from azure.ai.ml.entities import CommandJob, CommandJobLimits
         from azure.ai.ml import Input, Output
+        from azure.ai.ml.entities import CommandJob, CommandJobLimits
 
         # [START command_job_definition]
         command_job = CommandJob(
@@ -52,11 +52,11 @@ class CommandConfigurationOptions(object):
             command='echo "hello world"',
             distribution={"type": "Pytorch", "process_count_per_instance": 2},
             inputs={
-            "training_data": Input(type="uri_folder"),
-            "max_epochs": 20,
-            "learning_rate": 1.8,
-            "learning_rate_schedule": "time-based",
-        },
+                "training_data": Input(type="uri_folder"),
+                "max_epochs": 20,
+                "learning_rate": 1.8,
+                "learning_rate_schedule": "time-based",
+            },
             outputs={"model_output": Output(type="uri_folder")},
         )
         # [END command_function]
@@ -76,7 +76,6 @@ class CommandConfigurationOptions(object):
             environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         # [END command_component_definition]
-
 
 
 if __name__ == "__main__":

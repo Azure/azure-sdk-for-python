@@ -20,8 +20,8 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.distribution import (
     MpiDistribution,
     PyTorchDistribution,
-    TensorFlowDistribution,
     RayDistribution,
+    TensorFlowDistribution,
 )
 from azure.ai.ml.entities._job.job_service import (
     JobService,
@@ -152,27 +152,28 @@ def command(
     :param description: The description of the Command.
     :type description: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: Dict[str, str]
+    :type tags: dict[str, str]
     :param properties: The job property dictionary.
-    :type properties: Dict[str, str]
+    :type properties: dict[str, str]
     :param display_name: The display name of the job.
     :type display_name: str
     :param command: The command to be executed during training.
     :type command: str
-    :param experiment_name: The name of the experiment the job will be created under. Defaults to current directory name.
+    :param experiment_name: The name of the experiment the job will be created under. Defaults to current directory
+        name.
     :type experiment_name: str
     :param environment: The environment that training job will run in.
     :type environment: Union[str, ~azure.ai.ml.entities.Environment]
     :param environment_variables:  A dictionary of environment variable names and values.
         These environment variables are set on the process where user script is being executed.
-    :type environment_variables: Dict[str, str]
+    :type environment_variables: dict[str, str]
     :param distribution: The configuration for distributed training.
-    :type distribution: Union[Dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+    :type distribution: Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
         ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
     :param compute: The compute target the job will run on.
     :type compute: str
     :param inputs: A mapping of input names to input data sources used in the job.
-    :type inputs: Dict[str, Union[
+    :type inputs: dict[str, Union[
         ~azure.ai.ml.Input,
         str,
         bool,
@@ -182,13 +183,13 @@ def command(
         ]
     ]
     :param outputs: A mapping of output names to output data sources used in the job.
-    :type outputs: Dict[str, Union[str, ~azure.ai.ml.Output]]
+    :type outputs: dict[str, Union[str, ~azure.ai.ml.Output]]
     :param instance_count: The number of instances or nodes to be used by the compute target. Defaults to 1.
     :type instance_count: int
     :param instance_type: The type of VM to be used by the compute target.
     :type instance_type: str
     :param locations: The list of locations where the job will run.
-    :type locations: List[str]
+    :type locations: list[str]
     :param docker_args: Extra arguments to pass to the Docker run command. This would override any
      parameters that have already been set by the system, or in this section. This parameter is only
      supported for Azure ML compute types.
@@ -199,21 +200,24 @@ def command(
     :type shm_size: str
     :param timeout: The number, in seconds, after which the job will be cancelled.
     :type timeout: int
-    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing to a remote location.
+    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url
+        pointing to a remote location.
     :type code: Union[str, os.PathLike]
     :param identity: The identity that the command job will use while running on compute.
     :type identity: Union[
-        Dict[str, str],
+        dict[str, str],
         ~azure.ai.ml.entities.ManagedIdentityConfiguration,
         ~azure.ai.ml.entities.AmlTokenConfiguration,
         ~azure.ai.ml.entities.UserIdentityConfiguration]
-    :param is_deterministic: Specifies whether the Command will return the same output given the same input. Defaults to True.
-        When True, if a Command (component) is deterministic and has been run before in the current workspace with the same input and settings,
-        it will reuse results from a previous submitted job when used as a node or step in a pipeline. In that scenario, no compute resources will be used.
+    :param is_deterministic: Specifies whether the Command will return the same output given the same input.
+        Defaults to True.
+        When True, if a Command (component) is deterministic and has been run before in the current workspace
+        with the same input and settings, it will reuse results from a previous submitted job when used as a
+        node or step in a pipeline. In that scenario, no compute resources will be used.
     :type is_deterministic: bool
-    :param services: The interactive services for the node. This is an experimental parameter, and may change at any time.
-        Please see https://aka.ms/azuremlexperimental for more information.
-    :type services: Dict[str, Union[~azure.ai.ml.entities.JobService, ~azure.ai.ml.entities.JupyterLabJobService,
+    :param services: The interactive services for the node. This is an experimental parameter, and may change at
+        any time. Please see https://aka.ms/azuremlexperimental for more information.
+    :type services: dict[str, Union[~azure.ai.ml.entities.JobService, ~azure.ai.ml.entities.JupyterLabJobService,
         ~azure.ai.ml.entities.SshJobService, ~azure.ai.ml.entities.TensorBoardJobService,
         ~azure.ai.ml.entities.VsCodeJobService]]
     :param job_tier: The job tier. Accepted values are "Spot", "Basic", "Standard", or "Premium".

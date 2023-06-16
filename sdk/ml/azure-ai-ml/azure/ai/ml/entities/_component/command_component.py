@@ -42,7 +42,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     :param description: The description of the component.
     :type description: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: Dict
+    :type tags: dict
     :param display_name: The display name of the component.
     :type display_name: str
     :param command: The command to be executed during training.
@@ -52,12 +52,12 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     :param environment: The environment that training job will run in.
     :type environment: Union[str, ~azure.ai.ml.entities.Environment]
     :param distribution: The configuration for distributed training.
-    :type distribution: Union[Dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+    :type distribution: Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
         ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
     :param resources: The compute resource configuration for the command.
     :type resources: ~azure.ai.ml.entities.JobResourceConfiguration
     :param inputs: A mapping of input names to input data sources used in the job.
-    :type inputs: Dict[str, Union[
+    :type inputs: dict[str, Union[
         ~azure.ai.ml.Input,
         str,
         bool,
@@ -67,7 +67,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         ]
     ]
     :param outputs: A mapping of output names to output data sources used in the job.
-    :type outputs: Dict[str, Union[str, ~azure.ai.ml.Output]]
+    :type outputs: dict[str, Union[str, ~azure.ai.ml.Output]]
     :param instance_count: The number of instances or nodes to be used by the compute target. Defaults to 1.
     :type instance_count: int
     :param is_deterministic: Specifies whether the Command will return the same output given the same input. Defaults to True.
@@ -77,7 +77,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     :param additional_includes: A list of shared additional files to be included in the component.
     :type additional_includes: List[str]
     :param properties: The job property dictionary.
-    :type properties: Dict[str, str]
+    :type properties: dict[str, str]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated.
         Details will be provided in the error message.
 
@@ -172,7 +172,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     @property
     def instance_count(self) -> int:
         """The number of instances or nodes to be used by the compute target.
-        
+
         :rtype: int
         """
         return self.resources.instance_count if self.resources else None
@@ -180,7 +180,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     @instance_count.setter
     def instance_count(self, value: int) -> None:
         """Sets the number of instances or nodes to be used by the compute target.
-        
+
         :param value: Tne number of instances of nodes to be used by the compute target. Defaults to 1.
         :type instance_count: int
         """

@@ -17,15 +17,15 @@ from ..._schema import NestedField, UnionField
 from ..._schema.job.distribution import (
     MPIDistributionSchema,
     PyTorchDistributionSchema,
-    TensorFlowDistributionSchema,
     RayDistributionSchema,
+    TensorFlowDistributionSchema,
 )
 from .distribution import (
     DistributionConfiguration,
     MpiDistribution,
     PyTorchDistribution,
-    TensorFlowDistribution,
     RayDistribution,
+    TensorFlowDistribution,
 )
 from .job_resource_configuration import JobResourceConfiguration
 from .queue_settings import QueueSettings
@@ -109,7 +109,7 @@ class ParameterizedCommand:
         """Sets the configuration for the distributed command component or job.
 
         :param value: The configuration for distributed training.
-        :type value: Union[Dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+        :type value: Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
         ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
         """
         if isinstance(value, dict):
@@ -127,7 +127,7 @@ class ParameterizedCommand:
     @property
     def resources(self) -> JobResourceConfiguration:
         """The compute resource configuration for the command component or job.
-        
+
         :rtype: ~azure.ai.ml.entities.JobResourceConfiguration
         """
         return self._resources
@@ -135,9 +135,9 @@ class ParameterizedCommand:
     @resources.setter
     def resources(self, value) -> None:
         """Sets the compute resource configuration for the command component or job.
-    
+
         :param value: The compute resource configuration for the command component or job.
-        :type value: Union[Dict, ~azure.ai.ml.entities.JobResourceConfiguration]
+        :type value: Union[dict, ~azure.ai.ml.entities.JobResourceConfiguration]
         """
         if isinstance(value, dict):
             value = JobResourceConfiguration(**value)
