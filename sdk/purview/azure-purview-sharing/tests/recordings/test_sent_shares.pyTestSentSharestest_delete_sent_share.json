@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 14 Jun 2023 18:53:25 GMT",
+        "Date": "Fri, 16 Jun 2023 17:57:45 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15620.8 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15673.3 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 14 Jun 2023 18:53:25 GMT",
+        "Date": "Fri, 16 Jun 2023 17:57:45 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15587.7 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.15620.8 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,7 +172,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "36b75deb-8d4f-4ae7-a87c-bab6db76f9f3",
+        "client-request-id": "752c5424-1161-4055-88ef-802d7f560340",
         "Connection": "keep-alive",
         "Content-Length": "285",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -190,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "36b75deb-8d4f-4ae7-a87c-bab6db76f9f3",
+        "client-request-id": "752c5424-1161-4055-88ef-802d7f560340",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 14 Jun 2023 18:53:25 GMT",
+        "Date": "Fri, 16 Jun 2023 17:57:46 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.15620.8 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15673.3 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -213,7 +213,7 @@
       }
     },
     {
-      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/9550f86d-dc04-4c85-9ff0-db8978cd728e?api-version=2023-05-30-preview",
+      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/851dd856-45e5-4c4c-8fb8-688f1e2aed70?api-version=2023-05-30-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -250,13 +250,13 @@
       "ResponseHeaders": {
         "Content-Length": "683",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 14 Jun 2023 18:53:28 GMT",
-        "Location": "/sentShares/9550f86d-dc04-4c85-9ff0-db8978cd728e/9550f86d-dc04-4c85-9ff0-db8978cd728e",
+        "Date": "Fri, 16 Jun 2023 17:57:47 GMT",
+        "Location": "/sentShares/851dd856-45e5-4c4c-8fb8-688f1e2aed70/851dd856-45e5-4c4c-8fb8-688f1e2aed70",
         "Operation-Id": "https://fake_account.share.purview.azure.com/operationResults/00000000-0000-0000-0000-000000000000?api-version=2023-05-30-preview",
         "Operation-Location": "https://fake_account.share.purview.azure.com/operationResults/00000000-0000-0000-0000-000000000000?api-version=2023-05-30-preview",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-correlation-request-id": "fcb46aae-948f-48b2-b168-badd40df5d2b"
+        "x-ms-correlation-request-id": "68168943-16b5-4570-aadf-cacff00140d1"
       },
       "ResponseBody": {
         "properties": {
@@ -280,18 +280,18 @@
             }
           },
           "state": "Succeeded",
-          "createdAt": "2023-06-14T18:53:27.8454026Z",
+          "createdAt": "2023-06-16T17:57:47.4407668Z",
           "dependsOn": [],
           "senderName": "python-sdk-share",
           "senderTenantName": "Microsoft"
         },
         "shareKind": "InPlace",
-        "id": "9550f86d-dc04-4c85-9ff0-db8978cd728e",
+        "id": "851dd856-45e5-4c4c-8fb8-688f1e2aed70",
         "type": "SentShare"
       }
     },
     {
-      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/9550f86d-dc04-4c85-9ff0-db8978cd728e?api-version=2023-05-30-preview",
+      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/851dd856-45e5-4c4c-8fb8-688f1e2aed70?api-version=2023-05-30-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -305,16 +305,16 @@
       "ResponseHeaders": {
         "Content-Length": "138",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 14 Jun 2023 18:53:28 GMT",
-        "Operation-Id": "https://fake_account.share.purview.azure.com/operationResults/2a8e7887-694e-4a45-868f-60b9d600a9ee?api-version=2023-05-30-preview",
-        "Operation-Location": "https://fake_account.share.purview.azure.com/operationResults/2a8e7887-694e-4a45-868f-60b9d600a9ee?api-version=2023-05-30-preview",
+        "Date": "Fri, 16 Jun 2023 17:57:47 GMT",
+        "Operation-Id": "https://fake_account.share.purview.azure.com/operationResults/03ac9dd1-da61-4ff3-87fa-4246545ee5d4?api-version=2023-05-30-preview",
+        "Operation-Location": "https://fake_account.share.purview.azure.com/operationResults/03ac9dd1-da61-4ff3-87fa-4246545ee5d4?api-version=2023-05-30-preview",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-correlation-request-id": "ccad1631-3823-4922-94df-8d17a46f1817"
+        "x-ms-correlation-request-id": "4cad7c4e-7c2e-4cf5-be63-c24a68178507"
       },
       "ResponseBody": {
-        "id": "2a8e7887-694e-4a45-868f-60b9d600a9ee",
-        "startTime": "2023-06-14T18:53:29.2323409Z",
+        "id": "03ac9dd1-da61-4ff3-87fa-4246545ee5d4",
+        "startTime": "2023-06-16T17:57:48.4649415Z",
         "endTime": null,
         "status": "NotStarted",
         "error": null

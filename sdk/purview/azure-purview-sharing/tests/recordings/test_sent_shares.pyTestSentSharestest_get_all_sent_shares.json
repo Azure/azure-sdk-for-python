@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 14 Jun 2023 18:52:32 GMT",
+        "Date": "Fri, 16 Jun 2023 17:57:42 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15620.8 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15673.3 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -111,7 +111,7 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 14 Jun 2023 18:52:33 GMT",
+        "Date": "Fri, 16 Jun 2023 17:57:42 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -172,7 +172,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "328e1b0b-c0e5-45fd-b3ff-115c22bfdde3",
+        "client-request-id": "4d834d41-accb-48a1-8ab7-d8dd7ab93d54",
         "Connection": "keep-alive",
         "Content-Length": "285",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -190,11 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "328e1b0b-c0e5-45fd-b3ff-115c22bfdde3",
+        "client-request-id": "4d834d41-accb-48a1-8ab7-d8dd7ab93d54",
         "Content-Length": "114",
-        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-IpmvoaBYT1Y7UNohRonS2w\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027 \u0027report-sample\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 14 Jun 2023 18:52:33 GMT",
+        "Date": "Fri, 16 Jun 2023 17:57:42 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -202,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.15620.8 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.15673.3 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -214,7 +213,7 @@
       }
     },
     {
-      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/08c1b2a2-880c-4db7-9afe-140683fd1aed?api-version=2023-05-30-preview",
+      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/2281f6ae-fe13-4154-9334-16072830912b?api-version=2023-05-30-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -251,13 +250,13 @@
       "ResponseHeaders": {
         "Content-Length": "683",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 14 Jun 2023 18:52:35 GMT",
-        "Location": "/sentShares/08c1b2a2-880c-4db7-9afe-140683fd1aed/08c1b2a2-880c-4db7-9afe-140683fd1aed",
+        "Date": "Fri, 16 Jun 2023 17:57:44 GMT",
+        "Location": "/sentShares/2281f6ae-fe13-4154-9334-16072830912b/2281f6ae-fe13-4154-9334-16072830912b",
         "Operation-Id": "https://fake_account.share.purview.azure.com/operationResults/00000000-0000-0000-0000-000000000000?api-version=2023-05-30-preview",
         "Operation-Location": "https://fake_account.share.purview.azure.com/operationResults/00000000-0000-0000-0000-000000000000?api-version=2023-05-30-preview",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-correlation-request-id": "a56b63b0-7377-44f3-a0e8-7c30f1afb9eb"
+        "x-ms-correlation-request-id": "b005c27a-e275-4445-a5b7-1aa1a8cd843a"
       },
       "ResponseBody": {
         "properties": {
@@ -281,13 +280,13 @@
             }
           },
           "state": "Succeeded",
-          "createdAt": "2023-06-14T18:52:35.2485754Z",
+          "createdAt": "2023-06-16T17:57:44.2755014Z",
           "dependsOn": [],
           "senderName": "python-sdk-share",
           "senderTenantName": "Microsoft"
         },
         "shareKind": "InPlace",
-        "id": "08c1b2a2-880c-4db7-9afe-140683fd1aed",
+        "id": "2281f6ae-fe13-4154-9334-16072830912b",
         "type": "SentShare"
       }
     },
@@ -303,12 +302,12 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "Content-Length": "4153",
+        "Content-Length": "24629",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 14 Jun 2023 18:52:36 GMT",
+        "Date": "Fri, 16 Jun 2023 17:57:45 GMT",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-correlation-request-id": "76fc6818-4712-4460-903b-35ebfe45ae43"
+        "x-ms-correlation-request-id": "ea6e5540-8499-4a70-b257-c7d722ad97f1"
       },
       "ResponseBody": {
         "value": [
@@ -334,13 +333,13 @@
                 }
               },
               "state": "Succeeded",
-              "createdAt": "2023-06-14T18:52:35.2485754Z",
+              "createdAt": "2023-06-16T17:57:44.2755014Z",
               "dependsOn": [],
               "senderName": "python-sdk-share",
               "senderTenantName": "Microsoft"
             },
             "shareKind": "InPlace",
-            "id": "08c1b2a2-880c-4db7-9afe-140683fd1aed",
+            "id": "2281f6ae-fe13-4154-9334-16072830912b",
             "type": "SentShare"
           },
           {
@@ -365,13 +364,13 @@
                 }
               },
               "state": "Succeeded",
-              "createdAt": "2023-06-14T18:51:42.1923038Z",
+              "createdAt": "2023-06-16T17:57:41.1505992Z",
               "dependsOn": [],
               "senderName": "python-sdk-share",
               "senderTenantName": "Microsoft"
             },
             "shareKind": "InPlace",
-            "id": "3f55ca37-78a5-4641-a6ab-14b4249ec5c5",
+            "id": "b30ec354-c5db-4f13-914b-0f89cf10e3ac",
             "type": "SentShare"
           },
           {
@@ -396,13 +395,13 @@
                 }
               },
               "state": "Succeeded",
-              "createdAt": "2023-06-14T18:50:57.8773181Z",
+              "createdAt": "2023-06-16T17:57:34.1480062Z",
               "dependsOn": [],
               "senderName": "python-sdk-share",
               "senderTenantName": "Microsoft"
             },
             "shareKind": "InPlace",
-            "id": "087fa116-287d-4dd3-894d-0b635aaff683",
+            "id": "3b841557-b9cb-4790-a934-4b698e73657f",
             "type": "SentShare"
           },
           {
@@ -427,13 +426,13 @@
                 }
               },
               "state": "Succeeded",
-              "createdAt": "2023-06-14T18:50:07.5413353Z",
+              "createdAt": "2023-06-16T17:57:31.5261839Z",
               "dependsOn": [],
               "senderName": "python-sdk-share",
               "senderTenantName": "Microsoft"
             },
             "shareKind": "InPlace",
-            "id": "85e57d9e-9f5c-4304-bfe5-973627039bf8",
+            "id": "0f50b30c-8cee-4258-b30b-45d9c0b3499d",
             "type": "SentShare"
           },
           {
@@ -458,19 +457,19 @@
                 }
               },
               "state": "Succeeded",
-              "createdAt": "2023-06-14T18:38:30.3432766Z",
+              "createdAt": "2023-06-16T17:52:46.8193288Z",
               "dependsOn": [],
               "senderName": "python-sdk-share",
               "senderTenantName": "Microsoft"
             },
             "shareKind": "InPlace",
-            "id": "5cd2c587-2fb4-496a-b6c9-04ebef84c5d2",
+            "id": "73e17418-f961-421a-a998-26b4ea7b7fe2",
             "type": "SentShare"
           },
           {
             "properties": {
-              "displayName": "JS-SDK-Sent-Share-Updated",
-              "description": "Sent share updated by and for JS SDK tests.",
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
               "artifact": {
                 "properties": {
                   "paths": [
@@ -489,13 +488,943 @@
                 }
               },
               "state": "Succeeded",
-              "createdAt": "2023-06-02T15:29:50.2020699Z",
+              "createdAt": "2023-06-16T17:52:39.4925986Z",
               "dependsOn": [],
-              "senderName": "testDataBricks",
+              "senderName": "python-sdk-share",
               "senderTenantName": "Microsoft"
             },
             "shareKind": "InPlace",
-            "id": "172e29c5-ce5d-4c5f-9cfb-6c2748114aa4",
+            "id": "e2e85856-3ea8-475e-8dd0-de082899fe42",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-16T17:52:34.5817916Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "cece231f-175b-4381-b34e-94e8d14baa9a",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-16T17:52:29.1291113Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "01d93dfb-d017-4871-856e-3cfeb42238c3",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-16T17:52:24.0443013Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "b46146ac-697e-4d1a-8637-377317b58bb5",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-16T17:51:36.7510451Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "dae25ebc-a362-4fc0-925a-8421a3112cbb",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-16T17:47:48.3657712Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "d13d7b4b-36ef-418b-99bd-d60c5e1c5685",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-16T17:46:17.8860536Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "a4ce133b-f038-45df-9df0-912dc0dcdad8",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-16T17:45:04.05167Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "f3ef7e3c-a1fc-47af-aba2-a0248229a2f3",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-16T17:39:36.1591303Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "ebeb99c7-74b3-48a3-9c1f-4aaf642599ca",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-16T00:15:01.2513281Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "1ac043c0-fa8c-443d-95e1-6533eb8364cb",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-16T00:00:53.953535Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "76142d33-610b-4a85-ac22-9fa5509f0a9e",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-15T23:57:18.2265364Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "0f481493-98ae-4528-9321-ee35a3a7f3e8",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-15T23:52:06.9068255Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "62c702ac-00b1-4ac6-a402-72b6e83e68a0",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-15T23:47:51.9125188Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "081cd02e-2713-4030-aa82-848a0ee07067",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-15T22:24:49.8243291Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "732ae5f6-b692-4cc8-a8b5-997a6ce9c20e",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-15T22:22:48.1763969Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "ce1d260f-e7ad-4028-abc5-e87286c6eedf",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-15T22:21:53.2571442Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "5656ec9c-c61c-4e2a-adf5-937fe07828a0",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-15T22:17:05.0137341Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "7a32d39e-9da1-4c3a-aa01-9ddf49d80a17",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-15T21:22:57.6461563Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "293e93c5-6193-4510-b353-5f9c4cb79cca",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-15T21:20:38.2298965Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "f199d1d9-7cab-4351-94bf-9fdad397fbba",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-15T21:15:26.1801215Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "596d7c3e-05ee-44a4-98c6-9301295809b0",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-15T17:55:57.9816903Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "50cf19c1-2012-4327-9c4d-1652dde538b8",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-15T17:23:43.9854254Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "ee0bb125-b965-4881-bbe7-1c2e03f0d331",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-14T23:40:31.8746153Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "32e10749-830a-4085-93c3-cfcf2f441db4",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-14T23:34:30.555209Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "27d01689-f528-4056-9dbd-d65c6763d4ce",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-14T23:33:22.09678Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "28311a2d-cf9a-4f4e-8cfc-8c8821504d9b",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-14T23:32:51.7343167Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "9886113e-9d05-4b46-be1d-eba48d827302",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-14T23:31:07.1010589Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "3652b6ed-be0b-4aa4-910f-0a998bac4012",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-14T23:20:28.1326336Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "87cd4c9c-e764-414f-b16a-fc03b219749f",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-14T23:19:23.4381343Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "5a733ea2-3da2-493b-91fb-53b23b8bec44",
+            "type": "SentShare"
+          },
+          {
+            "properties": {
+              "displayName": "sentShare-Test",
+              "description": "A sample share",
+              "artifact": {
+                "properties": {
+                  "paths": [
+                    {
+                      "containerName": "container1",
+                      "senderPath": "folder1",
+                      "receiverPath": "folder1"
+                    }
+                  ],
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "type": "ArmResourceReference"
+                }
+              },
+              "state": "Succeeded",
+              "createdAt": "2023-06-14T23:12:21.5094682Z",
+              "dependsOn": [],
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft"
+            },
+            "shareKind": "InPlace",
+            "id": "7b8999e9-b43d-4001-9fea-cb2267476c8b",
             "type": "SentShare"
           }
         ]
