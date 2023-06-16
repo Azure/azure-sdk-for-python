@@ -10,7 +10,7 @@ from functools import partial
 from inspect import Parameter, signature
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -91,6 +91,8 @@ class ComponentOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
         self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
+
+        self._client_key: Optional[str] = None
 
     @property
     def _code_operations(self) -> CodeOperations:
@@ -756,6 +758,44 @@ class ComponentOperations(_ScopeDependentOperations):
 
         return layers
 
+    def _get_workspace_key(self) -> str:
+        try:
+            workspace_rest = self._workspace_operations._operation.get(
+                resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
+            )
+            return workspace_rest.workspace_id
+        except HttpResponseError:
+            return "{}/{}/{}".format(self._subscription_id, self._resource_group_name, self._workspace_name)
+
+    def _get_registry_key(self) -> str:
+        """Get key for used registry.
+        Note that, although registry id is in registry discovery response, it is not in RegistryDiscoveryDto; and we'll
+        lose the information after deserialization.
+        To avoid changing related rest client, we simply use registry related information from self to construct
+        registry key, which means that on-disk cache will be invalid if a registry is deleted and then created
+        again with the same name.
+        """
+        return "{}/{}/{}".format(self._subscription_id, self._resource_group_name, self._registry_name)
+
+    def _get_client_key(self) -> str:
+        """Get key for used client.
+        Key should be able to uniquely identify used registry or workspace.
+        """
+        # check cache first
+        if self._client_key:
+            return self._client_key
+
+        # registry name has a higher priority comparing to workspace name according to current __init__ implementation
+        # of MLClient
+        if self._registry_name:
+            self._client_key = "registry/" + self._get_registry_key()
+        elif self._workspace_name:
+            self._client_key = "workspace/" + self._get_workspace_key()
+        else:
+            # This should never happen.
+            raise ValueError("Either workspace name or registry name must be provided to use component operations.")
+        return self._client_key
+
     def _resolve_dependencies_for_pipeline_component_jobs(
         self, component: Union[Component, str], resolver: Callable, *, resolve_inputs: bool = True
     ):
@@ -797,10 +837,7 @@ class ComponentOperations(_ScopeDependentOperations):
         # relatively simple and of small number of distinct instances
         component_cache = CachedNodeResolver(
             resolver=resolver,
-            subscription_id=self._subscription_id,
-            resource_group_name=self._resource_group_name,
-            workspace_name=self._workspace_name,
-            registry_name=self._registry_name,
+            client_key=self._get_client_key(),
         )
 
         for layer in reversed(layers):

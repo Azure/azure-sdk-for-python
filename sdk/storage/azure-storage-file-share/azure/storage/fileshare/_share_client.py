@@ -112,7 +112,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         if not share_name:
             raise ValueError("Please specify a share name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+            raise ValueError(f"Invalid URL: {account_url}")
 
         path_snapshot = None
         path_snapshot, sas_token = parse_query(parsed_url.query)
@@ -171,17 +171,13 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             raise ValueError("Share URL must be a string.")
         parsed_url = urlparse(share_url.rstrip('/'))
         if not (parsed_url.path and parsed_url.netloc):
-            raise ValueError("Invalid URL: {}".format(share_url))
+            raise ValueError(f"Invalid URL: {share_url}")
 
         share_path = parsed_url.path.lstrip('/').split('/')
         account_path = ""
         if len(share_path) > 1:
             account_path = "/" + "/".join(share_path[:-1])
-        account_url = "{}://{}{}?{}".format(
-            parsed_url.scheme,
-            parsed_url.netloc.rstrip('/'),
-            account_path,
-            parsed_url.query)
+        account_url = f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}{account_path}?{parsed_url.query}"
 
         share_name = unquote(share_path[-1])
         path_snapshot, _ = parse_query(parsed_url.query)
@@ -205,11 +201,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         share_name = self.share_name
         if isinstance(share_name, str):
             share_name = share_name.encode('UTF-8')
-        return "{}://{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(share_name),
-            self._query_str)
+        return f"{self.scheme}://{hostname}/{quote(share_name)}{self._query_str}"
 
     @classmethod
     def from_connection_string(

@@ -150,7 +150,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         if not container_name:
             raise ValueError("Please specify a container name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+            raise ValueError(f"Invalid URL: {account_url}")
 
         _, sas_token = parse_query(parsed_url.query)
         self.container_name = container_name
@@ -171,11 +171,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         container_name = self.container_name
         if isinstance(container_name, str):
             container_name = container_name.encode('UTF-8')
-        return "{}://{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(container_name),
-            self._query_str)
+        return f"{self.scheme}://{hostname}/{quote(container_name)}{self._query_str}"
 
     @classmethod
     def from_container_url(
@@ -209,17 +205,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             raise ValueError("Container URL must be a string.")
         parsed_url = urlparse(container_url)
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(container_url))
+            raise ValueError(f"Invalid URL: {container_url}")
 
         container_path = parsed_url.path.strip('/').split('/')
         account_path = ""
         if len(container_path) > 1:
             account_path = "/" + "/".join(container_path[:-1])
-        account_url = "{}://{}{}?{}".format(
-            parsed_url.scheme,
-            parsed_url.netloc.rstrip('/'),
-            account_path,
-            parsed_url.query)
+        account_url = f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}{account_path}?{parsed_url.query}"
         container_name = unquote(container_path[-1])
         if not container_name:
             raise ValueError("Invalid URL. Please provide a URL with a valid container name")
@@ -347,7 +339,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             kwargs['source_lease_id'] = lease
         try:
             renamed_container = ContainerClient(
-                "{}://{}".format(self.scheme, self.primary_hostname), container_name=new_name,
+                f"{self.scheme}://{self.primary_hostname}", container_name=new_name,
                 credential=self.credential, api_version=self.api_version, _configuration=self._config,
                 _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
                 require_encryption=self.require_encryption, encryption_version=self.encryption_version,
@@ -655,7 +647,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         else:
             _pipeline = self._pipeline   # pylint: disable = protected-access
         return BlobServiceClient(
-            "{}://{}".format(self.scheme, self.primary_hostname),
+            f"{self.scheme}://{self.primary_hostname}",
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
             _location_mode=self._location_mode, _hosts=self._hosts, require_encryption=self.require_encryption,
             encryption_version=self.encryption_version, key_encryption_key=self.key_encryption_key,
@@ -1407,7 +1399,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
             req = HttpRequest(
                 "DELETE",
-                "/{}/{}{}".format(quote(container_name), quote(blob_name, safe='/~'), self._query_str),
+                f"/{quote(container_name)}/{quote(blob_name, safe='/~')}{self._query_str}",
                 headers=header_parameters
             )
             req.format_parameters(query_parameters)
@@ -1507,7 +1499,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 :caption: Deleting multiple blobs.
         """
         if len(blobs) == 0:
-            return iter(list())
+            return iter([])
 
         reqs, options = self._generate_delete_blobs_options(*blobs, **kwargs)
 
@@ -1593,7 +1585,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
             req = HttpRequest(
                 "PUT",
-                "/{}/{}{}".format(quote(container_name), quote(blob_name, safe='/~'), self._query_str),
+                f"/{quote(container_name)}/{quote(blob_name, safe='/~')}{self._query_str}",
                 headers=header_parameters
             )
             req.format_parameters(query_parameters)

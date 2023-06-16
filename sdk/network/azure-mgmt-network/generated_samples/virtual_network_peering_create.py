@@ -14,7 +14,7 @@ from azure.mgmt.network import NetworkManagementClient
     pip install azure-identity
     pip install azure-mgmt-network
 # USAGE
-    python p2_svpn_gateway_update_tags.py
+    python virtual_network_peering_create.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,25 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.p2_svpn_gateways.begin_update_tags(
-        resource_group_name="rg1",
-        gateway_name="p2sVpnGateway1",
-        p2_s_vpn_gateway_parameters={"tags": {"tag1": "value1", "tag2": "value2"}},
+    response = client.virtual_network_peerings.begin_create_or_update(
+        resource_group_name="peerTest",
+        virtual_network_name="vnet1",
+        virtual_network_peering_name="peer",
+        virtual_network_peering_parameters={
+            "properties": {
+                "allowForwardedTraffic": True,
+                "allowGatewayTransit": False,
+                "allowVirtualNetworkAccess": True,
+                "remoteVirtualNetwork": {
+                    "id": "/subscriptions/subid/resourceGroups/peerTest/providers/Microsoft.Network/virtualNetworks/vnet2"
+                },
+                "useRemoteGateways": False,
+            }
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/P2SVpnGatewayUpdateTags.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/VirtualNetworkPeeringCreate.json
 if __name__ == "__main__":
     main()

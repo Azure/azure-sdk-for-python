@@ -146,12 +146,6 @@ IGNORED_SAMPLES = {
         "sample_analyze_healthcare_entities_with_cancellation_async.py",
         "sample_abstract_summary.py",
         "sample_abstract_summary_async.py",
-        "sample_authentication.py",
-        "sample_authentication_async.py",
-    ],
-    "azure-ai-language-conversations": [
-        "sample_assign_deployment_resources.py",
-        "sample_assign_deployment_resources_async.py",
     ],
 }
 
