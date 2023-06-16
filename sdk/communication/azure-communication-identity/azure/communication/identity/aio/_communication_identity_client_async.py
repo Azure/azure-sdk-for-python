@@ -229,7 +229,7 @@ class CommunicationIdentityClient:
             "userId": user_object_id,
         }
         access_token = await self._identity_service_client.communication_identity.exchange_teams_user_access_token(
-            self, body=request_body, **kwargs  # type: ignore
+            body=request_body, **kwargs  # type: ignore
         )
 
         return AccessToken(access_token.token, access_token.expires_on)
