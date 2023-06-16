@@ -235,7 +235,7 @@
             },
             "storeKind": "AdlsGen2Account",
             "storeReference": {
-              "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+              "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
               "type": "ArmResourceReference"
             }
           },
@@ -273,7 +273,7 @@
             },
             "storeKind": "AdlsGen2Account",
             "storeReference": {
-              "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+              "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
               "type": "ArmResourceReference"
             }
           },
@@ -289,7 +289,7 @@
       }
     },
     {
-      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares?referenceName=%2Fsubscriptions%2F0f3dcfc3-18f8-4099-b381-8353e19d43a7%2FresourceGroups%2Ffaisalaltell%2Fproviders%2FMicrosoft.Storage%2FstorageAccounts%2Fbbfaisalp1\u0026api-version=2023-05-30-preview\u0026orderby=properties%2FcreatedAt%20desc",
+      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares?referenceName=%2Fsubscriptions%2F00000000-0000-0000-0000-000000000000%2FresourceGroups%2FfakeResourceGroup%2Fproviders%2FMicrosoft.Storage%2FstorageAccounts%2FfakeStorageAccount\u0026api-version=2023-05-30-preview\u0026orderby=properties%2FcreatedAt%20desc",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -326,7 +326,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -357,7 +357,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -388,7 +388,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -419,7 +419,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -450,7 +450,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -481,7 +481,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -512,7 +512,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -543,7 +543,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -574,7 +574,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -605,7 +605,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -636,7 +636,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -667,7 +667,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -698,7 +698,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -729,7 +729,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -760,7 +760,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -791,7 +791,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -822,7 +822,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -853,7 +853,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -884,7 +884,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -915,7 +915,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -946,7 +946,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -977,7 +977,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1008,7 +1008,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1039,7 +1039,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1070,7 +1070,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1101,7 +1101,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1132,7 +1132,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1163,7 +1163,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1194,7 +1194,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1225,7 +1225,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1256,7 +1256,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1287,7 +1287,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1318,7 +1318,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1349,7 +1349,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1380,7 +1380,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1411,7 +1411,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1442,7 +1442,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1473,7 +1473,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1504,7 +1504,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1535,7 +1535,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1566,7 +1566,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1597,7 +1597,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1628,7 +1628,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1659,7 +1659,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1690,7 +1690,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1721,7 +1721,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1752,7 +1752,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1783,7 +1783,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1814,7 +1814,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1845,7 +1845,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1876,7 +1876,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1907,7 +1907,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1938,7 +1938,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -1969,7 +1969,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -2000,7 +2000,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -2031,7 +2031,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -2062,7 +2062,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -2093,7 +2093,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -2124,7 +2124,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -2155,7 +2155,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },
@@ -2186,7 +2186,7 @@
                 },
                 "storeKind": "AdlsGen2Account",
                 "storeReference": {
-                  "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount",
                   "type": "ArmResourceReference"
                 }
               },

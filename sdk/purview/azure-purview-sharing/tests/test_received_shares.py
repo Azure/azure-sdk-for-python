@@ -216,7 +216,7 @@ class TestReceivedShares(TestPurviewSharing):
         sent_share = self.prepare_sent_share()
 
         # cspell:disable-next-line
-        consumer_storage_account_resource_id = "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalr1"
+        consumer_storage_account_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount"
 
         request = build_sent_shares_create_or_replace_request(
             sent_share_id,
@@ -311,7 +311,7 @@ class TestReceivedShares(TestPurviewSharing):
         sent_share = self.prepare_sent_share()
 
         # cspell:disable-next-line
-        consumer_storage_account_resource_id = "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalr1"
+        consumer_storage_account_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount"
 
         request = build_sent_shares_create_or_replace_request(
             sent_share_id,
