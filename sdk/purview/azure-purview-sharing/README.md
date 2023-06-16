@@ -124,7 +124,7 @@ print(response)
 After creating a sent share, the data provider can extend invitations to consumers who may then view the shared data. In this example, an invitation is extended to an individual by specifying their email address.
 
 ```python Snippet:send_a_user_invitation
-import os
+import os, uuid
 
 from azure.purview.sharing import PurviewSharingClient
 from azure.identity import DefaultAzureCredential
@@ -163,7 +163,7 @@ print(created_invitation)
 **NEW** Data providers can also extend invitations to services or applications by specifying the tenant id and object id of the service. _The object id used for sending an invitation to a service must be the object id associated with the Enterprise Application (not the application registration)._
 
 ```python Snippet:send_a_service_invitation
-import os
+import os, uuid
 
 from azure.purview.sharing import PurviewSharingClient
 from azure.identity import DefaultAzureCredential
@@ -173,14 +173,14 @@ credential = DefaultAzureCredential()
 
 client = PurviewSharingClient(endpoint=endpoint, credential=credential)
 
-targetActiverDirectoryId = uuid.uuid4()
+targetActiveDirectoryId = uuid.uuid4()
 targetObjectId = uuid.uuid4()
 
 sent_share_invitation = {
     "invitationKind": "Service",
     "properties": {
-        "targetActiveDirectoryId": targetActiverDirectoryId,
-        "targetObjectId": targetObjectId
+        "targetActiveDirectoryId": str(targetActiveDirectoryId),
+        "targetObjectId": str(targetObjectId)
     }
 }
 
@@ -252,7 +252,7 @@ credential = DefaultAzureCredential()
 
 client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 
-sent_share_id="885E60CB-2001-4192-B95D-B98CE316C783"
+sent_share_id = uuid.uuid4()
 
 delete_request = client.sent_shares.begin_delete(sent_share_id=str(sent_share_id))
 delete_response = delete_request.result()
@@ -492,7 +492,7 @@ The following code examples demonstrate how to use the Microsoft Azure Python SD
 
 **NEW** A list of share resources can be retrieved to view all resources within an account where sharing activities have taken place.
 
-```python Snippet:list_a_share_resource
+```python Snippet:list_share_resources
 import os
 
 from azure.purview.sharing import PurviewSharingClient
@@ -503,7 +503,12 @@ credential = DefaultAzureCredential()
 
 client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 
-list_request = client placeholder waiting so that I dont forget to put final version here
+list_request = client.share_resources.list(
+    filter="properties/storeKind eq 'AdlsGen2Account'",
+    orderby="properties/createdAt desc")
+
+for list_response in list_request:
+    print(list_response)
 ```
 
 ## Troubleshooting

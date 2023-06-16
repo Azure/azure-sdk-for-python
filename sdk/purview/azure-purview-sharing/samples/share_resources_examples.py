@@ -24,8 +24,8 @@ client = PurviewSharingClient(endpoint=endpoint, credential=credential)
 
 # List share resources
 # [START list_share_resources]
-### TODO need a filter param example for list share resources
 list_request = client.share_resources.list(
+    filter="properties/storeKind eq 'AdlsGen2Account'",
     orderby="properties/createdAt desc")
 
 for list_response in list_request:
