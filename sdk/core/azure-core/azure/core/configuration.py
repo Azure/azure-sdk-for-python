@@ -26,9 +26,9 @@
 from typing import Union, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .pipeline.policies import HTTPPolicy, AsyncHTTPPolicy
+    from .pipeline.policies import HTTPPolicy, AsyncHTTPPolicy, SansIOHTTPPolicy
 
-    AnyPolicy = Union[HTTPPolicy, AsyncHTTPPolicy]
+    AnyPolicy = Union[HTTPPolicy, AsyncHTTPPolicy, SansIOHTTPPolicy]
 
 
 class Configuration:  # pylint: disable=too-many-instance-attributes
