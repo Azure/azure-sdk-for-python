@@ -11,7 +11,6 @@ from testcase import TestPurviewSharing, PurviewSharingPowerShellPreparer
 from devtools_testutils import recorded_by_proxy
 from azure.purview.sharing.operations._operations import (
     build_share_resources_list_request,
-    build_sent_shares_create_or_replace_request
 )
 
 class TestShareResources(TestPurviewSharing):

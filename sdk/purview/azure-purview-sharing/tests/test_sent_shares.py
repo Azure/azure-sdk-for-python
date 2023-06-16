@@ -283,7 +283,6 @@ class TestSentShares(TestPurviewSharing):
     ###     ###
     ### NEW ###
     ###     ###
-    ### TODO make a delete_sent_share_user_invitation test?? does the difference matter?
     @PurviewSharingPowerShellPreparer()
     @recorded_by_proxy
     def test_delete_sent_share_service_invitation(self, purviewsharing_endpoint):
