@@ -17,7 +17,7 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 16 Jun 2023 20:48:32 GMT",
+        "Date": "Fri, 16 Jun 2023 20:56:00 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 16 Jun 2023 20:48:32 GMT",
+        "Date": "Fri, 16 Jun 2023 20:56:00 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15587.7 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15620.8 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,7 +172,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "52ee1f5c-25fa-4ee5-b502-3f7aa43e12c6",
+        "client-request-id": "73029c72-8e7c-4d11-8896-d660cc7dd457",
         "Connection": "keep-alive",
         "Content-Length": "285",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -190,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "52ee1f5c-25fa-4ee5-b502-3f7aa43e12c6",
+        "client-request-id": "73029c72-8e7c-4d11-8896-d660cc7dd457",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 16 Jun 2023 20:48:32 GMT",
+        "Date": "Fri, 16 Jun 2023 20:56:01 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -213,84 +213,6 @@
       }
     },
     {
-      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/8cc27e6b-c890-4f5e-8c89-6f6c04f94cb7?api-version=2023-05-30-preview",
-      "RequestMethod": "PUT",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "471",
-        "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-purview-sharing/1.0.0b1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
-      },
-      "RequestBody": {
-        "properties": {
-          "artifact": {
-            "properties": {
-              "paths": [
-                {
-                  "containerName": "container1",
-                  "receiverPath": "folder1",
-                  "senderPath": "folder1"
-                }
-              ]
-            },
-            "storeKind": "AdlsGen2Account",
-            "storeReference": {
-              "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
-              "type": "ArmResourceReference"
-            }
-          },
-          "displayName": "sentShare-Test",
-          "description": "A sample share"
-        },
-        "shareKind": "InPlace"
-      },
-      "StatusCode": 201,
-      "ResponseHeaders": {
-        "Content-Length": "683",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 16 Jun 2023 20:48:38 GMT",
-        "Location": "/sentShares/8cc27e6b-c890-4f5e-8c89-6f6c04f94cb7/8cc27e6b-c890-4f5e-8c89-6f6c04f94cb7",
-        "Operation-Id": "https://fake_account.share.purview.azure.com/operationResults/00000000-0000-0000-0000-000000000000?api-version=2023-05-30-preview",
-        "Operation-Location": "https://fake_account.share.purview.azure.com/operationResults/00000000-0000-0000-0000-000000000000?api-version=2023-05-30-preview",
-        "Server": "Kestrel",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-correlation-request-id": "3ef66a38-d6d1-4cde-a9fa-40e67cd3d3b7"
-      },
-      "ResponseBody": {
-        "properties": {
-          "displayName": "sentShare-Test",
-          "description": "A sample share",
-          "artifact": {
-            "properties": {
-              "paths": [
-                {
-                  "containerName": "container1",
-                  "senderPath": "folder1",
-                  "receiverPath": "folder1"
-                }
-              ],
-              "location": "southafricanorth"
-            },
-            "storeKind": "AdlsGen2Account",
-            "storeReference": {
-              "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
-              "type": "ArmResourceReference"
-            }
-          },
-          "state": "Succeeded",
-          "createdAt": "2023-06-16T20:48:36.5722144Z",
-          "dependsOn": [],
-          "senderName": "python-sdk-share",
-          "senderTenantName": "Microsoft"
-        },
-        "shareKind": "InPlace",
-        "id": "8cc27e6b-c890-4f5e-8c89-6f6c04f94cb7",
-        "type": "SentShare"
-      }
-    },
-    {
       "RequestUri": "https://fake_account.share.purview.azure.com/shareResources?api-version=2023-05-30-preview\u0026filter=properties%2FstoreKind%20eq%20%27AdlsGen2Account%27\u0026orderby=properties%2FcreatedAt%20desc",
       "RequestMethod": "GET",
       "RequestHeaders": {
@@ -304,10 +226,10 @@
       "ResponseHeaders": {
         "Content-Length": "2816",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 16 Jun 2023 20:48:41 GMT",
+        "Date": "Fri, 16 Jun 2023 20:56:11 GMT",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-correlation-request-id": "96410df5-c22f-4b0a-9e86-eda67c027696"
+        "x-ms-correlation-request-id": "8baf0dc9-bb0c-41df-867c-bb13fc5f29e7"
       },
       "ResponseBody": {
         "value": [
@@ -328,7 +250,7 @@
               "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalp1",
               "type": "ArmResourceReference"
             },
-            "sentSharesCount": 51,
+            "sentSharesCount": 52,
             "receivedSharesCount": 0,
             "id": "5df902ad-b725-46f3-947c-6a225a211536",
             "type": "ShareResource"

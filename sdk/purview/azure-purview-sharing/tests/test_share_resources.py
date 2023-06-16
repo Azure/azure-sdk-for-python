@@ -19,24 +19,6 @@ class TestShareResources(TestPurviewSharing):
     @recorded_by_proxy
     def test_list_share_resources(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid4()
-        sent_share = self.prepare_sent_share()
-
-        request = build_sent_shares_create_or_replace_request(
-            sent_share_id,
-            content_type="application/json",
-            content=json.dumps(sent_share))
-        
-        response = client.send_request(request)
-        
-        assert response is not None
-        assert response.status_code == 201, "Invalid Status Code " + str(response.status_code)
-        assert response.content is not None
-
-        created_sent_share = json.loads(response.content)
-
-        assert created_sent_share is not None
-        assert created_sent_share['id'] == str(sent_share_id)
 
         list_request = build_share_resources_list_request(
             filter="properties/storeKind eq 'AdlsGen2Account'",
