@@ -23,10 +23,9 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import platform
-import sys
+import os
 import pytest
-from devtools_testutils import add_general_string_sanitizer, test_proxy, add_body_key_sanitizer, add_header_regex_sanitizer, add_uri_regex_sanitizer, add_oauth_response_sanitizer
+from devtools_testutils import add_general_string_sanitizer, test_proxy, add_body_key_sanitizer, add_header_regex_sanitizer, add_oauth_response_sanitizer
 from devtools_testutils.sanitizers import (
     add_remove_header_sanitizer,
     add_general_regex_sanitizer,
@@ -48,8 +47,9 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+    add_body_key_sanitizer(json_path="$..id", value="id")
     add_oauth_response_sanitizer()
-    # add_general_regex_sanitizer(
-    #     value=":https://login.microsoftonline.com/",
-    #     regex=r"https://login.microsoftonline.com/(.+)/"
-    # )
+
+    tenant_id = os.environ.get("AZURE_TENANT_ID", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=tenant_id, value="00000000-0000-0000-0000-000000000000")
+
