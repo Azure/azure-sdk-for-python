@@ -120,7 +120,7 @@ class ParameterizedSweep:
         return self._limits
 
     @resources.setter
-    def resources(self, value: JobResourceConfiguration):
+    def resources(self, value: Union[dict, JobResourceConfiguration]):
         """Set Resources for sweep job.
 
         :param resources: Compute Resource configuration for the job.
