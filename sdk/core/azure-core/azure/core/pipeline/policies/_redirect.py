@@ -163,7 +163,7 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
         """
         retryable = True
         redirect_settings = self.configure_redirects(request.context.options)
-        original_domain = get_domain(request.http_request.url) if self.allow else None
+        original_domain = get_domain(request.http_request.url) if redirect_settings["allow"] else None
         while retryable:
             response = self.next.send(request)
             redirect_location = self.get_redirect_location(response)
