@@ -92,7 +92,8 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     :type description: str
     :param tags: The tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
-    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing to a remote location.
+    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
+        to a remote location.
     :type code: Union[str, os.PathLike]
     :param entry: The file or class entry point.
     :type entry: dict[str, str]

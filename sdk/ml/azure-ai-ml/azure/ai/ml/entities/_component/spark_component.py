@@ -26,18 +26,19 @@ class SparkComponent(
 ):  # pylint: disable=too-many-instance-attributes
     """Spark component version, used to define a Spark Component or Job.
 
-    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing to a remote location.
+    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
+        to a remote location.
     :type code: Union[str, os.PathLike]
     :param entry: The file or class entry point.
     :type entry: dict[str, str]
     :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
-    :type py_files: List[str]
+    :type py_files: list[str]
     :param jars: The list of .JAR files to include on the driver and executor classpaths.
-    :type jars: List[str]
+    :type jars: list[str]
     :param files: The list of files to be placed in the working directory of each executor.
-    :type files: List[str]
+    :type files: list[str]
     :param archives: The list of archives to be extracted into the working directory of each executor.
-    :type archives: List[str]
+    :type archives: list[str]
     :param driver_cores: The number of cores to use for the driver process, only in cluster mode.
     :type driver_cores: int
     :param driver_memory: The amount of memory to use for the driver process, formatted as strings with a size unit
