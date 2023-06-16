@@ -536,6 +536,8 @@ class ResourceTypes(object):
         Get Service Stats, List Tables)
     :keyword bool object:
         Access to object-level APIs for tables (e.g. Get/Create/Query Entity etc.)
+    :keyword bool container:
+        Access to container-level APIs for tables (e.g. Create Tables etc.)
     """
 
     def __init__(self, **kwargs) -> None:
