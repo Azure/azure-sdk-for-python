@@ -6,10 +6,6 @@
 # --------------------------------------------------------------------------
 import json
 from uuid import uuid4
-import os, uuid, json
-
-from azure.purview.sharing import PurviewSharingClient
-from azure.identity import DefaultAzureCredential
 
 from testcase import TestPurviewSharing, PurviewSharingPowerShellPreparer
 from devtools_testutils import recorded_by_proxy
@@ -137,7 +133,6 @@ class TestReceivedShares(TestPurviewSharing):
 
         list_detached = json.loads(list_detached_response.content)
 
-        print(list_detached)
         received_share = list_detached['value'][0]
 
         get_share_request = build_received_shares_get_request(received_share_id=received_share['id'])
