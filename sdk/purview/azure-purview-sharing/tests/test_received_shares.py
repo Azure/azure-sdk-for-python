@@ -5,6 +5,11 @@
 # license information.
 # --------------------------------------------------------------------------
 import json
+from uuid import uuid4
+import os, uuid, json
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
 
 from testcase import TestPurviewSharing, PurviewSharingPowerShellPreparer
 from devtools_testutils import recorded_by_proxy
@@ -24,8 +29,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_all_detached_shares(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "5cd2c587-2fb4-496a-b6c9-04ebef84c5d2"
-        sent_share_invitation_id = "623fe4bf-d2cb-4b9f-9243-abe16b65d8a8"
+        sent_share_id = uuid4()
+        sent_share_invitation_id = uuid4()
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -75,16 +80,18 @@ class TestReceivedShares(TestPurviewSharing):
 
         assert list_detached is not None
         assert len(list_detached['value']) > 0
-
         # is the number of items that has shareStatus "Detached" equal to the number of all results
         assert len([x for x in list_detached['value'] if x['properties']['shareStatus'] == "Detached"]) == len(list_detached['value'])
     
+
+
+
     @PurviewSharingPowerShellPreparer()
     @recorded_by_proxy
     def test_get_received_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "5cd2c587-2fb4-496a-b6c9-04ebef84c5d2"
-        sent_share_invitation_id = "623fe4bf-d2cb-4b9f-9243-abe16b65d8a8"
+        sent_share_id = uuid4()
+        sent_share_invitation_id = uuid4()
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -132,22 +139,27 @@ class TestReceivedShares(TestPurviewSharing):
 
         list_detached = json.loads(list_detached_response.content)
 
+        print(list_detached)
         received_share = list_detached['value'][0]
 
         get_share_request = build_received_shares_get_request(received_share_id=received_share['id'])
         get_share_response = client.send_request(get_share_request)
         
         retrieved_share = json.loads(get_share_response.content)
-
+        print(retrieved_share)
         assert retrieved_share is not None
         assert retrieved_share['id'] == received_share['id']
+
+
+
+
 
     @PurviewSharingPowerShellPreparer()
     @recorded_by_proxy
     def test_delete_received_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "5cd2c587-2fb4-496a-b6c9-04ebef84c5d2"
-        sent_share_invitation_id = "623fe4bf-d2cb-4b9f-9243-abe16b65d8a8"
+        sent_share_id = uuid4()
+        sent_share_invitation_id = uuid4()
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -210,12 +222,12 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_attach_received_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "5cd2c587-2fb4-496a-b6c9-04ebef84c5d2"
-        sent_share_invitation_id = "623fe4bf-d2cb-4b9f-9243-abe16b65d8a8"
+        sent_share_id = uuid4()
+        sent_share_invitation_id = uuid4()
         sent_share = self.prepare_sent_share()
 
         # cspell:disable-next-line
-        consumer_storage_account_resource_id = "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/ftreceiversan"
+        consumer_storage_account_resource_id = "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/bbfaisalr1"
 
         request = build_sent_shares_create_or_replace_request(
             sent_share_id,
