@@ -36,7 +36,7 @@ class FeatureSet(Artifact):
         version: str,
         entities: List[str],
         specification: FeatureSetSpecification,
-        stage: Optional[str] = None,
+        stage: Optional[str] = "Development",
         description: Optional[str] = None,
         materialization_settings: Optional[MaterializationSettings] = None,
         tags: Optional[Dict] = None,
