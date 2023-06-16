@@ -366,7 +366,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
     """
 
     def __init__(
-        self, timeout: float = 30, lro_algorithms=None, lro_options=None, path_format_arguments=None, **operation_config
+        self, timeout = 30, lro_algorithms=None, lro_options=None, path_format_arguments=None, **operation_config
     ):
         self._lro_algorithms = lro_algorithms or [
             OperationResourcePolling(lro_options=lro_options),
