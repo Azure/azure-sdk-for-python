@@ -128,11 +128,9 @@ class CommunicationIdentityClient:
             "expiresInMinutes": convert_timedelta_to_mins(token_expires_in),
         }
 
-        identity_access_token = (
-            await self._identity_service_client.communication_identity.create(
-                body=request_body, **kwargs
-            )
-        )  # type: ignore
+        identity_access_token = await self._identity_service_client.communication_identity.create(
+            body=request_body, **kwargs  # type: ignore
+        )
 
         user_identifier = CommunicationUserIdentifier(
             identity_access_token.identity.id, raw_id=identity_access_token.identity.id
@@ -185,8 +183,8 @@ class CommunicationIdentityClient:
         }
 
         access_token = await self._identity_service_client.communication_identity.issue_access_token(
-            user.properties["id"], body=request_body, **kwargs
-        )  # type: ignore
+            user.properties["id"], body=request_body, **kwargs  # type: ignore
+        )
 
         return AccessToken(access_token.token, access_token.expires_on)
 
@@ -231,8 +229,8 @@ class CommunicationIdentityClient:
             "userId": user_object_id,
         }
         access_token = await self._identity_service_client.communication_identity.exchange_teams_user_access_token(
-            self, body=request_body, **kwargs
-        )  # type: ignore
+            self, body=request_body, **kwargs  # type: ignore
+        )
 
         return AccessToken(access_token.token, access_token.expires_on)
 

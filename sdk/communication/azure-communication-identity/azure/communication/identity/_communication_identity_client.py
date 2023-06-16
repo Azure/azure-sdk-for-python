@@ -129,11 +129,9 @@ class CommunicationIdentityClient(object):
             "createTokenWithScopes": scopes,
             "expiresInMinutes": convert_timedelta_to_mins(token_expires_in),
         }
-        identity_access_token = (
-            self._identity_service_client.communication_identity.create(
-                body=request_body, **kwargs
-            )
-        )  # type: ignore
+        identity_access_token = self._identity_service_client.communication_identity.create(
+            body=request_body, **kwargs  # type: ignore
+        )
 
         user_identifier = CommunicationUserIdentifier(
             identity_access_token.identity.id, raw_id=identity_access_token.identity.id
@@ -189,11 +187,9 @@ class CommunicationIdentityClient(object):
             "expiresInMinutes": convert_timedelta_to_mins(token_expires_in),
         }
 
-        access_token = (
-            self._identity_service_client.communication_identity.issue_access_token(
-                user.properties["id"], body=request_body, **kwargs
-            )
-        )  # type: ignore
+        access_token = self._identity_service_client.communication_identity.issue_access_token(
+            user.properties["id"], body=request_body, **kwargs  # type: ignore
+        )
 
         return AccessToken(access_token.token, access_token.expires_on)
 
@@ -245,7 +241,7 @@ class CommunicationIdentityClient(object):
         }
 
         access_token = self._identity_service_client.communication_identity.exchange_teams_user_access_token(
-            body=request_body, **kwargs
-        )  # type: ignore
+            body=request_body, **kwargs  # type: ignore
+        )
 
         return AccessToken(access_token.token, access_token.expires_on)
