@@ -8,7 +8,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
-* Fixed bug with async patch_item method. See [PR 12345]().
+* Fixed bug with async patch_item method. See [PR 30804](https://github.com/Azure/azure-sdk-for-python/pull/30804).
 
 #### Other Changes
 
