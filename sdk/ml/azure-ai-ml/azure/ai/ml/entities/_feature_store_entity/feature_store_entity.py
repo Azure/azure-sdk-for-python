@@ -33,7 +33,7 @@ class FeatureStoreEntity(Asset):
         name: str,
         version: str,
         index_columns: List[DataColumn],
-        stage: Optional[str] = "Development",
+        stage: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs,
@@ -62,7 +62,7 @@ class FeatureStoreEntity(Asset):
             tags=tags,
             **kwargs,
         )
-        if stage not in ["Development", "Production", "Archived"]:
+        if stage and stage not in ["Development", "Production", "Archived"]:
             msg = f"Stage must be Development, Production, or Archived, found {stage}"
             raise ValidationException(
                 message=msg,
