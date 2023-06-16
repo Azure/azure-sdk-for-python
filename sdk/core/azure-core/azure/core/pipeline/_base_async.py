@@ -101,7 +101,7 @@ class _AsyncTransportRunner(
         # has occurred to a different domain. This tells the SensitiveHeaderCleanupPolicy
         # to clean up sensitive headers. We need to remove it before sending the request
         # to the transport layer. This need this code to handle the case that the
-        # SensitiveHeaderCleanupPolicy is not added into the pipeline and "insecure_domain_change" is not popped. 
+        # SensitiveHeaderCleanupPolicy is not added into the pipeline and "insecure_domain_change" is not popped.
         request.context.options.pop("insecure_domain_change", False)
         return PipelineResponse(
             request.http_request,
