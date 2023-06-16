@@ -144,7 +144,7 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
                 [
                     config.logging_policy,
                     DistributedTracingPolicy(**kwargs),
-                    SensitiveHeaderCleanupPolicy(**kwargs) if config.redirect_policy else None
+                    SensitiveHeaderCleanupPolicy(**kwargs) if config.redirect_policy else None,
                     config.http_logging_policy or HttpLoggingPolicy(**kwargs),
                 ]
             )
