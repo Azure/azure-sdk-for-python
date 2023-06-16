@@ -1070,6 +1070,11 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 sender.send_messages(ServiceBusMessage("test session sender", session_id="test"))
+            
+            with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
+                messages = receiver.receive_messages()
+                for message in messages:
+                    receiver.complete_message(message)
     
 
     @pytest.mark.liveTest
@@ -2498,57 +2503,28 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_queue_send_large_message_receive(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
-        def _hack_amqp_sender_run(self, **kwargs):
-            time.sleep(6)  # sleep until timeout
-            if uamqp_transport:
-                self.message_handler.work()
-                self._waiting_messages = 0
-                self._pending_messages = self._filter_pending()
-                if self._backoff and not self._waiting_messages:
-                    _logger.info("Client told to backoff - sleeping for %r seconds", self._backoff)
-                    self._connection.sleep(self._backoff)
-                    self._backoff = 0
-                self._connection.work()
-            else:
-                try:
-                    self._link.update_pending_deliveries()
-                    self._connection.listen(wait=self._socket_timeout, **kwargs)
-                except ValueError:
-                    self._shutdown = True
-                    return False
-            return True
-
+        # Amqp
         with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
-            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                # this one doesn't need to reset the method, as it's hacking the method on the instance
-                sender._handler._client_run = types.MethodType(_hack_amqp_sender_run, sender._handler)
-                with pytest.raises(OperationTimeoutError):
-                    sender.send_messages(ServiceBusMessage("body"), timeout=5)
+            servicebus_namespace_connection_string,
+            uamqp_transport=uamqp_transport
+        ) as sb_client:
+            with sb_client.get_queue_sender(servicebus_queue.name, socket_timeout=0.6) as sender:
+                payload = "A" * 250 * 1024
+                sender.send_messages(ServiceBusMessage(payload))
 
-        if not uamqp_transport:
-            # Amqp
-            with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string,
-                uamqp_transport=uamqp_transport
-            ) as sb_client:
-                with sb_client.get_queue_sender(servicebus_queue.name, socket_timeout=0.6) as sender:
-                    payload = "A" * 250 * 1024
-                    sender.send_messages(ServiceBusMessage(payload))
-
-            if uamqp:
-                transport_type = uamqp.constants.TransportType.AmqpOverWebsocket
-            else:
-                transport_type = TransportType.AmqpOverWebsocket
-            # AmqpOverWebsocket
-            with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string,
-                transport_type=transport_type,
-                uamqp_transport=uamqp_transport
-            ) as sb_client:
-                with sb_client.get_queue_sender(servicebus_queue.name, socket_timeout=0.8) as sender:
-                    payload = "A" * 250 * 1024
-                    sender.send_messages(ServiceBusMessage(payload))
+        if uamqp:
+            transport_type = uamqp.constants.TransportType.AmqpOverWebsocket
+        else:
+            transport_type = TransportType.AmqpOverWebsocket
+        # AmqpOverWebsocket
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string,
+            transport_type=transport_type,
+            uamqp_transport=uamqp_transport
+        ) as sb_client:
+            with sb_client.get_queue_sender(servicebus_queue.name, socket_timeout=0.8) as sender:
+                payload = "A" * 250 * 1024
+                sender.send_messages(ServiceBusMessage(payload))
 
         # ReceiveMessages
         with ServiceBusClient.from_connection_string(

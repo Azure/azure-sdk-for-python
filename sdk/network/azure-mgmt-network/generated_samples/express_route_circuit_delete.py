@@ -29,11 +29,10 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.express_route_circuits.begin_delete(
+    client.express_route_circuits.begin_delete(
         resource_group_name="rg1",
         circuit_name="circuitName",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/ExpressRouteCircuitDelete.json

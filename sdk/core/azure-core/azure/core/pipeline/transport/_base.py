@@ -107,9 +107,25 @@ def _urljoin(base_url: str, stub_url: str) -> str:
     :returns: The updated URL.
     :rtype: str
     """
-    parsed = urlparse(base_url)
-    parsed = parsed._replace(path=parsed.path.rstrip("/") + "/" + stub_url)
-    return parsed.geturl()
+    parsed_base_url = urlparse(base_url)
+
+    # Can't use "urlparse" on a partial url, we get incorrect parsing for things like
+    # document:build?format=html&api-version=2019-05-01
+    split_url = stub_url.split("?", 1)
+    stub_url_path = split_url.pop(0)
+    stub_url_query = split_url.pop() if split_url else None
+
+    # Note that _replace is a public API named that way to avoid to avoid conflicts in namedtuple
+    # https://docs.python.org/3/library/collections.html?highlight=namedtuple#collections.namedtuple
+    parsed_base_url = parsed_base_url._replace(
+        path=parsed_base_url.path.rstrip("/") + "/" + stub_url_path,
+    )
+    if stub_url_query:
+        query_params = [stub_url_query]
+        if parsed_base_url.query:
+            query_params.insert(0, parsed_base_url.query)
+        parsed_base_url = parsed_base_url._replace(query="&".join(query_params))
+    return parsed_base_url.geturl()
 
 
 class HttpTransport(AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
@@ -546,6 +562,8 @@ class PipelineClientBase:
     def format_url(self, url_template: str, **kwargs) -> str:
         """Format request URL with the client base URL, unless the
         supplied URL is already absolute.
+
+        Note that both the base url and the template url can contain query parameters.
 
         :param str url_template: The request URL to be formatted if necessary.
         """
