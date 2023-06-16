@@ -23,6 +23,7 @@ class LogsIngestionClient(GeneratedClient):
     :paramtype api_version: str
     """
 
+
 __all__: List[str] = ["LogsIngestionClient"]
 
 
