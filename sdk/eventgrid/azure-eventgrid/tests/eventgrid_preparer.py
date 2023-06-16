@@ -13,7 +13,7 @@ from azure_devtools.scenario_tests.exceptions import AzureTestError
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 
 EVENTGRID_TOPIC_PARAM = "eventgrid_topic"
-EVENTGRID_TOPIC_LOCATION = "westus"
+EVENTGRID_TOPIC_LOCATION = "eastus"
 CLOUD_EVENT_SCHEMA = InputSchema.cloud_event_schema_v1_0
 CUSTOM_EVENT_SCHEMA = InputSchema.custom_event_schema
 ID_JSON_FIELD = JsonField(source_field="customId")
@@ -40,21 +40,21 @@ CUSTOM_JSON_INPUT_SCHEMA_MAPPING = JsonInputSchemaMapping(
 EventGridPreparer = functools.partial(
     PowerShellPreparer,
     "eventgrid",
-    eventgrid_topic_endpoint="https://fakeresource.westus2-1.eventgrid.azure.net/api/events",
+    eventgrid_topic_endpoint="https://fakeresource.eastus-1.eventgrid.azure.net/api/events",
     eventgrid_topic_key="fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyA=",
-    eventgrid_domain_endpoint="https://fakeresource.westus2-1.eventgrid.azure.net/api/events",
+    eventgrid_domain_endpoint="https://fakeresource.eastus-1.eventgrid.azure.net/api/events",
     eventgrid_domain_key="fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyA=",
-    eventgrid_cloud_event_topic_endpoint="https://fakeresource.westus2-1.eventgrid.azure.net/api/events",
+    eventgrid_cloud_event_topic_endpoint="https://fakeresource.eastus-1.eventgrid.azure.net/api/events",
     eventgrid_cloud_event_topic_key="fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyA=",
-    eventgrid_cloud_event_domain_endpoint="https://fakeresource.westus2-1.eventgrid.azure.net/api/events",
+    eventgrid_cloud_event_domain_endpoint="https://fakeresource.eastus-1.eventgrid.azure.net/api/events",
     eventgrid_cloud_event_domain_key="fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyA=",
-    eventgrid_custom_event_topic_endpoint="https://fakeresource.westus2-1.eventgrid.azure.net/api/events",
+    eventgrid_custom_event_topic_endpoint="https://fakeresource.eastus-1.eventgrid.azure.net/api/events",
     eventgrid_custom_event_topic_key="fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyA=",
 )
 
 EventGridBetaPreparer = functools.partial(
     PowerShellPreparer,
     "eventgrid",
-    eventgrid_endpoint="https://fakeresource.westus2-1.eventgrid.azure.net/api/events",
+    eventgrid_endpoint="https://fakeresource.eastus-1.eventgrid.azure.net/api/events",
     eventgrid_key="fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyA=",
 )
