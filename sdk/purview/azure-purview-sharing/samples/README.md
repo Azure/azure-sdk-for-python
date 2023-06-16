@@ -13,7 +13,7 @@ description: Samples for the Azure.Purview.Sharing client library.
 
 The following are code samples that show common scenario operations with the Azure Purview client library.
 
-* [sent_shares_examples.py](https://github.com/yamanwahsheh/azure-sdk-for-python/blob/yaman/share-v2-python-tests-and-samples/sdk/purview/azure-purview-sharing/samples/sent_shares_examples.py) - Examples of Sent Shares:
+* [sent_shares_examples.py](https://github.com/hopewelchmicrosoft/azure-sdk-for-python/blob/hope-new-branch/sdk/purview/azure-purview-sharing/samples/sent_shares_examples.py) - Examples of Sent Shares:
     * Create a share client
     * Create a sent share
     * Send a user invitation
@@ -25,7 +25,7 @@ The following are code samples that show common scenario operations with the Azu
     * View sent invitations
     * Delete a sent share invitation
 
-* [received_shares_examples.py](https://github.com/yamanwahsheh/azure-sdk-for-python/blob/yaman/share-v2-python-tests-and-samples/sdk/purview/azure-purview-sharing/samples/received_shares_examples.py) - Examples of Received Shares:
+* [received_shares_examples.py](https://github.com/hopewelchmicrosoft/azure-sdk-for-python/blob/hope-new-branch/sdk/purview/azure-purview-sharing/samples/received_shares_examples.py) - Examples of Received Shares:
     * Create a share client
     * Get all detached received shares
     * Attach a received share

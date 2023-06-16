@@ -336,7 +336,6 @@ print(delete_invitation_response)
 ## Data Consumer Examples
 
 The following code examples demonstrate how data consumers can use the Microsoft Azure Python SDK for Purview Sharing to manage their sharing activity.
-**uuid should be replaced with real share ids!!! do it in the samples?????**
 
 ### Create a Received Share Client
 
@@ -588,4 +587,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
-[samples]: https://github.com/yamanwahsheh/azure-sdk-for-python/tree/yaman/share-v2-python-tests-and-samples/sdk/purview/azure-purview-sharing/samples
+[samples]: https://github.com/hopewelchmicrosoft/azure-sdk-for-python/blob/hope-new-branch/sdk/purview/azure-purview-sharing/samples/README.md
