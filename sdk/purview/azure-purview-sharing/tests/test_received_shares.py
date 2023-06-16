@@ -26,8 +26,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_all_detached_shares(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid4()
-        sent_share_invitation_id = uuid4()
+        sent_share_id = "44a61a1f-c550-4c85-b8e3-f6f83fee489d" # uuid4()
+        sent_share_invitation_id = "a713dfaf-70ac-4c48-80dd-33916a342d64" # uuid4()
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -84,8 +84,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_received_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid4()
-        sent_share_invitation_id = uuid4()
+        sent_share_id = "87bf306d-db22-4f57-a6e5-084245e386fd" # uuid4()
+        sent_share_invitation_id = "40de4e40-fd85-4024-99b3-c09cead6896a" # uuid4()
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -147,8 +147,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_delete_received_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid4()
-        sent_share_invitation_id = uuid4()
+        sent_share_id = "50c5e9f2-8fc0-484b-96ab-1011401ec0b5" # uuid4()
+        sent_share_invitation_id = "c3c31c43-95b9-406e-a9b7-cf21c41d80bb" # uuid4()
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -211,8 +211,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_attach_received_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid4()
-        sent_share_invitation_id = uuid4()
+        sent_share_id = "0ea7e339-3790-47d5-8dbb-8c9415676f87" # uuid4()
+        sent_share_invitation_id = "752d25fc-bad1-4e36-b28a-bcd6ddb02ee9" # uuid4()
         sent_share = self.prepare_sent_share()
 
         # cspell:disable-next-line
@@ -306,8 +306,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_all_attached_shares(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid4()
-        sent_share_invitation_id = uuid4()
+        sent_share_id = "d92b66fd-5458-4db3-878d-c3b79c3ed8ca" # uuid4()
+        sent_share_invitation_id = "9898c18c-7848-4747-93de-9ffa1f4a79bf" # uuid4()
         sent_share = self.prepare_sent_share()
 
         # cspell:disable-next-line
