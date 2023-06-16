@@ -585,7 +585,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         data: Optional[Union[AnyStr, IO]],
         mime_type: Optional[str] = None,
         response: Optional[HTTPResponseType] = None,
-    ):
+    ) -> Any:
         """Decode response data according to content-type.
 
         Accept a stream of data as well, but will be load at once in memory for now.
@@ -655,7 +655,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         cls,
         response: HTTPResponseType,
         encoding: Optional[str] = None,
-    ):
+    ) -> Any:
         """Deserialize from HTTP response.
 
         Headers will tested for "content-type"
