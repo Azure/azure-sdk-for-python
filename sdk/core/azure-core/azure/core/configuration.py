@@ -95,7 +95,7 @@ class Configuration:  # pylint: disable=too-many-instance-attributes
         self.request_id_policy: "Optional[AnyPolicy]" = None
 
         # Polling interval if no retry-after in polling calls results
-        self.polling_interval = kwargs.get("polling_interval", 30)
+        self.polling_interval: float = kwargs.get("polling_interval", 30)
 
 
 class ConnectionConfiguration:
