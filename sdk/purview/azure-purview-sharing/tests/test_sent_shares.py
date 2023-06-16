@@ -22,7 +22,6 @@ from azure.purview.sharing.operations._operations import (
 )
 
 class TestSentShares(TestPurviewSharing):
-    ### TODO Change all hardcoded ids into uuid4???
     @PurviewSharingPowerShellPreparer()
     @recorded_by_proxy
     def test_create_sent_share(self, purviewsharing_endpoint):
