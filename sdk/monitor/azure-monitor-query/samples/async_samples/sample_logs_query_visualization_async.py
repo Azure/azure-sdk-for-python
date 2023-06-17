@@ -23,15 +23,14 @@ This example uses DefaultAzureCredential, which requests a token from Azure Acti
 For more information on DefaultAzureCredential, see https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 """
 import asyncio
-import os
 from datetime import timedelta
+import os
 
-import plotly.express as px
-
-from azure.monitor.query import LogsQueryStatus
-from azure.monitor.query.aio import LogsQueryClient
 from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
+from azure.monitor.query import LogsQueryStatus
+from azure.monitor.query.aio import LogsQueryClient
+import plotly.express as px
 
 
 async def query_visualization():
@@ -49,10 +48,7 @@ async def query_visualization():
     try:
         async with client:
             response = await client.query_workspace(
-                os.environ['LOGS_WORKSPACE_ID'],
-                query,
-                timespan=timedelta(days=1),
-                include_visualization=True
+                os.environ["LOGS_WORKSPACE_ID"], query, timespan=timedelta(days=1), include_visualization=True
             )
             if response.status == LogsQueryStatus.PARTIAL:
                 error = response.partial_error
@@ -76,21 +72,19 @@ async def query_visualization():
                         x=0,
                         y=1,
                         title=viz["title"],
-                        labels={
-                            "0": viz["xTitle"],
-                            "1": viz["yTitle"]
-                        },
-                        range_y=[0, viz["yMax"]]
+                        labels={"0": viz["xTitle"], "1": viz["yTitle"]},
+                        range_y=[0, viz["yMax"]],
                     )
                     # Output visualization to a file.
-                    fig.write_html('query-visualization.html')
+                    fig.write_html("query-visualization.html")
                     # To open in a browser, use:
                     # fig.show()
 
     except HttpResponseError as err:
         print("something fatal happened")
         print(err)
+    await credential.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(query_visualization())
