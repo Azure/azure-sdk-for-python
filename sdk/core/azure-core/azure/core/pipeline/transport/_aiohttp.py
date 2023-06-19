@@ -266,10 +266,10 @@ class AioHttpTransport(AsyncHttpTransport):
                     await response.load_body()
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
-        except aiohttp.client_exceptions.ClientError as err:
-            raise ServiceRequestError(err, error=err) from err
         except asyncio.TimeoutError as err:
             raise ServiceResponseError(err, error=err) from err
+        except aiohttp.client_exceptions.ClientError as err:
+            raise ServiceRequestError(err, error=err) from err
         return response
 
 
@@ -326,10 +326,10 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
             raise IncompleteReadError(err, error=err)
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
-        except aiohttp.client_exceptions.ClientError as err:
-            raise ServiceRequestError(err, error=err) from err
         except asyncio.TimeoutError as err:
             raise ServiceResponseError(err, error=err)
+        except aiohttp.client_exceptions.ClientError as err:
+            raise ServiceRequestError(err, error=err) from err
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()
@@ -419,10 +419,10 @@ class AioHttpTransportResponse(AsyncHttpResponse):
             raise IncompleteReadError(err, error=err)
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
-        except aiohttp.client_exceptions.ClientError as err:
-            raise ServiceRequestError(err, error=err) from err
         except asyncio.TimeoutError as err:
             raise ServiceResponseError(err, error=err)
+        except aiohttp.client_exceptions.ClientError as err:
+            raise ServiceRequestError(err, error=err) from err
 
     def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
