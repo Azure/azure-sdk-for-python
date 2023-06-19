@@ -224,10 +224,10 @@ extends:
 
 #### Running locally
 
-To run locally first install `black` from pip if you do not have it already (the pipeline uses version 21.6b0). Currently, we use the `-l 120` option to allow lines up to 120 characters (consistent with our `pylint` check).
+To run locally first install `black` from pip if you do not have it already (the pipeline uses version 22.3.0). Currently, we use the `-l 120` option to allow lines up to 120 characters (consistent with our `pylint` check).
 
 ```bash
-python -m pip install black==21.6b0
+python -m pip install black==22.3.0
 python -m black -l 120 <path/to/service_directory>
 ```
 

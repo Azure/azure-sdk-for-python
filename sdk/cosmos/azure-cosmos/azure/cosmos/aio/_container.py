@@ -565,7 +565,7 @@ class ContainerProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         request_options["disableAutomaticIdGeneration"] = True
         request_options["partitionKey"] = partition_key
-        filter_predicate = kwargs.pop("filter_predicate")
+        filter_predicate = kwargs.pop("filter_predicate", None)
         if filter_predicate is not None:
             request_options["filterPredicate"] = filter_predicate
 
