@@ -37,13 +37,13 @@ from ._async_poller import AsyncPollingMethod
 from ..pipeline._tools import is_rest
 from .. import AsyncPipelineClient
 from ..pipeline import PipelineResponse
-from ..pipeline.transport import HttpRequest as LegacyHttpRequest, AsyncHttpTransport
+from ..pipeline.transport import HttpRequest as LegacyHttpRequest, AsyncHttpTransport, AsyncHttpResponse as LegacyAsyncHttpResponse
 from ..pipeline.transport._base import _HttpResponseBase as LegacySansIOHttpResponse
-from ..rest import HttpRequest
+from ..rest import HttpRequest, AsyncHttpResponse
 from ..rest._rest_py3 import _HttpResponseBase as SansIOHttpResponse
 
 HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
-AsyncHTTPResponseType = Union[LegacySansIOHttpResponse, SansIOHttpResponse]
+AsyncHTTPResponseType = Union[LegacyAsyncHttpResponse, AsyncHttpResponse]
 AsyncPipelineResponseType = PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]
 
 PollingReturnType = TypeVar("PollingReturnType")
@@ -52,7 +52,7 @@ __all__ = ["AsyncLROBasePolling"]
 
 
 class AsyncLROBasePolling(
-    _SansIOLROBasePolling[PollingReturnType, "AsyncPipelineClient[HTTPRequestType, AsyncHTTPResponseType]"],
+    _SansIOLROBasePolling[PollingReturnType, AsyncPipelineClient[HTTPRequestType, AsyncHTTPResponseType]],
     AsyncPollingMethod[PollingReturnType],
 ):
     """A base LRO async poller.
@@ -72,7 +72,7 @@ class AsyncLROBasePolling(
     """Store the latest received HTTP response, initialized by the first answer."""
 
     @property
-    def _transport(self) -> "AsyncHttpTransport":
+    def _transport(self) -> AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]:
         return self._client._pipeline._transport  # pylint: disable=protected-access
 
     async def run(self) -> None:

@@ -55,7 +55,7 @@ def _iterate_response_content(iterator):
         raise _ResponseStopIteration()
 
 
-class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
+class AsyncHttpResponse(_HttpResponseBase, AbstractAsyncContextManager):  # pylint: disable=abstract-method
     """An AsyncHttpResponse ABC.
 
     Allows for the asynchronous streaming of data from the response.
@@ -84,6 +84,9 @@ class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
             raise ValueError("You can't get parts if the response is not multipart/mixed")
 
         return _PartGenerator(self, default_http_response_type=AsyncHttpClientTransportResponse)
+
+    async def __aexit__(self, exc_type, exc_value, traceback):
+        return None
 
 
 class AsyncHttpClientTransportResponse(  # pylint: disable=abstract-method

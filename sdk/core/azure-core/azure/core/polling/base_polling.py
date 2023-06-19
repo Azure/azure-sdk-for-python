@@ -171,7 +171,7 @@ class LongRunningOperation(ABC):
     def get_final_get_url(self, pipeline_response: "PipelineResponseType") -> Optional[str]:
         """If a final GET is needed, returns the URL.
 
-        :rtype: str
+        :rtype: str or None
         """
         raise NotImplementedError()
 
