@@ -3,17 +3,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Any, List, Union, Tuple
 
+from typing import TYPE_CHECKING, List, Union, Tuple
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.credentials import AccessToken
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.credentials import AzureKeyCredential
-
 from .._generated.aio._client import (
     CommunicationIdentityClient as CommunicationIdentityClientGen,
 )
-from .._shared.utils import parse_connection_str, get_authentication_policy
+from .._shared.auth_policy_utils import get_authentication_policy
+from .._shared.utils import parse_connection_str
 from .._shared.models import CommunicationUserIdentifier
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION

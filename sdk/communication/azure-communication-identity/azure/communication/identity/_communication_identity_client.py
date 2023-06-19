@@ -5,14 +5,13 @@
 # ------------------------------------
 
 from typing import TYPE_CHECKING, Any, Tuple, Union
-
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import AccessToken
-
 from ._generated._client import (
     CommunicationIdentityClient as CommunicationIdentityClientGen,
 )
-from ._shared.utils import parse_connection_str, get_authentication_policy
+from ._shared.auth_policy_utils import get_authentication_policy
+from ._shared.utils import parse_connection_str
 from ._shared.models import CommunicationUserIdentifier
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
@@ -20,7 +19,6 @@ from ._utils import convert_timedelta_to_mins
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureKeyCredential
-    from ._generated.models import CommunicationTokenScope
 
 
 class CommunicationIdentityClient(object):
