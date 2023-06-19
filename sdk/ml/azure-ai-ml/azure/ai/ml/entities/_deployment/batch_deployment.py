@@ -7,6 +7,7 @@
 import logging
 from os import PathLike
 from pathlib import Path
+import warnings
 from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentData
@@ -32,7 +33,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attributes
-    """Batch endpoint deployment entity.
+    """Deprecated. Batch endpoint deployment entity.
 
     :param name: the name of the batch deployment
     :type name: str
@@ -194,6 +195,11 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         return output_switcher.get(yaml_output_action, yaml_output_action)
 
     def _to_rest_object(self, location: str) -> BatchDeploymentData:  # pylint: disable=arguments-differ
+        warnings.warn(
+            """ The entity 'BatchDeployment' is deprecated.
+            Please use'ModelBatchDeployment' instead.""",
+            DeprecationWarning,
+        )
         self._validate()
         code_config = (
             RestCodeConfiguration(

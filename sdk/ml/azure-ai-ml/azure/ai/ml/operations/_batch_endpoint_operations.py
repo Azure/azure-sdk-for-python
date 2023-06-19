@@ -240,7 +240,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         if input and isinstance(input, Input):
             warnings.warn(
-                "the 'input' parameter for batch endpoint invoke is deprecated. Please use 'inputs' instead.",
+                "The property 'input' is deprecated. Please use 'inputs' instead.",
                 DeprecationWarning,
             )
             if HTTP_PREFIX not in input.path:
