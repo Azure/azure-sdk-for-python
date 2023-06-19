@@ -3,9 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
+
+from azure.core.rest import HttpResponse
 from ._generated._serialization import Model
-from ._generated.models import KeyValue
+from ._generated.models import KeyValue, Snapshot as GeneratedSnapshot, ConfigurationSettingFilter
 
 
 PolymorphicConfigurationSetting = Union[
@@ -348,4 +350,115 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             tags=self.tags,
             locked=self.read_only,
             etag=self.etag,
+        )
+
+
+class Snapshot:
+    """Snapshot.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: The name of the snapshot.
+    :vartype name: str
+    :ivar status: The current status of the snapshot. Known values are: "provisioning", "ready",
+     "archived", and "failed".
+    :vartype status: str
+    :ivar filters: A list of filters used to filter the key-values included in the snapshot.
+     Required.
+    :vartype filters: list[dict[str, str]]
+    :ivar composition_type: The composition type describes how the key-values within the snapshot
+     are composed. The 'key' composition type ensures there are no two key-values containing the
+     same key. The 'key_label' composition type ensures there are no two key-values containing the
+     same key and label. Known values are: "key" and "key_label".
+    :vartype composition_type: str
+    :ivar created: The time that the snapshot was created.
+    :vartype created: ~datetime.datetime
+    :ivar expires: The time that the snapshot will expire.
+    :vartype expires: ~datetime.datetime
+    :ivar retention_period: The amount of time, in seconds, that a snapshot will remain in the
+     archived state before expiring. This property is only writable during the creation of a
+     snapshot. If not specified, the default lifetime of key-value revisions will be used.
+    :vartype retention_period: int
+    :ivar size: The size in bytes of the snapshot.
+    :vartype size: int
+    :ivar items_count: The amount of key-values in the snapshot.
+    :vartype items_count: int
+    :ivar tags: The tags of the snapshot.
+    :vartype tags: dict[str, str]
+    :ivar etag: A value representing the current state of the snapshot.
+    :vartype etag: str
+    """
+    
+    def __init__(
+        self,
+        *,
+        filters: List[Dict[str, str]],
+        composition_type: Optional[Literal["key", "key_label"]] = None,
+        retention_period: Optional[int] = None,
+        tags: Optional[Dict[str, str]] = None,
+        ** kwargs
+    ):
+        """
+        :keyword filters: A list of filters used to filter the key-values included in the snapshot.
+         Required.
+        :paramtype filters: list[dict[str, str]]
+        :keyword composition_type: The composition type describes how the key-values within the
+         snapshot are composed. The 'key' composition type ensures there are no two key-values
+         containing the same key. The 'key_label' composition type ensures there are no two key-values
+         containing the same key and label. Known values are: "key" and "key_label".
+        :paramtype composition_type: str
+        :keyword retention_period: The amount of time, in seconds, that a snapshot will remain in the
+         archived state before expiring. This property is only writable during the creation of a
+         snapshot. If not specified, the default lifetime of key-value revisions will be used.
+        :paramtype retention_period: int
+        :keyword tags: The tags of the snapshot.
+        :paramtype tags: dict[str, str]
+        """
+        self.name = kwargs.get("name", None)
+        self.status = kwargs.get("status", None)
+        self.filters = filters
+        self.composition_type = composition_type
+        self.created = kwargs.get("created", None)
+        self.expires = kwargs.get("expires", None)
+        self.retention_period = retention_period
+        self.size = kwargs.get("size", None)
+        self.items_count = kwargs.get("items_count", None)
+        self.tags = tags
+        self.etag = kwargs.get("etag", None)
+
+    @classmethod
+    def _from_generated(
+        cls, response: HttpResponse, snapshot: GeneratedSnapshot, response_headers: Dict
+    ) -> "Snapshot":
+        if snapshot is None:
+            return snapshot
+
+        filters_dict = []
+        for config_setting_filter in snapshot.filters:
+            filters_dict.append({"key": config_setting_filter.key, "label": config_setting_filter.label})
+        return cls(
+            name=snapshot.name,
+            status=snapshot.status,
+            filters=filters_dict,
+            composition_type=snapshot.composition_type,
+            created=snapshot.created,
+            expires=snapshot.expires,
+            retention_period=snapshot.retention_period,
+            size=snapshot.size,
+            items_count=snapshot.items_count,
+            tags=snapshot.tags,
+            etag=snapshot.etag,
+        )
+    
+    def _to_generated(self) -> GeneratedSnapshot:
+        config_setting_filters = []
+        for kv_filter in self.filters:
+            config_setting_filters.append(ConfigurationSettingFilter(key=kv_filter["key"], label=kv_filter["label"]))
+        return GeneratedSnapshot(
+            filters=config_setting_filters,
+            composition_type=self.composition_type,
+            retention_period=self.retention_period,
+            tags=self.tags,
         )

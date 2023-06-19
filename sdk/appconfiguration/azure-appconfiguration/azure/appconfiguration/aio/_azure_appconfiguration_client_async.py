@@ -30,8 +30,8 @@ from .._azure_appconfiguration_error import ResourceReadOnlyError
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from .._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from .._generated.aio import AzureAppConfiguration
-from .._generated.models import Snapshot, SnapshotStatus, SnapshotUpdateParameters, ConfigurationSettingFilter
-from .._models import ConfigurationSetting
+from .._generated.models import SnapshotStatus, SnapshotUpdateParameters
+from .._models import ConfigurationSetting, Snapshot
 from .._user_agent import USER_AGENT
 from .._utils import (
     get_endpoint_from_connection_string,
@@ -578,14 +578,13 @@ class AzureAppConfigurationClient:
             operation to complete and get the created snapshot.
         :rtype: :class:`~azure.core.polling.AsyncLROPoller[~azure.appconfiguration.Snapshot]`
         """
-        kv_list = []
-        for kv_filter in filters:
-            kv_list.append(ConfigurationSettingFilter(key=kv_filter["key"], label=kv_filter["label"]))
         snapshot = Snapshot(
-            filters=kv_list, composition_type=composition_type, retention_period=retention_period, tags=tags
+            filters=filters, composition_type=composition_type, retention_period=retention_period, tags=tags
         )
         try:
-            return await self._impl.begin_create_snapshot(name=name, entity=snapshot, **kwargs)
+            return await self._impl.begin_create_snapshot(
+                name=name, entity=snapshot._to_generated(), cls=Snapshot._from_generated, **kwargs
+            )
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -615,6 +614,7 @@ class AzureAppConfigurationClient:
                 entity=SnapshotUpdateParameters(status=SnapshotStatus.ARCHIVED),
                 if_match=prep_if_match(etag, match_condition),
                 if_none_match=prep_if_none_match(etag, match_condition),
+                cls=Snapshot._from_generated,
                 **kwargs
             )
         except binascii.Error:
@@ -645,6 +645,7 @@ class AzureAppConfigurationClient:
                 entity=SnapshotUpdateParameters(status=SnapshotStatus.READY),
                 if_match=prep_if_match(etag, match_condition),
                 if_none_match=prep_if_none_match(etag, match_condition),
+                cls=Snapshot._from_generated,
                 **kwargs
             )
         except binascii.Error:
@@ -661,7 +662,9 @@ class AzureAppConfigurationClient:
         :rtype: :class:`~azure.appconfiguration.Snapshot`
         """
         try:
-            return await self._impl.get_snapshot(name=name, if_match=None, if_none_match=None, select=fields, **kwargs)
+            return await self._impl.get_snapshot(
+                name=name, if_match=None, if_none_match=None, select=fields, cls=Snapshot._from_generated, **kwargs
+            )
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -684,7 +687,13 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.Snapshot]
         """
         try:
-            return self._impl.get_snapshots(name=name, select=fields, status=status, **kwargs)  # type: ignore
+            return self._impl.get_snapshots(  # type: ignore
+                name=name,
+                select=fields,
+                status=status,
+                cls=lambda objs: [Snapshot._from_generated(None, x, None) for x in objs],
+                **kwargs
+            )
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 

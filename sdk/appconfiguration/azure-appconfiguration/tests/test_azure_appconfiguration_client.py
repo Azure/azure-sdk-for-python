@@ -893,8 +893,8 @@ class TestAppConfigurationClient(AppConfigTestCase):
         assert created_snapshot.name == snapshot_name
         assert created_snapshot.status == "ready"
         assert len(created_snapshot.filters) == 1
-        assert created_snapshot.filters[0].key == KEY
-        assert created_snapshot.filters[0].label == LABEL
+        assert created_snapshot.filters[0]["key"] == KEY
+        assert created_snapshot.filters[0]["label"] == LABEL
 
         received_snapshot = self.client.get_snapshot(name=snapshot_name)
         self._assert_snapshots(received_snapshot, created_snapshot)

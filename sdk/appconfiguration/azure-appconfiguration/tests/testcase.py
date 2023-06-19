@@ -103,8 +103,8 @@ class AppConfigTestCase(AzureRecordedTestCase):
         assert snapshot.expires == expected_snapshot.expires
         assert len(snapshot.filters) == len(expected_snapshot.filters)
         for index, filter in enumerate(snapshot.filters):
-            filter.key == expected_snapshot.filters[index].key
-            filter.label == expected_snapshot.filters[index].label
+            filter["key"] == expected_snapshot.filters[index]["key"]
+            filter["label"] == expected_snapshot.filters[index]["label"]
         assert snapshot.items_count == expected_snapshot.items_count
         assert snapshot.name == expected_snapshot.name
         assert snapshot.retention_period == expected_snapshot.retention_period
