@@ -44,7 +44,7 @@ def get_environment_artifacts(
             if not version:
                 name, label = parse_name_label(deployment.environment)
             environment_asset = environment_operations.get(name=name, version=version, label=label)
-        
+
         if not _cloud_environment_is_valid(environment=environment_asset):
             msg = (
                 "Cloud environment must have environment.image "
@@ -87,7 +87,7 @@ def _get_cloud_environment_artifacts(
             blob_url=environment_asset.build.path,
             destination=download_path,
             datastore_operation=environment_operations._datastore_operation,
-            datastore_name='workspaceartifactstore',
+            datastore_name="workspaceartifactstore",
         )
         dockerfile_path = Path(environment_build_directory, environment_asset.build.dockerfile_path)
         dockerfile_contents = dockerfile_path.read_text()
