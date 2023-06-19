@@ -48,7 +48,9 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
     add_body_key_sanitizer(json_path="$..id", value="id")
-    # add_oauth_response_sanitizer()
+    # add_general_regex_sanitizer(value="scope", regex="(?<=&scope=)[^&]+(?=&)")
+    # add_general_regex_sanitizer(value="claims", regex="(?<=&claims=)[^&]+(?=)")
+    add_oauth_response_sanitizer()
 
     client_id = os.getenv("AZURE_CLIENT_ID", "sanitized")
     client_secret = os.getenv("AZURE_CLIENT_SECRET", "sanitized")
