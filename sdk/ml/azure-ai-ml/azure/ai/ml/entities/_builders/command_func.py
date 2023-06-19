@@ -195,7 +195,7 @@ def command(
      supported for Azure ML compute types.
     :type docker_args: str
     :param shm_size: The size of the Docker container's shared memory block. This should be in the
-     format of (number)(unit) where number as to be greater than 0 and the unit can be one of
+     format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
      b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
     :type shm_size: str
     :param timeout: The number, in seconds, after which the job will be cancelled.
@@ -211,8 +211,8 @@ def command(
         ~azure.ai.ml.entities.UserIdentityConfiguration]
     :param is_deterministic: Specifies whether the Command will return the same output given the same input.
         Defaults to True.
-        When True, if a Command (component) is deterministic and has been run before in the current workspace
-        with the same input and settings, it will reuse results from a previous submitted job when used as a
+        When True, if a Command Component is deterministic and has been run before in the current workspace
+        with the same input and settings, it will reuse results from a previously submitted job when used as a
         node or step in a pipeline. In that scenario, no compute resources will be used.
     :type is_deterministic: bool
     :param services: The interactive services for the node. This is an experimental parameter, and may change at

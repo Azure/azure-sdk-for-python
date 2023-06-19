@@ -6,9 +6,7 @@ import json
 import logging
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    JobResourceConfiguration as RestJobResourceConfiguration,
-)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
@@ -103,7 +101,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
      supported for Azure ML compute types.
     :type docker_args: str
     :param shm_size: Size of the docker container's shared memory block. This should be in the
-     format of (number)(unit) where number as to be greater than 0 and the unit can be one of
+     format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
      b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
     :type shm_size: str
     """

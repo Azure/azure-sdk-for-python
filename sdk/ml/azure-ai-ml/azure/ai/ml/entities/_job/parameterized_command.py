@@ -54,9 +54,9 @@ class ParameterizedCommand:
     :param distribution: The configuration for distributed training.
     :type distribution: Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
         ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
-    :param environment: The environment that training job will run in.
+    :param environment: The environment that the training job will run in.
     :type environment: Union[str, ~azure.ai.ml.entities.Environment]
-    :param queue_settings: Queue settings for the job.
+    :param queue_settings: The queue settings for the job.
     :type queue_settings: ~azure.ai.ml.entities.QueueSettings
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict

@@ -139,10 +139,10 @@ class Command(BaseNode):
     :param distribution: The configuration for distributed training.
     :type distribution: Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
         ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
-    :param environment: The environment that training job will run in.
+    :param environment: The environment that the training job will run in.
     :type environment: Union[str, ~azure.ai.ml.entities.Environment]
     :param environment_variables:  A dictionary of environment variable names and values.
-        These environment variables are set on the process where user script is being executed.
+        These environment variables are set on the process where the user script is being executed.
     :type environment_variables: dict[str, str]
     :param resources: The compute resource configuration for the command.
     :type resources: ~azure.ai.ml.entities.JobResourceConfiguration
@@ -244,7 +244,7 @@ class Command(BaseNode):
 
     @property
     def parameters(self) -> Dict[str, str]:
-        """MLFlow parameters to be logged during the component or job.
+        """MLFlow parameters to be logged during the job.
 
         :rtype: dict[str, str]
         """
@@ -315,7 +315,7 @@ class Command(BaseNode):
     def queue_settings(self, value: Union[Dict, QueueSettings]) -> None:
         """Sets the queue settings for the command component or job.
 
-        :param value: The queue settings for the job.
+        :param value: The queue settings for the command component or job.
         :type value: Union[dict, ~azure.ai.ml.entities.QueueSettings]
         """
         if isinstance(value, dict):
@@ -481,19 +481,19 @@ class Command(BaseNode):
 
         :param instance_type: The type of compute instance to run the job on. If not specified, the job will run on
             the default compute target.
-        :type instance_type: Union[str, List[str]]
+        :type instance_type: Union[str, list[str]]
         :param instance_count: The number of instances to run the job on. If not specified, the job will run on a
             single instance.
         :type instance_count: int
         :param locations: The list of locations where the job will run. If not specified, the job will run on the
             default compute target.
-        :type locations: List[str]
+        :type locations: list[str]
         :param properties: The properties of the job.
         :type properties: dict
         :param docker_args: The Docker arguments for the job.
         :type docker_args: str
         :param shm_size: The size of the docker container's shared memory block. This should be in the
-            format of (number)(unit) where number as to be greater than 0 and the unit can be one of
+            format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
             b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
         :type shm_size: str
         """
