@@ -14,13 +14,13 @@ from typing import (
 )
 from datetime import datetime
 from msrest.serialization import TZ_UTC
-from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.credentials import AccessToken, AzureKeyCredential, TokenCredential
-from azure.communication.identity._shared.policy import HMACCredentialsPolicy
+from .._shared.policy import HMACCredentialsPolicy
 from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
     AsyncBearerTokenCredentialPolicy,
 )
+from azure.core.credentials import AccessToken, AzureKeyCredential, TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 
 
 def _convert_datetime_to_utc_int(input_datetime) -> int:
