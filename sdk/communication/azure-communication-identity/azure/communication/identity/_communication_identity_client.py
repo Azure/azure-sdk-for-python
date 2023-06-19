@@ -42,7 +42,7 @@ class CommunicationIdentityClient(object):
     def __init__(
         self,
         endpoint,  # type: str
-        credential,  # type: Union[TokenCredential, AzureKeyCredential, str]
+        credential,  # type: Union[TokenCredential, AzureKeyCredential]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -86,7 +86,7 @@ class CommunicationIdentityClient(object):
                 :caption: Creating the CommunicationIdentityClient from a connection string.
         """
         endpoint, access_key = parse_connection_str(conn_str)
-        return cls(endpoint, access_key, **kwargs)
+        return cls(endpoint, access_key, **kwargs)  # type: ignore
 
     @distributed_trace
     def create_user(self, **kwargs):

@@ -44,7 +44,7 @@ class CommunicationIdentityClient:
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AsyncTokenCredential, AzureKeyCredential, str],
+        credential: Union[AsyncTokenCredential, AzureKeyCredential],
         **kwargs
     ) -> None:
         try:
@@ -90,7 +90,7 @@ class CommunicationIdentityClient:
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
-        return cls(endpoint, access_key, **kwargs)
+        return cls(endpoint, access_key, **kwargs)  # type: ignore
 
     @distributed_trace_async
     async def create_user(self, **kwargs) -> "CommunicationUserIdentifier":

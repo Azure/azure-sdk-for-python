@@ -6,7 +6,8 @@
 
 from enum import Enum
 from six import with_metaclass
-from typing import Mapping, Optional, Union, Any, Protocol, TypedDict
+from typing import Mapping, Optional, Union, Any, TypedDict
+from typing_extensions import Protocol
 from azure.core import CaseInsensitiveEnumMeta
 
 
