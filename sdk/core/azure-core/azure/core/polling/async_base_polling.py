@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, TypeVar, cast, Union
+from typing import TypeVar, cast, Union
 from ..exceptions import HttpResponseError
 from .base_polling import (
     _failed,
@@ -39,7 +39,6 @@ from .. import AsyncPipelineClient
 from ..pipeline import PipelineResponse
 from ..pipeline.transport import HttpRequest as LegacyHttpRequest, AsyncHttpTransport
 from ..pipeline.transport._base import _HttpResponseBase as LegacySansIOHttpResponse
-from .._pipeline_client_async import _AsyncContextManagerCloseable
 from ..rest import HttpRequest
 from ..rest._rest_py3 import _HttpResponseBase as SansIOHttpResponse
 
