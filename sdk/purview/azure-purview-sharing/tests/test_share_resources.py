@@ -5,7 +5,6 @@
 # license information.
 # -------------------------------------------------------------------------
 import json
-from uuid import uuid4
 
 from testcase import TestPurviewSharing, PurviewSharingPowerShellPreparer
 from devtools_testutils import recorded_by_proxy
