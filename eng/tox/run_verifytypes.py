@@ -6,8 +6,8 @@
 # --------------------------------------------------------------------------------------------
 
 # This script is used to execute verifytypes within a tox environment. It additionally installs
-# the latest release of a package (if it exists) and compares its type completeness score with
-# that of the current code. If type completeness worsens from the last release, the check fails.
+# the package from main and compares its type completeness score with
+# that of the current code. If type completeness worsens from the code in main, the check fails.
 
 import subprocess
 import json
@@ -22,29 +22,20 @@ from ci_tools.variables import in_ci
 logging.getLogger().setLevel(logging.INFO)
 
 
-def install_latest_release(package_name):
-    from pypi_tools.pypi import PyPIClient
+def install_from_main(subdirectory, package_name):
+    main_url = f"git+https://github.com/Azure/azure-sdk-for-python@main#subdirectory={subdirectory}&egg={package_name}"
 
-    client = PyPIClient()
+    commands = [
+        sys.executable,
+        "-m",
+        "pip",
+        "install",
+        main_url,
+        "--force-reinstall"
+    ]
 
-    try:
-        latest_version = str(client.get_ordered_versions(package_name)[-1])
-    except (IndexError, KeyError):
-        logging.info(f"No released packages for {package_name} on PyPi yet.")
-        latest_version = None
+    subprocess.check_call(commands, stdout=subprocess.DEVNULL)
 
-    if latest_version:
-        packages = [f"{package_name}=={latest_version}"]
-        commands = [
-            sys.executable,
-            "-m",
-            "pip",
-            "install",
-        ]
-
-        commands.extend(packages)
-        subprocess.check_call(commands, stdout=subprocess.DEVNULL)
-    return latest_version
 
 
 def get_type_complete_score(commands, check_pytyped=False):
@@ -116,23 +107,23 @@ if __name__ == "__main__":
     try:
         subprocess.check_call(commands[:-1])
     except subprocess.CalledProcessError:
-        pass  # we don't fail on verifytypes, only if type completeness score worsens from last release
+        pass  # we don't fail on verifytypes, only if type completeness score worsens from main
 
-    # get type completeness score from latest release
-    latest_version = install_latest_release(package_name)
-    if latest_version:
-        score_from_released = get_type_complete_score(commands)
-    else:
-        score_from_released = None
+    # get type completeness score from main
+    try:
+        install_from_main(setup_path.split("azure-sdk-for-python")[1].lstrip("/\\"), package_name)
+    except subprocess.CalledProcessError:
+        exit(0)  # there is no code in main yet, nothing to compare
 
-    if score_from_released is not None:
-        score_from_released_rounded = round(score_from_released * 100, 1)
-        score_from_current_rounded = round(score_from_current * 100, 1)
-        print("\n-----Type completeness score comparison-----\n")
-        print(f"Previous release ({latest_version}): {score_from_released_rounded}%")
-        if score_from_current_rounded < score_from_released_rounded:
-            print(
-                f"\nERROR: The type completeness score of {package_name} has decreased since the last release. "
-                f"See the above output for areas to improve. See https://aka.ms/python/typing-guide for information."
-            )
-            exit(1)
+    score_from_main = get_type_complete_score(commands)
+
+    score_from_main_rounded = round(score_from_main * 100, 1)
+    score_from_current_rounded = round(score_from_current * 100, 1)
+    print("\n-----Type completeness score comparison-----\n")
+    print(f"Score in main: {score_from_main_rounded}%")
+    if score_from_current_rounded < score_from_main_rounded:
+        print(
+            f"\nERROR: The type completeness score of {package_name} has decreased compared to main. "
+            f"See the above output for areas to improve. See https://aka.ms/python/typing-guide for information."
+        )
+        exit(1)
