@@ -13,12 +13,12 @@ from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from .._generated.models import TranslationStatus as _TranslationStatus
 from .._models import TranslationStatus
 
-PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 _FINISHED = frozenset(["succeeded", "cancelled", "cancelling", "failed"])
 _FAILED = frozenset(["validationfailed"])
 
 
-class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType]):
+class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType_co]):
     """An async custom poller implementation for Document Translation. Call `result()` on the poller to return
     a pageable of :class:`~azure.ai.translation.document.DocumentStatus`."""
 

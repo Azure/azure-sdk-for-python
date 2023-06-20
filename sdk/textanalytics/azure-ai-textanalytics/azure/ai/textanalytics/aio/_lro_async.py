@@ -20,7 +20,6 @@ _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted",
 _FAILED = frozenset(["failed"])
 _SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallysucceeded"])
 
-PollingReturnType = TypeVar("PollingReturnType")
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 
