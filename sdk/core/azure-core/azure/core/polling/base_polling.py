@@ -50,7 +50,7 @@ PipelineResponseType = Union[LegacyPipelineResponseType, NewPipelineResponseType
 
 
 ABC = abc.ABC
-PollingReturnType = TypeVar("PollingReturnType", covariant=True)
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 PipelineClientType = TypeVar("PipelineClientType")
 
 _FINISHED = frozenset(["succeeded", "canceled", "failed"])
@@ -378,11 +378,11 @@ class StatusCheckPolling(LongRunningOperation):
 
 
 class _SansIOLROBasePolling(
-    Generic[PollingReturnType, PipelineClientType]
+    Generic[PollingReturnType_co, PipelineClientType]
 ):  # pylint: disable=too-many-instance-attributes
     """A base class that has no opinion on IO, to help mypy be accurate."""
 
-    _deserialization_callback: Callable[[Any], PollingReturnType]
+    _deserialization_callback: Callable[[Any], PollingReturnType_co]
     """The deserialization callback that returns the final instance."""
 
     _operation: LongRunningOperation
@@ -417,7 +417,7 @@ class _SansIOLROBasePolling(
         self,
         client: PipelineClientType,
         initial_response: Any,
-        deserialization_callback: Callable[[Any], PollingReturnType],
+        deserialization_callback: Callable[[Any], PollingReturnType_co],
     ) -> None:
         """Set the initial status of this LRO.
 
@@ -458,7 +458,7 @@ class _SansIOLROBasePolling(
     @classmethod
     def from_continuation_token(
         cls, continuation_token: str, **kwargs
-    ) -> Tuple[Any, Any, Callable[[Any], PollingReturnType]]:
+    ) -> Tuple[Any, Any, Callable[[Any], PollingReturnType_co]]:
         try:
             client = kwargs["client"]
         except KeyError:
@@ -490,11 +490,11 @@ class _SansIOLROBasePolling(
         """
         return _finished(self.status())
 
-    def resource(self) -> PollingReturnType:
+    def resource(self) -> PollingReturnType_co:
         """Return the built resource."""
         return self._parse_resource(self._pipeline_response)
 
-    def _parse_resource(self, pipeline_response: "PipelineResponseType") -> PollingReturnType:
+    def _parse_resource(self, pipeline_response: "PipelineResponseType") -> PollingReturnType_co:
         """Assuming this response is a resource, use the deserialization callback to parse it.
         If body is empty, assuming no resource to return.
         """
@@ -503,7 +503,7 @@ class _SansIOLROBasePolling(
             return self._deserialization_callback(pipeline_response)
 
         # This "type ignore" has been discussed with architects.
-        # We have a typing problem that if the Swagger/TSP describes a return type (PollingReturnType is not None), BUT
+        # We have a typing problem that if the Swagger/TSP describes a return type (PollingReturnType_co is not None), BUT
         # the returned payload is actually empty, we don't want to fail, but return None.
         # To make it clean, we would have to make the polling return type Optional
         # "just in case the Swagger/TSP is wrong". This is reducing the quality and the value of the typing annotations
@@ -521,8 +521,8 @@ class _SansIOLROBasePolling(
 
 
 class LROBasePolling(
-    _SansIOLROBasePolling[PollingReturnType, "PipelineClient[HTTPRequestType, HTTPResponseType]"],
-    PollingMethod[PollingReturnType],
+    _SansIOLROBasePolling[PollingReturnType_co, "PipelineClient[HTTPRequestType, HTTPResponseType]"],
+    PollingMethod[PollingReturnType_co],
 ):  # pylint: disable=too-many-instance-attributes
     """A base LRO poller.
 

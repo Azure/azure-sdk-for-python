@@ -53,14 +53,14 @@ NewPipelineResponseType = PipelineResponse[HttpRequest, AsyncHttpResponse]
 AsyncPipelineResponseType = Union[LegacyPipelineResponseType, NewPipelineResponseType]
 
 
-PollingReturnType = TypeVar("PollingReturnType", covariant=True)
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 __all__ = ["AsyncLROBasePolling"]
 
 
 class AsyncLROBasePolling(
-    _SansIOLROBasePolling[PollingReturnType, AsyncPipelineClient[HTTPRequestType, AsyncHTTPResponseType]],
-    AsyncPollingMethod[PollingReturnType],
+    _SansIOLROBasePolling[PollingReturnType_co, AsyncPipelineClient[HTTPRequestType, AsyncHTTPResponseType]],
+    AsyncPollingMethod[PollingReturnType_co],
 ):
     """A base LRO async poller.
 

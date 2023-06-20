@@ -28,13 +28,13 @@ from ._models import TranslationStatus
 
 ResponseType = Union[HttpResponse, AsyncHttpResponse]
 PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
-PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 _FINISHED = frozenset(["succeeded", "cancelled", "cancelling", "failed"])
 _FAILED = frozenset(["validationfailed"])
 
 
-class DocumentTranslationLROPoller(LROPoller[PollingReturnType]):
+class DocumentTranslationLROPoller(LROPoller[PollingReturnType_co]):
     """A custom poller implementation for Document Translation. Call `result()` on the poller to return
     a pageable of :class:`~azure.ai.translation.document.DocumentStatus`."""
 
