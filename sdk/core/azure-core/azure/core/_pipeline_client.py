@@ -115,7 +115,7 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
 
         if policies is None:  # [] is a valid policy list
             policies = [
-                RequestIdPolicy(**kwargs),
+                config.request_id_policy or RequestIdPolicy(**kwargs),
                 config.headers_policy,
                 config.user_agent_policy,
                 config.proxy_policy,

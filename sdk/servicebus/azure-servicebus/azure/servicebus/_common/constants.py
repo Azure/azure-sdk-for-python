@@ -4,8 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 from enum import Enum
-
-from uamqp import constants, types
 from azure.core import CaseInsensitiveEnumMeta
 
 VENDOR = b"com.microsoft"
@@ -61,6 +59,8 @@ CONTAINER_PREFIX = "servicebus.pysdk-"
 JWT_TOKEN_SCOPE = "https://servicebus.azure.net//.default"
 USER_AGENT_PREFIX = "azsdk-python-servicebus"
 CONSUMER_IDENTIFIER = VENDOR + b":receiver-name"
+UAMQP_LIBRARY = "uamqp"
+PYAMQP_LIBRARY = "pyamqp"
 
 MANAGEMENT_PATH_SUFFIX = "/$management"
 
@@ -137,31 +137,7 @@ DEAD_LETTER_SUPPLEMENTARY_AUTHORIZATION_HEADER = (
     "ServiceBusDlqSupplementaryAuthorization"
 )
 
-# Distributed Tracing Constants
-
-TRACE_COMPONENT_PROPERTY = "component"
-TRACE_COMPONENT = "servicebus"
-
-TRACE_NAMESPACE_PROPERTY = "az.namespace"
-TRACE_NAMESPACE = "ServiceBus"
-
-SPAN_NAME_RECEIVE = TRACE_NAMESPACE + ".receive"
-SPAN_NAME_RECEIVE_DEFERRED = TRACE_NAMESPACE + ".receive_deferred"
-SPAN_NAME_PEEK = TRACE_NAMESPACE + ".peek"
-SPAN_NAME_SEND = TRACE_NAMESPACE + ".send"
-SPAN_NAME_SCHEDULE = TRACE_NAMESPACE + ".schedule"
-SPAN_NAME_MESSAGE = TRACE_NAMESPACE + ".message"
-
-TRACE_BUS_DESTINATION_PROPERTY = "message_bus.destination"
-TRACE_PEER_ADDRESS_PROPERTY = "peer.address"
-
-SPAN_ENQUEUED_TIME_PROPERTY = "enqueuedTime"
-
-TRACE_ENQUEUED_TIME_PROPERTY = b"x-opt-enqueued-time"
-TRACE_PARENT_PROPERTY = b"Diagnostic-Id"
-TRACE_PROPERTY_ENCODING = "ascii"
-
-
+MAX_MESSAGE_LENGTH_BYTES = 1024 * 1024  # Backcompat with uAMQP
 MESSAGE_PROPERTY_MAX_LENGTH = 128
 # .NET TimeSpan.MaxValue: 10675199.02:48:05.4775807
 MAX_DURATION_VALUE = 922337203685477
@@ -178,12 +154,6 @@ class ServiceBusMessageState(int, Enum):
     DEFERRED = 1
     SCHEDULED = 2
 
-# To enable extensible string enums for the public facing parameter, and translate to the "real" uamqp constants.
-ServiceBusToAMQPReceiveModeMap = {
-    ServiceBusReceiveMode.PEEK_LOCK: constants.ReceiverSettleMode.PeekLock,
-    ServiceBusReceiveMode.RECEIVE_AND_DELETE: constants.ReceiverSettleMode.ReceiveAndDelete,
-}
-
 
 class ServiceBusSessionFilter(Enum):
     NEXT_AVAILABLE = 0
@@ -194,17 +164,18 @@ class ServiceBusSubQueue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TRANSFER_DEAD_LETTER = "transferdeadletter"
 
 
-ANNOTATION_SYMBOL_PARTITION_KEY = types.AMQPSymbol(_X_OPT_PARTITION_KEY)
-ANNOTATION_SYMBOL_VIA_PARTITION_KEY = types.AMQPSymbol(_X_OPT_VIA_PARTITION_KEY)
-ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME = types.AMQPSymbol(
-    _X_OPT_SCHEDULED_ENQUEUE_TIME
-)
-
-ANNOTATION_SYMBOL_KEY_MAP = {
-    _X_OPT_PARTITION_KEY: ANNOTATION_SYMBOL_PARTITION_KEY,
-    _X_OPT_VIA_PARTITION_KEY: ANNOTATION_SYMBOL_VIA_PARTITION_KEY,
-    _X_OPT_SCHEDULED_ENQUEUE_TIME: ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME,
-}
-
-
 NEXT_AVAILABLE_SESSION = ServiceBusSessionFilter.NEXT_AVAILABLE
+
+## all below - previously uamqp
+class TransportType(Enum):
+    """Transport type
+    The underlying transport protocol type:
+     Amqp: AMQP over the default TCP transport protocol, it uses port 5671.
+     AmqpOverWebsocket: Amqp over the Web Sockets transport protocol, it uses
+     port 443.
+    """
+    Amqp = 1
+    AmqpOverWebsocket = 2
+
+DEFAULT_AMQPS_PORT = 5671
+DEFAULT_AMQP_WSS_PORT = 443

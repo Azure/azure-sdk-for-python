@@ -361,7 +361,7 @@ class DataLakeFileClient(PathClient):
         elif hasattr(data, '__aiter__'):
             stream = AsyncIterStreamer(data, encoding=encoding)
         else:
-            raise TypeError("Unsupported data type: {}".format(type(data)))
+            raise TypeError(f"Unsupported data type: {type(data)}")
 
         validate_content = kwargs.pop('validate_content', False)
         content_settings = kwargs.pop('content_settings', None)
@@ -457,6 +457,8 @@ class DataLakeFileClient(PathClient):
         :keyword int chunk_size:
             The maximum chunk size for uploading a file in chunks.
             Defaults to 100*1024*1024, or 100MB.
+        :keyword str encryption_context:
+            Specifies the encryption context to set on the file.
         :return: response dict (Etag and last modified).
         """
         options = self._upload_options(
@@ -836,16 +838,13 @@ class DataLakeFileClient(PathClient):
         new_file_system, new_path, new_file_sas = self._parse_rename_path(new_name)
 
         new_file_client = DataLakeFileClient(
-            "{}://{}".format(self.scheme, self.primary_hostname), new_file_system, file_path=new_path,
+            f"{self.scheme}://{self.primary_hostname}", new_file_system, file_path=new_path,
             credential=self._raw_credential or new_file_sas,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode
         )
         new_file_client._rename_path(  # pylint: disable=protected-access
-            '/{}/{}{}'.format(quote(unquote(self.file_system_name)),
-                              quote(unquote(self.path_name)),
-                              self._query_str),
-            **kwargs)
+            f'/{quote(unquote(self.file_system_name))}/{quote(unquote(self.path_name))}{self._query_str}', **kwargs)
         return new_file_client
 
     def query_file(self, query_expression, **kwargs):

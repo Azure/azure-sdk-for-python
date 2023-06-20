@@ -192,7 +192,7 @@ class BlobStorageClient:
                     no_personal_data_message=msg,
                     target=ErrorTarget.ARTIFACT,
                     error_category=ErrorCategory.USER_ERROR,
-                )
+                ) from e
             raise e
 
     def _set_confirmation_metadata(self, name: str, version: str) -> None:
@@ -248,7 +248,7 @@ class BlobStorageClient:
                 target=ErrorTarget.ARTIFACT,
                 error_category=ErrorCategory.USER_ERROR,
                 error=e,
-            )
+            ) from e
 
     def list(self, starts_with: str) -> List[str]:
         """Lists all blob names in the specified container.

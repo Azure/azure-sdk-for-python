@@ -85,7 +85,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             raise ValueError("Account URL must be a string.")
         parsed_url = urlparse(account_url.rstrip('/'))
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+            raise ValueError(f"Invalid URL: {account_url}")
 
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
         self._blob_account_url = blob_account_url
@@ -109,18 +109,19 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
 
     def __exit__(self, *args):
         self._blob_service_client.close()
+        super(DataLakeServiceClient, self).__exit__(*args)
 
     def close(self):
         # type: () -> None
         """ This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
-        self._blob_service_client.close()
+        self.__exit__()
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to hostname
         """
-        formated_url = "{}://{}/{}".format(self.scheme, hostname, self._query_str)
+        formated_url = f"{self.scheme}://{hostname}/{self._query_str}"
         return formated_url
 
     @classmethod

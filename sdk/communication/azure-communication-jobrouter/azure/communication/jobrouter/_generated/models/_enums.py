@@ -21,6 +21,11 @@ class JobStateSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLOSED = "closed"
     CANCELLED = "cancelled"
     CLASSIFICATION_FAILED = "classificationFailed"
+    CREATED = "created"
+    PENDING_SCHEDULE = "pendingSchedule"
+    SCHEDULED = "scheduled"
+    SCHEDULE_FAILED = "scheduleFailed"
+    WAITING_FOR_ACTIVATION = "waitingForActivation"
     ACTIVE = "active"
 
 
@@ -46,6 +51,10 @@ class RouterJobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELLED = "cancelled"
     CLASSIFICATION_FAILED = "classificationFailed"
     CREATED = "created"
+    PENDING_SCHEDULE = "pendingSchedule"
+    SCHEDULED = "scheduled"
+    SCHEDULE_FAILED = "scheduleFailed"
+    WAITING_FOR_ACTIVATION = "waitingForActivation"
 
 
 class RouterWorkerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

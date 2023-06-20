@@ -108,7 +108,7 @@ class ConfigurationSetting(Model):
         )
 
 
-class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=too-many-instance-attributes
+class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=too-many-instance-attributes
     """A feature flag configuration value.
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -150,12 +150,10 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=t
         "tags": {"key": "tags", "type": "{str}"},
     }
     _key_prefix = ".appconfig.featureflag/"
-    _feature_flag_content_type = (
-        "application/vnd.microsoft.appconfig.ff+json;charset=utf-8"
-    )
+    _feature_flag_content_type = "application/vnd.microsoft.appconfig.ff+json;charset=utf-8"
     kind = "FeatureFlag"
 
-    def __init__( # pylint: disable=super-init-not-called
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         feature_id: str,
         *,
@@ -232,7 +230,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=t
             read_only=key_value.locked,
             etag=key_value.etag,
             enabled=enabled,
-            filters=filters
+            filters=filters,
         )
 
     def _to_generated(self) -> KeyValue:
@@ -283,19 +281,15 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         "read_only": {"key": "read_only", "type": "bool"},
         "tags": {"key": "tags", "type": "{str}"},
     }
-    _secret_reference_content_type = (
-        "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
-    )
+    _secret_reference_content_type = "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
     kind = "SecretReference"
 
-    def __init__(self, key: str, secret_id: str, **kwargs) -> None: # pylint: disable=super-init-not-called
+    def __init__(self, key: str, secret_id: str, **kwargs) -> None:  # pylint: disable=super-init-not-called
         if "value" in kwargs.keys():
             raise TypeError("Unexpected keyword argument, do not provide 'value' as a keyword-arg")
         self.key = key
         self.label = kwargs.pop("label", None)
-        self.content_type = kwargs.get(
-            "content_type", self._secret_reference_content_type
-        )
+        self.content_type = kwargs.get("content_type", self._secret_reference_content_type)
         self.etag = kwargs.get("etag", None)
         self.last_modified = kwargs.get("last_modified", None)
         self.read_only = kwargs.get("read_only", None)
@@ -319,7 +313,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             temp = json.loads(new_value)
             self._value = new_value
             self.secret_id = temp.get("uri")
-        except(json.JSONDecodeError, ValueError):
+        except (json.JSONDecodeError, ValueError):
             self._value = new_value
             self.secret_id = None
 

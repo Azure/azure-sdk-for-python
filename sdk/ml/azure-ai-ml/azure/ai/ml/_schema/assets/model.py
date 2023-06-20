@@ -35,6 +35,7 @@ class ModelSchema(PathAwareSchema):
     description = fields.Str()
     properties = fields.Dict()
     tags = fields.Dict()
+    stage = fields.Str()
     utc_time_created = fields.DateTime(format="iso", dump_only=True)
     flavors = fields.Dict()
     creation_context = NestedField(CreationContextSchema, dump_only=True)

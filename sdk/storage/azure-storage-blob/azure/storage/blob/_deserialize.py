@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=no-self-use
 
 from typing import (
     Dict, List, Optional, Tuple, Union,
@@ -76,7 +75,7 @@ def deserialize_ors_policies(policy_dictionary):
         rule_id = policy_and_rule_ids[1]
 
         # If we are seeing this policy for the first time, create a new list to store rule_id -> result
-        parsed_result[policy_id] = parsed_result.get(policy_id) or list()
+        parsed_result[policy_id] = parsed_result.get(policy_id) or []
         parsed_result[policy_id].append(ObjectReplicationRule(rule_id=rule_id, status=val))
 
     result_list = [ObjectReplicationPolicy(policy_id=k, rules=v) for k, v in parsed_result.items()]

@@ -86,7 +86,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         if not file_system_name:
             raise ValueError("Please specify a file system name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+            raise ValueError(f"Invalid URL: {account_url}")
 
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
         # TODO: add self.account_url to base_client and remove _blob_account_url
@@ -122,14 +122,11 @@ class FileSystemClient(StorageAccountHostsMixin):
         file_system_name = self.file_system_name
         if isinstance(file_system_name, str):
             file_system_name = file_system_name.encode('UTF-8')
-        return "{}://{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(file_system_name),
-            self._query_str)
+        return f"{self.scheme}://{hostname}/{quote(file_system_name)}{self._query_str}"
 
     def __exit__(self, *args):
         self._container_client.close()
+        self._datalake_client_for_blob_operation.close()
         super(FileSystemClient, self).__exit__(*args)
 
     def close(self):
@@ -137,7 +134,6 @@ class FileSystemClient(StorageAccountHostsMixin):
         """ This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
-        self._container_client.close()
         self.__exit__()
 
     @classmethod
@@ -323,7 +319,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         self._container_client._rename_container(new_name, **kwargs)   # pylint: disable=protected-access
         #TODO: self._raw_credential would not work with SAS tokens
         renamed_file_system = FileSystemClient(
-                "{}://{}".format(self.scheme, self.primary_hostname), file_system_name=new_name,
+                f"{self.scheme}://{self.primary_hostname}", file_system_name=new_name,
                 credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
                 _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts)
         return renamed_file_system
@@ -877,7 +873,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         except IndexError:
             url = url_and_token[0] + '/' + quoted_path
 
-        undelete_source = quoted_path + '?deletionid={}'.format(deletion_id) if deletion_id else None
+        undelete_source = quoted_path + f'?deletionid={deletion_id}' if deletion_id else None
 
         return quoted_path, url, undelete_source
 

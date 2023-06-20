@@ -29,14 +29,13 @@ def main():
         subscription_id="77777777-d41f-4550-9f70-7708a3a2283b",
     )
 
-    response = client.registered_identities.delete(
+    client.registered_identities.delete(
         resource_group_name="BCDRIbzRG",
         vault_name="BCDRIbzVault",
         identity_name="dpmcontainer01",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/recoveryservices/resource-manager/Microsoft.RecoveryServices/stable/2023-01-01/examples/DeleteRegisteredIdentities.json
+# x-ms-original-file: specification/recoveryservices/resource-manager/Microsoft.RecoveryServices/stable/2023-02-01/examples/DeleteRegisteredIdentities.json
 if __name__ == "__main__":
     main()

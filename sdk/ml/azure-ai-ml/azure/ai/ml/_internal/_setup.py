@@ -58,7 +58,6 @@ def _register_node(_type, node_cls, schema_cls):
 
 
 def enable_internal_components_in_pipeline(*, force=False):
-    global _registered  # pylint: disable=global-statement
     if _registered and not force:
         return  # already registered
 
@@ -70,11 +69,18 @@ def enable_internal_components_in_pipeline(*, force=False):
 
     # redo the registration for those with specific runsettings
     _register_node(NodeType.DATA_TRANSFER, DataTransfer, InternalBaseNodeSchema)
-    _register_node(NodeType.HEMERA, Hemera, InternalBaseNodeSchema)
-    _register_node(NodeType.STARLITE, Starlite, InternalBaseNodeSchema)
     _register_node(NodeType.COMMAND, Command, CommandSchema)
     _register_node(NodeType.DISTRIBUTED, Distributed, DistributedSchema)
-    _register_node(NodeType.SCOPE, Scope, ScopeSchema)
     _register_node(NodeType.PARALLEL, Parallel, ParallelSchema)
+    _register_node(NodeType.HEMERA, Hemera, InternalBaseNodeSchema)
+    _register_node(NodeType.STARLITE, Starlite, InternalBaseNodeSchema)
+    _register_node(NodeType.SCOPE, Scope, ScopeSchema)
     _register_node(NodeType.HDI, HDInsight, HDInsightSchema)
+
+    # register v2 style 1p only components
+    _register_node(NodeType.HEMERA_V2, Hemera, InternalBaseNodeSchema)
+    _register_node(NodeType.STARLITE_V2, Starlite, InternalBaseNodeSchema)
+    _register_node(NodeType.SCOPE_V2, Scope, ScopeSchema)
+    _register_node(NodeType.HDI_V2, HDInsight, HDInsightSchema)
+    # Ae365exepool and AetherBridge have been registered to InternalBaseNode
     _set_registered(True)

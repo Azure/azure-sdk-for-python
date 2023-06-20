@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
+from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 import datetime
 
@@ -102,8 +103,28 @@ def upsert_item(container, doc_id):
 
     print('Upserted Item\'s Id is {0}, new subtotal={1}'.format(response['id'], response['subtotal']))
 
+def conditional_patch_item(container, doc_id):
+    print('\n1.7 Patching Item by Id based on filter\n')
+    operations = [
+        {"op": "add", "path": "/favorite_color", "value": "red"},
+        {"op": "remove", "path": "/ttl"},
+        {"op": "replace", "path": "/tax_amount", "value": 14},
+        {"op": "set", "path": "/items/0/discount", "value": 20.0512},
+        {"op": "incr", "path": "/total_due", "value": 5},
+        {"op": "move", "from": "/freight", "path": "/service_addition"}
+    ]
+    filter_predicate = "from c where c.tax_amount = 10"
+
+    print("Filter predicate match failure will result in BadRequestException.")
+    try:
+        container.patch_item(item=doc_id, partition_key=doc_id,
+                                    patch_operations=operations, filter_predicate=filter_predicate)
+    except exceptions.CosmosHttpResponseError as e:
+        assert(e.status_code == StatusCodes.PRECONDITION_FAILED)
+        print("Failed as expected.")
+
 def patch_item(container, doc_id):
-    print('\n1.7 Patching Item by Id\n')
+    print('\n1.8 Patching Item by Id\n')
 
     operations = [
         {"op": "add", "path": "/favorite_color", "value": "red"},
@@ -122,7 +143,7 @@ def patch_item(container, doc_id):
                                                  response["total_due"], response.get("freight"), response["service_addition"]))
 
 def delete_item(container, doc_id):
-    print('\n1.8 Deleting Item by Id\n')
+    print('\n1.9 Deleting Item by Id\n')
 
     response = container.delete_item(item=doc_id, partition_key=doc_id)
 
@@ -130,7 +151,7 @@ def delete_item(container, doc_id):
 
 
 def delete_all_items_by_partition_key(db, partitionkey):
-    print('\n1.8 Deleting all Items by Partition Key\n')
+    print('\n1.10 Deleting all Items by Partition Key\n')
 
     # A container with a partition key that is different from id is needed
     container = db.create_container_if_not_exists(id="Partition Key Delete Container",
@@ -169,6 +190,23 @@ def delete_all_items_by_partition_key(db, partitionkey):
 
     for doc in item_list:
         print('Item Id: {0}; Partition Key: {1}'.format(doc.get('id'), doc.get("company")))
+
+
+def query_items_with_continuation_token_size_limit(container, doc_id):
+    print('\n1.11 Query Items With Continuation Token Size Limit.\n')
+
+    size_limit_in_kb = 8
+    sales_order = get_sales_order(doc_id)
+    container.create_item(body=sales_order)
+
+    # set response_continuation_token_limit_in_kb to 8 to limit size to 8KB
+    items = list(container.query_items(
+        query="SELECT * FROM r",
+        partition_key=doc_id,
+        response_continuation_token_limit_in_kb=size_limit_in_kb
+    ))
+
+    print('Continuation Token size has been limited to {}KB.'.format(size_limit_in_kb))
 
 def get_sales_order(item_id):
     order1 = {'id' : item_id,
@@ -234,9 +272,11 @@ def run_sample():
         query_items(container, 'SalesOrder1')
         replace_item(container, 'SalesOrder1')
         upsert_item(container, 'SalesOrder1')
+        conditional_patch_item(container, 'SalesOrder1')
         patch_item(container, 'SalesOrder1')
         delete_item(container, 'SalesOrder1')
         delete_all_items_by_partition_key(db, "CompanyA")
+        query_items_with_continuation_token_size_limit(container, 'SalesOrder1')
 
         # cleanup database after sample
         try:

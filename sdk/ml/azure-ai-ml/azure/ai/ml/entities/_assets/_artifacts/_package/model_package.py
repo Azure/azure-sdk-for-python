@@ -45,7 +45,7 @@ class PackageInputPathId:
     :type resource_id: str
     """
 
-    def __init__(self, input_path_type: Optional[str] = None, resource_id: Optional[str] = None):
+    def __init__(self, *, input_path_type: Optional[str] = None, resource_id: Optional[str] = None):
         self.input_path_type = input_path_type
         self.resource_id = resource_id
 

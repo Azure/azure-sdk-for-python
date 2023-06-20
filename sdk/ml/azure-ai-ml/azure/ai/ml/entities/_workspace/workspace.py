@@ -104,6 +104,7 @@ class Workspace(Resource):
         :type kwargs: dict
         """
         self._kind = kwargs.pop("kind", "default")
+        self.print_as_yaml = True
         self._discovery_url = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
         self._feature_store_settings: Optional[FeatureStoreSettings] = kwargs.pop("feature_store_settings", None)

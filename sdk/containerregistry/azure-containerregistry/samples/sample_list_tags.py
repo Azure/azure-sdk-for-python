@@ -18,12 +18,12 @@ USAGE:
     python sample_list_tags.py
 
     Set the environment variables with your own values before running the sample:
-    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+    1) CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT - The URL of your Container Registry account for anonymous access
 
     This sample assumes your registry has a repository "library/hello-world" with image tagged "latest",
     run load_registry() if you don't have.
     Set the environment variables with your own values before running load_registry():
-    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+    1) CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT - The URL of your Container Registry account for anonymous access
     2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
@@ -33,26 +33,24 @@ USAGE:
 import os
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient
-from utilities import load_registry, get_authority, get_audience, get_credential
+from utilities import load_registry
 
 
 class ListTags(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
-        self.authority = get_authority(self.endpoint)
-        self.audience = get_audience(self.authority)
-        self.credential = get_credential(self.authority)
 
     def list_tags(self):
         load_registry()
-        # Instantiate an instance of ContainerRegistryClient
-        with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
-            manifest = client.get_manifest_properties("library/hello-world", "latest")
-            print("Tags of " + manifest.repository_name + ": ")
+        # [START list_tags_anonymous]
+        endpoint = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")
+        with ContainerRegistryClient(endpoint) as anon_client:
+            manifest = anon_client.get_manifest_properties("library/hello-world", "latest")
+            print(f"Tags of {manifest.repository_name}: ")
             # Iterate through all the tags
             for tag in manifest.tags:
-                print(tag)
+                print(f"{tag}\n")
+        # [END list_tags_anonymous]
 
 
 if __name__ == "__main__":

@@ -68,7 +68,7 @@
 /sdk/attestation/azure-security-attestation/                         @anilba06 @Azure/azure-sdk-write-attestation @gkostal
 
 # PRLabel: %Batch
-/sdk/batch/                                                          @cRui861 @paterasMSFT @dpwatrous @gingi @zfengms @NickKouds
+/sdk/batch/                                                          @jingjlii @JJJessieWang @wanghoppe @dpwatrous @wiboris
 
 # PRLabel: %CognitiveServices
 /sdk/cognitiveservices/                                              @kristapratico
@@ -92,7 +92,7 @@
 /sdk/communication/azure-communication-rooms/                        @shirleyqin-msft @minnieliu @paolamvhz @alexokun @Mrayyan @shwali-msft @allchiang-msft @mikehang-msft
 
 # PRLabel: %Communication - SMS
-/sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
+/sdk/communication/azure-communication-sms/                           @DimaKolomiiets @ozgurcivi-msft @gfeitosa-msft @besh2014 @phermanov-msft @ilyapaliakou-msft
 
 # PRLabel: %Communication - Identity
 /sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
@@ -146,6 +146,9 @@
 /sdk/datafactory/                                                    @hvermis
 /sdk/datalake/                                                       @ro-joowan
 /sdk/datadatamigration/                                              @vchske
+
+# PRLabel: %Device Provisioning
+/sdk/iothub/azure-iot-deviceprovisioning                             @c-ryan-k @digimaun
 
 # PRLabel: %Device Update
 /sdk/deviceupdate/                                                   @dpokluda @sedols
@@ -259,8 +262,11 @@
 /sdk/maps/                                                           @alextts627
 
 # PRLabel: %Mixed Reality
-/sdk/mixedreality/azure-mixedreality-authentication/                 @crtreasu
-/sdk/remoterendering/                                                @rikogeln
+/sdk/mixedreality/azure-mixedreality-authentication/                 @RamonArguelles
+/sdk/remoterendering/                                                @FlorianBorn71
+
+# PRLabel: %Open AI
+/sdk/openai                                                          @kristapratico @glecaros
 
 # PRLabel: %Purview
 /sdk/purview/                                                        @iscai-msft @msyyc

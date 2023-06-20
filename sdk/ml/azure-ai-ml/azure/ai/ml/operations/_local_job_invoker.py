@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 import base64
+import io
 import json
 import logging
 import os
@@ -18,6 +19,9 @@ from pathlib import Path
 from threading import Thread
 from typing import Dict, Optional, Tuple
 
+from azure.core.credentials import TokenCredential
+from azure.core.exceptions import AzureError
+
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils.utils import DockerProxy
@@ -27,12 +31,9 @@ from azure.ai.ml.constants._common import (
     EXECUTION_SERVICE_URL_KEY,
     INVOCATION_BASH_FILE,
     INVOCATION_BAT_FILE,
-    INVOCATION_ZIP_FILE,
     LOCAL_JOB_FAILURE_MSG,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
-from azure.core.credentials import TokenCredential
-from azure.core.exceptions import AzureError
 
 docker = DockerProxy()
 module_logger = logging.getLogger(__name__)
@@ -41,12 +42,8 @@ module_logger = logging.getLogger(__name__)
 def unzip_to_temporary_file(job_definition: JobBaseData, zip_content: bytes) -> Path:
     temp_dir = Path(tempfile.gettempdir(), AZUREML_RUNS_DIR, job_definition.name)
     temp_dir.mkdir(parents=True, exist_ok=True)
-    zip_path = temp_dir / INVOCATION_ZIP_FILE
-    with zip_path.open(mode="wb") as file:
-        file.write(zip_content)
-    with zipfile.ZipFile(zip_path, "r") as zip_ref:
+    with zipfile.ZipFile(io.BytesIO(zip_content)) as zip_ref:
         zip_ref.extractall(temp_dir)
-    zip_path.unlink()
     return temp_dir
 
 
@@ -150,15 +147,15 @@ def get_execution_service_response(
         response.raise_for_status()
         return (response.content, body.get("SnapshotId", None))
     except AzureError as err:
-        raise SystemExit(err)
-    except Exception:
+        raise SystemExit(err) from err
+    except Exception as e:
         msg = "Failed to read in local executable job"
         raise JobException(
             message=msg,
             target=ErrorTarget.LOCAL_JOB,
             no_personal_data_message=msg,
             error_category=ErrorCategory.SYSTEM_ERROR,
-        )
+        ) from e
 
 
 def is_local_run(job_definition: JobBaseData) -> bool:
@@ -220,12 +217,12 @@ class CommonRuntimeHelper:
         try:
             client = docker.from_env(version="auto")
         except docker.errors.DockerException as e:
-            raise Exception(self.DOCKER_CLIENT_FAILURE_MSG.format(e))
+            raise Exception(self.DOCKER_CLIENT_FAILURE_MSG.format(e)) from e
 
         try:
             client.version()
         except Exception as e:
-            raise Exception(self.DOCKER_DAEMON_FAILURE_MSG.format(e))
+            raise Exception(self.DOCKER_DAEMON_FAILURE_MSG.format(e)) from e
 
         if registry:
             try:
@@ -235,7 +232,7 @@ class CommonRuntimeHelper:
                     registry=registry["url"],
                 )
             except Exception as e:
-                raise RuntimeError(self.DOCKER_LOGIN_FAILURE_MSG.format(registry["url"], e))
+                raise RuntimeError(self.DOCKER_LOGIN_FAILURE_MSG.format(registry["url"], e)) from e
         else:
             raise RuntimeError("Registry information is missing from bootstrapper configuration.")
 
@@ -261,7 +258,7 @@ class CommonRuntimeHelper:
                     tar.extract(file_name, os.path.dirname(path_in_host))
             os.remove(tar_file)
         except docker.errors.APIError as e:
-            raise Exception(f"Copying {path_in_container} from container has failed. Detailed message: {e}")
+            raise Exception(f"Copying {path_in_container} from container has failed. Detailed message: {e}") from e
 
     def get_common_runtime_info_from_response(self, response: Dict[str, str]) -> Tuple[Dict[str, str], str]:
         """Extract common-runtime info from Execution Service response.
@@ -273,23 +270,16 @@ class CommonRuntimeHelper:
         :rtype: Tuple[Dict[str, str], str]
         """
 
-        with tempfile.TemporaryDirectory() as tempdir:
-            invocation_zip_path = os.path.join(tempdir, INVOCATION_ZIP_FILE)
-            with open(invocation_zip_path, "wb") as file:
-                file.write(response)
+        with zipfile.ZipFile(io.BytesIO(response)) as zip_ref:
+            bootstrapper_path = f"{AZUREML_RUN_SETUP_DIR}/{self.COMMON_RUNTIME_BOOTSTRAPPER_INFO}"
+            job_spec_path = f"{AZUREML_RUN_SETUP_DIR}/{self.COMMON_RUNTIME_JOB_SPEC}"
+            if not all(file_path in zip_ref.namelist() for file_path in [bootstrapper_path, job_spec_path]):
+                raise RuntimeError(f"{bootstrapper_path}, {job_spec_path} are not in the execution service response.")
 
-            with zipfile.ZipFile(invocation_zip_path, "r") as zip_ref:
-                bootstrapper_path = f"{AZUREML_RUN_SETUP_DIR}/{self.COMMON_RUNTIME_BOOTSTRAPPER_INFO}"
-                job_spec_path = f"{AZUREML_RUN_SETUP_DIR}/{self.COMMON_RUNTIME_JOB_SPEC}"
-                if not all(file_path in zip_ref.namelist() for file_path in [bootstrapper_path, job_spec_path]):
-                    raise RuntimeError(
-                        f"{bootstrapper_path}, {job_spec_path} are not in the execution service response."
-                    )
-
-                with zip_ref.open(bootstrapper_path, "r") as bootstrapper_file:
-                    bootstrapper_json = json.loads(base64.b64decode(bootstrapper_file.read()))
-                with zip_ref.open(job_spec_path, "r") as job_spec_file:
-                    job_spec = job_spec_file.read().decode("utf-8")
+            with zip_ref.open(bootstrapper_path, "r") as bootstrapper_file:
+                bootstrapper_json = json.loads(base64.b64decode(bootstrapper_file.read()))
+            with zip_ref.open(job_spec_path, "r") as job_spec_file:
+                job_spec = job_spec_file.read().decode("utf-8")
 
         return bootstrapper_json, job_spec
 
@@ -423,17 +413,17 @@ def start_run_if_local(
             temp_dir = unzip_to_temporary_file(job_definition, zip_content)
             invoke_command(temp_dir)
         except Exception as e:
-            raise Exception(LOCAL_JOB_FAILURE_MSG.format(e))
+            raise Exception(LOCAL_JOB_FAILURE_MSG.format(e)) from e
     return snapshot_id
 
 
-def _log_subprocess(io, file, show_in_console=False):
-    def log_subprocess(io, file, show_in_console):
-        for line in iter(io.readline, ""):
+def _log_subprocess(output_io, file, show_in_console=False):
+    def log_subprocess():
+        for line in iter(output_io.readline, ""):
             if show_in_console:
                 print(line, end="")
             file.write(line)
 
-    thread = Thread(target=log_subprocess, args=(io, file, show_in_console))
+    thread = Thread(target=log_subprocess)
     thread.daemon = True
     thread.start()

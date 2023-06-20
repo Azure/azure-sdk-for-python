@@ -21,7 +21,8 @@ from ._path_client_async import PathClient
 from .._shared.base_client_async import AsyncTransportWrapper
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from datetime import datetime
 
 
@@ -72,7 +73,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         self, account_url: str,
         file_system_name: str,
         directory_name: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
         super(DataLakeDirectoryClient, self).__init__(account_url, file_system_name, directory_name, # pylint: disable=specify-parameter-names-in-call
@@ -346,14 +347,11 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         new_file_system, new_path, new_dir_sas = self._parse_rename_path(new_name)
 
         new_directory_client = DataLakeDirectoryClient(
-            "{}://{}".format(self.scheme, self.primary_hostname), new_file_system, directory_name=new_path,
+            f"{self.scheme}://{self.primary_hostname}", new_file_system, directory_name=new_path,
             credential=self._raw_credential or new_dir_sas,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline)
         await new_directory_client._rename_path(  # pylint: disable=protected-access
-            '/{}/{}{}'.format(quote(unquote(self.file_system_name)),
-                              quote(unquote(self.path_name)),
-                              self._query_str),
-            **kwargs)
+            f'/{quote(unquote(self.file_system_name))}/{quote(unquote(self.path_name))}{self._query_str}', **kwargs)
         return new_directory_client
 
     async def create_sub_directory(self, sub_directory,  # type: Union[DirectoryProperties, str]
