@@ -1,9 +1,10 @@
 # Release History
 
-## 0.17.0 (2023-06-13)
+## 0.17.0 (2023-06-20)
 
 ### Features Added
 
+  - Added operation group ArtifactsClientOperationsMixin
   - Added operation group RunNotebookOperations
   - Model Activity has a new parameter on_inactive_mark_as
   - Model Activity has a new parameter state
@@ -95,15 +96,9 @@
   - Model ScriptActivity has a new parameter on_inactive_mark_as
   - Model ScriptActivity has a new parameter state
   - Model SetVariableActivity has a new parameter on_inactive_mark_as
+  - Model SetVariableActivity has a new parameter policy
   - Model SetVariableActivity has a new parameter state
   - Model SqlDWSource has a new parameter isolation_level
-  - Model SqlMISource has a new parameter isolation_level
-  - Model SqlPoolStoredProcedureActivity has a new parameter on_inactive_mark_as
-  - Model SqlPoolStoredProcedureActivity has a new parameter state
-  - Model SqlServerLinkedService has a new parameter always_encrypted_settings
-  - Model SqlServerSource has a new parameter isolation_level
-  - Model SqlServerStoredProcedureActivity has a new parameter on_inactive_mark_as
-  - Model SqlServerStoredProcedureActivity has a new parameter state
   - Model SwitchActivity has a new parameter on_inactive_mark_as
   - Model SwitchActivity has a new parameter state
   - Model SynapseNotebookActivity has a new parameter configuration_type
@@ -125,10 +120,6 @@
   - Model WebActivityAuthentication has a new parameter user_tenant
   - Model WebHookActivity has a new parameter on_inactive_mark_as
   - Model WebHookActivity has a new parameter state
-
-### Breaking Changes
-
-  - Model Notebook no longer has parameter target_spark_configuration
 
 ## 0.16.0 (2023-05-12)
 
