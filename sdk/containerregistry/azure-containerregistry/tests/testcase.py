@@ -59,12 +59,6 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
 
     def create_fully_qualified_reference(self, registry, repository, digest):
         return f"{registry}/{repository}{':' if _is_tag(digest) else '@'}{digest.split(':')[-1]}"
-
-    def is_public_endpoint(self, endpoint):
-        return ".azurecr.io" in endpoint
-    
-    def is_china_endpoint(self, endpoint):
-        return ".azurecr.cn" in endpoint
     
     def upload_oci_manifest_prerequisites(self, repo, client):
         layer = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
@@ -87,6 +81,12 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
     def get_test_directory(self):
         return os.path.join(os.getcwd(), "tests")
 
+
+def is_public_endpoint(endpoint):
+    return ".azurecr.io" in endpoint
+
+def is_china_endpoint(self, endpoint):
+    return ".azurecr.cn" in endpoint
 
 def get_authority(endpoint: str) -> str:
     if ".azurecr.io" in endpoint:

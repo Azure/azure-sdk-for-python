@@ -32,7 +32,7 @@ from azure.core.exceptions import (
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineRequest
 from azure.identity import AzureAuthorityHosts
-from testcase import ContainerRegistryTestClass, get_authority, get_audience
+from testcase import ContainerRegistryTestClass, get_authority, get_audience, is_public_endpoint, is_china_endpoint
 from constants import HELLO_WORLD, DOES_NOT_EXIST
 from preparer import acr_preparer
 from devtools_testutils import recorded_by_proxy
@@ -500,7 +500,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_set_oci_manifest_without_spaces(self, containerregistry_endpoint):
-        if self.is_china_endpoint(containerregistry_endpoint):
+        if is_china_endpoint(containerregistry_endpoint):
             pytest.skip("Running in china cloud may cause all tests finishing longer than the max time of 120 mins.")
         
         repo = self.get_resource_name("repo")
@@ -532,7 +532,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     def test_set_docker_manifest(self, **kwargs):
         containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
-        if self.is_china_endpoint(containerregistry_endpoint):
+        if is_china_endpoint(containerregistry_endpoint):
             pytest.skip("Not run in China cloud")
         repo = self.get_resource_name("repo")
         path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
@@ -575,7 +575,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_set_docker_manifest_without_spaces(self, containerregistry_endpoint):
-        if self.is_china_endpoint(containerregistry_endpoint):
+        if is_china_endpoint(containerregistry_endpoint):
             pytest.skip("Running in china cloud may cause all tests finishing longer than the max time of 120 mins.")
         
         repo = self.get_resource_name("repo")
@@ -626,7 +626,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     # @acr_preparer()
     def upload_large_blob_in_chunk(self, **kwargs):
         containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
-        if not self.is_public_endpoint(containerregistry_endpoint):
+        if not is_public_endpoint(containerregistry_endpoint):
             pytest.skip("Running in non-public cloud may cause all tests finishing longer than the max time of 120 mins.")
         
         repo = self.get_resource_name("repo")

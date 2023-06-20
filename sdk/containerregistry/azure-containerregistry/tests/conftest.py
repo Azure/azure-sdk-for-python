@@ -14,7 +14,7 @@ from devtools_testutils import (
     test_proxy,
     is_live,
 )
-from testcase import import_image
+from testcase import import_image, is_public_endpoint
 from constants import HELLO_WORLD
 
 logger = logging.getLogger()
@@ -30,7 +30,8 @@ def load_registry():
     tags = ["latest", "v1"]
     try:
         import_image(endpoint, repo, tags)
-        import_image(endpoint_anon, repo, tags)
+        if is_public_endpoint(endpoint_anon):
+            import_image(endpoint_anon, repo, tags)
     except Exception as e:
         logger.exception(e)
         raise
