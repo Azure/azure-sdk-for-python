@@ -25,7 +25,6 @@ _FAILED = frozenset(["failed"])
 _SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallysucceeded"])
 
 
-PollingReturnType = TypeVar("PollingReturnType")
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 
@@ -266,7 +265,7 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
         return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
 
-class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
+class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType_co]):
     def polling_method(self) -> AnalyzeHealthcareEntitiesLROPollingMethod:
         """Return the polling method associated to this poller.
 
@@ -456,7 +455,7 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
         return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
 
-class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
+class AnalyzeActionsLROPoller(LROPoller[PollingReturnType_co]):
     def polling_method(self) -> AnalyzeActionsLROPollingMethod:
         """Return the polling method associated to this poller.
 
