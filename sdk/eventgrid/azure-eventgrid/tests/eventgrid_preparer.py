@@ -57,4 +57,6 @@ EventGridBetaPreparer = functools.partial(
     "eventgrid",
     eventgrid_endpoint="https://fakeresource.eastus-1.eventgrid.azure.net/api/events",
     eventgrid_key="fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyA=",
+    topic_name="topicname",
+    event_subscription_name="eventsubscription",
 )

@@ -59,6 +59,8 @@ def add_sanitizers(test_proxy):
     tenant_id = os.getenv("AZURE_TENANT_ID", "sanitized")
     eventgrid_topic_key = os.getenv("EVENTGRID_TOPIC_KEY", "sanitized")
     eventgrid_key = os.getenv("EVENTGRID_KEY", "sanitized")
+    topic_name = os.getenv("TOPIC_NAME", "sanitized")
+    event_subscription_name = os.getenv("EVENT_SUBSCRIPTION_NAME", "sanitized")
     add_general_string_sanitizer(target=eventgrid_key, value="sanitized")
     add_general_string_sanitizer(target=eventgrid_topic_key, value="sanitized")
     add_general_string_sanitizer(target=client_id, value="sanitized")
@@ -66,4 +68,6 @@ def add_sanitizers(test_proxy):
     add_general_string_sanitizer(target=eventgrid_client_id, value="sanitized")
     add_general_string_sanitizer(target=eventgrid_client_secret, value="sanitized")
     add_general_string_sanitizer(target=tenant_id, value="sanitized")
+    add_general_string_sanitizer(target=topic_name, value="sanitized")
+    add_general_string_sanitizer(target=event_subscription_name, value="sanitized")
 
