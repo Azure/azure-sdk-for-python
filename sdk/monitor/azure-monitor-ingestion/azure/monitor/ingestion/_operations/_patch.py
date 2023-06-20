@@ -26,7 +26,7 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class LogsIngestionClientOperationsMixin(GeneratedOps):
-    def upload(  # type: ignore[override] # pylint: disable=arguments-renamed, arguments-differ
+    def upload(
         self,
         rule_id: str,
         stream_name: str,
