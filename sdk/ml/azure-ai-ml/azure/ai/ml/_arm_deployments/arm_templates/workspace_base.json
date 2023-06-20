@@ -602,7 +602,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('storageAccountOption'), 'new'), equals(length(parameters('storage_accounts')), 0)))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('storageAccountOption'), 'new'), equals(length(parameters('storage_accounts')), 0))]",
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-04-01",
             "name": "[parameters('storageAccountName')]",
@@ -633,7 +633,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('keyVaultOption'), 'new'), equals(length(parameters('key_vaults')), 0)))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('keyVaultOption'), 'new'), equals(length(parameters('key_vaults')), 0))]",
             "type": "Microsoft.KeyVault/vaults",
             "apiVersion": "2019-09-01",
             "tags": "[parameters('tagValues')]",
@@ -653,7 +653,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('containerRegistryOption'), 'new'), equals(length(parameters('container_registies')), 0)))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('containerRegistryOption'), 'new'), equals(length(parameters('container_registies')), 0))]",
             "type": "Microsoft.ContainerRegistry/registries",
             "apiVersion": "2019-05-01",
             "tags": "[parameters('tagValues')]",
