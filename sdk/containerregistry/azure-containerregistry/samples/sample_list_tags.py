@@ -49,7 +49,7 @@ class ListTags(object):
             print(f"Tags of {manifest.repository_name}: ")
             # Iterate through all the tags
             for tag in manifest.tags:
-                print(f"{tag}\n")
+                print(tag)
         # [END list_tags_anonymous]
 
 

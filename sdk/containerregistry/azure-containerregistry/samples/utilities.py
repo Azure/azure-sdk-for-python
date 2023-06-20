@@ -17,61 +17,89 @@ DESCRIPTION:
     - get_credential(): get credential of the ContainerRegistryClient
     It is not a file expected to run independently.
 """
+import json
 import os
-from azure.mgmt.containerregistry import ContainerRegistryManagementClient
-from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
+from io import BytesIO
+from azure.containerregistry import ContainerRegistryClient
 from azure.identity import AzureAuthorityHosts, ClientSecretCredential
 from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential
 
 def load_registry():
-    authority = get_authority(os.environ.get("CONTAINERREGISTRY_ENDPOINT"))
+    print("loading registry...")
+    endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
     repo = "library/hello-world"
-    tags = [
-        [
-            "library/hello-world:latest",
-            "library/hello-world:v1",
-            "library/hello-world:v2",
-            "library/hello-world:v3"
-        ]
-    ]
-    for tag in tags:
-        try:
-            _import_image(authority, repo, tag)
-        except Exception as e:
-            print(e)
+    tags = ["latest", "v1", "v2", "v3"]
+    # tags = [
+    #     [
+    #         "library/hello-world:latest",
+    #         "library/hello-world:v1",
+    #         "library/hello-world:v2",
+    #         "library/hello-world:v3"
+    #     ]
+    # ]
+    try:
+        _import_images(endpoint, repo, tags)
+    except Exception as e:
+        raise
 
-def _import_image(authority, repository, tags):
+def _import_images(endpoint, repository, tags):
+    authority = get_authority(endpoint)
     credential = ClientSecretCredential(
         tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
         client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
         client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
         authority=authority
     )
-    sub_id = os.environ.get("CONTAINERREGISTRY_SUBSCRIPTION_ID")
-    audience = get_audience(authority)
-    scope = [audience + "/.default"]
-    mgmt_client = ContainerRegistryManagementClient(
-        credential,
-        sub_id,
-        api_version="2019-05-01",
-        base_url=audience,
-        credential_scopes=scope
-    )
-    registry_uri = "registry.hub.docker.com"
-    rg_name = os.environ.get("CONTAINERREGISTRY_RESOURCE_GROUP")
-    registry_name = os.environ.get("CONTAINERREGISTRY_REGISTRY_NAME")
+    with ContainerRegistryClient(endpoint, credential) as client:
+        # Upload a layer
+        layer = BytesIO(b"Sample layer")
+        layer_digest, layer_size = client.upload_blob(repository, layer)
+        # Upload a config
+        config = BytesIO(json.dumps({"sample config": "content"}).encode())
+        config_digest, config_size = client.upload_blob(repository, config)
+        docker_manifest = {
+            "config": {
+                "digest": config_digest,
+                "mediaType": "application/vnd.docker.container.image.v1+json",
+                "size": config_size
+            },
+            "layers": [
+                {
+                    "digest": layer_digest,
+                    "mediaType": "application/vnd.docker.image.rootfs.diff.tar.gzip",
+                    "size": layer_size
+                }
+            ],
+            "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+            "schemaVersion": 2
+        }
+        for tag in tags:
+            client.set_manifest(repository, docker_manifest, tag=tag, media_type="application/vnd.docker.distribution.manifest.v2+json")
+    # sub_id = os.environ.get("CONTAINERREGISTRY_SUBSCRIPTION_ID")
+    # audience = get_audience(authority)
+    # scope = [audience + "/.default"]
+    # mgmt_client = ContainerRegistryManagementClient(
+    #     credential,
+    #     sub_id,
+    #     api_version="2019-05-01",
+    #     base_url=audience,
+    #     credential_scopes=scope
+    # )
+    # registry_uri = "registry.hub.docker.com"
+    # rg_name = os.environ.get("CONTAINERREGISTRY_RESOURCE_GROUP")
+    # registry_name = os.environ.get("CONTAINERREGISTRY_REGISTRY_NAME")
 
-    import_source = ImportSource(source_image=repository, registry_uri=registry_uri)
+    # import_source = ImportSource(source_image=repository, registry_uri=registry_uri)
 
-    import_params = ImportImageParameters(mode=ImportMode.Force, source=import_source, target_tags=tags)
+    # import_params = ImportImageParameters(mode=ImportMode.Force, source=import_source, target_tags=tags)
 
-    result = mgmt_client.registries.begin_import_image(
-        rg_name,
-        registry_name,
-        parameters=import_params,
-    )
+    # result = mgmt_client.registries.begin_import_image(
+    #     rg_name,
+    #     registry_name,
+    #     parameters=import_params,
+    # )
     
-    result.wait()
+    # result.wait()
 
 def get_authority(endpoint):
     if ".azurecr.io" in endpoint:
