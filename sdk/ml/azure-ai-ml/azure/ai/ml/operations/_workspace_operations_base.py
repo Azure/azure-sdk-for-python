@@ -331,9 +331,10 @@ class WorkspaceOperationsBase:
             workspace.location = get_resource_group_location(
                 self._credentials, self._subscription_id, workspace.resource_group
             )
-
         template = get_template(resource_type=ArmConstants.WORKSPACE_BASE)
         param = get_template(resource_type=ArmConstants.WORKSPACE_PARAM)
+        if workspace._kind == LEAN_WORKSPACE_KIND:
+            template = get_template(resource_type=ArmConstants.WORKSPACE_PROJECT)
         _set_val(param["workspaceName"], workspace.name)
         if not workspace.display_name:
             _set_val(param["friendlyName"], workspace.name)

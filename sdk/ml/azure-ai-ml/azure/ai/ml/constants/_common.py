@@ -299,6 +299,7 @@ class ArmConstants:
     BASE_TYPE = "base"
     WORKSPACE_BASE = "workspace_base"
     WORKSPACE_PARAM = "workspace_param"
+    WORKSPACE_PROJECT = "workspace_project"
 
     OPERATION_CREATE = "create"
     OPERATION_UPDATE = "update"
