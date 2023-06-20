@@ -37,7 +37,6 @@ import re
 import uuid
 from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Set, Mapping
 import urllib.parse
-from typing_extensions import Protocol, runtime_checkable
 
 from azure.core import __version__ as azcore_version
 from azure.core.exceptions import DecodeError, raise_with_traceback

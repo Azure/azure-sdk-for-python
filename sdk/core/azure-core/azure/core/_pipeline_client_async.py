@@ -36,7 +36,6 @@ from typing import (
     Optional,
     cast,
 )
-from typing_extensions import Protocol
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
 from .pipeline.transport._base import PipelineClientBase

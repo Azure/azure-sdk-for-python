@@ -42,9 +42,7 @@ from ..pipeline.transport import (
     AsyncHttpTransport,
     AsyncHttpResponse as LegacyAsyncHttpResponse,
 )
-from ..pipeline.transport._base import _HttpResponseBase as LegacySansIOHttpResponse
 from ..rest import HttpRequest, AsyncHttpResponse
-from ..rest._rest_py3 import _HttpResponseBase as SansIOHttpResponse
 
 HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
 AsyncHTTPResponseType = Union[LegacyAsyncHttpResponse, AsyncHttpResponse]
