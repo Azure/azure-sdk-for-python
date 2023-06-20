@@ -482,7 +482,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                 self.next_refresh_time = datetime.now() + timedelta(seconds=self.refresh_options.refresh_interval)
             self.attempts = 1
             self.min_backoff: Optional[int] = kwargs.pop("min_backoff", 30)
-            self.max_backoff: Optional[int] = kwargs.pop("min_backoff", 600)
+            self.max_backoff: Optional[int] = kwargs.pop("max_backoff", 600)
 
         def updated_configurations(self):
             # pylint:disable=protected-access
