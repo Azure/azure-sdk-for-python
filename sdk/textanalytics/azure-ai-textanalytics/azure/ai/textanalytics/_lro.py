@@ -206,7 +206,7 @@ class TextAnalyticsLROPollingMethod(LROBasePolling):
             )
 
 
-class AnalyzeHealthcareEntitiesLROPollingMethod(  # pylint: disable=name-too-long
+class AnalyzeHealthcareEntitiesLROPollingMethod(  # pylint: disable=all
     TextAnalyticsLROPollingMethod
 ):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
