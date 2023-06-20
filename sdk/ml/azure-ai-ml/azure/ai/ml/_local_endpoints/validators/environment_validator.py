@@ -36,7 +36,7 @@ def get_environment_artifacts(
     """
     # Validate environment for local endpoint
     if _environment_contains_cloud_artifacts(deployment=deployment):
-        if deployment.environment.id:
+        if isinstance(deployment.environment, Environment):
             environment_asset = deployment.environment
         else:
             name, version = parse_name_version(deployment.environment)
