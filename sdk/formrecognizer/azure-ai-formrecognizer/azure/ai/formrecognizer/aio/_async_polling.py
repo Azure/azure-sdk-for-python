@@ -12,11 +12,11 @@ from typing_extensions import Protocol, runtime_checkable
 from azure.core.polling import AsyncLROPoller, AsyncPollingMethod
 from .._polling import parse_operation_id
 
-PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 
 @runtime_checkable
-class AsyncDocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
+class AsyncDocumentModelAdministrationLROPoller(Protocol[PollingReturnType_co]):
     """Implements a protocol followed by returned poller objects."""
 
     @property
@@ -27,7 +27,7 @@ class AsyncDocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
 
     def polling_method(  # pylint: disable=no-self-use
         self,
-    ) -> AsyncPollingMethod[PollingReturnType]:
+    ) -> AsyncPollingMethod[PollingReturnType_co]:
         ...
 
     def continuation_token(self) -> str:  # pylint: disable=no-self-use
@@ -38,7 +38,7 @@ class AsyncDocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
 
     async def result(  # pylint: disable=no-self-use, unused-argument
         self,
-    ) -> PollingReturnType:
+    ) -> PollingReturnType_co:
         ...
 
     async def wait(self) -> None:  # pylint: disable=no-self-use, unused-argument
@@ -48,7 +48,7 @@ class AsyncDocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
         ...
 
 
-class AsyncDocumentModelAdministrationClientLROPoller(AsyncLROPoller[PollingReturnType]):
+class AsyncDocumentModelAdministrationClientLROPoller(AsyncLROPoller[PollingReturnType_co]):
     """Custom poller for model build operations. Call `result()` on the poller to return
     a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
 
@@ -85,7 +85,7 @@ class AsyncDocumentModelAdministrationClientLROPoller(AsyncLROPoller[PollingRetu
 
     @classmethod
     def from_continuation_token(
-        cls, polling_method: AsyncPollingMethod[PollingReturnType], continuation_token: str, **kwargs: Any
+        cls, polling_method: AsyncPollingMethod[PollingReturnType_co], continuation_token: str, **kwargs: Any
     ) -> "AsyncDocumentModelAdministrationClientLROPoller":
         (
             client,
