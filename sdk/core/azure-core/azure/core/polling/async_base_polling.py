@@ -161,7 +161,7 @@ class AsyncLROBasePolling(
             # Need a cast, as "_return_pipeline_response" mutate the return type, and that return type is not
             # declared in the typing of "send_request"
             return cast(
-                LegacyPipelineResponseType,
+                NewPipelineResponseType,
                 await self._client.send_request(rest_request, _return_pipeline_response=True, **self._operation_config),
             )
 
@@ -170,7 +170,7 @@ class AsyncLROBasePolling(
         # about the legacy APIs.
         request = self._client.get(status_link)
         return cast(
-            NewPipelineResponseType,
+            LegacyPipelineResponseType,
             await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **self._operation_config
             ),
