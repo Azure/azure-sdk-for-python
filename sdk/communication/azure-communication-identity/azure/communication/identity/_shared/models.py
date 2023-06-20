@@ -6,8 +6,7 @@
 
 from enum import Enum
 from six import with_metaclass
-from typing import Mapping, Optional, Union, Any
-from typing_extensions import TypedDict, Protocol
+from typing import Mapping, Optional, Union, Any, TypedDict, Protocol
 from azure.core import CaseInsensitiveEnumMeta
 
 
@@ -164,7 +163,7 @@ class UnknownIdentifier(object):
 
     def __init__(self, identifier: str) -> None:
         self.raw_id = identifier
-        self.properties = {Any}
+        self.properties = {}  # type: Any
 
     def __eq__(self, other):
         try:
