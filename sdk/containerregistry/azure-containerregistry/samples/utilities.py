@@ -29,14 +29,6 @@ def load_registry():
     endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
     repo = "library/hello-world"
     tags = ["latest", "v1", "v2", "v3"]
-    # tags = [
-    #     [
-    #         "library/hello-world:latest",
-    #         "library/hello-world:v1",
-    #         "library/hello-world:v2",
-    #         "library/hello-world:v3"
-    #     ]
-    # ]
     try:
         _import_images(endpoint, repo, tags)
     except Exception as e:
@@ -75,31 +67,7 @@ def _import_images(endpoint, repository, tags):
         }
         for tag in tags:
             client.set_manifest(repository, docker_manifest, tag=tag, media_type="application/vnd.docker.distribution.manifest.v2+json")
-    # sub_id = os.environ.get("CONTAINERREGISTRY_SUBSCRIPTION_ID")
-    # audience = get_audience(authority)
-    # scope = [audience + "/.default"]
-    # mgmt_client = ContainerRegistryManagementClient(
-    #     credential,
-    #     sub_id,
-    #     api_version="2019-05-01",
-    #     base_url=audience,
-    #     credential_scopes=scope
-    # )
-    # registry_uri = "registry.hub.docker.com"
-    # rg_name = os.environ.get("CONTAINERREGISTRY_RESOURCE_GROUP")
-    # registry_name = os.environ.get("CONTAINERREGISTRY_REGISTRY_NAME")
 
-    # import_source = ImportSource(source_image=repository, registry_uri=registry_uri)
-
-    # import_params = ImportImageParameters(mode=ImportMode.Force, source=import_source, target_tags=tags)
-
-    # result = mgmt_client.registries.begin_import_image(
-    #     rg_name,
-    #     registry_name,
-    #     parameters=import_params,
-    # )
-    
-    # result.wait()
 
 def get_authority(endpoint):
     if ".azurecr.io" in endpoint:
