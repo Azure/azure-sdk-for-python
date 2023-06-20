@@ -102,7 +102,7 @@ except HttpResponseError as ex:
 ```
 
 ### List rooms
-Retrieve all created rooms by calling the `list_rooms` function from `RoomsClient`.
+Retrieve all valid rooms created with an ACS resource by calling the `list_rooms` function from `RoomsClient`.
 
 ```python
 try:

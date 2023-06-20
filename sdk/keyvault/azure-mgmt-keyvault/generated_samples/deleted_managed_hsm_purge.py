@@ -29,11 +29,10 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.managed_hsms.begin_purge_deleted(
+    client.managed_hsms.begin_purge_deleted(
         name="hsm1",
         location="westus",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/keyvault/resource-manager/Microsoft.KeyVault/stable/2023-02-01/examples/DeletedManagedHsm_Purge.json

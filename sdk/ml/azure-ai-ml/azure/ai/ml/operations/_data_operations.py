@@ -364,7 +364,7 @@ class DataOperations(_ScopeDependentOperations):
                         tartget=ErrorTarget.DATA,
                         no_personal_data_message=CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
                         error_category=ErrorCategory.USER_ERROR,
-                    )
+                    ) from ex
             raise ex
 
     @monitor_with_activity(logger, "Data.ImportData", ActivityType.PUBLICAPI)
@@ -566,7 +566,16 @@ class DataOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "data.Share", ActivityType.PUBLICAPI)
     @experimental
-    def share(self, name, version, *, share_with_name, share_with_version, registry_name) -> Data:
+    def share(
+        self,
+        name,
+        version,
+        *,
+        share_with_name,
+        share_with_version,
+        registry_name,
+        **kwargs,
+    ) -> Data:
         """Share a data asset from workspace to registry.
 
         :param name: Name of data asset.
@@ -585,7 +594,7 @@ class DataOperations(_ScopeDependentOperations):
 
         #  Get workspace info to get workspace GUID
         workspace = self._service_client.workspaces.get(
-            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
+            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name, **kwargs
         )
         workspace_guid = workspace.workspace_id
         workspace_location = workspace.location

@@ -171,7 +171,10 @@ class TestCommandFunction:
             }
         }
         actual_component = pydash.omit(
-            test_command._component._to_rest_object().as_dict(), "name", "properties.component_spec.name"
+            test_command._component._to_rest_object().as_dict(),
+            "name",
+            "properties.component_spec.name",
+            "properties.properties.client_component_hash",
         )
         assert actual_component == expected_component
 
@@ -212,6 +215,7 @@ class TestCommandFunction:
             test_no_deterministic_command._component._to_rest_object().as_dict(),
             "name",
             "properties.component_spec.name",
+            "properties.properties.client_component_hash",
         )
         assert actual_component == expected_component
 
@@ -364,7 +368,10 @@ class TestCommandFunction:
 
         # node1's component stores proper inputs & outputs
         actual_component = pydash.omit(
-            node1._component._to_rest_object().as_dict(), "name", "properties.component_spec.name"
+            node1._component._to_rest_object().as_dict(),
+            "name",
+            "properties.component_spec.name",
+            "properties.properties.client_component_hash",
         )
         expected_component = {
             "properties": {
@@ -538,7 +545,10 @@ class TestCommandFunction:
         node1 = command(**test_command_params)
 
         actual_component = pydash.omit(
-            node1._component._to_rest_object().as_dict(), "name", "properties.component_spec.name"
+            node1._component._to_rest_object().as_dict(),
+            "name",
+            "properties.component_spec.name",
+            "properties.properties.client_component_hash",
         )
         expected_component = {
             "properties": {
@@ -725,6 +735,15 @@ class TestCommandFunction:
         rest_dict = command_node._to_rest_object()
         assert rest_dict["queue_settings"] == expected_queue_settings
 
+        test_command_params.update(
+            {
+                "queue_settings": QueueSettings(job_tier="Standard", priority="Medium"),
+            }
+        )
+        command_node = command(**test_command_params)
+        rest_dict = command_node._to_rest_object()
+        assert rest_dict["queue_settings"] == expected_queue_settings
+
     def test_to_component_input(self):
         # test literal input
         literal_input_2_expected_type = {
@@ -780,7 +799,7 @@ class TestCommandFunction:
         )
         result = node._validate()
         message = "Should not specify min or max executors when dynamic allocation is disabled."
-        assert "*" in result.error_messages and message == result.error_messages["*"]
+        assert "conf" in result.error_messages and message == result.error_messages["conf"]
 
     def test_executor_instances_is_mandatory_when_dynamic_allocation_disabled(self):
         node = spark(
@@ -797,7 +816,7 @@ class TestCommandFunction:
             "spark.driver.cores, spark.driver.memory, spark.executor.cores, spark.executor.memory and "
             "spark.executor.instances are mandatory fields."
         )
-        assert "*" in result.error_messages and message == result.error_messages["*"]
+        assert "conf" in result.error_messages and message == result.error_messages["conf"]
 
     def test_executor_instances_is_specified_as_min_executor_if_unset(self):
         node = spark(
@@ -834,7 +853,7 @@ class TestCommandFunction:
             "Executor instances must be a valid non-negative integer and must be between "
             "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors"
         )
-        assert "*" in result.error_messages and message == result.error_messages["*"]
+        assert "conf" in result.error_messages and message == result.error_messages["conf"]
 
     def test_spark_job_with_additional_conf(self):
         node = spark(

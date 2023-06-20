@@ -6,12 +6,14 @@
 from typing import Dict, Optional
 
 from azure.ai.ml._schema._deployment.online.data_collector_schema import DataCollectorSchema
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._deployment.request_logging import RequestLogging
 from azure.ai.ml.entities._deployment.deployment_collection import DeploymentCollection
 from azure.ai.ml._restclient.v2023_04_01_preview.models import DataCollector as RestDataCollector
 
 
+@experimental
 class DataCollector:
     """Data Capture deployment entity.
 
@@ -49,7 +51,7 @@ class DataCollector:
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestDataCollector) -> "DataCollector":
-        collections = dict()
+        collections = {}
         for k, v in rest_obj.collections.items():
             sampling_rate = v.sampling_rate
             collections[k] = DeploymentCollection._from_rest_object(v)
@@ -75,7 +77,7 @@ class DataCollector:
         if self.request_logging:
             self.request_logging = self.request_logging._to_rest_object()
         if self.collections:
-            rest_collections = dict()
+            rest_collections = {}
             for k, v in self.collections.items():
                 rest_collections[k] = v._to_rest_object()
         return RestDataCollector(

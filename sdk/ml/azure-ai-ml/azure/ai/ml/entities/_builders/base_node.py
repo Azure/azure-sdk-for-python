@@ -450,7 +450,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         )
         # only add comment in REST object when it is set
         if self.comment is not None:
-            rest_obj.update(dict(comment=self.comment))
+            rest_obj.update({"comment": self.comment})
 
         return convert_ordered_dict_to_dict(rest_obj)
 

@@ -16,6 +16,7 @@ USAGE: python read_only_sample.py
 from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting
 from util import print_configuration_setting, get_connection_string
 
+
 def main():
     CONNECTION_STRING = get_connection_string()
 
@@ -24,10 +25,7 @@ def main():
 
     print("Set new configuration setting")
     config_setting = ConfigurationSetting(
-        key="MyKey",
-        value="my value",
-        content_type="my content type",
-        tags={"my tag": "my tag value"}
+        key="MyKey", value="my value", content_type="my content type", tags={"my tag": "my tag value"}
     )
     returned_config_setting = client.set_configuration_setting(config_setting)
     print("New configuration setting:")
@@ -35,16 +33,12 @@ def main():
     print("")
 
     print("Read only configuration setting:")
-    read_only_config_setting = client.set_read_only(
-        returned_config_setting
-    )
+    read_only_config_setting = client.set_read_only(returned_config_setting)
     print_configuration_setting(read_only_config_setting)
     print("")
 
     print("Clear read only configuration setting:")
-    read_write_config_setting = client.set_read_only(
-        returned_config_setting, False
-    )
+    read_write_config_setting = client.set_read_only(returned_config_setting, False)
     print_configuration_setting(read_write_config_setting)
     print("")
 
@@ -52,6 +46,7 @@ def main():
     client.delete_configuration_setting(
         key="MyKey",
     )
+
 
 if __name__ == "__main__":
     main()

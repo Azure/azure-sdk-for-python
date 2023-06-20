@@ -21,6 +21,9 @@ from ._generated.models import (
     QueryType,
     SearchMode,
     ScoringStatistics,
+    Vector,
+    SemanticErrorHandling,
+    QueryDebugMode,
 )
 from ._search_documents_error import RequestEntityTooLargeError
 from ._index_documents_batch import IndexDocumentsBatch
@@ -154,6 +157,7 @@ class SearchClient(HeadersMixin):
             query_speller: Optional[Union[str, QuerySpellerType]] = None,
             query_answer: Optional[Union[str, QueryAnswerType]] = None,
             query_answer_count: Optional[int] = None,
+            query_answer_threshold: Optional[float] = None,
             query_caption: Optional[Union[str, QueryCaptionType]] = None,
             query_caption_highlight: Optional[bool] = None,
             semantic_fields: Optional[List[str]] = None,
@@ -163,6 +167,10 @@ class SearchClient(HeadersMixin):
             top: Optional[int] = None,
             scoring_statistics: Optional[Union[str, ScoringStatistics]] = None,
             session_id: Optional[str] = None,
+            vector:Optional[Vector] = None,
+            semantic_error_handling: Optional[Union[str, SemanticErrorHandling]] = None,
+            semantic_max_wait_in_milliseconds: Optional[int] = None,
+            debug: Optional[Union[str, QueryDebugMode]] = None,
             **kwargs: Any) -> SearchItemPaged[Dict]:
         # pylint:disable=too-many-locals, disable=redefined-builtin
         """Search the Azure search index for documents.
@@ -226,6 +234,8 @@ class SearchClient(HeadersMixin):
         :paramtype query_answer: str or ~azure.search.documents.models.QueryAnswerType
         :keyword int query_answer_count: This parameter is only valid if the query type is 'semantic' and
          query answer is 'extractive'. Configures the number of answers returned. Default count is 1.
+        :keyword float query_answer_threshold: This parameter is only valid if the query type is 'semantic' and
+         query answer is 'extractive'. Configures the number of confidence threshold. Default count is 0.7.
         :keyword query_caption: This parameter is only valid if the query type is 'semantic'. If set, the
          query returns captions extracted from key passages in the highest ranked documents.
          Defaults to 'None'. Possible values include: "none", "extractive".
@@ -258,6 +268,17 @@ class SearchClient(HeadersMixin):
          interfere with the load balancing of the requests across replicas and adversely affect the
          performance of the search service. The value used as sessionId cannot start with a '_'
          character.
+        :keyword semantic_error_handling: Allows the user to choose whether a semantic call should fail
+         completely (default / current behavior), or to return partial results. Known values are:
+         "partial" and "fail".
+        :paramtype semantic_error_handling: str or ~azure.search.documents.models.SemanticErrorHandling
+        :keyword int semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
+         time it takes for semantic enrichment to finish processing before the request fails.
+        :keyword debug: Enables a debugging tool that can be used to further explore your Semantic search
+         results. Known values are: "disabled", "speller", "semantic", and "all".
+        :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
+        :keyword vector: The query parameters for vector and hybrid search queries.
+        :paramtype vector: str or ~azure.search.documents.models.Vector
         :rtype:  SearchItemPaged[Dict]
 
         .. admonition:: Example:
@@ -294,6 +315,9 @@ class SearchClient(HeadersMixin):
         answers = query_answer if not query_answer_count else '{}|count-{}'.format(
             query_answer, query_answer_count
         )
+        answers = answers if not query_answer_threshold else '{}|threshold-{}'.format(
+            answers, query_answer_threshold
+        )
 
         captions = query_caption if not query_caption_highlight else '{}|highlight-{}'.format(
             query_caption, query_caption_highlight
@@ -326,7 +350,11 @@ class SearchClient(HeadersMixin):
             skip=skip,
             top=top,
             session_id=session_id,
-            scoring_statistics=scoring_statistics
+            scoring_statistics=scoring_statistics,
+            vector=vector,
+            semantic_error_handling=semantic_error_handling,
+            semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
+            debug=debug,
         )
         if isinstance(select, list):
             query.select(select)

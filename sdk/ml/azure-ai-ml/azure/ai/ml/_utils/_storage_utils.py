@@ -186,14 +186,14 @@ def get_ds_name_and_path_prefix(asset_uri: str, registry_name: Optional[str] = N
         try:
             split_paths = re.findall(STORAGE_URI_REGEX, asset_uri)
             path_prefix = split_paths[0][3]
-        except Exception:
-            raise Exception("Registry asset URI could not be parsed.")
+        except Exception as e:
+            raise Exception("Registry asset URI could not be parsed.") from e
         ds_name = None
     else:
         try:
             ds_name = asset_uri.split("paths")[0].split("/")[-2]
             path_prefix = asset_uri.split("paths")[1][1:]
-        except Exception:
-            raise Exception("Workspace asset URI could not be parsed.")
+        except Exception as e:
+            raise Exception("Workspace asset URI could not be parsed.") from e
 
     return ds_name, path_prefix

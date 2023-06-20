@@ -125,14 +125,14 @@ class ComponentTranslatableMixin:
                         #  input/output type because we didn't get the component.
                         source_type, _ = cls._find_source_input_output_type(_source._data, pipeline_job_dict)
                 return source_type, source_mode
-            except AttributeError:
+            except AttributeError as e:
                 msg = "Failed to get referenced component type {}."
                 raise JobException(
                     message=msg.format(_input_regex),
                     no_personal_data_message=msg.format("[_input_regex]"),
                     target=ErrorTarget.PIPELINE,
                     error_category=ErrorCategory.USER_ERROR,
-                )
+                ) from e
         if isinstance(_input_job, (CommandJob, ParallelJob)):
             # If source has not parsed to Command yet, infer type
             _source = get(_input_job, f"{_io_type}.{_name}")

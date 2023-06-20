@@ -457,7 +457,7 @@ If your code runs in an environment with a firewall/proxy, ensure that the traff
 - **SessionCannotBeLockedError:** Attempt to connect to a session with a specific session ID, but the session is currently locked by another client.
 Make sure the session is unlocked by other clients.
 - **AutoLockRenewFailed:** An attempt to renew a lock on a message or session in the background has failed.
-This could happen when the receiver used by `AutoLockRenerer` is closed or the lock of the renewable has expired.
+This could happen when the receiver used by `AutoLockRenewer` is closed or the lock of the renewable has expired.
 It is recommended to re-register the renewable message or session by receiving the message or connect to the sessionful entity again.
 - **AutoLockRenewTimeout:** The time allocated to renew the message or session lock has elapsed. You could re-register the object that wants be auto lock renewed or extend the timeout in advance.
 - **ServiceBusError:** All other Service Bus related errors. It is the root error class of all the errors described above.
@@ -480,12 +480,41 @@ For users seeking to perform management operations against ServiceBus (Creating 
 please see the [azure-mgmt-servicebus documentation][service_bus_mgmt_docs] for API documentation.  Terse usage examples can be found
 [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-mgmt-servicebus/tests) as well.
 
+### Pure Python AMQP Transport and Backward Compatibility Support
+
+The Azure Service Bus client library is now based on a pure Python AMQP implementation. `uAMQP` has been removed as required dependency.
+
+To use `uAMQP` as the underlying transport:
+
+1. Install `uamqp` with pip.
+
+```
+$ pip install uamqp
+```
+
+2. Pass `uamqp_transport=True` during client construction.
+
+```python
+from azure.servicebus import ServiceBusClient
+connection_str = '<< CONNECTION STRING FOR THE SERVICE BUS NAMESPACE >>'
+queue_name = '<< NAME OF THE QUEUE >>'
+client = ServiceBusClient.from_connection_string(
+    connection_str, uamqp_transport=True
+)
+```
+
+Note: The `message` attribute on `ServiceBusMessage`/`ServiceBusMessageBatch`/`ServiceBusReceivedMessage`, which previously exposed the `uamqp.Message`, has been deprecated.
+ The "Legacy" objects returned by `message` attribute have been introduced to help facilitate the transition.
+
 ### Building uAMQP wheel from source
 
 `azure-servicebus` depends on the [uAMQP](https://pypi.org/project/uamqp/) for the AMQP protocol implementation.
 uAMQP wheels are provided for most major operating systems and will be installed automatically when installing `azure-servicebus`.
+If [uAMQP](https://pypi.org/project/uamqp/) is intended to be used as the underlying AMQP protocol implementation for `azure-servicebus`,
+uAMQP wheels can be found for most major operating systems.
 
 If you're running on a platform for which uAMQP wheels are not provided, please follow
+If you intend to use `uAMQP` and you're running on a platform for which uAMQP wheels are not provided, please follow
  the [uAMQP Installation](https://github.com/Azure/azure-uamqp-python#installation) guidance to install from source.
 
 ## Contributing

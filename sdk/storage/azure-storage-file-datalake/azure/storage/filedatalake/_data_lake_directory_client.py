@@ -378,14 +378,11 @@ class DataLakeDirectoryClient(PathClient):
         new_file_system, new_path, new_dir_sas = self._parse_rename_path(new_name)
 
         new_directory_client = DataLakeDirectoryClient(
-            "{}://{}".format(self.scheme, self.primary_hostname), new_file_system, directory_name=new_path,
-            credential=self._raw_credential or new_dir_sas,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline)
+            f"{self.scheme}://{self.primary_hostname}", new_file_system, directory_name=new_path,
+            credential=self._raw_credential or new_dir_sas, _hosts=self._hosts, _configuration=self._config,
+            _pipeline=self._pipeline)
         new_directory_client._rename_path(  # pylint: disable=protected-access
-            '/{}/{}{}'.format(quote(unquote(self.file_system_name)),
-                              quote(unquote(self.path_name)),
-                              self._query_str),
-            **kwargs)
+            f'/{quote(unquote(self.file_system_name))}/{quote(unquote(self.path_name))}{self._query_str}', **kwargs)
         return new_directory_client
 
     def create_sub_directory(self, sub_directory,  # type: Union[DirectoryProperties, str]

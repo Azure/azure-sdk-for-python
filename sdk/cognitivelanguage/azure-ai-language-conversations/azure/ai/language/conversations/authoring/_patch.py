@@ -29,14 +29,9 @@ def _authentication_policy(credential):
 
 
 class ConversationAuthoringClient(GeneratedConversationAuthoringClient):
-    """The language service API is a suite of natural language processing (NLP) skills built with
-    best-in-class Microsoft machine learning algorithms. The API can be used to analyze
-    unstructured text for tasks such as sentiment analysis, key phrase extraction, language
-    detection and question answering. Further documentation can be found in
-    https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview.
-
-    See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring for more information about
-    requests and responses you can pass to this client.
+    """The language service conversations API is a suite of natural language processing (NLP) skills
+    that can be used to analyze structured conversations (textual or spoken). Further documentation
+    can be found in https://docs.microsoft.com/azure/cognitive-services/language-service/overview.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
@@ -45,12 +40,11 @@ class ConversationAuthoringClient(GeneratedConversationAuthoringClient):
         This can be the an instance of AzureKeyCredential if using a Language API key
         or a token credential from :mod:`azure.identity`.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Available values are "2022-10-01-preview", "2022-05-15-preview",
-     "2022-05-01". Default value is "2022-10-01-preview". Note that overriding this default value may result in
-     unsupported behavior.
+    :keyword api_version: Api Version. Available values are "2023-04-01" and "2022-05-01". Default value is
+        "2023-04-01". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-     Retry-After header is present.
+        Retry-After header is present.
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:

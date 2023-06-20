@@ -9,7 +9,7 @@ import os
 import typing
 from abc import abstractmethod
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml._restclient.v2023_04_01_preview.models import EndpointComputeType
@@ -32,6 +32,7 @@ from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._assets.environment import Environment
 from azure.ai.ml.entities._deployment.code_configuration import CodeConfiguration
+from azure.ai.ml.entities._deployment.data_collector import DataCollector
 from azure.ai.ml.entities._deployment.deployment_settings import OnlineRequestSettings, ProbeSettings
 from azure.ai.ml.entities._deployment.resource_requirements_settings import ResourceRequirementsSettings
 from azure.ai.ml.entities._deployment.scale_settings import (
@@ -39,7 +40,6 @@ from azure.ai.ml.entities._deployment.scale_settings import (
     OnlineScaleSettings,
     TargetUtilizationScaleSettings,
 )
-from azure.ai.ml.entities._deployment.data_collector import DataCollector
 from azure.ai.ml.entities._endpoint._endpoint_helpers import validate_endpoint_or_deployment_name
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import (
@@ -49,6 +49,7 @@ from azure.ai.ml.exceptions import (
     ValidationErrorType,
     ValidationException,
 )
+
 from .deployment import Deployment
 
 module_logger = logging.getLogger(__name__)
@@ -564,7 +565,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
             else None
         )
 
-        entity = KubernetesOnlineDeployment(
+        return KubernetesOnlineDeployment(
             id=resource.id,
             name=resource.name,
             tags=resource.tags,
@@ -583,9 +584,11 @@ class KubernetesOnlineDeployment(OnlineDeployment):
             endpoint_name=_parse_endpoint_name_from_deployment_id(resource.id),
             instance_count=resource.sku.capacity if resource.sku else None,
             instance_type=deployment.instance_type,
+            data_collector=DataCollector._from_rest_object(deployment.data_collector)
+            if hasattr(deployment, "data_collector") and deployment.data_collector
+            else None,
+            provisioning_state=deployment.provisioning_state if hasattr(deployment, "provisioning_state") else None,
         )
-
-        return OnlineDeployment._filter_datastore_from_rest_object(entity=entity, deployment=deployment)
 
 
 class ManagedOnlineDeployment(OnlineDeployment):
@@ -630,6 +633,11 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :keyword code_path: Equivalent to code_configuration.code, will be ignored if code_configuration is present
         , defaults to None
     :paramtype code_path: typing.Optional[typing.Union[str, os.PathLike]]
+    :keyword scoring_script_path: Equivalent to code_configuration.scoring_script, will be ignored if
+        code_configuration is present, defaults to None
+    :paramtype scoring_script_path: typing.Optional[typing.Union[str, os.PathLike]]
+    :keyword data_collector: Data collector, defaults to None
+    :paramtype data_collector: typing.Optional[typing.List[~azure.ai.ml.entities.DataCollector]]
     """
 
     def __init__(
@@ -656,6 +664,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
         scoring_script: Optional[
             Union[str, os.PathLike]
         ] = None,  # promoted property from code_configuration.scoring_script
+        data_collector: Optional[DataCollector] = None,
         **kwargs,
     ):
         """Managed Online endpoint deployment entity.
@@ -724,6 +733,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
             instance_type=instance_type,
             code_path=code_path,
             scoring_script=scoring_script,
+            data_collector=data_collector,
             **kwargs,
         )
 
@@ -815,7 +825,10 @@ class ManagedOnlineDeployment(OnlineDeployment):
             if hasattr(deployment, "private_network_connection")
             else None,
             egress_public_network_access=deployment.egress_public_network_access,
-            data_collector=DataCollector._from_rest_object(deployment.data_collector),
+            data_collector=DataCollector._from_rest_object(deployment.data_collector)
+            if hasattr(deployment, "data_collector") and deployment.data_collector
+            else None,
+            provisioning_state=deployment.provisioning_state if hasattr(deployment, "provisioning_state") else None,
         )
 
     def _merge_with(self, other: "ManagedOnlineDeployment") -> None:

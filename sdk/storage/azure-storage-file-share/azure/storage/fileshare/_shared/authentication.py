@@ -40,7 +40,7 @@ def _storage_header_sort(input_headers: List[Tuple[str, str]]) -> List[Tuple[str
     custom_weights = "-!#$%&*.^_|~+\"\'(),/`~0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz{}"
 
     # Build dict of tuples and list of keys
-    header_dict = dict()
+    header_dict = {}
     header_keys = []
     for k, v in input_headers:
         header_dict[k] = v
