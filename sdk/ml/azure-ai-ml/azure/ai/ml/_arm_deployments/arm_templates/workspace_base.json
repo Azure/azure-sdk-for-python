@@ -671,7 +671,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'), not(variables('isWorkspaceHub')))]",
             "type": "Microsoft.OperationalInsights/workspaces",
             "tags": "[parameters('tagValues')]",
             "apiVersion": "2020-08-01",
