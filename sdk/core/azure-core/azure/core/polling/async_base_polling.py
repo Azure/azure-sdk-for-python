@@ -37,14 +37,21 @@ from ._async_poller import AsyncPollingMethod
 from ..pipeline._tools import is_rest
 from .. import AsyncPipelineClient
 from ..pipeline import PipelineResponse
-from ..pipeline.transport import HttpRequest as LegacyHttpRequest, AsyncHttpTransport, AsyncHttpResponse as LegacyAsyncHttpResponse
+from ..pipeline.transport import (
+    HttpRequest as LegacyHttpRequest,
+    AsyncHttpTransport,
+    AsyncHttpResponse as LegacyAsyncHttpResponse,
+)
 from ..pipeline.transport._base import _HttpResponseBase as LegacySansIOHttpResponse
 from ..rest import HttpRequest, AsyncHttpResponse
 from ..rest._rest_py3 import _HttpResponseBase as SansIOHttpResponse
 
 HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
 AsyncHTTPResponseType = Union[LegacyAsyncHttpResponse, AsyncHttpResponse]
-AsyncPipelineResponseType = PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]
+LegacyPipelineResponseType = PipelineResponse[LegacyHttpRequest, LegacyAsyncHttpResponse]
+NewPipelineResponseType = PipelineResponse[HttpRequest, AsyncHttpResponse]
+AsyncPipelineResponseType = Union[LegacyPipelineResponseType, NewPipelineResponseType]
+
 
 PollingReturnType = TypeVar("PollingReturnType")
 
@@ -154,16 +161,19 @@ class AsyncLROBasePolling(
             # Need a cast, as "_return_pipeline_response" mutate the return type, and that return type is not
             # declared in the typing of "send_request"
             return cast(
-                AsyncPipelineResponseType,
+                LegacyPipelineResponseType,
                 await self._client.send_request(rest_request, _return_pipeline_response=True, **self._operation_config),
             )
 
         # Legacy HttpRequest and AsyncHttpResponse from azure.core.pipeline.transport
-        # "Type ignore"-ing things here, as we don't want the typing system to know
+        # casting things here, as we don't want the typing system to know
         # about the legacy APIs.
         request = self._client.get(status_link)
-        return await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **self._operation_config
+        return cast(
+            NewPipelineResponseType,
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **self._operation_config
+            ),
         )
 
 

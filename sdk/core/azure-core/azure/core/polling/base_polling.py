@@ -44,7 +44,9 @@ from ..rest._rest_py3 import _HttpResponseBase as SansIOHttpResponse
 
 HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
 HTTPResponseType = Union[LegacySansIOHttpResponse, SansIOHttpResponse]
-PipelineResponseType = PipelineResponse[HTTPRequestType, HTTPResponseType]
+LegacyPipelineResponseType = PipelineResponse[LegacyHttpRequest, LegacySansIOHttpResponse]
+NewPipelineResponseType = PipelineResponse[HttpRequest, SansIOHttpResponse]
+PipelineResponseType = Union[LegacyPipelineResponseType, NewPipelineResponseType]
 
 
 ABC = abc.ABC
@@ -54,7 +56,6 @@ PipelineClientType = TypeVar("PipelineClientType")
 _FINISHED = frozenset(["succeeded", "canceled", "failed"])
 _FAILED = frozenset(["canceled", "failed"])
 _SUCCEEDED = frozenset(["succeeded"])
-
 
 
 def _get_content(response: HTTPResponseType) -> bytes:
@@ -376,7 +377,9 @@ class StatusCheckPolling(LongRunningOperation):
         return None
 
 
-class _SansIOLROBasePolling(Generic[PollingReturnType, PipelineClientType]):  # pylint: disable=too-many-instance-attributes
+class _SansIOLROBasePolling(
+    Generic[PollingReturnType, PipelineClientType]
+):  # pylint: disable=too-many-instance-attributes
     """A base class that has no opinion on IO, to help mypy be accurate."""
 
     _deserialization_callback: Callable[[Any], PollingReturnType]
@@ -422,7 +425,9 @@ class _SansIOLROBasePolling(Generic[PollingReturnType, PipelineClientType]):  # 
         :raises: HttpResponseError if initial status is incorrect LRO state
         """
         self._client = client
-        self._pipeline_response = self._initial_response = initial_response  # pylint: disable=attribute-defined-outside-init
+        self._pipeline_response = (
+            self._initial_response
+        ) = initial_response  # pylint: disable=attribute-defined-outside-init
         self._deserialization_callback = deserialization_callback
 
         for operation in self._lro_algorithms:
@@ -516,7 +521,8 @@ class _SansIOLROBasePolling(Generic[PollingReturnType, PipelineClientType]):  # 
 
 
 class LROBasePolling(
-    _SansIOLROBasePolling[PollingReturnType, "PipelineClient[HTTPRequestType, HTTPResponseType]"], PollingMethod[PollingReturnType]
+    _SansIOLROBasePolling[PollingReturnType, "PipelineClient[HTTPRequestType, HTTPResponseType]"],
+    PollingMethod[PollingReturnType],
 ):  # pylint: disable=too-many-instance-attributes
     """A base LRO poller.
 
@@ -616,16 +622,19 @@ class LROBasePolling(
             # Need a cast, as "_return_pipeline_response" mutate the return type, and that return type is not
             # declared in the typing of "send_request"
             return cast(
-                "PipelineResponseType",
+                PipelineResponseType,
                 self._client.send_request(rest_request, _return_pipeline_response=True, **self._operation_config),
             )
 
         # Legacy HttpRequest and HttpResponse from azure.core.pipeline.transport
-        # "Type ignore"-ing things here, as we don't want the typing system to know
+        # casting things here, as we don't want the typing system to know
         # about the legacy APIs.
         request = self._client.get(status_link)
-        return self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **self._operation_config
+        return cast(
+            LegacyPipelineResponseType,
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **self._operation_config
+            ),
         )
 
 
