@@ -256,7 +256,11 @@ def prepare_local_tool(repo_root: str) -> str:
                 with open(os.path.join(download_folder, "downloaded_version.txt"), "w") as f:
                     f.writelines([target_proxy_version])
 
-            return os.path.abspath(os.path.join(download_folder, target_info["executable"])).replace("\\", "/")
+            executable_path = os.path.join(download_folder, target_info["executable"])
+            # Mark the executable file as executable by all users; Mac drops these permissions during extraction
+            if system == "Darwin":
+                os.chmod(executable_path, 0o755)
+            return os.path.abspath(executable_path).replace("\\", "/")
         else:
             _LOGGER.error(f'There are no available standalone proxy binaries for platform "{machine}".')
             raise Exception(

@@ -7,13 +7,14 @@ import jwt
 import pytest
 import vcr
 import yaml
-from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
-from azure.ai.ml.exceptions import ValidationException
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import HttpResponseError
+from azure.identity import DefaultAzureCredential
 from msrest import Deserializer
 from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
+from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
 from azure.ai.ml._restclient.v2023_04_01_preview import models
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
@@ -22,13 +23,12 @@ from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.automl.training_settings import TrainingSettings
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
+from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.operations import DatastoreOperations, EnvironmentOperations, JobOperations, WorkspaceOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._job_ops_helper import get_git_properties
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.operations._run_operations import RunOperations
-from azure.core.exceptions import HttpResponseError
-from azure.identity import DefaultAzureCredential
 
 from .test_vcr_utils import before_record_cb, vcr_header_filters
 
@@ -147,6 +147,8 @@ class TestJobOperations:
         mock_job_operation.get("randon_name")
         mock_job_operation._operation_2023_02_preview.get.assert_called_once()
 
+    # use mock_component_hash to avoid passing a Mock object as client key
+    @pytest.mark.usefixtures("mock_component_hash")
     @patch.object(JobOperations, "_get_job")
     def test_get_job(self, mock_method, mock_job_operation: JobOperations) -> None:
         from azure.ai.ml import Input, dsl, load_component

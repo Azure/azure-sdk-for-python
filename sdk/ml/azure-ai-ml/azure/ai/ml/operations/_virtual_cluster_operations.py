@@ -85,13 +85,13 @@ class VirtualClusterOperations:
 
         try:
             return get_virtual_clusters_from_subscriptions(self._credentials, subscription_list=subscription_list)
-        except ImportError:
+        except ImportError as e:
             raise UserErrorException(
                 message="Met ImportError when trying to list virtual clusters. "
                 "Please install azure-mgmt-resource to enable this feature; "
                 "and please install azure-mgmt-resource to enable listing virtual clusters "
                 "across all subscriptions a customer has access to."
-            )
+            ) from e
 
     @distributed_trace
     @monitor_with_activity(logger, "VirtualCluster.ListJobs", ActivityType.PUBLICAPI)

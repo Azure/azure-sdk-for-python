@@ -20,7 +20,7 @@ from azure.identity._credentials.azure_cli import AzureCliCredential
 from azure.identity._credentials.azd_cli import AzureDeveloperCliCredential
 from azure.identity._credentials.managed_identity import ManagedIdentityCredential
 import pytest
-from six.moves.urllib_parse import urlparse
+from urllib.parse import urlparse
 
 from helpers import mock_response, Request, validating_transport
 from test_shared_cache_credential import build_aad_response, get_account_event, populated_cache

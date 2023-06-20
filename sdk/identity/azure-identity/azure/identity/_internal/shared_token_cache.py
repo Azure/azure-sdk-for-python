@@ -7,7 +7,6 @@ import platform
 import time
 from typing import Any, Iterable, List, Mapping, Optional, cast
 from urllib.parse import urlparse
-import six
 import msal
 
 from azure.core.credentials import AccessToken
@@ -195,7 +194,7 @@ class SharedTokenCacheBase(ABC):
                     return AccessToken(token["secret"], expires_on)
         except Exception as ex:  # pylint:disable=broad-except
             message = "Error accessing cached data: {}".format(ex)
-            six.raise_from(CredentialUnavailableError(message=message), ex)
+            raise CredentialUnavailableError(message=message) from ex
 
         return None
 
@@ -210,7 +209,7 @@ class SharedTokenCacheBase(ABC):
             return [token["secret"] for token in cache_entries if "secret" in token]
         except Exception as ex:  # pylint:disable=broad-except
             message = "Error accessing cached data: {}".format(ex)
-            six.raise_from(CredentialUnavailableError(message=message), ex)
+            raise CredentialUnavailableError(message=message) from ex
 
     @staticmethod
     def supported() -> bool:

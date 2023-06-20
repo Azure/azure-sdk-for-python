@@ -27,6 +27,7 @@ The following code samples show common scenarios with the Azure Monitor Query cl
 #### Notebook samples
 
 - [Split a large query into multiple smaller queries to avoid hitting service limits](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/notebooks/sample_large_query.ipynb)
+- [Detect anomalies in Azure Monitor log data using machine learning techniques](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/notebooks/sample_machine_learning_sklearn.ipynb)
 
 
 ### Metrics query samples

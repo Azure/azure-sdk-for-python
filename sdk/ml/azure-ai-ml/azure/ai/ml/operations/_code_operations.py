@@ -176,7 +176,7 @@ class CodeOperations(_ScopeDependentOperations):
                         target=ErrorTarget.CODE,
                         no_personal_data_message=CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
                         error_category=ErrorCategory.USER_ERROR,
-                    )
+                    ) from ex
             raise ex
 
     @monitor_with_activity(logger, "Code.Get", ActivityType.PUBLICAPI)

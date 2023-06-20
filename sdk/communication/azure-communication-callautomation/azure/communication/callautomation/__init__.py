@@ -12,6 +12,8 @@ from ._models import (
     ServerCallLocator,
     GroupCallLocator,
     FileSource,
+    TextSource,
+    SsmlSource,
     CallParticipant,
     RecordingProperties,
     AddParticipantResult,
@@ -42,7 +44,8 @@ from ._generated.models._enums import (
     MediaStreamingTransportType,
     DtmfTone,
     CallConnectionState,
-    RecordingState
+    RecordingState,
+    Gender
 )
 __all__ = [
     # clients and parser
@@ -54,6 +57,8 @@ __all__ = [
     "ServerCallLocator",
     "GroupCallLocator",
     "FileSource",
+    "TextSource",
+    "SsmlSource",
     "ChannelAffinity",
 
     # models for output
@@ -87,6 +92,7 @@ __all__ = [
     "MediaStreamingTransportType",
     "DtmfTone",
     "CallConnectionState",
-    "RecordingState"
+    "RecordingState",
+    "Gender"
 ]
 __version__ = VERSION

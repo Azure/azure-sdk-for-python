@@ -79,6 +79,7 @@ class DataCollector:
         if self.request_logging:
             self.request_logging = self.request_logging._to_rest_object()
         if self.collections:
+            rest_collections = {}
             for k, v in self.collections.items():
                 rest_collections[k] = v._to_rest_object()
         return RestDataCollector(

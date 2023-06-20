@@ -19,7 +19,9 @@ Param (
   [Parameter(Mandatory=$True)]
   [string] $repoName,
   [Parameter(Mandatory=$True)]
-  [string] $Language
+  [string] $Language,
+  [Parameter(Mandatory=$False)]
+  [string] $ArtifactName = "packages"
 )
 
 Set-StrictMode -Version 3
@@ -28,7 +30,7 @@ Set-StrictMode -Version 3
 # Submit API review request and return status whether current revision is approved or pending or failed to create review
 function Submit-APIReview($packageArtifactname, $apiLabel, $releaseStatus, $reviewFileName)
 {
-    $params = "buildId=$buildId&artifactName=packages&originalFilePath=$packageArtifactname&reviewFilePath=$reviewFileName"
+    $params = "buildId=$buildId&artifactName=$ArtifactName&originalFilePath=$packageArtifactname&reviewFilePath=$reviewFileName"
     $params += "&label=$apiLabel&repoName=$repoName&packageName=$PackageName&project=internal"
     $uri = "$($APIViewUri)?$params"
     

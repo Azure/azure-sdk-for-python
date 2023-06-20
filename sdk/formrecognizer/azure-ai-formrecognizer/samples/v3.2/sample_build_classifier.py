@@ -33,7 +33,7 @@ def sample_build_classifier():
         DocumentModelAdministrationClient,
         ClassifierDocumentTypeDetails,
         AzureBlobContentSource,
-        AzureBlobFileListSource
+        AzureBlobFileListSource,
     )
     from azure.core.credentials import AzureKeyCredential
 
@@ -41,25 +41,25 @@ def sample_build_classifier():
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     container_sas_url = os.environ["CLASSIFIER_CONTAINER_SAS_URL"]
 
-    document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_model_admin_client = DocumentModelAdministrationClient(
+        endpoint=endpoint, credential=AzureKeyCredential(key)
+    )
 
     # pass either a azure_blob_source or azure_blob_file_list_source
     poller = document_model_admin_client.begin_build_document_classifier(
         doc_types={
             "IRS-1040-A": ClassifierDocumentTypeDetails(
                 azure_blob_source=AzureBlobContentSource(
-                    container_url=container_sas_url,
-                    prefix="IRS-1040-A/train"
+                    container_url=container_sas_url, prefix="IRS-1040-A/train"
                 )
             ),
             "IRS-1040-D": ClassifierDocumentTypeDetails(
                 azure_blob_file_list_source=AzureBlobFileListSource(
-                    container_url=container_sas_url,
-                    file_list="IRS-1040-D.jsonl"
+                    container_url=container_sas_url, file_list="IRS-1040-D.jsonl"
                 )
             ),
         },
-        description="IRS document classifier"
+        description="IRS document classifier",
     )
     result = poller.result()
     print(f"Classifier ID: {result.classifier_id}")
@@ -68,10 +68,14 @@ def sample_build_classifier():
     print(f"Document classes used for training the model:")
     for doc_type, source in result.doc_types.items():
         print(f"Document type: {doc_type}")
-        blob_source = source.azure_blob_source if source.azure_blob_source else source.azure_blob_file_list_source
+        blob_source = (
+            source.azure_blob_source
+            if source.azure_blob_source
+            else source.azure_blob_file_list_source
+        )
         print(f"Container source: {blob_source.container_url}\n")
     # [END build_classifier]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_build_classifier()

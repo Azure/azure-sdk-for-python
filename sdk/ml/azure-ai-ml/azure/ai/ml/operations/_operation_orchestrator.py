@@ -255,7 +255,7 @@ class OperationOrchestrator(object):
                     no_personal_data_message=msg.format(azureml_type, ""),
                     error=e,
                     error_category=ErrorCategory.SYSTEM_ERROR,
-                )
+                ) from e
             return result
         msg = f"Error creating {azureml_type} asset: must be type Optional[Union[str, Asset]]"
         raise ValidationException(
@@ -303,7 +303,7 @@ class OperationOrchestrator(object):
                 no_personal_data_message="Error getting code asset",
                 error=e,
                 error_category=ErrorCategory.SYSTEM_ERROR,
-            )
+            ) from e
 
     def _get_environment_arm_id(self, environment: Environment, register_asset: bool = True) -> Union[str, Environment]:
         if register_asset:
@@ -352,7 +352,7 @@ class OperationOrchestrator(object):
                 no_personal_data_message="Error getting model",
                 error=e,
                 error_category=ErrorCategory.SYSTEM_ERROR,
-            )
+            ) from e
 
     def _get_data_arm_id(self, data_asset: Data, register_asset: bool = True) -> Union[str, Data]:
         self._validate_datastore_name(data_asset.path)
@@ -508,7 +508,7 @@ class OperationOrchestrator(object):
                     datastore_name = datastore_name[len(ARM_ID_PREFIX) :]
 
                 self._datastore_operation.get(datastore_name)
-            except ResourceNotFoundError:
+            except ResourceNotFoundError as e:
                 msg = "The datastore {} could not be found in this workspace."
                 raise ValidationException(
                     message=msg.format(datastore_name),
@@ -516,4 +516,4 @@ class OperationOrchestrator(object):
                     no_personal_data_message=msg.format(""),
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
-                )
+                ) from e
