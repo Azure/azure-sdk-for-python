@@ -332,7 +332,7 @@ class LROPoller(Generic["T"]):
 # Yes:
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
-class LROPoller(Generic[PollingReturnType]):
+class LROPoller(Generic[PollingReturnType_co]):
     ...
 ```
 
