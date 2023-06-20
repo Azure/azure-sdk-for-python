@@ -324,9 +324,9 @@ S = TypeVar("S", bound=str)  # limited to str or any subtype of str
 from typing import TypeVar, Generic
 
 # No:
-T = TypeVar("T")
+T = TypeVar("T", covariant=True)
 
-class LROPoller(Generic["T"], covariant=True):
+class LROPoller(Generic["T"]):
     ...
 
 # Yes:
