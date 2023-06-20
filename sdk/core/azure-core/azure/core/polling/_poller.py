@@ -134,13 +134,8 @@ class LROPoller(Generic[PollingReturnType_co]):
         self,
         client: Any,
         initial_response: Any,
-<<<<<<< HEAD
         deserialization_callback: Callable[[Any], PollingReturnType_co],
         polling_method: PollingMethod[PollingReturnType_co],
-=======
-        deserialization_callback: Callable,
-        polling_method: PollingMethod[PollingReturnType_co],
->>>>>>> origin/main
     ) -> None:
         self._callbacks: List[Callable] = []
         self._polling_method = polling_method

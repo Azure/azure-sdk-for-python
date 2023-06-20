@@ -114,13 +114,8 @@ class AsyncLROPoller(Generic[PollingReturnType_co], Awaitable):
         self,
         client: Any,
         initial_response: Any,
-<<<<<<< HEAD
         deserialization_callback: Callable[[Any], PollingReturnType_co],
         polling_method: AsyncPollingMethod[PollingReturnType_co],
-=======
-        deserialization_callback: Callable,
-        polling_method: AsyncPollingMethod[PollingReturnType_co],
->>>>>>> origin/main
     ):
         self._polling_method = polling_method
         self._done = False
