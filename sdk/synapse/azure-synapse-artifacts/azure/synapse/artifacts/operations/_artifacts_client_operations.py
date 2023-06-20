@@ -36,7 +36,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_execute_change_request(*, user_agent_parameter: str, **kwargs: Any) -> HttpRequest:
+def build_execute_change_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -51,7 +51,6 @@ def build_execute_change_request(*, user_agent_parameter: str, **kwargs: Any) ->
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -59,9 +58,7 @@ def build_execute_change_request(*, user_agent_parameter: str, **kwargs: Any) ->
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_execute_change_with_validation_request(
-    *, validation_type: str, user_agent_parameter: str, **kwargs: Any
-) -> HttpRequest:
+def build_execute_change_with_validation_request(*, validation_type: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -77,7 +74,6 @@ def build_execute_change_with_validation_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -86,11 +82,7 @@ def build_execute_change_with_validation_request(
 
 
 def build_list_databases_request(
-    *,
-    user_agent_parameter: str,
-    continuation_token_parameter: Optional[str] = None,
-    max_page_size: Optional[int] = None,
-    **kwargs: Any
+    *, continuation_token_parameter: Optional[str] = None, max_page_size: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -111,7 +103,6 @@ def build_list_databases_request(
         _params["maxPageSize"] = _SERIALIZER.query("max_page_size", max_page_size, "int")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -121,7 +112,6 @@ def build_list_artifacts_request(
     database_name: str,
     artifact_type: Union[str, _models.SASEntityType],
     *,
-    user_agent_parameter: str,
     continuation_token_parameter: Optional[str] = None,
     max_page_size: Optional[int] = None,
     **kwargs: Any
@@ -151,7 +141,6 @@ def build_list_artifacts_request(
         _params["maxPageSize"] = _SERIALIZER.query("max_page_size", max_page_size, "int")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -162,7 +151,6 @@ def build_list_artifacts_in_schema_by_type_request(
     schema_name: str,
     artifact_type: Union[str, _models.SASEntityType],
     *,
-    user_agent_parameter: str,
     continuation_token_parameter: Optional[str] = None,
     max_page_size: Optional[int] = None,
     **kwargs: Any
@@ -193,7 +181,6 @@ def build_list_artifacts_in_schema_by_type_request(
         _params["maxPageSize"] = _SERIALIZER.query("max_page_size", max_page_size, "int")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -203,7 +190,6 @@ def build_list_partition_infos_for_table_request(
     database_name: str,
     table_name: str,
     *,
-    user_agent_parameter: str,
     continuation_token_parameter: Optional[str] = None,
     max_page_size: Optional[int] = None,
     **kwargs: Any
@@ -233,7 +219,6 @@ def build_list_partition_infos_for_table_request(
         _params["maxPageSize"] = _SERIALIZER.query("max_page_size", max_page_size, "int")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -243,7 +228,6 @@ def build_list_partition_infos_for_view_request(
     database_name: str,
     view_name: str,
     *,
-    user_agent_parameter: str,
     continuation_token_parameter: Optional[str] = None,
     max_page_size: Optional[int] = None,
     **kwargs: Any
@@ -273,7 +257,6 @@ def build_list_partition_infos_for_view_request(
         _params["maxPageSize"] = _SERIALIZER.query("max_page_size", max_page_size, "int")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -284,7 +267,6 @@ def build_list_partition_infos_for_schema_and_table_request(
     schema_name: str,
     table_name: str,
     *,
-    user_agent_parameter: str,
     continuation_token_parameter: Optional[str] = None,
     max_page_size: Optional[int] = None,
     **kwargs: Any
@@ -317,7 +299,6 @@ def build_list_partition_infos_for_schema_and_table_request(
         _params["maxPageSize"] = _SERIALIZER.query("max_page_size", max_page_size, "int")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -328,7 +309,6 @@ def build_list_partition_infos_for_schema_and_view_request(
     schema_name: str,
     view_name: str,
     *,
-    user_agent_parameter: str,
     continuation_token_parameter: Optional[str] = None,
     max_page_size: Optional[int] = None,
     **kwargs: Any
@@ -359,13 +339,12 @@ def build_list_partition_infos_for_schema_and_view_request(
         _params["maxPageSize"] = _SERIALIZER.query("max_page_size", max_page_size, "int")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_database_request(database_name: str, *, user_agent_parameter: str, **kwargs: Any) -> HttpRequest:
+def build_get_database_request(database_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -384,13 +363,12 @@ def build_get_database_request(database_name: str, *, user_agent_parameter: str,
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_put_database_request(database_name: str, *, user_agent_parameter: str, **kwargs: Any) -> HttpRequest:
+def build_put_database_request(database_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -410,7 +388,6 @@ def build_put_database_request(database_name: str, *, user_agent_parameter: str,
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -418,7 +395,7 @@ def build_put_database_request(database_name: str, *, user_agent_parameter: str,
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_database_request(database_name: str, *, user_agent_parameter: str, **kwargs: Any) -> HttpRequest:
+def build_delete_database_request(database_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -437,19 +414,13 @@ def build_delete_database_request(database_name: str, *, user_agent_parameter: s
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_artifact_from_db_request(
-    database_name: str,
-    artifact_type: Union[str, _models.SASEntityType],
-    artifact_name: str,
-    *,
-    user_agent_parameter: str,
-    **kwargs: Any
+    database_name: str, artifact_type: Union[str, _models.SASEntityType], artifact_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -471,7 +442,6 @@ def build_get_artifact_from_db_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -482,7 +452,6 @@ def build_put_artifact_in_db_request(
     artifact_type: Union[str, _models.SASEntityType],
     artifact_name: str,
     *,
-    user_agent_parameter: str,
     continuation_token_parameter: Optional[str] = None,
     max_page_size: Optional[int] = None,
     **kwargs: Any
@@ -514,7 +483,6 @@ def build_put_artifact_in_db_request(
         _params["maxPageSize"] = _SERIALIZER.query("max_page_size", max_page_size, "int")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -523,12 +491,7 @@ def build_put_artifact_in_db_request(
 
 
 def build_delete_artifact_for_db_request(
-    database_name: str,
-    artifact_type: Union[str, _models.SASEntityType],
-    artifact_name: str,
-    *,
-    user_agent_parameter: str,
-    **kwargs: Any
+    database_name: str, artifact_type: Union[str, _models.SASEntityType], artifact_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -550,7 +513,6 @@ def build_delete_artifact_for_db_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
@@ -561,8 +523,6 @@ def build_get_artifact_from_schema_request(
     schema_name: str,
     artifact_type: Union[str, _models.SASEntityType],
     artifact_name: str,
-    *,
-    user_agent_parameter: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -586,7 +546,6 @@ def build_get_artifact_from_schema_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -597,8 +556,6 @@ def build_put_artifact_in_schema_request(
     schema_name: str,
     artifact_type: Union[str, _models.SASEntityType],
     artifact_name: str,
-    *,
-    user_agent_parameter: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -623,7 +580,6 @@ def build_put_artifact_in_schema_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -636,8 +592,6 @@ def build_delete_artifact_from_schema_request(
     schema_name: str,
     artifact_type: Union[str, _models.SASEntityType],
     artifact_name: str,
-    *,
-    user_agent_parameter: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -661,15 +615,12 @@ def build_delete_artifact_from_schema_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_sy_ms_operation_status_request(
-    operation_id: str, *, user_agent_parameter: str, **kwargs: Any
-) -> HttpRequest:
+def build_get_sy_ms_operation_status_request(operation_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -688,7 +639,6 @@ def build_get_sy_ms_operation_status_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["User-Agent"] = _SERIALIZER.header("user_agent_parameter", user_agent_parameter, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -727,7 +677,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
         _json = self._serialize.body(_create_artifacts_payload, "DDLBatch")
 
         request = build_execute_change_request(
-            user_agent_parameter=self._config.user_agent_parameter,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -750,8 +699,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("SyMsapiddlResponses", pipeline_response)
 
@@ -785,7 +733,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         request = build_execute_change_with_validation_request(
             validation_type=validation_type,
-            user_agent_parameter=self._config.user_agent_parameter,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -808,8 +755,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
@@ -922,7 +868,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
         cls: ClsType[_models.QueryArtifactsResponse] = kwargs.pop("cls", None)
 
         request = build_list_databases_request(
-            user_agent_parameter=self._config.user_agent_parameter,
             continuation_token_parameter=continuation_token_parameter,
             max_page_size=max_page_size,
             api_version=api_version,
@@ -945,8 +890,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("QueryArtifactsResponse", pipeline_response)
 
@@ -1002,7 +946,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
         request = build_list_artifacts_request(
             database_name=database_name,
             artifact_type=artifact_type,
-            user_agent_parameter=self._config.user_agent_parameter,
             continuation_token_parameter=continuation_token_parameter,
             max_page_size=max_page_size,
             api_version=api_version,
@@ -1025,8 +968,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("QueryArtifactsResponse", pipeline_response)
 
@@ -1086,7 +1028,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
             database_name=database_name,
             schema_name=schema_name,
             artifact_type=artifact_type,
-            user_agent_parameter=self._config.user_agent_parameter,
             continuation_token_parameter=continuation_token_parameter,
             max_page_size=max_page_size,
             api_version=api_version,
@@ -1109,8 +1050,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("QueryArtifactsResponse", pipeline_response)
 
@@ -1167,7 +1107,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
         request = build_list_partition_infos_for_table_request(
             database_name=database_name,
             table_name=table_name,
-            user_agent_parameter=self._config.user_agent_parameter,
             continuation_token_parameter=continuation_token_parameter,
             max_page_size=max_page_size,
             api_version=api_version,
@@ -1190,8 +1129,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("QueryArtifactsResponse", pipeline_response)
 
@@ -1246,7 +1184,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
         request = build_list_partition_infos_for_view_request(
             database_name=database_name,
             view_name=view_name,
-            user_agent_parameter=self._config.user_agent_parameter,
             continuation_token_parameter=continuation_token_parameter,
             max_page_size=max_page_size,
             api_version=api_version,
@@ -1269,8 +1206,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("QueryArtifactsResponse", pipeline_response)
 
@@ -1329,7 +1265,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
             database_name=database_name,
             schema_name=schema_name,
             table_name=table_name,
-            user_agent_parameter=self._config.user_agent_parameter,
             continuation_token_parameter=continuation_token_parameter,
             max_page_size=max_page_size,
             api_version=api_version,
@@ -1352,8 +1287,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("QueryArtifactsResponse", pipeline_response)
 
@@ -1414,7 +1348,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
             database_name=database_name,
             schema_name=schema_name,
             view_name=view_name,
-            user_agent_parameter=self._config.user_agent_parameter,
             continuation_token_parameter=continuation_token_parameter,
             max_page_size=max_page_size,
             api_version=api_version,
@@ -1437,8 +1370,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("QueryArtifactsResponse", pipeline_response)
 
@@ -1480,7 +1412,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         request = build_get_database_request(
             database_name=database_name,
-            user_agent_parameter=self._config.user_agent_parameter,
             api_version=api_version,
             template_url=self.get_database.metadata["url"],
             headers=_headers,
@@ -1501,8 +1432,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("DatabaseEntity", pipeline_response)
 
@@ -1608,7 +1538,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         request = build_put_database_request(
             database_name=database_name,
-            user_agent_parameter=self._config.user_agent_parameter,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -1632,8 +1561,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("SyMsapiddlResponse", pipeline_response)
 
@@ -1675,7 +1603,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         request = build_delete_database_request(
             database_name=database_name,
-            user_agent_parameter=self._config.user_agent_parameter,
             api_version=api_version,
             template_url=self.delete_database.metadata["url"],
             headers=_headers,
@@ -1696,8 +1623,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
@@ -1742,7 +1668,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
             database_name=database_name,
             artifact_type=artifact_type,
             artifact_name=artifact_name,
-            user_agent_parameter=self._config.user_agent_parameter,
             api_version=api_version,
             template_url=self.get_artifact_from_db.metadata["url"],
             headers=_headers,
@@ -1763,8 +1688,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("MDEntity", pipeline_response)
 
@@ -1922,7 +1846,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
             database_name=database_name,
             artifact_type=artifact_type,
             artifact_name=artifact_name,
-            user_agent_parameter=self._config.user_agent_parameter,
             continuation_token_parameter=continuation_token_parameter,
             max_page_size=max_page_size,
             api_version=api_version,
@@ -1948,8 +1871,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("SyMsapiddlResponse", pipeline_response)
 
@@ -1998,7 +1920,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
             database_name=database_name,
             artifact_type=artifact_type,
             artifact_name=artifact_name,
-            user_agent_parameter=self._config.user_agent_parameter,
             api_version=api_version,
             template_url=self.delete_artifact_for_db.metadata["url"],
             headers=_headers,
@@ -2019,8 +1940,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
@@ -2073,7 +1993,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
             schema_name=schema_name,
             artifact_type=artifact_type,
             artifact_name=artifact_name,
-            user_agent_parameter=self._config.user_agent_parameter,
             api_version=api_version,
             template_url=self.get_artifact_from_schema.metadata["url"],
             headers=_headers,
@@ -2094,8 +2013,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("MDEntity", pipeline_response)
 
@@ -2244,7 +2162,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
             schema_name=schema_name,
             artifact_type=artifact_type,
             artifact_name=artifact_name,
-            user_agent_parameter=self._config.user_agent_parameter,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -2268,8 +2185,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("SyMsapiddlResponse", pipeline_response)
 
@@ -2328,7 +2244,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
             schema_name=schema_name,
             artifact_type=artifact_type,
             artifact_name=artifact_name,
-            user_agent_parameter=self._config.user_agent_parameter,
             api_version=api_version,
             template_url=self.delete_artifact_from_schema.metadata["url"],
             headers=_headers,
@@ -2349,8 +2264,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
@@ -2388,7 +2302,6 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         request = build_get_sy_ms_operation_status_request(
             operation_id=operation_id,
-            user_agent_parameter=self._config.user_agent_parameter,
             api_version=api_version,
             template_url=self.get_sy_ms_operation_status.metadata["url"],
             headers=_headers,
@@ -2409,8 +2322,7 @@ class ArtifactsClientOperationsMixin(ArtifactsClientMixinABC):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudErrorAutoGenerated, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("QueryArtifactsResponse", pipeline_response)
 

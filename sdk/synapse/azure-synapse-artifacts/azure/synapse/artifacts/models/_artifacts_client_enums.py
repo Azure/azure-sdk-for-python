@@ -291,8 +291,8 @@ class DynamicsSinkWriteBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UPSERT = "Upsert"
 
 
-class Enum12(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum12."""
+class Enum13(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum13."""
 
     APPENDBLOCK = "appendblock"
 
