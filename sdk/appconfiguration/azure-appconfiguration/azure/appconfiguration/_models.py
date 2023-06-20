@@ -3,11 +3,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-from typing import Any, Dict, List, Literal, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.rest import HttpResponse
 from ._generated._serialization import Model
 from ._generated.models import KeyValue, Snapshot as GeneratedSnapshot, ConfigurationSettingFilter
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 
 PolymorphicConfigurationSetting = Union[
