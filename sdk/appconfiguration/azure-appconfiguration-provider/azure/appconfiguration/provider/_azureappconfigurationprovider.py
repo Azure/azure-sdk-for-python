@@ -300,9 +300,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             for registration in refresh_registrations:
                 if registration.refresh_all:
                     updated_sentinel = self._client.get_configuration_setting(
-                        key=registration.key_filter, label=registration.label_filter, **kwargs
+                        key=registration.key_filter, label=registration.label_filter, etag=registration.etag, match_condition=MatchConditions.IfModified,  **kwargs
                     )
-                    if registration.etag != updated_sentinel.etag:
+                    if updated_sentinel != None:
                         logging.debug(
                             "Refresh all triggered by key: %s label %s.",
                             registration.key_filter,
@@ -328,9 +328,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             for registration in updated_registrations:
                 if not registration.refresh_all:
                     updated_sentinel = self._client.get_configuration_setting(
-                        key=registration.key_filter, label=registration.label_filter, **kwargs
+                        key=registration.key_filter, label=registration.label_filter, etag=registration.etag, match_condition=MatchConditions.IfModified,  **kwargs
                     )
-                    if registration.etag != updated_sentinel.etag:
+                    if updated_sentinel != None:
                         registration.etag = updated_sentinel.etag
                         updated_dict[self._proccess_key_name(updated_sentinel)] = self._proccess_key_value(
                             updated_sentinel
@@ -494,25 +494,25 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             logging.warning(message, self.attempts, error)
             # Refresh All or None, any failure will trigger a backoff
             # pylint:disable=protected-access
-            self.next_refresh_time = datetime.now() + timedelta(microseconds=self.calculate_backoff())
+            self.next_refresh_time = datetime.now() + timedelta(millisecond=self.calculate_backoff())
             self.attempts += 1
             self.refresh_options._on_error()
 
         def calculate_backoff(self):
             max_attempts = 30
-            microsecond = 1000000  # 1 Second in microseconds
+            millisecond = 1000  # 1 Second in milliseconds
 
-            min_backoff_microseconds = self.min_backoff * microsecond
-            max_backoff_microseconds = self.max_backoff * microsecond
+            min_backoff_milliseconds = self.min_backoff * millisecond
+            max_backoff_milliseconds = self.max_backoff * millisecond
 
             if self.attempts <= 1 or self.max_backoff <= self.min_backoff:
-                return min_backoff_microseconds
+                return min_backoff_milliseconds
 
-            calculated_microseconds = max(1, min_backoff_microseconds) * (1 << min(self.attempts, max_attempts))
+            calculated_milliseconds = max(1, min_backoff_milliseconds) * (1 << min(self.attempts, max_attempts))
 
-            if calculated_microseconds > max_backoff_microseconds or calculated_microseconds <= 0:
-                calculated_microseconds = max_backoff_microseconds
+            if calculated_milliseconds > max_backoff_milliseconds or calculated_milliseconds <= 0:
+                calculated_milliseconds = max_backoff_milliseconds
 
-            return min_backoff_microseconds + (
-                random.uniform(0.0, 1.0) * (calculated_microseconds - min_backoff_microseconds)
+            return min_backoff_milliseconds + (
+                random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)
             )
