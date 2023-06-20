@@ -50,7 +50,7 @@ PipelineResponseType = Union[LegacyPipelineResponseType, NewPipelineResponseType
 
 
 ABC = abc.ABC
-PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType = TypeVar("PollingReturnType", covariant=True)
 PipelineClientType = TypeVar("PipelineClientType")
 
 _FINISHED = frozenset(["succeeded", "canceled", "failed"])

@@ -31,7 +31,7 @@ from ..exceptions import AzureError
 from ._poller import NoPolling as _NoPolling
 
 
-PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType = TypeVar("PollingReturnType", covariant=True)
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -33,7 +33,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
 
 
-PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType = TypeVar("PollingReturnType", covariant=True)
 
 _LOGGER = logging.getLogger(__name__)
 
