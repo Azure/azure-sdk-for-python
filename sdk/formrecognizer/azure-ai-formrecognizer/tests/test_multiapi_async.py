@@ -209,10 +209,6 @@ class TestMultiapi(AsyncFormRecognizerTest):
                 await client.begin_analyze_document("prebuilt-layout", my_file, features=[AnalysisFeature.OCR_FONT])
             assert "Keyword argument 'features' is only available for API version V2023_07_31 and later." == str(excinfo.value)
 
-            with pytest.raises(ValueError) as excinfo:
-                await client.begin_analyze_document("prebuilt-layout", my_file, query_fields=["Charges"])
-            assert "Keyword argument 'query_fields' is only available for API version V2023_07_31 and later." == str(excinfo.value)
-
             # test that the addition of new methods in v2023-07-31 does not break v2022-08-31
             with pytest.raises(ValueError) as excinfo:
                 await client.begin_classify_document("foo", my_file)

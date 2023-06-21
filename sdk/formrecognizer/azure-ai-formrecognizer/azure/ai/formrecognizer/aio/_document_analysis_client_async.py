@@ -90,16 +90,13 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
             See supported locales here: https://aka.ms/azsdk/formrecognizer/supportedlocales.
         :keyword features: Document analysis features to enable.
         :paramtype: list[str or ~azure.ai.formrecognizer.AnalysisFeature]
-        :keyword query_fields: List of additional fields to extract. Examples: "NumberOfGuests,StoreNumber".
-            Default value is None. See https://aka.ms/azsdk/formrecognizer/queryfields for usage.
-        :paramtype: list[str]
         :return: An instance of an AsyncLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.formrecognizer.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: 2023-07-31
-            The *features* and *query_fields* keyword arguments.
+            The *features* keyword argument.
 
         .. admonition:: Example:
 
@@ -129,10 +126,6 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
             if kwargs.pop("features", None):
                 raise ValueError(
                     "Keyword argument 'features' is only available for API version V2023_07_31 and later."
-                )
-            if kwargs.pop("query_fields", None):
-                raise ValueError(
-                    "Keyword argument 'query_fields' is only available for API version V2023_07_31 and later."
                 )
         else:
             _client_op_path = self._client.document_models
@@ -166,16 +159,13 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
             See supported locales here: https://aka.ms/azsdk/formrecognizer/supportedlocales.
         :keyword features: Document analysis features to enable.
         :paramtype: list[str or ~azure.ai.formrecognizer.AnalysisFeature]
-        :keyword query_fields: List of additional fields to extract. Examples: "NumberOfGuests,StoreNumber".
-            Default value is None. See https://aka.ms/azsdk/formrecognizer/queryfields for usage.
-        :paramtype: list[str]
         :return: An instance of an AsyncLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.formrecognizer.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: 2023-07-31
-            The *features* and *query_fields* keyword arguments.
+            The *features* keyword argument.
 
         .. admonition:: Example:
 
@@ -205,10 +195,6 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
             if kwargs.pop("features", None):
                 raise ValueError(
                     "Keyword argument 'features' is only available for API version V2023_07_31 and later."
-                )
-            if kwargs.pop("query_fields", None):
-                raise ValueError(
-                    "Keyword argument 'query_fields' is only available for API version V2023_07_31 and later."
                 )
         else:
             _client_op_path = self._client.document_models

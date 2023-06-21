@@ -1,5 +1,20 @@
 # Release History
 
+## 3.3.0 (Unreleased)
+
+This version of the client library defaults to the service API version `2023-07-31`.
+
+### Features Added
+
+### Breaking Changes
+- Going forward this library defaults to the service API version `2023-07-31`.
+- Removed `query_fields` keyword argument from `begin_analyze_document()` and `begin_analyze_document_from_url()`.
+
+### Bugs Fixed
+
+### Other Changes
+
+
 ## 3.3.0b1 (2023-04-13)
 
 This version of the client library defaults to the service API version `2023-02-28-preview`.
