@@ -871,4 +871,5 @@ class TestContainerRegistryClientUnitTests:
         ) as client:
             manifests = client.list_manifest_properties(HELLO_WORLD)
             for manifest in manifests:
-                pass
+                assert manifest.architecture == "unknown"
+                assert manifest.operating_system == "unknown"
