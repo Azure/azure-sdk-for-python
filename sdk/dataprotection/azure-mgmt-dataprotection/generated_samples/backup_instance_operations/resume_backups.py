@@ -14,7 +14,7 @@ from azure.mgmt.dataprotection import DataProtectionMgmtClient
     pip install azure-identity
     pip install azure-mgmt-dataprotection
 # USAGE
-    python suspend_backups.py
+    python resume_backups.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,13 @@ def main():
         subscription_id="04cf684a-d41f-4550-9f70-7708a3a2283b",
     )
 
-    response = client.backup_instances.begin_suspend_backups(
+    client.backup_instances.begin_resume_backups(
         resource_group_name="testrg",
         vault_name="testvault",
         backup_instance_name="testbi",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/dataprotection/resource-manager/Microsoft.DataProtection/stable/2023-01-01/examples/BackupInstanceOperations/SuspendBackups.json
+# x-ms-original-file: specification/dataprotection/resource-manager/Microsoft.DataProtection/stable/2023-01-01/examples/BackupInstanceOperations/ResumeBackups.json
 if __name__ == "__main__":
     main()
