@@ -7,19 +7,16 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, Optional
 
 from azure.core import PipelineClient
+from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest, HttpResponse
 
-from . import models
+from . import models as _models
 from ._configuration import MapsRenderClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import RenderOperations
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
 
 
 class MapsRenderClient:  # pylint: disable=client-accepts-api-version-keyword
@@ -28,7 +25,7 @@ class MapsRenderClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar render: RenderOperations operations
     :vartype render: azure.maps.render.operations.RenderOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential
     :param client_id: Specifies which account is intended for usage in conjunction with the Azure
      AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved
      from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see
@@ -43,16 +40,16 @@ class MapsRenderClient:  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(
         self,
-        credential: "TokenCredential",
+        credential: AzureKeyCredential,
         client_id: Optional[str] = None,
         *,
         endpoint: str = "https://atlas.microsoft.com",
         **kwargs: Any
     ) -> None:
         self._config = MapsRenderClientConfiguration(credential=credential, client_id=client_id, **kwargs)
-        self._client = PipelineClient(base_url=endpoint, config=self._config, **kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -80,15 +77,12 @@ class MapsRenderClient:  # pylint: disable=client-accepts-api-version-keyword
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> MapsRenderClient
+    def __enter__(self) -> "MapsRenderClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)
