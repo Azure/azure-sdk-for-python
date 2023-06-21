@@ -14,7 +14,7 @@ from azure.mgmt.iothubprovisioningservices import IotDpsClient
     pip install azure-identity
     pip install azure-mgmt-iothubprovisioningservices
 # USAGE
-    python dps_delete_certificate.py
+    python dps_get_private_link_resources.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,14 @@ def main():
         subscription_id="91d12660-3dec-467a-be2a-213b5544ddc0",
     )
 
-    client.dps_certificate.delete(
+    response = client.iot_dps_resource.get_private_link_resources(
         resource_group_name="myResourceGroup",
-        if_match="AAAAAAAADGk=",
-        provisioning_service_name="myFirstProvisioningService",
-        certificate_name="cert",
+        resource_name="myFirstProvisioningService",
+        group_id="iotDps",
     )
+    print(response)
 
 
-# x-ms-original-file: specification/deviceprovisioningservices/resource-manager/Microsoft.Devices/preview/2023-03-01-preview/examples/DPSDeleteCertificate.json
+# x-ms-original-file: specification/deviceprovisioningservices/resource-manager/Microsoft.Devices/preview/2023-03-01-preview/examples/DPSGetPrivateLinkResources.json
 if __name__ == "__main__":
     main()
