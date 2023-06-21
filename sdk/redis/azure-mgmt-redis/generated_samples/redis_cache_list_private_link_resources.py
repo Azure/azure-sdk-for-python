@@ -14,7 +14,7 @@ from azure.mgmt.redis import RedisManagementClient
     pip install azure-identity
     pip install azure-mgmt-redis
 # USAGE
-    python linked_server_list.py
+    python redis_cache_list_private_link_resources.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,17 +26,17 @@ from azure.mgmt.redis import RedisManagementClient
 def main():
     client = RedisManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="{subscription-id}",
     )
 
-    response = client.linked_server.list(
-        resource_group_name="rg1",
-        name="cache1",
+    response = client.private_link_resources.list_by_redis_cache(
+        resource_group_name="rgtest01",
+        cache_name="cacheTest01",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/redis/resource-manager/Microsoft.Cache/stable/2022-06-01/examples/RedisCacheLinkedServer_List.json
+# x-ms-original-file: specification/redis/resource-manager/Microsoft.Cache/stable/2023-04-01/examples/RedisCacheListPrivateLinkResources.json
 if __name__ == "__main__":
     main()
