@@ -10,6 +10,8 @@ This version of the client library defaults to the service API version `2023-07-
 - Going forward this library defaults to the service API version `2023-07-31`.
 - Removed `query_fields` keyword argument from `begin_analyze_document()` and `begin_analyze_document_from_url()`.
 - Removed `kind` property from `DocumentPage`.
+- Removed `images` property from `DocumentPage`.
+- Removed `DocumentImage` model.
 
 ### Bugs Fixed
 

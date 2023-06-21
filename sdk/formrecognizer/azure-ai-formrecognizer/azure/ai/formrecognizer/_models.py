@@ -3075,78 +3075,11 @@ class DocumentFormula:
         )
 
 
-class DocumentImage:
-    """An image object detected in the page."""
-
-    page_number: int
-    """1-based page number of the page that contains the image."""
-    polygon: Sequence[Point]
-    """Bounding polygon of the image."""
-    span: DocumentSpan
-    """Location of the image in the reading order concatenated content."""
-    confidence: float
-    """Confidence of correctly identifying the image."""
-
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.page_number = kwargs.get("page_number", None)
-        self.polygon = kwargs.get("polygon", None)
-        self.span = kwargs.get("span", None)
-        self.confidence = kwargs.get("confidence", None)
-
-    @classmethod
-    def _from_generated(cls, image):
-        return cls(
-            page_number=image.page_number,
-            span=DocumentSpan._from_generated(image.span)
-            if image.span
-            else None,
-            polygon=get_polygon(image) if image.polygon else [],
-            confidence=image.confidence
-        )
-
-    def __repr__(self) -> str:
-        return (
-            f"DocumentImage(page_number={self.page_number}, polygon={self.polygon}, confidence={self.confidence}, "
-            f"span={repr(self.span)})"
-        )
-
-    def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of DocumentImage."""
-        return {
-            "page_number": self.page_number,
-            "polygon": [f.to_dict() for f in self.polygon]
-            if self.polygon
-            else [],
-            "confidence": self.confidence,
-            "span": self.span.to_dict() if self.span else None,
-        }
-
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "DocumentImage":
-        """Converts a dict in the shape of a DocumentImage to the model itself.
-
-        :param Dict data: A dictionary in the shape of DocumentImage.
-        :return: DocumentImage
-        :rtype: DocumentImage
-        """
-        return cls(
-            page_number=data.get("page_number", None),
-            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
-            if len(data.get("polygon", [])) > 0
-            else [],
-            confidence=data.get("confidence", None),
-            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
-        )
-
-
 class DocumentPage:  # pylint: disable=too-many-instance-attributes
     """Content and layout elements extracted from a page of the input.
 
     .. versionadded:: 2023-07-31
-        The *annotations*, *barcodes*, *formulas*, and *images* properties.
+        The *annotations*, *barcodes*, and *formulas* properties.
     """
 
     page_number: int
@@ -3177,8 +3110,6 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
     """Extracted barcodes from the page."""
     formulas: List[DocumentFormula]
     """Extracted formulas from the page"""
-    images: List[DocumentImage]
-    """Extracted images from the page."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.page_number = kwargs.get("page_number", None)
@@ -3193,14 +3124,12 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
         self.annotations = kwargs.get("annotations", None)
         self.barcodes = kwargs.get("barcodes", None)
         self.formulas = kwargs.get("formulas", None)
-        self.images = kwargs.get("images", None)
 
     @classmethod
     def _from_generated(cls, page):
         annotations = page.annotations if hasattr(page, "annotations") else None
         barcodes = page.barcodes if hasattr(page, "barcodes") else None
         formulas = page.formulas if hasattr(page, "formulas") else None
-        images = page.images if hasattr(page, "images") else None
 
         return cls(
             page_number=page.page_number,
@@ -3240,12 +3169,6 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             ]
             if formulas
             else [],
-            images=[
-                DocumentImage._from_generated(image)
-                for image in images
-            ]
-            if images
-            else [],
         )
 
     def __repr__(self) -> str:
@@ -3254,7 +3177,7 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             f"width={self.width}, height={self.height}, unit={self.unit}, lines={repr(self.lines)}, "
             f"words={repr(self.words)}, selection_marks={repr(self.selection_marks)}, "
             f"spans={repr(self.spans)}, annotations={repr(self.annotations)}, "
-            f"barcodes={repr(self.barcodes)}, formulas={repr(self.formulas)}, images={repr(self.images)})"
+            f"barcodes={repr(self.barcodes)}, formulas={repr(self.formulas)})"
         )
 
     def to_dict(self) -> Dict:
@@ -3285,9 +3208,6 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             else [],
             "formulas": [f.to_dict() for f in self.formulas]
             if self.formulas
-            else [],
-            "images": [f.to_dict() for f in self.images]
-            if self.images
             else [],
         }
 
@@ -3325,9 +3245,6 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             else [],
             formulas=[DocumentFormula.from_dict(v) for v in data.get("formulas")]  # type: ignore
             if len(data.get("formulas", [])) > 0
-            else [],
-            images=[DocumentImage.from_dict(v) for v in data.get("images")]  # type: ignore
-            if len(data.get("images", [])) > 0
             else [],
         )
 

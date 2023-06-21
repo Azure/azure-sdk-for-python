@@ -736,19 +736,6 @@ class TestToDict(FormRecognizerTest):
                     span=_models.DocumentSpan(offset=5, length=2),
                     confidence=0.8
                 )
-            ],
-            images=[
-                _models.DocumentImage(
-                    page_number=1,
-                    polygon=[
-                        _models.Point(1427.0, 1669.0),
-                        _models.Point(1527.0, 1669.0),
-                        _models.Point(1527.0, 1698.0),
-                        _models.Point(1427.0, 1698.0),
-                    ],
-                    span=_models.DocumentSpan(offset=5, length=2),
-                    confidence=0.8
-                )
             ]
         )
 
@@ -859,22 +846,6 @@ class TestToDict(FormRecognizerTest):
                         "length": 2
                     },
                     "value": "2+2=4"
-                }
-            ],
-            "images": [
-                {
-                    "page_number": 1,
-                    "polygon": [
-                        {"x": 1427.0, "y": 1669.0},
-                        {"x": 1527.0, "y": 1669.0},
-                        {"x": 1527.0, "y": 1698.0},
-                        {"x": 1427.0, "y": 1698.0}
-                    ],
-                    "confidence": 0.8,
-                    "span": {
-                        "offset": 5,
-                        "length": 2
-                    }
                 }
             ]
         }
@@ -1335,19 +1306,6 @@ class TestToDict(FormRecognizerTest):
                             span=_models.DocumentSpan(offset=5, length=2),
                             confidence=0.8
                         )
-                    ],
-                    images=[
-                        _models.DocumentImage(
-                            page_number=1,
-                            polygon=[
-                                _models.Point(1427.0, 1669.0),
-                                _models.Point(1527.0, 1669.0),
-                                _models.Point(1527.0, 1698.0),
-                                _models.Point(1427.0, 1698.0),
-                            ],
-                            span=_models.DocumentSpan(offset=5, length=2),
-                            confidence=0.8
-                        )
                     ]
                 ),
             ],
@@ -1623,22 +1581,6 @@ class TestToDict(FormRecognizerTest):
                                 "length": 2
                             },
                             "value": "2+2=4"
-                        }
-                    ],
-                    "images": [
-                        {
-                            "page_number": 1,
-                            "polygon": [
-                                {"x": 1427.0, "y": 1669.0},
-                                {"x": 1527.0, "y": 1669.0},
-                                {"x": 1527.0, "y": 1698.0},
-                                {"x": 1427.0, "y": 1698.0}
-                            ],
-                            "confidence": 0.8,
-                            "span": {
-                                "offset": 5,
-                                "length": 2
-                            }
                         }
                     ]
                 },
