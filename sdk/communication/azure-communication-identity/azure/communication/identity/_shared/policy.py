@@ -15,7 +15,13 @@ from .utils import get_current_utc_time
 
 
 class HMACCredentialsPolicy(SansIOHTTPPolicy):
-    """Implementation of HMAC authentication policy."""
+    """Implementation of HMAC authentication policy.
+
+    :param str host: The host of the endpoint url for Azure Communication Service resource
+    :param access_key: The access key we use to authenticate to the service
+    :type access_key: Union[str, AzureKeyCredential]
+    :param bool decode_url: `True` if there is a need to decode the url. Default value is `False`
+    """
 
     def __init__(
         self,

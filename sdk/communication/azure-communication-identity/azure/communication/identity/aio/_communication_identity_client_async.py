@@ -50,8 +50,8 @@ class CommunicationIdentityClient:
         try:
             if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as err:
+            raise ValueError("Account URL must be a string.") from err
 
         if not credential:
             raise ValueError("You need to provide account shared key to authenticate.")

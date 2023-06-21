@@ -21,15 +21,18 @@ def get_authentication_policy(
     is_async=False,  # type: bool
 ):
     # type: (...) -> Union[AsyncBearerTokenCredentialPolicy, BearerTokenCredentialPolicy, HMACCredentialsPolicy]
-    """Returns the correct authentication policy based
-    on which credential is being passed.
+    """Returns the correct authentication policy based on which credential is being passed.
+
     :param endpoint: The endpoint to which we are authenticating to.
     :type endpoint: str
     :param credential: The credential we use to authenticate to the service
-    :type credential: Union[TokenCredential, AzureKeyCredential, str]
-    :param isAsync: For async clients there is a need to decode the url
-    :type bool: isAsync or str
-    :rtype: ~azure.core.pipeline.policies.BearerTokenCredentialPolicy or
+    :type credential: Union[TokenCredential, AsyncTokenCredential, AzureKeyCredential, str]
+    :param bool decode_url: `True` if there is a need to decode the url. Default value is `False`
+    :param bool is_async: For async clients there is a need to decode the url
+
+    :return: Either AsyncBearerTokenCredentialPolicy or BearerTokenCredentialPolicy or HMACCredentialsPolicy
+    :rtype: ~azure.core.pipeline.policies.AsyncBearerTokenCredentialPolicy or
+    ~azure.core.pipeline.policies.BearerTokenCredentialPolicy or
     ~azure.communication.chat.shared.policy.HMACCredentialsPolicy
     """
 
@@ -47,6 +50,6 @@ def get_authentication_policy(
         return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
 
     raise TypeError(
-        "Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
-        "or a token credential from azure.identity".format(type(credential))
+        f"Unsupported credential: {type(credential)}. Use an access token string to use HMACCredentialsPolicy"
+        "or a token credential from azure.identity"
     )

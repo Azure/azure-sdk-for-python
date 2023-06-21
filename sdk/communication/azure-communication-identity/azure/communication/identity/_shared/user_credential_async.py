@@ -55,6 +55,7 @@ class CommunicationTokenCredential(object):
     async def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
         # type (*str, **Any) -> AccessToken
         """The value of the configured token.
+        :return: AccessToken
         :rtype: ~azure.core.credentials.AccessToken
         """
         if self._proactive_refresh and self._is_closed.is_set():
