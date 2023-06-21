@@ -29,14 +29,13 @@ def main():
         subscription_id="mySubscriptionId",
     )
 
-    response = client.mongo_db_resources.begin_delete_mongo_role_definition(
+    client.mongo_db_resources.begin_delete_mongo_role_definition(
         mongo_role_definition_id="myMongoRoleDefinitionId",
         resource_group_name="myResourceGroupName",
         account_name="myAccountName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-04-15/examples/CosmosDBMongoDBRoleDefinitionDelete.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBMongoDBRoleDefinitionDelete.json
 if __name__ == "__main__":
     main()
