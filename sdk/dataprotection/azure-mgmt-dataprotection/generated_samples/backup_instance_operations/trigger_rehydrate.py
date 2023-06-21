@@ -29,7 +29,7 @@ def main():
         subscription_id="04cf684a-d41f-4550-9f70-7708a3a2283b",
     )
 
-    response = client.backup_instances.begin_trigger_rehydrate(
+    client.backup_instances.begin_trigger_rehydrate(
         resource_group_name="000pikumar",
         vault_name="PratikPrivatePreviewVault1",
         backup_instance_name="testInstance1",
@@ -39,7 +39,6 @@ def main():
             "rehydrationRetentionDuration": "7D",
         },
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/dataprotection/resource-manager/Microsoft.DataProtection/stable/2023-01-01/examples/BackupInstanceOperations/TriggerRehydrate.json

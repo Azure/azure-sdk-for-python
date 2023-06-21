@@ -14,7 +14,7 @@ from azure.mgmt.dataprotection import DataProtectionMgmtClient
     pip install azure-identity
     pip install azure-mgmt-dataprotection
 # USAGE
-    python undelete_deleted_backup_instance.py
+    python trigger_export_jobs.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,17 +26,15 @@ from azure.mgmt.dataprotection import DataProtectionMgmtClient
 def main():
     client = DataProtectionMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="04cf684a-d41f-4550-9f70-7708a3a2283b",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.deleted_backup_instances.begin_undelete(
-        resource_group_name="testrg",
-        vault_name="testvault",
-        backup_instance_name="testbi",
+    client.export_jobs.begin_trigger(
+        resource_group_name="SwaggerTestRg",
+        vault_name="NetSDKTestRsVault",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/dataprotection/resource-manager/Microsoft.DataProtection/stable/2023-01-01/examples/DeletedBackupInstanceOperations/UndeleteDeletedBackupInstance.json
+# x-ms-original-file: specification/dataprotection/resource-manager/Microsoft.DataProtection/stable/2023-01-01/examples/JobCRUD/TriggerExportJobs.json
 if __name__ == "__main__":
     main()
