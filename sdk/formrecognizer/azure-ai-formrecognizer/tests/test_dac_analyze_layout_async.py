@@ -34,7 +34,7 @@ class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
                 poller = await client.begin_analyze_document(
                     "prebuilt-layout",
                     document,
-                    features=AnalysisFeature.OCR_FONT
+                    features=AnalysisFeature.STYLE_FONT
                 )
 
     @skip_flaky_test
@@ -57,7 +57,7 @@ class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
             poller = await client.begin_analyze_document(
                 "prebuilt-layout",
                 document,
-                features=[AnalysisFeature.OCR_FONT],
+                features=[AnalysisFeature.STYLE_FONT],
                 cls=callback
             )
             result = await poller.result()

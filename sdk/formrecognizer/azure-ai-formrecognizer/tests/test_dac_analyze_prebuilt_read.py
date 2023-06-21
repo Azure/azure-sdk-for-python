@@ -27,7 +27,7 @@ class TestDACAnalyzeRead(FormRecognizerTest):
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
     def test_document_read_url_features_formulas(self, client):
-        poller = client.begin_analyze_document_from_url("prebuilt-read", self.formula_url_jpg, features=[AnalysisFeature.OCR_FORMULA])
+        poller = client.begin_analyze_document_from_url("prebuilt-read", self.formula_url_jpg, features=[AnalysisFeature.FORMULAS])
         result = poller.result()
         assert len(result.pages) > 0
         assert len(result.pages[0].formulas) == 2

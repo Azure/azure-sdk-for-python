@@ -33,7 +33,7 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
             poller = client.begin_analyze_document(
                 "prebuilt-layout",
                 document,
-                features=AnalysisFeature.OCR_FONT
+                features=AnalysisFeature.STYLE_FONT
             )
 
     @skip_flaky_test
@@ -55,7 +55,7 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
-            features=[AnalysisFeature.OCR_FONT],
+            features=[AnalysisFeature.STYLE_FONT],
             cls=callback)
         result = poller.result()
         raw_analyze_result = responses[0].analyze_result

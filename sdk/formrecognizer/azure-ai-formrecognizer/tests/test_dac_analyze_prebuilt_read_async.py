@@ -28,7 +28,7 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
     @recorded_by_proxy_async
     async def test_document_read_url_features_formulas(self, client):
         async with client:
-            poller = await client.begin_analyze_document_from_url("prebuilt-read", self.formula_url_jpg, features=[AnalysisFeature.OCR_FORMULA])
+            poller = await client.begin_analyze_document_from_url("prebuilt-read", self.formula_url_jpg, features=[AnalysisFeature.FORMULAS])
             result = await poller.result()
         assert len(result.pages) > 0
         assert len(result.pages[0].formulas) == 2

@@ -173,13 +173,17 @@ class AnalysisFeature(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Document analysis features to enable."""
 
     #: Perform OCR at a higher resolution to handle documents with fine print.
-    OCR_HIGH_RESOLUTION = "ocr.highResolution"
-    #: Enable the detection of mathematical expressions the document.
-    OCR_FORMULA = "ocr.formula"
+    OCR_HIGH_RESOLUTION = "ocrHighResolution"
+    #: Enable the detection of the text content language.
+    LANGUAGES = "languages"
+    #: Enable the detection of barcodes in the document.
+    BARCODES = "barcodes"
+    #: Enable the detection of mathematical expressions in the document.
+    FORMULAS = "formulas"
+    #: Enable the detection of general key value pairs (form fields) in the document.
+    KEY_VALUE_PAIRS = "keyValuePairs"
     #: Enable the recognition of various font styles.
-    OCR_FONT = "ocr.font"
-    #: Enable extraction of additional fields via the queryFields query parameter.
-    QUERY_FIELDS_PREMIUM = "queryFields.premium"
+    STYLE_FONT = "styleFont"
 
 
 class ModelBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -60,7 +60,7 @@ def analyze_read():
     )
     with open(path_to_sample_documents, "rb") as f:
         poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-read", document=f, features=[AnalysisFeature.OCR_FONT]
+            "prebuilt-read", document=f, features=[AnalysisFeature.STYLE_FONT]
         )
     result = poller.result()
 
