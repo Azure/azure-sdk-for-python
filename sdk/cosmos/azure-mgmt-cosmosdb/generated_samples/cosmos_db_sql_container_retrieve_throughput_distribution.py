@@ -14,7 +14,7 @@ from azure.mgmt.cosmosdb import CosmosDBManagementClient
     pip install azure-identity
     pip install azure-mgmt-cosmosdb
 # USAGE
-    python cosmos_db_collection_partition_get_metrics.py
+    python cosmos_db_sql_container_retrieve_throughput_distribution.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,17 +29,18 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.collection_partition.list_metrics(
+    response = client.sql_resources.begin_sql_container_retrieve_throughput_distribution(
         resource_group_name="rg1",
         account_name="ddb1",
-        database_rid="databaseRid",
-        collection_rid="collectionRid",
-        filter="$filter=(name.value eq 'Max RUs Per Second') and timeGrain eq duration'PT1M' and startTime eq '2017-11-19T23:53:55.2780000Z' and endTime eq '2017-11-20T23:58:55.2780000Z",
-    )
-    for item in response:
-        print(item)
+        database_name="databaseName",
+        container_name="containerName",
+        retrieve_throughput_parameters={
+            "properties": {"resource": {"physicalPartitionIds": [{"id": "0"}, {"id": "1"}]}}
+        },
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-04-15/examples/CosmosDBCollectionPartitionGetMetrics.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBSqlContainerRetrieveThroughputDistribution.json
 if __name__ == "__main__":
     main()

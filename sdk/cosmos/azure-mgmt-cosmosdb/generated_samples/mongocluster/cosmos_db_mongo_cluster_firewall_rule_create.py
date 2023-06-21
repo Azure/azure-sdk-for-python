@@ -14,7 +14,7 @@ from azure.mgmt.cosmosdb import CosmosDBManagementClient
     pip install azure-identity
     pip install azure-mgmt-cosmosdb
 # USAGE
-    python cosmos_db_collection_get_metrics.py
+    python cosmos_db_mongo_cluster_firewall_rule_create.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,20 +26,18 @@ from azure.mgmt.cosmosdb import CosmosDBManagementClient
 def main():
     client = CosmosDBManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.collection.list_metrics(
-        resource_group_name="rg1",
-        account_name="ddb1",
-        database_rid="databaseRid",
-        collection_rid="collectionRid",
-        filter="$filter=(name.value eq 'Total Requests') and timeGrain eq duration'PT5M' and startTime eq '2017-11-19T23:53:55.2780000Z' and endTime eq '2017-11-20T00:13:55.2780000Z",
-    )
-    for item in response:
-        print(item)
+    response = client.mongo_clusters.begin_create_or_update_firewall_rule(
+        resource_group_name="TestGroup",
+        mongo_cluster_name="myMongoCluster",
+        firewall_rule_name="rule1",
+        parameters={"properties": {"endIpAddress": "255.255.255.255", "startIpAddress": "0.0.0.0"}},
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-04-15/examples/CosmosDBCollectionGetMetrics.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/mongo-cluster/CosmosDBMongoClusterFirewallRuleCreate.json
 if __name__ == "__main__":
     main()
