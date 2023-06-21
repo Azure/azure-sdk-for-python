@@ -3146,7 +3146,7 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
     """Content and layout elements extracted from a page of the input.
 
     .. versionadded:: 2023-07-31
-        The *kind*, *annotations*, *barcodes*, *formulas*, and *images* properties.
+        The *annotations*, *barcodes*, *formulas*, and *images* properties.
     """
 
     page_number: int
@@ -3171,9 +3171,6 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
     lines: Optional[List[DocumentLine]]
     """Extracted lines from the page, potentially containing both textual and
      visual elements."""
-    kind: str
-    """Kind of document page. Known values are: "document", "sheet", "slide",
-     "image"."""
     annotations: List[DocumentAnnotation]
     """Extracted annotations from the page."""
     barcodes: List[DocumentBarcode]
@@ -3193,7 +3190,6 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
         self.words = kwargs.get("words", None)
         self.selection_marks = kwargs.get("selection_marks", None)
         self.lines = kwargs.get("lines", None)
-        self.kind = kwargs.get("kind", None)
         self.annotations = kwargs.get("annotations", None)
         self.barcodes = kwargs.get("barcodes", None)
         self.formulas = kwargs.get("formulas", None)
@@ -3201,7 +3197,6 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
 
     @classmethod
     def _from_generated(cls, page):
-        kind = page.kind if hasattr(page, "kind") else None
         annotations = page.annotations if hasattr(page, "annotations") else None
         barcodes = page.barcodes if hasattr(page, "barcodes") else None
         formulas = page.formulas if hasattr(page, "formulas") else None
@@ -3227,7 +3222,6 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             if page.selection_marks
             else [],
             spans=prepare_document_spans(page.spans),
-            kind=kind,
             annotations=[
                 DocumentAnnotation._from_generated(annotation)
                 for annotation in annotations
@@ -3259,7 +3253,7 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             f"DocumentPage(page_number={self.page_number}, angle={self.angle}, "
             f"width={self.width}, height={self.height}, unit={self.unit}, lines={repr(self.lines)}, "
             f"words={repr(self.words)}, selection_marks={repr(self.selection_marks)}, "
-            f"spans={repr(self.spans)}, kind={self.kind}, annotations={repr(self.annotations)}, "
+            f"spans={repr(self.spans)}, annotations={repr(self.annotations)}, "
             f"barcodes={repr(self.barcodes)}, formulas={repr(self.formulas)}, images={repr(self.images)})"
         )
 
@@ -3283,7 +3277,6 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             "spans": [f.to_dict() for f in self.spans]
             if self.spans
             else [],
-            "kind": self.kind,
             "annotations": [f.to_dict() for f in self.annotations]
             if self.annotations
             else [],
@@ -3324,7 +3317,6 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
             if len(data.get("spans", [])) > 0
             else [],
-            kind=data.get("kind", None),
             annotations=[DocumentAnnotation.from_dict(v) for v in data.get("annotations")]  # type: ignore
             if len(data.get("annotations", [])) > 0
             else [],

@@ -697,7 +697,6 @@ class TestToDict(FormRecognizerTest):
                     ],
                 ),
             ],
-            kind="document",
             annotations=[
                 _models.DocumentAnnotation(
                     kind="check",
@@ -816,7 +815,6 @@ class TestToDict(FormRecognizerTest):
                     ],
                 },
             ],
-            "kind": "document",
             "annotations": [
                 {
                     "kind": "check",
@@ -1298,7 +1296,6 @@ class TestToDict(FormRecognizerTest):
                             spans=[_models.DocumentSpan(offset=5, length=2)],
                         ),
                     ],
-                    kind="document",
                     annotations=[
                         _models.DocumentAnnotation(
                             kind="check",
@@ -1582,7 +1579,6 @@ class TestToDict(FormRecognizerTest):
                             ],
                         },
                     ],
-                    "kind": "document",
                     "annotations": [
                         {
                             "kind": "check",
