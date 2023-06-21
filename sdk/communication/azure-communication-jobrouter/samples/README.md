@@ -13,7 +13,7 @@ description: Samples for the azure-communication-jobrouter client library
 # Azure Communication JobRouter client SDK Samples
 
 - Authentication
-  - [RouterClient and RouterAdministrationClient][sample_authentication]([async version][sample_authentication_async])
+  - [JobRouterClient and JobRouterAdministrationClient][sample_authentication]([async version][sample_authentication_async])
     - Create client from connection string
 
 - Crud operations

@@ -32,11 +32,11 @@ class JobQueueSamples(object):
         distribution_policy_id = self._distribution_policy_id
 
         from azure.communication.jobrouter import (
-            RouterAdministrationClient,
+            JobRouterAdministrationClient,
             LongestIdleMode,
             DistributionPolicy
         )
-        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
         distribution_policy = router_admin_client.create_distribution_policy(
             distribution_policy_id = distribution_policy_id,
             distribution_policy = DistributionPolicy(
@@ -55,13 +55,13 @@ class JobQueueSamples(object):
         distribution_policy_id = self._distribution_policy_id
         # [START create_queue]
         from azure.communication.jobrouter import (
-            RouterAdministrationClient,
+            JobRouterAdministrationClient,
             JobQueue,
         )
 
         # set `connection_string` to an existing ACS endpoint
-        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
-        print("RouterAdministrationClient created successfully!")
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        print("JobRouterAdministrationClient created successfully!")
 
         job_queue: JobQueue = router_admin_client.create_queue(
             queue_id = job_queue_id,
@@ -80,13 +80,13 @@ class JobQueueSamples(object):
         job_queue_id = self._job_queue_id
         # [START update_queue]
         from azure.communication.jobrouter import (
-            RouterAdministrationClient,
+            JobRouterAdministrationClient,
             JobQueue,
         )
 
         # set `connection_string` to an existing ACS endpoint
-        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
-        print("RouterAdministrationClient created successfully!")
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        print("JobRouterAdministrationClient created successfully!")
 
         updated_job_queue: JobQueue = router_admin_client.update_queue(
             queue_id = job_queue_id,
@@ -102,9 +102,9 @@ class JobQueueSamples(object):
         connection_string = self.endpoint
         job_queue_id = self._job_queue_id
         # [START get_queue]
-        from azure.communication.jobrouter import RouterAdministrationClient
+        from azure.communication.jobrouter import JobRouterAdministrationClient
 
-        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
         job_queue = router_admin_client.get_queue(queue_id = job_queue_id)
 
@@ -117,11 +117,11 @@ class JobQueueSamples(object):
 
         # [START get_queue_statistics]
         from azure.communication.jobrouter import (
-            RouterClient,
+            JobRouterClient,
             QueueStatistics
         )
 
-        router_client: RouterClient = RouterClient.from_connection_string(conn_str = connection_string)
+        router_client: JobRouterClient = JobRouterClient.from_connection_string(conn_str = connection_string)
 
         job_queue_statistics: QueueStatistics = router_client.get_queue_statistics(queue_id = job_queue_id)
 
@@ -131,9 +131,9 @@ class JobQueueSamples(object):
     def list_queues(self):
         connection_string = self.endpoint
         # [START list_queues]
-        from azure.communication.jobrouter import RouterAdministrationClient
+        from azure.communication.jobrouter import JobRouterAdministrationClient
 
-        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
         job_queue_iterator = router_admin_client.list_queues()
 
@@ -146,9 +146,9 @@ class JobQueueSamples(object):
     def list_queues_batched(self):
         connection_string = self.endpoint
         # [START list_queues_batched]
-        from azure.communication.jobrouter import RouterAdministrationClient
+        from azure.communication.jobrouter import JobRouterAdministrationClient
 
-        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
         job_queue_iterator = router_admin_client.list_queues(results_per_page = 10)
 
@@ -167,9 +167,9 @@ class JobQueueSamples(object):
         job_queue_id = self._job_queue_id
 
         # [START delete_queue]
-        from azure.communication.jobrouter import RouterAdministrationClient
+        from azure.communication.jobrouter import JobRouterAdministrationClient
 
-        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
         router_admin_client.delete_queue(queue_id = job_queue_id)
 

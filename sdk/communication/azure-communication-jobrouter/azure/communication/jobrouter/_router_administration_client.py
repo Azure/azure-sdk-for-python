@@ -57,7 +57,7 @@ from ._api_versions import DEFAULT_VERSION
 _SERIALIZER = Serializer()
 
 
-class RouterAdministrationClient(object):  # pylint:disable=too-many-public-methods,too-many-lines
+class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-methods,too-many-lines
     """A client to interact with the AzureCommunicationService JobRouter service.
 
     This client provides operations to create, update, list and delete the following entities: classification policy,
@@ -112,13 +112,13 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
             cls,
             conn_str: str,
             **kwargs: Any
-    ) -> "RouterAdministrationClient":
-        """Create RouterClient from a Connection String.
+    ) -> "JobRouterAdministrationClient":
+        """Create JobRouterClient from a Connection String.
 
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
-        :return: Instance of RouterAdministrationClient.
-        :rtype: ~azure.communication.jobrouter.RouterAdministrationClient
+        :return: Instance of JobRouterAdministrationClient.
+        :rtype: ~azure.communication.jobrouter.JobRouterAdministrationClient
 
         .. admonition:: Example:
 
@@ -127,7 +127,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END admin_auth_from_connection_string]
                 :language: python
                 :dedent: 8
-                :caption: Authenticating a RouterAdministrationClient from a connection_string
+                :caption: Authenticating a JobRouterAdministrationClient from a connection_string
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
@@ -161,7 +161,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END create_exception_policy]
                 :language: python
                 :dedent: 8
-                :caption: Using a RouterAdministrationClient to create an exception policy
+                :caption: Using a JobRouterAdministrationClient to create an exception policy
         """
         if not exception_policy_id:
             raise ValueError("exception_policy_id cannot be None.")
@@ -249,7 +249,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END update_exception_policy]
                 :language: python
                 :dedent: 8
-                :caption: Using a RouterAdministrationClient to update an exception policy
+                :caption: Using a JobRouterAdministrationClient to update an exception policy
         """
         if not exception_policy_id:
             raise ValueError("exception_policy_id cannot be None.")
@@ -290,7 +290,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END get_exception_policy]
                 :language: python
                 :dedent: 8
-                :caption: Using a RouterAdministrationClient to get an exception policy
+                :caption: Using a JobRouterAdministrationClient to get an exception policy
         """
         if not exception_policy_id:
             raise ValueError("exception_policy_id cannot be None.")
@@ -320,7 +320,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END list_exception_policies]
                 :language: python
                 :dedent: 8
-                :caption: Using a RouterAdministrationClient to list exception policies
+                :caption: Using a JobRouterAdministrationClient to list exception policies
 
         .. admonition:: Example:
 
@@ -329,7 +329,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END list_exception_policies_batched]
                 :language: python
                 :dedent: 8
-                :caption: Using a RouterAdministrationClient to list exception policies in batches
+                :caption: Using a JobRouterAdministrationClient to list exception policies in batches
         """
 
         results_per_page = kwargs.pop("results_per_page", None)
@@ -363,7 +363,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END delete_exception_policy]
                 :language: python
                 :dedent: 8
-                :caption: Using a RouterAdministrationClient to delete an exception policy
+                :caption: Using a JobRouterAdministrationClient to delete an exception policy
         """
 
         if not exception_policy_id:
@@ -403,7 +403,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END create_distribution_policy]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to create a distribution policy
+                :caption: Use a JobRouterAdministrationClient to create a distribution policy
         """
         if not distribution_policy_id:
             raise ValueError("distribution_policy_id cannot be None.")
@@ -497,7 +497,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END update_distribution_policy]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to update a distribution policy
+                :caption: Use a JobRouterAdministrationClient to update a distribution policy
         """
         if not distribution_policy_id:
             raise ValueError("distribution_policy_id cannot be None.")
@@ -540,7 +540,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END get_distribution_policy]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to get a distribution policy
+                :caption: Use a JobRouterAdministrationClient to get a distribution policy
         """
         if not distribution_policy_id:
             raise ValueError("distribution_policy_id cannot be None.")
@@ -570,7 +570,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END list_distribution_policies]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to list distribution policies
+                :caption: Use a JobRouterAdministrationClient to list distribution policies
 
         .. admonition:: Example:
 
@@ -579,7 +579,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END list_distribution_policies_batched]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to list distribution policies in batches
+                :caption: Use a JobRouterAdministrationClient to list distribution policies in batches
         """
 
         results_per_page = kwargs.pop("results_per_page", None)
@@ -613,7 +613,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END delete_distribution_policy]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to delete a distribution policy
+                :caption: Use a JobRouterAdministrationClient to delete a distribution policy
         """
 
         if not distribution_policy_id:
@@ -653,7 +653,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END create_queue]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to create a queue
+                :caption: Use a JobRouterAdministrationClient to create a queue
         """
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
@@ -753,7 +753,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END update_queue]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to update a queue
+                :caption: Use a JobRouterAdministrationClient to update a queue
         """
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
@@ -795,7 +795,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END get_queue]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to get a queue
+                :caption: Use a JobRouterAdministrationClient to get a queue
         """
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
@@ -825,7 +825,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END list_queues]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to list queues
+                :caption: Use a JobRouterAdministrationClient to list queues
 
         .. admonition:: Example:
 
@@ -834,7 +834,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END list_queues_batched]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to list queues in batches
+                :caption: Use a JobRouterAdministrationClient to list queues in batches
         """
 
         results_per_page = kwargs.pop("results_per_page", None)
@@ -868,7 +868,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END delete_queue]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to delete a queue
+                :caption: Use a JobRouterAdministrationClient to delete a queue
         """
 
         if not queue_id:
@@ -908,7 +908,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END create_classification_policy]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to create a classification policy
+                :caption: Use a JobRouterAdministrationClient to create a classification policy
         """
         if not classification_policy_id:
             raise ValueError("classification_policy_id cannot be None.")
@@ -1031,7 +1031,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END update_classification_policy]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to update a classification policy
+                :caption: Use a JobRouterAdministrationClient to update a classification policy
         """
         if not classification_policy_id:
             raise ValueError("classification_policy_id cannot be None.")
@@ -1074,7 +1074,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END get_classification_policy]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to get a classification policy
+                :caption: Use a JobRouterAdministrationClient to get a classification policy
         """
         if not classification_policy_id:
             raise ValueError("classification_policy_id cannot be None.")
@@ -1103,7 +1103,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END list_classification_policies]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to list classification policies
+                :caption: Use a JobRouterAdministrationClient to list classification policies
 
         .. admonition:: Example:
 
@@ -1112,7 +1112,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END list_classification_policies_batched]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to list classification policies in batches
+                :caption: Use a JobRouterAdministrationClient to list classification policies in batches
         """
         results_per_page = kwargs.pop("results_per_page", None)
 
@@ -1145,7 +1145,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
                 :end-before: [END delete_classification_policy]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterAdministrationClient to delete a classification policy
+                :caption: Use a JobRouterAdministrationClient to delete a classification policy
         """
         if not classification_policy_id:
             raise ValueError("classification_policy_id cannot be None.")
@@ -1159,7 +1159,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "RouterAdministrationClient":
+    def __enter__(self) -> "JobRouterAdministrationClient":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 

@@ -17,7 +17,7 @@ from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.communication.jobrouter import (
-    RouterAdministrationClient,
+    JobRouterAdministrationClient,
     RoundRobinMode, DistributionPolicy, RouterQueue,
 )
 
@@ -35,7 +35,7 @@ class TestJobQueue(RouterRecordedTestCase):
     def clean_up(self, **kwargs):
         # delete in live mode
         if not self.is_playback():
-            router_client: RouterAdministrationClient = self.create_admin_client()
+            router_client: JobRouterAdministrationClient = self.create_admin_client()
             if self._testMethodName in self.queue_ids \
                     and any(self.queue_ids[self._testMethodName]):
                 for _id in set(self.queue_ids[self._testMethodName]):
@@ -50,7 +50,7 @@ class TestJobQueue(RouterRecordedTestCase):
         return self._testMethodName + "_tst_dp"
 
     def setup_distribution_policy(self, **kwargs):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
 
         distribution_policy_id = self.get_distribution_policy_id()
 
@@ -79,7 +79,7 @@ class TestJobQueue(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_create_queue(self, **kwargs):
         dp_identifier = "tst_create_q"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         job_queue: RouterQueue = RouterQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
@@ -111,7 +111,7 @@ class TestJobQueue(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_update_queue(self, **kwargs):
         dp_identifier = "tst_update_q"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         job_queue: RouterQueue = RouterQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
@@ -164,7 +164,7 @@ class TestJobQueue(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_update_queue_w_kwargs(self, **kwargs):
         dp_identifier = "tst_update_q_w_kwargs"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         job_queue: RouterQueue = RouterQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
@@ -216,7 +216,7 @@ class TestJobQueue(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_get_queue(self, **kwargs):
         dp_identifier = "tst_get_q"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         job_queue: RouterQueue = RouterQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
@@ -259,7 +259,7 @@ class TestJobQueue(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_delete_queue(self, **kwargs):
         dp_identifier = "tst_delete_q"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         job_queue: RouterQueue = RouterQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
@@ -292,7 +292,7 @@ class TestJobQueue(RouterRecordedTestCase):
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.after_test_execute('clean_up')
     def test_list_queues(self, **kwargs):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         dp_identifiers = ["tst_list_q_1", "tst_list_q_2", "tst_list_q_3"]
         created_q_response = {}
         q_count = len(dp_identifiers)

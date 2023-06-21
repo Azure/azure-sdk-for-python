@@ -1,6 +1,6 @@
 from ._version import VERSION
-from ._router_client import RouterClient
-from ._router_administration_client import RouterAdministrationClient
+from ._router_client import JobRouterClient
+from ._router_administration_client import JobRouterAdministrationClient
 from ._generated.models import (
     ClassificationPolicy,
     ClassificationPolicyItem,
@@ -73,8 +73,8 @@ from ._generated.models import (
 
 __all__ = [
     # Clients
-    'RouterClient',
-    'RouterAdministrationClient',
+    'JobRouterClient',
+    'JobRouterAdministrationClient',
 
     # Generated models
     'ClassificationPolicy',

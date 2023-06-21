@@ -20,8 +20,8 @@ from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.communication.jobrouter import (
-    RouterClient,
-    RouterAdministrationClient,
+    JobRouterClient,
+    JobRouterAdministrationClient,
     RoundRobinMode,
     RouterWorker,
     QueueAssignment,
@@ -121,8 +121,8 @@ class TestRouterJob(RouterRecordedTestCase):
     def clean_up(self):
         # delete in live mode
         if not self.is_playback():
-            router_client: RouterClient = self.create_client()
-            router_admin_client: RouterAdministrationClient = self.create_admin_client()
+            router_client: JobRouterClient = self.create_client()
+            router_admin_client: JobRouterAdministrationClient = self.create_admin_client()
             if self._testMethodName in self.job_ids \
                     and any(self.job_ids[self._testMethodName]):
                 for _id in set(self.job_ids[self._testMethodName]):
@@ -147,7 +147,7 @@ class TestRouterJob(RouterRecordedTestCase):
         return self._testMethodName + "_tst_dp"
 
     def setup_distribution_policy(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
 
         distribution_policy_id = self.get_distribution_policy_id()
 
@@ -174,7 +174,7 @@ class TestRouterJob(RouterRecordedTestCase):
         return self._testMethodName + "_tst_q"
 
     def setup_job_queue(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_job_queue_id()
 
         job_queue: RouterQueue = RouterQueue(
@@ -198,7 +198,7 @@ class TestRouterJob(RouterRecordedTestCase):
         return self._testMethodName + "_tst_flbk_q"  # cspell:disable-line
 
     def setup_fallback_queue(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_fallback_queue_id()
 
         job_queue: RouterQueue = RouterQueue(
@@ -222,7 +222,7 @@ class TestRouterJob(RouterRecordedTestCase):
         return self._testMethodName + "_tst_cp"
 
     def setup_classification_policy(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
 
         cp_queue_selectors = [
             StaticQueueSelectorAttachment(
@@ -258,7 +258,7 @@ class TestRouterJob(RouterRecordedTestCase):
             identifier,
             **kwargs
     ):
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         router_job = router_client.get_job(job_id = identifier)
         assert router_job.job_status == RouterJobStatus.QUEUED
 
@@ -267,7 +267,7 @@ class TestRouterJob(RouterRecordedTestCase):
             identifier,
             **kwargs
     ):
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         router_job = router_client.get_job(job_id = identifier)
         assert router_job.job_status == RouterJobStatus.SCHEDULED
 
@@ -276,7 +276,7 @@ class TestRouterJob(RouterRecordedTestCase):
             identifier,
             **kwargs
     ):
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         router_job = router_client.get_job(job_id = identifier)
         assert router_job.job_status == RouterJobStatus.CANCELLED
 
@@ -288,7 +288,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_create_job_direct_q(self):
         job_identifier = "tst_create_job_man"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -342,7 +342,7 @@ class TestRouterJob(RouterRecordedTestCase):
         scheduled_time_utc = recorded_variables.setdefault("scheduled_time_utc", _datetime_as_isostr(scheduled_time))
 
         job_identifier = "tst_create_sch_job"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -398,7 +398,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_update_job_direct_q(self):
         job_identifier = "tst_update_job_man"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -472,7 +472,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_update_job_direct_q_w_kwargs(self):
         job_identifier = "tst_update_job_man_w_kwargs"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -546,7 +546,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_get_job_direct_q(self):
         job_identifier = "tst_get_job_man"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -615,7 +615,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_create_job_w_cp(self):
         job_identifier = "tst_create_job_cp"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -665,7 +665,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_update_job_w_cp(self):
         job_identifier = "tst_update_job_cp"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -745,7 +745,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_update_job_w_cp_w_kwargs(self):
         job_identifier = "tst_update_job_cp_w_kwargs"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -825,7 +825,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_get_job_w_cp(self):
         job_identifier = "tst_get_job_cp"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -893,7 +893,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_delete_job(self):
         job_identifier = "tst_del_job_man"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -948,7 +948,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.after_test_execute('clean_up')
     def test_list_jobs(self):
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         job_identifiers = ["tst_list_job_1", "tst_list_job_2", "tst_list_job_3"]
 
         created_job_response = {}
@@ -1042,7 +1042,7 @@ class TestRouterJob(RouterRecordedTestCase):
         scheduled_time = datetime.datetime.utcnow() + datetime.timedelta(0, 30)
         scheduled_time_utc = recorded_variables.setdefault("scheduled_time_utc", _datetime_as_isostr(scheduled_time))
 
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         job_identifiers = ["tst_list_sch_job_1", "tst_list_sch_job_2"]
 
         created_job_response = {}

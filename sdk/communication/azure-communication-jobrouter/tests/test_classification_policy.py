@@ -15,7 +15,7 @@ from _validators import ClassificationPolicyValidator
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 
 from azure.communication.jobrouter import (
-    RouterAdministrationClient,
+    JobRouterAdministrationClient,
     RoundRobinMode,
     ClassificationPolicy,
     LabelOperator,
@@ -160,7 +160,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
     def clean_up(self):
         # delete in live mode
         if not self.is_playback():
-            router_client: RouterAdministrationClient = self.create_admin_client()
+            router_client: JobRouterAdministrationClient = self.create_admin_client()
             if self._testMethodName in self.classification_policy_ids \
                     and any(self.classification_policy_ids[self._testMethodName]):
                 for policy_id in set(self.classification_policy_ids[self._testMethodName]):
@@ -180,7 +180,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
         return self._testMethodName + "_tst_dp"
 
     def setup_distribution_policy(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
         distribution_policy_id = self.get_distribution_policy_id()
 
         policy: DistributionPolicy = DistributionPolicy(
@@ -206,7 +206,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
         return self._testMethodName + "_tst_q"
 
     def setup_job_queue(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_job_queue_id()
 
         job_queue: RouterQueue = RouterQueue(
@@ -232,7 +232,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.after_test_execute('clean_up')
     def test_create_classification_policy(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_create_cp'
 
         for rule in prioritization_rules:
@@ -269,7 +269,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.after_test_execute('clean_up')
     def test_update_classification_policy(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_update_cp'
 
         for rule in prioritization_rules:
@@ -323,7 +323,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.after_test_execute('clean_up')
     def test_update_classification_policy_w_kwargs(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_update_cp_w_kwargs'
 
         for rule in prioritization_rules:
@@ -377,7 +377,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.after_test_execute('clean_up')
     def test_get_classification_policy(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_get_cp'
 
         for rule in prioritization_rules:
@@ -427,7 +427,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.after_test_execute('clean_up')
     def test_list_classification_policies(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         cp_identifiers = ['tst_list_cp_1', 'tst_list_cp_2']
         created_cp_response = {}
         policy_count = 0
@@ -499,7 +499,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.after_test_execute('clean_up')
     def test_delete_classification_policy(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_delete_cp'
 
         for rule in prioritization_rules:

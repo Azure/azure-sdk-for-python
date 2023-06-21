@@ -17,8 +17,8 @@ from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.communication.jobrouter import (
-    RouterClient,
-    RouterAdministrationClient,
+    JobRouterClient,
+    JobRouterAdministrationClient,
     RoundRobinMode,
     RouterWorker,
     QueueAssignment,
@@ -48,8 +48,8 @@ class TestRouterWorker(RouterRecordedTestCase):
     def clean_up(self):
         # delete in live mode
         if not self.is_playback():
-            router_client: RouterClient = self.create_client()
-            router_admin_client: RouterAdministrationClient = self.create_admin_client()
+            router_client: JobRouterClient = self.create_client()
+            router_admin_client: JobRouterAdministrationClient = self.create_admin_client()
             if self._testMethodName in self.worker_ids \
                     and any(self.worker_ids[self._testMethodName]):
                 for _id in set(self.worker_ids[self._testMethodName]):
@@ -69,7 +69,7 @@ class TestRouterWorker(RouterRecordedTestCase):
         return self._testMethodName + "_tst_dp"
 
     def setup_distribution_policy(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
 
         distribution_policy_id = self.get_distribution_policy_id()
 
@@ -96,7 +96,7 @@ class TestRouterWorker(RouterRecordedTestCase):
         return self._testMethodName + "_tst_q"
 
     def setup_job_queue(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_job_queue_id()
 
         job_queue: RouterQueue = RouterQueue(
@@ -124,7 +124,7 @@ class TestRouterWorker(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_create_worker(self):
         w_identifier = "tst_create_w"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
 
         router_worker: RouterWorker = RouterWorker(
@@ -164,7 +164,7 @@ class TestRouterWorker(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_update_worker(self):
         w_identifier = "tst_update_w"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
 
         router_worker: RouterWorker = RouterWorker(
@@ -225,7 +225,7 @@ class TestRouterWorker(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_update_worker_w_kwargs(self):
         w_identifier = "tst_update_w_kwargs"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
 
         router_worker: RouterWorker = RouterWorker(
@@ -285,7 +285,7 @@ class TestRouterWorker(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_get_worker(self):
         w_identifier = "tst_get_w"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
 
         router_worker: RouterWorker = RouterWorker(
@@ -339,7 +339,7 @@ class TestRouterWorker(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_delete_worker(self):
         w_identifier = "tst_delete_w"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
 
         router_worker: RouterWorker = RouterWorker(
@@ -380,7 +380,7 @@ class TestRouterWorker(RouterRecordedTestCase):
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.after_test_execute('clean_up')
     def test_list_workers(self):
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         w_identifiers = ["tst_list_w_1", "tst_list_w_2", "tst_list_w_3"]
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
         created_w_response = {}
