@@ -15,6 +15,7 @@ import argparse
 import os
 import logging
 import sys
+import tempfile
 
 from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.variables import in_ci
@@ -22,19 +23,41 @@ from ci_tools.variables import in_ci
 logging.getLogger().setLevel(logging.INFO)
 
 
-def install_from_main(subdirectory, package_name):
-    main_url = f"git+https://github.com/Azure/azure-sdk-for-python@main#subdirectory={subdirectory}&egg={package_name}"
+def install_from_main(setup_path):
+    subdirectory = setup_path.split("azure-sdk-for-python")[1].lstrip("/\\")
+    cwd = os.getcwd()
+    with tempfile.TemporaryDirectory() as temp_dir_name:
+        os.chdir(temp_dir_name)
+        try:
+            subprocess.check_call(['git', 'init'], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+            subprocess.check_call(
+                ['git', 'clone', '--no-checkout', 'https://github.com/Azure/azure-sdk-for-python.git', '--depth', '1'],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.STDOUT
+            )
+            os.chdir("azure-sdk-for-python")
+            subprocess.check_call(['git', 'sparse-checkout', 'init', '--cone'], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+            subprocess.check_call(['git', 'sparse-checkout', 'set', subdirectory], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+            subprocess.check_call(['git', 'checkout', 'main'], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
-    commands = [
-        sys.executable,
-        "-m",
-        "pip",
-        "install",
-        main_url,
-        "--force-reinstall"
-    ]
+            if not os.path.exists(os.path.join(os.getcwd(), subdirectory)):
+                # code is not checked into main yet, nothing to compare
+                exit(0)
 
-    subprocess.check_call(commands, stdout=subprocess.DEVNULL)
+            os.chdir(subdirectory)
+
+            command = [
+                sys.executable,
+                "-m",
+                "pip",
+                "install",
+                ".",
+                "--force-reinstall"
+            ]
+
+            subprocess.check_call(command, stdout=subprocess.DEVNULL)
+        finally:
+            os.chdir(cwd)  # allow temp dir to be deleted
 
 
 
@@ -104,17 +127,15 @@ if __name__ == "__main__":
 
     # get type completeness score from current code
     score_from_current = get_type_complete_score(commands, check_pytyped=True)
+
+    # show output
     try:
         subprocess.check_call(commands[:-1])
     except subprocess.CalledProcessError:
         pass  # we don't fail on verifytypes, only if type completeness score worsens from main
 
     # get type completeness score from main
-    try:
-        install_from_main(setup_path.split("azure-sdk-for-python")[1].lstrip("/\\"), package_name)
-    except subprocess.CalledProcessError:
-        exit(0)  # there is no code in main yet, nothing to compare
-
+    install_from_main(setup_path)
     score_from_main = get_type_complete_score(commands)
 
     score_from_main_rounded = round(score_from_main * 100, 1)
@@ -123,7 +144,7 @@ if __name__ == "__main__":
     print(f"Score in main: {score_from_main_rounded}%")
     if score_from_current_rounded < score_from_main_rounded:
         print(
-            f"\nERROR: The type completeness score of {package_name} has decreased compared to main. "
+            f"\nERROR: The type completeness score of {package_name} has decreased compared to the score in main. "
             f"See the above output for areas to improve. See https://aka.ms/python/typing-guide for information."
         )
         exit(1)
