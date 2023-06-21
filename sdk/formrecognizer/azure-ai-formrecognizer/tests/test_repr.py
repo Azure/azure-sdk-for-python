@@ -234,8 +234,8 @@ def document_key_value_element(bounding_region, document_span):
 
 @pytest.fixture
 def document_key_value_pair(document_key_value_element):
-    model = _models.DocumentKeyValuePair(key=document_key_value_element[0], value=document_key_value_element[0], confidence=0.98, common_name="Charges")
-    model_repr = "DocumentKeyValuePair(key={}, value={}, confidence={}, common_name={})".format(document_key_value_element[1], document_key_value_element[1], 0.98, "Charges")
+    model = _models.DocumentKeyValuePair(key=document_key_value_element[0], value=document_key_value_element[0], confidence=0.98)
+    model_repr = "DocumentKeyValuePair(key={}, value={}, confidence={})".format(document_key_value_element[1], document_key_value_element[1], 0.98)
     assert repr(model) == model_repr
     return model, model_repr
 

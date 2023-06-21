@@ -82,8 +82,6 @@ async def analyze_general_documents():
 
     print("----Key-value pairs found in document----")
     for kv_pair in result.key_value_pairs:
-        if kv_pair.common_name:
-            print(f"Common name for key value pair: {kv_pair.common_name}")
         if kv_pair.key:
             print(
                 f"Key '{kv_pair.key.content}' found within "

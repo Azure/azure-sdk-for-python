@@ -545,8 +545,7 @@ class TestToDict(FormRecognizerTest):
                     ),
                 ],
             ),
-            confidence=0.89,
-            common_name="Charges"
+            confidence=0.89
         )
 
         d = model.to_dict()
@@ -594,8 +593,7 @@ class TestToDict(FormRecognizerTest):
                     },
                 ],
             },
-            "confidence": 0.89,
-            "common_name": "Charges"
+            "confidence": 0.89
         }
 
         assert d == final
@@ -1705,8 +1703,7 @@ class TestToDict(FormRecognizerTest):
                             },
                         ],
                     },
-                    "confidence": 0.89,
-                    "common_name": None
+                    "confidence": 0.89
                 },
             ],
             "styles": [

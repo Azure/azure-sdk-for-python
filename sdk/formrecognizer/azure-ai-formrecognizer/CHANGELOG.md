@@ -12,6 +12,7 @@ This version of the client library defaults to the service API version `2023-07-
 - Removed `kind` property from `DocumentPage`.
 - Removed `images` property from `DocumentPage`.
 - Removed `DocumentImage` model.
+- Removed `common_name` property from `DocumentKeyValuePair`.
 
 ### Bugs Fixed
 
