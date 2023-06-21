@@ -65,6 +65,9 @@ from ._generated.models import (
     CloseJobResult,
     RouterJob,
     RouterJobItem,
+    JobMatchingMode,
+    JobMatchModeType,
+    ScheduleAndSuspendMode,
 )
 
 
@@ -130,6 +133,9 @@ __all__ = [
     'ScoringRuleParameterSelector',
     'RouterWorker',
     'RouterWorkerItem',
+    'JobMatchingMode',
+    'JobMatchModeType',
+    'ScheduleAndSuspendMode',
 
     # Created models
 

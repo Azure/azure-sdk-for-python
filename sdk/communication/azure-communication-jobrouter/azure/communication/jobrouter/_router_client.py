@@ -45,6 +45,7 @@ from ._generated.models import (
     QueueAssignment,
     RouterJob,
     RouterJobItem,
+    JobMatchingMode
 )
 
 from ._shared.utils import parse_connection_str
@@ -559,8 +560,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             labels: Optional[Dict[str, Union[int, float, str, bool]]],
             tags: Optional[Dict[str, Union[int, float, str, bool]]],
             notes: Optional[Dict[datetime, str]],
-            unavailable_for_matching: Optional[bool],
-            scheduled_time_utc: Optional[Union[str, datetime]],
+            matching_mode: Optional[JobMatchingMode],
             **kwargs: Any
     ) -> RouterJob:
         """ Update a job.
@@ -600,14 +600,8 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         :keyword notes: Notes attached to a job, sorted by timestamp.
         :paramtype notes: Optional[Dict[~datetime.datetime, str]]
 
-        :keyword unavailable_for_matching: A flag indicating this job is not ready for being matched with
-         workers.
-         When set to true, job matching will not be started. If set to false, job matching will start
-         automatically.
-         :paramtype unavailable_for_matching: Optional[bool]
-
-         :keyword scheduled_time_utc: If set, job will be scheduled to be enqueued at a given time.
-         :paramtype scheduled_time_utc: Optional[Union[str, ~datetime.datetime]]
+        :keyword matching_mode: If set, determines how a job will be matched
+        :paramtype matching_mode: Optional[~azure.communication.jobrouter.JobMatchingMode]
 
 
         :return: RouterJob
@@ -663,14 +657,8 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         :keyword notes: Notes attached to a job, sorted by timestamp.
         :paramtype notes: Optional[Dict[~datetime.datetime, str]]
 
-        :keyword unavailable_for_matching: A flag indicating this job is not ready for being matched with
-         workers.
-         When set to true, job matching will not be started. If set to false, job matching will start
-         automatically.
-         :paramtype unavailable_for_matching: Optional[bool]
-
-         :keyword scheduled_time_utc: If set, job will be scheduled to be enqueued at a given time.
-         :paramtype scheduled_time_utc: Optional[Union[str, ~datetime.datetime]]
+        :keyword matching_mode: If set, determines how a job will be matched
+        :paramtype matching_mode: Optional[~azure.communication.jobrouter.JobMatchingMode]
 
 
         :return: RouterJob
@@ -705,8 +693,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             labels = kwargs.pop('labels', router_job.labels),
             tags = kwargs.pop('tags', router_job.tags),
             notes = kwargs.pop('notes', router_job.notes),
-            unavailable_for_matching = kwargs.pop('unavailable_for_matching', router_job.unavailable_for_matching),
-            scheduled_time_utc = kwargs.pop('scheduled_time_utc', router_job.scheduled_time_utc)
+            matching_mode = kwargs.pop('matching_mode', router_job.matching_mode)
         )
 
         return self._client.job_router.upsert_job(
