@@ -17,7 +17,7 @@ from azure.core.polling.base_polling import (
 
 from azure.core.exceptions import HttpResponseError, ODataV4Format
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import (
+from azure.core.rest import (
     HttpResponse,
     AsyncHttpResponse,
     HttpRequest,
@@ -183,8 +183,10 @@ class TranslationPolling(OperationResourcePolling):
         return False
 
     def _set_async_url_if_present(self, response: ResponseType) -> None:
-        self._async_url = response.headers.get(self._operation_location_header)
-        if not self._async_url:
+        location_header = response.headers.get(self._operation_location_header)
+        if location_header:
+            self._async_url = location_header
+        else:
             self._async_url = response.request.url
 
     def get_status(self, pipeline_response: PipelineResponseType) -> str:
