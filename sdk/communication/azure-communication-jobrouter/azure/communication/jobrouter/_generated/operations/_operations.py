@@ -606,7 +606,7 @@ def build_job_router_close_job_action_request(id: str, **kwargs: Any) -> HttpReq
 
 def build_job_router_list_jobs_request(
     *,
-    status: Union[str, _models.JobStateSelector] = "all",
+    status: Union[str, _models.RouterJobStatusSelector] = "all",
     queue_id: Optional[str] = None,
     channel_id: Optional[str] = None,
     classification_policy_id: Optional[str] = None,
@@ -674,6 +674,7 @@ def build_job_router_unassign_job_action_request(id: str, assignment_id: str, **
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-07-18-preview"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -690,6 +691,8 @@ def build_job_router_unassign_job_action_request(id: str, assignment_id: str, **
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -849,7 +852,7 @@ def build_job_router_delete_worker_request(worker_id: str, **kwargs: Any) -> Htt
 
 def build_job_router_list_workers_request(
     *,
-    status: Union[str, _models.WorkerStateSelector] = "all",
+    state: Union[str, _models.RouterWorkerStateSelector] = "all",
     channel_id: Optional[str] = None,
     queue_id: Optional[str] = None,
     has_capacity: Optional[bool] = None,
@@ -865,8 +868,8 @@ def build_job_router_list_workers_request(
     _url = "/routing/workers"
 
     # Construct parameters
-    if status is not None:
-        _params["status"] = _SERIALIZER.query("status", status, "str")
+    if state is not None:
+        _params["state"] = _SERIALIZER.query("state", state, "str")
     if channel_id is not None:
         _params["channelId"] = _SERIALIZER.query("channel_id", channel_id, "str")
     if queue_id is not None:
@@ -1011,17 +1014,21 @@ class JobRouterAdministrationOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("ClassificationPolicy", pipeline_response)
+        if response.status_code == 200:
+            deserialized = self._deserialize("ClassificationPolicy", pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize("ClassificationPolicy", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_classification_policy(self, id: str, **kwargs: Any) -> _models.ClassificationPolicy:
@@ -1332,17 +1339,21 @@ class JobRouterAdministrationOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("DistributionPolicy", pipeline_response)
+        if response.status_code == 200:
+            deserialized = self._deserialize("DistributionPolicy", pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize("DistributionPolicy", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_distribution_policy(self, id: str, **kwargs: Any) -> _models.DistributionPolicy:
@@ -1653,17 +1664,21 @@ class JobRouterAdministrationOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("ExceptionPolicy", pipeline_response)
+        if response.status_code == 200:
+            deserialized = self._deserialize("ExceptionPolicy", pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize("ExceptionPolicy", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_exception_policy(self, id: str, **kwargs: Any) -> _models.ExceptionPolicy:
@@ -1862,8 +1877,8 @@ class JobRouterAdministrationOperations:
 
     @overload
     def upsert_queue(
-        self, id: str, patch: _models.JobQueue, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.JobQueue:
+        self, id: str, patch: _models.RouterQueue, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.RouterQueue:
         """Creates or updates a queue.
 
         Creates or updates a queue.
@@ -1872,19 +1887,19 @@ class JobRouterAdministrationOperations:
         :type id: str
         :param patch: Model of queue properties to be patched. See also:
          https://datatracker.ietf.org/doc/html/rfc7386. Required.
-        :type patch: ~azure.communication.jobrouter.models.JobQueue
+        :type patch: ~azure.communication.jobrouter.models.RouterQueue
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: JobQueue
-        :rtype: ~azure.communication.jobrouter.models.JobQueue
+        :return: RouterQueue
+        :rtype: ~azure.communication.jobrouter.models.RouterQueue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def upsert_queue(
         self, id: str, patch: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.JobQueue:
+    ) -> _models.RouterQueue:
         """Creates or updates a queue.
 
         Creates or updates a queue.
@@ -1897,13 +1912,13 @@ class JobRouterAdministrationOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: JobQueue
-        :rtype: ~azure.communication.jobrouter.models.JobQueue
+        :return: RouterQueue
+        :rtype: ~azure.communication.jobrouter.models.RouterQueue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def upsert_queue(self, id: str, patch: Union[_models.JobQueue, IO], **kwargs: Any) -> _models.JobQueue:
+    def upsert_queue(self, id: str, patch: Union[_models.RouterQueue, IO], **kwargs: Any) -> _models.RouterQueue:
         """Creates or updates a queue.
 
         Creates or updates a queue.
@@ -1911,14 +1926,14 @@ class JobRouterAdministrationOperations:
         :param id: Id of the queue. Required.
         :type id: str
         :param patch: Model of queue properties to be patched. See also:
-         https://datatracker.ietf.org/doc/html/rfc7386. Is either a JobQueue type or a IO type.
+         https://datatracker.ietf.org/doc/html/rfc7386. Is either a RouterQueue type or a IO type.
          Required.
-        :type patch: ~azure.communication.jobrouter.models.JobQueue or IO
+        :type patch: ~azure.communication.jobrouter.models.RouterQueue or IO
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
         :paramtype content_type: str
-        :return: JobQueue
-        :rtype: ~azure.communication.jobrouter.models.JobQueue
+        :return: RouterQueue
+        :rtype: ~azure.communication.jobrouter.models.RouterQueue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1933,7 +1948,7 @@ class JobRouterAdministrationOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.JobQueue] = kwargs.pop("cls", None)
+        cls: ClsType[_models.RouterQueue] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -1941,7 +1956,7 @@ class JobRouterAdministrationOperations:
         if isinstance(patch, (IOBase, bytes)):
             _content = patch
         else:
-            _json = self._serialize.body(patch, "JobQueue")
+            _json = self._serialize.body(patch, "RouterQueue")
 
         request = build_job_router_administration_upsert_queue_request(
             id=id,
@@ -1964,28 +1979,32 @@ class JobRouterAdministrationOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("JobQueue", pipeline_response)
+        if response.status_code == 200:
+            deserialized = self._deserialize("RouterQueue", pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize("RouterQueue", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
-    def get_queue(self, id: str, **kwargs: Any) -> _models.JobQueue:
+    def get_queue(self, id: str, **kwargs: Any) -> _models.RouterQueue:
         """Retrieves an existing queue by Id.
 
         Retrieves an existing queue by Id.
 
         :param id: Id of the queue to retrieve. Required.
         :type id: str
-        :return: JobQueue
-        :rtype: ~azure.communication.jobrouter.models.JobQueue
+        :return: RouterQueue
+        :rtype: ~azure.communication.jobrouter.models.RouterQueue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1999,7 +2018,7 @@ class JobRouterAdministrationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.JobQueue] = kwargs.pop("cls", None)
+        cls: ClsType[_models.RouterQueue] = kwargs.pop("cls", None)
 
         request = build_job_router_administration_get_queue_request(
             id=id,
@@ -2024,7 +2043,7 @@ class JobRouterAdministrationOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("JobQueue", pipeline_response)
+        deserialized = self._deserialize("RouterQueue", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -2083,19 +2102,21 @@ class JobRouterAdministrationOperations:
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def list_queues(self, **kwargs: Any) -> Iterable["_models.JobQueueItem"]:
+    def list_queues(self, **kwargs: Any) -> Iterable["_models.RouterQueueItem"]:
         """Retrieves existing queues.
 
         Retrieves existing queues.
 
-        :return: An iterator like instance of JobQueueItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.JobQueueItem]
+        :return: An iterator like instance of RouterQueueItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.RouterQueueItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.QueueCollection] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models._models.RouterQueueCollection] = kwargs.pop(  # pylint: disable=protected-access
+            "cls", None
+        )
 
         error_map = {
             401: ClientAuthenticationError,
@@ -2144,7 +2165,7 @@ class JobRouterAdministrationOperations:
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize(
-                _models._models.QueueCollection, pipeline_response  # pylint: disable=protected-access
+                _models._models.RouterQueueCollection, pipeline_response  # pylint: disable=protected-access
             )
             list_of_elem = deserialized.value
             if cls:
@@ -2293,17 +2314,21 @@ class JobRouterOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RouterJob", pipeline_response)
+        if response.status_code == 200:
+            deserialized = self._deserialize("RouterJob", pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize("RouterJob", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_job(self, id: str, **kwargs: Any) -> _models.RouterJob:
@@ -2845,7 +2870,7 @@ class JobRouterOperations:
     def list_jobs(
         self,
         *,
-        status: Union[str, _models.JobStateSelector] = "all",
+        status: Union[str, _models.RouterJobStatusSelector] = "all",
         queue_id: Optional[str] = None,
         channel_id: Optional[str] = None,
         classification_policy_id: Optional[str] = None,
@@ -2857,23 +2882,23 @@ class JobRouterOperations:
 
         Retrieves list of jobs based on filter parameters.
 
-        :keyword status: (Optional) If specified, filter jobs by status. Known values are: "all",
+        :keyword status: If specified, filter jobs by status. Known values are: "all",
          "pendingClassification", "queued", "assigned", "completed", "closed", "cancelled",
          "classificationFailed", "created", "pendingSchedule", "scheduled", "scheduleFailed",
          "waitingForActivation", and "active". Default value is "all".
-        :paramtype status: str or ~azure.communication.jobrouter.models.JobStateSelector
-        :keyword queue_id: (Optional) If specified, filter jobs by queue. Default value is None.
+        :paramtype status: str or ~azure.communication.jobrouter.models.RouterJobStatusSelector
+        :keyword queue_id: If specified, filter jobs by queue. Default value is None.
         :paramtype queue_id: str
-        :keyword channel_id: (Optional) If specified, filter jobs by channel. Default value is None.
+        :keyword channel_id: If specified, filter jobs by channel. Default value is None.
         :paramtype channel_id: str
-        :keyword classification_policy_id: (Optional) If specified, filter jobs by
-         classificationPolicy. Default value is None.
+        :keyword classification_policy_id: If specified, filter jobs by classificationPolicy. Default
+         value is None.
         :paramtype classification_policy_id: str
-        :keyword scheduled_before: (Optional) If specified, filter on jobs that was scheduled before or
-         at given timestamp. Range: (-Inf, scheduledBefore]. Default value is None.
+        :keyword scheduled_before: If specified, filter on jobs that was scheduled before or at given
+         timestamp. Range: (-Inf, scheduledBefore]. Default value is None.
         :paramtype scheduled_before: ~datetime.datetime
-        :keyword scheduled_after: (Optional) If specified, filter on jobs that was scheduled at or
-         after given value. Range: [scheduledAfter, +Inf). Default value is None.
+        :keyword scheduled_after: If specified, filter on jobs that was scheduled at or after given
+         value. Range: [scheduledAfter, +Inf). Default value is None.
         :paramtype scheduled_after: ~datetime.datetime
         :return: An iterator like instance of RouterJobItem
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.RouterJobItem]
@@ -2882,7 +2907,7 @@ class JobRouterOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.JobCollection] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models._models.RouterJobCollection] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         error_map = {
             401: ClientAuthenticationError,
@@ -2937,7 +2962,7 @@ class JobRouterOperations:
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize(
-                _models._models.JobCollection, pipeline_response  # pylint: disable=protected-access
+                _models._models.RouterJobCollection, pipeline_response  # pylint: disable=protected-access
             )
             list_of_elem = deserialized.value
             if cls:
@@ -2963,15 +2988,15 @@ class JobRouterOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_in_queue_position(self, id: str, **kwargs: Any) -> _models.JobPositionDetails:
+    def get_in_queue_position(self, id: str, **kwargs: Any) -> _models.RouterJobPositionDetails:
         """Gets a job's position details.
 
         Gets a job's position details.
 
         :param id: Id of the job. Required.
         :type id: str
-        :return: JobPositionDetails
-        :rtype: ~azure.communication.jobrouter.models.JobPositionDetails
+        :return: RouterJobPositionDetails
+        :rtype: ~azure.communication.jobrouter.models.RouterJobPositionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -2985,7 +3010,7 @@ class JobRouterOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.JobPositionDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_models.RouterJobPositionDetails] = kwargs.pop("cls", None)
 
         request = build_job_router_get_in_queue_position_request(
             id=id,
@@ -3010,15 +3035,23 @@ class JobRouterOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("JobPositionDetails", pipeline_response)
+        deserialized = self._deserialize("RouterJobPositionDetails", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    @distributed_trace
-    def unassign_job_action(self, id: str, assignment_id: str, **kwargs: Any) -> _models.UnassignJobResult:
+    @overload
+    def unassign_job_action(
+        self,
+        id: str,
+        assignment_id: str,
+        unassign_job_request: Optional[_models.UnassignJobRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.UnassignJobResult:
         """Un-assign a job.
 
         Un-assign a job.
@@ -3027,6 +3060,66 @@ class JobRouterOperations:
         :type id: str
         :param assignment_id: Id of the assignment to un-assign. Required.
         :type assignment_id: str
+        :param unassign_job_request: Request body for unassign route. Default value is None.
+        :type unassign_job_request: ~azure.communication.jobrouter.models.UnassignJobRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: UnassignJobResult
+        :rtype: ~azure.communication.jobrouter.models.UnassignJobResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def unassign_job_action(
+        self,
+        id: str,
+        assignment_id: str,
+        unassign_job_request: Optional[IO] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.UnassignJobResult:
+        """Un-assign a job.
+
+        Un-assign a job.
+
+        :param id: Id of the job to un-assign. Required.
+        :type id: str
+        :param assignment_id: Id of the assignment to un-assign. Required.
+        :type assignment_id: str
+        :param unassign_job_request: Request body for unassign route. Default value is None.
+        :type unassign_job_request: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: UnassignJobResult
+        :rtype: ~azure.communication.jobrouter.models.UnassignJobResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def unassign_job_action(
+        self,
+        id: str,
+        assignment_id: str,
+        unassign_job_request: Optional[Union[_models.UnassignJobRequest, IO]] = None,
+        **kwargs: Any
+    ) -> _models.UnassignJobResult:
+        """Un-assign a job.
+
+        Un-assign a job.
+
+        :param id: Id of the job to un-assign. Required.
+        :type id: str
+        :param assignment_id: Id of the assignment to un-assign. Required.
+        :type assignment_id: str
+        :param unassign_job_request: Request body for unassign route. Is either a UnassignJobRequest
+         type or a IO type. Default value is None.
+        :type unassign_job_request: ~azure.communication.jobrouter.models.UnassignJobRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: UnassignJobResult
         :rtype: ~azure.communication.jobrouter.models.UnassignJobResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3039,15 +3132,30 @@ class JobRouterOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.UnassignJobResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(unassign_job_request, (IOBase, bytes)):
+            _content = unassign_job_request
+        else:
+            if unassign_job_request is not None:
+                _json = self._serialize.body(unassign_job_request, "UnassignJobRequest")
+            else:
+                _json = None
 
         request = build_job_router_unassign_job_action_request(
             id=id,
             assignment_id=assignment_id,
+            content_type=content_type,
             api_version=self._config.api_version,
+            json=_json,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -3184,8 +3292,7 @@ class JobRouterOperations:
         :param decline_job_offer_request: Request model for declining offer. Default value is None.
         :type decline_job_offer_request: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Known values are: 'application/*+json', 'application/json', 'text/json'. Default value is
-         "application/json".
+         Default value is "application/json".
         :paramtype content_type: str
         :return: JSON
         :rtype: JSON
@@ -3212,8 +3319,8 @@ class JobRouterOperations:
          DeclineJobOfferRequest type or a IO type. Default value is None.
         :type decline_job_offer_request: ~azure.communication.jobrouter.models.DeclineJobOfferRequest
          or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/*+json',
-         'application/json', 'text/json'. Default value is None.
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
         :paramtype content_type: str
         :return: JSON
         :rtype: JSON
@@ -3279,15 +3386,15 @@ class JobRouterOperations:
         return deserialized
 
     @distributed_trace
-    def get_queue_statistics(self, id: str, **kwargs: Any) -> _models.QueueStatistics:
+    def get_queue_statistics(self, id: str, **kwargs: Any) -> _models.RouterQueueStatistics:
         """Retrieves a queue's statistics.
 
         Retrieves a queue's statistics.
 
         :param id: Id of the queue to retrieve statistics. Required.
         :type id: str
-        :return: QueueStatistics
-        :rtype: ~azure.communication.jobrouter.models.QueueStatistics
+        :return: RouterQueueStatistics
+        :rtype: ~azure.communication.jobrouter.models.RouterQueueStatistics
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -3301,7 +3408,7 @@ class JobRouterOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.QueueStatistics] = kwargs.pop("cls", None)
+        cls: ClsType[_models.RouterQueueStatistics] = kwargs.pop("cls", None)
 
         request = build_job_router_get_queue_statistics_request(
             id=id,
@@ -3326,7 +3433,7 @@ class JobRouterOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("QueueStatistics", pipeline_response)
+        deserialized = self._deserialize("RouterQueueStatistics", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -3444,17 +3551,21 @@ class JobRouterOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RouterWorker", pipeline_response)
+        if response.status_code == 200:
+            deserialized = self._deserialize("RouterWorker", pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize("RouterWorker", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_worker(self, worker_id: str, **kwargs: Any) -> _models.RouterWorker:
@@ -3566,7 +3677,7 @@ class JobRouterOperations:
     def list_workers(
         self,
         *,
-        status: Union[str, _models.WorkerStateSelector] = "all",
+        state: Union[str, _models.RouterWorkerStateSelector] = "all",
         channel_id: Optional[str] = None,
         queue_id: Optional[str] = None,
         has_capacity: Optional[bool] = None,
@@ -3576,17 +3687,17 @@ class JobRouterOperations:
 
         Retrieves existing workers.
 
-        :keyword status: (Optional) If specified, select workers by worker status. Known values are:
-         "active", "draining", "inactive", and "all". Default value is "all".
-        :paramtype status: str or ~azure.communication.jobrouter.models.WorkerStateSelector
-        :keyword channel_id: (Optional) If specified, select workers who have a channel configuration
-         with this channel. Default value is None.
+        :keyword state: If specified, select workers by worker status. Known values are: "active",
+         "draining", "inactive", and "all". Default value is "all".
+        :paramtype state: str or ~azure.communication.jobrouter.models.RouterWorkerStateSelector
+        :keyword channel_id: If specified, select workers who have a channel configuration with this
+         channel. Default value is None.
         :paramtype channel_id: str
-        :keyword queue_id: (Optional) If specified, select workers who are assigned to this queue.
-         Default value is None.
+        :keyword queue_id: If specified, select workers who are assigned to this queue. Default value
+         is None.
         :paramtype queue_id: str
-        :keyword has_capacity: (Optional) If set to true, select only workers who have capacity for the
-         channel specified by ``channelId`` or for any channel
+        :keyword has_capacity: If set to true, select only workers who have capacity for the channel
+         specified by ``channelId`` or for any channel
                      if ``channelId`` not specified. If set to false, then will return all workers
          including workers without any capacity for jobs. Defaults to false. Default value is None.
         :paramtype has_capacity: bool
@@ -3597,7 +3708,9 @@ class JobRouterOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.WorkerCollection] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models._models.RouterWorkerCollection] = kwargs.pop(  # pylint: disable=protected-access
+            "cls", None
+        )
 
         error_map = {
             401: ClientAuthenticationError,
@@ -3611,7 +3724,7 @@ class JobRouterOperations:
             if not next_link:
 
                 request = build_job_router_list_workers_request(
-                    status=status,
+                    state=state,
                     channel_id=channel_id,
                     queue_id=queue_id,
                     has_capacity=has_capacity,
@@ -3650,7 +3763,7 @@ class JobRouterOperations:
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize(
-                _models._models.WorkerCollection, pipeline_response  # pylint: disable=protected-access
+                _models._models.RouterWorkerCollection, pipeline_response  # pylint: disable=protected-access
             )
             list_of_elem = deserialized.value
             if cls:
