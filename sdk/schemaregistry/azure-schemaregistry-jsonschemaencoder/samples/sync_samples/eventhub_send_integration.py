@@ -8,7 +8,7 @@
 """
 FILE: eventhub_send_integration.py
 DESCRIPTION:
-    Examples to show sending events synchronously to EventHub with AvroEncoder integrated for content encoding.
+    Examples to show sending events synchronously to EventHub with JsonSchemaEncoder integrated for content encoding.
 USAGE:
     python eventhub_send_integration.py
     Set the environment variables with your own values before running the sample:
@@ -28,6 +28,8 @@ For more information on DefaultAzureCredential, see
  https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 """
 import os
+import json
+
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
@@ -59,8 +61,6 @@ SCHEMA_JSON = {
         }
     }
 }
-
-import json
 SCHEMA_STRING = json.dumps(SCHEMA_JSON)
 
 def send_event_data_batch(producer, encoder):
@@ -83,8 +83,8 @@ eventhub_producer = EventHubProducerClient.from_connection_string(
     eventhub_name=EVENTHUB_NAME
 )
 
-# create a AvroEncoder instance
-json_encoder = JsonSchemaEncoder(
+# create a JsonSchemaEncoder instance
+json_schema_encoder = JsonSchemaEncoder(
     client=SchemaRegistryClient(
         fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
         credential=DefaultAzureCredential()
@@ -93,5 +93,5 @@ json_encoder = JsonSchemaEncoder(
     auto_register=True
 )
 
-with eventhub_producer, json_encoder:
-    send_event_data_batch(eventhub_producer, json_encoder)
+with eventhub_producer, json_schema_encoder:
+    send_event_data_batch(eventhub_producer, json_schema_encoder)

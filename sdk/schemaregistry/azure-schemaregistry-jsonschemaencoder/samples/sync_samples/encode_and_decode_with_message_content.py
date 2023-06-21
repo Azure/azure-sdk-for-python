@@ -27,11 +27,11 @@
 FILE: encode_and_decode_with_message_content.py
 DESCRIPTION:
     This sample demonstrates the following:
-     - Authenticating a sync SchemaRegistryClient to be used by the JsonEncoder.
-     - Passing in content and schema to the JsonEncoder, which will return a dict containing
+     - Authenticating a sync SchemaRegistryClient to be used by the JsonSchemaEncoder.
+     - Passing in content and schema to the JsonSchemaEncoder, which will return a dict containing
       encoded content and corresponding content type.
      - Passing in a dict containing Json-encoded content and corresponding content type to
-      the JsonEncoder, which will return the decoded content.
+      the JsonSchemaEncoder, which will return the decoded content.
 USAGE:
     python encode_and_decode_with_message_content.py
     Set the environment variables with your own values before running the sample:
@@ -51,7 +51,7 @@ import json
 
 from azure.identity import ClientSecretCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonEncoder, MessageContent
+from azure.schemaregistry.encoder.jsonschemaencoder import JsonSchemaEncoder, MessageContent
 from azure.eventhub import EventData
 
 TENANT_ID = os.environ["AZURE_TENANT_ID"]
@@ -59,7 +59,7 @@ CLIENT_ID = os.environ["AZURE_CLIENT_ID"]
 CLIENT_SECRET = os.environ["AZURE_CLIENT_SECRET"]
 
 SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ[
-    "SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE"
+    "SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE"
 ]
 GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
 SCHEMA_JSON = {
@@ -82,8 +82,8 @@ SCHEMA_JSON = {
         }
     }
 }
-
 SCHEMA_STRING = json.dumps(SCHEMA_JSON)
+
 
 token_credential = ClientSecretCredential(
     tenant_id=TENANT_ID, client_id=CLIENT_ID, client_secret=CLIENT_SECRET
@@ -118,7 +118,7 @@ if __name__ == "__main__":
         fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
         credential=token_credential,
     )
-    encoder = JsonEncoder(
+    encoder = JsonSchemaEncoder(
         client=schema_registry, group_name=GROUP_NAME, auto_register=True
     )
     event_data = encode_message_content_dict(encoder)

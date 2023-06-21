@@ -8,7 +8,7 @@
 """
 FILE: eventhub_receive_integration.py
 DESCRIPTION:
-    Examples to show receiving events synchronously from EventHub with AvroEncoder integrated for content decoding.
+    Examples to show receiving events synchronously from EventHub with JsonSchemaEncoder integrated for content decoding.
 USAGE:
     python eventhub_receive_integration.py
     Set the environment variables with your own values before running the sample:
@@ -17,7 +17,7 @@ USAGE:
     2) AZURE_CLIENT_ID - Required for use of the credential. The service principal's client ID.
      Also called its 'application' ID.
     3) AZURE_CLIENT_SECRET - Required for use of the credential. One of the service principal's client secrets.
-    4) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
+    4) SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
      which should follow the format: `<your-namespace>.servicebus.windows.net`
     5) SCHEMAREGISTRY_GROUP - The name of the schema group.
     6) EVENT_HUB_CONN_STR - The connection string of the Event Hubs namespace to receive events from.
@@ -31,7 +31,7 @@ import os
 from azure.eventhub import EventHubConsumerClient
 from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonEncoder
+from azure.schemaregistry.encoder.jsonschemaencoder import JsonSchemaEncoder
 
 EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
@@ -47,9 +47,9 @@ def on_event(partition_context, event):
     print(f'The received bytes of the EventData is {bytes_payload}.')
 
     # Use the decode method to decode the payload of the event.
-    # The decode method will extract the schema id from the content_type, and automatically retrieve the Avro Schema
+    # The decode method will extract the schema id from the content_type, and automatically retrieve the Json Schema
     # from the Schema Registry Service. The schema will be cached locally for future usage.
-    decoded_content = json_encoder.decode(event)
+    decoded_content = json_schema_encoder.decode(event)
     print(f'The dict content after decoding is {decoded_content}')
 
 
@@ -61,8 +61,8 @@ eventhub_consumer = EventHubConsumerClient.from_connection_string(
 )
 
 
-# create a jsonEncoder instance
-json_encoder = JsonEncoder(
+# create a JsonSchemaEncoder instance
+json_schema_encoder = JsonSchemaEncoder(
     client=SchemaRegistryClient(
         fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
         credential=DefaultAzureCredential()
@@ -73,7 +73,7 @@ json_encoder = JsonEncoder(
 
 
 try:
-    with eventhub_consumer, json_encoder:
+    with eventhub_consumer, json_schema_encoder:
         eventhub_consumer.receive(
             on_event=on_event,
             starting_position="-1",  # "-1" is from the beginning of the partition.

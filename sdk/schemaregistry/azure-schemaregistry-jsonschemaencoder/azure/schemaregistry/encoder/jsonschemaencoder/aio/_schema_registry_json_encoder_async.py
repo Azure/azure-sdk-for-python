@@ -280,9 +280,9 @@ class JsonSchemaEncoder(object):
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: Dict[str, Any]
         :rtype: Dict[str, Any]
-        :raises ~azure.schemaregistry.encoder.avroencoder.InvalidSchemaError:
+        :raises ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidSchemaError:
             Indicates an issue with validating schemas.
-        :raises ~azure.schemaregistry.encoder.avroencoder.InvalidContentError:
+        :raises ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidContentError:
             Indicates an issue with decoding content.
         """
 

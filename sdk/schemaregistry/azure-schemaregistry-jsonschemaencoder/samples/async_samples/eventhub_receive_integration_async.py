@@ -8,7 +8,7 @@
 """
 FILE: eventhub_receive_integration_async.py
 DESCRIPTION:
-    Examples to show receiving events asynchronously from EventHub with AvroEncoder integrated for content decoding.
+    Examples to show receiving events asynchronously from EventHub with JsonSchemaEncoder integrated for content decoding.
 USAGE:
     python eventhub_receive_integration_async.py
     Set the environment variables with your own values before running the sample:
@@ -32,12 +32,12 @@ import asyncio
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.schemaregistry.aio import SchemaRegistryClient
-from azure.schemaregistry.encoder.avroencoder.aio import AvroEncoder
+from azure.schemaregistry.encoder.jsonschemaencoder.aio import JsonSchemaEncoder
 
 EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ['SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE']
 GROUP_NAME = os.environ['SCHEMAREGISTRY_GROUP']
 
 
@@ -47,9 +47,9 @@ eventhub_consumer = EventHubConsumerClient.from_connection_string(
     consumer_group='$Default',
     eventhub_name=EVENTHUB_NAME,
 )
-# create a AvroEncoder instance
+# create a JsonSchemaEncoder instance
 azure_credential = DefaultAzureCredential()
-avro_encoder = AvroEncoder(
+json_schema_encoder = JsonSchemaEncoder(
     client=SchemaRegistryClient(
         fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
         credential=azure_credential
@@ -65,15 +65,15 @@ async def on_event(partition_context, event):
     print(f'The received bytes of the EventData is {bytes_payload}.')
 
     # Use the decode method to decode the payload of the event.
-    # The decode method will extract the schema id from the content_type, and automatically retrieve the Avro Schema
+    # The decode method will extract the schema id from the content_type, and automatically retrieve the Json Schema
     # from the Schema Registry Service. The schema will be cached locally for future usage.
-    decoded_content= await avro_encoder.decode(event)
+    decoded_content= await json_schema_encoder.decode(event)
     print(f'The dict content after decoding is {decoded_content}')
 
 
 async def main():
     try:
-        async with eventhub_consumer, avro_encoder:
+        async with eventhub_consumer, json_schema_encoder:
             await eventhub_consumer.receive(
                 on_event=on_event,
                 starting_position="-1",  # "-1" is from the beginning of the partition.
@@ -81,7 +81,7 @@ async def main():
     except KeyboardInterrupt:
         print('Stopped receiving.')
     finally:
-        await avro_encoder.close()
+        await json_schema_encoder.close()
         await azure_credential.close()
         await eventhub_consumer.close()
 

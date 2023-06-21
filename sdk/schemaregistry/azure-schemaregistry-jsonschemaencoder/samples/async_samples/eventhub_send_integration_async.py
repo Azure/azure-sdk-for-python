@@ -8,7 +8,7 @@
 """
 FILE: eventhub_send_integration_async.py
 DESCRIPTION:
-    Examples to show sending events asynchronously to EventHub with AvroEncoder integrated for content encoding.
+    Examples to show sending events asynchronously to EventHub with JsonSchemaEncoder integrated for content encoding.
 USAGE:
     python eventhub_send_integration_async.py
     Set the environment variables with your own values before running the sample:
@@ -29,6 +29,8 @@ For more information on DefaultAzureCredential, see
 """
 import os
 import asyncio
+import json
+
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubProducerClient
 from azure.identity.aio import DefaultAzureCredential
@@ -61,8 +63,6 @@ SCHEMA_JSON = {
         }
     }
 }
-
-import json
 SCHEMA_STRING = json.dumps(SCHEMA_JSON)
 
 
@@ -71,9 +71,8 @@ eventhub_producer = EventHubProducerClient.from_connection_string(
     conn_str=EVENTHUB_CONNECTION_STR,
     eventhub_name=EVENTHUB_NAME
 )
-# create a AvroEncoder instance
 azure_credential = DefaultAzureCredential()
-# create a AvroEncoder instance
+# create a JsonSchemaEncoder instance
 json_schema_encoder = JsonSchemaEncoder(
     client=SchemaRegistryClient(
         fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,

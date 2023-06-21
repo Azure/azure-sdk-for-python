@@ -27,11 +27,11 @@
 FILE: encode_and_decode_event_data_message.py
 DESCRIPTION:
     This sample demonstrates the following:
-     - Authenticating a sync SchemaRegistryClient to be used by the AvroEncoder.
-     - Passing in content, schema, and EventData class to the AvroEncoder, which will return an
+     - Authenticating a sync SchemaRegistryClient to be used by the JsonSchemaEncoder.
+     - Passing in content, schema, and EventData class to the JsonSchemaEncoder, which will return an
       EventData object containing encoded content and corresponding content type.
-     - Passing in an `EventData` object with `body` set to Avro-encoded content and `content_type`
-      set to corresponding content type to the AvroEncoder, which will return the decoded content.
+     - Passing in an `EventData` object with `body` set to Json-encoded content and `content_type`
+      set to corresponding content type to the JsonSchemaEncoder, which will return the decoded content.
 USAGE:
     python encode_and_decode_event_data_message.py
     Set the environment variables with your own values before running the sample:
@@ -47,10 +47,11 @@ For more information on ClientSecretCredential, see:
     https://docs.microsoft.com/python/api/azure-identity/azure.identity.clientsecretcredential?view=azure-python
 """
 import os
+import json
 
 from azure.identity import ClientSecretCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.avroencoder import AvroEncoder
+from azure.schemaregistry.encoder.jsonschemaencoder import JsonSchemaEncoder
 from azure.eventhub import EventData
 
 TENANT_ID = os.environ["AZURE_TENANT_ID"]
@@ -58,20 +59,30 @@ CLIENT_ID = os.environ["AZURE_CLIENT_ID"]
 CLIENT_SECRET = os.environ["AZURE_CLIENT_SECRET"]
 
 SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ[
-    "SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE"
+    "SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE"
 ]
 GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
-SCHEMA_STRING = """
-{"namespace": "example.avro",
- "type": "record",
- "name": "User",
- "fields": [
-     {"name": "name", "type": "string"},
-     {"name": "favorite_number",  "type": ["int", "null"]},
-     {"name": "favorite_color", "type": ["string", "null"]}
- ]
-}"""
-
+SCHEMA_JSON = {
+    "$id": "https://example.com/person.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Person",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "Person's name."
+        },
+        "favorite_color": {
+            "type": "string",
+            "description": "Favorite color."
+        },
+        "favorite_number": {
+            "description": "Favorite number.",
+            "type": "integer",
+        }
+    }
+}
+SCHEMA_STRING = json.dumps(SCHEMA_JSON)
 
 token_credential = ClientSecretCredential(
     tenant_id=TENANT_ID, client_id=CLIENT_ID, client_secret=CLIENT_SECRET
@@ -115,7 +126,7 @@ if __name__ == "__main__":
         fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
         credential=token_credential,
     )
-    encoder = AvroEncoder(
+    encoder = JsonSchemaEncoder(
         client=schema_registry, group_name=GROUP_NAME, auto_register=True
     )
     event_data_ben, event_data_alice = encode_to_event_data_message(encoder)
