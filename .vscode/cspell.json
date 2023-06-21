@@ -72,8 +72,6 @@
     "sdk/keyvault/azure-keyvault-keys/tests/keys.py",
     "sdk/modelsrepository/azure-iot-modelsrepository/**",
     "sdk/monitor/azure-monitor-query/**",
-    "sdk/purview/azure-purview-sharing/azure/purview/sharing/_serialization.py",
-    "sdk/purview/azure-purview-sharing/node_modules/**",
     "sdk/servicefabric/azure-servicefabric/**",
     "sdk/search/azure-search-documents/**",
     "sdk/storage/azure-storage-blob-changefeed/**",
