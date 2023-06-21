@@ -1,5 +1,11 @@
 # Release History
 
+## 23.1.0b2 (2023-06-16)
+
+### Breaking Changes
+
+  - Parameter mode of model DenySettings is now required
+
 ## 23.1.0b1 (2023-05-19)
 
 ### Features Added
