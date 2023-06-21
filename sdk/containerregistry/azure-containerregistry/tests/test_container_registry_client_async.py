@@ -876,7 +876,7 @@ class TestContainerRegistryClientAsyncUnitTests:
                 ]
             }
             return json.dumps(manifest)
-        async def send(request: PipelineRequest, **kwargs) -> MagicMock:
+        async def send(request: PipelineRequest, **kwargs) -> MyMagicMock:
             return MyMagicMock(
                 status_code=200,
                 content_type="application/json; charset=utf-8",
@@ -884,7 +884,7 @@ class TestContainerRegistryClientAsyncUnitTests:
         )
         
         async with ContainerRegistryClient(
-            endpoint=self.containerregistry_endpoint, transport = MagicMock(send=send)
+            endpoint=self.containerregistry_endpoint, transport = MyMagicMock(send=send)
         ) as client:
             manifests = client.list_manifest_properties(HELLO_WORLD)
             async for manifest in manifests:
