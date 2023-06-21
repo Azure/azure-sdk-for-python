@@ -414,7 +414,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             if self.state not in [SessionState.UNMAPPED, SessionState.DISCARDING]:
                 await self._outgoing_end(error=error)
             for _, link in self.links.items():
-                if link._is_closed is False:
+                if link._is_closed is False: # pylint: disable=protected-access
                     await link.detach()
             new_state = SessionState.DISCARDING if error else SessionState.END_SENT
             await self._set_state(new_state)
