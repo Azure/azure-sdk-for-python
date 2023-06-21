@@ -61,14 +61,14 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     :ivar bool can_read: Read Permissions for an artifact.
     :ivar bool can_list: List Permissions for an artifact.
     :ivar architecture: CPU Architecture of an artifact.
-    :vartype architecture: Optional[str]
+    :vartype architecture: Optional[Union[str, ~azure.containerregistry.ArtifactArchitecture]]
     :ivar created_on: Time and date an artifact was created.
     :vartype created_on: Optional[~datetime.datetime]
     :ivar Optional[str] digest: Digest for the artifact.
     :ivar last_updated_on: Time and date an artifact was last updated.
     :vartype last_updated_on: Optional[~datetime.datetime]
     :ivar operating_system: Operating system for the artifact.
-    :vartype operating_system: Optional[str]
+    :vartype operating_system: Optional[Union[str, ~azure.containerregistry.ArtifactOperatingSystem]]
     :ivar Optional[str] repository_name: Repository name the artifact belongs to.
     :ivar Optional[int] size_in_bytes: Size of the artifact.
     :ivar Optional[List[str]] tags: Tags associated with a registry artifact.
@@ -88,6 +88,11 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
         self.can_read = kwargs.get("can_read")
         self.can_list = kwargs.get("can_list")
         self.can_write = kwargs.get("can_write")
+        try:
+            self._architecture = ArtifactArchitecture(self._architecture)
+            self._operating_system = ArtifactOperatingSystem(self._operating_system)
+        except ValueError as e:
+            pass
 
     @classmethod
     def _from_generated(cls, generated: ManifestAttributesBase, **kwargs) -> "ArtifactManifestProperties":
