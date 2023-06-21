@@ -23,7 +23,7 @@ from azure.communication.jobrouter import (
     ReclassifyExceptionAction,
     ManualReclassifyExceptionAction,
     CancelExceptionAction,
-    RoundRobinMode, DistributionPolicy, JobQueue, ClassificationPolicy
+    RoundRobinMode, DistributionPolicy, RouterQueue, ClassificationPolicy
 )
 
 queue_labels = {
@@ -83,7 +83,7 @@ class TestExceptionPolicy(RouterRecordedTestCase):
         distribution_policy_id = self.get_distribution_policy_id()
 
         policy: DistributionPolicy = DistributionPolicy(
-            offer_ttl_seconds = 10.0,
+            offer_expires_after_seconds = 10.0,
             mode = RoundRobinMode(min_concurrent_offers = 1,
                                   max_concurrent_offers = 1),
             name = distribution_policy_id,
@@ -108,7 +108,7 @@ class TestExceptionPolicy(RouterRecordedTestCase):
         client: RouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_job_queue_id()
 
-        job_queue: JobQueue = JobQueue(
+        job_queue: RouterQueue = RouterQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
             name = job_queue_id,
             labels = queue_labels

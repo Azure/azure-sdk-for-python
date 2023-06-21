@@ -19,14 +19,14 @@ from azure.communication.jobrouter import (
     RoundRobinMode,
     ClassificationPolicy,
     LabelOperator,
-    QueueSelector,
+    RouterQueueSelector,
     StaticQueueSelectorAttachment,
     ConditionalQueueSelectorAttachment,
     RuleEngineQueueSelectorAttachment,
     PassThroughQueueSelectorAttachment,
     QueueWeightedAllocation,
     WeightedAllocationQueueSelectorAttachment,
-    WorkerSelector,
+    RouterWorkerSelector,
     StaticWorkerSelectorAttachment,
     ConditionalWorkerSelectorAttachment,
     RuleEngineWorkerSelectorAttachment,
@@ -38,7 +38,7 @@ from azure.communication.jobrouter import (
     FunctionRule,
     FunctionRuleCredential,
     DistributionPolicy,
-    JobQueue,
+    RouterQueue,
 )
 
 
@@ -52,21 +52,21 @@ queue_labels = {
 
 queue_selectors = [
     StaticQueueSelectorAttachment(
-        label_selector = QueueSelector(
+        queue_selector = RouterQueueSelector(
             key = "test_key", label_operator = LabelOperator.EQUAL, value = "test_value"
         )
     ),
     ConditionalQueueSelectorAttachment(
         condition = StaticRule(value = True),
-        label_selectors = [
-            QueueSelector(
+        queue_selectors = [
+            RouterQueueSelector(
                 key = "test_key", label_operator = LabelOperator.EQUAL, value = "test_value"
             )
         ]
     ),
     RuleEngineQueueSelectorAttachment(
         rule = StaticRule(value = [
-            QueueSelector(
+            RouterQueueSelector(
                 key = "test_key",
                 label_operator = LabelOperator.EQUAL,
                 value = "test_value"
@@ -81,8 +81,8 @@ queue_selectors = [
         allocations = [
             QueueWeightedAllocation(
                 weight = 1.0,
-                label_selectors = [
-                    QueueSelector(
+                queue_selectors = [
+                    RouterQueueSelector(
                         key = "test_key", label_operator = LabelOperator.EQUAL, value = "test_value"
                     )
                 ]
@@ -101,7 +101,7 @@ prioritization_rules = [
 
 worker_selectors = [
     StaticWorkerSelectorAttachment(
-        label_selector = WorkerSelector(
+        worker_selector = RouterWorkerSelector(
             key = "test_key",
             label_operator = LabelOperator.EQUAL,
             value = "test_value",
@@ -111,8 +111,8 @@ worker_selectors = [
     ),
     ConditionalWorkerSelectorAttachment(
         condition = StaticRule(value = True),
-        label_selectors = [
-            WorkerSelector(
+        worker_selectors = [
+            RouterWorkerSelector(
                 key = "test_key",
                 label_operator = LabelOperator.EQUAL,
                 value = "test_value",
@@ -123,7 +123,7 @@ worker_selectors = [
     ),
     RuleEngineWorkerSelectorAttachment(
         rule = StaticRule(value = [
-            WorkerSelector(
+            RouterWorkerSelector(
                 key = "test_key",
                 label_operator = LabelOperator.EQUAL,
                 value = "test_value",
@@ -140,8 +140,8 @@ worker_selectors = [
         allocations = [
             WorkerWeightedAllocation(
                 weight = 1.0,
-                label_selectors = [
-                    WorkerSelector(
+                worker_selectors = [
+                    RouterWorkerSelector(
                         key = "test_key",
                         label_operator = LabelOperator.EQUAL,
                         value = "test_value",
@@ -188,7 +188,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
 
             policy: DistributionPolicy = DistributionPolicy(
                 name = distribution_policy_id,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = RoundRobinMode(min_concurrent_offers = 1,
                                       max_concurrent_offers = 1)
             )
@@ -214,7 +214,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
         async with client:
             job_queue_id = self.get_job_queue_id()
 
-            job_queue: JobQueue = JobQueue(
+            job_queue: RouterQueue = RouterQueue(
                 name = job_queue_id,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()

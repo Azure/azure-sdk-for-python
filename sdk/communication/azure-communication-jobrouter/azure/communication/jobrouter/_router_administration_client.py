@@ -46,8 +46,8 @@ from ._generated.models import (
     StaticRule,
     ExpressionRule,
     FunctionRule,
-    JobQueue,
-    JobQueueItem
+    RouterQueue,
+    RouterQueueItem
 )
 
 from ._shared.utils import parse_connection_str
@@ -448,8 +448,8 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         :param str distribution_policy_id: Id of the distribution policy.
 
-        :keyword Optional[float] offer_ttl_seconds: The expiry time of any offers created under this policy will
-          be governed by the offer time to live.
+        :keyword Optional[float] offer_expires_after_seconds: The expiry time of any offers created under this policy
+          will be governed by the offer time to live.
 
         :keyword mode: Specified distribution mode
         :paramtype mode: Optional[Union[~azure.communication.jobrouter.BestWorkerMode,
@@ -477,8 +477,8 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
           Please provide either this or individual keyword parameters.
         :type distribution_policy: ~azure.communication.jobrouter.DistributionPolicy
 
-        :keyword Optional[float] offer_ttl_seconds: The expiry time of any offers created under this policy will
-          be governed by the offer time to live.
+        :keyword Optional[float] offer_expires_after_seconds: The expiry time of any offers created under this policy
+          will be governed by the offer time to live.
 
         :keyword mode: Specified distribution mode
         :paramtype mode: Optional[Union[~azure.communication.jobrouter.BestWorkerMode,
@@ -508,7 +508,8 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
 
         patch = DistributionPolicy(
             name = kwargs.pop("name", distribution_policy.name),
-            offer_ttl_seconds = kwargs.pop("offer_ttl_seconds", distribution_policy.offer_ttl_seconds),
+            offer_expires_after_seconds = kwargs.pop("offer_expires_after_seconds",
+                                           distribution_policy.offer_expires_after_seconds),
             mode = kwargs.pop("mode", distribution_policy.mode)
         )
 
@@ -631,9 +632,9 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
     def create_queue(
             self,
             queue_id: str,
-            queue: JobQueue,
+            queue: RouterQueue,
             **kwargs: Any
-    ) -> JobQueue:
+    ) -> RouterQueue:
         """ Create a job queue
 
         :param str queue_id: Id of the queue.
@@ -642,7 +643,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
         :type queue: ~azure.communication.jobrouter.JobQueue
 
         :return: JobQueue
-        :rtype: ~azure.communication.jobrouter.JobQueue
+        :rtype: ~azure.communication.jobrouter.RouterQueue
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -666,16 +667,16 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
     def update_queue(
             self,
             queue_id: str,
-            queue: JobQueue,
+            queue: RouterQueue,
             **kwargs: Any
-    ) -> JobQueue:
+    ) -> RouterQueue:
         """ Update a job queue
 
         :param str queue_id: Id of the queue.
 
         :param queue: An instance of JobQueue. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
-        :type queue: ~azure.communication.jobrouter.JobQueue
+        :type queue: ~azure.communication.jobrouter.RouterQueue
 
         :return: JobQueue
         :rtype: ~azure.communication.jobrouter.JobQueue
@@ -692,7 +693,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
             labels: Optional[Dict[str, Union[int, float, str, bool]]],
             exception_policy_id: Optional[str],
             **kwargs: Any
-    ) -> JobQueue:
+    ) -> RouterQueue:
         """ Update a job queue
 
         :param str queue_id: Id of the queue.
@@ -710,7 +711,7 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
           job escalation rules.
 
         :return: JobQueue
-        :rtype: ~azure.communication.jobrouter.JobQueue
+        :rtype: ~azure.communication.jobrouter.RouterQueue
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
@@ -718,16 +719,16 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
     def update_queue(
             self,
             queue_id: str,
-            *args: JobQueue,
+            *args: RouterQueue,
             **kwargs: Any
-    ) -> JobQueue:
+    ) -> RouterQueue:
         """ Update a job queue
 
         :param str queue_id: Id of the queue.
 
         :param queue: An instance of JobQueue. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
-        :type queue: ~azure.communication.jobrouter.JobQueue
+        :type queue: ~azure.communication.jobrouter.RouterQueue
 
         :keyword Optional[str] distribution_policy_id: The ID of the distribution policy that will determine
           how a job is distributed to workers.
@@ -757,11 +758,11 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
 
-        queue = JobQueue()
+        queue = RouterQueue()
         if len(args) == 1:
             queue = args[0]
 
-        patch = JobQueue(
+        patch = RouterQueue(
             name = kwargs.pop('name', queue.name),
             distribution_policy_id = kwargs.pop('distribution_policy_id', queue.distribution_policy_id),
             labels = kwargs.pop('labels', queue.labels),
@@ -778,13 +779,13 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
             self,
             queue_id: str,
             **kwargs: Any
-    ) -> JobQueue:
+    ) -> RouterQueue:
         """Retrieves an existing queue by Id.
 
         :param str queue_id: Id of the queue.
 
         :return: JobQueue
-        :rtype: ~azure.communication.jobrouter.JobQueue
+        :rtype: ~azure.communication.jobrouter.RouterQueue
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -808,13 +809,13 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
     def list_queues(
             self,
             **kwargs: Any
-    ) -> ItemPaged[JobQueueItem]:
+    ) -> ItemPaged[RouterQueueItem]:
         """Retrieves existing queues.
 
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
 
-        :return: An iterator like instance of JobQueueItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.JobQueueItem]
+        :return: An iterator like instance of RouterQueueItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.RouterQueueItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:

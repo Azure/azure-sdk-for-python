@@ -25,7 +25,7 @@ from azure.communication.jobrouter import (
     RoundRobinMode,
     RouterWorker,
     QueueAssignment,
-    ChannelConfiguration, DistributionPolicy, JobQueue,
+    ChannelConfiguration, DistributionPolicy, RouterQueue,
 )
 
 worker_labels = {
@@ -81,7 +81,7 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
 
             policy: DistributionPolicy = DistributionPolicy(
                 name = distribution_policy_id,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = RoundRobinMode(min_concurrent_offers = 1,
                                       max_concurrent_offers = 1)
             )
@@ -107,7 +107,7 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
         async with client:
             job_queue_id = self.get_job_queue_id()
 
-            job_queue: JobQueue = JobQueue(
+            job_queue: RouterQueue = RouterQueue(
                 name = job_queue_id,
                 labels = worker_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
@@ -435,7 +435,7 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
 
             router_workers = router_client.list_workers(
                 results_per_page = 2,
-                status = "inactive",
+                state = "inactive",
                 queue_id = self.get_job_queue_id(),
                 channel_id = "fakeChannel1")
 
@@ -444,13 +444,13 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
                 assert len(list_of_workers) <= 2
 
                 for w_item in list_of_workers:
-                    response_at_creation = created_w_response.get(w_item.router_worker.id, None)
+                    response_at_creation = created_w_response.get(w_item.worker.id, None)
 
                     if not response_at_creation:
                         continue
 
                     RouterWorkerValidator.validate_worker(
-                        w_item.router_worker,
+                        w_item.worker,
                         identifier = response_at_creation.id,
                         total_capacity = response_at_creation.total_capacity,
                         labels = response_at_creation.labels,

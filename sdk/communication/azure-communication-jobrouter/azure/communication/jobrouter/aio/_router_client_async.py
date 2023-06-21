@@ -26,17 +26,17 @@ from .._generated.models._patch import _convert_str_to_datetime  # pylint:disabl
 from .._generated._serialization import Serializer  # pylint:disable=protected-access
 from .._generated.aio import AzureCommunicationJobRouterService
 from .._generated.models import (
-    QueueStatistics,
-    WorkerStateSelector,
-    JobStateSelector,
+    RouterQueueStatistics,
+    RouterWorkerStateSelector,
+    RouterJobStatusSelector,
     AcceptJobOfferResult,
     UnassignJobResult,
-    JobPositionDetails,
+    RouterJobPositionDetails,
     CancelJobRequest,
     CompleteJobRequest,
     CloseJobRequest,
     DeclineJobOfferRequest,
-    WorkerSelector,
+    RouterWorkerSelector,
     ChannelConfiguration,
     RouterWorker,
     RouterWorkerItem,
@@ -139,13 +139,13 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             self,
             queue_id: str,
             **kwargs: Any
-    ) -> QueueStatistics:
+    ) -> RouterQueueStatistics:
         """Retrieves a queue's statistics.
 
         :param str queue_id: Id of the queue.
 
         :return: QueueStatistics
-        :rtype: ~azure.communication.jobrouter.QueueStatistics
+        :rtype: ~azure.communication.jobrouter.RouterQueueStatistics
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -396,7 +396,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
     def list_workers(
             self,
             *,
-            status: Optional[Union[str, WorkerStateSelector]] = WorkerStateSelector.ALL,
+            state: Optional[Union[str, RouterWorkerStateSelector]] = RouterWorkerStateSelector.ALL,
             channel_id: Optional[str] = None,
             queue_id: Optional[str] = None,
             has_capacity: Optional[bool] = None,
@@ -405,9 +405,9 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
     ) -> AsyncItemPaged[RouterWorkerItem]:
         """Retrieves existing workers.
 
-        :keyword status: If specified, select workers by worker status. Default value is "all".
+        :keyword state: If specified, select workers by worker status. Default value is "all".
           Accepted value(s): active, draining, inactive, all
-        :paramtype status: Optional[Union[str, ~azure.communication.jobrouter.WorkerStateSelector]]
+        :paramtype state: Optional[Union[str, ~azure.communication.jobrouter.RouterWorkerStateSelector]]
 
         :keyword channel_id: If specified, select workers who have a channel configuration
            with this channel. Default value is None.
@@ -452,7 +452,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
 
         return self._client.job_router.list_workers(
             params = params,
-            status = status,
+            state = state,
             channel_id = channel_id,
             queue_id = queue_id,
             has_capacity = has_capacity,
@@ -561,7 +561,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             queue_id: Optional[str],
             priority: Optional[int],
             disposition_code: Optional[str],
-            requested_worker_selectors: Optional[List[WorkerSelector]],
+            requested_worker_selectors: Optional[List[RouterWorkerSelector]],
             labels: Optional[Dict[str, Union[int, float, str, bool]]],
             tags: Optional[Dict[str, Union[int, float, str, bool]]],
             notes: Optional[Dict[datetime, str]],
@@ -594,7 +594,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
 
         :keyword requested_worker_selectors: A collection of manually specified label selectors, which
          a worker must satisfy in order to process this job.
-        :paramtype requested_worker_selectors: Optional[List[~azure.communication.jobrouter.WorkerSelector]]
+        :paramtype requested_worker_selectors: Optional[List[~azure.communication.jobrouter.RouterWorkerSelector]]
 
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
@@ -756,7 +756,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
     def list_jobs(
             self,
             *,
-            status: Optional[Union[str, JobStateSelector]] = JobStateSelector.ALL,
+            status: Optional[Union[str, RouterJobStatusSelector]] = RouterJobStatusSelector.ALL,
             channel_id: Optional[str] = None,
             queue_id: Optional[str] = None,
             classification_policy_id: Optional[str] = None,
@@ -770,7 +770,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         :keyword status: If specified, filter jobs by status. Default value is "all".
             Accepted value(s): pendingClassification, queued, assigned, completed, closed, cancelled,
             classificationFailed, active, all
-        :paramtype status: Optional[Union[str, ~azure.communication.jobrouter.JobStateSelector]]
+        :paramtype status: Optional[Union[str, ~azure.communication.jobrouter.RouterJobStatusSelector]]
 
         :keyword channel_id: If specified, filter jobs by channel. Default value is None.
         :paramtype channel_id: Optional[str]
@@ -881,13 +881,13 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             self,
             job_id: str,
             **kwargs: Any
-    ) -> JobPositionDetails:
+    ) -> RouterJobPositionDetails:
         """Gets a job's position details.
 
         :param str job_id: Id of the job.
 
         :return: JobPositionDetails
-        :rtype: ~azure.communication.jobrouter.JobPositionDetails
+        :rtype: ~azure.communication.jobrouter.RouterJobPositionDetails
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:

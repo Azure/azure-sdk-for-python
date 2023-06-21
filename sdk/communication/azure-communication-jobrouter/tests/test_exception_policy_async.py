@@ -24,7 +24,7 @@ from azure.communication.jobrouter import (
     ReclassifyExceptionAction,
     ManualReclassifyExceptionAction,
     CancelExceptionAction,
-    RoundRobinMode, DistributionPolicy, JobQueue, ClassificationPolicy
+    RoundRobinMode, DistributionPolicy, RouterQueue, ClassificationPolicy
 )
 
 queue_labels = {
@@ -88,7 +88,7 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
 
             policy: DistributionPolicy = DistributionPolicy(
                 name = distribution_policy_id,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = RoundRobinMode(min_concurrent_offers = 1,
                                       max_concurrent_offers = 1)
             )
@@ -114,7 +114,7 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
         async with client:
             job_queue_id = self.get_job_queue_id()
 
-            job_queue: JobQueue = JobQueue(
+            job_queue: RouterQueue = RouterQueue(
                 name = job_queue_id,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()

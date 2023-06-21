@@ -29,14 +29,14 @@ from azure.communication.jobrouter import (
     RouterWorker,
     QueueAssignment,
     ChannelConfiguration,
-    WorkerSelector,
+    RouterWorkerSelector,
     LabelOperator,
-    QueueSelector,
+    RouterQueueSelector,
     StaticQueueSelectorAttachment,
     StaticRule,
     StaticWorkerSelectorAttachment,
     RouterJobStatus,
-    JobStateSelector, DistributionPolicy, JobQueue, ClassificationPolicy, RouterJob
+    RouterJobStatusSelector, DistributionPolicy, RouterQueue, ClassificationPolicy, RouterJob
 )
 
 job_labels = {
@@ -58,32 +58,32 @@ job_priority = 10
 job_disposition_code = "JobCancelledByUser"
 
 job_requested_worker_selectors = [
-    WorkerSelector(
+    RouterWorkerSelector(
         key = "FakeKey1",
         label_operator = LabelOperator.EQUAL,
         value = True
     ),
-    WorkerSelector(
+    RouterWorkerSelector(
         key = "FakeKey2",
         label_operator = LabelOperator.NOT_EQUAL,
         value = False
     ),
-    WorkerSelector(
+    RouterWorkerSelector(
         key = "FakeKey3",
         label_operator = LabelOperator.LESS_THAN,
         value = 10
     ),
-    WorkerSelector(
+    RouterWorkerSelector(
         key = "FakeKey4",
         label_operator = LabelOperator.LESS_THAN_EQUAL,
         value = 10.01
     ),
-    WorkerSelector(
+    RouterWorkerSelector(
         key = "FakeKey5",
         label_operator = LabelOperator.GREATER_THAN,
         value = 10
     ),
-    WorkerSelector(
+    RouterWorkerSelector(
         key = "FakeKey6",
         label_operator = LabelOperator.GREATER_THAN_EQUAL,
         value = 10
@@ -97,7 +97,7 @@ prioritization_rules = [
 
 cp_worker_selectors = [
     StaticWorkerSelectorAttachment(
-        label_selector = WorkerSelector(
+        worker_selector = RouterWorkerSelector(
             key = "FakeKeyFromCp",
             label_operator = LabelOperator.EQUAL,
             value = "FakeValue",
@@ -106,7 +106,7 @@ cp_worker_selectors = [
 ]
 
 expected_attached_worker_selectors = [
-    WorkerSelector(
+    RouterWorkerSelector(
         key = "FakeKeyFromCp",
         label_operator = LabelOperator.EQUAL,
         value = "FakeValue",
@@ -159,7 +159,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
 
             policy: DistributionPolicy = DistributionPolicy(
                 name = distribution_policy_id,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = RoundRobinMode(min_concurrent_offers = 1,
                                       max_concurrent_offers = 1)
             )
@@ -185,7 +185,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
         async with client:
             job_queue_id = self.get_job_queue_id()
 
-            job_queue: JobQueue = JobQueue(
+            job_queue: RouterQueue = RouterQueue(
                 name = job_queue_id,
                 labels = job_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
@@ -211,7 +211,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
         async with client:
             job_queue_id = self.get_fallback_queue_id()
 
-            job_queue: JobQueue = JobQueue(
+            job_queue: RouterQueue = RouterQueue(
                 name = job_queue_id,
                 labels = job_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
@@ -237,7 +237,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
         async with client:
             cp_queue_selectors = [
                 StaticQueueSelectorAttachment(
-                    label_selector = QueueSelector(
+                    label_selector = RouterQueueSelector(
                         key = "Id", label_operator = LabelOperator.EQUAL, value = self.get_job_queue_id()
                     )
                 ),
@@ -298,6 +298,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
             router_job = await router_client.get_job(job_id = identifier)
             assert router_job.job_status == RouterJobStatus.CANCELLED
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparersAsync.router_test_decorator_async
     @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
@@ -348,6 +349,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
                 Exception,
                 job_identifier)
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparersAsync.router_test_decorator_async
     @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
@@ -407,6 +409,8 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
                 job_identifier)
 
             return recorded_variables
+
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparersAsync.router_test_decorator_async
     @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
@@ -481,6 +485,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
             # updating labels does not change job status
             assert update_router_job.job_status == RouterJobStatus.QUEUED
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparersAsync.router_test_decorator_async
     @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
@@ -555,6 +560,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
             # updating labels does not change job status
             assert update_router_job.job_status == RouterJobStatus.QUEUED
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparersAsync.router_test_decorator_async
     @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
@@ -622,6 +628,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
                 notes = job_notes
             )
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparersAsync.router_test_decorator_async
     @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
@@ -672,6 +679,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
                 Exception,
                 job_identifier)
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparersAsync.router_test_decorator_async
     @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
@@ -752,6 +760,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
                 Exception,
                 job_identifier)
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparersAsync.router_test_decorator_async
     @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
@@ -832,6 +841,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
                 Exception,
                 job_identifier)
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparersAsync.router_test_decorator_async
     @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
@@ -902,6 +912,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
 
             assert queried_router_job.job_status == RouterJobStatus.QUEUED
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparersAsync.router_test_decorator_async
     @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
@@ -958,6 +969,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
             assert nfe.value.reason == "Not Found"
             assert nfe.value.status_code == 404
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparersAsync.router_test_decorator_async
     @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
@@ -1016,7 +1028,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
 
             router_jobs = router_client.list_jobs(
                 results_per_page = 3,
-                status = JobStateSelector.QUEUED,
+                status = RouterJobStatusSelector.QUEUED,
                 queue_id = self.get_job_queue_id(),
                 channel_id = job_channel_ids[0]
             )
@@ -1048,7 +1060,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
             # all job_queues created were listed
             assert job_count == 0
 
-
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparersAsync.router_test_decorator_async
     @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
@@ -1115,7 +1127,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
 
             router_jobs = router_client.list_jobs(
                 results_per_page = 2,
-                status = JobStateSelector.SCHEDULED,
+                status = RouterJobStatusSelector.SCHEDULED,
                 queue_id = self.get_job_queue_id(),
                 scheduled_before = recorded_variables["scheduled_time_utc"],
                 channel_id = job_channel_ids[0],

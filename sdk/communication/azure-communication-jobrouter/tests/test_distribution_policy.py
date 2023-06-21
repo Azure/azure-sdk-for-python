@@ -54,7 +54,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
 
         for mode in distribution_modes:
             policy: DistributionPolicy = DistributionPolicy(
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode,
                 name = dp_identifier,
             )
@@ -72,7 +72,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 distribution_policy = distribution_policy_response,
                 identifier = dp_identifier,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode
             )
 
@@ -86,7 +86,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             # Arrange
 
             policy: DistributionPolicy = DistributionPolicy(
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode,
                 name = dp_identifier,
             )
@@ -104,7 +104,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 distribution_policy = distribution_policy_response,
                 identifier = dp_identifier,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode
             )
 
@@ -123,7 +123,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 distribution_policy = updated_distribution_policy,
                 identifier = dp_identifier,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode_copy
             )
 
@@ -137,7 +137,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             # Arrange
 
             policy: DistributionPolicy = DistributionPolicy(
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode,
                 name = dp_identifier,
             )
@@ -155,7 +155,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 distribution_policy = distribution_policy_response,
                 identifier = dp_identifier,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode
             )
 
@@ -174,7 +174,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 distribution_policy = updated_distribution_policy,
                 identifier = dp_identifier,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode_copy
             )
 
@@ -186,7 +186,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
 
         for mode in distribution_modes:
             policy: DistributionPolicy = DistributionPolicy(
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode,
                 name = dp_identifier,
             )
@@ -204,7 +204,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 distribution_policy = distribution_policy_response,
                 identifier = dp_identifier,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode
             )
 
@@ -213,7 +213,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 distribution_policy = queried_distribution_policy,
                 identifier = dp_identifier,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode
             )
 
@@ -225,7 +225,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
 
         for mode in distribution_modes:
             policy: DistributionPolicy = DistributionPolicy(
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode,
                 name = dp_identifier,
             )
@@ -240,7 +240,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 distribution_policy = distribution_policy_response,
                 identifier = dp_identifier,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode
             )
 
@@ -261,7 +261,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
 
         for identifier in dp_identifiers:
             policy: DistributionPolicy = DistributionPolicy(
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = distribution_modes[0],
                 name = identifier,
             )
@@ -279,7 +279,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 distribution_policy = distribution_policy_response,
                 identifier = identifier,
                 name = identifier,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = distribution_modes[0]
             )
             created_dp_response[distribution_policy_response.id] = distribution_policy_response
@@ -299,7 +299,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                     distribution_policy = policy_item.distribution_policy,
                     identifier = response_at_creation.id,
                     name = response_at_creation.name,
-                    offer_ttl_seconds = response_at_creation.offer_ttl_seconds,
+                    offer_expires_after_seconds = response_at_creation.offer_expires_after_seconds,
                     mode = response_at_creation.mode
                 )
                 policy_count -= 1

@@ -19,7 +19,7 @@ from azure.core.exceptions import ResourceNotFoundError
 
 from azure.communication.jobrouter.aio import RouterAdministrationClient
 from azure.communication.jobrouter import (
-    RoundRobinMode, DistributionPolicy, JobQueue,
+    RoundRobinMode, DistributionPolicy, RouterQueue,
 )
 
 queue_labels = {
@@ -59,7 +59,7 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
 
             policy: DistributionPolicy = DistributionPolicy(
                 name = distribution_policy_id,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = RoundRobinMode(min_concurrent_offers = 1,
                                       max_concurrent_offers = 1)
             )
@@ -85,7 +85,7 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
         router_client: RouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
-            job_queue: JobQueue = JobQueue(
+            job_queue: RouterQueue = RouterQueue(
                 name = dp_identifier,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
@@ -118,7 +118,7 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
         router_client: RouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
-            job_queue: JobQueue = JobQueue(
+            job_queue: RouterQueue = RouterQueue(
                 name = dp_identifier,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
@@ -172,7 +172,7 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
         router_client: RouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
-            job_queue: JobQueue = JobQueue(
+            job_queue: RouterQueue = RouterQueue(
                 name = dp_identifier,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
@@ -225,7 +225,7 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
         router_client: RouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
-            job_queue: JobQueue = JobQueue(
+            job_queue: RouterQueue = RouterQueue(
                 name = dp_identifier,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
@@ -268,7 +268,7 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
         dp_identifier = "test_delete_q_async"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
-        job_queue: JobQueue = JobQueue(
+        job_queue: RouterQueue = RouterQueue(
             name = dp_identifier,
             labels = queue_labels,
             distribution_policy_id = self.get_distribution_policy_id()
@@ -307,7 +307,7 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
 
         async with router_client:
             for identifier in dp_identifiers:
-                job_queue: JobQueue = JobQueue(
+                job_queue: RouterQueue = RouterQueue(
                     name = identifier,
                     labels = queue_labels,
                     distribution_policy_id = self.get_distribution_policy_id()
@@ -339,13 +339,13 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
                 assert len(list_of_queues) <= 2
 
                 for q_item in list_of_queues:
-                    response_at_creation = created_q_response.get(q_item.job_queue.id, None)
+                    response_at_creation = created_q_response.get(q_item.queue.id, None)
 
                     if not response_at_creation:
                         continue
 
                     JobQueueValidator.validate_queue(
-                        q_item.job_queue,
+                        q_item.queue,
                         identifier = response_at_creation.id,
                         name = response_at_creation.name,
                         labels = response_at_creation.labels,
