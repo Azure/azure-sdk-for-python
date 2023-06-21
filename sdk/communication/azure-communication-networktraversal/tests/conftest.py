@@ -23,12 +23,20 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import os
 import pytest
 
-from devtools_testutils import add_body_key_sanitizer
+from devtools_testutils import add_body_key_sanitizer, add_general_string_sanitizer, add_remove_header_sanitizer
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     add_body_key_sanitizer(json_path="$..credential", value="sanitized")
+    # Two `id` sanitizers are used since this key can be nested at different levels in bodies
     add_body_key_sanitizer(json_path="$.id", value="sanitized")
+    add_body_key_sanitizer(json_path="$..id", value="sanitized")
     add_body_key_sanitizer(json_path="$..username", value="sanitized")
+
+    sanitized_endpoint = "https://sanitized.communication.azure.com"
+    endpoint = os.environ.get("COMMUNICATION_SERVICE_ENDPOINT", sanitized_endpoint)
+    add_general_string_sanitizer(target=endpoint, value=sanitized_endpoint)
+    add_remove_header_sanitizer(headers="x-ms-content-sha256")

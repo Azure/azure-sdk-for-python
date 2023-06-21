@@ -1,0 +1,58 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/networkTraversal/:issueRelayConfiguration?api-version=2022-03-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "15",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-communication-networktraversal/1.1.0b2 Python/3.10.6 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-glibc2.35)",
+        "x-ms-date": "Thu, 22 Jun 2023 01:15:58 GMT",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": {
+        "ttl": 172800
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview, 2022-03-01-preview",
+        "Content-Length": "367",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 22 Jun 2023 01:15:57 GMT",
+        "MS-CV": "8j8\u002B23u1XESUDjCCXbaTYw.0",
+        "Request-Context": "appId=",
+        "Strict-Transport-Security": "max-age=2592000",
+        "X-Azure-Ref": "0zaCTZAAAAADxWquOr5bZR69bJZXELa7rUERYMzFFREdFMDIyMgA5ZmM3YjUxOS1hOGNjLTRmODktOTM1ZS1jOTE0OGFlMDllODE=",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Processing-Time": "17ms"
+      },
+      "ResponseBody": {
+        "iceServers": [
+          {
+            "routeType": "any",
+            "urls": [
+              "stun:relay.communication.microsoft.com:3478",
+              "turn:relay.communication.microsoft.com:3478"
+            ],
+            "username": "sanitized",
+            "credential": "sanitized"
+          },
+          {
+            "routeType": "nearest",
+            "urls": [
+              "stun:20.202.255.225:3478",
+              "turn:20.202.255.225:3478"
+            ],
+            "username": "sanitized",
+            "credential": "sanitized"
+          }
+        ],
+        "expiresOn": "2023-06-24T01:15:57.811938\u002B00:00"
+      }
+    }
+  ],
+  "Variables": {}
+}
