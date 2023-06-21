@@ -14,7 +14,7 @@ from azure.mgmt.trafficmanager import TrafficManagerManagementClient
     pip install azure-identity
     pip install azure-mgmt-trafficmanager
 # USAGE
-    python profile_get_with_endpoints.py
+    python name_availability_v2_test_name_not_available_postexample23.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,12 @@ def main():
         subscription_id="{subscription-id}",
     )
 
-    response = client.profiles.get(
-        resource_group_name="azuresdkfornetautoresttrafficmanager1323",
-        profile_name="azuresdkfornetautoresttrafficmanager3880",
+    response = client.profiles.check_traffic_manager_name_availability_v2(
+        parameters={"name": "azsmnet4696", "type": "microsoft.network/trafficmanagerprofiles"},
     )
     print(response)
 
 
-# x-ms-original-file: specification/trafficmanager/resource-manager/Microsoft.Network/stable/2022-04-01/examples/Profile-GET-WithEndpoints.json
+# x-ms-original-file: specification/trafficmanager/resource-manager/Microsoft.Network/stable/2022-04-01/examples/NameAvailabilityV2Test_NameNotAvailable-POST-example-23.json
 if __name__ == "__main__":
     main()
