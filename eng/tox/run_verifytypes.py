@@ -9,6 +9,7 @@
 # the package from main and compares its type completeness score with
 # that of the current code. If type completeness worsens from the code in main, the check fails.
 
+import pathlib
 import subprocess
 import json
 import argparse
@@ -21,10 +22,12 @@ from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.variables import in_ci
 
 logging.getLogger().setLevel(logging.INFO)
+root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
 
 def install_from_main(setup_path):
-    subdirectory = setup_path.split("azure-sdk-for-python")[1].lstrip("/\\")
+    path = pathlib.Path(setup_path)
+    subdirectory = path.relative_to(root_dir)
     cwd = os.getcwd()
     with tempfile.TemporaryDirectory() as temp_dir_name:
         os.chdir(temp_dir_name)
