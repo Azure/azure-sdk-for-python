@@ -5,9 +5,10 @@
 ### Features Added
 
 ### Breaking Changes
+- The enum properties in `ArtifactManifestProperties` can be `string` when the value is not included in enum.
 
 ### Bugs Fixed
-- Fixed a bug when deserializing unknown architecture and os values in `ArtifactManifestProperties` object. ([#28469](https://github.com/Azure/azure-sdk-for-python/issues/28469)[#30077](https://github.com/Azure/azure-sdk-for-python/issues/30077))
+- Fixed a bug when deserializing unknown architecture and os values in `ArtifactManifestProperties` object. ([#28469](https://github.com/Azure/azure-sdk-for-python/issues/28469) [#30077](https://github.com/Azure/azure-sdk-for-python/issues/30077))
 
 ### Other Changes
 
