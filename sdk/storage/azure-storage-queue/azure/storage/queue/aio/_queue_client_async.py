@@ -93,7 +93,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
     ) -> None:
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.get('loop', None)
-        _initialize_client(self, account_url=account_url, queue_name=queue_name, credential=credential, **kwargs)
+        _initialize_client(self, account_url=account_url, queue_name=queue_name, credential=credential, client_type='async', **kwargs)
         self._loop = loop
 
     @distributed_trace_async

@@ -7,12 +7,13 @@
 import sys
 from datetime import datetime, timezone
 from ._generated import AzureQueueStorage
+from ._generated.aio import AzureQueueStorage as AsyncAzureQueueStorage
 from urllib.parse import urlparse, quote, unquote
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._message_encoding import NoEncodePolicy, NoDecodePolicy
 from ._serialize import get_api_version
 
-def _initialize_client(self, account_url, queue_name, credential, **kwargs):
+def _initialize_client(self, account_url, queue_name, credential, client_type, **kwargs):
     try:
         if not account_url.lower().startswith('http'):
             account_url = "https://" + account_url
@@ -35,7 +36,14 @@ def _initialize_client(self, account_url, queue_name, credential, **kwargs):
 
     self.message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
     self.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
-    self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
+
+    if client_type == 'sync':
+        self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
+    elif client_type == 'async':
+        self._client = AsyncAzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
+    else:
+        raise ValueError("Unknown client_type provided, valid options are 'sync' and 'async'.")
+
     self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
     self._configure_encryption(kwargs)
 

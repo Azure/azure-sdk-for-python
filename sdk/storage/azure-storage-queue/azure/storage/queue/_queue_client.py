@@ -84,7 +84,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
-        _initialize_client(self, account_url=account_url, queue_name=queue_name, credential=credential, **kwargs)
+        _initialize_client(self, account_url=account_url, queue_name=queue_name, credential=credential, client_type='sync', **kwargs)
 
     def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to the current location
