@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -37,9 +37,36 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 
 class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
+    @overload
+    async def _upload(  # pylint: disable=inconsistent-return-statements
+        self,
+        rule_id: str,
+        stream: str,
+        body: List[JSON],
+        *,
+        content_encoding: Optional[str] = None,
+        x_ms_client_request_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        ...
+
+    @overload
+    async def _upload(  # pylint: disable=inconsistent-return-statements
+        self,
+        rule_id: str,
+        stream: str,
+        body: IO,
+        *,
+        content_encoding: Optional[str] = None,
+        x_ms_client_request_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        ...
 
     @distributed_trace_async
-    async def upload(  # pylint: disable=inconsistent-return-statements
+    async def _upload(  # pylint: disable=inconsistent-return-statements
         self,
         rule_id: str,
         stream: str,

@@ -1,5 +1,16 @@
 # Release History
 
+## 1.2.0b2 (2023-06-16)
+
+### Features Added
+
+  - Model IotDpsPropertiesDescription has a new parameter portal_operations_host_name
+  - Model ProvisioningServiceDescription has a new parameter identity
+  - Model ProvisioningServiceDescription has a new parameter resourcegroup
+  - Model ProvisioningServiceDescription has a new parameter subscriptionid
+  - Model Resource has a new parameter resourcegroup
+  - Model Resource has a new parameter subscriptionid
+
 ## 1.2.0b1 (2022-11-15)
 
 ### Features Added
