@@ -860,3 +860,32 @@ class TestContainerRegistryClientAsyncUnitTests:
                 async for chunk in stream:
                     pass
             assert str(exp.value) == "The content of retrieved blob digest does not match the requested digest."
+    
+    @pytest.mark.asyncio
+    async def test_deserialize_manifest(self):
+        def get_manifest(encoding: Optional[str] = None) -> str:
+            manifest = {
+                "manifests": [
+                    {
+                        "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+                        "imageSize": 566,
+                        "digest": "sha256:b808af65792ab617b9032c20fb12c455dc2bf5efe1af3f0ac81a129560772d35",
+                        "architecture": "unknown",
+                        "os": "unknown",
+                    }
+                ]
+            }
+            return json.dumps(manifest)
+        async def send(request: PipelineRequest, **kwargs) -> MagicMock:
+            return MyMagicMock(
+                status_code=200,
+                content_type="application/json; charset=utf-8",
+                text=get_manifest,
+        )
+        
+        async with ContainerRegistryClient(
+            endpoint=self.containerregistry_endpoint, transport = MagicMock(send=send)
+        ) as client:
+            manifests = client.list_manifest_properties(HELLO_WORLD)
+            async for manifest in manifests:
+                pass
