@@ -164,4 +164,4 @@ def _cloud_environment_is_valid(environment: Environment):
 
 
 def _environment_contains_cloud_artifacts(deployment: OnlineDeployment):
-    return isinstance(deployment.environment, str) or deployment.environment.id
+    return isinstance(deployment.environment, str) or deployment.environment.id is not None

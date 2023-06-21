@@ -59,7 +59,7 @@ def _local_model_is_valid(deployment: OnlineDeployment):
 
 def _model_contains_cloud_artifacts(deployment: OnlineDeployment):
     # If the deployment.model is a string, then it is the cloud model name or full arm ID
-    return isinstance(deployment.model, str) or deployment.model.id
+    return isinstance(deployment.model, str) or deployment.model.id is not None
 
 
 def _get_cloud_model_artifacts(model_operations: ModelOperations, model: str, download_path: str) -> str:
