@@ -43,7 +43,7 @@ class RouterWorkerSamplesAsync(object):
             distribution_policy = await router_admin_client.create_distribution_policy(
                 distribution_policy_id = distribution_policy_id,
                 distribution_policy = DistributionPolicy(
-                    offer_ttl_seconds = 10 * 60,
+                    offer_expires_after_seconds = 10 * 60,
                     mode = LongestIdleMode(
                         min_concurrent_offers = 1,
                         max_concurrent_offers = 1

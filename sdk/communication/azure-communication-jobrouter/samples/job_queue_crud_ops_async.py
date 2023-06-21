@@ -42,7 +42,7 @@ class JobQueueSamplesAsync(object):
             distribution_policy = await router_admin_client.create_distribution_policy(
                 distribution_policy_id = distribution_policy_id,
                 distribution_policy = DistributionPolicy(
-                    offer_ttl_seconds = 10 * 60,
+                    offer_expires_after_seconds = 10 * 60,
                     mode = LongestIdleMode(
                         min_concurrent_offers = 1,
                         max_concurrent_offers = 1
@@ -58,7 +58,7 @@ class JobQueueSamplesAsync(object):
         # [START create_queue_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
         from azure.communication.jobrouter import (
-            JobQueue,
+            RouterQueue,
         )
 
         # set `connection_string` to an existing ACS endpoint
@@ -66,9 +66,9 @@ class JobQueueSamplesAsync(object):
         print("JobRouterAdministrationClient created successfully!")
 
         async with router_admin_client:
-            job_queue: JobQueue = await router_admin_client.create_queue(
+            job_queue: RouterQueue = await router_admin_client.create_queue(
                 queue_id = job_queue_id,
-                queue = JobQueue(
+                queue = RouterQueue(
                     distribution_policy_id = distribution_policy_id,
                     name = "My job queue"
                 )
@@ -84,7 +84,7 @@ class JobQueueSamplesAsync(object):
         # [START update_queue_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
         from azure.communication.jobrouter import (
-            JobQueue,
+            RouterQueue,
         )
 
         # set `connection_string` to an existing ACS endpoint
@@ -92,7 +92,7 @@ class JobQueueSamplesAsync(object):
         print("JobRouterAdministrationClient created successfully!")
 
         async with router_admin_client:
-            updated_job_queue: JobQueue = await router_admin_client.update_queue(
+            updated_job_queue: RouterQueue = await router_admin_client.update_queue(
                 queue_id = job_queue_id,
                 labels = {
                     "Additional-Queue-Label": "ChatQueue"
@@ -123,13 +123,13 @@ class JobQueueSamplesAsync(object):
         # [START get_queue_statistics_async]
         from azure.communication.jobrouter.aio import JobRouterClient
         from azure.communication.jobrouter import (
-            QueueStatistics
+            RouterQueueStatistics
         )
 
         router_client: JobRouterClient = JobRouterClient.from_connection_string(conn_str = connection_string)
 
         async with router_client:
-            job_queue_statistics: QueueStatistics = await router_client.get_queue_statistics(queue_id = job_queue_id)
+            job_queue_statistics: RouterQueueStatistics = await router_client.get_queue_statistics(queue_id = job_queue_id)
 
             print(f"Successfully fetched queue statistics router queue: {job_queue_statistics}")
         # [END get_queue_statistics_async]
@@ -145,7 +145,7 @@ class JobQueueSamplesAsync(object):
             job_queue_iterator = router_admin_client.list_queues()
 
             async for q in job_queue_iterator:
-                print(f"Retrieved queue policy with id: {q.job_queue.id}")
+                print(f"Retrieved queue policy with id: {q.queue.id}")
 
             print(f"Successfully completed fetching job queues")
         # [END list_queues_async]
@@ -165,7 +165,7 @@ class JobQueueSamplesAsync(object):
                 print(f"Retrieved {len(job_queues_in_page)} queues in current page")
 
                 for q in job_queues_in_page:
-                    print(f"Retrieved queue policy with id: {q.job_queue.id}")
+                    print(f"Retrieved queue policy with id: {q.queue.id}")
 
             print(f"Successfully completed fetching job queues")
         # [END list_queues_batched_async]

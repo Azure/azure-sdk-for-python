@@ -51,7 +51,7 @@ class RouterJobSamplesAsync(object):
             dist_policy = await router_admin_client.create_distribution_policy(
                 distribution_policy_id = distribution_policy_id,
                 distribution_policy = DistributionPolicy(
-                    offer_ttl_seconds = 10 * 60,
+                    offer_expires_after_seconds = 10 * 60,
                     mode = LongestIdleMode(
                         min_concurrent_offers = 1,
                         max_concurrent_offers = 1
@@ -64,15 +64,15 @@ class RouterJobSamplesAsync(object):
         queue_id = self._queue_id
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
         from azure.communication.jobrouter import (
-            JobQueue
+            RouterQueue
         )
 
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
         async with router_admin_client:
-            job_queue: JobQueue = await router_admin_client.create_queue(
+            job_queue: RouterQueue = await router_admin_client.create_queue(
                 queue_id = queue_id,
-                queue = JobQueue(
+                queue = RouterQueue(
                     distribution_policy_id = self._distribution_policy_id
                 )
             )
@@ -85,7 +85,7 @@ class RouterJobSamplesAsync(object):
         from azure.communication.jobrouter import (
             StaticRule,
             StaticQueueSelectorAttachment,
-            QueueSelector,
+            RouterQueueSelector,
             LabelOperator,
             ClassificationPolicy
         )
@@ -100,7 +100,7 @@ class RouterJobSamplesAsync(object):
                     prioritization_rule = StaticRule(value = 10),
                     queue_selectors = [
                         StaticQueueSelectorAttachment(
-                            label_selector = QueueSelector(
+                            queue_selector = RouterQueueSelector(
                                 key = "Id",
                                 label_operator = LabelOperator.EQUAL,
                                 value = self._queue_id)
@@ -286,7 +286,7 @@ class RouterJobSamplesAsync(object):
 
         from azure.communication.jobrouter.aio import JobRouterClient
         from azure.communication.jobrouter import (
-            JobOffer
+            RouterJobOffer
         )
 
         router_client = JobRouterClient.from_connection_string(conn_str = connection_string)
@@ -304,7 +304,7 @@ class RouterJobSamplesAsync(object):
                     await asyncio.sleep(1)
 
             queried_worker = await router_client.get_worker(worker_id = worker_id)
-            issued_offer: JobOffer = [offer for offer in queried_worker.offers if offer.job_id == job_id][0]
+            issued_offer: RouterJobOffer = [offer for offer in queried_worker.offers if offer.job_id == job_id][0]
             offer_id = issued_offer.id
 
             # [START accept_job_offer_async]
@@ -361,7 +361,7 @@ class RouterJobSamplesAsync(object):
 
             queried_job: RouterJob = await router_client.get_job(job_id = job_id)
 
-            print(f"Job has been successfully completed. Current status: {queried_job.job_status}")
+            print(f"Job has been successfully completed. Current status: {queried_job.status}")
         # [END complete_job_async]
 
         # [START close_job_async]
@@ -372,7 +372,7 @@ class RouterJobSamplesAsync(object):
 
             queried_job: RouterJob = await router_client.get_job(job_id = job_id)
 
-            print(f"Job has been successfully closed. Current status: {queried_job.job_status}")
+            print(f"Job has been successfully closed. Current status: {queried_job.status}")
 
         # [END close_job_async]
 
@@ -387,7 +387,7 @@ class RouterJobSamplesAsync(object):
             router_job_iterator = router_client.list_jobs()
 
             async for j in router_job_iterator:
-                print(f"Retrieved job with id: {j.router_job.id}")
+                print(f"Retrieved job with id: {j.job.id}")
 
             print(f"Successfully completed fetching jobs")
         # [END list_jobs_async]
@@ -407,7 +407,7 @@ class RouterJobSamplesAsync(object):
                 print(f"Retrieved {len(jobs_in_page)} jobs in current page")
 
                 for j in jobs_in_page:
-                    print(f"Retrieved job with id: {j.router_job.id}")
+                    print(f"Retrieved job with id: {j.job.id}")
 
             print(f"Successfully completed fetching jobs")
         # [END list_jobs_batched_async]
@@ -430,7 +430,7 @@ class RouterJobSamplesAsync(object):
                 print(f"Retrieved {len(jobs_in_page)} jobs in current page")
 
                 for j in jobs_in_page:
-                    print(f"Retrieved job with id: {j.router_job.id}")
+                    print(f"Retrieved job with id: {j.job.id}")
 
             print(f"Successfully completed fetching scheduled jobs")
         # [END list_scheduled_jobs_async]

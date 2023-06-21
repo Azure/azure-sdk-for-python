@@ -37,9 +37,9 @@ class ClassificationPolicySamples(object):
             ExpressionRule,
             StaticQueueSelectorAttachment,
             ConditionalQueueSelectorAttachment,
-            QueueSelector,
+            RouterQueueSelector,
             ConditionalWorkerSelectorAttachment,
-            WorkerSelector,
+            RouterWorkerSelector,
             LabelOperator
         )
 
@@ -53,7 +53,7 @@ class ClassificationPolicySamples(object):
                 prioritization_rule = StaticRule(value = 10),
                 queue_selectors = [
                     StaticQueueSelectorAttachment(
-                        label_selector = QueueSelector(
+                        queue_selector = RouterQueueSelector(
                             key = "Region",
                             label_operator = LabelOperator.EQUAL,
                             value = "NA"
@@ -61,18 +61,18 @@ class ClassificationPolicySamples(object):
                     ),
                     ConditionalQueueSelectorAttachment(
                         condition = ExpressionRule(expression = "If(job.Product = \"O365\", true, false)"),
-                        label_selectors = [
-                            QueueSelector(key = "Product", label_operator = LabelOperator.EQUAL, value = "O365"),
-                            QueueSelector(key = "QGroup", label_operator = LabelOperator.EQUAL, value = "NA_O365")
+                        queue_selectors = [
+                            RouterQueueSelector(key = "Product", label_operator = LabelOperator.EQUAL, value = "O365"),
+                            RouterQueueSelector(key = "QGroup", label_operator = LabelOperator.EQUAL, value = "NA_O365")
                         ]
                     ),
                 ],
                 worker_selectors = [
                     ConditionalWorkerSelectorAttachment(
                         condition = ExpressionRule(expression = "If(job.Product = \"O365\", true, false)"),
-                        label_selectors = [
-                            WorkerSelector(key = "Skill_O365", label_operator = LabelOperator.EQUAL, value = True),
-                            WorkerSelector(
+                        worker_selectors = [
+                            RouterWorkerSelector(key = "Skill_O365", label_operator = LabelOperator.EQUAL, value = True),
+                            RouterWorkerSelector(
                                 key = "Skill_O365_Lvl",
                                 label_operator = LabelOperator.GREATER_THAN_EQUAL,
                                 value = 1
@@ -81,8 +81,8 @@ class ClassificationPolicySamples(object):
                     ),
                     ConditionalWorkerSelectorAttachment(
                         condition = ExpressionRule(expression = "If(job.HighPriority = \"true\", true, false)"),
-                        label_selectors = [
-                            WorkerSelector(
+                        worker_selectors = [
+                            RouterWorkerSelector(
                                 key = "Skill_O365_Lvl",
                                 label_operator = LabelOperator.GREATER_THAN_EQUAL,
                                 value = 10
