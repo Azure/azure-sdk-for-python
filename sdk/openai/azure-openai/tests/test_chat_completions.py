@@ -6,12 +6,12 @@
 import pytest
 import openai
 from devtools_testutils import AzureRecordedTestCase
-from conftest import API_TYPE, configure
+from conftest import configure, AZURE, OPENAI, ALL
 
 
 class TestChatCompletions(AzureRecordedTestCase):
 
-    @pytest.mark.parametrize("api_type", ["azure"])
+    @pytest.mark.parametrize("api_type", [AZURE])
     @configure
     def test_chat_completion_bad_deployment_name(self, azure_openai_creds, api_type):
         messages = [
@@ -23,7 +23,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert e.value.http_status == 404
         assert "The API deployment for this resource does not exist" in str(e.value)
 
-    @pytest.mark.parametrize("api_type", ["azure"])
+    @pytest.mark.parametrize("api_type", [AZURE])
     @configure
     def test_chat_completion_kw_input(self, azure_openai_creds, api_type):
         messages = [
@@ -40,7 +40,7 @@ class TestChatCompletions(AzureRecordedTestCase):
             openai.ChatCompletion.create(messages=messages, model=deployment)
         assert "Must provide an 'engine' or 'deployment_id' parameter" in str(e.value)
 
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [ALL])
     @configure
     def test_chat_completion(self, azure_openai_creds, api_type):
         messages = [
@@ -65,7 +65,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.content
         assert completion.choices[0].message.role
 
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     def test_streamed_chat_completions(self, azure_openai_creds, api_type):
         messages = [
@@ -86,7 +86,7 @@ class TestChatCompletions(AzureRecordedTestCase):
                 assert c.index is not None
                 assert c.delta is not None
 
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     def test_chat_completion_max_tokens(self, azure_openai_creds, api_type):
         messages = [
@@ -111,7 +111,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.content
         assert completion.choices[0].message.role
 
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     def test_chat_completion_temperature(self, azure_openai_creds, api_type):
         messages = [
@@ -136,7 +136,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.content
         assert completion.choices[0].message.role
 
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     def test_chat_completion_top_p(self, azure_openai_creds, api_type):
         messages = [
@@ -161,7 +161,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.content
         assert completion.choices[0].message.role
 
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     def test_chat_completion_n(self, azure_openai_creds, api_type):
         messages = [
@@ -187,7 +187,7 @@ class TestChatCompletions(AzureRecordedTestCase):
             assert c.message.content
             assert c.message.role
 
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     def test_chat_completion_stop(self, azure_openai_creds, api_type):
         messages = [
@@ -211,7 +211,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.content
         assert completion.choices[0].message.role
 
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     def test_chat_completion_token_penalty(self, azure_openai_creds, api_type):
         messages = [
@@ -241,7 +241,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.content
         assert completion.choices[0].message.role
 
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     def test_chat_completion_user(self, azure_openai_creds, api_type):
         messages = [
@@ -270,7 +270,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.content
         assert completion.choices[0].message.role
 
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     def test_chat_completion_logit_bias(self, azure_openai_creds, api_type):
         messages = [

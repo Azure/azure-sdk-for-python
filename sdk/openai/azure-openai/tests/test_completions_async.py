@@ -5,14 +5,14 @@
 import pytest
 import openai
 from devtools_testutils import AzureRecordedTestCase
-from conftest import configure, API_TYPE
+from conftest import configure, AZURE, OPENAI, ALL
 
 
 class TestCompletionsAsync(AzureRecordedTestCase):
     """Missing tests for keyword argument `suffix`"""
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", ["azure"])
+    @pytest.mark.parametrize("api_type", [AZURE])
     @configure
     async def test_completion_bad_deployment_name(self, azure_openai_creds, api_type):
         with pytest.raises(openai.error.InvalidRequestError) as e:
@@ -21,7 +21,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
         assert "The API deployment for this resource does not exist" in str(e.value)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", ["azure"])
+    @pytest.mark.parametrize("api_type", [AZURE])
     @configure
     async def test_completion_kw_input(self, azure_openai_creds, api_type):
         deployment = azure_openai_creds["completions_name"]
@@ -35,7 +35,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
         assert "Must provide an 'engine' or 'deployment_id' parameter" in str(e.value)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [ALL])
     @configure
     async def test_completion(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["completions_model"]} if api_type == "openai" \
@@ -55,7 +55,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].text
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_batched_completions(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["completions_model"]} if api_type == "openai" \
@@ -77,7 +77,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
 
     @pytest.mark.skip("openai.error.APIError: Invalid response object from API: 'Unsupported data type\n' (HTTP response code was 400)")
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_completion_token_input(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["completions_model"]} if api_type == "openai" \
@@ -98,7 +98,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
             assert c.text
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_streamed_completions(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["completions_model"]} if api_type == "openai" \
@@ -116,7 +116,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
                 assert c.text is not None
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_completion_max_tokens(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["completions_model"]} if api_type == "openai" \
@@ -141,7 +141,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].text
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", ["azure"])
+    @pytest.mark.parametrize("api_type", [AZURE])
     @configure
     async def test_completion_content_filter_prompt(self, azure_openai_creds, api_type):
         deployment = azure_openai_creds["completions_name"]
@@ -156,7 +156,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
         assert "The response was filtered due to the prompt triggering Azure OpenAI’s content management policy" in str(e.value)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_completion_temperature(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["completions_model"]} if api_type == "openai" \
@@ -181,7 +181,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].text
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_completion_top_p(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["completions_model"]} if api_type == "openai" \
@@ -206,7 +206,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].text
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_completion_n(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["completions_model"]} if api_type == "openai" \
@@ -231,7 +231,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
             assert c.text
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_completion_logprobs(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["completions_model"]} if api_type == "openai" \
@@ -260,7 +260,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].logprobs.text_offset
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_completion_echo(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["completions_model"]} if api_type == "openai" \
@@ -285,7 +285,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
         assert prompt in completion.choices[0].text
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_completion_stop(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["completions_model"]} if api_type == "openai" \
@@ -308,7 +308,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].text
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_completion_token_penalty(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["completions_model"]} if api_type == "openai" \
@@ -333,7 +333,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].text
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_completion_best_of(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["completions_model"]} if api_type == "openai" \
@@ -358,7 +358,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].text
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_completion_user(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["completions_model"]} if api_type == "openai" \
@@ -382,7 +382,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].text
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_completion_logit_bias(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["completions_model"]} if api_type == "openai" \

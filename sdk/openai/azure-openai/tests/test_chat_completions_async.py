@@ -6,13 +6,13 @@
 import pytest
 import openai
 from devtools_testutils import AzureRecordedTestCase
-from conftest import configure, API_TYPE
+from conftest import configure, ALL, AZURE, OPENAI
 
 
 class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", ["azure"])
+    @pytest.mark.parametrize("api_type", [AZURE])
     @configure
     async def test_chat_completion_bad_deployment_name(self, azure_openai_creds, api_type):
         messages = [
@@ -25,7 +25,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         assert "The API deployment for this resource does not exist" in str(e.value)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", ["azure"])
+    @pytest.mark.parametrize("api_type", [AZURE])
     @configure
     async def test_chat_completion_kw_input(self, azure_openai_creds, api_type):
         messages = [
@@ -43,7 +43,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         assert "Must provide an 'engine' or 'deployment_id' parameter" in str(e.value)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", ALL)
     @configure
     async def test_chat_completion(self, azure_openai_creds, api_type):
         messages = [
@@ -68,7 +68,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_streamed_chat_completions(self, azure_openai_creds, api_type):
         messages = [
@@ -90,7 +90,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                 assert c.delta is not None
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_chat_completion_max_tokens(self, azure_openai_creds, api_type):
         messages = [
@@ -116,7 +116,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_chat_completion_temperature(self, azure_openai_creds, api_type):
         messages = [
@@ -142,7 +142,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_chat_completion_top_p(self, azure_openai_creds, api_type):
         messages = [
@@ -168,7 +168,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_chat_completion_n(self, azure_openai_creds, api_type):
         messages = [
@@ -195,7 +195,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
             assert c.message.role
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_chat_completion_stop(self, azure_openai_creds, api_type):
         messages = [
@@ -220,7 +220,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_chat_completion_token_penalty(self, azure_openai_creds, api_type):
         messages = [
@@ -251,7 +251,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_chat_completion_user(self, azure_openai_creds, api_type):
         messages = [
@@ -281,7 +281,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].message.role
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_chat_completion_logit_bias(self, azure_openai_creds, api_type):
         messages = [

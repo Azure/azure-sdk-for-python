@@ -13,8 +13,10 @@ from azure.identity import DefaultAzureCredential
 
 
 # for pytest.parametrize
-API_TYPE = ["azure", "azuread", "openai"]
-
+ALL = ["azure", "azuread", "openai"]
+AZURE = "azure"
+OPENAI = "openai"
+AZURE_AD = "azuread"
 
 # Environment variable keys
 ENV_AZURE_OPENAI_ENDPOINT = "AZURE_OPENAI_ENDPOINT"

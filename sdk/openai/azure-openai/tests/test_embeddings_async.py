@@ -6,13 +6,13 @@
 import pytest
 import openai
 from devtools_testutils import AzureRecordedTestCase
-from conftest import configure, API_TYPE
+from conftest import configure, AZURE, OPENAI, ALL
 
 
 class TestEmbeddingsAsync(AzureRecordedTestCase):
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", ["azure"])
+    @pytest.mark.parametrize("api_type", [AZURE])
     @configure
     async def test_embedding_bad_deployment_name(self, azure_openai_creds, api_type):
         with pytest.raises(openai.error.InvalidRequestError) as e:
@@ -21,7 +21,7 @@ class TestEmbeddingsAsync(AzureRecordedTestCase):
         assert "The API deployment for this resource does not exist" in str(e.value)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", ["azure"])
+    @pytest.mark.parametrize("api_type", [AZURE])
     @configure
     async def test_embedding_kw_input(self, azure_openai_creds, api_type):
         deployment = azure_openai_creds["embeddings_name"]
@@ -35,7 +35,7 @@ class TestEmbeddingsAsync(AzureRecordedTestCase):
         assert "Must provide an 'engine' or 'deployment_id' parameter" in str(e.value)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [ALL])
     @configure
     async def test_embedding(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["embeddings_model"]} if api_type == "openai" \
@@ -55,7 +55,7 @@ class TestEmbeddingsAsync(AzureRecordedTestCase):
                       "We hope to increase the number of inputs per request soon. Please contact us through "
                       "an Azure support request at: https://go.microsoft.com/fwlink/?linkid=2213926 for further questions")
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_embedding_batched(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["embeddings_model"]} if api_type == "openai" \
@@ -63,7 +63,7 @@ class TestEmbeddingsAsync(AzureRecordedTestCase):
         embedding = await openai.Embedding.acreate(input=["hello world", "second input"], **kwargs)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", API_TYPE)
+    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     async def test_embedding_user(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["embeddings_model"]} if api_type == "openai" \
