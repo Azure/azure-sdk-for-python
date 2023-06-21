@@ -121,7 +121,9 @@ def convert_azure_cloud(value: Union[str, AzureClouds]) -> AzureClouds:
         azure_clouds = {cloud.name: cloud for cloud in AzureClouds}
         if value in azure_clouds:
             return azure_clouds[value]
-        raise ValueError("Cannot convert {} to Azure Cloud, valid values are: {}".format(value, ", ".join(azure_clouds.keys())))
+        raise ValueError(
+            "Cannot convert {} to Azure Cloud, valid values are: {}".format(value, ", ".join(azure_clouds.keys()))
+        )
     return value
 
 
