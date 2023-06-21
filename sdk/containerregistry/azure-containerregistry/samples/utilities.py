@@ -11,7 +11,7 @@ FILE: utilities.py
 
 DESCRIPTION:
     This file include some utility functions for samples to use:
-    - load_registry(): to create some repositories and import images with different tags in each repository.
+    - load_registry(): to create repository "library/hello-world" and import images with different tags.
     - get_authority(): get authority of the ContainerRegistryClient
     - get_audience(): get audience of the ContainerRegistryClient
     - get_credential(): get credential of the ContainerRegistryClient
@@ -24,9 +24,8 @@ from azure.containerregistry import ContainerRegistryClient
 from azure.identity import AzureAuthorityHosts, ClientSecretCredential
 from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential
 
-def load_registry():
+def load_registry(endpoint):
     print("loading registry...")
-    endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
     repo = "library/hello-world"
     tags = ["latest", "v1", "v2", "v3"]
     try:
@@ -101,6 +100,3 @@ def get_credential(authority, **kwargs):
         client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
         authority=authority
     )
-
-def get_data_path():
-    return os.path.join(os.getcwd(), "samples", "data", "docker_artifact")
