@@ -74,7 +74,10 @@ class NoPolling(PollingMethod[PollingReturnType_co]):
         self._initial_response = None
 
     def initialize(
-        self, _: Any, initial_response: Any, deserialization_callback: Callable[[Any], PollingReturnType_co]
+        self,
+        _: Any,
+        initial_response: Any,
+        deserialization_callback: Callable[[Any], PollingReturnType_co],
     ) -> None:
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback

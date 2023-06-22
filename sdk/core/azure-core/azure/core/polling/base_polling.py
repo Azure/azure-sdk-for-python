@@ -27,7 +27,20 @@ import abc
 import base64
 import json
 from enum import Enum
-from typing import Optional, Any, Tuple, Callable, Dict, List, Generic, TypeVar, cast, Union
+from typing import (
+    Optional,
+    Any,
+    Tuple,
+    Callable,
+    Dict,
+    List,
+    Generic,
+    TypeVar,
+    cast,
+    Union,
+    Protocol,
+    runtime_checkable,
+)
 
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
@@ -36,36 +49,44 @@ from ..pipeline._tools import is_rest
 from .._enum_meta import CaseInsensitiveEnumMeta
 from .. import PipelineClient
 from ..pipeline import PipelineResponse
-from ..pipeline.transport import HttpRequest as LegacyHttpRequest, HttpTransport
-from ..pipeline.transport._base import _HttpResponseBase as LegacySansIOHttpResponse
-from ..rest import HttpRequest
-from ..rest._rest_py3 import _HttpResponseBase as SansIOHttpResponse
+from ..pipeline.transport import (
+    HttpTransport,
+    HttpRequest as LegacyHttpRequest,
+    HttpResponse as LegacyHttpResponse,
+    AsyncHttpResponse as LegacyAsyncHttpResponse,
+)
+from ..rest import HttpRequest, HttpResponse, AsyncHttpResponse
 
 
 HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
-HTTPResponseType = Union[LegacySansIOHttpResponse, SansIOHttpResponse]
-LegacyPipelineResponseType = PipelineResponse[LegacyHttpRequest, LegacySansIOHttpResponse]
-NewPipelineResponseType = PipelineResponse[HttpRequest, SansIOHttpResponse]
-PipelineResponseType = Union[LegacyPipelineResponseType, NewPipelineResponseType]
+HTTPResponseType = Union[LegacyHttpResponse, HttpResponse]
+LegacyPipelineResponseType = PipelineResponse[LegacyHttpRequest, LegacyHttpResponse]
+NewPipelineResponseType = PipelineResponse[HttpRequest, HttpResponse]
+PipelineResponseType = PipelineResponse[HTTPRequestType, HTTPResponseType]
 
+# Some tool functions here works for all HttpResponse, and need to be typed as such to be used in all context
+AllHTTPResponseType = Union[LegacyHttpResponse, HttpResponse, LegacyAsyncHttpResponse, AsyncHttpResponse]
 
 ABC = abc.ABC
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 PipelineClientType = TypeVar("PipelineClientType")
+HTTPResponseType_co = TypeVar("HTTPResponseType_co", covariant=True)
+HTTPRequestType_co = TypeVar("HTTPRequestType_co", covariant=True)
+
 
 _FINISHED = frozenset(["succeeded", "canceled", "failed"])
 _FAILED = frozenset(["canceled", "failed"])
 _SUCCEEDED = frozenset(["succeeded"])
 
 
-def _get_content(response: HTTPResponseType) -> bytes:
+def _get_content(response: AllHTTPResponseType) -> bytes:
     """Get the content of this response. This is designed specifically to avoid
     a warning of mypy for body() access, as this method is deprecated.
 
     :param response: The response object.
     :rtype: bytes
     """
-    if isinstance(response, LegacySansIOHttpResponse):
+    if isinstance(response, (LegacyHttpResponse, LegacyAsyncHttpResponse)):
         return response.body()
     return response.content
 
@@ -100,7 +121,7 @@ class OperationFailed(Exception):
     pass
 
 
-def _as_json(response: HTTPResponseType) -> Dict[str, Any]:
+def _as_json(response: AllHTTPResponseType) -> Dict[str, Any]:
     """Assuming this is not empty, return the content as JSON.
 
     Result/exceptions is not determined if you call this method without testing _is_empty.
@@ -113,7 +134,7 @@ def _as_json(response: HTTPResponseType) -> Dict[str, Any]:
         raise DecodeError("Error occurred in deserializing the response body.")
 
 
-def _raise_if_bad_http_status_and_method(response: HTTPResponseType) -> None:
+def _raise_if_bad_http_status_and_method(response: AllHTTPResponseType) -> None:
     """Check response status code is valid.
 
     Must be 200, 201, 202, or 204.
@@ -126,7 +147,7 @@ def _raise_if_bad_http_status_and_method(response: HTTPResponseType) -> None:
     raise BadStatus("Invalid return status {!r} for {!r} operation".format(code, response.request.method))
 
 
-def _is_empty(response: HTTPResponseType) -> bool:
+def _is_empty(response: AllHTTPResponseType) -> bool:
     """Check if response body contains meaningful content.
 
     :rtype: bool
@@ -134,7 +155,7 @@ def _is_empty(response: HTTPResponseType) -> bool:
     return not bool(_get_content(response))
 
 
-class LongRunningOperation(ABC):
+class LongRunningOperation(ABC, Generic[HTTPRequestType_co, HTTPResponseType_co]):
     """LongRunningOperation
     Provides default logic for interpreting operation responses
     and status updates.
@@ -146,7 +167,10 @@ class LongRunningOperation(ABC):
     """
 
     @abc.abstractmethod
-    def can_poll(self, pipeline_response: PipelineResponseType) -> bool:
+    def can_poll(
+        self,
+        pipeline_response: PipelineResponse[HTTPRequestType_co, HTTPResponseType_co],
+    ) -> bool:
         """Answer if this polling method could be used."""
         raise NotImplementedError()
 
@@ -156,7 +180,10 @@ class LongRunningOperation(ABC):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def set_initial_status(self, pipeline_response: PipelineResponseType) -> str:
+    def set_initial_status(
+        self,
+        pipeline_response: PipelineResponse[HTTPRequestType_co, HTTPResponseType_co],
+    ) -> str:
         """Process first response after initiating long running operation.
 
         :param azure.core.pipeline.PipelineResponse response: initial REST call response.
@@ -164,12 +191,18 @@ class LongRunningOperation(ABC):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def get_status(self, pipeline_response: PipelineResponseType) -> str:
+    def get_status(
+        self,
+        pipeline_response: PipelineResponse[HTTPRequestType_co, HTTPResponseType_co],
+    ) -> str:
         """Return the status string extracted from this response."""
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def get_final_get_url(self, pipeline_response: PipelineResponseType) -> Optional[str]:
+    def get_final_get_url(
+        self,
+        pipeline_response: PipelineResponse[HTTPRequestType_co, HTTPResponseType_co],
+    ) -> Optional[str]:
         """If a final GET is needed, returns the URL.
 
         :rtype: str or None
@@ -191,7 +224,7 @@ class _FinalStateViaOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OPERATION_LOCATION_FINAL_STATE = "operation-location"
 
 
-class OperationResourcePolling(LongRunningOperation):
+class OperationResourcePolling(LongRunningOperation[HTTPRequestType, HTTPResponseType]):
     """Implements a operation resource polling, typically from Operation-Location.
 
     :param str operation_location_header: Name of the header to return operation format (default 'operation-location')
