@@ -13,7 +13,7 @@ from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str,
 from ._message_encoding import NoEncodePolicy, NoDecodePolicy
 from ._serialize import get_api_version
 
-def _initialize_client(self, account_url, queue_name, credential, client_type, **kwargs):
+def _initialize_client(account_url, queue_name, credential):
     try:
         if not account_url.lower().startswith('http'):
             account_url = "https://" + account_url
@@ -28,49 +28,5 @@ def _initialize_client(self, account_url, queue_name, credential, client_type, *
     _, sas_token = parse_query(parsed_url.query)
     if not sas_token and not credential:
         raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
-
-    self.queue_name = queue_name
-    self._query_str, credential = self._format_query_string(sas_token, credential)
-    loop = kwargs.pop('loop', None)
-    StorageAccountHostsMixin.__init__(self, parsed_url, service='queue', credential=credential, loop=loop, **kwargs)
-
-    self.message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
-    self.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
-
-    if client_type == 'sync':
-        self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
-    elif client_type == 'async':
-        self._client = AsyncAzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
-    else:
-        raise ValueError("Unknown client_type provided, valid options are 'sync' and 'async'.")
-
-    self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
-    self._configure_encryption(kwargs)
-
-def _rfc_1123_to_datetime(rfc_1123: str) -> datetime:
-    """Converts an RFC 1123 date string to a UTC datetime.
-    """
-    if not rfc_1123:
-        return None
-
-    return datetime.strptime(rfc_1123, "%a, %d %b %Y %H:%M:%S %Z")
-
-def _filetime_to_datetime(filetime: str) -> datetime:
-    """Converts an MS filetime string to a UTC datetime. "0" indicates None.
-    If parsing MS Filetime fails, tries RFC 1123 as backup.
-    """
-    if not filetime:
-        return None
-
-    # Try to convert to MS Filetime
-    try:
-        filetime = int(filetime)
-        if filetime == 0:
-            return None
-
-        return datetime.fromtimestamp((filetime - EPOCH_AS_FILETIME) / HUNDREDS_OF_NANOSECONDS, tz=timezone.utc)
-    except ValueError:
-        pass
-
-    # Try RFC 1123 as backup
-    return _rfc_1123_to_datetime(filetime)
+    
+    return parsed_url, sas_token

@@ -10,6 +10,7 @@ import warnings
 from typing import (
     Any, cast, Dict, List, Optional, Union, Tuple,
     TYPE_CHECKING)
+from urllib.parse import urlparse, quote, unquote
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError
@@ -28,16 +29,20 @@ from .._generated.aio import AzureQueueStorage
 from .._generated.models import SignedIdentifier, QueueMessage as GenQueueMessage
 from .._deserialize import deserialize_queue_properties, deserialize_queue_creation
 from .._encryption import StorageEncryptionMixin
+from .._message_encoding import NoEncodePolicy, NoDecodePolicy
+from .._shared.base_client import StorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._models import QueueMessage, AccessPolicy
 from .._queue_client import QueueClient as QueueClientBase
 from ._models import MessagesPaged
+from .._queue_client_helpers import _initialize_client
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from .._models import QueueProperties
 
 
-class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncryptionMixin):  # type: ignore[misc]
+class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # type: ignore[misc]
     """A client to interact with a specific Queue.
 
     :param str account_url:
@@ -91,13 +96,31 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
     ) -> None:
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
-        super(QueueClient, self).__init__(
-            account_url, queue_name=queue_name, credential=credential, loop=loop, **kwargs
-        )
+
+        parsed_url, sas_token = _initialize_client(account_url=account_url, queue_name=queue_name, credential=credential)
+
+        self.queue_name = queue_name
+        self._query_str, credential = self._format_query_string(sas_token, credential)
+        super(QueueClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
+
+        self.message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
+        self.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._loop = loop
         self._configure_encryption(kwargs)
+
+    def _format_url(self, hostname: str) -> str:
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        if isinstance(self.queue_name, str):
+            queue_name = self.queue_name.encode('UTF-8')
+        else:
+            queue_name = self.queue_name
+        return (
+            f"{self.scheme}://{hostname}"
+            f"/{quote(queue_name)}{self._query_str}")
 
     @distributed_trace_async
     async def create_queue(  # type: ignore[override]

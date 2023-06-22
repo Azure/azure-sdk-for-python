@@ -29,6 +29,7 @@ from ._encryption import StorageEncryptionMixin
 from ._message_encoding import NoEncodePolicy, NoDecodePolicy
 from ._models import AccessPolicy, MessagesPaged, QueueMessage
 from ._serialize import get_api_version
+from ._queue_client_helpers import _initialize_client
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -83,20 +84,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not queue_name:
-            raise ValueError("Please specify a queue name.")
-        if not parsed_url.netloc:
-            raise ValueError(f"Invalid URL: {parsed_url}")
-
-        _, sas_token = parse_query(parsed_url.query)
-        if not sas_token and not credential:
-            raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
+        parsed_url, sas_token = _initialize_client(account_url=account_url, queue_name=queue_name, credential=credential)
 
         self.queue_name = queue_name
         self._query_str, credential = self._format_query_string(sas_token, credential)
