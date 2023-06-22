@@ -165,7 +165,7 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
 
-class TranslationPolling(OperationResourcePolling):
+class TranslationPolling(OperationResourcePolling[HttpRequest, HttpResponse]):
     """Implements a Location polling."""
 
     def can_poll(self, pipeline_response: PipelineResponseType) -> bool:

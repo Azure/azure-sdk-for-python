@@ -58,11 +58,14 @@ from ..pipeline.transport import (
 from ..rest import HttpRequest, HttpResponse, AsyncHttpResponse
 
 
-HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
-HTTPResponseType = Union[LegacyHttpResponse, HttpResponse]
+HttpRequestType = Union[LegacyHttpRequest, HttpRequest]
+HttpResponseType = Union[LegacyHttpResponse, HttpResponse]
 LegacyPipelineResponseType = PipelineResponse[LegacyHttpRequest, LegacyHttpResponse]
 NewPipelineResponseType = PipelineResponse[HttpRequest, HttpResponse]
-PipelineResponseType = PipelineResponse[HTTPRequestType, HTTPResponseType]
+PipelineResponseType = PipelineResponse[HttpRequestType, HttpResponseType]
+HttpRequestTypeVar = TypeVar("HttpRequestTypeVar", bound=HttpRequestType)
+HttpResponseTypeVar = TypeVar("HttpResponseTypeVar", bound=HttpResponseType)
+PipelineResponseTypeVar = PipelineResponse[HttpRequestTypeVar, HttpResponseTypeVar]
 
 # Some tool functions here works for all HttpResponse, and need to be typed as such to be used in all context
 AllHTTPResponseType = Union[LegacyHttpResponse, HttpResponse, LegacyAsyncHttpResponse, AsyncHttpResponse]
@@ -224,7 +227,7 @@ class _FinalStateViaOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OPERATION_LOCATION_FINAL_STATE = "operation-location"
 
 
-class OperationResourcePolling(LongRunningOperation[HTTPRequestType, HTTPResponseType]):
+class OperationResourcePolling(LongRunningOperation[HttpRequestTypeVar, HttpResponseTypeVar]):
     """Implements a operation resource polling, typically from Operation-Location.
 
     :param str operation_location_header: Name of the header to return operation format (default 'operation-location')
@@ -248,7 +251,7 @@ class OperationResourcePolling(LongRunningOperation[HTTPRequestType, HTTPRespons
         self._location_url = None
         self._lro_options = lro_options or {}
 
-    def can_poll(self, pipeline_response: PipelineResponseType):
+    def can_poll(self, pipeline_response: PipelineResponseTypeVar):
         """Answer if this polling method could be used."""
         response = pipeline_response.http_response
         return self._operation_location_header in response.headers
@@ -257,7 +260,7 @@ class OperationResourcePolling(LongRunningOperation[HTTPRequestType, HTTPRespons
         """Return the polling URL."""
         return self._async_url
 
-    def get_final_get_url(self, pipeline_response: PipelineResponseType) -> Optional[str]:
+    def get_final_get_url(self, pipeline_response: PipelineResponseTypeVar) -> Optional[str]:
         """If a final GET is needed, returns the URL.
 
         :rtype: str
@@ -292,7 +295,7 @@ class OperationResourcePolling(LongRunningOperation[HTTPRequestType, HTTPRespons
 
         return None
 
-    def set_initial_status(self, pipeline_response: PipelineResponseType) -> str:
+    def set_initial_status(self, pipeline_response: PipelineResponseTypeVar) -> str:
         """Process first response after initiating long running operation.
 
         :param azure.core.pipeline.PipelineResponse response: initial REST call response.
@@ -306,14 +309,14 @@ class OperationResourcePolling(LongRunningOperation[HTTPRequestType, HTTPRespons
             return "InProgress"
         raise OperationFailed("Operation failed or canceled")
 
-    def _set_async_url_if_present(self, response: HTTPResponseType) -> None:
+    def _set_async_url_if_present(self, response: HttpResponseTypeVar) -> None:
         self._async_url = response.headers[self._operation_location_header]
 
         location_url = response.headers.get("location")
         if location_url:
             self._location_url = location_url
 
-    def get_status(self, pipeline_response: PipelineResponseType) -> str:
+    def get_status(self, pipeline_response: PipelineResponseTypeVar) -> str:
         """Process the latest status update retrieved from an "Operation-Location" header.
 
         :param azure.core.pipeline.PipelineResponse response: The response to extract the status.
@@ -554,7 +557,7 @@ class _SansIOLROBasePolling(
 
 
 class LROBasePolling(
-    _SansIOLROBasePolling[PollingReturnType_co, PipelineClient[HTTPRequestType, HTTPResponseType]],
+    _SansIOLROBasePolling[PollingReturnType_co, PipelineClient[HttpRequestTypeVar, HttpResponseTypeVar]],
     PollingMethod[PollingReturnType_co],
 ):  # pylint: disable=too-many-instance-attributes
     """A base LRO poller.
@@ -567,14 +570,14 @@ class LROBasePolling(
     If your polling need are more specific, you could implement a PollingMethod directly
     """
 
-    _initial_response: PipelineResponseType
+    _initial_response: PipelineResponseTypeVar
     """Store the initial response."""
 
-    _pipeline_response: PipelineResponseType
+    _pipeline_response: PipelineResponseTypeVar
     """Store the latest received HTTP response, initialized by the first answer."""
 
     @property
-    def _transport(self) -> HttpTransport[HTTPRequestType, HTTPResponseType]:
+    def _transport(self) -> HttpTransport[HttpRequestTypeVar, HttpResponseTypeVar]:
         return self._client._pipeline._transport  # pylint: disable=protected-access
 
     def run(self) -> None:
@@ -636,7 +639,7 @@ class LROBasePolling(
         _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
 
-    def request_status(self, status_link: str) -> PipelineResponseType:
+    def request_status(self, status_link: str) -> PipelineResponseTypeVar:
         """Do a simple GET to this status link.
 
         This method re-inject 'x-ms-client-request-id'.
@@ -648,23 +651,22 @@ class LROBasePolling(
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()
+
         if is_rest(self._initial_response.http_response):
-            # if I am a azure.core.rest.HttpResponse
-            # want to keep making azure.core.rest calls
-            rest_request = HttpRequest("GET", status_link)
+            rest_request = cast(HttpRequestTypeVar, HttpRequest("GET", status_link))
             # Need a cast, as "_return_pipeline_response" mutate the return type, and that return type is not
             # declared in the typing of "send_request"
             return cast(
-                PipelineResponseType,
+                PipelineResponseTypeVar,
                 self._client.send_request(rest_request, _return_pipeline_response=True, **self._operation_config),
             )
 
         # Legacy HttpRequest and HttpResponse from azure.core.pipeline.transport
         # casting things here, as we don't want the typing system to know
         # about the legacy APIs.
-        request = self._client.get(status_link)
+        request = cast(HttpRequestTypeVar, self._client.get(status_link))
         return cast(
-            LegacyPipelineResponseType,
+            PipelineResponseTypeVar,
             self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **self._operation_config
             ),

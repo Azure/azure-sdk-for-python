@@ -44,11 +44,14 @@ from ..pipeline.transport import (
 )
 from ..rest import HttpRequest, AsyncHttpResponse
 
-HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
-AsyncHTTPResponseType = Union[LegacyAsyncHttpResponse, AsyncHttpResponse]
+HttpRequestType = Union[LegacyHttpRequest, HttpRequest]
+AsyncHttpResponseType = Union[LegacyAsyncHttpResponse, AsyncHttpResponse]
 LegacyPipelineResponseType = PipelineResponse[LegacyHttpRequest, LegacyAsyncHttpResponse]
 NewPipelineResponseType = PipelineResponse[HttpRequest, AsyncHttpResponse]
-AsyncPipelineResponseType = PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]
+AsyncPipelineResponseType = PipelineResponse[HttpRequestType, AsyncHttpResponseType]
+HttpRequestTypeVar = TypeVar("HttpRequestTypeVar", bound=HttpRequestType)
+AsyncHttpResponseTypeVar = TypeVar("AsyncHttpResponseTypeVar", bound=AsyncHttpResponseType)
+AsyncPipelineResponseTypeVar = PipelineResponse[HttpRequestTypeVar, AsyncHttpResponseTypeVar]
 
 
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
@@ -59,7 +62,7 @@ __all__ = ["AsyncLROBasePolling"]
 class AsyncLROBasePolling(
     _SansIOLROBasePolling[
         PollingReturnType_co,
-        AsyncPipelineClient[HTTPRequestType, AsyncHTTPResponseType],
+        AsyncPipelineClient[HttpRequestTypeVar, AsyncHttpResponseTypeVar],
     ],
     AsyncPollingMethod[PollingReturnType_co],
 ):
@@ -80,7 +83,7 @@ class AsyncLROBasePolling(
     """Store the latest received HTTP response, initialized by the first answer."""
 
     @property
-    def _transport(self) -> AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]:
+    def _transport(self) -> AsyncHttpTransport[HttpRequestTypeVar, AsyncHttpResponseTypeVar]:
         return self._client._pipeline._transport  # pylint: disable=protected-access
 
     async def run(self) -> None:
@@ -142,7 +145,7 @@ class AsyncLROBasePolling(
         _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
 
-    async def request_status(self, status_link: str) -> AsyncPipelineResponseType:
+    async def request_status(self, status_link: str) -> AsyncPipelineResponseTypeVar:
         """Do a simple GET to this status link.
 
         This method re-inject 'x-ms-client-request-id'.
@@ -154,24 +157,22 @@ class AsyncLROBasePolling(
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()
-        if is_rest(self._initial_response.http_response):
-            # if I am a azure.core.rest.HttpResponse
-            # want to keep making azure.core.rest calls
 
-            rest_request = HttpRequest("GET", status_link)
+        if is_rest(self._initial_response.http_response):
+            rest_request = cast(HttpRequestTypeVar, HttpRequest("GET", status_link))
             # Need a cast, as "_return_pipeline_response" mutate the return type, and that return type is not
             # declared in the typing of "send_request"
             return cast(
-                NewPipelineResponseType,
+                AsyncPipelineResponseTypeVar,
                 await self._client.send_request(rest_request, _return_pipeline_response=True, **self._operation_config),
             )
 
         # Legacy HttpRequest and AsyncHttpResponse from azure.core.pipeline.transport
         # casting things here, as we don't want the typing system to know
         # about the legacy APIs.
-        request = self._client.get(status_link)
+        request = cast(HttpRequestTypeVar, self._client.get(status_link))
         return cast(
-            LegacyPipelineResponseType,
+            AsyncPipelineResponseTypeVar,
             await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **self._operation_config
             ),
