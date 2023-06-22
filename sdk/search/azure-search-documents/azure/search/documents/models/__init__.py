@@ -41,7 +41,6 @@ from .._generated.models import (
     QueryDebugMode,
 )
 from .._utils import odata
-from ._models import SearchQueryVector
 
 
 __all__ = (
@@ -60,5 +59,4 @@ __all__ = (
     "SearchMode",
     "SemanticErrorHandling",
     "QueryDebugMode",
-    "SearchQueryVector",
 )

@@ -21,6 +21,7 @@ from ._generated.models import (
     QueryType,
     SearchMode,
     ScoringStatistics,
+    Vector,
     SemanticErrorHandling,
     QueryDebugMode,
 )
@@ -29,7 +30,6 @@ from ._index_documents_batch import IndexDocumentsBatch
 from ._paging import SearchItemPaged, SearchPageIterator
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from ._headers_mixin import HeadersMixin
-from .models._models import SearchQueryVector
 from ._utils import get_authentication_policy
 from ._version import SDK_MONIKER
 
@@ -167,7 +167,9 @@ class SearchClient(HeadersMixin):
             top: Optional[int] = None,
             scoring_statistics: Optional[Union[str, ScoringStatistics]] = None,
             session_id: Optional[str] = None,
-            search_query_vector:Optional[SearchQueryVector] = None,
+            vector:Optional[List[float]] = None,
+            top_k: Optional[int] = None,
+            vector_fields: Optional[str] = None,
             semantic_error_handling: Optional[Union[str, SemanticErrorHandling]] = None,
             semantic_max_wait_in_milliseconds: Optional[int] = None,
             debug: Optional[Union[str, QueryDebugMode]] = None,
@@ -277,8 +279,13 @@ class SearchClient(HeadersMixin):
         :keyword debug: Enables a debugging tool that can be used to further explore your Semantic search
          results. Known values are: "disabled", "speller", "semantic", and "all".
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
-        :keyword search_query_vector: The query parameters for vector and hybrid search queries.
-        :paramtype search_query_vector: str or ~azure.search.documents.models.SearchQueryVector
+        :keyword vector: The vector representation of a search query.
+        :paramtype vector: List[float]
+        :keyword top_k: Number of nearest neighbors to return as top hits.
+        :paramtype top_k: int
+        :keyword vector_fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
+          searched.
+        :paramtype vector_fields: str
         :rtype:  SearchItemPaged[Dict]
 
         .. admonition:: Example:
@@ -324,6 +331,7 @@ class SearchClient(HeadersMixin):
         )
 
         semantic_configuration = semantic_configuration_name
+        vector = Vector(value=vector, top_k=top_k, fields=vector_fields)
 
         query = SearchQuery(
             search_text=search_text,
@@ -351,7 +359,7 @@ class SearchClient(HeadersMixin):
             top=top,
             session_id=session_id,
             scoring_statistics=scoring_statistics,
-            vector=search_query_vector._to_generated(),
+            vector=vector,
             semantic_error_handling=semantic_error_handling,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
             debug=debug,
