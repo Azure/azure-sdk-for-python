@@ -1,5 +1,17 @@
 # Release History
 
+## 10.1.0 (2023-07-21)
+
+### Features Added
+
+  - Added operation VolumesOperations.begin_list_get_group_id_list_for_ldap_user
+  - Model NetAppAccountPatch has a new parameter identity
+  - Model Volume has a new parameter actual_throughput_mibps
+  - Model Volume has a new parameter originating_resource_id
+  - Model VolumeGroupVolumeProperties has a new parameter actual_throughput_mibps
+  - Model VolumeGroupVolumeProperties has a new parameter originating_resource_id
+  - Model VolumePatch has a new parameter snapshot_directory_visible
+
 ## 10.0.0 (2023-04-20)
 
 ### Features Added

@@ -29,7 +29,7 @@ def main():
         subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
     )
 
-    response = client.snapshots.begin_restore_files(
+    client.snapshots.begin_restore_files(
         resource_group_name="myRG",
         account_name="account1",
         pool_name="pool1",
@@ -37,9 +37,8 @@ def main():
         snapshot_name="snapshot1",
         body={"filePaths": ["/dir1/customer1.db", "/dir1/customer2.db"]},
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-09-01/examples/Snapshots_SingleFileRestore.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-11-01/examples/Snapshots_SingleFileRestore.json
 if __name__ == "__main__":
     main()

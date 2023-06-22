@@ -14,7 +14,7 @@ from azure.mgmt.netapp import NetAppManagementClient
     pip install azure-identity
     pip install azure-mgmt-netapp
 # USAGE
-    python volume_quota_rules_update.py
+    python group_id_list_for_ldap_user.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,20 +26,19 @@ from azure.mgmt.netapp import NetAppManagementClient
 def main():
     client = NetAppManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="5275316f-a498-48d6-b324-2cbfdc4311b9",
+        subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
     )
 
-    response = client.volume_quota_rules.begin_update(
+    response = client.volumes.begin_list_get_group_id_list_for_ldap_user(
         resource_group_name="myRG",
-        account_name="account-9957",
-        pool_name="pool-5210",
-        volume_name="volume-6387",
-        volume_quota_rule_name="rule-0004",
-        body={"properties": {"quotaSizeInKiBs": 100009}},
+        account_name="account1",
+        pool_name="pool1",
+        volume_name="volume1",
+        body={"username": "user1"},
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-11-01/examples/VolumeQuotaRules_Update.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-11-01/examples/GroupIdListForLDAPUser.json
 if __name__ == "__main__":
     main()

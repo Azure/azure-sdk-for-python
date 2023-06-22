@@ -240,8 +240,16 @@ class RegionStorageToNetworkProximity(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Standard T1 network connectivity."""
     T2 = "T2"
     """Standard T2 network connectivity."""
+    ACROSS_T2 = "AcrossT2"
+    """Standard AcrossT2 network connectivity."""
     T1_AND_T2 = "T1AndT2"
     """Standard T1 and T2 network connectivity."""
+    T1_AND_ACROSS_T2 = "T1AndAcrossT2"
+    """Standard T1 and AcrossT2 network connectivity."""
+    T2_AND_ACROSS_T2 = "T2AndAcrossT2"
+    """Standard T2 and AcrossT2 network connectivity."""
+    T1_AND_T2_AND_ACROSS_T2 = "T1AndT2AndAcrossT2"
+    """Standard T1, T2 and AcrossT2 network connectivity."""
 
 
 class RelationshipStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -323,3 +331,5 @@ class VolumeStorageToNetworkProximity(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Standard T1 storage to network connectivity."""
     T2 = "T2"
     """Standard T2 storage to network connectivity."""
+    ACROSS_T2 = "AcrossT2"
+    """Standard AcrossT2 storage to network connectivity."""
