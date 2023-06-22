@@ -21,7 +21,6 @@ from ._generated.models import (
     QueryType,
     SearchMode,
     ScoringStatistics,
-    Vector,
     SemanticErrorHandling,
     QueryDebugMode,
 )
@@ -30,6 +29,7 @@ from ._index_documents_batch import IndexDocumentsBatch
 from ._paging import SearchItemPaged, SearchPageIterator
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from ._headers_mixin import HeadersMixin
+from .models._models import SearchQueryVector
 from ._utils import get_authentication_policy
 from ._version import SDK_MONIKER
 
@@ -167,7 +167,7 @@ class SearchClient(HeadersMixin):
             top: Optional[int] = None,
             scoring_statistics: Optional[Union[str, ScoringStatistics]] = None,
             session_id: Optional[str] = None,
-            vector:Optional[Vector] = None,
+            search_query_vector:Optional[SearchQueryVector] = None,
             semantic_error_handling: Optional[Union[str, SemanticErrorHandling]] = None,
             semantic_max_wait_in_milliseconds: Optional[int] = None,
             debug: Optional[Union[str, QueryDebugMode]] = None,
@@ -277,8 +277,8 @@ class SearchClient(HeadersMixin):
         :keyword debug: Enables a debugging tool that can be used to further explore your Semantic search
          results. Known values are: "disabled", "speller", "semantic", and "all".
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
-        :keyword vector: The query parameters for vector and hybrid search queries.
-        :paramtype vector: str or ~azure.search.documents.models.Vector
+        :keyword search_query_vector: The query parameters for vector and hybrid search queries.
+        :paramtype search_query_vector: str or ~azure.search.documents.models.SearchQueryVector
         :rtype:  SearchItemPaged[Dict]
 
         .. admonition:: Example:
@@ -351,7 +351,7 @@ class SearchClient(HeadersMixin):
             top=top,
             session_id=session_id,
             scoring_statistics=scoring_statistics,
-            vector=vector,
+            vector=search_query_vector._to_generated(),
             semantic_error_handling=semantic_error_handling,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
             debug=debug,

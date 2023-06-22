@@ -166,7 +166,7 @@ class SearchField(_serialization.Model):
     :keyword fields: A list of sub-fields if this is a field of type Edm.ComplexType or
      Collection(Edm.ComplexType). Must be null or empty for simple fields.
     :paramtype fields: list[~azure.search.documents.models.SearchField]
-    :keyword int dimensions: The dimensionality of the vector field.
+    :keyword int vector_search_dimensions: The dimensionality of the vector field.
     :keyword str vector_search_configuration: The name of the vector search algorithm configuration
      that specifies the algorithm and optional parameters for searching the vector field.
     """
@@ -191,7 +191,7 @@ class SearchField(_serialization.Model):
         "normalizer_name": {"key": "normalizerName", "type": "str"},
         "synonym_map_names": {"key": "synonymMapNames", "type": "[str]"},
         "fields": {"key": "fields", "type": "[SearchField]"},
-        "dimensions": {"key": "dimensions", "type": "int"},
+        "vector_search_dimensions": {"key": "vectorSearchDimensions", "type": "int"},
         "vector_search_configuration": {"key": "vectorSearchConfiguration", "type": "str"},
     }
 
@@ -211,7 +211,7 @@ class SearchField(_serialization.Model):
         self.normalizer_name = kwargs.get("normalizer_name", None)
         self.synonym_map_names = kwargs.get("synonym_map_names", None)
         self.fields = kwargs.get("fields", None)
-        self.dimensions = kwargs.get("dimensions", None)
+        self.vector_search_dimensions = kwargs.get("vector_search_dimensions", None)
         self.vector_search_configuration = kwargs.get("vector_search_configuration", None)
 
 
@@ -233,7 +233,7 @@ class SearchField(_serialization.Model):
             normalizer=self.normalizer_name,
             synonym_maps=self.synonym_map_names,
             fields=fields,
-            dimensions=self.dimensions,
+            dimensions=self.vector_search_dimensions,
             vector_search_configuration=self.vector_search_configuration,
         )
 
@@ -271,7 +271,7 @@ class SearchField(_serialization.Model):
             normalizer_name=normalizer,
             synonym_map_names=search_field.synonym_maps,
             fields=fields,
-            dimensions=search_field.dimensions,
+            vector_search_dimensions=search_field.dimensions,
             vector_search_configuration=search_field.vector_search_configuration,
         )
 
