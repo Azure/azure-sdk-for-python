@@ -10,23 +10,18 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class JobStateSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """JobStateSelector."""
+class ExpressionLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The expression language to compile to and execute."""
 
-    ALL = "all"
-    PENDING_CLASSIFICATION = "pendingClassification"
-    QUEUED = "queued"
-    ASSIGNED = "assigned"
-    COMPLETED = "completed"
-    CLOSED = "closed"
-    CANCELLED = "cancelled"
-    CLASSIFICATION_FAILED = "classificationFailed"
-    CREATED = "created"
-    PENDING_SCHEDULE = "pendingSchedule"
-    SCHEDULED = "scheduled"
-    SCHEDULE_FAILED = "scheduleFailed"
-    WAITING_FOR_ACTIVATION = "waitingForActivation"
-    ACTIVE = "active"
+    POWER_FX = "powerFx"
+
+
+class JobMatchModeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """JobMatchModeType."""
+
+    QUEUE_AND_MATCH_MODE = "queueAndMatchMode"
+    SCHEDULE_AND_SUSPEND_MODE = "scheduleAndSuspendMode"
+    SUSPEND_MODE = "suspendMode"
 
 
 class LabelOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -41,7 +36,7 @@ class LabelOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class RouterJobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of the Job."""
+    """The status of the Job."""
 
     PENDING_CLASSIFICATION = "pendingClassification"
     QUEUED = "queued"
@@ -57,6 +52,32 @@ class RouterJobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WAITING_FOR_ACTIVATION = "waitingForActivation"
 
 
+class RouterJobStatusSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """RouterJobStatusSelector."""
+
+    ALL = "all"
+    PENDING_CLASSIFICATION = "pendingClassification"
+    QUEUED = "queued"
+    ASSIGNED = "assigned"
+    COMPLETED = "completed"
+    CLOSED = "closed"
+    CANCELLED = "cancelled"
+    CLASSIFICATION_FAILED = "classificationFailed"
+    CREATED = "created"
+    PENDING_SCHEDULE = "pendingSchedule"
+    SCHEDULED = "scheduled"
+    SCHEDULE_FAILED = "scheduleFailed"
+    WAITING_FOR_ACTIVATION = "waitingForActivation"
+    ACTIVE = "active"
+
+
+class RouterWorkerSelectorStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the worker selector."""
+
+    ACTIVE = "active"
+    EXPIRED = "expired"
+
+
 class RouterWorkerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current state of the worker."""
 
@@ -65,24 +86,17 @@ class RouterWorkerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INACTIVE = "inactive"
 
 
-class ScoringRuleParameterSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Supported parameters for scoring workers."""
-
-    JOB_LABELS = "jobLabels"
-    WORKER_SELECTORS = "workerSelectors"
-
-
-class WorkerSelectorState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of the worker selector."""
-
-    ACTIVE = "active"
-    EXPIRED = "expired"
-
-
-class WorkerStateSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """WorkerStateSelector."""
+class RouterWorkerStateSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """RouterWorkerStateSelector."""
 
     ACTIVE = "active"
     DRAINING = "draining"
     INACTIVE = "inactive"
     ALL = "all"
+
+
+class ScoringRuleParameterSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported parameters for scoring workers."""
+
+    JOB_LABELS = "jobLabels"
+    WORKER_SELECTORS = "workerSelectors"

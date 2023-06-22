@@ -14,6 +14,7 @@ from ._models import ChannelConfiguration
 from ._models import ClassificationPolicy
 from ._models import ClassificationPolicyItem
 from ._models import CloseJobRequest
+from ._models import CommunicationError
 from ._models import CommunicationErrorResponse
 from ._models import CompleteJobRequest
 from ._models import ConditionalQueueSelectorAttachment
@@ -27,56 +28,60 @@ from ._models import ExceptionAction
 from ._models import ExceptionPolicy
 from ._models import ExceptionPolicyItem
 from ._models import ExceptionRule
+from ._models import ExceptionTrigger
 from ._models import ExpressionRule
 from ._models import FunctionRule
 from ._models import FunctionRuleCredential
-from ._models import JobAssignment
-from ._models import JobExceptionTrigger
-from ._models import JobOffer
-from ._models import JobPositionDetails
-from ._models import JobQueue
-from ._models import JobQueueItem
-from ._models import JobRouterError
+from ._models import JobMatchingMode
 from ._models import LongestIdleMode
 from ._models import ManualReclassifyExceptionAction
 from ._models import Oauth2ClientCredential
 from ._models import PassThroughQueueSelectorAttachment
 from ._models import PassThroughWorkerSelectorAttachment
 from ._models import QueueLengthExceptionTrigger
-from ._models import QueueSelector
 from ._models import QueueSelectorAttachment
-from ._models import QueueStatistics
 from ._models import QueueWeightedAllocation
 from ._models import ReclassifyExceptionAction
 from ._models import RoundRobinMode
 from ._models import RouterJob
+from ._models import RouterJobAssignment
 from ._models import RouterJobItem
+from ._models import RouterJobOffer
+from ._models import RouterJobPositionDetails
+from ._models import RouterQueue
+from ._models import RouterQueueItem
+from ._models import RouterQueueSelector
+from ._models import RouterQueueStatistics
 from ._models import RouterRule
 from ._models import RouterWorker
+from ._models import RouterWorkerAssignment
 from ._models import RouterWorkerItem
+from ._models import RouterWorkerSelector
 from ._models import RuleEngineQueueSelectorAttachment
 from ._models import RuleEngineWorkerSelectorAttachment
+from ._models import ScheduleAndSuspendMode
 from ._models import ScoringRuleOptions
 from ._models import StaticQueueSelectorAttachment
 from ._models import StaticRule
 from ._models import StaticWorkerSelectorAttachment
+from ._models import UnassignJobRequest
 from ._models import UnassignJobResult
 from ._models import WaitTimeExceptionTrigger
 from ._models import WebhookRule
 from ._models import WeightedAllocationQueueSelectorAttachment
 from ._models import WeightedAllocationWorkerSelectorAttachment
-from ._models import WorkerAssignment
-from ._models import WorkerSelector
 from ._models import WorkerSelectorAttachment
 from ._models import WorkerWeightedAllocation
 
-from ._enums import JobStateSelector
+from ._enums import ExpressionLanguage
+from ._enums import JobMatchModeType
 from ._enums import LabelOperator
 from ._enums import RouterJobStatus
+from ._enums import RouterJobStatusSelector
+from ._enums import RouterWorkerSelectorStatus
 from ._enums import RouterWorkerState
+from ._enums import RouterWorkerStateSelector
 from ._enums import ScoringRuleParameterSelector
-from ._enums import WorkerSelectorState
-from ._enums import WorkerStateSelector
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -90,6 +95,7 @@ __all__ = [
     "ClassificationPolicy",
     "ClassificationPolicyItem",
     "CloseJobRequest",
+    "CommunicationError",
     "CommunicationErrorResponse",
     "CompleteJobRequest",
     "ConditionalQueueSelectorAttachment",
@@ -103,55 +109,59 @@ __all__ = [
     "ExceptionPolicy",
     "ExceptionPolicyItem",
     "ExceptionRule",
+    "ExceptionTrigger",
     "ExpressionRule",
     "FunctionRule",
     "FunctionRuleCredential",
-    "JobAssignment",
-    "JobExceptionTrigger",
-    "JobOffer",
-    "JobPositionDetails",
-    "JobQueue",
-    "JobQueueItem",
-    "JobRouterError",
+    "JobMatchingMode",
     "LongestIdleMode",
     "ManualReclassifyExceptionAction",
     "Oauth2ClientCredential",
     "PassThroughQueueSelectorAttachment",
     "PassThroughWorkerSelectorAttachment",
     "QueueLengthExceptionTrigger",
-    "QueueSelector",
     "QueueSelectorAttachment",
-    "QueueStatistics",
     "QueueWeightedAllocation",
     "ReclassifyExceptionAction",
     "RoundRobinMode",
     "RouterJob",
+    "RouterJobAssignment",
     "RouterJobItem",
+    "RouterJobOffer",
+    "RouterJobPositionDetails",
+    "RouterQueue",
+    "RouterQueueItem",
+    "RouterQueueSelector",
+    "RouterQueueStatistics",
     "RouterRule",
     "RouterWorker",
+    "RouterWorkerAssignment",
     "RouterWorkerItem",
+    "RouterWorkerSelector",
     "RuleEngineQueueSelectorAttachment",
     "RuleEngineWorkerSelectorAttachment",
+    "ScheduleAndSuspendMode",
     "ScoringRuleOptions",
     "StaticQueueSelectorAttachment",
     "StaticRule",
     "StaticWorkerSelectorAttachment",
+    "UnassignJobRequest",
     "UnassignJobResult",
     "WaitTimeExceptionTrigger",
     "WebhookRule",
     "WeightedAllocationQueueSelectorAttachment",
     "WeightedAllocationWorkerSelectorAttachment",
-    "WorkerAssignment",
-    "WorkerSelector",
     "WorkerSelectorAttachment",
     "WorkerWeightedAllocation",
-    "JobStateSelector",
+    "ExpressionLanguage",
+    "JobMatchModeType",
     "LabelOperator",
     "RouterJobStatus",
+    "RouterJobStatusSelector",
+    "RouterWorkerSelectorStatus",
     "RouterWorkerState",
+    "RouterWorkerStateSelector",
     "ScoringRuleParameterSelector",
-    "WorkerSelectorState",
-    "WorkerStateSelector",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

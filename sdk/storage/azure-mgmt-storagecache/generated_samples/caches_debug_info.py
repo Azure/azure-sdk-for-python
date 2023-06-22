@@ -29,13 +29,12 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.caches.begin_debug_info(
+    client.caches.begin_debug_info(
         resource_group_name="scgroup",
         cache_name="sc",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2023-01-01/examples/Caches_DebugInfo.json
+# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2023-05-01/examples/Caches_DebugInfo.json
 if __name__ == "__main__":
     main()

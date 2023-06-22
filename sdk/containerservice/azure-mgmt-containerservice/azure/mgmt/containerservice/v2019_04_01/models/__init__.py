@@ -33,6 +33,9 @@ from ._models_py3 import ManagedClusterUpgradeProfile
 from ._models_py3 import ManagedClusterWindowsProfile
 from ._models_py3 import OperationListResult
 from ._models_py3 import OperationValue
+from ._models_py3 import OrchestratorProfile
+from ._models_py3 import OrchestratorVersionProfile
+from ._models_py3 import OrchestratorVersionProfileListResult
 from ._models_py3 import Resource
 from ._models_py3 import SubResource
 from ._models_py3 import TagsObject
@@ -78,6 +81,9 @@ __all__ = [
     "ManagedClusterWindowsProfile",
     "OperationListResult",
     "OperationValue",
+    "OrchestratorProfile",
+    "OrchestratorVersionProfile",
+    "OrchestratorVersionProfileListResult",
     "Resource",
     "SubResource",
     "TagsObject",

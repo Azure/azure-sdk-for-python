@@ -7,39 +7,39 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Content-Length": "168",
+        "Content-Length": "177",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "1f79f011-e476-11ed-84d0-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "fc1ba239-106f-11ee-9ed7-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 21:05:50 GMT",
+        "x-ms-date": "Wed, 21 Jun 2023 20:12:45 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
         "name": "test_update_classification_policy_tst_dp_async",
-        "offerTtlSeconds": 10.0,
+        "offerExpiresAfterSeconds": 10.0,
         "mode": {
           "kind": "round-robin",
           "minConcurrentOffers": 1,
           "maxConcurrentOffers": 1
         }
       },
-      "StatusCode": 200,
+      "StatusCode": 201,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 21:05:50 GMT",
+        "Date": "Wed, 21 Jun 2023 20:12:45 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 21:05:50 GMT",
-        "trace-id": "e256a9d2-bc4a-fe4c-ffcb-ec2ad960f227",
+        "Last-Modified": "Wed, 21 Jun 2023 20:12:45 GMT",
+        "trace-id": "6777151f-15d5-4230-af8a-dbc7567644e9",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0LpJJZAAAAAAdQMroMuZ6S67EEX6wZPRdWVRPMjIxMDkwODE4MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "X-Azure-Ref": "0vVmTZAAAAAAVzzXcREQeRor6U1SRFs67WVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
         "id": "test_update_classification_policy_tst_dp_async",
         "name": "test_update_classification_policy_tst_dp_async",
-        "offerTtlSeconds": 10,
+        "offerExpiresAfterSeconds": 10,
         "mode": {
           "kind": "round-robin",
           "minConcurrentOffers": 1,
@@ -57,10 +57,10 @@
         "Authorization": "Sanitized",
         "Content-Length": "218",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "1fb53ae0-e476-11ed-bfa1-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "fc31bf0e-106f-11ee-bdb4-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 21:05:50 GMT",
+        "x-ms-date": "Wed, 21 Jun 2023 20:12:45 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -78,12 +78,12 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 21:05:50 GMT",
+        "Date": "Wed, 21 Jun 2023 20:12:45 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 21:05:51 GMT",
-        "trace-id": "d96c957f-0f37-9b15-f922-254d37b53788",
+        "Last-Modified": "Wed, 21 Jun 2023 20:12:45 GMT",
+        "trace-id": "5f5bde67-172a-f624-eaf3-afeec72bc541",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0L5JJZAAAAAD/WcHPazrJQ7xKCq7hWntbWVRPMjIxMDkwODE4MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "X-Azure-Ref": "0vVmTZAAAAAD6zgMeqD0JQqCgjfQ192EVWVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -107,12 +107,12 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Content-Length": "1668",
+        "Content-Length": "1591",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "1fe930e5-e476-11ed-83f7-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "fc458d9f-106f-11ee-a689-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 21:05:51 GMT",
+        "x-ms-date": "Wed, 21 Jun 2023 20:12:45 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -121,7 +121,7 @@
         "queueSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "queueSelector": {
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value"
@@ -133,7 +133,7 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "queueSelectors": [
               {
                 "key": "test_key",
                 "labelOperator": "equal",
@@ -164,7 +164,7 @@
             "allocations": [
               {
                 "weight": 1.0,
-                "labelSelectors": [
+                "queueSelectors": [
                   {
                     "key": "test_key",
                     "labelOperator": "equal",
@@ -182,11 +182,10 @@
         "workerSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "workerSelector": {
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value",
-              "ttlSeconds": 10.0,
               "expedite": false
             }
           },
@@ -196,12 +195,11 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "workerSelectors": [
               {
                 "key": "test_key",
                 "labelOperator": "equal",
                 "value": "test_value",
-                "ttlSeconds": 10.0,
                 "expedite": false
               }
             ]
@@ -215,7 +213,6 @@
                   "key": "test_key",
                   "labelOperator": "equal",
                   "value": "test_value",
-                  "ttlSeconds": 10.0,
                   "expedite": false
                 }
               ]
@@ -231,12 +228,11 @@
             "allocations": [
               {
                 "weight": 1.0,
-                "labelSelectors": [
+                "workerSelectors": [
                   {
                     "key": "test_key",
                     "labelOperator": "equal",
                     "value": "test_value",
-                    "ttlSeconds": 10.0,
                     "expedite": false
                   }
                 ]
@@ -245,16 +241,16 @@
           }
         ]
       },
-      "StatusCode": 200,
+      "StatusCode": 201,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 21:05:51 GMT",
+        "Date": "Wed, 21 Jun 2023 20:12:45 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 21:05:51 GMT",
-        "trace-id": "0b4acba1-b6c3-ff9a-3bd2-10727ce50669",
+        "Last-Modified": "Wed, 21 Jun 2023 20:12:45 GMT",
+        "trace-id": "118bd405-5e0d-94bf-4bba-3036ff35f2ba",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0L5JJZAAAAAAd8mudJ6pwT73WSM8Yl7kwWVRPMjIxMDkwODE4MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "X-Azure-Ref": "0vVmTZAAAAACjU5JeK24CS515nQjT9MfSWVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -264,7 +260,7 @@
         "queueSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "queueSelector": {
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value"
@@ -276,7 +272,7 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "queueSelectors": [
               {
                 "key": "test_key",
                 "labelOperator": "equal",
@@ -307,7 +303,7 @@
             "allocations": [
               {
                 "weight": 1,
-                "labelSelectors": [
+                "queueSelectors": [
                   {
                     "key": "test_key",
                     "labelOperator": "equal",
@@ -325,10 +321,9 @@
         "workerSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
-              "ttlSeconds": 10,
+            "workerSelector": {
               "expedite": false,
-              "state": "active",
+              "status": "active",
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value"
@@ -340,11 +335,10 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "workerSelectors": [
               {
-                "ttlSeconds": 10,
                 "expedite": false,
-                "state": "active",
+                "status": "active",
                 "key": "test_key",
                 "labelOperator": "equal",
                 "value": "test_value"
@@ -360,7 +354,6 @@
                   "key": "test_key",
                   "labelOperator": "equal",
                   "value": "test_value",
-                  "ttlSeconds": 10,
                   "expedite": false
                 }
               ]
@@ -376,11 +369,10 @@
             "allocations": [
               {
                 "weight": 1,
-                "labelSelectors": [
+                "workerSelectors": [
                   {
-                    "ttlSeconds": 10,
                     "expedite": false,
-                    "state": "active",
+                    "status": "active",
                     "key": "test_key",
                     "labelOperator": "equal",
                     "value": "test_value"
@@ -399,12 +391,12 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Content-Length": "1700",
+        "Content-Length": "1602",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "202786df-e476-11ed-968f-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "fc603e66-106f-11ee-af37-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 21:05:51 GMT",
+        "x-ms-date": "Wed, 21 Jun 2023 20:12:45 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -413,7 +405,7 @@
         "queueSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "queueSelector": {
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value"
@@ -425,7 +417,7 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "queueSelectors": [
               {
                 "key": "test_key",
                 "labelOperator": "equal",
@@ -456,7 +448,7 @@
             "allocations": [
               {
                 "weight": 1.0,
-                "labelSelectors": [
+                "queueSelectors": [
                   {
                     "key": "test_key",
                     "labelOperator": "equal",
@@ -469,17 +461,15 @@
         ],
         "prioritizationRule": {
           "kind": "expression-rule",
-          "language": "powerFx",
           "expression": "2"
         },
         "workerSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "workerSelector": {
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value",
-              "ttlSeconds": 10.0,
               "expedite": false
             }
           },
@@ -489,12 +479,11 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "workerSelectors": [
               {
                 "key": "test_key",
                 "labelOperator": "equal",
                 "value": "test_value",
-                "ttlSeconds": 10.0,
                 "expedite": false
               }
             ]
@@ -508,7 +497,6 @@
                   "key": "test_key",
                   "labelOperator": "equal",
                   "value": "test_value",
-                  "ttlSeconds": 10,
                   "expedite": false
                 }
               ]
@@ -524,12 +512,11 @@
             "allocations": [
               {
                 "weight": 1.0,
-                "labelSelectors": [
+                "workerSelectors": [
                   {
                     "key": "test_key",
                     "labelOperator": "equal",
                     "value": "test_value",
-                    "ttlSeconds": 10.0,
                     "expedite": false
                   }
                 ]
@@ -542,12 +529,12 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 21:05:51 GMT",
+        "Date": "Wed, 21 Jun 2023 20:12:45 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 21:05:52 GMT",
-        "trace-id": "d557ec32-2992-34cf-f0a2-6d8b89bb66eb",
+        "Last-Modified": "Wed, 21 Jun 2023 20:12:45 GMT",
+        "trace-id": "e65a8282-6fd2-4883-bb0e-46ae004c8e69",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0L5JJZAAAAADcj5uMtXqaS7DDfcPZ0wZoWVRPMjIxMDkwODE4MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "X-Azure-Ref": "0vVmTZAAAAAC\u002B8hD1cFDLSKDvdYAF\u002BT4XWVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -557,7 +544,7 @@
         "queueSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "queueSelector": {
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value"
@@ -569,7 +556,7 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "queueSelectors": [
               {
                 "key": "test_key",
                 "labelOperator": "equal",
@@ -600,7 +587,7 @@
             "allocations": [
               {
                 "weight": 1,
-                "labelSelectors": [
+                "queueSelectors": [
                   {
                     "key": "test_key",
                     "labelOperator": "equal",
@@ -619,10 +606,9 @@
         "workerSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
-              "ttlSeconds": 10,
+            "workerSelector": {
               "expedite": false,
-              "state": "active",
+              "status": "active",
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value"
@@ -634,11 +620,10 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "workerSelectors": [
               {
-                "ttlSeconds": 10,
                 "expedite": false,
-                "state": "active",
+                "status": "active",
                 "key": "test_key",
                 "labelOperator": "equal",
                 "value": "test_value"
@@ -654,7 +639,6 @@
                   "key": "test_key",
                   "labelOperator": "equal",
                   "value": "test_value",
-                  "ttlSeconds": 10,
                   "expedite": false
                 }
               ]
@@ -670,11 +654,10 @@
             "allocations": [
               {
                 "weight": 1,
-                "labelSelectors": [
+                "workerSelectors": [
                   {
-                    "ttlSeconds": 10,
                     "expedite": false,
-                    "state": "active",
+                    "status": "active",
                     "key": "test_key",
                     "labelOperator": "equal",
                     "value": "test_value"
@@ -693,12 +676,12 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Content-Length": "1702",
+        "Content-Length": "1602",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "2078e67c-e476-11ed-811e-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "fc84f5a5-106f-11ee-94ef-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 21:05:52 GMT",
+        "x-ms-date": "Wed, 21 Jun 2023 20:12:45 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -707,7 +690,7 @@
         "queueSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "queueSelector": {
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value"
@@ -719,7 +702,7 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "queueSelectors": [
               {
                 "key": "test_key",
                 "labelOperator": "equal",
@@ -750,7 +733,146 @@
             "allocations": [
               {
                 "weight": 1.0,
-                "labelSelectors": [
+                "queueSelectors": [
+                  {
+                    "key": "test_key",
+                    "labelOperator": "equal",
+                    "value": "test_value"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "prioritizationRule": {
+          "kind": "expression-rule",
+          "expression": "1"
+        },
+        "workerSelectors": [
+          {
+            "kind": "static",
+            "workerSelector": {
+              "key": "test_key",
+              "labelOperator": "equal",
+              "value": "test_value",
+              "expedite": false
+            }
+          },
+          {
+            "kind": "conditional",
+            "condition": {
+              "kind": "static-rule",
+              "value": true
+            },
+            "workerSelectors": [
+              {
+                "key": "test_key",
+                "labelOperator": "equal",
+                "value": "test_value",
+                "expedite": false
+              }
+            ]
+          },
+          {
+            "kind": "rule-engine",
+            "rule": {
+              "kind": "static-rule",
+              "value": [
+                {
+                  "key": "test_key",
+                  "labelOperator": "equal",
+                  "value": "test_value",
+                  "expedite": false
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pass-through",
+            "key": "testKey",
+            "labelOperator": "equal"
+          },
+          {
+            "kind": "weighted-allocation-worker-selector",
+            "allocations": [
+              {
+                "weight": 1.0,
+                "workerSelectors": [
+                  {
+                    "key": "test_key",
+                    "labelOperator": "equal",
+                    "value": "test_value",
+                    "expedite": false
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 21 Jun 2023 20:12:45 GMT",
+        "ETag": "Sanitized",
+        "Last-Modified": "Wed, 21 Jun 2023 20:12:45 GMT",
+        "trace-id": "6cc4d836-0d2a-8abb-e89a-4df00414dc4a",
+        "Transfer-Encoding": "chunked",
+        "X-Azure-Ref": "0vVmTZAAAAAB1Q1fxpt22RJlQBOHqdPc8WVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
+        "X-Cache": "CONFIG_NOCACHE"
+      },
+      "ResponseBody": {
+        "id": "tst_update_cp_async",
+        "name": "tst_update_cp_async",
+        "fallbackQueueId": "test_update_classification_policy_tst_q_async",
+        "queueSelectors": [
+          {
+            "kind": "static",
+            "queueSelector": {
+              "key": "test_key",
+              "labelOperator": "equal",
+              "value": "test_value"
+            }
+          },
+          {
+            "kind": "conditional",
+            "condition": {
+              "kind": "static-rule",
+              "value": true
+            },
+            "queueSelectors": [
+              {
+                "key": "test_key",
+                "labelOperator": "equal",
+                "value": "test_value"
+              }
+            ]
+          },
+          {
+            "kind": "rule-engine",
+            "rule": {
+              "kind": "static-rule",
+              "value": [
+                {
+                  "key": "test_key",
+                  "labelOperator": "equal",
+                  "value": "test_value"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pass-through",
+            "key": "testKey",
+            "labelOperator": "equal"
+          },
+          {
+            "kind": "weighted-allocation-queue-selector",
+            "allocations": [
+              {
+                "weight": 1,
+                "queueSelectors": [
                   {
                     "key": "test_key",
                     "labelOperator": "equal",
@@ -769,154 +891,9 @@
         "workerSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
-              "key": "test_key",
-              "labelOperator": "equal",
-              "value": "test_value",
-              "ttlSeconds": 10.0,
-              "expedite": false
-            }
-          },
-          {
-            "kind": "conditional",
-            "condition": {
-              "kind": "static-rule",
-              "value": true
-            },
-            "labelSelectors": [
-              {
-                "key": "test_key",
-                "labelOperator": "equal",
-                "value": "test_value",
-                "ttlSeconds": 10.0,
-                "expedite": false
-              }
-            ]
-          },
-          {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value",
-                  "ttlSeconds": 10.0,
-                  "expedite": false
-                }
-              ]
-            }
-          },
-          {
-            "kind": "pass-through",
-            "key": "testKey",
-            "labelOperator": "equal"
-          },
-          {
-            "kind": "weighted-allocation-worker-selector",
-            "allocations": [
-              {
-                "weight": 1.0,
-                "labelSelectors": [
-                  {
-                    "key": "test_key",
-                    "labelOperator": "equal",
-                    "value": "test_value",
-                    "ttlSeconds": 10.0,
-                    "expedite": false
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 21:05:52 GMT",
-        "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 21:05:52 GMT",
-        "trace-id": "a0e53b95-b953-0d1e-c768-c39fbf8a52d2",
-        "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0MJJJZAAAAABFEq5w\u002B9GdQ7Fxmrte4tPbWVRPMjIxMDkwODE4MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
-        "X-Cache": "CONFIG_NOCACHE"
-      },
-      "ResponseBody": {
-        "id": "tst_update_cp_async",
-        "name": "tst_update_cp_async",
-        "fallbackQueueId": "test_update_classification_policy_tst_q_async",
-        "queueSelectors": [
-          {
-            "kind": "static",
-            "labelSelector": {
-              "key": "test_key",
-              "labelOperator": "equal",
-              "value": "test_value"
-            }
-          },
-          {
-            "kind": "conditional",
-            "condition": {
-              "kind": "static-rule",
-              "value": true
-            },
-            "labelSelectors": [
-              {
-                "key": "test_key",
-                "labelOperator": "equal",
-                "value": "test_value"
-              }
-            ]
-          },
-          {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value"
-                }
-              ]
-            }
-          },
-          {
-            "kind": "pass-through",
-            "key": "testKey",
-            "labelOperator": "equal"
-          },
-          {
-            "kind": "weighted-allocation-queue-selector",
-            "allocations": [
-              {
-                "weight": 1,
-                "labelSelectors": [
-                  {
-                    "key": "test_key",
-                    "labelOperator": "equal",
-                    "value": "test_value"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "prioritizationRule": {
-          "kind": "expression-rule",
-          "language": "powerFx",
-          "expression": "1"
-        },
-        "workerSelectors": [
-          {
-            "kind": "static",
-            "labelSelector": {
-              "ttlSeconds": 10,
+            "workerSelector": {
               "expedite": false,
-              "state": "active",
+              "status": "active",
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value"
@@ -928,11 +905,10 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "workerSelectors": [
               {
-                "ttlSeconds": 10,
                 "expedite": false,
-                "state": "active",
+                "status": "active",
                 "key": "test_key",
                 "labelOperator": "equal",
                 "value": "test_value"
@@ -948,7 +924,6 @@
                   "key": "test_key",
                   "labelOperator": "equal",
                   "value": "test_value",
-                  "ttlSeconds": 10,
                   "expedite": false
                 }
               ]
@@ -964,11 +939,10 @@
             "allocations": [
               {
                 "weight": 1,
-                "labelSelectors": [
+                "workerSelectors": [
                   {
-                    "ttlSeconds": 10,
                     "expedite": false,
-                    "state": "active",
+                    "status": "active",
                     "key": "test_key",
                     "labelOperator": "equal",
                     "value": "test_value"
@@ -987,12 +961,12 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Content-Length": "1700",
+        "Content-Length": "1602",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "20cb14a1-e476-11ed-bfb4-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "fca8df8c-106f-11ee-a69b-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 21:05:52 GMT",
+        "x-ms-date": "Wed, 21 Jun 2023 20:12:46 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -1001,7 +975,7 @@
         "queueSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "queueSelector": {
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value"
@@ -1013,7 +987,7 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "queueSelectors": [
               {
                 "key": "test_key",
                 "labelOperator": "equal",
@@ -1044,7 +1018,7 @@
             "allocations": [
               {
                 "weight": 1.0,
-                "labelSelectors": [
+                "queueSelectors": [
                   {
                     "key": "test_key",
                     "labelOperator": "equal",
@@ -1057,17 +1031,15 @@
         ],
         "prioritizationRule": {
           "kind": "expression-rule",
-          "language": "powerFx",
           "expression": "2"
         },
         "workerSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "workerSelector": {
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value",
-              "ttlSeconds": 10.0,
               "expedite": false
             }
           },
@@ -1077,12 +1049,11 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "workerSelectors": [
               {
                 "key": "test_key",
                 "labelOperator": "equal",
                 "value": "test_value",
-                "ttlSeconds": 10.0,
                 "expedite": false
               }
             ]
@@ -1096,7 +1067,6 @@
                   "key": "test_key",
                   "labelOperator": "equal",
                   "value": "test_value",
-                  "ttlSeconds": 10,
                   "expedite": false
                 }
               ]
@@ -1112,12 +1082,11 @@
             "allocations": [
               {
                 "weight": 1.0,
-                "labelSelectors": [
+                "workerSelectors": [
                   {
                     "key": "test_key",
                     "labelOperator": "equal",
                     "value": "test_value",
-                    "ttlSeconds": 10.0,
                     "expedite": false
                   }
                 ]
@@ -1130,12 +1099,12 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 21:05:52 GMT",
+        "Date": "Wed, 21 Jun 2023 20:12:46 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 21:05:53 GMT",
-        "trace-id": "913e92e3-dfa3-ebca-5775-5e5ee79e92e1",
+        "Last-Modified": "Wed, 21 Jun 2023 20:12:46 GMT",
+        "trace-id": "29f10897-74b8-5ef9-1b8d-146eb1abae58",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0MJJJZAAAAACOSeDJkAQOTp9XAUkmWD6DWVRPMjIxMDkwODE4MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "X-Azure-Ref": "0vVmTZAAAAACTzDHda\u002B9ySp63kllwpY\u002BcWVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -1145,7 +1114,7 @@
         "queueSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "queueSelector": {
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value"
@@ -1157,7 +1126,7 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "queueSelectors": [
               {
                 "key": "test_key",
                 "labelOperator": "equal",
@@ -1188,7 +1157,7 @@
             "allocations": [
               {
                 "weight": 1,
-                "labelSelectors": [
+                "queueSelectors": [
                   {
                     "key": "test_key",
                     "labelOperator": "equal",
@@ -1207,10 +1176,9 @@
         "workerSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
-              "ttlSeconds": 10,
+            "workerSelector": {
               "expedite": false,
-              "state": "active",
+              "status": "active",
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value"
@@ -1222,11 +1190,10 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "workerSelectors": [
               {
-                "ttlSeconds": 10,
                 "expedite": false,
-                "state": "active",
+                "status": "active",
                 "key": "test_key",
                 "labelOperator": "equal",
                 "value": "test_value"
@@ -1242,7 +1209,6 @@
                   "key": "test_key",
                   "labelOperator": "equal",
                   "value": "test_value",
-                  "ttlSeconds": 10,
                   "expedite": false
                 }
               ]
@@ -1258,11 +1224,10 @@
             "allocations": [
               {
                 "weight": 1,
-                "labelSelectors": [
+                "workerSelectors": [
                   {
-                    "ttlSeconds": 10,
                     "expedite": false,
-                    "state": "active",
+                    "status": "active",
                     "key": "test_key",
                     "labelOperator": "equal",
                     "value": "test_value"
@@ -1281,12 +1246,12 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Content-Length": "1618",
+        "Content-Length": "1549",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "211d610a-e476-11ed-9959-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "fccb5839-106f-11ee-b17f-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 21:05:53 GMT",
+        "x-ms-date": "Wed, 21 Jun 2023 20:12:46 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -1295,7 +1260,7 @@
         "queueSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "queueSelector": {
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value"
@@ -1307,7 +1272,7 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "queueSelectors": [
               {
                 "key": "test_key",
                 "labelOperator": "equal",
@@ -1338,7 +1303,7 @@
             "allocations": [
               {
                 "weight": 1.0,
-                "labelSelectors": [
+                "queueSelectors": [
                   {
                     "key": "test_key",
                     "labelOperator": "equal",
@@ -1359,11 +1324,10 @@
         "workerSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "workerSelector": {
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value",
-              "ttlSeconds": 10.0,
               "expedite": false
             }
           },
@@ -1373,12 +1337,11 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "workerSelectors": [
               {
                 "key": "test_key",
                 "labelOperator": "equal",
                 "value": "test_value",
-                "ttlSeconds": 10.0,
                 "expedite": false
               }
             ]
@@ -1392,7 +1355,6 @@
                   "key": "test_key",
                   "labelOperator": "equal",
                   "value": "test_value",
-                  "ttlSeconds": 10.0,
                   "expedite": false
                 }
               ]
@@ -1408,12 +1370,11 @@
             "allocations": [
               {
                 "weight": 1.0,
-                "labelSelectors": [
+                "workerSelectors": [
                   {
                     "key": "test_key",
                     "labelOperator": "equal",
                     "value": "test_value",
-                    "ttlSeconds": 10.0,
                     "expedite": false
                   }
                 ]
@@ -1426,12 +1387,12 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 21:05:53 GMT",
+        "Date": "Wed, 21 Jun 2023 20:12:46 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 21:05:53 GMT",
-        "trace-id": "10fe48e6-1475-aed9-b72f-100611aec9cd",
+        "Last-Modified": "Wed, 21 Jun 2023 20:12:46 GMT",
+        "trace-id": "53fbbf68-5501-67ea-d1a1-d3f7bf3b471a",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0MZJJZAAAAAArThNz3xHrQaJLWw2Il0CjWVRPMjIxMDkwODE4MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "X-Azure-Ref": "0vlmTZAAAAADPg21Wun7FQpdLdCsE23mNWVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -1441,7 +1402,7 @@
         "queueSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "queueSelector": {
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value"
@@ -1453,7 +1414,7 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "queueSelectors": [
               {
                 "key": "test_key",
                 "labelOperator": "equal",
@@ -1484,7 +1445,7 @@
             "allocations": [
               {
                 "weight": 1,
-                "labelSelectors": [
+                "queueSelectors": [
                   {
                     "key": "test_key",
                     "labelOperator": "equal",
@@ -1505,10 +1466,9 @@
         "workerSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
-              "ttlSeconds": 10,
+            "workerSelector": {
               "expedite": false,
-              "state": "active",
+              "status": "active",
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value"
@@ -1520,11 +1480,10 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "workerSelectors": [
               {
-                "ttlSeconds": 10,
                 "expedite": false,
-                "state": "active",
+                "status": "active",
                 "key": "test_key",
                 "labelOperator": "equal",
                 "value": "test_value"
@@ -1540,7 +1499,6 @@
                   "key": "test_key",
                   "labelOperator": "equal",
                   "value": "test_value",
-                  "ttlSeconds": 10,
                   "expedite": false
                 }
               ]
@@ -1556,11 +1514,10 @@
             "allocations": [
               {
                 "weight": 1,
-                "labelSelectors": [
+                "workerSelectors": [
                   {
-                    "ttlSeconds": 10,
                     "expedite": false,
-                    "state": "active",
+                    "status": "active",
                     "key": "test_key",
                     "labelOperator": "equal",
                     "value": "test_value"
@@ -1579,12 +1536,12 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Content-Length": "1700",
+        "Content-Length": "1602",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "21729944-e476-11ed-90b2-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "fcefc70e-106f-11ee-a87b-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 21:05:53 GMT",
+        "x-ms-date": "Wed, 21 Jun 2023 20:12:46 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -1593,7 +1550,7 @@
         "queueSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "queueSelector": {
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value"
@@ -1605,7 +1562,7 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "queueSelectors": [
               {
                 "key": "test_key",
                 "labelOperator": "equal",
@@ -1636,7 +1593,7 @@
             "allocations": [
               {
                 "weight": 1.0,
-                "labelSelectors": [
+                "queueSelectors": [
                   {
                     "key": "test_key",
                     "labelOperator": "equal",
@@ -1649,17 +1606,15 @@
         ],
         "prioritizationRule": {
           "kind": "expression-rule",
-          "language": "powerFx",
           "expression": "2"
         },
         "workerSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "workerSelector": {
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value",
-              "ttlSeconds": 10.0,
               "expedite": false
             }
           },
@@ -1669,12 +1624,11 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "workerSelectors": [
               {
                 "key": "test_key",
                 "labelOperator": "equal",
                 "value": "test_value",
-                "ttlSeconds": 10.0,
                 "expedite": false
               }
             ]
@@ -1688,7 +1642,6 @@
                   "key": "test_key",
                   "labelOperator": "equal",
                   "value": "test_value",
-                  "ttlSeconds": 10,
                   "expedite": false
                 }
               ]
@@ -1704,12 +1657,11 @@
             "allocations": [
               {
                 "weight": 1.0,
-                "labelSelectors": [
+                "workerSelectors": [
                   {
                     "key": "test_key",
                     "labelOperator": "equal",
                     "value": "test_value",
-                    "ttlSeconds": 10.0,
                     "expedite": false
                   }
                 ]
@@ -1722,12 +1674,12 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 21:05:53 GMT",
+        "Date": "Wed, 21 Jun 2023 20:12:46 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 21:05:54 GMT",
-        "trace-id": "59bb5530-ff9b-e124-8272-44f74facb687",
+        "Last-Modified": "Wed, 21 Jun 2023 20:12:46 GMT",
+        "trace-id": "9611e7f2-13d4-3d26-5297-6ff55cc02605",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0MZJJZAAAAADeyFWRzOxvRJUh4m7sZY6nWVRPMjIxMDkwODE4MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "X-Azure-Ref": "0vlmTZAAAAAByvI22s2gMR6P3PDDIkN76WVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -1737,7 +1689,7 @@
         "queueSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "queueSelector": {
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value"
@@ -1749,7 +1701,7 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "queueSelectors": [
               {
                 "key": "test_key",
                 "labelOperator": "equal",
@@ -1780,7 +1732,7 @@
             "allocations": [
               {
                 "weight": 1,
-                "labelSelectors": [
+                "queueSelectors": [
                   {
                     "key": "test_key",
                     "labelOperator": "equal",
@@ -1799,10 +1751,9 @@
         "workerSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
-              "ttlSeconds": 10,
+            "workerSelector": {
               "expedite": false,
-              "state": "active",
+              "status": "active",
               "key": "test_key",
               "labelOperator": "equal",
               "value": "test_value"
@@ -1814,11 +1765,10 @@
               "kind": "static-rule",
               "value": true
             },
-            "labelSelectors": [
+            "workerSelectors": [
               {
-                "ttlSeconds": 10,
                 "expedite": false,
-                "state": "active",
+                "status": "active",
                 "key": "test_key",
                 "labelOperator": "equal",
                 "value": "test_value"
@@ -1834,7 +1784,6 @@
                   "key": "test_key",
                   "labelOperator": "equal",
                   "value": "test_value",
-                  "ttlSeconds": 10,
                   "expedite": false
                 }
               ]
@@ -1850,11 +1799,10 @@
             "allocations": [
               {
                 "weight": 1,
-                "labelSelectors": [
+                "workerSelectors": [
                   {
-                    "ttlSeconds": 10,
                     "expedite": false,
-                    "state": "active",
+                    "status": "active",
                     "key": "test_key",
                     "labelOperator": "equal",
                     "value": "test_value"
@@ -1874,19 +1822,19 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "21c3a671-e476-11ed-ada8-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "fd121827-106f-11ee-a608-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 21:05:54 GMT",
+        "x-ms-date": "Wed, 21 Jun 2023 20:12:46 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
-        "Date": "Wed, 26 Apr 2023 21:05:54 GMT",
-        "trace-id": "ce83df97-c109-64aa-0cc5-74b30952244c",
-        "X-Azure-Ref": "0MpJJZAAAAACTd5dk0IR0R5KfVlYjoNKcWVRPMjIxMDkwODE4MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "Date": "Wed, 21 Jun 2023 20:12:46 GMT",
+        "trace-id": "7b288f4f-c096-44e6-8db1-55f687fd8247",
+        "X-Azure-Ref": "0vlmTZAAAAAB8OY36uqElSaUuiPMti1b\u002BWVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
@@ -1899,19 +1847,19 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "21f2e74d-e476-11ed-823a-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "fd26261d-106f-11ee-aca5-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 21:05:54 GMT",
+        "x-ms-date": "Wed, 21 Jun 2023 20:12:46 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
-        "Date": "Wed, 26 Apr 2023 21:05:54 GMT",
-        "trace-id": "41c5721a-91c1-5cde-1a66-a4af0b700896",
-        "X-Azure-Ref": "0MpJJZAAAAACIRyHxBnMwTIPGMsVcZL/\u002BWVRPMjIxMDkwODE4MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "Date": "Wed, 21 Jun 2023 20:12:46 GMT",
+        "trace-id": "73fce4ee-095e-c174-a657-b9617577d833",
+        "X-Azure-Ref": "0vlmTZAAAAAByg0GYBIOkQLNgL21XFdhRWVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
@@ -1924,19 +1872,19 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "223290fc-e476-11ed-9c45-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "fd405e0a-106f-11ee-964c-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 21:05:54 GMT",
+        "x-ms-date": "Wed, 21 Jun 2023 20:12:47 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
-        "Date": "Wed, 26 Apr 2023 21:05:54 GMT",
-        "trace-id": "9c4cb0d1-7175-44bc-750f-17a2e70925c3",
-        "X-Azure-Ref": "0M5JJZAAAAADsUhSVOYkrS7KCDVapwFvLWVRPMjIxMDkwODE4MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "Date": "Wed, 21 Jun 2023 20:12:46 GMT",
+        "trace-id": "2a7ea4cc-e1c9-b105-f210-40762f1997bf",
+        "X-Azure-Ref": "0vlmTZAAAAADY0OTi2SFdQZlHSdAvPX93WVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
