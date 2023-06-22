@@ -12,6 +12,8 @@ from typing import (
     TYPE_CHECKING)
 from urllib.parse import urlparse, quote, unquote
 
+from typing_extensions import Self
+
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
@@ -30,7 +32,7 @@ from .._generated.models import SignedIdentifier, QueueMessage as GenQueueMessag
 from .._deserialize import deserialize_queue_properties, deserialize_queue_creation
 from .._encryption import StorageEncryptionMixin
 from .._message_encoding import NoEncodePolicy, NoDecodePolicy
-from .._shared.base_client import StorageAccountHostsMixin
+from .._shared.base_client import StorageAccountHostsMixin, parse_connection_str
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._models import QueueMessage, AccessPolicy
 from .._queue_client import QueueClient as QueueClientBase
@@ -38,7 +40,8 @@ from ._models import MessagesPaged
 from .._queue_client_helpers import _initialize_client
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from .._models import QueueProperties
 
 
@@ -91,7 +94,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
     def __init__(
         self, account_url: str,
         queue_name: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
@@ -121,6 +124,89 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         return (
             f"{self.scheme}://{hostname}"
             f"/{quote(queue_name)}{self._query_str}")
+
+    @classmethod
+    def from_queue_url(
+        cls, queue_url: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
+        """A client to interact with a specific Queue.
+
+        :param str queue_url: The full URI to the queue, including SAS token if used.
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string,
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
+        :returns: A queue client.
+        :rtype: ~azure.storage.queue.QueueClient
+        """
+        try:
+            if not queue_url.lower().startswith('http'):
+                queue_url = "https://" + queue_url
+        except AttributeError:
+            raise ValueError("Queue URL must be a string.")
+        parsed_url = urlparse(queue_url.rstrip('/'))
+
+        if not parsed_url.netloc:
+            raise ValueError(f"Invalid URL: {queue_url}")
+
+        queue_path = parsed_url.path.lstrip('/').split('/')
+        account_path = ""
+        if len(queue_path) > 1:
+            account_path = "/" + "/".join(queue_path[:-1])
+        account_url = (
+            f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}"
+            f"{account_path}?{parsed_url.query}")
+        queue_name = unquote(queue_path[-1])
+        if not queue_name:
+            raise ValueError("Invalid URL. Please provide a URL with a valid queue name")
+        return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
+
+    @classmethod
+    def from_connection_string(
+        cls, conn_str: str,
+        queue_name: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
+        """Create QueueClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param queue_name: The queue name.
+        :type queue_name: str
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
+        :returns: A queue client.
+        :rtype: ~azure.storage.queue.QueueClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/queue_samples_message.py
+                :start-after: [START create_queue_client_from_connection_string]
+                :end-before: [END create_queue_client_from_connection_string]
+                :language: python
+                :dedent: 8
+                :caption: Create the queue client from connection string.
+        """
+        account_url, secondary, credential = parse_connection_str(
+            conn_str, credential, 'queue')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+        return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
 
     @distributed_trace_async
     async def create_queue(  # type: ignore[override]
