@@ -42,6 +42,10 @@ def request_file() -> str:
 
 @pytest.mark.e2etest
 @pytest.mark.local_endpoint_local_assets
+@pytest.mark.skipif(
+    condition=sys.platform.startswith(("mac", "PyPy")),
+    reason="Skipping for PyPy as docker installation is not supported and skipped in dev_requirement.txt",
+)
 def test_local_endpoint_mir_e2e(
     endpoint_mir_yaml: str,
     mir_endpoint_name: str,
