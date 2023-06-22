@@ -258,3 +258,6 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
     def flow(self, *, link_credit: Optional[int] = None, **kwargs) -> None:
         self.current_link_credit = link_credit if link_credit is not None else self.link_credit
         self._outgoing_flow(**kwargs)
+
+    def is_detaching(self) -> bool:
+        return self.state in [LinkState.DETACH_SENT, LinkState.DETACHED]
