@@ -91,7 +91,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
         try:
             self._architecture = ArtifactArchitecture(self._architecture)
             self._operating_system = ArtifactOperatingSystem(self._operating_system)
-        except ValueError as e:
+        except ValueError:
             pass
 
     @classmethod
