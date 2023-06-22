@@ -83,6 +83,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     def test_delete_repository(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         self.import_image(containerregistry_endpoint, repo, ["test"])
+        self.sleep(5)
         with self.create_registry_client(containerregistry_endpoint) as client:
             client.delete_repository(repo)
 
@@ -109,6 +110,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     def test_update_repository_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         self.import_image(containerregistry_endpoint, repo, ["test"])
+        self.sleep(5)
         with self.create_registry_client(containerregistry_endpoint) as client:
             properties = self.set_all_properties(RepositoryProperties(), False)
             received = client.update_repository_properties(repo, properties)
@@ -126,7 +128,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     def test_update_repository_properties_kwargs(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         self.import_image(containerregistry_endpoint, repo, ["test"])
-
+        self.sleep(5)
         with self.create_registry_client(containerregistry_endpoint) as client:
             received = client.update_repository_properties(
                 repo, can_delete=False, can_read=False, can_write=False, can_list=False
@@ -228,7 +230,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         repo = self.get_resource_name("repo")
         tag = "test"
         self.import_image(containerregistry_endpoint, repo, [tag])
-
+        self.sleep(5)
         with self.create_registry_client(containerregistry_endpoint) as client:
             properties = self.set_all_properties(ArtifactManifestProperties(), False)
             received = client.update_manifest_properties(repo, tag, properties)
@@ -247,7 +249,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         repo = self.get_resource_name("repo")
         tag = "test"
         self.import_image(containerregistry_endpoint, repo, [tag])
-
+        self.sleep(5)
         with self.create_registry_client(containerregistry_endpoint) as client:
             received = client.update_manifest_properties(
                 repo, tag, can_delete=False, can_read=False, can_write=False, can_list=False
@@ -285,7 +287,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         repo = self.get_resource_name("repo")
         tag = "test"
         self.import_image(containerregistry_endpoint, repo, [tag])
-
+        self.sleep(5)
         with self.create_registry_client(containerregistry_endpoint) as client:
             properties = self.set_all_properties(ArtifactTagProperties(), False)
             received = client.update_tag_properties(repo, tag, properties)
@@ -304,7 +306,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         repo = self.get_resource_name("repo")
         tag = "test"
         self.import_image(containerregistry_endpoint, repo, [tag])
-
+        self.sleep(5)
         with self.create_registry_client(containerregistry_endpoint) as client:
             received = client.update_tag_properties(
                 repo, tag, can_delete=False, can_read=False, can_write=False, can_list=False
@@ -362,7 +364,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         repo = self.get_resource_name("repo")
         tag = "test"
         self.import_image(containerregistry_endpoint, repo, [tag])
-
+        self.sleep(5)
         with self.create_registry_client(containerregistry_endpoint) as client:
             client.delete_tag(repo, tag)
 
@@ -386,7 +388,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         repo = self.get_resource_name("repo")
         tag = "test"
         self.import_image(containerregistry_endpoint, repo, [tag])
-
+        self.sleep(5)
         with self.create_registry_client(containerregistry_endpoint) as client:
             client.delete_manifest(repo, tag)
 
@@ -726,6 +728,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     def test_list_in_empty_repo(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         self.import_image(containerregistry_endpoint, repo, ["test"])
+        self.sleep(5)
         with self.create_registry_client(containerregistry_endpoint) as client:
             # cleanup tags in repo
             for tag in client.list_tag_properties(repo):
