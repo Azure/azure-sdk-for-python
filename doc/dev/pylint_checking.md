@@ -44,6 +44,9 @@ If you don't want to use tox, you can also install and run pylint on its own:
 - If there is a pylint checker within your SDK that you wish to ignore for that specific scenario (i.e protected-access) you can ignore it with a comment on the offending line.
 
     `# pylint:disable=protected-access`  
+
+- If there are multiple pylint warnings on a single line that you wish to ignore, you can ignore it with a comment on the offending line:
+    `# pylint:disable=all`
     
 - (Not Recommended) Another way to disable a checker is by ignoring the entire package in the [pyproject.toml](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#the-pyprojecttoml).
 
