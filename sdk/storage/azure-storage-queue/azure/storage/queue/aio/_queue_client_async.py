@@ -31,11 +31,9 @@ from .._encryption import StorageEncryptionMixin
 from .._models import QueueMessage, AccessPolicy
 from .._queue_client import QueueClient as QueueClientBase
 from ._models import MessagesPaged
-from .._queue_client_helpers import _initialize_client
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
-    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from .._models import QueueProperties
 
 
@@ -88,13 +86,18 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
     def __init__(
         self, account_url: str,
         queue_name: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
-        loop = kwargs.get('loop', None)
-        _initialize_client(self, account_url=account_url, queue_name=queue_name, credential=credential, client_type='async', **kwargs)
+        loop = kwargs.pop('loop', None)
+        super(QueueClient, self).__init__(
+            account_url, queue_name=queue_name, credential=credential, loop=loop, **kwargs
+        )
+        self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
+        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._loop = loop
+        self._configure_encryption(kwargs)
 
     @distributed_trace_async
     async def create_queue(  # type: ignore[override]
