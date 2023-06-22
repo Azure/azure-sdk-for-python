@@ -15,28 +15,17 @@ from azure.mgmt.core import AsyncARMPipelineClient
 from .. import models as _models
 from ..._serialization import Deserializer, Serializer
 from ._configuration import PolicyClientConfiguration
-from .operations import (
-    DataPolicyManifestsOperations,
-    PolicyAssignmentsOperations,
-    PolicyDefinitionsOperations,
-    PolicyExemptionsOperations,
-    PolicySetDefinitionsOperations,
-    VariableValuesOperations,
-    VariablesOperations,
-)
+from .operations import PolicyAssignmentsOperations, PolicyDefinitionsOperations, PolicySetDefinitionsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class PolicyClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class PolicyClient:  # pylint: disable=client-accepts-api-version-keyword
     """To manage and control access to your resources, you can define customized policies and assign
     them at a scope.
 
-    :ivar data_policy_manifests: DataPolicyManifestsOperations operations
-    :vartype data_policy_manifests:
-     azure.mgmt.resource.policy.v2021_06_01.aio.operations.DataPolicyManifestsOperations
     :ivar policy_assignments: PolicyAssignmentsOperations operations
     :vartype policy_assignments:
      azure.mgmt.resource.policy.v2021_06_01.aio.operations.PolicyAssignmentsOperations
@@ -46,20 +35,15 @@ class PolicyClient:  # pylint: disable=client-accepts-api-version-keyword,too-ma
     :ivar policy_set_definitions: PolicySetDefinitionsOperations operations
     :vartype policy_set_definitions:
      azure.mgmt.resource.policy.v2021_06_01.aio.operations.PolicySetDefinitionsOperations
-    :ivar policy_exemptions: PolicyExemptionsOperations operations
-    :vartype policy_exemptions:
-     azure.mgmt.resource.policy.v2021_06_01.aio.operations.PolicyExemptionsOperations
-    :ivar variables: VariablesOperations operations
-    :vartype variables: azure.mgmt.resource.policy.v2021_06_01.aio.operations.VariablesOperations
-    :ivar variable_values: VariableValuesOperations operations
-    :vartype variable_values:
-     azure.mgmt.resource.policy.v2021_06_01.aio.operations.VariableValuesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2021-06-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -76,9 +60,6 @@ class PolicyClient:  # pylint: disable=client-accepts-api-version-keyword,too-ma
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.data_policy_manifests = DataPolicyManifestsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.policy_assignments = PolicyAssignmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -88,11 +69,6 @@ class PolicyClient:  # pylint: disable=client-accepts-api-version-keyword,too-ma
         self.policy_set_definitions = PolicySetDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.policy_exemptions = PolicyExemptionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.variables = VariablesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.variable_values = VariableValuesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

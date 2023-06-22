@@ -107,6 +107,7 @@
     "operation_groups": {
         "operations": "Operations",
         "managed_clusters": "ManagedClustersOperations",
-        "agent_pools": "AgentPoolsOperations"
+        "agent_pools": "AgentPoolsOperations",
+        "container_services": "ContainerServicesOperations"
     }
 }

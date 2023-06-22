@@ -29,16 +29,15 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.sql_resources.begin_delete_sql_trigger(
+    client.sql_resources.begin_delete_sql_trigger(
         resource_group_name="rg1",
         account_name="ddb1",
         database_name="databaseName",
         container_name="containerName",
         trigger_name="triggerName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-04-15/examples/CosmosDBSqlTriggerDelete.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBSqlTriggerDelete.json
 if __name__ == "__main__":
     main()

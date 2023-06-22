@@ -98,32 +98,38 @@ class ContainerServiceClient:  # pylint: disable=client-accepts-api-version-keyw
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize, "2023-03-02-preview"
+        )
         self.managed_clusters = ManagedClustersOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2023-03-02-preview"
         )
         self.maintenance_configurations = MaintenanceConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2023-03-02-preview"
         )
-        self.agent_pools = AgentPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.agent_pools = AgentPoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2023-03-02-preview"
+        )
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2023-03-02-preview"
         )
         self.private_link_resources = PrivateLinkResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2023-03-02-preview"
         )
         self.resolve_private_link_service_id = ResolvePrivateLinkServiceIdOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2023-03-02-preview"
         )
-        self.snapshots = SnapshotsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.snapshots = SnapshotsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2023-03-02-preview"
+        )
         self.managed_cluster_snapshots = ManagedClusterSnapshotsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2023-03-02-preview"
         )
         self.trusted_access_roles = TrustedAccessRolesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2023-03-02-preview"
         )
         self.trusted_access_role_bindings = TrustedAccessRoleBindingsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2023-03-02-preview"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
