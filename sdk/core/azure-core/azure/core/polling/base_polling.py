@@ -38,8 +38,6 @@ from typing import (
     TypeVar,
     cast,
     Union,
-    Protocol,
-    runtime_checkable,
 )
 
 from ..exceptions import HttpResponseError, DecodeError
@@ -461,9 +459,9 @@ class _SansIOLROBasePolling(
         :raises: HttpResponseError if initial status is incorrect LRO state
         """
         self._client = client
-        self._pipeline_response = (
-            self._initial_response
-        ) = initial_response  # pylint: disable=attribute-defined-outside-init
+        self._pipeline_response = (  # pylint: disable=attribute-defined-outside-init
+            self._initial_response  # pylint: disable=attribute-defined-outside-init
+        ) = initial_response
         self._deserialization_callback = deserialization_callback
 
         for operation in self._lro_algorithms:
@@ -539,10 +537,10 @@ class _SansIOLROBasePolling(
             return self._deserialization_callback(pipeline_response)
 
         # This "type ignore" has been discussed with architects.
-        # We have a typing problem that if the Swagger/TSP describes a return type (PollingReturnType_co is not None), BUT
-        # the returned payload is actually empty, we don't want to fail, but return None.
-        # To make it clean, we would have to make the polling return type Optional
-        # "just in case the Swagger/TSP is wrong". This is reducing the quality and the value of the typing annotations
+        # We have a typing problem that if the Swagger/TSP describes a return type (PollingReturnType_co is not None),
+        # BUT the returned payload is actually empty, we don't want to fail, but return None.
+        # To be clean, we would have to make the polling return type Optional "just in case the Swagger/TSP is wrong".
+        # This is reducing the quality and the value of the typing annotations
         # for a case that is not supposed to happen in the first place. So we decided to ignore the type error here.
         return None  # type: ignore
 
