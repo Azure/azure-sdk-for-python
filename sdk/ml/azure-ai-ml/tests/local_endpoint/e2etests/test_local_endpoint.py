@@ -1,6 +1,7 @@
 import random
 
 import pytest
+import sys
 
 from azure.ai.ml import MLClient, load_online_deployment, load_online_endpoint
 from azure.ai.ml.entities import OnlineDeployment, OnlineEndpoint
