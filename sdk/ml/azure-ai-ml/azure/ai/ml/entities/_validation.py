@@ -17,7 +17,6 @@ import msrest
 import pydash
 import strictyaml
 from marshmallow import Schema, ValidationError
-from strictyaml.ruamel.scanner import ScannerError
 
 from .._schema import PathAwareSchema
 from .._vendor.azure_resources.models import Deployment, DeploymentProperties, DeploymentValidateResult, ErrorResponse
@@ -632,7 +631,7 @@ class _YamlLocationResolver:
         with open(source_path, encoding="utf-8") as f:
             try:
                 loaded_yaml = strictyaml.load(f.read())
-            except (ScannerError, strictyaml.exceptions.StrictYAMLError) as e:
+            except Exception as e:  # pylint: disable=broad-except
                 msg = "Can't load source file %s as a strict yaml:\n%s" % (source_path, str(e))
                 module_logger.debug(msg)
                 return None, None

@@ -101,7 +101,7 @@ See [Types usable in annotations](#types-usable-in-annotations) for more informa
 When starting to add type hints to a client library, there are a few things to consider. First, Python has a "gradual
 type system". What this means is that typing is not an all-or-nothing task - you can gradually add types into your code
 and any code without type hints will just be ignored by the type checker. Typing is optional and this is a good
-thing! Pushing to achieve full coverage of annotated code can lead to low signal-to-noise and sometimes is not practical 
+thing! Pushing to achieve full coverage of annotated code can lead to low signal-to-noise and sometimes is not practical
 given the expressiveness of Python as a language. So, in practice, what should you aim to type?
 
 1) Add type hints to publicly exposed APIs in the client library. Type hints get shipped with our client libraries (both whl and sdist)
@@ -273,7 +273,7 @@ ignore_me: int = 5  # type: ignore  https://www.github.com/Azure/azure-sdk-for-p
 
 Note that it is possible to be specific in the error to ignore, instead of globally turning off type checking on
 that line. Syntax for this involves putting the specific error code in brackets of the ignore comment. Error codes
-are found next to the type checking error. 
+are found next to the type checking error.
 
 *mypy:*
 ```python
@@ -545,7 +545,7 @@ type checked (since there are no other typed parameters found in signature).
 
 ```python
 class KeyCredential:
-    
+
     def __init__(self) -> None:
         ...
 ```
@@ -770,7 +770,7 @@ At import time, the default behavior in Python is to read in all type hints and 
 `from __future__ import annotations` changes this such that type hints don't get evaluated at runtime and are preserved as string literals in the `__annotations__` dictionary.
 There is no difference in behavior for the type checkers with using this import. Note that `from __future__ import annotations` must be imported at the top of the file before any other imports.
 
-It's also worth calling out that using this import also allows use of generic collection type hints like `dict` and `list` instead of `typing.Dict` and `typing.List`. 
+It's also worth calling out that using this import also allows use of generic collection type hints like `dict` and `list` instead of `typing.Dict` and `typing.List`.
 
 More details about this import and its behavior can be found in [PEP 563](https://peps.python.org/pep-0563/). Information
 about the PEP which may supersede this can be found in [PEP 649](https://peps.python.org/pep-0649/).
@@ -909,7 +909,7 @@ main.py:39: note: Revealed type is "builtins.str"
 ```
 
 An overload needs two or more variants + the actual implementation to be valid. Because the implementation is the only
-function allowed to contain code, you must handle the different combinations of arguments at runtime yourself in order 
+function allowed to contain code, you must handle the different combinations of arguments at runtime yourself in order
 to create the desired behavior.
 
 ### Use typing.cast to help the type checker understand a type
@@ -996,15 +996,15 @@ parameter `PollingReturnType` which can then be used to type throughout the impl
 ```python
 from typing import TypeVar, Generic, Callable, Any, Optional
 
-PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 
-class LROPoller(Generic[PollingReturnType]):
+class LROPoller(Generic[PollingReturnType_co]):
     def __init__(self, client: Any, initial_response: Any, deserialization_callback: Callable,
-                 polling_method: PollingMethod[PollingReturnType]):
+                 polling_method: PollingMethod[PollingReturnType_co]):
         ...
 
-    def result(self, timeout: Optional[int] = None) -> PollingReturnType:
+    def result(self, timeout: Optional[int] = None) -> PollingReturnType_co:
         ...
 ```
 
@@ -1186,7 +1186,7 @@ values:
 from typing_extensions import Literal
 
 doc_type = Literal["prebuilt-receipt"]
-allowed_content_types = Literal["application/json", "text/plain", "image/png", "image/jpeg"] 
+allowed_content_types = Literal["application/json", "text/plain", "image/png", "image/jpeg"]
 ```
 
 Literals can be useful with functions that behave differently based on an exact value that the caller specifies.
@@ -1365,7 +1365,7 @@ Therefore, it is preferred to use `typing.Literal` in this situation to provide 
 
 ### Use typing.NewType to restrict a type to a specific context
 
-`NewType` can be useful to catch errors where a particular type is expected. `NewType` will take an existing type and 
+`NewType` can be useful to catch errors where a particular type is expected. `NewType` will take an existing type and
 create a brand new type in the same shape; however, these two will not be interchangeable. In the below example,
 a string should be passed into `print_log`, but that input string should be specifically the type `str` returned from the `sanitize` function.
 `NewType` creates a `Sanitized` type which is viewed as a distinct type for the type checker:

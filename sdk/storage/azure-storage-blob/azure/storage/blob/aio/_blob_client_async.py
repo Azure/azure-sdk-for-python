@@ -2908,7 +2908,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         else:
             _pipeline = self._pipeline  # pylint: disable = protected-access
         return ContainerClient(
-            "{}://{}".format(self.scheme, self.primary_hostname), container_name=self.container_name,
+            f"{self.scheme}://{self.primary_hostname}", container_name=self.container_name,
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, encryption_version=self.encryption_version,

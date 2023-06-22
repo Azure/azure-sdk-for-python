@@ -81,8 +81,8 @@ class TextAnalyticsClientBase:
         )
         try:
             endpoint = endpoint.rstrip("/")
-        except AttributeError:
-            raise ValueError("Parameter 'endpoint' must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Parameter 'endpoint' must be a string.") from exc
 
         self._api_version = api_version if api_version is not None else DEFAULT_API_VERSION
         if hasattr(self._api_version, "value"):
