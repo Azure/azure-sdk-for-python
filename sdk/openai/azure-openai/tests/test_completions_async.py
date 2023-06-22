@@ -35,7 +35,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
         assert "Must provide an 'engine' or 'deployment_id' parameter" in str(e.value)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [ALL])
+    @pytest.mark.parametrize("api_type", ALL)
     @configure
     async def test_completion(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["completions_model"]} if api_type == "openai" \
