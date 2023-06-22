@@ -393,3 +393,53 @@ class TestCompletions(AzureRecordedTestCase):
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
         assert completion.choices[0].text
+
+    @pytest.mark.parametrize("api_type", [AZURE])
+    @configure
+    def test_completion_rai_annotations(self, azure_openai_creds, api_type):
+        kwargs = {"model": azure_openai_creds["completions_model"]} if api_type == "openai" \
+          else {"deployment_id": azure_openai_creds["completions_name"]}
+
+        # prompt filtered
+        with pytest.raises(openai.error.InvalidRequestError) as e:
+            completion = openai.Completion.create(
+                prompt="how do I rob a bank?",
+                **kwargs
+            )
+        assert e.value.code == "content_filter"
+        content_filter_result = e.value.error.innererror.content_filter_result
+        assert content_filter_result.hate.filtered is False
+        assert content_filter_result.hate.severity == "safe"
+        assert content_filter_result.self_harm.filtered is False
+        assert content_filter_result.self_harm.severity == "safe"
+        assert content_filter_result.sexual.filtered is False
+        assert content_filter_result.sexual.severity == "safe"
+        assert content_filter_result.violence.filtered is True
+        assert content_filter_result.violence.severity is not None
+
+        # not filtered
+        completion = openai.Completion.create(
+            prompt="What color is the ocean?",
+            **kwargs
+        )
+        # prompt content filter result
+        prompt_filter_result = completion.prompt_annotations[0].content_filter_results
+        assert prompt_filter_result.hate.filtered is False
+        assert prompt_filter_result.hate.severity == "safe"
+        assert prompt_filter_result.self_harm.filtered is False
+        assert prompt_filter_result.self_harm.severity == "safe"
+        assert prompt_filter_result.sexual.filtered is False
+        assert prompt_filter_result.sexual.severity == "safe"
+        assert prompt_filter_result.violence.filtered is False
+        assert prompt_filter_result.violence.severity == "safe"
+
+        # output content filter result
+        output_filter_result = completion.choices[0].content_filter_results
+        assert output_filter_result.hate.filtered is False
+        assert output_filter_result.hate.severity == "safe"
+        assert output_filter_result.self_harm.filtered is False
+        assert output_filter_result.self_harm.severity == "safe"
+        assert output_filter_result.sexual.filtered is False
+        assert output_filter_result.sexual.severity == "safe"
+        assert output_filter_result.violence.filtered is False
+        assert output_filter_result.violence.severity == "safe"
