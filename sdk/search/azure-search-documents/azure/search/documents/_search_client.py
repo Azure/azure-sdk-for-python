@@ -331,9 +331,8 @@ class SearchClient(HeadersMixin):
         )
 
         semantic_configuration = semantic_configuration_name
-        if not vector or not top_k:
-            vector_option = None
-        else:
+        vector_option = None
+        if vector or top_k or vector_fields:
             vector_option = Vector(value=vector, top_k=top_k, fields=vector_fields)
 
         query = SearchQuery(
