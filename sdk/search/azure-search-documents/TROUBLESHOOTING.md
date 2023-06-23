@@ -18,12 +18,7 @@ codes sent by the Azure Cognitive Search service.
 
 ### 207 Multi-Status
 
-This response status indicates a partial success for an indexing operation. Some documents were successfully processed, 
-but at least one failed. Details of the failed documents are present in the individual `IndexingResult` objects within 
-the `IndexDocumentsResult`. If you want the [`indexDocumentsWithResponse`](https://docs.microsoft.com/java/api/com.azure.search.documents.searchclient.indexdocumentswithresponse?view=azure-java-stable) 
-method call to throw an exception on any failure, set [`IndexDocumentsOptions.throwOnAnyError`](https://docs.microsoft.com/java/api/com.azure.search.documents.models.indexdocumentsoptions.setthrowonanyerror?view=azure-java-stable#com-azure-search-documents-models-indexdocumentsoptions-setthrowonanyerror(boolean)) 
-to `true`. Each failure is then recorded in a separate `IndexingResult` and a single `IndexBatchException` is thrown by 
-the method.
+This response status indicates a partial success for an indexing operation. Some documents were successfully processed, but at least one failed. Details of the failed documents are present in the individual `IndexingResult` objects within the `IndexDocumentsResult`. 
 
 ### 403 Forbidden
 
