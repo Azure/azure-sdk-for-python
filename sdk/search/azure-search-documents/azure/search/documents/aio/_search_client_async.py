@@ -333,7 +333,10 @@ class SearchClient(HeadersMixin):
             query_caption, query_caption_highlight
         )
         semantic_configuration = semantic_configuration_name
-        vector = Vector(value=vector, top_k=top_k, fields=vector_fields)
+        if not vector or not top_k:
+            vector_option = None
+        else:
+            vector_option = Vector(value=vector, top_k=top_k, fields=vector_fields)
 
         query = SearchQuery(
             search_text=search_text,
@@ -361,7 +364,7 @@ class SearchClient(HeadersMixin):
             top=top,
             session_id=session_id,
             scoring_statistics=scoring_statistics,
-            vector=vector,
+            vector=vector_option,
             semantic_error_handling=semantic_error_handling,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
             debug=debug,
