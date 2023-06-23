@@ -747,23 +747,28 @@ async def test_final_get_via_location(port, http_request, deserialization_cb):
     assert result == {"returnedFrom": "locationHeaderUrl"}
 
 
-
 """Reproduce the bad design of azure-mgmt-core 1.0.0-1.4.0"""
+
 
 class ARMPolling(LROBasePolling):
     pass
 
+
 class AsyncARMPolling(ARMPolling, AsyncLROBasePolling):
     pass
+
 
 @pytest.mark.asyncio
 async def test_async_polling_inheritance(async_pipeline_client_builder, deserialization_cb):
     rest_http = request_and_responses_product(ASYNCIO_REQUESTS_TRANSPORT_RESPONSES)[1]
+
     async def send(request, **kwargs):
         assert request.method == "GET"
 
         if request.url == "http://example.org/location":
-            return TestBasePolling.mock_send(rest_http[0], rest_http[1], "GET", 200, body={"success": True}).http_response
+            return TestBasePolling.mock_send(
+                rest_http[0], rest_http[1], "GET", 200, body={"success": True}
+            ).http_response
         elif request.url == "http://example.org/async_monitor":
             return TestBasePolling.mock_send(
                 rest_http[0], rest_http[1], "GET", 200, body={"status": "Succeeded"}
