@@ -590,7 +590,14 @@ class LROBasePolling(
         :return: The attribute value.
         """
         cls = object.__getattribute__(self, "__class__")
-        if cls.__name__ == "AsyncARMPolling" and name in ["run", "update_status", "request_status"]:
+        if cls.__name__ == "AsyncARMPolling" and name in [
+            "run",
+            "update_status",
+            "request_status",
+            "_sleep",
+            "_delay",
+            "_poll",
+        ]:
             return getattr(super(LROBasePolling, self), name)
         return super().__getattribute__(name)
 
