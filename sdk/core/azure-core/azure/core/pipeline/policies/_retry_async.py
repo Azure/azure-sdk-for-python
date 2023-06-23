@@ -142,8 +142,8 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
         is_response_error = True
 
         while retry_active:
+            start_time = time.time()
             try:
-                start_time = time.time()
                 self._configure_timeout(request, absolute_timeout, is_response_error)
                 response = await self.next.send(request)
                 if self.is_retry(retry_settings, response):
