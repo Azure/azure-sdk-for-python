@@ -271,7 +271,7 @@ class CertificateProperties(object):
         :return: The certificate's thumbprint, as a hexadecimal string.
         :rtype: str
         """
-        return "".join(f"{byte:02X}" for byte in self._x509_thumbprint)
+        return self._x509_thumbprint.hex().upper()
 
     @property
     def tags(self) -> "Optional[Dict[str, str]]":
