@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `workload_identity_tenant_id` support in `DefaultAzureCredential`.
+
 ### Breaking Changes
 
 ### Bugs Fixed

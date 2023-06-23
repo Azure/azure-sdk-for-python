@@ -72,6 +72,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
     :keyword str workload_identity_client_id: The client ID of an identity assigned to the pod. Defaults to the value
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, the pod's default identity will be used.
+    :keyword str workload_identity_tenant_id: Preferred tenant for :class:`~azure.identity.WorkloadIdentityCredential`.
+        Defaults to the value of environment variable AZURE_TENANT_ID, if any.
     :keyword str interactive_browser_client_id: The client ID to be used in interactive browser credential. If not
         specified, users will authenticate to an Azure development application.
     :keyword str shared_cache_username: Preferred username for :class:`~azure.identity.SharedTokenCacheCredential`.
@@ -122,6 +124,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         workload_identity_client_id = kwargs.pop(
             "workload_identity_client_id", managed_identity_client_id
         )
+        workload_identity_tenant_id = kwargs.pop(
+            "workload_identity_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
+        )
         interactive_browser_client_id = kwargs.pop("interactive_browser_client_id", None)
 
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
@@ -149,7 +154,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 client_id = workload_identity_client_id
                 credentials.append(WorkloadIdentityCredential(
                     client_id=cast(str, client_id),
-                    tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
+                    tenant_id=workload_identity_tenant_id,
                     file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
                     **kwargs))
         if not exclude_managed_identity_credential:
