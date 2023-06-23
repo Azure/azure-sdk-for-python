@@ -81,6 +81,9 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
         :param response: The PipelineResponse object.
         :type response: ~azure.core.pipeline.PipelineResponse
         :param transport: The HTTP transport type.
+        :type transport: ~azure.core.pipeline.transport.AsyncHttpTransport
+        :return: Whether the retry-after value was found.
+        :rtype: bool
         """
         retry_after = self.get_retry_after(response)
         if retry_after:
@@ -93,6 +96,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
 
         :param dict settings: The retry settings.
         :param transport: The HTTP transport type.
+        :type transport: ~azure.core.pipeline.transport.AsyncHttpTransport
         """
         backoff = self.get_backoff_time(settings)
         if backoff <= 0:
@@ -109,6 +113,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
 
         :param dict settings: The retry settings.
         :param transport: The HTTP transport type.
+        :type transport: ~azure.core.pipeline.transport.AsyncHttpTransport
         :param response: The PipelineResponse object.
         :type response: ~azure.core.pipeline.PipelineResponse
         """

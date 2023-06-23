@@ -55,13 +55,18 @@ class RedirectPolicyBase:
 
     @classmethod
     def no_redirects(cls):
-        """Disable redirects."""
+        """Disable redirects.
+
+        :return: A redirect policy with redirects disabled.
+        :rtype: ~azure.core.pipeline.policies.RedirectPolicy or ~azure.core.pipeline.policies.AsyncRedirectPolicy
+        """
         return cls(permit_redirects=False)
 
     def configure_redirects(self, options):
         """Configures the redirect settings.
 
         :param options: Keyword arguments from context.
+        :type options: dict
         :return: A dict containing redirect settings and a history of redirects.
         :rtype: dict
         """
@@ -79,6 +84,7 @@ class RedirectPolicyBase:
         :return: Truthy redirect location string if we got a redirect status
          code and valid location. ``None`` if redirect status and no
          location. ``False`` if not a redirect status code.
+        :rtype: str or bool or None
         """
         if response.http_response.status_code in [301, 302]:
             if response.http_request.method in [
