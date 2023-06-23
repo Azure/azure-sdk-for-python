@@ -76,10 +76,18 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
 
     def __init__(self, **kwargs):
         self._architecture = kwargs.get("cpu_architecture", None)
+        try:
+            self._architecture = ArtifactArchitecture(self._architecture)
+        except ValueError:
+            pass
         self._created_on = kwargs.get("created_on", None)
         self._digest = kwargs.get("digest", None)
         self._last_updated_on = kwargs.get("last_updated_on", None)
         self._operating_system = kwargs.get("operating_system", None)
+        try:
+            self._operating_system = ArtifactOperatingSystem(self._operating_system)
+        except ValueError:
+            pass
         self._repository_name = kwargs.get("repository_name", None)
         self._registry = kwargs.get("registry", None)
         self._size_in_bytes = kwargs.get("size_in_bytes", None)
@@ -88,11 +96,6 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
         self.can_read = kwargs.get("can_read")
         self.can_list = kwargs.get("can_list")
         self.can_write = kwargs.get("can_write")
-        try:
-            self._architecture = ArtifactArchitecture(self._architecture)
-            self._operating_system = ArtifactOperatingSystem(self._operating_system)
-        except ValueError:
-            pass
 
     @classmethod
     def _from_generated(cls, generated: ManifestAttributesBase, **kwargs) -> "ArtifactManifestProperties":
