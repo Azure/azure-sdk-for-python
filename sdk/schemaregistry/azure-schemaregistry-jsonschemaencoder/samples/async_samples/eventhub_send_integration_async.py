@@ -85,7 +85,7 @@ json_schema_encoder = JsonSchemaEncoder(
 async def send_event_data_batch(producer, encoder):
     event_data_batch = await producer.create_batch()
     dict_content = {"name": "Bob", "favorite_number": 7, "favorite_color": "red"}
-    # Use the encode method to convert dict object to bytes with the given avro schema and set body of EventData.
+    # Use the encode method to convert dict object to bytes with the given json schema and set body of EventData.
     # The encode method will automatically register the schema into the Schema Registry Service and
     # schema will be cached locally for future usage.
     event_data = await encoder.encode(content=dict_content, schema=SCHEMA_STRING, message_type=EventData)

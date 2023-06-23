@@ -3,11 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from io import BytesIO
 from typing import (
-    TYPE_CHECKING,
     Any,
-    Dict,
     Callable,
     Mapping,
     Optional,
@@ -29,21 +26,8 @@ from ._message_protocol import (  # pylint: disable=import-error
 from ._constants import (  # pylint: disable=import-error
     JSON_MIME_TYPE,
 )
-if TYPE_CHECKING:
-    from jsonschema.protocols import Validator
 
 MessageType = TypeVar("MessageType", bound=MessageTypeProtocol)
-
-
-#def validate_schema(
-#    schema: Mapping[str, Any],
-#    json_validator: "Validator"
-#) -> None:
-#    try:    # returns None if valid schema
-#        json_validator.check_schema(schema=schema)
-#    except SchemaError as exc:  # pylint:disable=broad-except
-#        raise InvalidSchemaError(f"Cannot parse schema: {schema}") from exc
-
 
 def create_message_content(
     validate: Callable,

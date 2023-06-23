@@ -23,9 +23,10 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Callable
+from __future__ import annotations
 import logging
 from functools import lru_cache
+import json
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -35,8 +36,11 @@ from typing import (
     Type,
     overload,
     Union,
+    Callable,
+    BinaryIO,
 )
-import json
+from typing_extensions import Literal
+from azure.schemaregistry import SchemaFormat
 
 from ._utils import (  # pylint: disable=import-error
     create_message_content,
@@ -70,17 +74,20 @@ class JsonSchemaEncoder(object):
      Schema group under which schema should be registered.
     :keyword bool auto_register: When true, registers new schemas passed to encode.
      Otherwise, and by default, encode will fail if the schema has not been pre-registered in the registry.
+    :keyword schema: The schema used to encode the content by default. The `schema` argument passed into the `encode`
+     method will override this value. If None, then `schema` must be passed into `encode`.
+     If a callable is passed in, it must have the following method signature:
+     `(content: Mapping[str, Any]) -> Mapping[str, Any]`.
+     If an error is raised during generation, an ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidContentError
+     will be wrapped around it and raised.
+    :paramtype schema: str or bytes or Callable or None
     :keyword validate: Callable that validates the given content against the given schema. Must validate against
      schema draft version supported by the Schema Registry service. It must have the following method signature:
      `(content: Mapping[str, Any], schema: Mapping[str, Any]) -> None`.
      If valid, then method must return None. If invalid, method must raise an error which will be wrapped
-     and raised as an ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidContentError.
-    :paramtype validate: Callable or None
-    :keyword generate_schema: Callable that generates a schema from the given content. It must have
-     the following method signature: `(content: Mapping[str, Any]) -> Mapping[str, Any]`.
-     If an error is raised during generation, an ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidContentError
-     will be wrapped around it and raised.
-    :paramtype generate_schema: Callable or None
+     and raised as an ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidContentError. When False is passed in,
+     and by default, validation will be turned off.
+    :paramtype validate: Callable or False
 
     """
 
@@ -90,12 +97,12 @@ class JsonSchemaEncoder(object):
         client: "SchemaRegistryClient",
         group_name: Optional[str] = None,
         auto_register: bool = False,
-        validate: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
-        generate_schema: Optional[Callable[[Mapping[str, Any]], Mapping[str, Any]]] = None,
+        schema: Optional[Union[str, bytes, Callable[[Mapping[str, Any]], Mapping[str, Any]]]] = None,
+        validate: Union[Callable[[Mapping[str, Any], Mapping[str, Any]], None], Literal[False]] = False,
     ) -> None:
         self._schema_registry_client = client
         self._validate = validate
-        self._generate_schema = generate_schema
+        self._schema = schema
         self._schema_group = group_name
         self._auto_register = auto_register
         self._auto_register_schema_func = (
@@ -104,25 +111,21 @@ class JsonSchemaEncoder(object):
             else self._schema_registry_client.get_schema_properties
         )
 
-    def __enter__(self):
-        # type: () -> JsonSchemaEncoder
+    def __enter__(self) -> "JsonSchemaEncoder":
         self._schema_registry_client.__enter__()
         return self
 
-    def __exit__(self, *exc_details: Any):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._schema_registry_client.__exit__(*exc_details)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
         self._schema_registry_client.close()
 
     @lru_cache(maxsize=128)
-    def _get_schema_id(self, schema_name, schema_str, **kwargs):
-        # type: (str, str, Any) -> str
+    def _get_schema_id(self, schema_name: str, schema_str: str, **kwargs: Any) -> str:
         """
         Get schema id from local cache with the given schema.
         If there is no item in the local cache, get schema id from the service and cache it.
@@ -134,13 +137,12 @@ class JsonSchemaEncoder(object):
         :rtype: str
         """
         schema_id = self._auto_register_schema_func(
-            self._schema_group, schema_name, schema_str, "Json", **kwargs
+            self._schema_group, schema_name, schema_str, SchemaFormat.JSON.value, **kwargs
         ).id
         return schema_id
 
     @lru_cache(maxsize=128)
-    def _get_schema(self, schema_id, **kwargs):
-        # type: (str, Any) -> str
+    def _get_schema(self, schema_id: str, **kwargs: Any) -> str:
         """
         Get schema content from local cache with the given schema id.
         If there is no item in the local cache, get schema from the service and cache it.
@@ -159,8 +161,9 @@ class JsonSchemaEncoder(object):
         self,
         content: Mapping[str, Any],
         *,
-        schema: str,
+        schema: Optional[str] = None,
         message_type: Type[MessageType],
+        validate: Optional[Union[Callable[[Mapping[str, Any], Mapping[str, Any]], None], Literal[False]]] = False,
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> MessageType:
@@ -171,21 +174,73 @@ class JsonSchemaEncoder(object):
         self,
         content: Mapping[str, Any],
         *,
-        schema: str,
-        message_type: None = None,
+        schema: bytes,
+        message_type: Type[MessageType],
+        validate: Optional[Union[Callable[[Mapping[str, Any], Mapping[str, Any]], None], Literal[False]]] = False,
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> MessageContent:
+    ) -> MessageType:
         ...
 
-    # TODO: do we want schema type to be str or Mapping?
+    @overload
+    def encode(
+        self,
+        content: Mapping[str, Any],
+        *,
+        schema: Callable[[Mapping[str, Any]], Mapping[str, Any]],
+        message_type: Type[MessageType],
+        validate: Optional[Union[Callable[[Mapping[str, Any], Mapping[str, Any]], None], Literal[False]]] = False,
+        request_options: Optional[Dict[str, Any]] = None,
+        **kwargs: Any,
+    ) -> MessageType:
+        ...
+
+    @overload
     def encode(
         self,
         content: Mapping[str, Any],
         *,
         schema: Optional[str] = None,
-        schema_id: Optional[str] = None,
+        message_type: None = None,
+        validate: Optional[Union[Callable[[Mapping[str, Any], Mapping[str, Any]], None], Literal[False]]] = None,
+        request_options: Optional[Dict[str, Any]] = None,
+        **kwargs: Any,
+    ) -> MessageContent:
+        ...
+
+    @overload
+    def encode(
+        self,
+        content: Mapping[str, Any],
+        *,
+        schema: bytes,
+        message_type: None = None,
+        validate: Optional[Union[Callable[[Mapping[str, Any], Mapping[str, Any]], None], Literal[False]]] = None,
+        request_options: Optional[Dict[str, Any]] = None,
+        **kwargs: Any,
+    ) -> MessageType:
+        ...
+
+    @overload
+    def encode(
+        self,
+        content: Mapping[str, Any],
+        *,
+        schema: Callable[[Mapping[str, Any]], Mapping[str, Any]],
+        message_type: None = None,
+        validate: Optional[Union[Callable[[Mapping[str, Any], Mapping[str, Any]], None], Literal[False]]] = None,
+        request_options: Optional[Dict[str, Any]] = None,
+        **kwargs: Any,
+    ) -> MessageType:
+        ...
+
+    def encode(
+        self,
+        content: Mapping[str, Any],
+        *,
+        schema: Optional[Union[str, bytes, Callable[[Mapping[str, Any]], Mapping[str, Any]]]] = None,
         message_type: Optional[Type[MessageType]] = None,
+        validate: Optional[Union[Callable[[Mapping[str, Any], Mapping[str, Any]], None], Literal[False]]] = None,
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> Union[MessageType, MessageContent]:
@@ -203,15 +258,23 @@ class JsonSchemaEncoder(object):
 
         :param content: The content to be encoded.
         :type content: Mapping[str, Any]
-        :keyword schema: The schema used to encode the content. Required if `generate_schema` was not passed in during
-         JsonSchemaEncoder construction or `schema_id` was not passed in.
-        :paramtype schema: str or None
-        :keyword schema_id: The schema ID to a registered schema to be used. Required if `generate_schema` was not
-         passed in during JsonSchemaEncoder construction or `schema` was not passed in.
-        :paramtype schema_id: str or None
+        :keyword schema: The schema used to encode the content. If None, then `schema` must have been specified
+         in the constructor. If passed in, it will override the `schema` value specified in the constructor.
+         If a callable is passed in, it must have the following method signature:
+         `(content: Mapping[str, Any]) -> Mapping[str, Any]`.
+         If an error is raised during generation, an ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidContentError
+         will be wrapped around it and raised.
+        :paramtype schema: str or bytes or Callable or None
         :keyword message_type: The message class to construct the message. Must be a subtype of the
          azure.schemaregistry.encoder.jsonschemaencoder.MessageType protocol.
         :paramtype message_type: Type[MessageType] or None
+        :keyword validate: Callable that validates the given content against the given schema. Must validate against
+         schema draft version supported by the Schema Registry service. It must have the following method signature:
+         `(content: Mapping[str, Any], schema: Mapping[str, Any]) -> None`.
+         If valid, then method must return None. If invalid, method must raise an error which will be wrapped
+         and raised as an ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidContentError. When False is passed in,
+         validation will be turned off. If None, and by default, `schema` set in constructor will be used.
+        :paramtype validate: Callable or False
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: Dict[str, Any]
         :rtype: MessageType or MessageContent
@@ -220,37 +283,40 @@ class JsonSchemaEncoder(object):
         :raises ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidContentError:
             Indicates an issue with encoding content with schema.
         """
-
         if not self._schema_group:
             raise TypeError("'group_name' in constructor cannot be None, if encoding.")
-        if not schema and not self._generate_schema and not schema_id:
-            raise TypeError("""One of 'schema' or 'schema_id' is """
-                            """required if 'generate_schema' callable was not passed to constructor.""")
 
-        if schema:
+        # if schema not passed in, get default schema
+        schema = schema or self._schema
+        if not schema:
+            raise TypeError("'schema' is required if 'schema' was not passed to constructor.")
+        try:
+            # str or bytes
             schema_dict = json.loads(schema)
-        elif schema_id:
-            # TODO: get schema from schema id
-            pass
-        else:
+            if isinstance(schema, bytes):
+                schema_str = schema.decode()
+            else:
+                schema_str = schema
+        except TypeError:
+            # callable
             try:
-                schema_dict = self._generate_schema(content)
+                schema_dict = schema(content)
             except Exception as exc:
                 raise InvalidSchemaError(
                     f"Cannot generate schema with callable given the following content: {content}"
                 ) from exc
-
+            schema_str = json.dumps(schema_dict)
         try:
-            schema_fullname = schema_dict['$id'] # TODO: should this be 'title'?
+            schema_fullname = schema_dict['title']
         except KeyError:
-            raise ValueError("Schema must have '$id' property.")
+            raise ValueError("Schema must have 'title' property.")
 
         cache_misses = (
             self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
         )
         request_options = request_options or {}
         schema_id = self._get_schema_id(
-            schema_fullname, schema, **request_options
+            schema_fullname, schema_str, **request_options
         )
         new_cache_misses = (
             self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
@@ -269,7 +335,7 @@ class JsonSchemaEncoder(object):
             schema=schema_dict,
             schema_id=schema_id,
             message_type=message_type,
-            validate=self._validate,
+            validate=validate if validate is not None else self._validate,
             **kwargs,
         )
 
@@ -277,6 +343,7 @@ class JsonSchemaEncoder(object):
         self,  # pylint: disable=unused-argument
         message: Union[MessageContent, MessageType],
         *,
+        validate: Optional[Union[Callable[[Mapping[str, Any], Mapping[str, Any]], None], Literal[False]]] = None,
         request_options: Dict[str, Any] = None,
         **kwargs: Any,
     ) -> Dict[str, Any]:
@@ -289,6 +356,13 @@ class JsonSchemaEncoder(object):
         :param message: The message object which holds the content to be decoded and content type
          containing the schema ID.
         :type message: MessageType or MessageContent
+        :keyword validate: Callable that validates the given content against the given schema. Must validate against
+         schema draft version supported by the Schema Registry service. It must have the following method signature:
+         `(content: Mapping[str, Any], schema: Mapping[str, Any]) -> None`.
+         If valid, then method must return None. If invalid, method must raise an error which will be wrapped
+         and raised as an ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidContentError.  When False is passed in,
+         validation will be turned off. If None, and by default, `schema` set in constructor will be used.
+        :paramtype validate: Callable or False
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: Dict[str, Any]
         :rtype: Dict[str, Any]
@@ -319,6 +393,6 @@ class JsonSchemaEncoder(object):
             content=content,
             schema_id=schema_id,
             schema_definition=schema_definition,
-            validate=self._validate,
+            validate=validate if validate is not None else self._validate,
             **kwargs
         )
