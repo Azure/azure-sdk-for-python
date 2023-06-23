@@ -33,8 +33,8 @@ if TYPE_CHECKING:
 class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
     """A simple policy that cleans up sensitive headers
 
-    :keyword List[str] block_headers_list: The headers to clean up.
-    :keyword bool disable_cleanup: Opt out cleaning up sensitive headers
+    :keyword List[str] blocked_redirect_headers: The headers to clean up when redirecting to another domain.
+    :keyword bool disable_redirect_cleanup: Opt out cleaning up sensitive headers when redirecting to another domain.
     """
 
     DEFAULT_SENSITIVE_HEADERS = set(
@@ -47,13 +47,15 @@ class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
     def __init__(
         self,  # pylint: disable=unused-argument
         *,
-        block_headers_list: Optional[List[str]] = None,
-        disable_cleanup: bool = False,
+        blocked_redirect_headers: Optional[List[str]] = None,
+        disable_redirect_cleanup: bool = False,
         **kwargs: Any
     ) -> None:
-        self._disable_cleanup = disable_cleanup
-        self._block_headers_list = (
-            SensitiveHeaderCleanupPolicy.DEFAULT_SENSITIVE_HEADERS if block_headers_list is None else block_headers_list
+        self._disable_redirect_cleanup = disable_redirect_cleanup
+        self._blocked_redirect_headers = (
+            SensitiveHeaderCleanupPolicy.DEFAULT_SENSITIVE_HEADERS
+            if blocked_redirect_headers is None
+            else blocked_redirect_headers
         )
 
     def on_request(self, request: "PipelineRequest") -> None:  # pylint: disable=arguments-differ
@@ -67,6 +69,6 @@ class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
         # to clean up sensitive headers. We need to remove it before sending the request
         # to the transport layer.
         insecure_domain_change = request.context.options.pop("insecure_domain_change", False)
-        if not self._disable_cleanup and insecure_domain_change:
-            for header in self._block_headers_list:
+        if not self._disable_redirect_cleanup and insecure_domain_change:
+            for header in self._blocked_redirect_headers:
                 request.http_request.headers.pop(header, None)

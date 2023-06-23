@@ -379,7 +379,7 @@ async def test_bearer_policy_redirect_opt_out_clean_up():
     credential = Mock(get_token=get_token)
     auth_policy = AsyncBearerTokenCredentialPolicy(credential, expected_scope)
     redirect_policy = AsyncRedirectPolicy()
-    header_clean_up_policy = SensitiveHeaderCleanupPolicy(disable_cleanup=True)
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy(disable_redirect_cleanup=True)
     pipeline = AsyncPipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
 
     await pipeline.run(HttpRequest("GET", "https://localhost"))
@@ -423,7 +423,7 @@ async def test_bearer_policy_redirect_customize_sensitive_headers():
     credential = Mock(get_token=get_token)
     auth_policy = AsyncBearerTokenCredentialPolicy(credential, expected_scope)
     redirect_policy = AsyncRedirectPolicy()
-    header_clean_up_policy = SensitiveHeaderCleanupPolicy(block_headers_list=["x-ms-authorization-auxiliary"])
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy(blocked_redirect_headers=["x-ms-authorization-auxiliary"])
     pipeline = AsyncPipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
 
     await pipeline.run(HttpRequest("GET", "https://localhost"))
