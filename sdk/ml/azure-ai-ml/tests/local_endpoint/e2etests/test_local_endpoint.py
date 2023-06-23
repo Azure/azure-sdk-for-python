@@ -2,6 +2,7 @@ import random
 
 import pytest
 import platform
+import sys
 
 from azure.ai.ml import MLClient, load_online_deployment, load_online_endpoint
 from azure.ai.ml.entities import OnlineDeployment, OnlineEndpoint
@@ -44,8 +45,8 @@ def request_file() -> str:
 @pytest.mark.e2etest
 @pytest.mark.local_endpoint_local_assets
 @pytest.mark.skipif(
-    platform.python_implementation() == "PyPy",
-    reason="Skipping for PyPy as docker installation is not supported and skipped in dev_requirement.txt",
+    platform.python_implementation() == "PyPy" or sys.platform.startswith("darwin"),
+    reason="Skipping for PyPy and macOS as docker installation is not supported and skipped in dev_requirement.txt",
 )
 def test_local_endpoint_mir_e2e(
     endpoint_mir_yaml: str,
