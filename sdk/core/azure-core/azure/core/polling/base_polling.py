@@ -578,6 +578,22 @@ class LROBasePolling(
     def _transport(self) -> HttpTransport[HttpRequestTypeVar, HttpResponseTypeVar]:
         return self._client._pipeline._transport  # pylint: disable=protected-access
 
+    def __getattribute__(self, name: str) -> Any:
+        """Find the right method for the job.
+
+        This contains a workaround for azure-mgmt-core 1.0.0 to 1.4.0, where the MRO
+        is changing when azure-core was refactored in 1.27.0. The MRO change was causing
+        AsyncARMPolling to look-up the wrong methods and find the non-async ones.
+
+        :param str name: The name of the attribute to retrieve.
+        :rtype: Any
+        :return: The attribute value.
+        """
+        cls = object.__getattribute__(self, "__class__")
+        if cls.__name__ == "AsyncARMPolling" and name in ["run", "update_status", "request_status"]:
+            return getattr(super(LROBasePolling, self), name)
+        return super().__getattribute__(name)
+
     def run(self) -> None:
         try:
             self._poll()

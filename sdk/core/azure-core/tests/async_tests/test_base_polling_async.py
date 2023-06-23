@@ -30,12 +30,7 @@ import re
 from utils import HTTP_REQUESTS
 from azure.core.pipeline._tools import is_rest
 import types
-import unittest
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+from unittest import mock
 
 import pytest
 
@@ -47,6 +42,7 @@ from azure.core import AsyncPipelineClient
 from azure.core.pipeline import PipelineResponse, AsyncPipeline, PipelineContext
 from azure.core.pipeline.transport import AsyncioRequestsTransportResponse, AsyncHttpTransport
 
+from azure.core.polling.base_polling import LROBasePolling
 from azure.core.polling.async_base_polling import (
     AsyncLROBasePolling,
 )
@@ -749,3 +745,52 @@ async def test_final_get_via_location(port, http_request, deserialization_cb):
     )
     result = await poller.result()
     assert result == {"returnedFrom": "locationHeaderUrl"}
+
+
+
+"""Reproduce the bad design of azure-mgmt-core 1.0.0-1.4.0"""
+
+class ARMPolling(LROBasePolling):
+    pass
+
+class AsyncARMPolling(ARMPolling, AsyncLROBasePolling):
+    pass
+
+@pytest.mark.asyncio
+async def test_async_polling_inheritance(async_pipeline_client_builder, deserialization_cb):
+    rest_http = request_and_responses_product(ASYNCIO_REQUESTS_TRANSPORT_RESPONSES)[1]
+    async def send(request, **kwargs):
+        assert request.method == "GET"
+
+        if request.url == "http://example.org/location":
+            return TestBasePolling.mock_send(rest_http[0], rest_http[1], "GET", 200, body={"success": True}).http_response
+        elif request.url == "http://example.org/async_monitor":
+            return TestBasePolling.mock_send(
+                rest_http[0], rest_http[1], "GET", 200, body={"status": "Succeeded"}
+            ).http_response
+        else:
+            pytest.fail("No other query allowed")
+
+    client = async_pipeline_client_builder(send)
+
+    initial_response = TestBasePolling.mock_send(
+        rest_http[0],
+        rest_http[1],
+        "POST",
+        200,
+        {
+            "location": "http://example.org/location",
+            "operation-location": "http://example.org/async_monitor",
+        },
+        "",
+    )
+
+    polling = AsyncARMPolling()
+    polling.initialize(
+        client=client,
+        initial_response=initial_response,
+        deserialization_callback=deserialization_cb,
+    )
+    await polling.run()
+    resource = polling.resource()
+    assert resource["success"]

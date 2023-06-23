@@ -88,7 +88,7 @@ class AsyncLROBasePolling(
 
     async def run(self) -> None:
         try:
-            await self._poll()
+            await self._async_poll()
 
         except BadStatus as err:
             self._status = "Failed"
@@ -105,7 +105,7 @@ class AsyncLROBasePolling(
         except OperationFailed as err:
             raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
 
-    async def _poll(self) -> None:
+    async def _async_poll(self) -> None:
         """Poll status of operation so long as operation is incomplete and
         we have an endpoint to query.
 
@@ -118,7 +118,7 @@ class AsyncLROBasePolling(
         if not self.finished():
             await self.update_status()
         while not self.finished():
-            await self._delay()
+            await self._async_delay()
             await self.update_status()
 
         if _failed(self.status()):
@@ -129,15 +129,15 @@ class AsyncLROBasePolling(
             self._pipeline_response = await self.request_status(final_get_url)
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
-    async def _sleep(self, delay: float) -> None:
+    async def _async_sleep(self, delay: float) -> None:
         await self._transport.sleep(delay)
 
-    async def _delay(self):
+    async def _async_delay(self):
         """Check for a 'retry-after' header to set timeout,
         otherwise use configured timeout.
         """
         delay = self._extract_delay()
-        await self._sleep(delay)
+        await self._async_sleep(delay)
 
     async def update_status(self):
         """Update the current status of the LRO."""
