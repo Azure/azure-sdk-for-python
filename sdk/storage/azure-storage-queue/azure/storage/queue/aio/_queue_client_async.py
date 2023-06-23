@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
+# mypy: disable-error-code="misc"
 
 import functools
 import warnings
@@ -45,7 +46,7 @@ if TYPE_CHECKING:
     from .._models import QueueProperties
 
 
-class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # type: ignore[misc]
+class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):
     """A client to interact with a specific Queue.
 
     :param str account_url:

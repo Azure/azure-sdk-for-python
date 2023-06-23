@@ -13,6 +13,7 @@ from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str,
 from ._message_encoding import NoEncodePolicy, NoDecodePolicy
 from ._serialize import get_api_version
 
+# Rename this to like parse URL
 def _initialize_client(account_url, queue_name, credential):
     try:
         if not account_url.lower().startswith('http'):
