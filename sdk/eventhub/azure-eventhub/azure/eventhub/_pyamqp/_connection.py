@@ -531,8 +531,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """
         try:
             self._incoming_endpoints[channel]._incoming_end(frame)  # pylint:disable=protected-access
-            existing_session = self._incoming_endpoints.pop(channel)
-            self._outgoing_endpoints.pop(existing_session.channel)
+            outgoing_channel = self._incoming_endpoints[channel].channel
+            self._incoming_endpoints.pop(channel)
+            self._outgoing_endpoints.pop(outgoing_channel)
         except KeyError:
             #close the connection
             self.close(
