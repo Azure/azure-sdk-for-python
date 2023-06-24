@@ -111,7 +111,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         if len(refresh_tokens) == 1:  # there should be only one
             try:
                 refresh_token = refresh_tokens[0]["secret"]
-                return await self._client.obtain_token_by_refresh_token_on_behalf_of(
+                return await self._client.obtain_token_by_refresh_token_on_behalf(
                     scopes, self._client_credential, refresh_token, **kwargs)
             except ClientAuthenticationError as ex:
                 _LOGGER.debug("silent authentication failed: %s", ex, exc_info=True)
