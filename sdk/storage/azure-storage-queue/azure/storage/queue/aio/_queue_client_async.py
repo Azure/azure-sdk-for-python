@@ -9,9 +9,10 @@
 import functools
 import warnings
 from typing import (
-    Any, cast, Dict, List, Optional, Union, Tuple,
-    TYPE_CHECKING)
-from urllib.parse import urlparse, quote, unquote
+    Any, cast, Dict, List,
+    Optional, Tuple, TYPE_CHECKING, Union
+)
+from urllib.parse import quote, unquote, urlparse
 
 from typing_extensions import Self
 
@@ -19,26 +20,24 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from ._models import MessagesPaged
+from .._deserialize import deserialize_queue_creation, deserialize_queue_properties
+from .._encryption import StorageEncryptionMixin
+from .._generated.aio import AzureQueueStorage
+from .._generated.models import QueueMessage as GenQueueMessage, SignedIdentifier
+from .._message_encoding import NoDecodePolicy, NoEncodePolicy
+from .._models import AccessPolicy, QueueMessage
+from .._queue_client_helpers import _parse_url
 from .._serialize import get_api_version
+from .._shared.base_client import parse_connection_str, StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, serialize_iso
 from .._shared.response_handlers import (
-    return_response_headers,
     process_storage_error,
     return_headers_and_deserialized,
+    return_response_headers
 )
-from .._generated.aio import AzureQueueStorage
-from .._generated.models import SignedIdentifier, QueueMessage as GenQueueMessage
-from .._deserialize import deserialize_queue_properties, deserialize_queue_creation
-from .._encryption import StorageEncryptionMixin
-from .._message_encoding import NoEncodePolicy, NoDecodePolicy
-from .._shared.base_client import StorageAccountHostsMixin, parse_connection_str
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin
-from .._models import QueueMessage, AccessPolicy
-from .._queue_client import QueueClient as QueueClientBase
-from ._models import MessagesPaged
-from .._queue_client_helpers import _initialize_client
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -100,9 +99,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
     ) -> None:
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
-
-        parsed_url, sas_token = _initialize_client(account_url=account_url, queue_name=queue_name, credential=credential)
-
+        parsed_url, sas_token = _parse_url(account_url=account_url, queue_name=queue_name, credential=credential)
         self.queue_name = queue_name
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)

@@ -6,30 +6,31 @@
 
 import functools
 import warnings
-from typing import (  # pylint: disable=unused-import
-    Any, Dict, cast, List, Optional, Union,
-    TYPE_CHECKING, Tuple)
-from urllib.parse import urlparse, quote, unquote
+from typing import (
+    Any, cast, Dict, List, Optional,
+    TYPE_CHECKING, Tuple, Union
+)
+from urllib.parse import quote, unquote, urlparse
 
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._deserialize import deserialize_queue_creation, deserialize_queue_properties
+from ._encryption import StorageEncryptionMixin
+from ._generated import AzureQueueStorage
+from ._generated.models import QueueMessage as GenQueueMessage, SignedIdentifier
+from ._message_encoding import NoDecodePolicy, NoEncodePolicy
+from ._models import AccessPolicy, MessagesPaged, QueueMessage
+from ._queue_client_helpers import _parse_url
+from ._serialize import get_api_version
+from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
     process_storage_error,
-    return_response_headers,
-    return_headers_and_deserialized)
-from ._generated import AzureQueueStorage
-from ._generated.models import SignedIdentifier, QueueMessage as GenQueueMessage
-from ._deserialize import deserialize_queue_properties, deserialize_queue_creation
-from ._encryption import StorageEncryptionMixin
-from ._message_encoding import NoEncodePolicy, NoDecodePolicy
-from ._models import AccessPolicy, MessagesPaged, QueueMessage
-from ._serialize import get_api_version
-from ._queue_client_helpers import _initialize_client
+    return_headers_and_deserialized,
+    return_response_headers)
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -84,12 +85,10 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
-        parsed_url, sas_token = _initialize_client(account_url=account_url, queue_name=queue_name, credential=credential)
-
+        parsed_url, sas_token = _parse_url(account_url=account_url, queue_name=queue_name, credential=credential)
         self.queue_name = queue_name
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
-
         self.message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
         self.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)

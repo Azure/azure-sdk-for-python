@@ -4,44 +4,43 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
+# mypy: disable-error-code="misc"
 
 import functools
 from typing import (
-    Any, Dict, List, Optional, Union,
-    TYPE_CHECKING)
+    Any, Dict, List, Optional,
+    TYPE_CHECKING, Union
+)
+
+from typing_extensions import Self
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from ._models import QueuePropertiesPaged
+from ._queue_client_async import QueueClient
+from .._encryption import StorageEncryptionMixin
+from .._generated.aio import AzureQueueStorage
+from .._generated.models import StorageServiceProperties
+from .._models import QueueProperties, service_properties_deserialize, service_stats_deserialize
+from .._queue_service_client_helpers import _parse_url
 from .._serialize import get_api_version
+from .._shared.base_client import parse_connection_str, StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
 from .._shared.models import LocationMode
 from .._shared.response_handlers import process_storage_error
-from .._generated.aio import AzureQueueStorage
-from .._generated.models import StorageServiceProperties
-from .._encryption import StorageEncryptionMixin
-from .._models import (
-    service_stats_deserialize,
-    service_properties_deserialize,
-)
-from .._queue_service_client import QueueServiceClient as QueueServiceClientBase
-from ._models import QueuePropertiesPaged
-from ._queue_client_async import QueueClient
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from .._models import (
-        CorsRule,
-        Metrics,
-        QueueAnalyticsLogging,
-        QueueProperties,
-    )
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+    from azure.core.credentials_async import AsyncTokenCredential
+    from .._generated.models import CorsRule
+    from .._models import Metrics, QueueAnalyticsLogging
 
 
-class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, StorageEncryptionMixin):
+class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):
     """A client to interact with the Queue Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -87,20 +86,61 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
 
     def __init__(
         self, account_url: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
-        super(QueueServiceClient, self).__init__(
-            account_url,
-            credential=credential,
-            loop=loop,
-            **kwargs)
+        parsed_url, sas_token = _parse_url(account_url=account_url, credential=credential)
+        self._query_str, credential = self._format_query_string(sas_token, credential)
+        super(QueueServiceClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._loop = loop
         self._configure_encryption(kwargs)
+
+    def _format_url(self, hostname: str) -> str:
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        return f"{self.scheme}://{hostname}/{self._query_str}"
+
+    @classmethod
+    def from_connection_string(
+        cls, conn_str: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
+        """Create QueueServiceClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
+        :returns: A Queue service client.
+        :rtype: ~azure.storage.queue.QueueClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/queue_samples_authentication.py
+                :start-after: [START auth_from_connection_string]
+                :end-before: [END auth_from_connection_string]
+                :language: python
+                :dedent: 8
+                :caption: Creating the QueueServiceClient with a connection string.
+        """
+        account_url, secondary, credential = parse_connection_str(
+            conn_str, credential, 'queue')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+        return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace_async
     async def get_service_stats(self, **kwargs: Any) -> Dict[str, Any]:
@@ -368,14 +408,14 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
                 :dedent: 8
                 :caption: Get the queue client.
         """
-        try:
+        if isinstance(queue, QueueProperties):
             queue_name = queue.name
-        except AttributeError:
+        else:
             queue_name = queue
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # type: ignore # pylint: disable = protected-access
         )
 
         return QueueClient(

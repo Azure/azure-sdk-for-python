@@ -5,10 +5,10 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import (  # pylint: disable=unused-import
-    Any, Dict, List, Optional, Union,
-    TYPE_CHECKING)
-from urllib.parse import urlparse
+from typing import (
+    Any, Dict, List, Optional,
+    TYPE_CHECKING, Union
+)
 
 from typing_extensions import Self
 
@@ -16,28 +16,26 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
-from ._shared.models import LocationMode
-from ._shared.response_handlers import process_storage_error
+from ._encryption import StorageEncryptionMixin
 from ._generated import AzureQueueStorage
 from ._generated.models import StorageServiceProperties
-from ._encryption import StorageEncryptionMixin
 from ._models import (
+    QueueProperties,
     QueuePropertiesPaged,
-    service_stats_deserialize,
     service_properties_deserialize,
+    service_stats_deserialize,
 )
-from ._serialize import get_api_version
 from ._queue_client import QueueClient
+from ._queue_service_client_helpers import _parse_url
+from ._serialize import get_api_version
+from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin, TransportWrapper
+from ._shared.models import LocationMode
+from ._shared.response_handlers import process_storage_error
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from ._models import (
-        CorsRule,
-        Metrics,
-        QueueAnalyticsLogging,
-        QueueProperties
-    )
+    from ._generated.models import CorsRule
+    from ._models import Metrics, QueueAnalyticsLogging
 
 
 class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
@@ -93,18 +91,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not parsed_url.netloc:
-            raise ValueError(f"Invalid URL: {account_url}")
-
-        _, sas_token = parse_query(parsed_url.query)
-        if not sas_token and not credential:
-            raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
+        parsed_url, sas_token = _parse_url(account_url=account_url, credential=credential)
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueServiceClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)
@@ -421,14 +408,14 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 8
                 :caption: Get the queue client.
         """
-        try:
+        if isinstance(queue, QueueProperties):
             queue_name = queue.name
-        except AttributeError:
+        else:
             queue_name = queue
 
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # type: ignore # pylint: disable = protected-access
         )
 
         return QueueClient(
