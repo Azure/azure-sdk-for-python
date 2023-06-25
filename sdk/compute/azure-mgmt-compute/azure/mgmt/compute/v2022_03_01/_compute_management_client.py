@@ -156,69 +156,77 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.usage = UsageOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2022-03-01")
+        self.usage = UsageOperations(self._client, self._config, self._serialize, self._deserialize, "2022-03-01")
         self.virtual_machine_sizes = VirtualMachineSizesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
         self.virtual_machine_scale_sets = VirtualMachineScaleSetsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
         self.virtual_machine_scale_set_extensions = VirtualMachineScaleSetExtensionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
         self.virtual_machine_scale_set_rolling_upgrades = VirtualMachineScaleSetRollingUpgradesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
         self.virtual_machine_scale_set_vm_extensions = VirtualMachineScaleSetVMExtensionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
         self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
         self.virtual_machine_extensions = VirtualMachineExtensionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
         self.virtual_machines = VirtualMachinesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
         self.virtual_machine_images = VirtualMachineImagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
         self.virtual_machine_images_edge_zone = VirtualMachineImagesEdgeZoneOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
         self.virtual_machine_extension_images = VirtualMachineExtensionImagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
         self.availability_sets = AvailabilitySetsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
         self.proximity_placement_groups = ProximityPlacementGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
         self.dedicated_host_groups = DedicatedHostGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
-        self.dedicated_hosts = DedicatedHostsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.ssh_public_keys = SshPublicKeysOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.images = ImagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.dedicated_hosts = DedicatedHostsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
+        )
+        self.ssh_public_keys = SshPublicKeysOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
+        )
+        self.images = ImagesOperations(self._client, self._config, self._serialize, self._deserialize, "2022-03-01")
         self.restore_point_collections = RestorePointCollectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
-        self.restore_points = RestorePointsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.restore_points = RestorePointsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
+        )
         self.capacity_reservation_groups = CapacityReservationGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
         self.capacity_reservations = CapacityReservationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
-        self.log_analytics = LogAnalyticsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.log_analytics = LogAnalyticsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
+        )
         self.virtual_machine_run_commands = VirtualMachineRunCommandsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
         self.virtual_machine_scale_set_vm_run_commands = VirtualMachineScaleSetVMRunCommandsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-03-01"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:

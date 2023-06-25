@@ -205,8 +205,8 @@ class CommunityGalleryImage(PirCommunityGalleryResource):  # pylint: disable=too
     :ivar end_of_life_date: The end of life date of the gallery image definition. This property can
      be used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
-    :ivar identifier: This is the gallery image definition identifier.
-    :vartype identifier: ~azure.mgmt.compute.v2022_03_03.models.GalleryImageIdentifier
+    :ivar identifier: This is the community gallery image definition identifier.
+    :vartype identifier: ~azure.mgmt.compute.v2022_03_03.models.CommunityGalleryImageIdentifier
     :ivar recommended: The properties describe the recommended machine configuration for this Image
      Definition. These properties are updatable.
     :vartype recommended: ~azure.mgmt.compute.v2022_03_03.models.RecommendedMachineConfiguration
@@ -243,7 +243,7 @@ class CommunityGalleryImage(PirCommunityGalleryResource):  # pylint: disable=too
         "os_type": {"key": "properties.osType", "type": "str"},
         "os_state": {"key": "properties.osState", "type": "str"},
         "end_of_life_date": {"key": "properties.endOfLifeDate", "type": "iso-8601"},
-        "identifier": {"key": "properties.identifier", "type": "GalleryImageIdentifier"},
+        "identifier": {"key": "properties.identifier", "type": "CommunityGalleryImageIdentifier"},
         "recommended": {"key": "properties.recommended", "type": "RecommendedMachineConfiguration"},
         "disallowed": {"key": "properties.disallowed", "type": "Disallowed"},
         "hyper_v_generation": {"key": "properties.hyperVGeneration", "type": "str"},
@@ -261,7 +261,7 @@ class CommunityGalleryImage(PirCommunityGalleryResource):  # pylint: disable=too
         os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
         os_state: Optional[Union[str, "_models.OperatingSystemStateTypes"]] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        identifier: Optional["_models.GalleryImageIdentifier"] = None,
+        identifier: Optional["_models.CommunityGalleryImageIdentifier"] = None,
         recommended: Optional["_models.RecommendedMachineConfiguration"] = None,
         disallowed: Optional["_models.Disallowed"] = None,
         hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
@@ -287,8 +287,8 @@ class CommunityGalleryImage(PirCommunityGalleryResource):  # pylint: disable=too
         :keyword end_of_life_date: The end of life date of the gallery image definition. This property
          can be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
-        :keyword identifier: This is the gallery image definition identifier.
-        :paramtype identifier: ~azure.mgmt.compute.v2022_03_03.models.GalleryImageIdentifier
+        :keyword identifier: This is the community gallery image definition identifier.
+        :paramtype identifier: ~azure.mgmt.compute.v2022_03_03.models.CommunityGalleryImageIdentifier
         :keyword recommended: The properties describe the recommended machine configuration for this
          Image Definition. These properties are updatable.
         :paramtype recommended: ~azure.mgmt.compute.v2022_03_03.models.RecommendedMachineConfiguration
@@ -323,6 +323,40 @@ class CommunityGalleryImage(PirCommunityGalleryResource):  # pylint: disable=too
         self.architecture = architecture
         self.privacy_statement_uri = privacy_statement_uri
         self.eula = eula
+
+
+class CommunityGalleryImageIdentifier(_serialization.Model):
+    """This is the community gallery image definition identifier.
+
+    :ivar publisher: The name of the gallery image definition publisher.
+    :vartype publisher: str
+    :ivar offer: The name of the gallery image definition offer.
+    :vartype offer: str
+    :ivar sku: The name of the gallery image definition SKU.
+    :vartype sku: str
+    """
+
+    _attribute_map = {
+        "publisher": {"key": "publisher", "type": "str"},
+        "offer": {"key": "offer", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
+    }
+
+    def __init__(
+        self, *, publisher: Optional[str] = None, offer: Optional[str] = None, sku: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword publisher: The name of the gallery image definition publisher.
+        :paramtype publisher: str
+        :keyword offer: The name of the gallery image definition offer.
+        :paramtype offer: str
+        :keyword sku: The name of the gallery image definition SKU.
+        :paramtype sku: str
+        """
+        super().__init__(**kwargs)
+        self.publisher = publisher
+        self.offer = offer
+        self.sku = sku
 
 
 class CommunityGalleryImageList(_serialization.Model):
@@ -1390,8 +1424,8 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-     "Premium_LRS", and "StandardSSD_LRS".
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
+     "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2022_03_03.models.StorageAccountType
     :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
      This property is not updatable. Known values are: "Full" and "Shallow".
@@ -1444,8 +1478,8 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-         "Premium_LRS", and "StandardSSD_LRS".
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
+         "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2022_03_03.models.StorageAccountType
         :keyword replication_mode: Optional parameter which specifies the mode to be used for
@@ -1492,8 +1526,8 @@ class GalleryApplicationVersionPublishingProfile(
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-     "Premium_LRS", and "StandardSSD_LRS".
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
+     "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2022_03_03.models.StorageAccountType
     :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
      This property is not updatable. Known values are: "Full" and "Shallow".
@@ -1575,8 +1609,8 @@ class GalleryApplicationVersionPublishingProfile(
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-         "Premium_LRS", and "StandardSSD_LRS".
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
+         "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2022_03_03.models.StorageAccountType
         :keyword replication_mode: Optional parameter which specifies the mode to be used for
@@ -2612,8 +2646,8 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-     "Premium_LRS", and "StandardSSD_LRS".
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
+     "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2022_03_03.models.StorageAccountType
     :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
      This property is not updatable. Known values are: "Full" and "Shallow".
@@ -2666,8 +2700,8 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-         "Premium_LRS", and "StandardSSD_LRS".
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
+         "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2022_03_03.models.StorageAccountType
         :keyword replication_mode: Optional parameter which specifies the mode to be used for
@@ -2934,8 +2968,9 @@ class GalleryTargetExtendedLocation(_serialization.Model):
     :vartype extended_location_replica_count: int
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
      This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-     "Premium_LRS", and "StandardSSD_LRS".
-    :vartype storage_account_type: str or ~azure.mgmt.compute.v2022_03_03.models.StorageAccountType
+     "StandardSSD_LRS", and "Premium_LRS".
+    :vartype storage_account_type: str or
+     ~azure.mgmt.compute.v2022_03_03.models.EdgeZoneStorageAccountType
     :ivar encryption: Optional. Allows users to provide customer managed keys for encrypting the OS
      and data disks in the gallery artifact.
     :vartype encryption: ~azure.mgmt.compute.v2022_03_03.models.EncryptionImages
@@ -2955,7 +2990,7 @@ class GalleryTargetExtendedLocation(_serialization.Model):
         name: Optional[str] = None,
         extended_location: Optional["_models.GalleryExtendedLocation"] = None,
         extended_location_replica_count: Optional[int] = None,
-        storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
+        storage_account_type: Optional[Union[str, "_models.EdgeZoneStorageAccountType"]] = None,
         encryption: Optional["_models.EncryptionImages"] = None,
         **kwargs: Any
     ) -> None:
@@ -2969,9 +3004,9 @@ class GalleryTargetExtendedLocation(_serialization.Model):
         :paramtype extended_location_replica_count: int
         :keyword storage_account_type: Specifies the storage account type to be used to store the
          image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-         "Premium_LRS", and "StandardSSD_LRS".
+         "StandardSSD_LRS", and "Premium_LRS".
         :paramtype storage_account_type: str or
-         ~azure.mgmt.compute.v2022_03_03.models.StorageAccountType
+         ~azure.mgmt.compute.v2022_03_03.models.EdgeZoneStorageAccountType
         :keyword encryption: Optional. Allows users to provide customer managed keys for encrypting the
          OS and data disks in the gallery artifact.
         :paramtype encryption: ~azure.mgmt.compute.v2022_03_03.models.EncryptionImages
@@ -4338,8 +4373,8 @@ class TargetRegion(_serialization.Model):
      region. This property is updatable.
     :vartype regional_replica_count: int
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-     "Premium_LRS", and "StandardSSD_LRS".
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
+     "Premium_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2022_03_03.models.StorageAccountType
     :ivar encryption: Optional. Allows users to provide customer managed keys for encrypting the OS
      and data disks in the gallery artifact.
@@ -4378,8 +4413,8 @@ class TargetRegion(_serialization.Model):
          region. This property is updatable.
         :paramtype regional_replica_count: int
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
-         "Premium_LRS", and "StandardSSD_LRS".
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
+         "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2022_03_03.models.StorageAccountType
         :keyword encryption: Optional. Allows users to provide customer managed keys for encrypting the
