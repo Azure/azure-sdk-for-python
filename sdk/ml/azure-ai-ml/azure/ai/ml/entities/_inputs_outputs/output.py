@@ -3,27 +3,18 @@
 # ---------------------------------------------------------
 
 # pylint: disable=redefined-builtin, too-many-instance-attributes
-import logging
 import re
-from typing import Dict, overload
+from typing import Dict, Optional, Union, overload
 
 from typing_extensions import Literal
 
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    UserErrorException,
-    ValidationErrorType,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import UserErrorException
 
 from .base import _InputOutputBase
 from .utils import _remove_empty_values
-
-module_logger = logging.getLogger(__name__)
 
 
 class Output(_InputOutputBase):
@@ -47,6 +38,8 @@ class Output(_InputOutputBase):
         Version can be set only when name is set.
     :type version: str
     """
+
+    IO_KEYS = ["name", "version", "path", "type", "mode", "description", "is_control", "early_available"]
 
     @overload
     def __init__(self, type: Literal["uri_folder"] = "uri_folder", path=None, mode=None, description=None):
@@ -106,9 +99,6 @@ class Output(_InputOutputBase):
         self.mode = mode
         # use this field to determine the Output is control or not, currently hide in kwargs
         self.is_control = kwargs.pop("is_control", None)
-        self.min = kwargs.pop("min", None)
-        self.max = kwargs.pop("max", None)
-        self.default = kwargs.pop("default", None)
         # use this field to mark Output for early node orchestrate, currently hide in kwargs
         self.early_available = kwargs.pop("early_available", None)
         self._intellectual_property = None
@@ -129,7 +119,7 @@ class Output(_InputOutputBase):
 
     def _to_dict(self):
         """Convert the Output object to a dict."""
-        keys = ["name", "version", "path", "type", "mode", "description", "is_control", "early_available"]
+        keys = self.IO_KEYS
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
 
@@ -165,3 +155,60 @@ class Output(_InputOutputBase):
             )
         if self.version and not self.name:
             raise UserErrorException("Output name is required when output version is specified.")
+
+
+class OutputMetadata(object):
+    """This is the meta datas of Inputs/Outputs."""
+
+    def __init__(
+        self,
+        type=None,
+        description=None,
+        optional=None,
+        min=None,
+        max=None,
+        is_control=None,
+        **kwargs,
+    ):
+        self.type = type
+        self.description = description
+        self._optional = optional
+        self._min = min
+        self._max = max
+        self._is_control = is_control
+        self._default = kwargs.pop("default", None)
+        self._kwargs = kwargs
+
+    def _to_io_entity_args_dict(self):
+        """Convert the object to a kwargs dict for azure.ai.ml.entity.Output."""
+        keys = Output.IO_KEYS
+        result = {key: getattr(self, key, None) for key in keys}
+        result.update(self._kwargs)
+        if IOConstants.PRIMITIVE_TYPE_2_STR.get(self.type) is not None:
+            result["type"] = IOConstants.PRIMITIVE_TYPE_2_STR.get(self.type)
+        return _remove_empty_values(result)
+
+    @property
+    def optional(self) -> bool:
+        """Return whether the parameter is optional."""
+        return self._optional
+
+    @property
+    def max(self) -> Optional[Union[int, float]]:
+        """Return the maximum value of the parameter for a numeric parameter."""
+        return self._max
+
+    @property
+    def min(self) -> Optional[Union[int, float]]:
+        """Return the minimum value of the parameter for a numeric parameter."""
+        return self._min
+
+    @property
+    def is_control(self):
+        """Return the parameter is control output or not."""
+        return self._is_control
+
+    @property
+    def default(self):
+        """Return the default value of the parameter."""
+        return self._default

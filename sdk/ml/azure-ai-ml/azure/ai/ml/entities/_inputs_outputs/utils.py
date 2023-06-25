@@ -14,6 +14,8 @@ from inspect import Parameter, getmro, signature
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.exceptions import UserErrorException
 
+SUPPORTED_RETURN_TYPES_PRIMITIVE = list(IOConstants.PRIMITIVE_TYPE_2_STR.keys())
+
 
 def is_group(obj):
     """Return True if obj is a group or an instance of a parameter group class."""
@@ -246,7 +248,9 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
     This function depend on class names of `mldesigner._input_output` to translate Input/Output class annotations
     to IO entities.
     """
-    from azure.ai.ml import Input, Output
+    from typing_extensions import _AnnotatedAlias, get_args
+
+    from azure.ai.ml import Input, Output, OutputMetadata
 
     from .enum_input import EnumInput
 
@@ -295,6 +299,23 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
                         )
             except BaseException as e:
                 raise UserErrorException(f"Failed to parse {io} to azure-ai-ml Input/Output: {str(e)}") from e
+                # Handle Annotated annotation
+        elif isinstance(io, _AnnotatedAlias):
+            hint_type, arg, *hint_args = get_args(io)
+            if hint_type in SUPPORTED_RETURN_TYPES_PRIMITIVE:
+                if not _is_input_or_output_type(type(arg), "OutputMetadata") and not isinstance(arg, OutputMetadata):
+                    raise UserErrorException(
+                        f"Annotated Metadata class only support "
+                        f"[mldesigner._input_output.OutputMetadata, "
+                        f"azure.ai.ml.entities._inputs_outputs.OutputMetadata], "
+                        f"it is {type(arg)} now."
+                    )
+                if arg.type is not None and arg.type != hint_type:
+                    raise UserErrorException(
+                        f"OutputMetadata class type {arg.type} should be same as Annotated type: " f"{hint_type}"
+                    )
+                arg.type = hint_type
+                io = Output(**arg._to_io_entity_args_dict())
         result[key] = io
     return result
 
