@@ -22,7 +22,7 @@ def api_version_validation(**kwargs):
 
             if client_api_version not in method_valid_on:
                 raise ValueError(
-                    f"'{func.__name__}' is not available in API version "
+                    f"'{func_name}' is not available in API version "
                     f"{client_api_version}. All valid API version are {', '.join(method_valid_on)}."
                 )
 
