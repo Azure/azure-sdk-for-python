@@ -185,9 +185,9 @@ class Operation(VersionedObject):
         # all of the api versions of the operation group
         # because the operation group handles first round of validation
         if self._need_method_api_version_check:
-            retval.append(f"        api_versions={self.api_versions},")
+            retval.append(f"       method_valid_on={self.api_versions},")
         if self._need_params_api_version_check:
-            retval.append("        params={")
+            retval.append("        params_valid_on={")
             retval.extend([f'            "{p.name}": {p.api_versions},' for p in self.parameters if p.need_decorator])
             retval.append("        }")
         retval.append("    )")
