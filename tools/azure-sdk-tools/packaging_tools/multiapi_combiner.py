@@ -259,7 +259,7 @@ class OperationGroup(VersionedObject):
 
     @property
     def decorator(self) -> str:
-        return "\n".join(["@api_version_validation(", f"    api_versions={self.api_versions}", ")"])
+        return "\n".join(["@api_version_validation(", f"    method_valid_on={self.api_versions}", ")"])
 
     def combine_operations(self) -> None:
         api_versions = [v for v in self.code_model.sorted_api_versions if v in self.api_versions]
