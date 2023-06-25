@@ -24,7 +24,7 @@ def api_version_validation(**kwargs):
             if client_api_version not in method_valid_on:
                 raise ValueError(
                     f"'{func.__name__}' is not available in API version "
-                    f"{client_api_version}. Pass service API version of {method_valid_on} to your client."
+                    f"{client_api_version}. All valid API version are {', '.join(method_valid_on)}."
                 )
 
             unsupported = {
@@ -37,7 +37,7 @@ def api_version_validation(**kwargs):
                     "".join(
                         [
                             f"'{param}' is not available in API version {client_api_version}. "
-                            f" All valid API version are \"{versions}\" \n"
+                            f"All valid API version are {versions} \n"
                             for param, versions in unsupported.items()
                         ]
                     )
