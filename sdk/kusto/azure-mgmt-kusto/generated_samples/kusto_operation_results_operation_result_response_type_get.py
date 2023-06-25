@@ -29,13 +29,12 @@ def main():
         subscription_id="12345678-1234-1234-1234-123456789098",
     )
 
-    response = client.operations_results_location.get(
+    client.operations_results_location.get(
         location="westus",
         operation_id="30972f1b-b61d-4fd8-bd34-3dcfa24670f3",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2022-12-29/examples/KustoOperationResultsOperationResultResponseTypeGet.json
+# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2023-05-02/examples/KustoOperationResultsOperationResultResponseTypeGet.json
 if __name__ == "__main__":
     main()

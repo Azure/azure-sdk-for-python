@@ -546,58 +546,6 @@ class CheckNameResult(_serialization.Model):
         self.reason = reason
 
 
-class CloudErrorBody(_serialization.Model):
-    """An error response from Kusto.
-
-    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
-     programmatically.
-    :vartype code: str
-    :ivar message: A message describing the error, intended to be suitable for displaying in a user
-     interface.
-    :vartype message: str
-    :ivar target: The target of the particular error. For example, the name of the property in
-     error.
-    :vartype target: str
-    :ivar details: A list of additional details about the error.
-    :vartype details: list[~azure.mgmt.kusto.models.CloudErrorBody]
-    """
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[CloudErrorBody]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        target: Optional[str] = None,
-        details: Optional[List["_models.CloudErrorBody"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
-         programmatically.
-        :paramtype code: str
-        :keyword message: A message describing the error, intended to be suitable for displaying in a
-         user interface.
-        :paramtype message: str
-        :keyword target: The target of the particular error. For example, the name of the property in
-         error.
-        :paramtype target: str
-        :keyword details: A list of additional details about the error.
-        :paramtype details: list[~azure.mgmt.kusto.models.CloudErrorBody]
-        """
-        super().__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.target = target
-        self.details = details
-
-
 class TrackedResource(Resource):
     """The resource model definition for an Azure Resource Manager tracked top level resource which
     has 'tags' and a 'location'.
@@ -677,7 +625,7 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar state: The state of the resource. Known values are: "Creating", "Unavailable", "Running",
-     "Deleting", "Deleted", "Stopping", "Stopped", "Starting", and "Updating".
+     "Deleting", "Deleted", "Stopping", "Stopped", "Starting", "Updating", and "Migrated".
     :vartype state: str or ~azure.mgmt.kusto.models.State
     :ivar provisioning_state: The provisioned state of the resource. Known values are: "Running",
      "Creating", "Deleting", "Succeeded", "Failed", "Moving", and "Canceled".
@@ -737,6 +685,9 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype virtual_cluster_graduation_properties: str
     :ivar private_endpoint_connections: A list of private endpoint connections.
     :vartype private_endpoint_connections: list[~azure.mgmt.kusto.models.PrivateEndpointConnection]
+    :ivar migration_cluster: Properties of the peer cluster involved in a migration to/from this
+     cluster.
+    :vartype migration_cluster: ~azure.mgmt.kusto.models.MigrationClusterProperties
     """
 
     _validation = {
@@ -753,6 +704,7 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "data_ingestion_uri": {"readonly": True},
         "state_reason": {"readonly": True},
         "private_endpoint_connections": {"readonly": True},
+        "migration_cluster": {"readonly": True},
     }
 
     _attribute_map = {
@@ -799,6 +751,7 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
             "key": "properties.privateEndpointConnections",
             "type": "[PrivateEndpointConnection]",
         },
+        "migration_cluster": {"key": "properties.migrationCluster", "type": "MigrationClusterProperties"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -919,6 +872,7 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.public_ip_type = public_ip_type
         self.virtual_cluster_graduation_properties = virtual_cluster_graduation_properties
         self.private_endpoint_connections = None
+        self.migration_cluster = None
 
 
 class ClusterCheckNameRequest(_serialization.Model):
@@ -974,6 +928,32 @@ class ClusterListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
+
+
+class ClusterMigrateRequest(_serialization.Model):
+    """A cluster migrate request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar cluster_resource_id: Resource ID of the destination cluster or kusto pool. Required.
+    :vartype cluster_resource_id: str
+    """
+
+    _validation = {
+        "cluster_resource_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "cluster_resource_id": {"key": "clusterResourceId", "type": "str"},
+    }
+
+    def __init__(self, *, cluster_resource_id: str, **kwargs: Any) -> None:
+        """
+        :keyword cluster_resource_id: Resource ID of the destination cluster or kusto pool. Required.
+        :paramtype cluster_resource_id: str
+        """
+        super().__init__(**kwargs)
+        self.cluster_resource_id = cluster_resource_id
 
 
 class ClusterPrincipalAssignment(ProxyResource):  # pylint: disable=too-many-instance-attributes
@@ -1143,7 +1123,7 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar identity: The identity of the cluster, if configured.
     :vartype identity: ~azure.mgmt.kusto.models.Identity
     :ivar state: The state of the resource. Known values are: "Creating", "Unavailable", "Running",
-     "Deleting", "Deleted", "Stopping", "Stopped", "Starting", and "Updating".
+     "Deleting", "Deleted", "Stopping", "Stopped", "Starting", "Updating", and "Migrated".
     :vartype state: str or ~azure.mgmt.kusto.models.State
     :ivar provisioning_state: The provisioned state of the resource. Known values are: "Running",
      "Creating", "Deleting", "Succeeded", "Failed", "Moving", and "Canceled".
@@ -1203,6 +1183,9 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype virtual_cluster_graduation_properties: str
     :ivar private_endpoint_connections: A list of private endpoint connections.
     :vartype private_endpoint_connections: list[~azure.mgmt.kusto.models.PrivateEndpointConnection]
+    :ivar migration_cluster: Properties of the peer cluster involved in a migration to/from this
+     cluster.
+    :vartype migration_cluster: ~azure.mgmt.kusto.models.MigrationClusterProperties
     """
 
     _validation = {
@@ -1215,6 +1198,7 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
         "data_ingestion_uri": {"readonly": True},
         "state_reason": {"readonly": True},
         "private_endpoint_connections": {"readonly": True},
+        "migration_cluster": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1258,6 +1242,7 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
             "key": "properties.privateEndpointConnections",
             "type": "[PrivateEndpointConnection]",
         },
+        "migration_cluster": {"key": "properties.migrationCluster", "type": "MigrationClusterProperties"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -1374,6 +1359,7 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
         self.public_ip_type = public_ip_type
         self.virtual_cluster_graduation_properties = virtual_cluster_graduation_properties
         self.private_endpoint_connections = None
+        self.migration_cluster = None
 
 
 class ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties(_serialization.Model):
@@ -1636,23 +1622,91 @@ class Database(ProxyResource):
         self.kind: Optional[str] = None
 
 
+class DatabaseInviteFollowerRequest(_serialization.Model):
+    """The request to invite a follower to a database.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar invitee_email: The email of the invited user for which the follower invitation is
+     generated. Required.
+    :vartype invitee_email: str
+    :ivar table_level_sharing_properties: Table level sharing specifications.
+    :vartype table_level_sharing_properties: ~azure.mgmt.kusto.models.TableLevelSharingProperties
+    """
+
+    _validation = {
+        "invitee_email": {"required": True},
+    }
+
+    _attribute_map = {
+        "invitee_email": {"key": "inviteeEmail", "type": "str"},
+        "table_level_sharing_properties": {"key": "tableLevelSharingProperties", "type": "TableLevelSharingProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        invitee_email: str,
+        table_level_sharing_properties: Optional["_models.TableLevelSharingProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword invitee_email: The email of the invited user for which the follower invitation is
+         generated. Required.
+        :paramtype invitee_email: str
+        :keyword table_level_sharing_properties: Table level sharing specifications.
+        :paramtype table_level_sharing_properties: ~azure.mgmt.kusto.models.TableLevelSharingProperties
+        """
+        super().__init__(**kwargs)
+        self.invitee_email = invitee_email
+        self.table_level_sharing_properties = table_level_sharing_properties
+
+
+class DatabaseInviteFollowerResult(_serialization.Model):
+    """The result returned from a follower invitation generation request.
+
+    :ivar generated_invitation: The generated invitation token.
+    :vartype generated_invitation: str
+    """
+
+    _attribute_map = {
+        "generated_invitation": {"key": "generatedInvitation", "type": "str"},
+    }
+
+    def __init__(self, *, generated_invitation: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword generated_invitation: The generated invitation token.
+        :paramtype generated_invitation: str
+        """
+        super().__init__(**kwargs)
+        self.generated_invitation = generated_invitation
+
+
 class DatabaseListResult(_serialization.Model):
     """The list Kusto databases operation response.
 
+    :ivar next_link: Link to the next page of results.
+    :vartype next_link: str
     :ivar value: The list of Kusto databases.
     :vartype value: list[~azure.mgmt.kusto.models.Database]
     """
 
     _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
         "value": {"key": "value", "type": "[Database]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Database"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.Database"]] = None, **kwargs: Any
+    ) -> None:
         """
+        :keyword next_link: Link to the next page of results.
+        :paramtype next_link: str
         :keyword value: The list of Kusto databases.
         :paramtype value: list[~azure.mgmt.kusto.models.Database]
         """
         super().__init__(**kwargs)
+        self.next_link = next_link
         self.value = value
 
 
@@ -2137,6 +2191,98 @@ class EndpointDetail(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.port = port
+
+
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.kusto.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.kusto.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.kusto.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.kusto.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
 
 
 class EventGridDataConnection(DataConnection):  # pylint: disable=too-many-instance-attributes
@@ -2789,7 +2935,7 @@ class LanguageExtension(_serialization.Model):
     :ivar language_extension_name: The language extension name. Known values are: "PYTHON" and "R".
     :vartype language_extension_name: str or ~azure.mgmt.kusto.models.LanguageExtensionName
     :ivar language_extension_image_name: The language extension image name. Known values are: "R",
-     "Python3_6_5", "Python3_9_12", "Python3_9_12IncludeDeepLearning", and "Python3_10_8".
+     "Python3_6_5", and "Python3_10_8".
     :vartype language_extension_image_name: str or
      ~azure.mgmt.kusto.models.LanguageExtensionImageName
     """
@@ -2811,7 +2957,7 @@ class LanguageExtension(_serialization.Model):
          "R".
         :paramtype language_extension_name: str or ~azure.mgmt.kusto.models.LanguageExtensionName
         :keyword language_extension_image_name: The language extension image name. Known values are:
-         "R", "Python3_6_5", "Python3_9_12", "Python3_9_12IncludeDeepLearning", and "Python3_10_8".
+         "R", "Python3_6_5", and "Python3_10_8".
         :paramtype language_extension_image_name: str or
          ~azure.mgmt.kusto.models.LanguageExtensionImageName
         """
@@ -2994,6 +3140,45 @@ class ManagedPrivateEndpointsCheckNameRequest(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.name = name
+
+
+class MigrationClusterProperties(_serialization.Model):
+    """Represents a properties of a cluster that is part of a migration.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The resource ID of the cluster.
+    :vartype id: str
+    :ivar uri: The public URL of the cluster.
+    :vartype uri: str
+    :ivar data_ingestion_uri: The public data ingestion URL of the cluster.
+    :vartype data_ingestion_uri: str
+    :ivar role: The role of the cluster in the migration process. Known values are: "Source" and
+     "Destination".
+    :vartype role: str or ~azure.mgmt.kusto.models.MigrationClusterRole
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "uri": {"readonly": True},
+        "data_ingestion_uri": {"readonly": True},
+        "role": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "data_ingestion_uri": {"key": "dataIngestionUri", "type": "str"},
+        "role": {"key": "role", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
+        self.uri = None
+        self.data_ingestion_uri = None
+        self.role = None
 
 
 class Operation(_serialization.Model):
@@ -3629,6 +3814,9 @@ class ReadOnlyFollowingDatabase(Database):  # pylint: disable=too-many-instance-
     :ivar database_share_origin: The origin of the following setup. Known values are: "Direct",
      "DataShare", and "Other".
     :vartype database_share_origin: str or ~azure.mgmt.kusto.models.DatabaseShareOrigin
+    :ivar suspension_details: The database suspension details. If the database is suspended, this
+     object contains information related to the database's suspension state.
+    :vartype suspension_details: ~azure.mgmt.kusto.models.SuspensionDetails
     """
 
     _validation = {
@@ -3645,6 +3833,7 @@ class ReadOnlyFollowingDatabase(Database):  # pylint: disable=too-many-instance-
         "table_level_sharing_properties": {"readonly": True},
         "original_database_name": {"readonly": True},
         "database_share_origin": {"readonly": True},
+        "suspension_details": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3666,6 +3855,7 @@ class ReadOnlyFollowingDatabase(Database):  # pylint: disable=too-many-instance-
         },
         "original_database_name": {"key": "properties.originalDatabaseName", "type": "str"},
         "database_share_origin": {"key": "properties.databaseShareOrigin", "type": "str"},
+        "suspension_details": {"key": "properties.suspensionDetails", "type": "SuspensionDetails"},
     }
 
     def __init__(
@@ -3690,9 +3880,10 @@ class ReadOnlyFollowingDatabase(Database):  # pylint: disable=too-many-instance-
         self.table_level_sharing_properties = None
         self.original_database_name = None
         self.database_share_origin = None
+        self.suspension_details = None
 
 
-class ReadWriteDatabase(Database):
+class ReadWriteDatabase(Database):  # pylint: disable=too-many-instance-attributes
     """Class representing a read write database.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3724,6 +3915,11 @@ class ReadWriteDatabase(Database):
     :vartype statistics: ~azure.mgmt.kusto.models.DatabaseStatistics
     :ivar is_followed: Indicates whether the database is followed.
     :vartype is_followed: bool
+    :ivar key_vault_properties: KeyVault properties for the database encryption.
+    :vartype key_vault_properties: ~azure.mgmt.kusto.models.KeyVaultProperties
+    :ivar suspension_details: The database suspension details. If the database is suspended, this
+     object contains information related to the database's suspension state.
+    :vartype suspension_details: ~azure.mgmt.kusto.models.SuspensionDetails
     """
 
     _validation = {
@@ -3734,6 +3930,7 @@ class ReadWriteDatabase(Database):
         "provisioning_state": {"readonly": True},
         "statistics": {"readonly": True},
         "is_followed": {"readonly": True},
+        "suspension_details": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3747,6 +3944,8 @@ class ReadWriteDatabase(Database):
         "hot_cache_period": {"key": "properties.hotCachePeriod", "type": "duration"},
         "statistics": {"key": "properties.statistics", "type": "DatabaseStatistics"},
         "is_followed": {"key": "properties.isFollowed", "type": "bool"},
+        "key_vault_properties": {"key": "properties.keyVaultProperties", "type": "KeyVaultProperties"},
+        "suspension_details": {"key": "properties.suspensionDetails", "type": "SuspensionDetails"},
     }
 
     def __init__(
@@ -3755,6 +3954,7 @@ class ReadWriteDatabase(Database):
         location: Optional[str] = None,
         soft_delete_period: Optional[datetime.timedelta] = None,
         hot_cache_period: Optional[datetime.timedelta] = None,
+        key_vault_properties: Optional["_models.KeyVaultProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3766,6 +3966,8 @@ class ReadWriteDatabase(Database):
         :keyword hot_cache_period: The time the data should be kept in cache for fast queries in
          TimeSpan.
         :paramtype hot_cache_period: ~datetime.timedelta
+        :keyword key_vault_properties: KeyVault properties for the database encryption.
+        :paramtype key_vault_properties: ~azure.mgmt.kusto.models.KeyVaultProperties
         """
         super().__init__(location=location, **kwargs)
         self.kind: str = "ReadWrite"
@@ -3774,6 +3976,8 @@ class ReadWriteDatabase(Database):
         self.hot_cache_period = hot_cache_period
         self.statistics = None
         self.is_followed = None
+        self.key_vault_properties = key_vault_properties
+        self.suspension_details = None
 
 
 class ResourceSkuCapabilities(_serialization.Model):
@@ -4094,6 +4298,27 @@ class SkuLocationInfoItem(_serialization.Model):
         self.location = location
         self.zones = zones
         self.zone_details = zone_details
+
+
+class SuspensionDetails(_serialization.Model):
+    """The database suspension details. If the database is suspended, this object contains information
+    related to the database's suspension state.
+
+    :ivar suspension_start_date: The starting date and time of the suspension state.
+    :vartype suspension_start_date: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "suspension_start_date": {"key": "suspensionStartDate", "type": "iso-8601"},
+    }
+
+    def __init__(self, *, suspension_start_date: Optional[datetime.datetime] = None, **kwargs: Any) -> None:
+        """
+        :keyword suspension_start_date: The starting date and time of the suspension state.
+        :paramtype suspension_start_date: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.suspension_start_date = suspension_start_date
 
 
 class SystemData(_serialization.Model):

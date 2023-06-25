@@ -41,6 +41,12 @@ def main():
                 "enableDoubleEncryption": False,
                 "enablePurge": True,
                 "enableStreamingIngest": True,
+                "languageExtensions": {
+                    "value": [
+                        {"languageExtensionImageName": "Python3_10_8", "languageExtensionName": "PYTHON"},
+                        {"languageExtensionImageName": "R", "languageExtensionName": "R"},
+                    ]
+                },
                 "publicIPType": "DualStack",
                 "publicNetworkAccess": "Enabled",
             },
@@ -50,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2022-12-29/examples/KustoClustersCreateOrUpdate.json
+# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2023-05-02/examples/KustoClustersCreateOrUpdate.json
 if __name__ == "__main__":
     main()

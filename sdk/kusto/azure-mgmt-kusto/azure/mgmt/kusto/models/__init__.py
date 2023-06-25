@@ -15,10 +15,10 @@ from ._models_py3 import AzureResourceSku
 from ._models_py3 import AzureSku
 from ._models_py3 import CheckNameRequest
 from ._models_py3 import CheckNameResult
-from ._models_py3 import CloudErrorBody
 from ._models_py3 import Cluster
 from ._models_py3 import ClusterCheckNameRequest
 from ._models_py3 import ClusterListResult
+from ._models_py3 import ClusterMigrateRequest
 from ._models_py3 import ClusterPrincipalAssignment
 from ._models_py3 import ClusterPrincipalAssignmentCheckNameRequest
 from ._models_py3 import ClusterPrincipalAssignmentListResult
@@ -32,6 +32,8 @@ from ._models_py3 import DataConnectionValidation
 from ._models_py3 import DataConnectionValidationListResult
 from ._models_py3 import DataConnectionValidationResult
 from ._models_py3 import Database
+from ._models_py3 import DatabaseInviteFollowerRequest
+from ._models_py3 import DatabaseInviteFollowerResult
 from ._models_py3 import DatabaseListResult
 from ._models_py3 import DatabasePrincipal
 from ._models_py3 import DatabasePrincipalAssignment
@@ -43,6 +45,9 @@ from ._models_py3 import DatabaseStatistics
 from ._models_py3 import DiagnoseVirtualNetworkResult
 from ._models_py3 import EndpointDependency
 from ._models_py3 import EndpointDetail
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
 from ._models_py3 import EventGridDataConnection
 from ._models_py3 import EventHubDataConnection
 from ._models_py3 import FollowerDatabaseDefinition
@@ -56,6 +61,7 @@ from ._models_py3 import ListResourceSkusResult
 from ._models_py3 import ManagedPrivateEndpoint
 from ._models_py3 import ManagedPrivateEndpointListResult
 from ._models_py3 import ManagedPrivateEndpointsCheckNameRequest
+from ._models_py3 import MigrationClusterProperties
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
@@ -81,6 +87,7 @@ from ._models_py3 import ScriptListResult
 from ._models_py3 import SkuDescription
 from ._models_py3 import SkuDescriptionList
 from ._models_py3 import SkuLocationInfoItem
+from ._models_py3 import SuspensionDetails
 from ._models_py3 import SystemData
 from ._models_py3 import TableLevelSharingProperties
 from ._models_py3 import TrackedResource
@@ -110,6 +117,7 @@ from ._kusto_management_client_enums import IotHubDataFormat
 from ._kusto_management_client_enums import Kind
 from ._kusto_management_client_enums import LanguageExtensionImageName
 from ._kusto_management_client_enums import LanguageExtensionName
+from ._kusto_management_client_enums import MigrationClusterRole
 from ._kusto_management_client_enums import PrincipalType
 from ._kusto_management_client_enums import PrincipalsModificationKind
 from ._kusto_management_client_enums import ProvisioningState
@@ -133,10 +141,10 @@ __all__ = [
     "AzureSku",
     "CheckNameRequest",
     "CheckNameResult",
-    "CloudErrorBody",
     "Cluster",
     "ClusterCheckNameRequest",
     "ClusterListResult",
+    "ClusterMigrateRequest",
     "ClusterPrincipalAssignment",
     "ClusterPrincipalAssignmentCheckNameRequest",
     "ClusterPrincipalAssignmentListResult",
@@ -150,6 +158,8 @@ __all__ = [
     "DataConnectionValidationListResult",
     "DataConnectionValidationResult",
     "Database",
+    "DatabaseInviteFollowerRequest",
+    "DatabaseInviteFollowerResult",
     "DatabaseListResult",
     "DatabasePrincipal",
     "DatabasePrincipalAssignment",
@@ -161,6 +171,9 @@ __all__ = [
     "DiagnoseVirtualNetworkResult",
     "EndpointDependency",
     "EndpointDetail",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
     "EventGridDataConnection",
     "EventHubDataConnection",
     "FollowerDatabaseDefinition",
@@ -174,6 +187,7 @@ __all__ = [
     "ManagedPrivateEndpoint",
     "ManagedPrivateEndpointListResult",
     "ManagedPrivateEndpointsCheckNameRequest",
+    "MigrationClusterProperties",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
@@ -199,6 +213,7 @@ __all__ = [
     "SkuDescription",
     "SkuDescriptionList",
     "SkuLocationInfoItem",
+    "SuspensionDetails",
     "SystemData",
     "TableLevelSharingProperties",
     "TrackedResource",
@@ -227,6 +242,7 @@ __all__ = [
     "Kind",
     "LanguageExtensionImageName",
     "LanguageExtensionName",
+    "MigrationClusterRole",
     "PrincipalType",
     "PrincipalsModificationKind",
     "ProvisioningState",
