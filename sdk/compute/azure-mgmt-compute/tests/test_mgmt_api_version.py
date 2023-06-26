@@ -25,6 +25,11 @@ class TestMgmtComputeApiVersion:
         # expect to raise error when method signatue is not supported for the api version
         client = self.client(api_version="2016-04-30-preview")
         signature = inspect.signature(client.availability_sets.list_by_subscription)
-        assert not ("expand" in signature.parameters.keys())
-        
-          
+        result = "expand" in signature.parameters.keys()
+        try:
+          # old package structure
+          assert result == False
+        except AssertionError:
+           # new package structure
+           with pytest.raises(ValueError):
+             client.availability_sets.list_by_subscription(expand="fake_expand")

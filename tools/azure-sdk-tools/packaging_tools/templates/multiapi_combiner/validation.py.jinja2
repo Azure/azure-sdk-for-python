@@ -19,7 +19,7 @@ def api_version_validation(**kwargs):
                 client = args[0]
                 client_api_version = client._get_api_version(func_name)  # pylint: disable=protected-access
             except AttributeError:
-                client_api_version = client._api_version
+                client_api_version = client._api_version  # pylint: disable=protected-access
 
             if method_valid_on and client_api_version not in method_valid_on:
                 raise ValueError(
