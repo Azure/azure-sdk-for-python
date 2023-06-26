@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from pathlib import Path
-from typing import Dict, Optional, Union, List
 from contextlib import contextmanager
+from pathlib import Path
+from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -16,22 +16,21 @@ from azure.ai.ml.entities._job.distribution import (
     DistributionConfiguration,
     MpiDistribution,
     PyTorchDistribution,
-    TensorFlowDistribution,
     RayDistribution,
+    TensorFlowDistribution,
 )
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
-from .code import ComponentIgnoreFile
-from ._additional_includes import AdditionalIncludes
-
-from ...entities._assets import Code
 from ..._restclient.v2022_10_01.models import ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
+from ...entities._assets import Code
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
 from .._validation import MutableValidationResult
+from ._additional_includes import AdditionalIncludes
+from .code import ComponentIgnoreFile
 from .component import Component
 
 # pylint: disable=protected-access
@@ -239,8 +238,11 @@ class CommandComponent(Component, ParameterizedCommand):
     def _validate_early_available_output(self) -> MutableValidationResult:
         validation_result = self._create_empty_validation_result()
         for name, output in self.outputs.items():
-            if output.early_available is True and output.is_control is not True:
-                msg = f"Early available output {name!r} requires is_control as True, got {output.is_control!r}."
+            if output.early_available is True and output.is_control_or_primitive_type is not True:
+                msg = (
+                    f"Early available output {name!r} requires is_control as True or output is primitive type, "
+                    f"got {output.is_control_or_primitive_type!r}."
+                )
                 validation_result.append_error(message=msg, yaml_path=f"outputs.{name}")
         return validation_result
 
