@@ -89,7 +89,7 @@ class AsyncLROBasePolling(
 
         except BadStatus as err:
             self._status = "Failed"
-            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
+            raise HttpResponseError(response=self._pipeline_response.http_response, error=err) from err
 
         except BadResponse as err:
             self._status = "Failed"
@@ -97,17 +97,15 @@ class AsyncLROBasePolling(
                 response=self._pipeline_response.http_response,
                 message=str(err),
                 error=err,
-            )
+            ) from err
 
         except OperationFailed as err:
-            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
+            raise HttpResponseError(response=self._pipeline_response.http_response, error=err) from err
 
     async def _poll(self) -> None:
         """Poll status of operation so long as operation is incomplete and
         we have an endpoint to query.
 
-        :param callable update_cmd: The function to call to retrieve the
-         latest status of the long running operation.
         :raises: OperationFailed if operation status 'Failed' or 'Canceled'.
         :raises: BadStatus if response status invalid.
         :raises: BadResponse if response invalid.
@@ -147,7 +145,9 @@ class AsyncLROBasePolling(
 
         This method re-inject 'x-ms-client-request-id'.
 
+        :param str status_link: URL to poll.
         :rtype: azure.core.pipeline.PipelineResponse
+        :return: The response of the status request.
         """
         if self._path_format_arguments:
             status_link = self._client.format_url(status_link, **self._path_format_arguments)
