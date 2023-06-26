@@ -813,7 +813,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert updated.name == variables["data_feed_updated_name"]
             assert updated.data_feed_description == "updated"
             assert updated.schema.timestamp_column == "time"
-            assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 12, 10, tzinfo=tzutc())
+            assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 12, 10, tzinfo=timezone.utc)
             assert updated.ingestion_settings.ingestion_start_offset == 1
             assert updated.ingestion_settings.data_source_request_concurrency == 1
             assert updated.ingestion_settings.ingestion_retry_delay == 120
@@ -871,7 +871,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert updated.name == variables["data_feed_updated_name"]
             assert updated.data_feed_description == "updated"
             assert updated.schema.timestamp_column == "time"
-            assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 9, 10, tzinfo=tzutc())
+            assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 9, 10, tzinfo=timezone.utc)
             assert updated.ingestion_settings.ingestion_start_offset == 1
             assert updated.ingestion_settings.data_source_request_concurrency == 1
             assert updated.ingestion_settings.ingestion_retry_delay == 120
@@ -948,7 +948,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert updated.name == variables["data_feed_updated_name"]
             assert updated.data_feed_description == "updateMe"
             assert updated.schema.timestamp_column == "time"
-            assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 9, 10, tzinfo=tzutc())
+            assert updated.ingestion_settings.ingestion_begin_time == datetime.datetime(2021, 9, 10, tzinfo=timezone.utc)
             assert updated.ingestion_settings.ingestion_start_offset == 1
             assert updated.ingestion_settings.data_source_request_concurrency == 1
             assert updated.ingestion_settings.ingestion_retry_delay == 120
