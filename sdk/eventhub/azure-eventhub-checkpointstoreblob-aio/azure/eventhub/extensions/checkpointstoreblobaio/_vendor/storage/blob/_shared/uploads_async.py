@@ -161,7 +161,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
                 if self.total_size:
                     read_size = min(self.chunk_size - len(data), self.total_size - (index + len(data)))
                 temp = self.stream.read(read_size)
-                if not isinstance(temp, str):
+                if not isinstance(temp, bytes):
                     raise TypeError('Blob data should be of type bytes.')
                 data += temp or b""
 

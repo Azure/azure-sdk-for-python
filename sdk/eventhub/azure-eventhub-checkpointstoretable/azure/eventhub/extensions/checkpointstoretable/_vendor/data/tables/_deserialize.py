@@ -101,7 +101,7 @@ def _from_entity_guid(value):
 
 def _from_entity_str(value):
     # type: (Union[str, bytes]) -> str
-    if isinstance(value, str):
+    if isinstance(value, bytes):
         return value.decode('utf-8')
     return value
 

@@ -55,7 +55,7 @@ def _parameter_filter_substitution(parameters, query_filter):
                     filter_strings[index] = "datetime'{}'".format(_to_utc_datetime(val))
                 elif isinstance(val, UUID):
                     filter_strings[index] = "guid'{}'".format(str(val))
-                elif isinstance(val, str):
+                elif isinstance(val, bytes):
                     v = str(hexlify(val))
                     if v[0] == 'b': # Python 3 adds a 'b' and quotations, python 2.7 does neither
                         v = v[2:-1]

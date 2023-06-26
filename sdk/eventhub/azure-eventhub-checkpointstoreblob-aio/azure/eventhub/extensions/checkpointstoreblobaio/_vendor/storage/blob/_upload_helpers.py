@@ -83,7 +83,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
             try:
                 data = data.read(length)
-                if not isinstance(data, str):
+                if not isinstance(data, bytes):
                     raise TypeError('Blob data should be of type bytes.')
             except AttributeError:
                 pass
