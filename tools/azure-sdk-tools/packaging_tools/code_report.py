@@ -53,15 +53,16 @@ def create_report(module_name: str) -> Dict[str, Any]:
         report["client"] = []
 
     # Look for models first
-    model_names = [model_name for model_name in dir(module_to_generate.models) if model_name[0].isupper()]
-    for model_name in model_names:
-        model_cls = getattr(module_to_generate.models, model_name)
-        if hasattr(model_cls, "_attribute_map"):
-            report["models"]["models"][model_name] = create_model_report(model_cls)
-        elif issubclass(model_cls, Exception):  # If not, might be an exception
-            report["models"]["exceptions"][model_name] = create_model_report(model_cls)
-        else:
-            report["models"]["enums"][model_name] = create_model_report(model_cls)
+    if hasattr(module_to_generate, "models"):
+        model_names = [model_name for model_name in dir(module_to_generate.models) if model_name[0].isupper()]
+        for model_name in model_names:
+            model_cls = getattr(module_to_generate.models, model_name)
+            if hasattr(model_cls, "_attribute_map"):
+                report["models"]["models"][model_name] = create_model_report(model_cls)
+            elif issubclass(model_cls, Exception):  # If not, might be an exception
+                report["models"]["exceptions"][model_name] = create_model_report(model_cls)
+            else:
+                report["models"]["enums"][model_name] = create_model_report(model_cls)
     # Look for operation groups
     try:
         operations_classes = [op_name for op_name in dir(module_to_generate.operations) if op_name[0].isupper()]
@@ -288,7 +289,6 @@ def main(
 
     return result
 
-
 def find_autorest_generated_folder(module_prefix="azure"):
     """Find all Autorest generated code in that module prefix.
     This actually looks for a "models" package only (not file). We could be smarter if necessary.
@@ -308,7 +308,7 @@ def find_autorest_generated_folder(module_prefix="azure"):
     result = []
     try:
         _LOGGER.debug(f"Try {module_prefix}")
-        model_module = importlib.import_module(".models", module_prefix)
+        model_module = importlib.import_module(".operations", module_prefix)
         # If not exception, we MIGHT have found it, but cannot be a file.
         # Keep continue to try to break it, file module have no __path__
         model_module.__path__
