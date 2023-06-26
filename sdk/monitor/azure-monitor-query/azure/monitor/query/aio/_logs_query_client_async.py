@@ -35,7 +35,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/code_snippets.py
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
             :start-after: [START create_logs_query_client_async]
             :end-before: [END create_logs_query_client_async]
             :language: python

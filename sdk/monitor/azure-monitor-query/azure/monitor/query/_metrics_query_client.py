@@ -31,7 +31,7 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/code_snippets.py
+        .. literalinclude:: ../samples/sample_authentication.py
             :start-after: [START create_metrics_query_client]
             :end-before: [END create_metrics_query_client]
             :language: python

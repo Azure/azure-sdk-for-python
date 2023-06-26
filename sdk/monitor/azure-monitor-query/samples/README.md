@@ -14,6 +14,8 @@ urlFragment: query-azuremonitor-samples
 
 The following code samples show common scenarios with the Azure Monitor Query client library.
 
+For examples on authenticating with the Azure Monitor service, see [sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_authentication.py) and [sample_authentication_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/async_samples/sample_authentication_async.py).
+
 ### Logs query samples
 
 - [Send a single workspace query with LogsQueryClient and handle the response as a table](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_logs_single_query.py) ([async sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/async_samples/sample_log_query_async.py))
