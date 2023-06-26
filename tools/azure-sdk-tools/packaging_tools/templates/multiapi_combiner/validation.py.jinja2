@@ -16,11 +16,12 @@ def api_version_validation(**kwargs):
         def wrapper(*args, **kwargs):
             func_name = func.__name__
             try:
+                client = args[0]
                 client_api_version = client._get_api_version(func_name)  # pylint: disable=protected-access
             except AttributeError:
-                client_api_version = client._api_version
+                client_api_version = client._api_version  # pylint: disable=protected-access
 
-            if client_api_version not in method_valid_on:
+            if method_valid_on and client_api_version not in method_valid_on:
                 raise ValueError(
                     f"'{func_name}' is not available in API version "
                     f"{client_api_version}. All valid API version are {', '.join(method_valid_on)}."
