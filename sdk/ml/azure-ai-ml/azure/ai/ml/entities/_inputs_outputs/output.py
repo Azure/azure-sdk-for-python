@@ -98,7 +98,7 @@ class Output(_InputOutputBase):
         self.path = path
         self.mode = mode
         # use this field to determine the Output is control or not, currently hide in kwargs
-        self.is_control = kwargs.pop("is_control", None)
+        self.is_control = self._is_primitive_type if self._is_primitive_type else kwargs.pop("is_control", None)
         # use this field to mark Output for early node orchestrate, currently hide in kwargs
         self.early_available = kwargs.pop("early_available", None)
         self._intellectual_property = None
@@ -164,18 +164,14 @@ class OutputMetadata(object):
         self,
         type=None,
         description=None,
-        optional=None,
         min=None,
         max=None,
-        is_control=None,
         **kwargs,
     ):
         self.type = type
         self.description = description
-        self._optional = optional
         self._min = min
         self._max = max
-        self._is_control = is_control
         self._default = kwargs.pop("default", None)
         self._kwargs = kwargs
 
@@ -189,11 +185,6 @@ class OutputMetadata(object):
         return _remove_empty_values(result)
 
     @property
-    def optional(self) -> bool:
-        """Return whether the parameter is optional."""
-        return self._optional
-
-    @property
     def max(self) -> Optional[Union[int, float]]:
         """Return the maximum value of the parameter for a numeric parameter."""
         return self._max
@@ -202,11 +193,6 @@ class OutputMetadata(object):
     def min(self) -> Optional[Union[int, float]]:
         """Return the minimum value of the parameter for a numeric parameter."""
         return self._min
-
-    @property
-    def is_control(self):
-        """Return the parameter is control output or not."""
-        return self._is_control
 
     @property
     def default(self):
