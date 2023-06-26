@@ -22,7 +22,6 @@ from .._models import (
     AddParticipantResult,
     RemoveParticipantResult,
     TransferCallResult,
-    FileSource,
     MuteParticipantsResult,
 )
 from .._generated.aio import AzureCommunicationCallAutomationService
@@ -66,6 +65,7 @@ if TYPE_CHECKING:
         Choice,
     )
     from .._models import (
+        FileSource,
         TextSource,
         SsmlSource,
     )

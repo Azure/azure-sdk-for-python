@@ -21,7 +21,6 @@ from ._models import (
     AddParticipantResult,
     RemoveParticipantResult,
     TransferCallResult,
-    FileSource,
     MuteParticipantsResult,
 )
 from ._generated._client import AzureCommunicationCallAutomationService
@@ -63,6 +62,7 @@ if TYPE_CHECKING:
         Choice,
     )
     from ._models import (
+        FileSource,
         TextSource,
         SsmlSource,
     )
