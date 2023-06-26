@@ -35,7 +35,7 @@ class TestEmbeddingsAsync(AzureRecordedTestCase):
         assert "Must provide an 'engine' or 'deployment_id' parameter" in str(e.value)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [ALL])
+    @pytest.mark.parametrize("api_type", ALL)
     @configure
     async def test_embedding(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["embeddings_model"]} if api_type == "openai" \
