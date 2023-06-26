@@ -141,7 +141,7 @@ class ListBlobsIncludeItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     VERSIONS = "versions"
     TAGS = "tags"
 
-class ListContainersIncludeType(str, Enum, metaclass=CaseInsensitiveEnumMeta
+class ListContainersIncludeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     METADATA = "metadata"
     DELETED = "deleted"
