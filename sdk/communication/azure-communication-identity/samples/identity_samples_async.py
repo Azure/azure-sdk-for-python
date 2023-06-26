@@ -67,11 +67,11 @@ class CommunicationIdentityClientSamples(object):
 
         async with identity_client:
             user = await identity_client.create_user()
-            print("Issuing token for: " + user.properties.get("id"))
-            tokenresponse = await identity_client.get_token(
+            print(f"Issuing token for: {user.properties.get('id')}")
+            token_response = await identity_client.get_token(
                 user, scopes=[CommunicationTokenScope.CHAT]
             )
-            print("Token issued with value: " + tokenresponse.token)
+            print(f"Token issued with value: {token_response.token}")
 
     async def get_token_with_custom_expiration(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -95,14 +95,14 @@ class CommunicationIdentityClientSamples(object):
 
         async with identity_client:
             user = await identity_client.create_user()
-            print("Issuing token for: " + user.properties.get("id"))
+            print(f"Issuing token for: {user.properties.get('id')}")
             token_expires_in = timedelta(hours=1)
-            tokenresponse = await identity_client.get_token(
+            token_response = await identity_client.get_token(
                 user,
                 scopes=[CommunicationTokenScope.CHAT],
                 token_expires_in=token_expires_in,
             )
-            print("Issued token with custom expiration: " + tokenresponse.token)
+            print(f"Issued token with custom expiration: {token_response.token}")
 
     async def revoke_tokens(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -126,12 +126,12 @@ class CommunicationIdentityClientSamples(object):
 
         async with identity_client:
             user = await identity_client.create_user()
-            tokenresponse = await identity_client.get_token(
+            token_response = await identity_client.get_token(
                 user, scopes=[CommunicationTokenScope.CHAT]
             )
-            print("Revoking token: " + tokenresponse.token)
+            print(f"Revoking token: {token_response.token}")
             await identity_client.revoke_tokens(user)
-            print(tokenresponse.token + " revoked successfully")
+            print(f"{token_response.token} revoked successfully")
 
     async def create_user(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -155,7 +155,7 @@ class CommunicationIdentityClientSamples(object):
         async with identity_client:
             print("Creating new user")
             user = await identity_client.create_user()
-            print("User created with id:" + user.properties.get("id"))
+            print(f"User created with id: {user.properties.get('id')}")
 
     async def create_user_and_token(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -179,11 +179,11 @@ class CommunicationIdentityClientSamples(object):
 
         async with identity_client:
             print("Creating new user with token")
-            user, tokenresponse = await identity_client.create_user_and_token(
+            user, token_response = await identity_client.create_user_and_token(
                 scopes=[CommunicationTokenScope.CHAT]
             )
-            print("User created with id:" + user.properties.get("id"))
-            print("Token issued with value: " + tokenresponse.token)
+            print(f"User created with id: {user.properties.get('id')}")
+            print(f"Token issued with value: {token_response.token}")
 
     async def create_user_and_token_with_custom_expiration(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -208,11 +208,11 @@ class CommunicationIdentityClientSamples(object):
         async with identity_client:
             print("Creating new user with token")
             token_expires_in = timedelta(hours=1)
-            user, tokenresponse = await identity_client.create_user_and_token(
+            user, token_response = await identity_client.create_user_and_token(
                 scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in
             )
-            print("User created with id:" + user.properties.get("id"))
-            print("Issued token with custom expiration: " + tokenresponse.token)
+            print(f"User created with id: {user.properties.get('id')}")
+            print(f"Issued token with custom expiration: {token_response.token}")
 
     async def delete_user(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -235,9 +235,9 @@ class CommunicationIdentityClientSamples(object):
 
         async with identity_client:
             user = await identity_client.create_user()
-            print("Deleting user: " + user.properties.get("id"))
+            print(f"Deleting user: {user.properties.get('id')}")
             await identity_client.delete_user(user)
-            print(user.properties.get("id") + " deleted")
+            print(f"{user.properties.get('id')} deleted")
 
     async def get_token_for_teams_user(self):
         if os.getenv("SKIP_INT_IDENTITY_EXCHANGE_TOKEN_TEST") == "true":
@@ -275,12 +275,12 @@ class CommunicationIdentityClientSamples(object):
             )
             aad_token = result["access_token"]
             teams_user_oid = result["id_token_claims"]["oid"]
-            print("AAD access token of a Teams User: " + aad_token)
+            print(f"AAD access token of a Teams User: {aad_token}")
 
-            tokenresponse = await identity_client.get_token_for_teams_user(
+            token_response = await identity_client.get_token_for_teams_user(
                 aad_token, self.m365_client_id, teams_user_oid
             )
-            print("Token issued with value: " + tokenresponse.token)
+            print(f"Token issued with value: {token_response.token}")
 
 
 async def main():

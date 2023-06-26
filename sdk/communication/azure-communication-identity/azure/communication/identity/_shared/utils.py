@@ -7,7 +7,7 @@
 import base64
 import json
 import calendar
-from typing import cast, Tuple
+from typing import cast, Tuple, Optional
 from datetime import datetime
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
@@ -26,7 +26,7 @@ def _convert_datetime_to_utc_int(input_datetime) -> int:
 
 
 def parse_connection_str(conn_str):
-    # type: (str) -> Tuple[str, str]
+    # type: (Optional[str]) -> Tuple[str, str]
     if conn_str is None:
         raise ValueError("Connection string is undefined.")
     endpoint = None
