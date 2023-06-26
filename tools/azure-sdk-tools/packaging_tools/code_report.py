@@ -53,7 +53,7 @@ def create_report(module_name: str) -> Dict[str, Any]:
         report["client"] = []
 
     # Look for models first
-    if hasattr(module_to_generate, "models"):
+    try:
         model_names = [model_name for model_name in dir(module_to_generate.models) if model_name[0].isupper()]
         for model_name in model_names:
             model_cls = getattr(module_to_generate.models, model_name)
@@ -63,16 +63,24 @@ def create_report(module_name: str) -> Dict[str, Any]:
                 report["models"]["exceptions"][model_name] = create_model_report(model_cls)
             else:
                 report["models"]["enums"][model_name] = create_model_report(model_cls)
+    except:  # pylint: disable=bare-except
+        # the package may not have model or have DPG model which is supported yet
+        pass
+
     # Look for operation groups
+    if hasattr(module_to_generate, "operations"):
+        target_module = module_to_generate.operations
+    else:
+        target_module = module_to_generate._operations  #pylint: disable=protected-access
     try:
-        operations_classes = [op_name for op_name in dir(module_to_generate.operations) if op_name[0].isupper()]
+        operations_classes = [op_name for op_name in dir(target_module) if op_name[0].isupper()]
     except AttributeError:
         # This guy has no "operations", this is possible (Cognitive Services). Just skip it then.
         operations_classes = []
 
     for op_name in operations_classes:
         op_content = {"name": op_name}
-        op_cls = getattr(module_to_generate.operations, op_name)
+        op_cls = getattr(target_module, op_name)
         for op_attr_name in dir(op_cls):
             op_attr = getattr(op_cls, op_attr_name)
             if isinstance(op_attr, types.FunctionType) and not op_attr_name.startswith("_"):
@@ -306,20 +314,23 @@ def find_autorest_generated_folder(module_prefix="azure"):
         return []
 
     result = []
-    try:
-        _LOGGER.debug(f"Try {module_prefix}")
-        model_module = importlib.import_module(".operations", module_prefix)
-        # If not exception, we MIGHT have found it, but cannot be a file.
-        # Keep continue to try to break it, file module have no __path__
-        model_module.__path__
-        _LOGGER.info(f"Found {module_prefix}")
-        result.append(module_prefix)
-    except (ModuleNotFoundError, AttributeError):
-        # No model, might dig deeper
-        prefix_module = importlib.import_module(module_prefix)
-        for _, sub_package, ispkg in pkgutil.iter_modules(prefix_module.__path__, module_prefix + "."):
-            if ispkg:
-                result += find_autorest_generated_folder(sub_package)
+    for target in (".operations", "._operations"):
+        try:
+            _LOGGER.debug(f"Try {module_prefix}")
+            model_module = importlib.import_module(target, module_prefix)
+            # If not exception, we MIGHT have found it, but cannot be a file.
+            # Keep continue to try to break it, file module have no __path__
+            model_module.__path__
+            _LOGGER.info(f"Found {module_prefix}")
+            result.append(module_prefix)
+        except (ModuleNotFoundError, AttributeError):
+            # No model, might dig deeper
+            prefix_module = importlib.import_module(module_prefix)
+            for _, sub_package, ispkg in pkgutil.iter_modules(prefix_module.__path__, module_prefix + "."):
+                if ispkg and 'aio' not in sub_package:
+                    result += find_autorest_generated_folder(sub_package)
+        if result:
+            return result
     return result
 
 
