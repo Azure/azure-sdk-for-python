@@ -33,19 +33,8 @@ except ImportError:
     TZ_UTC = UTC()  # type: ignore
 
 
-if version_info < (3,):
-
-    def _str(value):
-        if isinstance(value, str):  # pylint: disable=undefined-variable
-            return value.encode("utf-8")
-
-        return str(value)
-else:
-    _str = str
-
-
 def _to_str(value):
-    return _str(value) if value is not None else None
+    return str(value) if value is not None else None
 
 
 def _to_utc_datetime(value):
