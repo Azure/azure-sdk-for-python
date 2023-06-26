@@ -401,6 +401,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         dtmf_inter_tone_timeout: Optional[int] = None,
         dtmf_max_tones_to_collect: Optional[int] = None,
         dtmf_stop_tones: Optional[List[str or 'DtmfTone']] = None,
+        speech_language: Optional[str] = None,
         choices: Optional[List['Choice']] = None,
         end_silence_timeout_in_ms: Optional[int] = None,
         **kwargs
@@ -429,6 +430,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype dtmf_max_tones_to_collect: int
         :keyword dtmf_stop_tones: List of tones that will stop recognizing.
         :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.DtmfTone]
+        :keyword speech_language: Speech language to be recognized, If not set default is en-US.
+        :paramtype speech_language: str
         :keyword choices: Defines Ivr choices for recognize.
         :paramtype choices: list[~azure.communication.callautomation.models.Choice]
         :keyword end_silence_timeout_in_ms: The length of end silence when user stops speaking and cogservice
@@ -441,7 +444,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         options = RecognizeOptions(
             interrupt_prompt=interrupt_prompt,
             initial_silence_timeout_in_seconds=initial_silence_timeout,
-            target_participant=serialize_identifier(target_participant)
+            target_participant=serialize_identifier(target_participant),
+            speech_language=speech_language
         )
 
         if not isinstance(input_type, RecognizeInputType):
