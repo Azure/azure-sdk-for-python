@@ -86,9 +86,10 @@ class NoPolling(PollingMethod[PollingReturnType_co]):
         """Empty run, no polling."""
 
     def status(self) -> str:
-        """Return the current status as a string.
+        """Return the current status.
 
         :rtype: str
+        :return: The current status
         """
         return "succeeded"
 
@@ -96,6 +97,7 @@ class NoPolling(PollingMethod[PollingReturnType_co]):
         """Is this polling finished?
 
         :rtype: bool
+        :return: Whether this polling is finished
         """
         return True
 
@@ -112,7 +114,9 @@ class NoPolling(PollingMethod[PollingReturnType_co]):
         try:
             deserialization_callback = kwargs["deserialization_callback"]
         except KeyError:
-            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token")
+            raise ValueError(  # pylint: disable=raise-missing-from
+                "Need kwarg 'deserialization_callback' to be recreated from continuation_token"
+            )
         import pickle
 
         initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
@@ -169,9 +173,6 @@ class LROPoller(Generic[PollingReturnType_co]):
     def _start(self):
         """Start the long running operation.
         On completion, runs any callbacks.
-
-        :param callable update_cmd: The API request to check the status of
-         the operation.
         """
         try:
             self._polling_method.run()
@@ -197,7 +198,11 @@ class LROPoller(Generic[PollingReturnType_co]):
             callbacks, self._callbacks = self._callbacks, []
 
     def polling_method(self) -> PollingMethod[PollingReturnType_co]:
-        """Return the polling method associated to this poller."""
+        """Return the polling method associated to this poller.
+
+        :returns: The polling method
+        :rtype: ~azure.core.polling.PollingMethod
+        """
         return self._polling_method
 
     def continuation_token(self) -> str:
@@ -231,8 +236,9 @@ class LROPoller(Generic[PollingReturnType_co]):
         """Return the result of the long running operation, or
         the result available after the specified timeout.
 
-        :returns: The deserialized resource of the long running operation,
-         if one is available.
+        :param float timeout: Period of time to wait before getting back control.
+        :returns: The deserialized resource of the long running operation, if one is available.
+        :rtype: any or None
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """
         self.wait(timeout)
