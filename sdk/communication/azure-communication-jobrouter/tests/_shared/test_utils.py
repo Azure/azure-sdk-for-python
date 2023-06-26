@@ -2,7 +2,7 @@ import unittest
 from datetime import datetime
 from azure.communication.jobrouter._shared.utils import create_access_token
 from azure.communication.jobrouter._shared.utils import get_current_utc_as_int
-import dateutil.tz
+from datetime import timezone
 import base64
 
 from azure.communication.jobrouter._shared.utils import(
@@ -23,7 +23,7 @@ class UtilsTest(unittest.TestCase):
 
     def test_convert_datetime_to_utc_int(self):
         # UTC
-        utc_time_in_sec = _convert_datetime_to_utc_int(datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=dateutil.tz.tzutc()))
+        utc_time_in_sec = _convert_datetime_to_utc_int(datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=timezone.utc))
         assert utc_time_in_sec == 0        
         # UTC naive (without a timezone specified)
         utc_naive_time_in_sec = _convert_datetime_to_utc_int(datetime(1970, 1, 1, 0, 0, 0, 0))
