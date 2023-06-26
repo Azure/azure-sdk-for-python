@@ -110,7 +110,7 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
     def body(self):
         return self.internal_response.content
 
-    def text(self, encoding: Optional[str]=None) -> str:
+    def text(self, encoding: Optional[str] = None) -> str:
         """Return the whole body as a string.
 
         If encoding is not provided, mostly rely on requests auto-detection, except

@@ -423,6 +423,8 @@ class Settings:
         """Return the currently computed settings, with values overridden by parameter values.
 
         :keyword dict kwargs: Settings to override
+        :rtype: namedtuple
+        :returns: The current values for all settings, with values overridden by parameter values
 
         Examples:
 
