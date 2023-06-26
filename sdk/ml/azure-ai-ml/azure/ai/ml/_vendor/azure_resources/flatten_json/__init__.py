@@ -314,10 +314,7 @@ def _unflatten_asserts(flat_dict, separator):
     assert isinstance(flat_dict, dict), "un_flatten requires dictionary input"
     assert isinstance(separator, str), "separator must be string"
     assert all(
-        (
-            not value or not isinstance(value, Iterable) or isinstance(value, str)
-            for value in flat_dict.values()
-        )
+        (not value or not isinstance(value, Iterable) or isinstance(value, str) for value in flat_dict.values())
     ), "provided dict is not flat"
 
 

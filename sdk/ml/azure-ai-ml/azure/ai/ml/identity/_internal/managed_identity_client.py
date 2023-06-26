@@ -15,6 +15,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 
 from .._internal import _scopes_to_resource
 from .._internal.pipeline import build_pipeline
+
 ABC = abc.ABC
 
 if TYPE_CHECKING:
