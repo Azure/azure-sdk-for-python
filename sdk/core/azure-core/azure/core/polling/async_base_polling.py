@@ -46,9 +46,6 @@ from ..rest import HttpRequest, AsyncHttpResponse
 
 HttpRequestType = Union[LegacyHttpRequest, HttpRequest]
 AsyncHttpResponseType = Union[LegacyAsyncHttpResponse, AsyncHttpResponse]
-LegacyPipelineResponseType = PipelineResponse[LegacyHttpRequest, LegacyAsyncHttpResponse]
-NewPipelineResponseType = PipelineResponse[HttpRequest, AsyncHttpResponse]
-AsyncPipelineResponseType = PipelineResponse[HttpRequestType, AsyncHttpResponseType]
 HttpRequestTypeVar = TypeVar("HttpRequestTypeVar", bound=HttpRequestType)
 AsyncHttpResponseTypeVar = TypeVar("AsyncHttpResponseTypeVar", bound=AsyncHttpResponseType)
 AsyncPipelineResponseTypeVar = PipelineResponse[HttpRequestTypeVar, AsyncHttpResponseTypeVar]
@@ -76,10 +73,10 @@ class AsyncLROBasePolling(
     If your polling need are more specific, you could implement a PollingMethod directly
     """
 
-    _initial_response: AsyncPipelineResponseType
+    _initial_response: AsyncPipelineResponseTypeVar
     """Store the initial response."""
 
-    _pipeline_response: AsyncPipelineResponseType
+    _pipeline_response: AsyncPipelineResponseTypeVar
     """Store the latest received HTTP response, initialized by the first answer."""
 
     @property

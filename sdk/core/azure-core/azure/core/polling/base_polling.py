@@ -423,7 +423,7 @@ class _SansIOLROBasePolling(
     """The algorithm this poller has decided to use. Will loop through 'can_poll' of the input algorithms to decide."""
 
     _status: str
-    """Hold the current of this poller"""
+    """Hold the current status of this poller"""
 
     _client: PipelineClientType
     """The Azure Core Pipeline client used to make request."""
@@ -434,7 +434,7 @@ class _SansIOLROBasePolling(
         lro_algorithms: Optional[List[LongRunningOperation]] = None,
         lro_options: Optional[Dict[str, Any]] = None,
         path_format_arguments: Optional[Dict[str, str]] = None,
-        **operation_config
+        **operation_config: Any
     ):
         self._lro_algorithms = lro_algorithms or [
             OperationResourcePolling(lro_options=lro_options),
