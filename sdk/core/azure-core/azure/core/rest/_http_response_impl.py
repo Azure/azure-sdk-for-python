@@ -23,7 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from email.message import Message
 from json import loads
 from typing import cast, Any, Optional, Iterator, MutableMapping, Callable
 from http.client import HTTPResponse as _HTTPResponse
@@ -94,7 +93,7 @@ class _HttpResponseBackcompatMixinBase:
         self.read()
         return self.content  # pylint: disable=no-member
 
-    def _decode_parts(self, message: Message, http_response_type, requests):
+    def _decode_parts(self, message, http_response_type, requests):
         """Helper for _decode_parts.
 
         Rebuild an HTTP response from pure string.
