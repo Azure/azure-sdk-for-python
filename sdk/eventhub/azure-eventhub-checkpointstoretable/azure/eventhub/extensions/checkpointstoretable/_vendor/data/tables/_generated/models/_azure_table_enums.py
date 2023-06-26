@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class GeoReplicationStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class GeoReplicationStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the secondary location.
     """
 
@@ -34,13 +18,13 @@ class GeoReplicationStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     BOOTSTRAP = "bootstrap"
     UNAVAILABLE = "unavailable"
 
-class OdataMetadataFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OdataMetadataFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     APPLICATION_JSON_ODATA_NOMETADATA = "application/json;odata=nometadata"
     APPLICATION_JSON_ODATA_MINIMALMETADATA = "application/json;odata=minimalmetadata"
     APPLICATION_JSON_ODATA_FULLMETADATA = "application/json;odata=fullmetadata"
 
-class ResponseFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     RETURN_NO_CONTENT = "return-no-content"
     RETURN_CONTENT = "return-content"

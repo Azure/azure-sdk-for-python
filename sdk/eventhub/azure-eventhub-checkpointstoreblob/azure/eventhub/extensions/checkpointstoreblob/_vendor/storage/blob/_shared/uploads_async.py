@@ -12,8 +12,6 @@ import threading
 
 from math import ceil
 
-import six
-
 from . import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
@@ -163,7 +161,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
                 if self.total_size:
                     read_size = min(self.chunk_size - len(data), self.total_size - (index + len(data)))
                 temp = self.stream.read(read_size)
-                if not isinstance(temp, six.binary_type):
+                if not isinstance(temp, str):
                     raise TypeError('Blob data should be of type bytes.')
                 data += temp or b""
 

@@ -8,7 +8,6 @@
 from io import SEEK_SET, UnsupportedOperation
 from typing import Optional, Union, Any, TypeVar, TYPE_CHECKING # pylint: disable=unused-import
 
-import six
 from azure.core.exceptions import ResourceModifiedError, HttpResponseError
 
 from .._shared.response_handlers import (
@@ -59,7 +58,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
             try:
                 data = data.read(length)
-                if not isinstance(data, six.binary_type):
+                if not isinstance(data, str):
                     raise TypeError('Blob data should be of type bytes.')
             except AttributeError:
                 pass

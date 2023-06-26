@@ -11,8 +11,6 @@ from threading import Lock
 from itertools import islice
 from math import ceil
 
-import six
-
 from azure.core.tracing.common import with_current_context
 
 from . import encode_base64, url_quote
@@ -160,7 +158,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
                 if self.total_size:
                     read_size = min(self.chunk_size - len(data), self.total_size - (index + len(data)))
                 temp = self.stream.read(read_size)
-                if not isinstance(temp, six.binary_type):
+                if not isinstance(temp, str):
                     raise TypeError("Blob data should be of type bytes.")
                 data += temp or b""
 
@@ -537,7 +535,7 @@ class IterStreamer(object):
         try:
             while count < size:
                 chunk = self.__next__()
-                if isinstance(chunk, six.text_type):
+                if isinstance(chunk, str):
                     chunk = chunk.encode(self.encoding)
                 data += chunk
                 count += len(chunk)

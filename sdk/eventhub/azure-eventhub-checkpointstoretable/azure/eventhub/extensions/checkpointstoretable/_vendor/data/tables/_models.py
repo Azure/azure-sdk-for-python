@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING, Any, Dict, List
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 # from azure.core import CaseInsensitiveEnumMeta
-# from six import with_metaclass
 
 from ._generated.models import TableServiceStats as GenTableServiceStats
 from ._generated.models import AccessPolicy as GenAccessPolicy

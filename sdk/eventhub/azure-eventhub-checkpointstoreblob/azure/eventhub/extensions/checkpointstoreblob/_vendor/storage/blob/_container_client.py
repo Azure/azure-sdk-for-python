@@ -18,8 +18,6 @@ except ImportError:
     from urlparse import urlparse # type: ignore
     from urllib2 import quote, unquote # type: ignore
 
-import six
-
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
@@ -155,7 +153,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
     def _format_url(self, hostname):
         container_name = self.container_name
-        if isinstance(container_name, six.text_type):
+        if isinstance(container_name, str):
             container_name = container_name.encode('UTF-8')
         return "{}://{}/{}{}".format(
             self.scheme,
