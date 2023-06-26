@@ -1,6 +1,9 @@
 import sys
 import asyncio
-from unittest.mock import AsyncMock, Mock
+if sys.version_info >= (3, 8):
+    from unittest.mock import AsyncMock
+else:
+    from unittest.mock import Mock
 import pytest
 from azure.eventhub._pyamqp.aio import Connection
 
