@@ -8,7 +8,6 @@ import hashlib
 import datetime
 import hmac
 from sys import version_info
-import six
 
 
 class UTC(datetime.tzinfo):
@@ -37,7 +36,7 @@ except ImportError:
 if version_info < (3,):
 
     def _str(value):
-        if isinstance(value, unicode):  # pylint: disable=undefined-variable
+        if isinstance(value, str):  # pylint: disable=undefined-variable
             return value.encode("utf-8")
 
         return str(value)
@@ -62,14 +61,14 @@ def _to_utc_datetime(value):
 
 
 def _encode_base64(data):
-    if isinstance(data, six.text_type):
+    if isinstance(data, str):
         data = data.encode("utf-8")
     encoded = base64.b64encode(data)
     return encoded.decode("utf-8")
 
 
 def _decode_base64_to_bytes(data):
-    if isinstance(data, six.text_type):
+    if isinstance(data, str):
         data = data.encode("utf-8")
     return base64.b64decode(data)
 
@@ -78,9 +77,9 @@ def _sign_string(key, string_to_sign, key_is_base64=True):
     if key_is_base64:
         key = _decode_base64_to_bytes(key)
     else:
-        if isinstance(key, six.text_type):
+        if isinstance(key, str):
             key = key.encode("utf-8")
-    if isinstance(string_to_sign, six.text_type):
+    if isinstance(string_to_sign, str):
         string_to_sign = string_to_sign.encode("utf-8")
     signed_hmac_sha256 = hmac.HMAC(key, string_to_sign, hashlib.sha256)
     digest = signed_hmac_sha256.digest()

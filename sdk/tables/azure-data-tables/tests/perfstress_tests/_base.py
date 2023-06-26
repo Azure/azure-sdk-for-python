@@ -5,7 +5,7 @@
 
 import os
 import uuid
-from dateutil.tz import tzutc
+from datetime import timezone
 from datetime import datetime
 import string
 import random
@@ -24,7 +24,7 @@ _FULL_EDM_ENTITY = {
     'PartitionKey': '',
     'RowKey': '',
     'StringTypeProperty': 'StringTypeProperty',
-    'DatetimeTypeProperty': datetime(1970, 10, 4, tzinfo=tzutc()),
+    'DatetimeTypeProperty': datetime(1970, 10, 4, tzinfo=timezone.utc),
     'GuidTypeProperty': uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'),
     'BinaryTypeProperty': b'BinaryTypeProperty',
     'Int64TypeProperty': EntityProperty(2^32+1, EdmType.INT64),
