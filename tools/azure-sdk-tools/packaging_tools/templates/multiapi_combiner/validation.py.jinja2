@@ -21,7 +21,7 @@ def api_version_validation(**kwargs):
             except AttributeError:
                 client_api_version = client._api_version
 
-            if client_api_version not in method_valid_on:
+            if method_valid_on and client_api_version not in method_valid_on:
                 raise ValueError(
                     f"'{func_name}' is not available in API version "
                     f"{client_api_version}. All valid API version are {', '.join(method_valid_on)}."
