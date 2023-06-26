@@ -356,7 +356,6 @@ class HttpRequest:
         :type requests: ~azure.core.pipeline.transport.HttpRequest
         :keyword list[SansIOHTTPPolicy] policies: SansIOPolicy to apply at preparation time
         :keyword str boundary: Optional boundary
-        :param requests: HttpRequests object
         """
         self.multipart_mixed_info = (
             requests,
