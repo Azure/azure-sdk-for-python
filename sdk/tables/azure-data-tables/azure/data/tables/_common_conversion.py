@@ -7,7 +7,6 @@ import base64
 import hashlib
 import datetime
 import hmac
-from sys import version_info
 
 
 class UTC(datetime.tzinfo):
