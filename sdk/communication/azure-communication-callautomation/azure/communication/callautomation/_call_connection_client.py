@@ -21,7 +21,8 @@ from ._models import (
     AddParticipantResult,
     RemoveParticipantResult,
     TransferCallResult,
-    FileSource
+    FileSource,
+    MuteParticipantsResult,
 )
 from ._generated._client import AzureCommunicationCallAutomationService
 from ._generated.models import (
@@ -33,7 +34,12 @@ from ._generated.models import (
     DtmfOptions,
     PlayOptions,
     RecognizeOptions,
+    SpeechOptions,
+    ContinuousDtmfRecognitionRequest,
+    SendDtmfRequest,
+    MuteParticipantsRequest,
 )
+from ._generated.models._enums import RecognizeInputType
 from ._shared.utils import (
     get_authentication_policy,
     parse_connection_str
@@ -52,7 +58,13 @@ if TYPE_CHECKING:
     )
     from ._generated.models._enums import (
         DtmfTone,
-        RecognizeInputType
+    )
+    from ._generated.models import (
+        Choice,
+    )
+    from ._models import (
+        TextSource,
+        SsmlSource,
     )
     from azure.core.exceptions import HttpResponseError
 
@@ -300,7 +312,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace
     def play_media(
         self,
-        play_source: Union['FileSource', List['FileSource']],
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource', List['FileSource'], List['TextSource'],
+        List['SsmlSource']],
         play_to: List['CommunicationIdentifier'],
         *,
         loop: Optional[bool] = False,
@@ -311,7 +324,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         :param play_source: A PlaySource representing the source to play.
         :type play_source: Union[~azure.communication.callautomation.FileSource,
-        List[~azure.communication.callautomation.FileSource]]
+         ~azure.communication.callautomation.TextSource, ~azure.communication.callautomation.SsmlSource,
+         List[~azure.communication.callautomation.FileSource], List[~azure.communication.callautomation.TextSource],
+         List[~azure.communication.callautomation.SsmlSource]]
         :param play_to: The targets to play media to.
         :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
         :keyword loop: if the media should be repeated until cancelled.
@@ -322,7 +337,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if isinstance(play_source, FileSource):
+        if not isinstance(play_source, List):
             play_source = [play_source]
 
         play_request = PlayRequest(
@@ -338,7 +353,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace
     def play_media_to_all(
         self,
-        play_source: Union['FileSource', List['FileSource']],
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource', List['FileSource'], List['TextSource'],
+        List['SsmlSource']],
         *,
         loop: Optional[bool] = False,
         operation_context: Optional[str] = None,
@@ -348,7 +364,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         :param play_source: A PlaySource representing the source to play.
         :type play_source: Union[~azure.communication.callautomation.FileSource,
-        List[~azure.communication.callautomation.FileSource]]
+         ~azure.communication.callautomation.TextSource, ~azure.communication.callautomation.SsmlSource,
+         List[~azure.communication.callautomation.FileSource], List[~azure.communication.callautomation.TextSource],
+         List[~azure.communication.callautomation.SsmlSource]]
         :keyword loop: if the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
@@ -357,7 +375,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if isinstance(play_source, FileSource):
+        if not isinstance(play_source, List):
             play_source = [play_source]
 
         self.play_media(play_source=play_source,
@@ -373,13 +391,15 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         target_participant: 'CommunicationIdentifier',
         *,
         initial_silence_timeout: Optional[int] = None,
-        play_prompt: Optional['FileSource'] = None,
+        play_prompt: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None,
         interrupt_call_media_operation: Optional[bool] = False,
         operation_context: Optional[str] = None,
         interrupt_prompt: Optional[bool] = False,
         dtmf_inter_tone_timeout: Optional[int] = None,
-        dtmf_max_tones_to_collect: Optional[str] = None,
+        dtmf_max_tones_to_collect: Optional[int] = None,
         dtmf_stop_tones: Optional[List[str or 'DtmfTone']] = None,
+        choices: Optional[List['Choice']] = None,
+        end_silence_timeout_in_ms: Optional[int] = None,
         **kwargs
     ) -> None:
         """Recognize tones from specific participant in this call.
@@ -391,7 +411,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :keyword initial_silence_timeout: Time to wait for first input after prompt in seconds (if any).
         :paramtype initial_silence_timeout: int
         :keyword play_prompt: The source of the audio to be played for recognition.
-        :paramtype play_prompt: ~azure.communication.callautomation.FileSource
+        :paramtype play_prompt: ~azure.communication.callautomation.FileSource or
+        ~azure.communication.callautomation.TextSource or ~azure.communication.callautomation.SsmlSource
         :keyword interrupt_call_media_operation:
          If set recognize can barge into other existing queued-up/currently-processing requests.
         :paramtype interrupt_call_media_operation: bool
@@ -405,6 +426,11 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype dtmf_max_tones_to_collect: int
         :keyword dtmf_stop_tones: List of tones that will stop recognizing.
         :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.DtmfTone]
+        :keyword choices: Defines Ivr choices for recognize.
+        :paramtype choices: list[~azure.communication.callautomation.models.Choice]
+        :keyword end_silence_timeout_in_ms: The length of end silence when user stops speaking and cogservice
+         send response.
+        :paramtype end_silence_timeout_in_ms: int
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -412,13 +438,35 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         options = RecognizeOptions(
             interrupt_prompt=interrupt_prompt,
             initial_silence_timeout_in_seconds=initial_silence_timeout,
-            target_participant=serialize_identifier(target_participant),
-            dtmf_options= DtmfOptions(
+            target_participant=serialize_identifier(target_participant)
+        )
+
+        if not isinstance(input_type, RecognizeInputType):
+            input_type = RecognizeInputType[input_type.upper()]
+
+        if input_type == RecognizeInputType.DTMF:
+            dtmf_options = DtmfOptions(
                 inter_tone_timeout_in_seconds=dtmf_inter_tone_timeout,
                 max_tones_to_collect=dtmf_max_tones_to_collect,
                 stop_tones=dtmf_stop_tones
             )
-        )
+            options.dtmf_options = dtmf_options
+        elif input_type == RecognizeInputType.SPEECH:
+            speech_options = SpeechOptions(end_silence_timeout_in_ms=end_silence_timeout_in_ms)
+            options.speech_options = speech_options
+        elif input_type == RecognizeInputType.SPEECH_OR_DTMF:
+            dtmf_options = DtmfOptions(
+                inter_tone_timeout_in_seconds=dtmf_inter_tone_timeout,
+                max_tones_to_collect=dtmf_max_tones_to_collect,
+                stop_tones=dtmf_stop_tones
+            )
+            speech_options = SpeechOptions(end_silence_timeout_in_ms=end_silence_timeout_in_ms)
+            options.dtmf_options = dtmf_options
+            options.speech_options = speech_options
+        elif input_type == RecognizeInputType.CHOICES:
+            options.choices = choices
+        else:
+            raise NotImplementedError(f"{type(input_type).__name__} is not supported")
 
         recognize_request = RecognizeRequest(
             recognize_input_type=input_type,
@@ -445,3 +493,117 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """
         self._call_media_client.cancel_all_media_operations(
             self._call_connection_id, **kwargs)
+
+    @distributed_trace
+    def start_continuous_dtmf_recognition(
+        self,
+        target_participant: 'CommunicationIdentifier',
+        *,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """Start continuous Dtmf recognition by subscribing to tones.
+
+        :param target_participant: Target participant.
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
+            target_participant=serialize_identifier(target_participant),
+            operation_context=operation_context)
+
+        self._call_media_client.start_continuous_dtmf_recognition(
+            self._call_connection_id,
+            continuous_dtmf_recognition_request,
+            **kwargs)
+
+    @distributed_trace
+    def stop_continuous_dtmf_recognition(
+        self,
+        target_participant: 'CommunicationIdentifier',
+        *,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """Stop continuous Dtmf recognition by unsubscribing to tones.
+
+        :param target_participant: Target participant.
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
+            target_participant=serialize_identifier(target_participant),
+            operation_context=operation_context)
+
+        self._call_media_client.stop_continuous_dtmf_recognition(
+            self._call_connection_id,
+            continuous_dtmf_recognition_request,
+            **kwargs)
+
+    @distributed_trace
+    def send_dtmf(
+        self,
+        tones: List[Union[str, 'DtmfTone']],
+        target_participant: 'CommunicationIdentifier',
+        *,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """Send Dtmf tones to this call.
+
+        :param tones: List of tones to be sent to target participant.
+        :type tones:list[str or ~azure.communication.callautomation.DtmfTone]
+        :param target_participant: Target participant.
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        send_dtmf_request = SendDtmfRequest(
+            tones=tones,
+            target_participant=serialize_identifier(target_participant),
+            operation_context=operation_context)
+
+        self._call_media_client.send_dtmf(
+            self._call_connection_id,
+            send_dtmf_request,
+            **kwargs)
+
+    @distributed_trace
+    def mute_participants(
+        self,
+        target_participant: 'CommunicationIdentifier',
+        *,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> MuteParticipantsResult:
+        """Mute participants from the call using identifier.
+        :param target_participant: Participant to be muted from the call. Only ACS Users are supported. Required.
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the request to the
+         response event.
+        :paramtype operation_context: str
+        :return: MuteParticipantsResult
+        :rtype: ~azure.communication.callautomation.MuteParticipantsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        mute_participants_request = MuteParticipantsRequest(
+            target_participants=[serialize_identifier(target_participant)],
+            operation_context=operation_context)
+
+        response = self._call_connection_client.mute(
+            self._call_connection_id,
+            mute_participants_request,
+            **kwargs)
+
+        return MuteParticipantsResult._from_generated(response) # pylint:disable=protected-access
