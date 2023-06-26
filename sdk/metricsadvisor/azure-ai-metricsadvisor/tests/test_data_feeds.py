@@ -236,7 +236,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert data_feed.schema.dimensions[1].name == "city"
             assert data_feed.schema.dimensions[0].display_name == "display category"
             assert data_feed.schema.dimensions[1].display_name == "display city"
-            assert data_feed.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=tzutc())
+            assert data_feed.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=timezone.utc)
             assert data_feed.ingestion_settings.data_source_request_concurrency == 0
             assert data_feed.ingestion_settings.ingestion_retry_delay == -1
             assert data_feed.ingestion_settings.ingestion_start_offset == -1
