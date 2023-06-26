@@ -33,7 +33,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attributes
-    """Deprecated. Batch endpoint deployment entity.
+    """Deprecated. Batch endpoint deployment entity. Please use ModelBatchDeployment entity instead.
 
     :param name: the name of the batch deployment
     :type name: str
