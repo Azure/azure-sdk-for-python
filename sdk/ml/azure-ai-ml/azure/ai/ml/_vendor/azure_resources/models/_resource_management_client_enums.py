@@ -139,7 +139,7 @@ class TagsPatchOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETE = "Delete"  #: The 'delete' option allows selectively deleting tags based on given names or name/value pairs.
 
 
-class WhatIfResultFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta
+class WhatIfResultFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The format of the What-If results"""
 
     RESOURCE_ID_ONLY = "ResourceIdOnly"
