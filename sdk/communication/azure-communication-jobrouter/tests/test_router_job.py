@@ -20,20 +20,20 @@ from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.communication.jobrouter import (
-    RouterClient,
-    RouterAdministrationClient,
+    JobRouterClient,
+    JobRouterAdministrationClient,
     RoundRobinMode,
     RouterWorker,
     QueueAssignment,
     ChannelConfiguration,
-    WorkerSelector,
+    RouterWorkerSelector,
     LabelOperator,
-    QueueSelector,
+    RouterQueueSelector,
     StaticQueueSelectorAttachment,
     StaticRule,
     StaticWorkerSelectorAttachment,
     RouterJobStatus,
-    JobStateSelector, DistributionPolicy, JobQueue, ClassificationPolicy, RouterJob
+    RouterJobStatusSelector, DistributionPolicy, RouterQueue, ClassificationPolicy, RouterJob
 )
 
 job_labels = {
@@ -55,32 +55,32 @@ job_priority = 10
 job_disposition_code = "JobCancelledByUser"
 
 job_requested_worker_selectors = [
-    WorkerSelector(
+    RouterWorkerSelector(
         key = "FakeKey1",
         label_operator = LabelOperator.EQUAL,
         value = True
     ),
-    WorkerSelector(
+    RouterWorkerSelector(
         key = "FakeKey2",
         label_operator = LabelOperator.NOT_EQUAL,
         value = False
     ),
-    WorkerSelector(
+    RouterWorkerSelector(
         key = "FakeKey3",
         label_operator = LabelOperator.LESS_THAN,
         value = 10
     ),
-    WorkerSelector(
+    RouterWorkerSelector(
         key = "FakeKey4",
         label_operator = LabelOperator.LESS_THAN_EQUAL,
         value = 10.01
     ),
-    WorkerSelector(
+    RouterWorkerSelector(
         key = "FakeKey5",
         label_operator = LabelOperator.GREATER_THAN,
         value = 10
     ),
-    WorkerSelector(
+    RouterWorkerSelector(
         key = "FakeKey6",
         label_operator = LabelOperator.GREATER_THAN_EQUAL,
         value = 10
@@ -94,7 +94,7 @@ prioritization_rules = [
 
 cp_worker_selectors = [
     StaticWorkerSelectorAttachment(
-        label_selector = WorkerSelector(
+        worker_selector = RouterWorkerSelector(
             key = "FakeKeyFromCp",
             label_operator = LabelOperator.EQUAL,
             value = "FakeValue",
@@ -103,7 +103,7 @@ cp_worker_selectors = [
 ]
 
 expected_attached_worker_selectors = [
-    WorkerSelector(
+    RouterWorkerSelector(
         key = "FakeKeyFromCp",
         label_operator = LabelOperator.EQUAL,
         value = "FakeValue",
@@ -121,8 +121,8 @@ class TestRouterJob(RouterRecordedTestCase):
     def clean_up(self):
         # delete in live mode
         if not self.is_playback():
-            router_client: RouterClient = self.create_client()
-            router_admin_client: RouterAdministrationClient = self.create_admin_client()
+            router_client: JobRouterClient = self.create_client()
+            router_admin_client: JobRouterAdministrationClient = self.create_admin_client()
             if self._testMethodName in self.job_ids \
                     and any(self.job_ids[self._testMethodName]):
                 for _id in set(self.job_ids[self._testMethodName]):
@@ -147,12 +147,12 @@ class TestRouterJob(RouterRecordedTestCase):
         return self._testMethodName + "_tst_dp"
 
     def setup_distribution_policy(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
 
         distribution_policy_id = self.get_distribution_policy_id()
 
         policy: DistributionPolicy = DistributionPolicy(
-            offer_ttl_seconds = 10.0,
+            offer_expires_after_seconds = 10.0,
             mode = RoundRobinMode(min_concurrent_offers = 1,
                                   max_concurrent_offers = 1),
             name = distribution_policy_id,
@@ -174,10 +174,10 @@ class TestRouterJob(RouterRecordedTestCase):
         return self._testMethodName + "_tst_q"
 
     def setup_job_queue(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_job_queue_id()
 
-        job_queue: JobQueue = JobQueue(
+        job_queue: RouterQueue = RouterQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
             name = job_queue_id,
             labels = job_labels,
@@ -198,10 +198,10 @@ class TestRouterJob(RouterRecordedTestCase):
         return self._testMethodName + "_tst_flbk_q"  # cspell:disable-line
 
     def setup_fallback_queue(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_fallback_queue_id()
 
-        job_queue: JobQueue = JobQueue(
+        job_queue: RouterQueue = RouterQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
             name = job_queue_id,
             labels = job_labels,
@@ -222,11 +222,11 @@ class TestRouterJob(RouterRecordedTestCase):
         return self._testMethodName + "_tst_cp"
 
     def setup_classification_policy(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
 
         cp_queue_selectors = [
             StaticQueueSelectorAttachment(
-                label_selector = QueueSelector(
+                label_selector = RouterQueueSelector(
                     key = "Id", label_operator = LabelOperator.EQUAL, value = self.get_job_queue_id()
                 )
             ),
@@ -258,7 +258,7 @@ class TestRouterJob(RouterRecordedTestCase):
             identifier,
             **kwargs
     ):
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         router_job = router_client.get_job(job_id = identifier)
         assert router_job.job_status == RouterJobStatus.QUEUED
 
@@ -267,7 +267,7 @@ class TestRouterJob(RouterRecordedTestCase):
             identifier,
             **kwargs
     ):
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         router_job = router_client.get_job(job_id = identifier)
         assert router_job.job_status == RouterJobStatus.SCHEDULED
 
@@ -276,10 +276,11 @@ class TestRouterJob(RouterRecordedTestCase):
             identifier,
             **kwargs
     ):
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         router_job = router_client.get_job(job_id = identifier)
         assert router_job.job_status == RouterJobStatus.CANCELLED
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
@@ -287,7 +288,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_create_job_direct_q(self):
         job_identifier = "tst_create_job_man"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -329,6 +330,7 @@ class TestRouterJob(RouterRecordedTestCase):
             Exception,
             job_identifier)
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
@@ -340,7 +342,7 @@ class TestRouterJob(RouterRecordedTestCase):
         scheduled_time_utc = recorded_variables.setdefault("scheduled_time_utc", _datetime_as_isostr(scheduled_time))
 
         job_identifier = "tst_create_sch_job"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -388,6 +390,7 @@ class TestRouterJob(RouterRecordedTestCase):
 
         return recorded_variables
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
@@ -395,7 +398,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_update_job_direct_q(self):
         job_identifier = "tst_update_job_man"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -461,6 +464,7 @@ class TestRouterJob(RouterRecordedTestCase):
         # updating labels does not change job status
         assert update_router_job.job_status == RouterJobStatus.QUEUED
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
@@ -468,7 +472,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_update_job_direct_q_w_kwargs(self):
         job_identifier = "tst_update_job_man_w_kwargs"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -534,6 +538,7 @@ class TestRouterJob(RouterRecordedTestCase):
         # updating labels does not change job status
         assert update_router_job.job_status == RouterJobStatus.QUEUED
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
@@ -541,7 +546,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_get_job_direct_q(self):
         job_identifier = "tst_get_job_man"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -600,6 +605,7 @@ class TestRouterJob(RouterRecordedTestCase):
             notes = job_notes
         )
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
@@ -609,7 +615,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_create_job_w_cp(self):
         job_identifier = "tst_create_job_cp"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -649,6 +655,7 @@ class TestRouterJob(RouterRecordedTestCase):
             Exception,
             job_identifier)
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
@@ -658,7 +665,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_update_job_w_cp(self):
         job_identifier = "tst_update_job_cp"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -728,6 +735,7 @@ class TestRouterJob(RouterRecordedTestCase):
             Exception,
             job_identifier)
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
@@ -737,7 +745,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_update_job_w_cp_w_kwargs(self):
         job_identifier = "tst_update_job_cp_w_kwargs"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -807,6 +815,7 @@ class TestRouterJob(RouterRecordedTestCase):
             Exception,
             job_identifier)
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
@@ -816,7 +825,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_get_job_w_cp(self):
         job_identifier = "tst_get_job_cp"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -876,6 +885,7 @@ class TestRouterJob(RouterRecordedTestCase):
 
         assert queried_router_job.job_status == RouterJobStatus.QUEUED
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
@@ -883,7 +893,7 @@ class TestRouterJob(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_delete_job(self):
         job_identifier = "tst_del_job_man"
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
             channel_id = job_channel_ids[0],
@@ -931,13 +941,14 @@ class TestRouterJob(RouterRecordedTestCase):
         assert nfe.value.reason == "Not Found"
         assert nfe.value.status_code == 404
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.after_test_execute('clean_up')
     def test_list_jobs(self):
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         job_identifiers = ["tst_list_job_1", "tst_list_job_2", "tst_list_job_3"]
 
         created_job_response = {}
@@ -988,7 +999,7 @@ class TestRouterJob(RouterRecordedTestCase):
 
         router_jobs = router_client.list_jobs(
             results_per_page = 2,
-            status = JobStateSelector.QUEUED,
+            status = RouterJobStatusSelector.QUEUED,
             queue_id = self.get_job_queue_id(),
             channel_id = job_channel_ids[0]
         )
@@ -1020,7 +1031,7 @@ class TestRouterJob(RouterRecordedTestCase):
         # all job_queues created were listed
         assert job_count == 0
 
-
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
@@ -1031,7 +1042,7 @@ class TestRouterJob(RouterRecordedTestCase):
         scheduled_time = datetime.datetime.utcnow() + datetime.timedelta(0, 30)
         scheduled_time_utc = recorded_variables.setdefault("scheduled_time_utc", _datetime_as_isostr(scheduled_time))
 
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         job_identifiers = ["tst_list_sch_job_1", "tst_list_sch_job_2"]
 
         created_job_response = {}
@@ -1086,7 +1097,7 @@ class TestRouterJob(RouterRecordedTestCase):
 
         router_jobs = router_client.list_jobs(
             results_per_page = 2,
-            status = JobStateSelector.SCHEDULED,
+            status = RouterJobStatusSelector.SCHEDULED,
             queue_id = self.get_job_queue_id(),
             channel_id = job_channel_ids[0],
             scheduled_before = recorded_variables["scheduled_time_utc"]

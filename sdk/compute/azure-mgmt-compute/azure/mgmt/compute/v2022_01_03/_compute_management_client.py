@@ -101,37 +101,41 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.galleries = GalleriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_images = GalleryImagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.galleries = GalleriesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-03"
+        )
+        self.gallery_images = GalleryImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-03"
+        )
         self.gallery_image_versions = GalleryImageVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-03"
         )
         self.gallery_applications = GalleryApplicationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-03"
         )
         self.gallery_application_versions = GalleryApplicationVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-03"
         )
         self.gallery_sharing_profile = GallerySharingProfileOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-03"
         )
         self.shared_galleries = SharedGalleriesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-03"
         )
         self.shared_gallery_images = SharedGalleryImagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-03"
         )
         self.shared_gallery_image_versions = SharedGalleryImageVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-03"
         )
         self.community_galleries = CommunityGalleriesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-03"
         )
         self.community_gallery_images = CommunityGalleryImagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-03"
         )
         self.community_gallery_image_versions = CommunityGalleryImageVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-03"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:

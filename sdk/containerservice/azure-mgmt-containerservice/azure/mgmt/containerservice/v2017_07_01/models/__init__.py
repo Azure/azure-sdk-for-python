@@ -20,9 +20,6 @@ from ._models_py3 import ContainerServiceSshPublicKey
 from ._models_py3 import ContainerServiceVMDiagnostics
 from ._models_py3 import ContainerServiceWindowsProfile
 from ._models_py3 import KeyVaultSecretRef
-from ._models_py3 import OrchestratorProfile
-from ._models_py3 import OrchestratorVersionProfile
-from ._models_py3 import OrchestratorVersionProfileListResult
 from ._models_py3 import Resource
 
 from ._container_service_client_enums import ContainerServiceOrchestratorTypes
@@ -49,9 +46,6 @@ __all__ = [
     "ContainerServiceVMDiagnostics",
     "ContainerServiceWindowsProfile",
     "KeyVaultSecretRef",
-    "OrchestratorProfile",
-    "OrchestratorVersionProfile",
-    "OrchestratorVersionProfileListResult",
     "Resource",
     "ContainerServiceOrchestratorTypes",
     "ContainerServiceStorageProfileTypes",

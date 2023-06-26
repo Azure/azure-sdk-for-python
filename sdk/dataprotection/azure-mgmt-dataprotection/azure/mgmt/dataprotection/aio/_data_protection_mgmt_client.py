@@ -23,6 +23,7 @@ from .operations import (
     DataProtectionOperations,
     DataProtectionOperationsOperations,
     DeletedBackupInstancesOperations,
+    DppResourceGuardProxyOperations,
     ExportJobsOperationResultOperations,
     ExportJobsOperations,
     JobsOperations,
@@ -86,6 +87,9 @@ class DataProtectionMgmtClient:  # pylint: disable=client-accepts-api-version-ke
      azure.mgmt.dataprotection.aio.operations.DeletedBackupInstancesOperations
     :ivar resource_guards: ResourceGuardsOperations operations
     :vartype resource_guards: azure.mgmt.dataprotection.aio.operations.ResourceGuardsOperations
+    :ivar dpp_resource_guard_proxy: DppResourceGuardProxyOperations operations
+    :vartype dpp_resource_guard_proxy:
+     azure.mgmt.dataprotection.aio.operations.DppResourceGuardProxyOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -109,7 +113,7 @@ class DataProtectionMgmtClient:  # pylint: disable=client-accepts-api-version-ke
         self._config = DataProtectionMgmtClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -152,6 +156,9 @@ class DataProtectionMgmtClient:  # pylint: disable=client-accepts-api-version-ke
             self._client, self._config, self._serialize, self._deserialize
         )
         self.resource_guards = ResourceGuardsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.dpp_resource_guard_proxy = DppResourceGuardProxyOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
