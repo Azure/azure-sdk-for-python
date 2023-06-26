@@ -1,6 +1,6 @@
 {
     "chosen_version": "2021-12-01-preview",
-    "total_api_version_list": ["2021-12-01-preview", "2022-08-01-preview"],
+    "total_api_version_list": ["2021-12-01-preview"],
     "client": {
         "name": "AuthorizationManagementClient",
         "filename": "_authorization_management_client",
@@ -8,7 +8,7 @@
         "host_value": "\"https://management.azure.com\"",
         "parameterized_host_template": null,
         "azure_arm": true,
-        "has_lro_operations": true,
+        "has_lro_operations": false,
         "client_side_validation": false,
         "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"azurecore\": {\"azure.mgmt.core\": [\"ARMPipelineClient\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"AuthorizationManagementClientConfiguration\"], \".._serialization\": [\"Deserializer\", \"Serializer\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
         "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"azurecore\": {\"azure.mgmt.core\": [\"AsyncARMPipelineClient\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"AuthorizationManagementClientConfiguration\"], \"..._serialization\": [\"Deserializer\", \"Serializer\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
@@ -129,11 +129,6 @@
         "access_review_schedule_definitions_assigned_for_my_approval": "AccessReviewScheduleDefinitionsAssignedForMyApprovalOperations",
         "access_review_instances_assigned_for_my_approval": "AccessReviewInstancesAssignedForMyApprovalOperations",
         "access_review_instance_my_decisions": "AccessReviewInstanceMyDecisionsOperations",
-        "tenant_level_access_review_instance_contacted_reviewers": "TenantLevelAccessReviewInstanceContactedReviewersOperations",
-        "alerts": "AlertsOperations",
-        "alert_configurations": "AlertConfigurationsOperations",
-        "alert_definitions": "AlertDefinitionsOperations",
-        "alert_incidents": "AlertIncidentsOperations",
-        "alert_operation": "AlertOperationOperations"
+        "tenant_level_access_review_instance_contacted_reviewers": "TenantLevelAccessReviewInstanceContactedReviewersOperations"
     }
 }

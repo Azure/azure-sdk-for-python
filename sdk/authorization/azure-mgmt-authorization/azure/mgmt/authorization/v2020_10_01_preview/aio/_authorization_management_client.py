@@ -90,41 +90,41 @@ class AuthorizationManagementClient:  # pylint: disable=client-accepts-api-versi
         self._config = AuthorizationManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.role_assignments = RoleAssignmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-10-01-preview"
         )
         self.eligible_child_resources = EligibleChildResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-10-01-preview"
         )
         self.role_assignment_schedules = RoleAssignmentSchedulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-10-01-preview"
         )
         self.role_assignment_schedule_instances = RoleAssignmentScheduleInstancesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-10-01-preview"
         )
         self.role_assignment_schedule_requests = RoleAssignmentScheduleRequestsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-10-01-preview"
         )
         self.role_eligibility_schedules = RoleEligibilitySchedulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-10-01-preview"
         )
         self.role_eligibility_schedule_instances = RoleEligibilityScheduleInstancesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-10-01-preview"
         )
         self.role_eligibility_schedule_requests = RoleEligibilityScheduleRequestsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-10-01-preview"
         )
         self.role_management_policies = RoleManagementPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-10-01-preview"
         )
         self.role_management_policy_assignments = RoleManagementPolicyAssignmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-10-01-preview"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
