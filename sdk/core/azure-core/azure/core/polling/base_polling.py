@@ -168,8 +168,7 @@ def _is_empty(response: AllHTTPResponseType) -> bool:
 
 
 class LongRunningOperation(ABC, Generic[HTTPRequestType_co, HTTPResponseType_co]):
-    """Protocol to implement for a long running operation algorithm.
-    """
+    """Protocol to implement for a long running operation algorithm."""
 
     @abc.abstractmethod
     def can_poll(
