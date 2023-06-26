@@ -7,7 +7,7 @@
 
 import datetime
 import uuid
-from dateutil.tz import tzutc
+from datetime import timezone
 import pytest
 import functools
 from azure.core.exceptions import ResourceNotFoundError
@@ -67,7 +67,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             assert data_feed.granularity.granularity_type == "Daily"
             assert data_feed.schema.metrics[0].name == "cost"
             assert data_feed.schema.metrics[1].name == "revenue"
-            assert data_feed.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=tzutc())
+            assert data_feed.ingestion_settings.ingestion_begin_time == datetime.datetime(2019, 10, 1, tzinfo=timezone.utc)
         finally:
             self.clean_up(client.delete_data_feed, variables)
         return variables
