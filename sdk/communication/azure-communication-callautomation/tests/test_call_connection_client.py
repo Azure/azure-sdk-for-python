@@ -189,7 +189,7 @@ class TestCallConnectionClient(unittest.TestCase):
             transport=Mock(send=mock_send))
         user = CommunicationUserIdentifier(self.communication_user_id)
         try:
-            response = call_connection.mute_participants([user])
+            response = call_connection.mute_participants(user)
         except:
             raised = True
             raise
