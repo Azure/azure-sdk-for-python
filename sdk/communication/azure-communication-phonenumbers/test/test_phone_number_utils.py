@@ -6,7 +6,8 @@
 
 import json
 import pytest
-from azure.communication.phonenumbers._shared.utils import parse_connection_str, get_current_utc_time, get_current_utc_as_int, create_access_token, get_authentication_policy, _convert_datetime_to_utc_int
+from azure.communication.phonenumbers._shared.auth_policy_utils import get_authentication_policy
+from azure.communication.phonenumbers._shared.utils import parse_connection_str, get_current_utc_time, get_current_utc_as_int, create_access_token, _convert_datetime_to_utc_int
 from azure.core.credentials import AccessToken, AzureKeyCredential
 from datetime import datetime, timezone
 from msrest.serialization import TZ_UTC
