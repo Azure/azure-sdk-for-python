@@ -711,12 +711,8 @@ def _validate_skillset(skillset):
         if not skill_version:
             continue
 
-        if skill_version == SentimentSkillVersion.V1:
-            unsupported = ['model_version', 'include_opinion_mining']
         elif skill_version == SentimentSkillVersion.V3:
             unsupported = []
-        elif skill_version == EntityRecognitionSkillVersion.V1:
-            unsupported = ['model_version']
         elif skill_version == EntityRecognitionSkillVersion.V3:
             unsupported = ['include_typeless_entities']
 

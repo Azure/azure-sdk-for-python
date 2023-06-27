@@ -12,7 +12,6 @@ from .._generated.models import (
     LexicalTokenizer,
     AnalyzeRequest,
     CustomAnalyzer as _CustomAnalyzer,
-    EntityRecognitionSkill as _EntityRecognitionSkillV1,
     EntityRecognitionSkillV3 as _EntityRecognitionSkillV3,
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
@@ -20,7 +19,6 @@ from .._generated.models import (
     SearchIndexerDataSource as _SearchIndexerDataSource,
     SearchIndexerSkill,
     SearchIndexerSkillset as _SearchIndexerSkillset,
-    SentimentSkill as _SentimentSkillV1,
     SentimentSkillV3 as _SentimentSkillV3,
     SynonymMap as _SynonymMap,
     DataSourceCredentials,
@@ -92,9 +90,9 @@ class SearchIndexerSkillset(_SearchIndexerSkillset):
         custom_skills = []
         for skill in skillset.skills:
             skill_cls = type(skill)
-            if skill_cls in [_EntityRecognitionSkillV1, _EntityRecognitionSkillV3]:
+            if skill_cls in [_EntityRecognitionSkillV3]:
                 custom_skills.append(EntityRecognitionSkill._from_generated(skill)) # pylint:disable=protected-access
-            elif skill_cls in [_SentimentSkillV1, _SentimentSkillV3]:
+            elif skill_cls in [_SentimentSkillV3]:
                 custom_skills.append(SentimentSkill._from_generated(skill)) # pylint:disable=protected-access
             else:
                 custom_skills.append(skill)
@@ -107,8 +105,6 @@ class SearchIndexerSkillset(_SearchIndexerSkillset):
 class EntityRecognitionSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the Entity Recognition skill version to use."""
 
-    #: Use Entity Recognition skill V1.
-    V1 = "#Microsoft.Skills.Text.EntityRecognitionSkill"
     #: Use Entity Recognition skill V3.
     V3 = "#Microsoft.Skills.Text.V3.EntityRecognitionSkill"
     #: Use latest version of Entity Recognition skill.
@@ -191,7 +187,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
         **kwargs
     ):
         # pop skill_version from kwargs to avoid warning in msrest
-        skill_version = kwargs.pop('skill_version', EntityRecognitionSkillVersion.V1)
+        skill_version = kwargs.pop('skill_version', EntityRecognitionSkillVersion.V3)
 
         super(EntityRecognitionSkill, self).__init__(**kwargs)
         self.skill_version = skill_version
@@ -204,17 +200,6 @@ class EntityRecognitionSkill(SearchIndexerSkill):
 
 
     def _to_generated(self):
-        if self.skill_version == EntityRecognitionSkillVersion.V1:
-            return _EntityRecognitionSkillV1(
-                inputs=self.inputs,
-                outputs=self.outputs,
-                name=self.name,
-                odata_type=self.odata_type,
-                categories=self.categories,
-                default_language_code=self.default_language_code,
-                include_typeless_entities=self.include_typeless_entities,
-                minimum_precision=self.minimum_precision
-            )
         if self.skill_version in [EntityRecognitionSkillVersion.V3, EntityRecognitionSkillVersion.LATEST]:
             return _EntityRecognitionSkillV3(
                 inputs=self.inputs,
@@ -233,11 +218,6 @@ class EntityRecognitionSkill(SearchIndexerSkill):
         if not skill:
             return None
         kwargs = skill.as_dict()
-        if isinstance(skill, _EntityRecognitionSkillV1):
-            return EntityRecognitionSkill(
-                skill_version=EntityRecognitionSkillVersion.V1,
-                **kwargs
-            )
         if isinstance(skill, _EntityRecognitionSkillV3):
             return EntityRecognitionSkill(
                 skill_version=EntityRecognitionSkillVersion.V3,
@@ -249,8 +229,6 @@ class EntityRecognitionSkill(SearchIndexerSkill):
 class SentimentSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ Specifies the Sentiment Skill version to use."""
 
-    #: Use Sentiment skill V1.
-    V1 = "#Microsoft.Skills.Text.SentimentSkill"
     #: Use Sentiment skill V3.
     V3 = "#Microsoft.Skills.Text.V3.SentimentSkill"
     #: Use latest version of Sentiment skill.
@@ -327,7 +305,7 @@ class SentimentSkill(SearchIndexerSkill):
         **kwargs
     ):
         # pop skill_version from kwargs to avoid warning in msrest
-        skill_version = kwargs.pop('skill_version', SentimentSkillVersion.V1)
+        skill_version = kwargs.pop('skill_version', SentimentSkillVersion.V3)
 
         super(SentimentSkill, self).__init__(**kwargs)
         self.skill_version = skill_version
@@ -337,14 +315,6 @@ class SentimentSkill(SearchIndexerSkill):
         self.model_version = kwargs.get('model_version', None)
 
     def _to_generated(self):
-        if self.skill_version == SentimentSkillVersion.V1:
-            return _SentimentSkillV1(
-                inputs=self.inputs,
-                outputs=self.outputs,
-                name=self.name,
-                odata_type=self.odata_type,
-                default_language_code=self.default_language_code
-        )
         if self.skill_version in [SentimentSkillVersion.V3, SentimentSkillVersion.LATEST]:
             return _SentimentSkillV3(
                 inputs=self.inputs,
@@ -362,11 +332,6 @@ class SentimentSkill(SearchIndexerSkill):
         if not skill:
             return None
         kwargs = skill.as_dict()
-        if isinstance(skill, _SentimentSkillV1):
-            return SentimentSkill(
-                skill_version=SentimentSkillVersion.V1,
-                **kwargs
-            )
         if isinstance(skill, _SentimentSkillV3):
             return SentimentSkill(
                 skill_version=SentimentSkillVersion.V3,
