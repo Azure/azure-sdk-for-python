@@ -34,7 +34,6 @@ class ArtifactArchitecture(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RISCV64 = "riscv64"
     S390X = "s390x"
     WASM = "wasm"
-    UNKNOWN = "unknown"
 
 
 class ArtifactOperatingSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -52,7 +51,6 @@ class ArtifactOperatingSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PLAN9 = "plan9"
     SOLARIS = "solaris"
     WINDOWS = "windows"
-    UNKNOWN = "unknown"
 
 
 class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-attributes
