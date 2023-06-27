@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.failover_groups.begin_delete(
+    client.failover_groups.begin_delete(
         resource_group_name="Default",
         server_name="failover-group-primary-server",
         failover_group_name="failover-group-test-1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/FailoverGroupDelete.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-11-01-preview/examples/FailoverGroupDelete.json
 if __name__ == "__main__":
     main()

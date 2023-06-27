@@ -29,12 +29,11 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.firewall_rules.delete(
+    client.firewall_rules.delete(
         resource_group_name="firewallrulecrudtest-9886",
         server_name="firewallrulecrudtest-2368",
         firewall_rule_name="firewallrulecrudtest-7011",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/FirewallRuleDelete.json
