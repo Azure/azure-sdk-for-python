@@ -29,7 +29,7 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.database_accounts.begin_failover_priority_change(
+    client.database_accounts.begin_failover_priority_change(
         resource_group_name="rg1",
         account_name="ddb1-failover",
         failover_parameters={
@@ -39,9 +39,8 @@ def main():
             ]
         },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-04-15/examples/CosmosDBDatabaseAccountFailoverPriorityChange.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBDatabaseAccountFailoverPriorityChange.json
 if __name__ == "__main__":
     main()

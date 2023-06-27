@@ -62,11 +62,11 @@ class AsyncKeyVaultClientBase(object):
                 **kwargs
             )
             self._models = _KeyVaultClient.models(api_version=self.api_version)
-        except ValueError:
+        except ValueError as exc:
             raise NotImplementedError(
                 f"This package doesn't support API version '{self.api_version}'. "
                 + f"Supported versions: {', '.join(v.value for v in ApiVersion)}"
-            )
+            ) from exc
 
     @property
     def vault_url(self) -> str:

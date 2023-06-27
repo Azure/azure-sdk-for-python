@@ -52,7 +52,7 @@ class SchemaResolutionException(schema.AvroException):
     def __init__(self, fail_msg, writer_schema=None):
         pretty_writers = json.dumps(json.loads(str(writer_schema)), indent=2)
         if writer_schema:
-            fail_msg += "\nWriter's Schema: %s" % pretty_writers
+            fail_msg += f"\nWriter's Schema: {pretty_writers}"
         schema.AvroException.__init__(self, fail_msg)
 
 # ------------------------------------------------------------------------------
@@ -105,7 +105,7 @@ class BinaryDecoder(object):
             return True
         if b == 0:
             return False
-        fail_msg = "Invalid value for boolean: %s" % b
+        fail_msg = f"Invalid value for boolean: {b}"
         raise schema.AvroException(fail_msg)
 
     def read_int(self):
@@ -253,7 +253,7 @@ class DatumReader(object):
         elif writer_schema.type in ['record', 'error', 'request']:
             result = self.read_record(writer_schema, decoder)
         else:
-            fail_msg = "Cannot read unknown schema type: %s" % writer_schema.type
+            fail_msg = f"Cannot read unknown schema type: {writer_schema.type}"
             raise schema.AvroException(fail_msg)
         return result
 
@@ -290,7 +290,7 @@ class DatumReader(object):
             self.skip_record(writer_schema, decoder)
             result = None
         else:
-            fail_msg = "Unknown schema type: %s" % writer_schema.type
+            fail_msg = f"Unknown schema type: {writer_schema.type}"
             raise schema.AvroException(fail_msg)
         return result
 
@@ -315,8 +315,7 @@ class DatumReader(object):
         # read data
         index_of_symbol = decoder.read_int()
         if index_of_symbol >= len(writer_schema.symbols):
-            fail_msg = "Can't access enum index %d for enum with %d symbols" \
-                       % (index_of_symbol, len(writer_schema.symbols))
+            fail_msg = f"Can't access enum index {index_of_symbol} for enum with {len(writer_schema.symbols)} symbols"
             raise SchemaResolutionException(fail_msg, writer_schema)
         read_symbol = writer_schema.symbols[index_of_symbol]
         return read_symbol
@@ -410,8 +409,8 @@ class DatumReader(object):
         # schema resolution
         index_of_schema = int(decoder.read_long())
         if index_of_schema >= len(writer_schema.schemas):
-            fail_msg = "Can't access branch index %d for union with %d branches" \
-                       % (index_of_schema, len(writer_schema.schemas))
+            fail_msg = (f"Can't access branch index {index_of_schema} "
+                        f"for union with {len(writer_schema.schemas)} branches")
             raise SchemaResolutionException(fail_msg, writer_schema)
         selected_writer_schema = writer_schema.schemas[index_of_schema]
 
@@ -421,8 +420,8 @@ class DatumReader(object):
     def skip_union(self, writer_schema, decoder):
         index_of_schema = int(decoder.read_long())
         if index_of_schema >= len(writer_schema.schemas):
-            fail_msg = "Can't access branch index %d for union with %d branches" \
-                       % (index_of_schema, len(writer_schema.schemas))
+            fail_msg = (f"Can't access branch index {index_of_schema} "
+                        f"for union with {len(writer_schema.schemas)} branches")
             raise SchemaResolutionException(fail_msg, writer_schema)
         return self.skip_data(writer_schema.schemas[index_of_schema], decoder)
 

@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.patch_schedules.delete(
+    client.patch_schedules.delete(
         resource_group_name="rg1",
         name="cache1",
         default="default",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/redis/resource-manager/Microsoft.Cache/stable/2022-06-01/examples/RedisCachePatchSchedulesDelete.json
+# x-ms-original-file: specification/redis/resource-manager/Microsoft.Cache/stable/2023-04-01/examples/RedisCachePatchSchedulesDelete.json
 if __name__ == "__main__":
     main()

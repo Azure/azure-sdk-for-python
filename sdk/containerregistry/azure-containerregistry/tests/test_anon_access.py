@@ -4,7 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
-import six
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.paging import ItemPaged
@@ -38,7 +37,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             prev = None
             for repo in repositories:
                 count += 1
-                assert isinstance(repo, six.string_types)
+                assert isinstance(repo, str)
                 assert prev != repo
                 prev = repo
 
@@ -62,7 +61,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             for page in repository_pages.by_page():
                 page_count = 0
                 for repo in page:
-                    assert isinstance(repo, six.string_types)
+                    assert isinstance(repo, str)
                     assert prev != repo
                     prev = repo
                     page_count += 1

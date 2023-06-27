@@ -4,8 +4,8 @@ This guide details some common errors that can come up when migrating to and usi
 information about migrating existing tests to the test proxy, please refer to the
 [test proxy migration guide][migration_guide].
 
-Documentation of the motivations and goals of the test proxy can be found [here][general_docs] in the azure-sdk-tools
-GitHub repository, and documentation of how to set up and use the proxy can be found [here][detailed_docs].
+Documentation of test proxy's underlying functionality can be found [here][detailed_docs] in the `azure-sdk-tools`
+GitHub repository, but this isn't necessary to read for Python testing.
 
 ## Table of contents
 - [Guide for test proxy troubleshooting](#guide-for-test-proxy-troubleshooting)
@@ -198,7 +198,6 @@ chmod +x .../azure-sdk-for-python/.proxy/Azure.Sdk.Tools.TestProxy
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 [env_var_section]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#fetch-environment-variables
-[general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/test-proxy/initial-investigation.md
 [gitattributes]: https://git-scm.com/docs/gitattributes
 [mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
 [migration_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
