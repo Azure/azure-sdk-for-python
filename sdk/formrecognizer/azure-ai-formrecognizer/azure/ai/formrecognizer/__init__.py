@@ -69,7 +69,6 @@ from ._models import (
     TargetAuthorization,
     QuotaDetails,
     DocumentFormula,
-    DocumentImage,
     DocumentBarcode,
     DocumentAnnotation,
 )
@@ -151,7 +150,6 @@ __all__ = [
     "AzureBlobContentSource",
     "QuotaDetails",
     "DocumentFormula",
-    "DocumentImage",
     "DocumentBarcode",
     "DocumentAnnotation",
 ]
