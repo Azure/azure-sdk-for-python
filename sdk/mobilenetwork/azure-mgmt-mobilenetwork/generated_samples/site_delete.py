@@ -26,17 +26,16 @@ from azure.mgmt.mobilenetwork import MobileNetworkManagementClient
 def main():
     client = MobileNetworkManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.sites.begin_delete(
+    client.sites.begin_delete(
         resource_group_name="rg1",
         mobile_network_name="testMobileNetwork",
         site_name="testSite",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2022-11-01/examples/SiteDelete.json
+# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2023-06-01/examples/SiteDelete.json
 if __name__ == "__main__":
     main()

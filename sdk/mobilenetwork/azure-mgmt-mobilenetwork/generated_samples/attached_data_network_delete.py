@@ -26,18 +26,17 @@ from azure.mgmt.mobilenetwork import MobileNetworkManagementClient
 def main():
     client = MobileNetworkManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.attached_data_networks.begin_delete(
+    client.attached_data_networks.begin_delete(
         resource_group_name="rg1",
         packet_core_control_plane_name="TestPacketCoreCP",
         packet_core_data_plane_name="TestPacketCoreDP",
         attached_data_network_name="TestAttachedDataNetwork",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2022-11-01/examples/AttachedDataNetworkDelete.json
+# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2023-06-01/examples/AttachedDataNetworkDelete.json
 if __name__ == "__main__":
     main()

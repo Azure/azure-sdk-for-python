@@ -26,7 +26,7 @@ from azure.mgmt.mobilenetwork import MobileNetworkManagementClient
 def main():
     client = MobileNetworkManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.mobile_networks.begin_create_or_update(
@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2022-11-01/examples/MobileNetworkCreate.json
+# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2023-06-01/examples/MobileNetworkCreate.json
 if __name__ == "__main__":
     main()
