@@ -14,7 +14,10 @@ DUMMY_IMAGE = "conda/miniconda3"
 
 
 class ParameterizedSpark(SparkJobEntryMixin):
-    """Spark component that contains supporting parameters.
+    """
+    This class should not be instantiated directly. Instead, use the child class ~azure.ai.ml.entities.SparkComponent.
+
+    Spark component that contains supporting parameters.
 
     :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
         to a remote location.
@@ -36,7 +39,7 @@ class ParameterizedSpark(SparkJobEntryMixin):
     :param args: The arguments for the job.
     :type args: str
     :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :type kwargs: dict[str, Any]
     """
 
     def __init__(

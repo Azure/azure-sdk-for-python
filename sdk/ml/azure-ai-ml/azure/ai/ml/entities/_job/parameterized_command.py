@@ -38,8 +38,10 @@ OLD_INPUT_BINDING_PREFIX = "AZURE_ML_INPUT"
 
 
 class ParameterizedCommand:
-    """Command component version that contains of the training command and supporting parameters for a Command component
-        or job.
+    """This class should not be instantiated directly. Instead, use the child class ~azure.ai.ml.entities.CommandComponent.
+
+    Command component version that contains the command and supporting parameters for a Command component
+    or job.
 
     :param command: The command to be executed during training.
     :type command: str
@@ -59,7 +61,7 @@ class ParameterizedCommand:
     :param queue_settings: The queue settings for the job.
     :type queue_settings: ~azure.ai.ml.entities.QueueSettings
     :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :type kwargs: dict[str, Any]
     """
 
     def __init__(

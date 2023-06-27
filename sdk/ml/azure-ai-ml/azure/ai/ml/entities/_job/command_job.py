@@ -99,6 +99,16 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     :type limits: ~azure.ai.ml.entities.CommandJobLimits
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_command_configurations.py
+            :start-after: [START command_job_definition]
+            :end-before: [END command_job_definition]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a CommandJob.
     """
 
     def __init__(

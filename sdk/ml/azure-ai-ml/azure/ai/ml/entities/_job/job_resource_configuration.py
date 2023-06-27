@@ -104,6 +104,18 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
     :type shm_size: str
     :param max_instance_count: Optional maximum number of instances or nodes used by the compute target.
     :type max_instance_count: int
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict[str, Any]
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_command_configurations.py
+            :start-after: [START command_job_resource_configuration]
+            :end-before: [END command_job_resource_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a CommandJob with a JobResourceConfiguration.
     """
 
     def __init__(

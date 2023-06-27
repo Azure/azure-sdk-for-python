@@ -18,6 +18,16 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
     :type instance_type: str
     :param runtime_version: The Spark runtime version.
     :type runtime_version: str
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+            :start-after: [START spark_resource_configuration]
+            :end-before: [END spark_resource_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a SparkJob with SparkResourceConfiguration.
     """
 
     instance_type_list = [

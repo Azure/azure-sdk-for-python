@@ -77,6 +77,20 @@ class CommandConfigurationOptions(object):
         )
         # [END command_component_definition]
 
+        # [START command_job_resource_configuration]
+        from azure.ai.ml import MpiDistribution
+        from azure.ai.ml.entities import JobResourceConfiguration
+
+        trial = CommandJob(
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            command="echo hello world",
+            distribution=MpiDistribution(),
+            environment_variables={"ENV1": "VAR1"},
+            resources=JobResourceConfiguration(instance_count=2, instance_type="STANDARD_BLA"),
+            code="./",
+        )
+        # [END command_job_resource_configuration]
+
 
 if __name__ == "__main__":
     sample = CommandConfigurationOptions()
