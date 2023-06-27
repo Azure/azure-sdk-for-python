@@ -139,6 +139,9 @@ if __name__ == "__main__":
         pass  # we don't fail on verifytypes, only if type completeness score worsens from main
 
     # get type completeness score from main
+    logging.info(
+        "Getting the type completeness score from the code in main..."
+    )
     install_from_main(setup_path)
     score_from_main = get_type_complete_score(commands)
 
