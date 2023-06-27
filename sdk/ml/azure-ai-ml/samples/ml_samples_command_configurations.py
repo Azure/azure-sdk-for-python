@@ -91,6 +91,68 @@ class CommandConfigurationOptions(object):
         )
         # [END command_job_resource_configuration]
 
+        # [START command_set_resources]
+        from azure.ai.ml import Input, Output, command
+
+        command_node = command(
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            command='echo "hello world"',
+            distribution={"type": "Pytorch", "process_count_per_instance": 2},
+            inputs={
+                "training_data": Input(type="uri_folder"),
+                "max_epochs": 20,
+                "learning_rate": 1.8,
+                "learning_rate_schedule": "time-based",
+            },
+            outputs={"model_output": Output(type="uri_folder")},
+        )
+
+        command_node.set_resources(
+            instance_count=1,
+            instance_type="STANDARD_D2_v2",
+            properties={"key": "new_val"},
+            shm_size="3g",
+        )
+        # [END command_set_resources]
+
+        # [START command_set_limits]
+        from azure.ai.ml import Input, Output, command
+
+        command_node = command(
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            command='echo "hello world"',
+            distribution={"type": "Pytorch", "process_count_per_instance": 2},
+            inputs={
+                "training_data": Input(type="uri_folder"),
+                "max_epochs": 20,
+                "learning_rate": 1.8,
+                "learning_rate_schedule": "time-based",
+            },
+            outputs={"model_output": Output(type="uri_folder")},
+        )
+
+        command_node.set_limits(timeout=10)
+        # [END command_set_limits]
+
+        # [START command_set_queue_settings]
+        from azure.ai.ml import Input, Output, command
+
+        command_node = command(
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            command='echo "hello world"',
+            distribution={"type": "Pytorch", "process_count_per_instance": 2},
+            inputs={
+                "training_data": Input(type="uri_folder"),
+                "max_epochs": 20,
+                "learning_rate": 1.8,
+                "learning_rate_schedule": "time-based",
+            },
+            outputs={"model_output": Output(type="uri_folder")},
+        )
+
+        command_node.set_queue_settings(job_tier="standard", priority="medium")
+        # [END command_set_queue_settings]
+
 
 if __name__ == "__main__":
     sample = CommandConfigurationOptions()

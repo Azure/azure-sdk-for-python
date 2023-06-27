@@ -496,6 +496,16 @@ class Command(BaseNode):
             format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
             b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
         :type shm_size: str
+
+        .. admonition:: Example:
+            :class: tip
+
+            .. literalinclude:: ../samples/ml_samples_command_configurations.py
+                :start-after: [START command_set_resources]
+                :end-before: [END command_set_resources]
+                :language: python
+                :dedent: 8
+                :caption: Setting resources on a Command.
         """
         if self.resources is None:
             self.resources = JobResourceConfiguration()
@@ -522,6 +532,16 @@ class Command(BaseNode):
 
         :param timeout: The timeout for the job in seconds.
         :type timeout: int
+
+        .. admonition:: Example:
+            :class: tip
+
+            .. literalinclude:: ../samples/ml_samples_command_configurations.py
+                :start-after: [START command_set_limits]
+                :end-before: [END command_set_limits]
+                :language: python
+                :dedent: 8
+                :caption: Setting a timeout limit of 10 seconds on a Command.
         """
         if isinstance(self.limits, CommandJobLimits):
             self.limits.timeout = timeout
@@ -535,6 +555,16 @@ class Command(BaseNode):
         :type job_tier: str
         :param priority:  The priority of the job on the compute. Defaults to "Medium".
         :type priority: str
+
+        .. admonition:: Example:
+            :class: tip
+
+            .. literalinclude:: ../samples/ml_samples_command_configurations.py
+                :start-after: [START command_set_queue_settings]
+                :end-before: [END command_set_queue_settings]
+                :language: python
+                :dedent: 8
+                :caption: Configuring queue settings on a Command.
         """
         if isinstance(self.queue_settings, QueueSettings):
             self.queue_settings.job_tier = job_tier
