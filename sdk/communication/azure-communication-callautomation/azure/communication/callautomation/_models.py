@@ -7,6 +7,8 @@ from typing import List, Optional, Union, TYPE_CHECKING
 from ._generated.models import (
     CallLocator,
     FileSource as FileSourceInternal,
+    TextSource as TextSourceInternal,
+    SsmlSource as SsmlSourceInternal,
     PlaySource as PlaySourceInternal,
     ChannelAffinity as ChannelAffinityInternal
 )
@@ -27,7 +29,8 @@ from ._utils import (
 if TYPE_CHECKING:
     from ._generated.models._enums  import (
         CallConnectionState,
-        RecordingState
+        RecordingState,
+        Gender,
     )
     from ._generated.models  import (
         CallParticipant as CallParticipantRest,
@@ -36,6 +39,7 @@ if TYPE_CHECKING:
         RemoveParticipantResponse as RemoveParticipantResultRest,
         TransferCallResponse as TransferParticipantResultRest,
         RecordingStateResponse as RecordingStateResultRest,
+        MuteParticipantsResponse as MuteParticipantsResultRest,
     )
 
 class CallInvite(object):
@@ -188,7 +192,104 @@ class FileSource(object):
             file=FileSourceInternal(uri=self.url)
         )
 
-class CallConnectionProperties(): # type: ignore # pylint: disable=too-many-instance-attributes
+
+class TextSource(object):
+    """TextSource to be played in actions such as Play media.
+
+    :ivar text: Text for the cognitive service to be played.
+    :vartype text: str
+    :ivar source_locale: Source language locale to be played. Refer to available locales here:
+        https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
+    :vartype source_locale: str
+    :ivar voice_gender: Voice gender type. Known values are: "male" and "female".
+    :vartype voice_gender: str or 'azure.communication.callautomation.Gender'
+    :ivar voice_name: Voice name to be played. Refer to available Text-to-speech voices here:
+        https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
+    :vartype voice_name: str
+    :ivar play_source_cache_id: source id of the play media.
+    :vartype play_source_cache_id: str
+    """
+
+    def __init__(
+            self,
+            text: str,
+            *,
+            source_locale: Optional[str] = None,
+            voice_gender: Optional[Union[str, 'Gender']] = None,
+            voice_name: Optional[str] = None,
+            play_source_cache_id: Optional[str] = None,
+            **kwargs
+    ):
+        """TextSource to be played in actions such as Play media.
+
+        :param text: Text for the cognitive service to be played.
+        :type text: str
+        :keyword source_locale: Source language locale to be played. Refer to available locales here:
+            https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
+        :paramtype source_locale: str
+        :keyword voice_gender: Voice gender type. Known values are: "male" and "female".
+        :paramtype voice_gender: str or 'azure.communication.callautomation.Gender'
+        :keyword voice_name: Voice name to be played. Refer to available Text-to-speech voices here:
+            https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
+        :paramtype voice_name: str
+        :ivar play_source_cache_id: source id of the play media.
+        :vartype play_source_cache_id: str
+        """
+        super().__init__(**kwargs)
+        self.text = text
+        self.source_locale = source_locale
+        self.voice_gender = voice_gender
+        self.voice_name = voice_name
+        self.play_source_cache_id = play_source_cache_id
+
+    def _to_generated(self):
+        return PlaySourceInternal(
+            kind=PlaySourceType.TEXT,
+            text_source=TextSourceInternal(
+                text=self.text,
+                source_locale=self.source_locale,
+                voice_gender=self.voice_gender,
+                voice_name=self.voice_name),
+            play_source_cache_id=self.play_source_cache_id
+        )
+
+
+class SsmlSource(object):
+    """SsmlSource to be played in actions such as Play media.
+
+    :ivar ssml_text: Ssml string for the cognitive service to be played.
+    :vartype ssml_text: str
+    :ivar play_source_cache_id: source id of the play media.
+    :vartype play_source_cache_id: str
+    """
+
+    def __init__(
+            self,
+            ssml_text: str,
+            *,
+            play_source_cache_id: Optional[str] = None,
+            **kwargs
+    ):
+        """SsmlSource to be played in actions such as Play media.
+
+        :param ssml_text: Ssml string for the cognitive service to be played.
+        :type ssml_text: str
+        :ivar play_source_cache_id: source id of the play media.
+        :vartype play_source_cache_id: str
+        """
+        super().__init__(**kwargs)
+        self.ssml_text = ssml_text
+        self.play_source_cache_id = play_source_cache_id
+
+    def _to_generated(self):
+        return PlaySourceInternal(
+            kind=PlaySourceType.SSML,
+            ssml_source=SsmlSourceInternal(ssml_text=self.ssml_text),
+            play_source_cache_id=self.play_source_cache_id
+        )
+
+
+class CallConnectionProperties():  # type: ignore # pylint: disable=too-many-instance-attributes
     """ Detailed properties of the call.
 
     :ivar call_connection_id: The call connection id of this call leg.
@@ -382,3 +483,22 @@ class TransferCallResult(object):
     @classmethod
     def _from_generated(cls, transfer_result_generated: 'TransferParticipantResultRest'):
         return cls(operation_context=transfer_result_generated.operation_context)
+
+
+class MuteParticipantsResult(object):
+    """The response payload for muting participants from the call.
+    :ivar operation_context: The operation context provided by client.
+    :vartype operation_context: str
+    """
+    def __init__(
+        self,
+        *,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        super().__init__(**kwargs)
+        self.operation_context = operation_context
+
+    @classmethod
+    def _from_generated(cls, mute_participants_result_generated: 'MuteParticipantsResultRest'):
+        return cls(operation_context=mute_participants_result_generated.operation_context)

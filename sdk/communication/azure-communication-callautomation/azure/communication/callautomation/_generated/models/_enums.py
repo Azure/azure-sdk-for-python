@@ -75,10 +75,19 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ASTERISK = "asterisk"
 
 
+class Gender(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Voice gender type."""
+
+    MALE = "male"
+    FEMALE = "female"
+
+
 class PlaySourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the type of the play source."""
 
     FILE = "file"
+    TEXT = "text"
+    SSML = "ssml"
 
 
 class RecognitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -87,12 +96,17 @@ class RecognitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     DTMF = "dtmf"
+    SPEECH = "speech"
+    CHOICES = "choices"
 
 
 class RecognizeInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines the type of the recognition."""
 
     DTMF = "dtmf"
+    SPEECH = "speech"
+    SPEECH_OR_DTMF = "speechOrDtmf"
+    CHOICES = "choices"
 
 
 class RecordingChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):

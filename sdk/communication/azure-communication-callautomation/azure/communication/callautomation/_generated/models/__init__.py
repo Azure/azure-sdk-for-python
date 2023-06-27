@@ -19,15 +19,23 @@ from ._models import CallParticipant
 from ._models import CallTransferAccepted
 from ._models import CallTransferFailed
 from ._models import ChannelAffinity
+from ._models import Choice
+from ._models import ChoiceResult
 from ._models import CommunicationError
 from ._models import CommunicationErrorResponse
 from ._models import CommunicationIdentifierModel
 from ._models import CommunicationUserIdentifierModel
+from ._models import ContinuousDtmfRecognitionRequest
+from ._models import ContinuousDtmfRecognitionStopped
+from ._models import ContinuousDtmfRecognitionToneFailed
+from ._models import ContinuousDtmfRecognitionToneReceived
 from ._models import CreateCallRequest
 from ._models import DtmfOptions
 from ._models import DtmfResult
 from ._models import FileSource
 from ._models import MicrosoftTeamsUserIdentifierModel
+from ._models import MuteParticipantsRequest
+from ._models import MuteParticipantsResponse
 from ._models import ParticipantsUpdated
 from ._models import PhoneNumberIdentifierModel
 from ._models import PlayCanceled
@@ -50,7 +58,15 @@ from ._models import RemoveParticipantRequest
 from ._models import RemoveParticipantResponse
 from ._models import RemoveParticipantSucceeded
 from ._models import ResultInformation
+from ._models import SendDtmfCompleted
+from ._models import SendDtmfFailed
+from ._models import SendDtmfRequest
+from ._models import SpeechOptions
+from ._models import SpeechResult
+from ._models import SsmlSource
 from ._models import StartCallRecordingRequest
+from ._models import TextSource
+from ._models import ToneInfo
 from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
 
@@ -60,6 +76,7 @@ from ._enums import CallRejectReason
 from ._enums import CommunicationCloudEnvironmentModel
 from ._enums import CommunicationIdentifierModelKind
 from ._enums import DtmfTone
+from ._enums import Gender
 from ._enums import PlaySourceType
 from ._enums import RecognitionType
 from ._enums import RecognizeInputType
@@ -85,15 +102,23 @@ __all__ = [
     "CallTransferAccepted",
     "CallTransferFailed",
     "ChannelAffinity",
+    "Choice",
+    "ChoiceResult",
     "CommunicationError",
     "CommunicationErrorResponse",
     "CommunicationIdentifierModel",
     "CommunicationUserIdentifierModel",
+    "ContinuousDtmfRecognitionRequest",
+    "ContinuousDtmfRecognitionStopped",
+    "ContinuousDtmfRecognitionToneFailed",
+    "ContinuousDtmfRecognitionToneReceived",
     "CreateCallRequest",
     "DtmfOptions",
     "DtmfResult",
     "FileSource",
     "MicrosoftTeamsUserIdentifierModel",
+    "MuteParticipantsRequest",
+    "MuteParticipantsResponse",
     "ParticipantsUpdated",
     "PhoneNumberIdentifierModel",
     "PlayCanceled",
@@ -116,7 +141,15 @@ __all__ = [
     "RemoveParticipantResponse",
     "RemoveParticipantSucceeded",
     "ResultInformation",
+    "SendDtmfCompleted",
+    "SendDtmfFailed",
+    "SendDtmfRequest",
+    "SpeechOptions",
+    "SpeechResult",
+    "SsmlSource",
     "StartCallRecordingRequest",
+    "TextSource",
+    "ToneInfo",
     "TransferCallResponse",
     "TransferToParticipantRequest",
     "CallConnectionState",
@@ -125,6 +158,7 @@ __all__ = [
     "CommunicationCloudEnvironmentModel",
     "CommunicationIdentifierModelKind",
     "DtmfTone",
+    "Gender",
     "PlaySourceType",
     "RecognitionType",
     "RecognizeInputType",
