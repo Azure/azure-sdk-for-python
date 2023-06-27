@@ -31,21 +31,21 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
     apps can be consolidated into a single Azure Log Analytics workspace.
 
     The various data types can be analyzed together using the
-    [Kusto Query Language](https://docs.microsoft.com/azure/data-explorer/kusto/query/)
-
-    .. admonition:: Example:
-
-    .. literalinclude:: ../samples/sample_single_logs_query.py
-        :start-after: [START client_auth_with_token_cred]
-        :end-before: [END client_auth_with_token_cred]
-        :language: python
-        :dedent: 0
-        :caption: Creating the LogsQueryClient with a TokenCredential.
+    [Kusto Query Language](https://learn.microsoft.com/azure/data-explorer/kusto/query/)
 
     :param credential: The credential to authenticate the client.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io/v1'.
     :paramtype endpoint: Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START create_logs_query_client]
+            :end-before: [END create_logs_query_client]
+            :language: python
+            :dedent: 4
+            :caption: Creating the LogsQueryClient with a TokenCredential.
     """
 
     def __init__(self, credential: TokenCredential, **kwargs: Any) -> None:
@@ -81,7 +81,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
          Azure portal.
         :type workspace_id: str
         :param query: The Kusto query. Learn more about the `Kusto query syntax
-         <https://docs.microsoft.com/azure/data-explorer/kusto/query/>`_.
+         <https://learn.microsoft.com/azure/data-explorer/kusto/query/>`_.
         :type query: str
         :keyword timespan: Required. The timespan for which to query the data. This can be a timedelta,
          a timedelta and a start datetime, or a start datetime/end datetime. Set to None to not constrain
@@ -103,12 +103,12 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
 
         .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sample_single_logs_query.py
-            :start-after: [START send_logs_query]
-            :end-before: [END send_logs_query]
-            :language: python
-            :dedent: 0
-            :caption: Get a response for a single Log Query
+            .. literalinclude:: ../samples/sample_logs_single_query.py
+                :start-after: [START send_logs_query]
+                :end-before: [END send_logs_query]
+                :language: python
+                :dedent: 0
+                :caption: Get a response for a single log query.
         """
         timespan_iso = construct_iso8601(timespan)
         include_statistics = kwargs.pop("include_statistics", False)
@@ -157,12 +157,12 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
 
         .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sample_batch_query.py
-            :start-after: [START send_query_batch]
-            :end-before: [END send_query_batch]
-            :language: python
-            :dedent: 0
-            :caption: Get a response for multiple Log Queries.
+            .. literalinclude:: ../samples/sample_batch_query.py
+                :start-after: [START send_query_batch]
+                :end-before: [END send_query_batch]
+                :language: python
+                :dedent: 0
+                :caption: Execute multiple queries in a batch.
         """
         try:
             queries = [LogsBatchQuery(**cast(Dict, q)) for q in queries]
@@ -199,7 +199,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
          '/subscriptions/<sid>/resourceGroups/<rg>/providers/<providerName>/<resourceType>/<resourceName>'.
         :type resource_id: str
         :param query: The Kusto query. Learn more about the `Kusto query syntax
-         <https://docs.microsoft.com/azure/data-explorer/kusto/query/>`_.
+         <https://learn.microsoft.com/azure/data-explorer/kusto/query/>`_.
         :type query: str
         :keyword timespan: Required. The timespan for which to query the data. This can be a timedelta,
          a timedelta and a start datetime, or a start datetime/end datetime. Set to None to not constrain
@@ -221,12 +221,12 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
 
         .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sample_resource_logs_query.py
-            :start-after: [START resource_logs_query]
-            :end-before: [END resource_logs_query]
-            :language: python
-            :dedent: 0
-            :caption: Get a response for a single query on a resource's logs.
+            .. literalinclude:: ../samples/sample_resource_logs_query.py
+                :start-after: [START resource_logs_query]
+                :end-before: [END resource_logs_query]
+                :language: python
+                :dedent: 0
+                :caption: Get a response for a single query on a resource's logs.
         """
         timespan_iso = construct_iso8601(timespan)
         include_statistics = kwargs.pop("include_statistics", False)
