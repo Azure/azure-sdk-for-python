@@ -9,6 +9,7 @@
 # the package from main and compares its type completeness score with
 # that of the current code. If type completeness worsens from the code in main, the check fails.
 
+import typing
 import pathlib
 import subprocess
 import json
@@ -25,7 +26,7 @@ logging.getLogger().setLevel(logging.INFO)
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
 
-def install_from_main(setup_path):
+def install_from_main(setup_path: str) -> None:
     path = pathlib.Path(setup_path)
     subdirectory = path.relative_to(root_dir)
     cwd = os.getcwd()
@@ -64,7 +65,7 @@ def install_from_main(setup_path):
 
 
 
-def get_type_complete_score(commands, check_pytyped=False):
+def get_type_complete_score(commands: typing.List[str], check_pytyped: bool = False) -> float:
     try:
         response = subprocess.run(
             commands,
