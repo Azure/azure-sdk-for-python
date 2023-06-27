@@ -308,7 +308,8 @@
 /sdk/anomalydetector/                                                @conhua @mengaims @juaduan @moreOver0
 
 # PRLabel: %Cognitive - Translator
-/sdk/translation/                                                    @kristapratico @MikeyMCZ
+/sdk/translation/                                                    @kristapratico
+/sdk/translation/azure-ai-translation-text/                          @MikeyMCZ
 
 # PRLabel: %Cognitive - Language
 /sdk/cognitivelanguage/                                              @kristapratico @quentinRobinson @wangyuantao
