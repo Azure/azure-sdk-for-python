@@ -17,7 +17,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 Install the Azure Schema Registry JSON Schema Encoder client library for Python with [pip][pip]:
 
 ```Bash
-pip install azure-schemaregistry-jsonschemaencoder
+pip install azure-schemaregistry-jsonencoder
 ```
 
 ### Prerequisites:
@@ -49,7 +49,7 @@ pip install aiohttp
 ```python
 import os
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonschemaencoder import JsonSchemaEncoder
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
@@ -69,7 +69,7 @@ content type with schema ID. Uses [SchemaRegistryClient][schemaregistry_client] 
 
 ### Supported message models
 
-Support has been added to certain Azure Messaging SDK model classes for interoperability with the `JsonSchemaEncoder`. These models are subtypes of the `MessageType` protocol defined under the `azure.schemaregistry.encoder.jsonschemaencoder` namespace. Currently, the supported model classes are:
+Support has been added to certain Azure Messaging SDK model classes for interoperability with the `JsonSchemaEncoder`. These models are subtypes of the `MessageType` protocol defined under the `azure.schemaregistry.encoder.jsonencoder` namespace. Currently, the supported model classes are:
 
 - `azure.eventhub.EventData` for `azure-eventhub>=5.9.0`
 
@@ -107,7 +107,7 @@ The method will use a schema previously registered to the Schema Registry servic
 ```python
 import os
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonschemaencoder import JsonSchemaEncoder
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
 from azure.identity import DefaultAzureCredential
 from azure.eventhub import EventData
 
@@ -162,7 +162,7 @@ The method automatically retrieves the schema from the Schema Registry Service a
 ```python
 import os
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonschemaencoder import JsonSchemaEncoder
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
 from azure.identity import DefaultAzureCredential
 
 token_credential = DefaultAzureCredential()
@@ -194,7 +194,7 @@ Integration with [Event Hubs][eventhubs_repo] to send an `EventData` object with
 import os
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonschemaencoder import JsonSchemaEncoder
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
 from azure.identity import DefaultAzureCredential
 
 token_credential = DefaultAzureCredential()
@@ -249,7 +249,7 @@ Integration with [Event Hubs][eventhubs_repo] to receive an `EventData` object a
 import os
 from azure.eventhub import EventHubConsumerClient
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonschemaencoder import JsonSchemaEncoder
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
 from azure.identity import DefaultAzureCredential
 
 token_credential = DefaultAzureCredential()
@@ -278,7 +278,7 @@ with eventhub_consumer, json_schema_encoder:
 
 ### General
 
-Azure Schema Registry JSON Schema Encoder raises exceptions defined in [Azure Core][azure_core] if errors are encountered when communicating with the Schema Registry service. Errors related to invalid content/content types and invalid schemas will be raised as `azure.schemaregistry.encoder.jsonschemaencoder.InvalidContentError` and `azure.schemaregistry.encoder.jsonschemaencoder.InvalidSchemaError`, respectively, where `__cause__` will contain the underlying exception raised by the provided `validation`/`schema` callable.
+Azure Schema Registry JSON Schema Encoder raises exceptions defined in [Azure Core][azure_core] if errors are encountered when communicating with the Schema Registry service. Errors related to invalid content/content types and invalid schemas will be raised as `azure.schemaregistry.encoder.jsonencoder.InvalidContentError` and `azure.schemaregistry.encoder.jsonencoder.InvalidSchemaError`, respectively, where `__cause__` will contain the underlying exception raised by the provided `validation`/`schema` callable.
 
 ### Logging
 This library uses the standard
@@ -293,7 +293,7 @@ import sys
 import os
 import logging
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonschemaencoder import JsonSchemaEncoder
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
 from azure.identity import DefaultAzureCredential
 
 # Create a logger for the SDK
@@ -340,15 +340,15 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 <!-- LINKS -->
 [pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/project/azure-schemaregistry-jsonschemaencoder/
+[pypi]: https://pypi.org/project/azure-schemaregistry-jsonencoder/
 [python]: https://www.python.org/downloads/
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [azure_sub]: https://azure.microsoft.com/free/
 [python_logging]: https://docs.python.org/3/library/logging.html
-[sr_json_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonschemaencoder/samples
+[sr_json_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonencoder/samples
 [api_reference]: https://docs.microsoft.com/python/api/overview/azure/schemaregistry-jsonschemaencoder-readme
-[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonschemaencoder
-[change_log]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonschemaencoder/CHANGELOG.md
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonencoder
+[change_log]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonencoder/CHANGELOG.md
 [schemaregistry_client]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry
 [schemaregistry_service]: https://aka.ms/schemaregistry
 [eventhubs_repo]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub

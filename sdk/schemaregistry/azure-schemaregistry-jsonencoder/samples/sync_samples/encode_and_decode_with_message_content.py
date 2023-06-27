@@ -24,16 +24,16 @@
 #
 # --------------------------------------------------------------------------
 """
-FILE: encode_and_decode_event_data_message.py
+FILE: encode_and_decode_with_message_content.py
 DESCRIPTION:
     This sample demonstrates the following:
      - Authenticating a sync SchemaRegistryClient to be used by the JsonSchemaEncoder.
-     - Passing in content, schema, and EventData class to the JsonSchemaEncoder, which will return an
-      EventData object containing encoded content and corresponding content type.
-     - Passing in an `EventData` object with `body` set to Json-encoded content and `content_type`
-      set to corresponding content type to the JsonSchemaEncoder, which will return the decoded content.
+     - Passing in content and schema to the JsonSchemaEncoder, which will return a dict containing
+      encoded content and corresponding content type.
+     - Passing in a dict containing Json-encoded content and corresponding content type to
+      the JsonSchemaEncoder, which will return the decoded content.
 USAGE:
-    python encode_and_decode_event_data_message.py
+    python encode_and_decode_with_message_content.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_TENANT_ID - The ID of the service principal's tenant. Also called its 'directory' ID.
     2) AZURE_CLIENT_ID - The service principal's client ID. Also called its 'application' ID.
@@ -51,7 +51,7 @@ import json
 
 from azure.identity import ClientSecretCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonschemaencoder import JsonSchemaEncoder
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder, MessageContent
 from azure.eventhub import EventData
 
 TENANT_ID = os.environ["AZURE_TENANT_ID"]
@@ -84,40 +84,32 @@ SCHEMA_JSON = {
 }
 SCHEMA_STRING = json.dumps(SCHEMA_JSON)
 
+
 token_credential = ClientSecretCredential(
     tenant_id=TENANT_ID, client_id=CLIENT_ID, client_secret=CLIENT_SECRET
 )
 
 
-def encode_to_event_data_message(encoder):
+def encode_message_content_dict(encoder):
     dict_content_ben = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
-    dict_content_alice = {"name": "Alice", "favorite_number": 15, "favorite_color": "green"}
+    encoded_message_content_ben = encoder.encode(dict_content_ben, schema=SCHEMA_STRING)
 
-    # Schema would be automatically registered into Schema Registry and cached locally.
-    event_data_ben = encoder.encode(
-        dict_content_ben, schema=SCHEMA_STRING, message_type=EventData
+    print("Encoded message content is: ", encoded_message_content_ben)
+    return EventData.from_message_content(
+        encoded_message_content_ben["content"],
+        encoded_message_content_ben["content_type"],
     )
 
-    # The second call won't trigger a service call.
-    event_data_alice = encoder.encode(
-        dict_content_alice, schema=SCHEMA_STRING, message_type=EventData
-    )
+def decode_with_content_and_content_type(encoder, event_data):
+    # get content as bytes
+    content = bytearray()
+    for c in event_data.body:
+        content += c
+    content_bytes = bytes(content)
+    message_content = MessageContent({"content": content_bytes, "content_type": event_data.content_type})
+    decoded_content = encoder.decode(message_content)
 
-    print("Encoded content is: ", next(event_data_ben.body))
-    print("Encoded content is: ", next(event_data_alice.body))
-
-    print("Encoded content type is: ", event_data_ben.content_type)
-    print("Encoded content type is: ", event_data_alice.content_type)
-    return [event_data_ben, event_data_alice]
-
-
-def decode_event_data_message(encoder, event_data):
-    # encoder.decode would extract the schema id from the content_type,
-    # retrieve schema from Schema Registry and cache the schema locally.
-    # If the schema id is in the local cache, the call won't trigger a service call.
-    decoded_content = encoder.decode(event_data)
-
-    print("Decoded data is: ", decoded_content)
+    print("Decoded content is: ", decoded_content)
     return decoded_content
 
 
@@ -129,7 +121,6 @@ if __name__ == "__main__":
     encoder = JsonSchemaEncoder(
         client=schema_registry, group_name=GROUP_NAME, auto_register=True
     )
-    event_data_ben, event_data_alice = encode_to_event_data_message(encoder)
-    decoded_content_ben = decode_event_data_message(encoder, event_data_ben)
-    decoded_content_alice = decode_event_data_message(encoder, event_data_alice)
+    event_data = encode_message_content_dict(encoder)
+    decoded_content = decode_with_content_and_content_type(encoder, event_data)
     encoder.close()

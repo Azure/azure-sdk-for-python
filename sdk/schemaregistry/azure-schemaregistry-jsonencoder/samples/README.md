@@ -32,7 +32,7 @@ If you do not have an existing Azure account, you may sign up for a free trial o
 1. Install the Azure Schema Registry JSON Schema Encoder client library and Azure Identity client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-schemaregistry-jsonschemaencoder azure-identity
+pip install azure-schemaregistry-jsonencoder azure-identity
 ```
 
 Additionally, if using with `azure.eventhub.EventData`, install `azure-eventhub>=5.9.0`:
@@ -56,10 +56,10 @@ Check out the [API reference documentation][api_reference] to learn more about
 what you can do with the Azure Schema Registry JSON Schema Encoder library.
 
 <!-- LINKS -->
-[encode_and_decode_event_data_message_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonschemaencoder/samples/sync_samples/encode_and_decode_event_data_message.py
-[eventhub_send_integration_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonschemaencoder/samples/sync_samples/eventhub_send_integration.py
-[eventhub_receive_integration_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonschemaencoder/samples/sync_samples/eventhub_receive_integration.py
-[encode_and_decode_event_data_message_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonschemaencoder/samples/async_samples/encode_and_decode_event_data_message_async.py
-[eventhub_send_integration_async_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonschemaencoder/samples/async_samples/eventhub_send_integration_async.py
-[eventhub_receive_integration_async_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonschemaencoder/samples/async_samples/eventhub_receive_integration_async.py
+[encode_and_decode_event_data_message_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonencoder/samples/sync_samples/encode_and_decode_event_data_message.py
+[eventhub_send_integration_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonencoder/samples/sync_samples/eventhub_send_integration.py
+[eventhub_receive_integration_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonencoder/samples/sync_samples/eventhub_receive_integration.py
+[encode_and_decode_event_data_message_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonencoder/samples/async_samples/encode_and_decode_event_data_message_async.py
+[eventhub_send_integration_async_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonencoder/samples/async_samples/eventhub_send_integration_async.py
+[eventhub_receive_integration_async_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonencoder/samples/async_samples/eventhub_receive_integration_async.py
 [api_reference]: https://docs.microsoft.com/python/api/overview/azure/schemaregistry-jsonschemaencoder-readme

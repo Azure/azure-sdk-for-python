@@ -12,9 +12,9 @@ from azure_devtools.perfstress_tests import PerfStressTest
 from azure.identity import DefaultAzureCredential
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonschemaencoder import JsonSchemaEncoder
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
 from azure.schemaregistry.aio import SchemaRegistryClient as AsyncSchemaRegistryClient
-from azure.schemaregistry.encoder.jsonschemaencoder.aio import JsonSchemaEncoder as AsyncJsonSchemaEncoder
+from azure.schemaregistry.encoder.jsonencoder.aio import JsonSchemaEncoder as AsyncJsonSchemaEncoder
 
 
 class _SchemaRegistryJsonTest(PerfStressTest):

@@ -66,14 +66,14 @@ class JsonSchemaEncoder(object):
      method will override this value. If None, then `schema` must be passed into `encode`.
      If a callable is passed in, it must have the following method signature:
      `(content: Mapping[str, Any]) -> Mapping[str, Any]`.
-     If an error is raised during generation, an ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidContentError
+     If an error is raised during generation, an ~azure.schemaregistry.encoder.jsonencoder.InvalidContentError
      will be wrapped around it and raised.
     :paramtype schema: str or bytes or Callable or None
     :keyword validate: Callable that validates the given content against the given schema. Must validate against
      schema draft version supported by the Schema Registry service. It must have the following method signature:
      `(content: Mapping[str, Any], schema: Mapping[str, Any]) -> None`.
      If valid, then method must return None. If invalid, method must raise an error which will be wrapped
-     and raised as an ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidContentError. When False is passed in,
+     and raised as an ~azure.schemaregistry.encoder.jsonencoder.InvalidContentError. When False is passed in,
      and by default, validation will be turned off.
     :paramtype validate: Callable or False
 
@@ -196,25 +196,25 @@ class JsonSchemaEncoder(object):
          the constructor. If passed in, it will override the `schema` value specified in the constructor.
          If a callable is passed in, it must have the following method signature:
          `(content: Mapping[str, Any]) -> Mapping[str, Any]`.
-         If an error is raised during generation, an ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidContentError
+         If an error is raised during generation, an ~azure.schemaregistry.encoder.jsonencoder.InvalidContentError
          will be wrapped around it and raised.
         :paramtype schema: str or bytes or Callable or None
         :keyword message_type: The message class to construct the message. Must be a subtype of the
-         azure.schemaregistry.encoder.jsonschemaencoder.MessageType protocol.
+         azure.schemaregistry.encoder.jsonencoder.MessageType protocol.
         :paramtype message_type: Type[MessageType] or None
         :keyword validate: Callable that validates the given content against the given schema. Must validate against
          schema draft version supported by the Schema Registry service. It must have the following method signature:
          `(content: Mapping[str, Any], schema: Mapping[str, Any]) -> None`.
          If valid, then method must return None. If invalid, method must raise an error which will be wrapped
-         and raised as an ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidContentError. When False is passed in,
+         and raised as an ~azure.schemaregistry.encoder.jsonencoder.InvalidContentError. When False is passed in,
          validation will be turned off. If None, and by default, `schema` set in constructor will be used.
         :paramtype validate: Callable or False
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: Dict[str, Any]
         :rtype: MessageType or MessageContent
-        :raises ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidSchemaError:
+        :raises ~azure.schemaregistry.encoder.jsonencoder.InvalidSchemaError:
             Indicates an issue with validating schema.
-        :raises ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidContentError:
+        :raises ~azure.schemaregistry.encoder.jsonencoder.InvalidContentError:
             Indicates an issue with encoding content with schema.
         """
 
@@ -295,15 +295,15 @@ class JsonSchemaEncoder(object):
          schema draft version supported by the Schema Registry service. It must have the following method signature:
          `(content: Mapping[str, Any], schema: Mapping[str, Any]) -> None`.
          If valid, then method must return None. If invalid, method must raise an error which will be wrapped
-         and raised as an ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidContentError.  When False is passed in,
+         and raised as an ~azure.schemaregistry.encoder.jsonencoder.InvalidContentError.  When False is passed in,
          validation will be turned off. If None, and by default, `schema` set in constructor will be used.
         :paramtype validate: Callable or False
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: Dict[str, Any]
         :rtype: Dict[str, Any]
-        :raises ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidSchemaError:
+        :raises ~azure.schemaregistry.encoder.jsonencoder.InvalidSchemaError:
             Indicates an issue with validating schemas.
-        :raises ~azure.schemaregistry.encoder.jsonschemaencoder.InvalidContentError:
+        :raises ~azure.schemaregistry.encoder.jsonencoder.InvalidContentError:
             Indicates an issue with decoding content.
         """
 

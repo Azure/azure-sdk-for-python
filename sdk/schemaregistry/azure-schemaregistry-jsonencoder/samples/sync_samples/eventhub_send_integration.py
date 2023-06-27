@@ -33,7 +33,7 @@ import json
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonschemaencoder import JsonSchemaEncoder
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
 
 EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']

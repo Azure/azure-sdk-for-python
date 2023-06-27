@@ -13,11 +13,11 @@ from io import open
 from setuptools import find_namespace_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-schemaregistry-jsonschemaencoder"
+PACKAGE_NAME = "azure-schemaregistry-jsonencoder"
 PACKAGE_PPRINT_NAME = "Schema Registry Json Schema Encoder"
 
-package_folder_path = "azure/schemaregistry/encoder/jsonschemaencoder"
-namespace_name = "azure.schemaregistry.encoder.jsonschemaencoder"
+package_folder_path = "azure/schemaregistry/encoder/jsonencoder"
+namespace_name = "azure.schemaregistry.encoder.jsonencoder"
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:

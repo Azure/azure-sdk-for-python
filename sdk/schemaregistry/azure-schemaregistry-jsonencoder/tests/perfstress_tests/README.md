@@ -23,8 +23,8 @@ SCHEMAREGISTRY_GROUP=<a schema group in a Schema Registry.>
 When `azure-devtools` is installed, you will have access to the `perfstress` command line tool, which will scan the current module for runable perf tests. Only a specific test can be run at a time (i.e. there is no "run all" feature).
 
 ```cmd
-(env) ~/azure-schemaregistry-jsonschemaencoder> cd tests
-(env) ~/azure-schemaregistry-jsonschemaencoder/tests> perfstress
+(env) ~/azure-schemaregistry-jsonencoder> cd tests
+(env) ~/azure-schemaregistry-jsonencoder/tests> perfstress
 ```
 Using the `perfstress` command alone will list the available perf tests found.
 
@@ -49,6 +49,6 @@ The tests currently written for the SDK:
 
 ## Example command
 ```cmd
-(env) ~/azure-schemaregistry-jsonschemaencoder/tests> perfstress EncodeContentTest --parallel=2 --duration=10 --schema-size=500 --num-values=2
-(env) ~/azure-schemaregistry-jsonschemaencoder/tests> perfstress DecodeContentTest --parallel=2 --duration=10
+(env) ~/azure-schemaregistry-jsonencoder/tests> perfstress EncodeContentTest --parallel=2 --duration=10 --schema-size=500 --num-values=2
+(env) ~/azure-schemaregistry-jsonencoder/tests> perfstress DecodeContentTest --parallel=2 --duration=10
 ```
