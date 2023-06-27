@@ -9,7 +9,7 @@
         "Authorization": "Sanitized",
         "Content-Length": "0",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-communication-identity/1.4.0b2 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-identity/1.4.0b2 Python/3.11.4 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
@@ -28,7 +28,7 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "80ms"
+        "X-Processing-Time": "91ms"
       },
       "ResponseBody": {
         "identity": {
@@ -45,7 +45,7 @@
         "Authorization": "Sanitized",
         "Content-Length": "44",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-communication-identity/1.4.0b2 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-identity/1.4.0b2 Python/3.11.4 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
@@ -69,11 +69,11 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "151ms"
+        "X-Processing-Time": "162ms"
       },
       "ResponseBody": {
         "token": "sanitized",
-        "expiresOn": "2023-05-08T08:37:02.5173258\u002B00:00"
+        "expiresOn": "2023-06-27T08:30:50.1565789\u002B00:00"
       }
     }
   ],

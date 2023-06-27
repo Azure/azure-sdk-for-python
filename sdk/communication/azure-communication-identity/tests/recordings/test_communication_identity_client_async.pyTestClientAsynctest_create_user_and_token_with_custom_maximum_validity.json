@@ -9,7 +9,7 @@
         "Authorization": "Sanitized",
         "Content-Length": "61",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-communication-identity/1.4.0b2 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-identity/1.4.0b2 Python/3.11.4 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
@@ -33,7 +33,7 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "91ms"
+        "X-Processing-Time": "88ms"
       },
       "ResponseBody": {
         "identity": {
@@ -41,7 +41,7 @@
         },
         "accessToken": {
           "token": "sanitized",
-          "expiresOn": "2023-05-09T07:36:57.9657875\u002B00:00"
+          "expiresOn": "2023-06-28T07:30:45.4343809\u002B00:00"
         }
       }
     }

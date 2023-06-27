@@ -33,7 +33,7 @@ def get_authentication_policy(
     :return: Either AsyncBearerTokenCredentialPolicy or BearerTokenCredentialPolicy or HMACCredentialsPolicy
     :rtype: ~azure.core.pipeline.policies.AsyncBearerTokenCredentialPolicy or
     ~azure.core.pipeline.policies.BearerTokenCredentialPolicy or
-    ~azure.communication.chat.shared.policy.HMACCredentialsPolicy
+    ~azure.communication.identity.shared.policy.HMACCredentialsPolicy
     """
 
     if credential is None:
@@ -50,6 +50,6 @@ def get_authentication_policy(
         return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
 
     raise TypeError(
-        f"Unsupported credential: {type(credential)}. Use an access token string to use HMACCredentialsPolicy"
+        f"Unsupported credential: {format(type(credential))}. Use an access token string to use HMACCredentialsPolicy"
         "or a token credential from azure.identity"
     )
