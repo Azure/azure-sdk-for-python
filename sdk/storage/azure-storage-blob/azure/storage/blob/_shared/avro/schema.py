@@ -30,14 +30,6 @@ import json
 import logging
 import re
 import sys
-from six import with_metaclass
-
-PY2 = sys.version_info[0] == 2
-
-if PY2:
-    _str = unicode # pylint: disable=undefined-variable
-else:
-    _str = str
 
 logger = logging.getLogger(__name__)
 
@@ -140,7 +132,7 @@ class SchemaParseException(AvroException):
     """Error while parsing a JSON schema descriptor."""
 
 
-class Schema(with_metaclass(abc.ABCMeta, object)):
+class Schema(metaclass=abc.ABCMeta):
     """Abstract base class for all Schema classes."""
 
     def __init__(self, data_type, other_props=None):

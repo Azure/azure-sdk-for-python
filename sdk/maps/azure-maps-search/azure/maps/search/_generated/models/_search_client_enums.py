@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ElectricVehicleConnector(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ElectricVehicleConnector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     STANDARD_HOUSEHOLD_COUNTRY_SPECIFIC = "StandardHouseholdCountrySpecific"  #: These are the standard household connectors for a certain region. They are all AC single phase and the standard Voltage and standard Amperage.
     #See also: `Plug & socket types - World Standards <https://www.worldstandards.eu/electricity/plugs-and-sockets>`_.
@@ -41,14 +25,14 @@ class ElectricVehicleConnector(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     IEC60309_DC_WHITE = "IEC60309DCWhite"  #: Industrial White connector is a DC connector defined in the IEC 60309 standard.
     TESLA = "Tesla"  #: The Tesla connector is the regionally specific Tesla Supercharger connector. I.e. it refers to either Tesla's proprietary connector, sometimes referred to as Tesla Port mostly limited to North America or the modified Type 2 (DC over Type 2) in Europe.
 
-class EntryPointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class EntryPointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of entry point. Value can be either *main* or *minor*.
     """
 
     MAIN = "main"
     MINOR = "minor"
 
-class GeographicEntityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class GeographicEntityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     COUNTRY = "Country"
     COUNTRY_SUBDIVISION = "CountrySubdivision"
@@ -59,7 +43,7 @@ class GeographicEntityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NEIGHBOURHOOD = "Neighbourhood"
     POSTAL_CODE_AREA = "PostalCodeArea"
 
-class GeoJsonObjectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class GeoJsonObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types - Point,
     MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection, Feature and
     FeatureCollection.
@@ -75,11 +59,11 @@ class GeoJsonObjectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     GEO_JSON_FEATURE = "Feature"  #: ``GeoJSON Feature`` object.
     GEO_JSON_FEATURE_COLLECTION = "FeatureCollection"  #: ``GeoJSON FeatureCollection`` object.
 
-class JsonFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class JsonFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     JSON = "json"  #: `The JavaScript Object Notation Data Interchange Format <https://tools.ietf.org/html/rfc8259>`_.
 
-class LocalizedMapView(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LocalizedMapView(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AE = "AE"  #: United Arab Emirates (Arabic View).
     AR = "AR"  #: Argentina (Argentinian View).
@@ -100,7 +84,7 @@ class LocalizedMapView(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AUTO = "Auto"  #: Return the map data based on the IP address of the request.
     UNIFIED = "Unified"  #: Unified View (Others).
 
-class MatchType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MatchType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Types of match for a reverse address search operation.
     """
 
@@ -108,28 +92,28 @@ class MatchType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     HOUSE_NUMBER_RANGE = "HouseNumberRange"
     STREET = "Street"
 
-class OperatingHoursRange(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperatingHoursRange(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NEXT_SEVEN_DAYS = "nextSevenDays"  #: Shows the hours of operation for the next week, starting with the current day in the local time of the POI.
 
-class PointOfInterestExtendedPostalCodes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PointOfInterestExtendedPostalCodes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     POI = "POI"
     NONE = "None"
 
-class QueryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class QueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of query being returned: NEARBY or NON_NEAR.
     """
 
     NEARBY = "NEARBY"  #: Search was performed around a certain latitude and longitude with a defined radius.
     GLOBAL_ENUM = "NON_NEAR"  #: Search was performed globally, without biasing to a certain latitude and longitude, and no defined radius.
 
-class ResponseFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     JSON = "json"  #: `The JavaScript Object Notation Data Interchange Format <https://tools.ietf.org/html/rfc8259>`_.
     XML = "xml"  #: `The Extensible Markup Language <https://www.w3.org/TR/xml/>`_.
 
-class RoadUseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RoadUseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes the possible uses of a road.
     """
 
@@ -140,7 +124,7 @@ class RoadUseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ROTARY = "Rotary"
     LOCAL_STREET = "LocalStreet"
 
-class SearchAddressResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SearchAddressResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """One of:
     
     
@@ -159,7 +143,7 @@ class SearchAddressResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     ADDRESS_RANGE = "Address Range"
     CROSS_STREET = "Cross Street"
 
-class SearchIndexes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SearchIndexes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ADDRESS = "Addr"  #: Address range interpolation.
     GEOGRAPHIES = "Geo"  #: Geographies.
