@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: ml_samples_authentication_sovereign_cloud.py
+FILE: ml_samples_authentication.py
 
 DESCRIPTION:
     These samples demonstrate authenticating a client for multiple clouds.
     
 USAGE:
-    python ml_samples_authentication_sovereign_cloud.py
+    python ml_samples_authentication.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_SUBSCRIPTION_ID - The subscription id.

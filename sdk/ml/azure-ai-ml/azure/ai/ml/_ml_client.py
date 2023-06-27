@@ -121,7 +121,7 @@ class MLClient:
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/ml_samples_authentication_sovereign_cloud.py
+        .. literalinclude:: ../samples/ml_samples_authentication.py
             :start-after: [START create_ml_client_default_credential]
             :end-before: [END create_ml_client_default_credential]
             :language: python
@@ -133,7 +133,7 @@ class MLClient:
        When using sovereign domains (i.e. any cloud other than AZURE_PUBLIC_CLOUD), you must pass in the cloud name in
        kwargs and you must use an authority with DefaultAzureCredential.
 
-       .. literalinclude:: ../samples/ml_samples_authentication_sovereign_cloud.py
+       .. literalinclude:: ../samples/ml_samples_authentication.py
             :start-after: [START create_ml_client_sovereign_cloud]
             :end-before: [END create_ml_client_sovereign_cloud]
             :language: python
@@ -534,7 +534,7 @@ class MLClient:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/ml_samples_authentication_sovereign_cloud.py
+            .. literalinclude:: ../samples/ml_samples_authentication.py
                 :start-after: [START create_ml_client_from_config_default]
                 :end-before: [END create_ml_client_from_config_default]
                 :language: python
@@ -543,7 +543,7 @@ class MLClient:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/ml_samples_authentication_sovereign_cloud.py
+            .. literalinclude:: ../samples/ml_samples_authentication.py
                 :start-after: [START create_ml_client_from_config_custom_filename]
                 :end-before: [END create_ml_client_from_config_custom_filename]
                 :language: python
