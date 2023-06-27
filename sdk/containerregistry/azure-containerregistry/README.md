@@ -104,13 +104,12 @@ Iterate through the collection of tags in the repository with anonymous access.
 <!-- SNIPPET:sample_list_tags.list_tags_anonymous -->
 
 ```python
-endpoint = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")
 with ContainerRegistryClient(endpoint) as anon_client:
     manifest = anon_client.get_manifest_properties("library/hello-world", "latest")
     print(f"Tags of {manifest.repository_name}: ")
     # Iterate through all the tags
     for tag in manifest.tags:
-        print(f"{tag}\n")
+        print(tag)
 ```
 
 <!-- END SNIPPET -->
