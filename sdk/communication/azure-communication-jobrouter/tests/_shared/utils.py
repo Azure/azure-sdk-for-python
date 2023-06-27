@@ -16,6 +16,7 @@ def create_token_credential():
     if not is_live():
         return FakeTokenCredential()
     from azure.identity import DefaultAzureCredential
+
     return DefaultAzureCredential()
 
 
@@ -24,6 +25,7 @@ def async_create_token_credential():
     if not is_live():
         return AsyncFakeTokenCredential()
     from azure.identity.aio import DefaultAzureCredential
+    
     return DefaultAzureCredential()
 
 

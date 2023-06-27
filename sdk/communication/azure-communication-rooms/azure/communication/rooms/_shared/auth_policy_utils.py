@@ -43,10 +43,14 @@ def get_authentication_policy(
             return AsyncBearerTokenCredentialPolicy(
                 credential, "https://communication.azure.com//.default"  # type: ignore
             )
+        from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+
         return BearerTokenCredentialPolicy(
             credential, "https://communication.azure.com//.default"  # type: ignore
         )
     if isinstance(credential, (AzureKeyCredential, str)):
+        from .._shared.policy import HMACCredentialsPolicy
+
         return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
 
     raise TypeError(
