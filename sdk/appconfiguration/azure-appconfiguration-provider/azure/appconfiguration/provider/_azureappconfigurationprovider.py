@@ -292,7 +292,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             return
 
         if datetime.now() < self._configuration_refresh.next_refresh_time:
-            logging.debug("Refresh called but refresh interval not elapsed.")
             return
 
         try:
@@ -494,7 +493,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             logging.warning(message, self.attempts, error)
             # Refresh All or None, any failure will trigger a backoff
             # pylint:disable=protected-access
-            self.next_refresh_time = datetime.now() + timedelta(millisecond=self.calculate_backoff())
+            self.next_refresh_time = datetime.now() + timedelta(min(millisecond=self.calculate_backoff(), self.refresh_options.refresh_interval))
             self.attempts += 1
             self.refresh_options._on_error()
 

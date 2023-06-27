@@ -73,6 +73,10 @@ class AzureAppConfigurationRefreshOptions:
     def register(
         self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL, refresh_all: Optional[bool] = False
     ):
+        if "*" in key_filter:
+            raise ValueError("Wildcard key filters are not supported for refresh.")
+        if "*" in label_filter:
+            raise ValueError("Wildcard label filters are not supported for refresh.")
         self._refresh_registrations.append(RefreshRegistrations(key_filter, label_filter, refresh_all))
 
     def _callback(self):

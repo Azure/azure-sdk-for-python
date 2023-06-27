@@ -28,7 +28,7 @@ refresh_options.register(key_filter="message")
 config = load(connection_string=connection_string, refresh_options=refresh_options)
 
 
-@config.drefresh  # cspell:disable-line
+@config.refresh_configuration_settings
 def print_configurations(config):
     time.sleep(2)
     print(config["message"])
