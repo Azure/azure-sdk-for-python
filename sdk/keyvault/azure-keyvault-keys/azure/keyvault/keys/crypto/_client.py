@@ -107,12 +107,12 @@ class CryptographyClient(KeyVaultClientBase):
 
     def __init__(self, key: "Union[KeyVaultKey, str]", credential: "TokenCredential", **kwargs) -> None:
         self._jwk = kwargs.pop("_jwk", False)
-        self._not_before = None  # type: Optional[datetime]
-        self._expires_on = None  # type: Optional[datetime]
-        self._key_id = None  # type: Optional[KeyVaultResourceId]
+        self._not_before: "Optional[datetime]" = None
+        self._expires_on: "Optional[datetime]" = None
+        self._key_id: "Optional[KeyVaultResourceId]" = None
 
         if isinstance(key, KeyVaultKey):
-            self._key = key.key  # type: Union[JsonWebKey, KeyVaultKey, str, None]
+            self._key: "Union[JsonWebKey, KeyVaultKey, str, None]" = key.key
             self._key_id = parse_key_vault_id(key.id)
             if key.properties._attributes:
                 self._not_before = key.properties.not_before
@@ -149,6 +149,7 @@ class CryptographyClient(KeyVaultClientBase):
 
         This property may be None when a client is constructed with :func:`from_jwk`.
 
+        :returns: The full identifier of the client's key.
         :rtype: str or None
         """
         if not self._jwk:
@@ -161,6 +162,7 @@ class CryptographyClient(KeyVaultClientBase):
 
         This property may be None when a client is constructed with :func:`from_jwk`.
 
+        :returns: The base vault URL of the client's key.
         :rtype: str or None
         """
         return self._vault_url
@@ -172,6 +174,7 @@ class CryptographyClient(KeyVaultClientBase):
         :param jwk: the key's cryptographic material, as a JsonWebKey or dictionary.
         :type jwk: JsonWebKey or Dict[str, Any]
 
+        :returns: A client that can only perform local cryptographic operations.
         :rtype: CryptographyClient
         """
         if not isinstance(jwk, JsonWebKey):
@@ -228,6 +231,7 @@ class CryptographyClient(KeyVaultClientBase):
             with AES-GCM encryption.
         :paramtype additional_authenticated_data: bytes or None
 
+        :returns: The result of the encryption operation.
         :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
 
         :raises ValueError: if parameters that are incompatible with the specified algorithm are provided, or if
@@ -305,6 +309,7 @@ class CryptographyClient(KeyVaultClientBase):
             with AES-GCM decryption.
         :paramtype additional_authenticated_data: bytes or None
 
+        :returns: The result of the decryption operation.
         :rtype: :class:`~azure.keyvault.keys.crypto.DecryptResult`
 
         :raises ValueError: If parameters that are incompatible with the specified algorithm are provided.
@@ -356,6 +361,7 @@ class CryptographyClient(KeyVaultClientBase):
         :type algorithm: :class:`~azure.keyvault.keys.crypto.KeyWrapAlgorithm`
         :param bytes key: key to wrap
 
+        :returns: The result of the wrapping operation.
         :rtype: :class:`~azure.keyvault.keys.crypto.WrapResult`
 
         .. literalinclude:: ../tests/test_examples_crypto.py
@@ -399,6 +405,7 @@ class CryptographyClient(KeyVaultClientBase):
         :type algorithm: :class:`~azure.keyvault.keys.crypto.KeyWrapAlgorithm`
         :param bytes encrypted_key: the wrapped key
 
+        :returns: The result of the unwrapping operation.
         :rtype: :class:`~azure.keyvault.keys.crypto.UnwrapResult`
 
         .. literalinclude:: ../tests/test_examples_crypto.py
@@ -440,6 +447,7 @@ class CryptographyClient(KeyVaultClientBase):
         :type algorithm: :class:`~azure.keyvault.keys.crypto.SignatureAlgorithm`
         :param bytes digest: hashed bytes to sign
 
+        :returns: The result of the signing operation.
         :rtype: :class:`~azure.keyvault.keys.crypto.SignResult`
 
         .. literalinclude:: ../tests/test_examples_crypto.py
@@ -485,6 +493,7 @@ class CryptographyClient(KeyVaultClientBase):
             compatible with ``algorithm``.
         :param bytes signature: signature to verify
 
+        :returns: The result of the verifying operation.
         :rtype: :class:`~azure.keyvault.keys.crypto.VerifyResult`
 
         .. literalinclude:: ../tests/test_examples_crypto.py

@@ -32,15 +32,15 @@ class RouterWorkerSamples(object):
         distribution_policy_id = self._distribution_policy_id
 
         from azure.communication.jobrouter import (
-            RouterAdministrationClient,
+            JobRouterAdministrationClient,
             LongestIdleMode,
             DistributionPolicy
         )
-        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
         distribution_policy = router_admin_client.create_distribution_policy(
             distribution_policy_id = distribution_policy_id,
             distribution_policy = DistributionPolicy(
-                offer_ttl_seconds = 10 * 60,
+                offer_expires_after_seconds = 10 * 60,
                 mode = LongestIdleMode(
                     min_concurrent_offers = 1,
                     max_concurrent_offers = 1
@@ -54,11 +54,11 @@ class RouterWorkerSamples(object):
         distribution_policy_id = self._distribution_policy_id
 
         from azure.communication.jobrouter import (
-            RouterAdministrationClient,
+            JobRouterAdministrationClient,
             JobQueue
         )
 
-        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
         job_queue1: JobQueue = router_admin_client.create_queue(
             queue_id = "worker-q-1",
             queue = JobQueue(
@@ -87,15 +87,15 @@ class RouterWorkerSamples(object):
         worker_id = self._worker_id
         # [START create_worker]
         from azure.communication.jobrouter import (
-            RouterClient,
+            JobRouterClient,
             RouterWorker,
             QueueAssignment,
             ChannelConfiguration,
         )
 
         # set `connection_string` to an existing ACS endpoint
-        router_client = RouterClient.from_connection_string(conn_str = connection_string)
-        print("RouterClient created successfully!")
+        router_client = JobRouterClient.from_connection_string(conn_str = connection_string)
+        print("JobRouterClient created successfully!")
 
         router_worker: RouterWorker = router_client.create_worker(
             worker_id = worker_id,
@@ -132,15 +132,15 @@ class RouterWorkerSamples(object):
         worker_id = self._worker_id
         # [START update_worker]
         from azure.communication.jobrouter import (
-            RouterClient,
+            JobRouterClient,
             RouterWorker,
             QueueAssignment,
             ChannelConfiguration,
         )
 
         # set `connection_string` to an existing ACS endpoint
-        router_client: RouterClient = RouterClient.from_connection_string(conn_str = connection_string)
-        print("RouterClient created successfully!")
+        router_client: JobRouterClient = JobRouterClient.from_connection_string(conn_str = connection_string)
+        print("JobRouterClient created successfully!")
 
         # we are going to
         # 1. Assign the worker to another queue
@@ -171,9 +171,9 @@ class RouterWorkerSamples(object):
         connection_string = self.endpoint
         worker_id = self._worker_id
         # [START get_worker]
-        from azure.communication.jobrouter import RouterClient
+        from azure.communication.jobrouter import JobRouterClient
 
-        router_client = RouterClient.from_connection_string(conn_str = connection_string)
+        router_client = JobRouterClient.from_connection_string(conn_str = connection_string)
 
         router_worker = router_client.get_worker(worker_id = worker_id)
 
@@ -184,9 +184,9 @@ class RouterWorkerSamples(object):
         connection_string = self.endpoint
         worker_id = self._worker_id
         # [START register_worker]
-        from azure.communication.jobrouter import RouterClient
+        from azure.communication.jobrouter import JobRouterClient
 
-        router_client = RouterClient.from_connection_string(conn_str = connection_string)
+        router_client = JobRouterClient.from_connection_string(conn_str = connection_string)
 
         router_worker = router_client.update_worker(
             worker_id = worker_id,
@@ -200,9 +200,9 @@ class RouterWorkerSamples(object):
         connection_string = self.endpoint
         worker_id = self._worker_id
         # [START deregister_worker]
-        from azure.communication.jobrouter import RouterClient
+        from azure.communication.jobrouter import JobRouterClient
 
-        router_client = RouterClient.from_connection_string(conn_str = connection_string)
+        router_client = JobRouterClient.from_connection_string(conn_str = connection_string)
 
         router_worker = router_client.update_worker(
             worker_id = worker_id,
@@ -215,9 +215,9 @@ class RouterWorkerSamples(object):
     def list_workers(self):
         connection_string = self.endpoint
         # [START list_workers]
-        from azure.communication.jobrouter import RouterClient
+        from azure.communication.jobrouter import JobRouterClient
 
-        router_client = RouterClient.from_connection_string(conn_str = connection_string)
+        router_client = JobRouterClient.from_connection_string(conn_str = connection_string)
 
         router_worker_iterator = router_client.list_workers()
 
@@ -230,9 +230,9 @@ class RouterWorkerSamples(object):
     def list_workers_batched(self):
         connection_string = self.endpoint
         # [START list_workers_batched]
-        from azure.communication.jobrouter import RouterClient
+        from azure.communication.jobrouter import JobRouterClient
 
-        router_client = RouterClient.from_connection_string(conn_str = connection_string)
+        router_client = JobRouterClient.from_connection_string(conn_str = connection_string)
 
         router_worker_iterator = router_client.list_workers(results_per_page = 10)
 
@@ -251,9 +251,9 @@ class RouterWorkerSamples(object):
         worker_id = self._worker_id
 
         # [START delete_worker]
-        from azure.communication.jobrouter import RouterClient
+        from azure.communication.jobrouter import JobRouterClient
 
-        router_client = RouterClient.from_connection_string(conn_str = connection_string)
+        router_client = JobRouterClient.from_connection_string(conn_str = connection_string)
 
         router_client.delete_worker(worker_id = worker_id)
 

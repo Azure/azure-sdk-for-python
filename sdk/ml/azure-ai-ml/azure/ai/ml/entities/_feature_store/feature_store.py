@@ -8,26 +8,24 @@
 from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Union
-from marshmallow import ValidationError
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Workspace as RestWorkspace
-
 from azure.ai.ml._schema._feature_store.feature_store_schema import FeatureStoreSchema
-from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
-from azure.ai.ml.entities._workspace.compute_runtime import ComputeRuntime
-from azure.ai.ml.entities import Workspace, CustomerManagedKey
-from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.entities import CustomerManagedKey, Workspace
+from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
+from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._workspace.compute_runtime import ComputeRuntime
+from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
 
-from .materialization_store import MaterializationStore
 from ._constants import (
-    OFFLINE_STORE_CONNECTION_NAME,
-    ONLINE_STORE_CONNECTION_NAME,
     DEFAULT_SPARK_RUNTIME_VERSION,
     FEATURE_STORE_KIND,
+    OFFLINE_STORE_CONNECTION_NAME,
+    ONLINE_STORE_CONNECTION_NAME,
 )
+from .materialization_store import MaterializationStore
 
 
 @experimental
@@ -113,12 +111,6 @@ class FeatureStore(Workspace):
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
-
-        if offline_store and not materialization_identity:
-            raise ValidationError("materialization_identity is required to setup offline store")
-
-        if online_store and not materialization_identity:
-            raise ValidationError("materialization_identity is required to setup online store")
 
         feature_store_settings = FeatureStoreSettings(
             compute_runtime=compute_runtime

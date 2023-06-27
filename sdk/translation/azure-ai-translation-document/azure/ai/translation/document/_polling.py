@@ -28,13 +28,13 @@ from ._models import TranslationStatus
 
 ResponseType = Union[HttpResponse, AsyncHttpResponse]
 PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
-PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 _FINISHED = frozenset(["succeeded", "cancelled", "cancelling", "failed"])
 _FAILED = frozenset(["validationfailed"])
 
 
-class DocumentTranslationLROPoller(LROPoller[PollingReturnType]):
+class DocumentTranslationLROPoller(LROPoller[PollingReturnType_co]):
     """A custom poller implementation for Document Translation. Call `result()` on the poller to return
     a pageable of :class:`~azure.ai.translation.document.DocumentStatus`."""
 
@@ -183,8 +183,10 @@ class TranslationPolling(OperationResourcePolling):
         return False
 
     def _set_async_url_if_present(self, response: ResponseType) -> None:
-        self._async_url = response.headers.get(self._operation_location_header)
-        if not self._async_url:
+        location_header = response.headers.get(self._operation_location_header)
+        if location_header:
+            self._async_url = location_header
+        else:
             self._async_url = response.request.url
 
     def get_status(self, pipeline_response: PipelineResponseType) -> str:

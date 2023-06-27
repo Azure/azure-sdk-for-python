@@ -37,7 +37,7 @@ setup(
     name=PACKAGE_NAME,
     version=version,
     include_package_data=True,
-    description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
+    description=f'Microsoft Azure {PACKAGE_PPRINT_NAME} Client Library for Python',
     long_description=readme + '\n\n' + changelog,
     long_description_content_type='text/markdown',
     license='MIT License',

@@ -8,8 +8,8 @@ from retry import retry
 import warnings
 from _shared.utils import get_http_logging_policy
 from azure.communication.jobrouter.aio import (
-    RouterClient,
-    RouterAdministrationClient,
+    JobRouterClient,
+    JobRouterAdministrationClient,
 )
 from azure.communication.jobrouter import (
     RouterJobStatus,
@@ -22,13 +22,13 @@ class AsyncRouterRecordedTestCase(AzureRecordedTestCase):
     async def clean_up(self):
         pass
 
-    def create_client(self) -> RouterClient:
-        return RouterClient.from_connection_string(
+    def create_client(self) -> JobRouterClient:
+        return JobRouterClient.from_connection_string(
             conn_str = self.connection_string,
             http_logging_policy=get_http_logging_policy())
 
-    def create_admin_client(self) -> RouterAdministrationClient:
-        return RouterAdministrationClient.from_connection_string(
+    def create_admin_client(self) -> JobRouterAdministrationClient:
+        return JobRouterAdministrationClient.from_connection_string(
             conn_str = self.connection_string,
             http_logging_policy=get_http_logging_policy())
 
@@ -38,7 +38,7 @@ class AsyncRouterRecordedTestCase(AzureRecordedTestCase):
             job_id,
             **kwargs
     ):
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         try:
             async with router_client:

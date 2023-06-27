@@ -7,4 +7,4 @@
 
 ### Added
 - Preview release of the package.
-- Add RouterClient
+- Add JobRouterClient

@@ -236,8 +236,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype elastic_pool_operations: azure.mgmt.sql.aio.operations.ElasticPoolOperationsOperations
     :ivar encryption_protectors: EncryptionProtectorsOperations operations
     :vartype encryption_protectors: azure.mgmt.sql.aio.operations.EncryptionProtectorsOperations
-    :ivar failover_groups: FailoverGroupsOperations operations
-    :vartype failover_groups: azure.mgmt.sql.aio.operations.FailoverGroupsOperations
     :ivar firewall_rules: FirewallRulesOperations operations
     :vartype firewall_rules: azure.mgmt.sql.aio.operations.FirewallRulesOperations
     :ivar instance_pools: InstancePoolsOperations operations
@@ -447,8 +445,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar server_trust_certificates: ServerTrustCertificatesOperations operations
     :vartype server_trust_certificates:
      azure.mgmt.sql.aio.operations.ServerTrustCertificatesOperations
-    :ivar ipv6_firewall_rules: IPv6FirewallRulesOperations operations
-    :vartype ipv6_firewall_rules: azure.mgmt.sql.aio.operations.IPv6FirewallRulesOperations
     :ivar endpoint_certificates: EndpointCertificatesOperations operations
     :vartype endpoint_certificates: azure.mgmt.sql.aio.operations.EndpointCertificatesOperations
     :ivar managed_database_sensitivity_labels: ManagedDatabaseSensitivityLabelsOperations
@@ -489,30 +485,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar managed_server_dns_aliases: ManagedServerDnsAliasesOperations operations
     :vartype managed_server_dns_aliases:
      azure.mgmt.sql.aio.operations.ManagedServerDnsAliasesOperations
-    :ivar database_sql_vulnerability_assessment_baselines:
-     DatabaseSqlVulnerabilityAssessmentBaselinesOperations operations
-    :vartype database_sql_vulnerability_assessment_baselines:
-     azure.mgmt.sql.aio.operations.DatabaseSqlVulnerabilityAssessmentBaselinesOperations
-    :ivar database_sql_vulnerability_assessment_execute_scan:
-     DatabaseSqlVulnerabilityAssessmentExecuteScanOperations operations
-    :vartype database_sql_vulnerability_assessment_execute_scan:
-     azure.mgmt.sql.aio.operations.DatabaseSqlVulnerabilityAssessmentExecuteScanOperations
-    :ivar database_sql_vulnerability_assessment_rule_baselines:
-     DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations operations
-    :vartype database_sql_vulnerability_assessment_rule_baselines:
-     azure.mgmt.sql.aio.operations.DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations
-    :ivar database_sql_vulnerability_assessment_scan_result:
-     DatabaseSqlVulnerabilityAssessmentScanResultOperations operations
-    :vartype database_sql_vulnerability_assessment_scan_result:
-     azure.mgmt.sql.aio.operations.DatabaseSqlVulnerabilityAssessmentScanResultOperations
-    :ivar database_sql_vulnerability_assessment_scans:
-     DatabaseSqlVulnerabilityAssessmentScansOperations operations
-    :vartype database_sql_vulnerability_assessment_scans:
-     azure.mgmt.sql.aio.operations.DatabaseSqlVulnerabilityAssessmentScansOperations
-    :ivar database_sql_vulnerability_assessments_settings:
-     DatabaseSqlVulnerabilityAssessmentsSettingsOperations operations
-    :vartype database_sql_vulnerability_assessments_settings:
-     azure.mgmt.sql.aio.operations.DatabaseSqlVulnerabilityAssessmentsSettingsOperations
     :ivar managed_database_advanced_threat_protection_settings:
      ManagedDatabaseAdvancedThreatProtectionSettingsOperations operations
     :vartype managed_database_advanced_threat_protection_settings:
@@ -523,40 +495,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
      azure.mgmt.sql.aio.operations.ManagedInstanceAdvancedThreatProtectionSettingsOperations
     :ivar replication_links: ReplicationLinksOperations operations
     :vartype replication_links: azure.mgmt.sql.aio.operations.ReplicationLinksOperations
-    :ivar sql_vulnerability_assessment_baseline: SqlVulnerabilityAssessmentBaselineOperations
-     operations
-    :vartype sql_vulnerability_assessment_baseline:
-     azure.mgmt.sql.aio.operations.SqlVulnerabilityAssessmentBaselineOperations
-    :ivar sql_vulnerability_assessment_baselines: SqlVulnerabilityAssessmentBaselinesOperations
-     operations
-    :vartype sql_vulnerability_assessment_baselines:
-     azure.mgmt.sql.aio.operations.SqlVulnerabilityAssessmentBaselinesOperations
-    :ivar sql_vulnerability_assessment_execute_scan:
-     SqlVulnerabilityAssessmentExecuteScanOperations operations
-    :vartype sql_vulnerability_assessment_execute_scan:
-     azure.mgmt.sql.aio.operations.SqlVulnerabilityAssessmentExecuteScanOperations
-    :ivar sql_vulnerability_assessment_rule_baseline:
-     SqlVulnerabilityAssessmentRuleBaselineOperations operations
-    :vartype sql_vulnerability_assessment_rule_baseline:
-     azure.mgmt.sql.aio.operations.SqlVulnerabilityAssessmentRuleBaselineOperations
-    :ivar sql_vulnerability_assessment_rule_baselines:
-     SqlVulnerabilityAssessmentRuleBaselinesOperations operations
-    :vartype sql_vulnerability_assessment_rule_baselines:
-     azure.mgmt.sql.aio.operations.SqlVulnerabilityAssessmentRuleBaselinesOperations
-    :ivar sql_vulnerability_assessment_scan_result: SqlVulnerabilityAssessmentScanResultOperations
-     operations
-    :vartype sql_vulnerability_assessment_scan_result:
-     azure.mgmt.sql.aio.operations.SqlVulnerabilityAssessmentScanResultOperations
-    :ivar sql_vulnerability_assessment_scans: SqlVulnerabilityAssessmentScansOperations operations
-    :vartype sql_vulnerability_assessment_scans:
-     azure.mgmt.sql.aio.operations.SqlVulnerabilityAssessmentScansOperations
-    :ivar sql_vulnerability_assessments_settings: SqlVulnerabilityAssessmentsSettingsOperations
-     operations
-    :vartype sql_vulnerability_assessments_settings:
-     azure.mgmt.sql.aio.operations.SqlVulnerabilityAssessmentsSettingsOperations
-    :ivar sql_vulnerability_assessments: SqlVulnerabilityAssessmentsOperations operations
-    :vartype sql_vulnerability_assessments:
-     azure.mgmt.sql.aio.operations.SqlVulnerabilityAssessmentsOperations
     :ivar managed_database_move_operations: ManagedDatabaseMoveOperationsOperations operations
     :vartype managed_database_move_operations:
      azure.mgmt.sql.aio.operations.ManagedDatabaseMoveOperationsOperations
@@ -599,6 +537,68 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar transparent_data_encryptions: TransparentDataEncryptionsOperations operations
     :vartype transparent_data_encryptions:
      azure.mgmt.sql.aio.operations.TransparentDataEncryptionsOperations
+    :ivar failover_groups: FailoverGroupsOperations operations
+    :vartype failover_groups: azure.mgmt.sql.aio.operations.FailoverGroupsOperations
+    :ivar ipv6_firewall_rules: IPv6FirewallRulesOperations operations
+    :vartype ipv6_firewall_rules: azure.mgmt.sql.aio.operations.IPv6FirewallRulesOperations
+    :ivar sql_vulnerability_assessment_baseline: SqlVulnerabilityAssessmentBaselineOperations
+     operations
+    :vartype sql_vulnerability_assessment_baseline:
+     azure.mgmt.sql.aio.operations.SqlVulnerabilityAssessmentBaselineOperations
+    :ivar sql_vulnerability_assessment_baselines: SqlVulnerabilityAssessmentBaselinesOperations
+     operations
+    :vartype sql_vulnerability_assessment_baselines:
+     azure.mgmt.sql.aio.operations.SqlVulnerabilityAssessmentBaselinesOperations
+    :ivar sql_vulnerability_assessment_execute_scan:
+     SqlVulnerabilityAssessmentExecuteScanOperations operations
+    :vartype sql_vulnerability_assessment_execute_scan:
+     azure.mgmt.sql.aio.operations.SqlVulnerabilityAssessmentExecuteScanOperations
+    :ivar sql_vulnerability_assessment_rule_baseline:
+     SqlVulnerabilityAssessmentRuleBaselineOperations operations
+    :vartype sql_vulnerability_assessment_rule_baseline:
+     azure.mgmt.sql.aio.operations.SqlVulnerabilityAssessmentRuleBaselineOperations
+    :ivar sql_vulnerability_assessment_rule_baselines:
+     SqlVulnerabilityAssessmentRuleBaselinesOperations operations
+    :vartype sql_vulnerability_assessment_rule_baselines:
+     azure.mgmt.sql.aio.operations.SqlVulnerabilityAssessmentRuleBaselinesOperations
+    :ivar sql_vulnerability_assessment_scan_result: SqlVulnerabilityAssessmentScanResultOperations
+     operations
+    :vartype sql_vulnerability_assessment_scan_result:
+     azure.mgmt.sql.aio.operations.SqlVulnerabilityAssessmentScanResultOperations
+    :ivar sql_vulnerability_assessment_scans: SqlVulnerabilityAssessmentScansOperations operations
+    :vartype sql_vulnerability_assessment_scans:
+     azure.mgmt.sql.aio.operations.SqlVulnerabilityAssessmentScansOperations
+    :ivar sql_vulnerability_assessments_settings: SqlVulnerabilityAssessmentsSettingsOperations
+     operations
+    :vartype sql_vulnerability_assessments_settings:
+     azure.mgmt.sql.aio.operations.SqlVulnerabilityAssessmentsSettingsOperations
+    :ivar sql_vulnerability_assessments: SqlVulnerabilityAssessmentsOperations operations
+    :vartype sql_vulnerability_assessments:
+     azure.mgmt.sql.aio.operations.SqlVulnerabilityAssessmentsOperations
+    :ivar database_sql_vulnerability_assessment_baselines:
+     DatabaseSqlVulnerabilityAssessmentBaselinesOperations operations
+    :vartype database_sql_vulnerability_assessment_baselines:
+     azure.mgmt.sql.aio.operations.DatabaseSqlVulnerabilityAssessmentBaselinesOperations
+    :ivar database_sql_vulnerability_assessment_execute_scan:
+     DatabaseSqlVulnerabilityAssessmentExecuteScanOperations operations
+    :vartype database_sql_vulnerability_assessment_execute_scan:
+     azure.mgmt.sql.aio.operations.DatabaseSqlVulnerabilityAssessmentExecuteScanOperations
+    :ivar database_sql_vulnerability_assessment_rule_baselines:
+     DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations operations
+    :vartype database_sql_vulnerability_assessment_rule_baselines:
+     azure.mgmt.sql.aio.operations.DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations
+    :ivar database_sql_vulnerability_assessment_scan_result:
+     DatabaseSqlVulnerabilityAssessmentScanResultOperations operations
+    :vartype database_sql_vulnerability_assessment_scan_result:
+     azure.mgmt.sql.aio.operations.DatabaseSqlVulnerabilityAssessmentScanResultOperations
+    :ivar database_sql_vulnerability_assessment_scans:
+     DatabaseSqlVulnerabilityAssessmentScansOperations operations
+    :vartype database_sql_vulnerability_assessment_scans:
+     azure.mgmt.sql.aio.operations.DatabaseSqlVulnerabilityAssessmentScansOperations
+    :ivar database_sql_vulnerability_assessments_settings:
+     DatabaseSqlVulnerabilityAssessmentsSettingsOperations operations
+    :vartype database_sql_vulnerability_assessments_settings:
+     azure.mgmt.sql.aio.operations.DatabaseSqlVulnerabilityAssessmentsSettingsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription ID that identifies an Azure subscription. Required.
@@ -687,7 +687,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.encryption_protectors = EncryptionProtectorsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.failover_groups = FailoverGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.instance_pools = InstancePoolsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.job_agents = JobAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -881,9 +880,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.server_trust_certificates = ServerTrustCertificatesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.ipv6_firewall_rules = IPv6FirewallRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.endpoint_certificates = EndpointCertificatesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -920,28 +916,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.managed_server_dns_aliases = ManagedServerDnsAliasesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.database_sql_vulnerability_assessment_baselines = DatabaseSqlVulnerabilityAssessmentBaselinesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.database_sql_vulnerability_assessment_execute_scan = (
-            DatabaseSqlVulnerabilityAssessmentExecuteScanOperations(
-                self._client, self._config, self._serialize, self._deserialize
-            )
-        )
-        self.database_sql_vulnerability_assessment_rule_baselines = (
-            DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations(
-                self._client, self._config, self._serialize, self._deserialize
-            )
-        )
-        self.database_sql_vulnerability_assessment_scan_result = DatabaseSqlVulnerabilityAssessmentScanResultOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.database_sql_vulnerability_assessment_scans = DatabaseSqlVulnerabilityAssessmentScansOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.database_sql_vulnerability_assessments_settings = DatabaseSqlVulnerabilityAssessmentsSettingsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.managed_database_advanced_threat_protection_settings = (
             ManagedDatabaseAdvancedThreatProtectionSettingsOperations(
                 self._client, self._config, self._serialize, self._deserialize
@@ -953,33 +927,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
             )
         )
         self.replication_links = ReplicationLinksOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sql_vulnerability_assessment_baseline = SqlVulnerabilityAssessmentBaselineOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sql_vulnerability_assessment_baselines = SqlVulnerabilityAssessmentBaselinesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sql_vulnerability_assessment_execute_scan = SqlVulnerabilityAssessmentExecuteScanOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sql_vulnerability_assessment_rule_baseline = SqlVulnerabilityAssessmentRuleBaselineOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sql_vulnerability_assessment_rule_baselines = SqlVulnerabilityAssessmentRuleBaselinesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sql_vulnerability_assessment_scan_result = SqlVulnerabilityAssessmentScanResultOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sql_vulnerability_assessment_scans = SqlVulnerabilityAssessmentScansOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sql_vulnerability_assessments_settings = SqlVulnerabilityAssessmentsSettingsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sql_vulnerability_assessments = SqlVulnerabilityAssessmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.managed_database_move_operations = ManagedDatabaseMoveOperationsOperations(
@@ -1026,6 +973,59 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
             self._client, self._config, self._serialize, self._deserialize
         )
         self.transparent_data_encryptions = TransparentDataEncryptionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.failover_groups = FailoverGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.ipv6_firewall_rules = IPv6FirewallRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sql_vulnerability_assessment_baseline = SqlVulnerabilityAssessmentBaselineOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sql_vulnerability_assessment_baselines = SqlVulnerabilityAssessmentBaselinesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sql_vulnerability_assessment_execute_scan = SqlVulnerabilityAssessmentExecuteScanOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sql_vulnerability_assessment_rule_baseline = SqlVulnerabilityAssessmentRuleBaselineOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sql_vulnerability_assessment_rule_baselines = SqlVulnerabilityAssessmentRuleBaselinesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sql_vulnerability_assessment_scan_result = SqlVulnerabilityAssessmentScanResultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sql_vulnerability_assessment_scans = SqlVulnerabilityAssessmentScansOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sql_vulnerability_assessments_settings = SqlVulnerabilityAssessmentsSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sql_vulnerability_assessments = SqlVulnerabilityAssessmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.database_sql_vulnerability_assessment_baselines = DatabaseSqlVulnerabilityAssessmentBaselinesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.database_sql_vulnerability_assessment_execute_scan = (
+            DatabaseSqlVulnerabilityAssessmentExecuteScanOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
+        )
+        self.database_sql_vulnerability_assessment_rule_baselines = (
+            DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
+        )
+        self.database_sql_vulnerability_assessment_scan_result = DatabaseSqlVulnerabilityAssessmentScanResultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.database_sql_vulnerability_assessment_scans = DatabaseSqlVulnerabilityAssessmentScansOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.database_sql_vulnerability_assessments_settings = DatabaseSqlVulnerabilityAssessmentsSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

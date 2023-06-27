@@ -1,5 +1,19 @@
 # Release History
 
+## 1.28.0 (Unreleased)
+
+### Features Added
+
+- Add header name parameter to RequestIdPolicy #30772
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Catch aiohttp errors and translate them into azure-core errors.
+
 ## 1.27.1 (2023-06-13)
 
 ### Bugs Fixed

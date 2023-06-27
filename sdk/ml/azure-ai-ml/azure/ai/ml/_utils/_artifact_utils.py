@@ -52,14 +52,13 @@ class ArtifactCache:
     @staticmethod
     def check_artifact_extension():
         # check az extension azure-devops installed. Install it if not installed.
-        process = subprocess.Popen(
-            "az artifacts --help --yes",
-            shell=True,  # nosec B602
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+        result = subprocess.run(
+            [shutil.which("az"), "artifacts", "--help", "--yes"],
+            capture_output=True,
+            check=False,
         )
-        process.communicate()
-        if process.returncode != 0:
+
+        if result.returncode != 0:
             raise RuntimeError(
                 "Auto-installation failed. Please install azure-devops "
                 "extension by 'az extension add --name azure-devops'."
@@ -102,20 +101,20 @@ class ArtifactCache:
         :return organization_url, project: organization_url, project
         :rtype organization_url, project: str, str
         """
-        process = subprocess.Popen(
-            "git config --get remote.origin.url",
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+        result = subprocess.run(
+            [shutil.which("git"), "config", "--get", "remote.origin.url"],
+            capture_output=True,
             encoding="utf-8",
-            shell=True,  # nosec B602
+            check=False,
         )
-        outs, errs = process.communicate()
-        if process.returncode != 0:
+
+        if result.returncode != 0:
             # When organization and project cannot be retrieved from the origin url.
             raise RuntimeError(
-                f"Get the git origin url failed, you must be in a local Git directory, " f"error message: {errs}"
+                f"Get the git origin url failed, you must be in a local Git directory, "
+                f"error message: {result.stderr}"
             )
-        origin_url = outs.strip()
+        origin_url = result.stdout.strip()
 
         # Organization URL has two format, https://dev.azure.com/{organization} and
         # https://{organization}.visualstudio.com
@@ -196,20 +195,21 @@ class ArtifactCache:
                 _logger.warning("Redirect artifacts tool path failed, details: %s", e)
 
             retries += 1
-            process = subprocess.Popen(
+            result = subprocess.run(
                 download_cmd,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                shell=True,  # nosec B602
+                capture_output=True,
                 encoding="utf-8",
+                check=False,
             )
-            outputs, errs = process.communicate()
-            if process.returncode != 0:
-                error_msg = f"Download package {name}:{version} from the feed {feed} failed {retries} times: {errs}"
+
+            if result.returncode != 0:
+                error_msg = (
+                    f"Download package {name}:{version} from the feed {feed} failed {retries} times: {result.stderr}"
+                )
                 if retries < max_retries:
                     _logger.warning(error_msg)
                 else:
-                    error_msg = error_msg + f"\nDownload artifact debug info: {outputs}"
+                    error_msg = error_msg + f"\nDownload artifact debug info: {result.stdout}"
                     raise RuntimeError(error_msg)
             else:
                 return
@@ -298,33 +298,45 @@ class ArtifactCache:
         :return artifact_package_path: Cache path of the artifact package
         """
         tempdir = tempfile.mktemp()  # nosec B306
-        download_cmd = (
-            f"az artifacts universal download --feed {feed} --name {name} --version {version} "
-            f"--scope {scope} --path {tempdir}"
-        )
+        download_cmd = [
+            shutil.which("az"),
+            "artifacts",
+            "universal",
+            "download",
+            "--feed",
+            feed,
+            "--name",
+            name,
+            "--version",
+            version,
+            "--scope",
+            scope,
+            "--path",
+            tempdir,
+        ]
         if organization:
-            download_cmd = download_cmd + f" --org {organization}"
+            download_cmd.extend(["--org", organization])
         if project:
-            download_cmd = download_cmd + f" --project {project}"
+            download_cmd.extend(["--project", project])
         _logger.info("Start downloading artifacts %s:%s from %s.", name, version, feed)
-        process = subprocess.Popen(
+        result = subprocess.run(
             download_cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            shell=True,  # nosec B602
+            capture_output=True,
             encoding="utf-8",
+            check=False,
         )
-        # Avoid deadlock when setting stdout/stderr to PIPE.
-        _, errs = process.communicate()
-        if process.returncode != 0:
+
+        if result.returncode != 0:
             artifacts_tool_not_find_error_pattern = "No such file or directory: .*artifacttool"
-            if re.findall(artifacts_tool_not_find_error_pattern, errs):
+            if re.findall(artifacts_tool_not_find_error_pattern, result.stderr):
                 # When download artifacts tool failed retry download artifacts command
-                _logger.warning("Download package %s:%s from the feed %s failed: %s", name, version, feed, errs)
-                download_cmd = download_cmd + "--debug"
+                _logger.warning(
+                    "Download package %s:%s from the feed %s failed: %s", name, version, feed, result.stderr
+                )
+                download_cmd.append("--debug")
                 self._download_artifacts(download_cmd, organization, name, version, feed)
             else:
-                raise RuntimeError(f"Download package {name}:{version} from the feed {feed} failed: {errs}")
+                raise RuntimeError(f"Download package {name}:{version} from the feed {feed} failed: {result.stderr}")
         try:
             # Copy artifact package from temp folder to the cache path.
             if not all([organization, project]):

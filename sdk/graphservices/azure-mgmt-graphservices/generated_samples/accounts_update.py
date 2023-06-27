@@ -29,7 +29,7 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.account.update(
+    response = client.accounts.update(
         resource_group_name="testResourceGroupGRAM",
         resource_name="11111111-aaaa-1111-bbbb-111111111111",
         account_resource={"tags": {"tag1": "value1", "tag2": "value2"}},
@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/graphservicesprod/resource-manager/Microsoft.GraphServices/preview/2022-09-22-preview/examples/Accounts_Update.json
+# x-ms-original-file: specification/graphservicesprod/resource-manager/Microsoft.GraphServices/stable/2023-04-13/examples/Accounts_Update.json
 if __name__ == "__main__":
     main()

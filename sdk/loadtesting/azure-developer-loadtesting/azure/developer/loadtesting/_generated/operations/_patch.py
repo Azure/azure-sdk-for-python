@@ -22,8 +22,6 @@ from .._serialization import Serializer
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-PollingReturnType = TypeVar("PollingReturnType")
-
 logger = logging.getLogger(__name__)
 
 

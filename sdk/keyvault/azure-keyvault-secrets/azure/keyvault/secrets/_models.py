@@ -2,29 +2,40 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from ._shared import parse_key_vault_id
+from typing import TYPE_CHECKING
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
+from ._shared import parse_key_vault_id
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Dict, Optional
+    from typing import Dict, Optional
     from datetime import datetime
     from . import _generated_models as _models
 
 
 class SecretProperties(object):
-    """A secret's id and attributes."""
+    """A secret's ID and attributes.
+
+    :param attributes: The secret's attributes.
+    :type attributes: ~azure.keyvault.secrets._generated_models.SecretAttributes
+    :param secret_id: The secret's ID.
+    :type secret_id: str or None
+
+    :keyword str content_type: The content type of the secret.
+    :keyword str key_id: If this is a secret backing a KV certificate, then this field specifies the corresponding key
+        backing the certificate.
+    :keyword bool managed: True if the secret's lifetime is managed by Key Vault. If this secret is backing a
+        certificate, this will be True.
+    :keyword tags: Application specific metadata in the form of key-value pairs.
+    :paramtype tags: dict[str, str]
+    """
 
     def __init__(
-        self, attributes: "Optional[_models.SecretAttributes]", vault_id: "Optional[str]", **kwargs
+        self, attributes: "Optional[_models.SecretAttributes]", secret_id: "Optional[str]", **kwargs
     ) -> None:
         self._attributes = attributes
-        self._id = vault_id
-        self._vault_id = KeyVaultSecretIdentifier(vault_id) if vault_id else None
+        self._id = secret_id
+        self._vault_id = KeyVaultSecretIdentifier(secret_id) if secret_id else None
         self._content_type = kwargs.get("content_type", None)
         self._key_id = kwargs.get("key_id", None)
         self._managed = kwargs.get("managed", None)
@@ -35,7 +46,6 @@ class SecretProperties(object):
 
     @classmethod
     def _from_secret_bundle(cls, secret_bundle: "_models.SecretBundle") -> "SecretProperties":
-        """Construct a SecretProperties from an autorest-generated SecretBundle"""
         return cls(
             secret_bundle.attributes,
             secret_bundle.id,
@@ -47,7 +57,6 @@ class SecretProperties(object):
 
     @classmethod
     def _from_secret_item(cls, secret_item: "_models.SecretItem") -> "SecretProperties":
-        """Construct a SecretProperties from an autorest-generated SecretItem"""
         return cls(
             secret_item.attributes,
             secret_item.id,
@@ -58,16 +67,18 @@ class SecretProperties(object):
 
     @property
     def content_type(self) -> "Optional[str]":
-        """An arbitrary string indicating the type of the secret
+        """An arbitrary string indicating the type of the secret.
 
+        :returns: The content type of the secret.
         :rtype: str or None
         """
         return self._content_type
 
     @property
     def id(self) -> "Optional[str]":
-        """The secret's id
+        """The secret's ID.
 
+        :returns: The secret's ID.
         :rtype: str or None
         """
         return self._id
@@ -76,46 +87,53 @@ class SecretProperties(object):
     def key_id(self) -> "Optional[str]":
         """If this secret backs a certificate, this property is the identifier of the corresponding key.
 
+        :returns: The ID of the key backing the certificate that's backed by this secret. If the secret isn't backing a
+            certificate, this is None.
         :rtype: str or None
         """
         return self._key_id
 
     @property
     def enabled(self) -> "Optional[bool]":
-        """Whether the secret is enabled for use
+        """Whether the secret is enabled for use.
 
+        :returns: True if the secret is enabled for use; False otherwise.
         :rtype: bool or None
         """
         return self._attributes.enabled if self._attributes else None
 
     @property
     def not_before(self) -> "Optional[datetime]":
-        """The time before which the secret can not be used, in UTC
+        """The time before which the secret cannot be used, in UTC.
 
+        :returns: The time before which the secret cannot be used, in UTC.
         :rtype: ~datetime.datetime or None
         """
         return self._attributes.not_before if self._attributes else None
 
     @property
     def expires_on(self) -> "Optional[datetime]":
-        """When the secret expires, in UTC
+        """When the secret expires, in UTC.
 
+        :returns: When the secret expires, in UTC.
         :rtype: ~datetime.datetime or None
         """
         return self._attributes.expires if self._attributes else None
 
     @property
     def created_on(self) -> "Optional[datetime]":
-        """When the secret was created, in UTC
+        """When the secret was created, in UTC.
 
+        :returns: When the secret was created, in UTC.
         :rtype: ~datetime.datetime or None
         """
         return self._attributes.created if self._attributes else None
 
     @property
     def updated_on(self) -> "Optional[datetime]":
-        """When the secret was last updated, in UTC
+        """When the secret was last updated, in UTC.
 
+        :returns: When the secret was last updated, in UTC.
         :rtype: ~datetime.datetime or None
         """
         return self._attributes.updated if self._attributes else None
@@ -124,6 +142,7 @@ class SecretProperties(object):
     def recoverable_days(self) -> "Optional[int]":
         """The number of days the key is retained before being deleted from a soft-delete enabled Key Vault.
 
+        :returns: The number of days the key is retained before being deleted from a soft-delete enabled Key Vault.
         :rtype: int or None
         """
         # recoverable_days was added in 7.1-preview
@@ -133,40 +152,45 @@ class SecretProperties(object):
 
     @property
     def recovery_level(self) -> "Optional[str]":
-        """The vault's deletion recovery level for secrets
+        """The vault's deletion recovery level for secrets.
 
+        :returns: The vault's deletion recovery level for secrets.
         :rtype: str or None
         """
         return self._attributes.recovery_level if self._attributes else None
 
     @property
     def vault_url(self) -> "Optional[str]":
-        """URL of the vault containing the secret
+        """URL of the vault containing the secret.
 
+        :returns: URL of the vault containing the secret.
         :rtype: str or None
         """
         return self._vault_id.vault_url if self._vault_id else None
 
     @property
     def name(self) -> "Optional[str]":
-        """The secret's name
+        """The secret's name.
 
+        :returns: The secret's name.
         :rtype: str or None
         """
         return self._vault_id.name if self._vault_id else None
 
     @property
     def version(self) -> "Optional[str]":
-        """The secret's version
+        """The secret's version.
 
+        :returns: The secret's version.
         :rtype: str or None
         """
         return self._vault_id.version if self._vault_id else None
 
     @property
     def tags(self) -> "Optional[Dict[str, str]]":
-        """Application specific metadata in the form of key-value pairs
+        """Application specific metadata in the form of key-value pairs.
 
+        :returns: A dictionary of tags attached to this secret.
         :rtype: dict or None
         """
         return self._tags
@@ -175,13 +199,20 @@ class SecretProperties(object):
     def managed(self) -> "Optional[bool]":
         """Whether the secret's lifetime is managed by Key Vault. If the secret backs a certificate, this will be true.
 
+        :returns: True if the secret's lifetime is managed by Key Vault; False otherwise.
         :rtype: bool or None
         """
         return self._managed
 
 
 class KeyVaultSecret(object):
-    """All of a secret's properties, and its value."""
+    """All of a secret's properties, and its value.
+
+    :param properties: The secret's properties.
+    :type properties: ~azure.keyvault.secrets.SecretProperties
+    :param value: The value of the secret.
+    :type value: str or None
+    """
 
     def __init__(self, properties: SecretProperties, value: "Optional[str]") -> None:
         self._properties = properties
@@ -192,7 +223,6 @@ class KeyVaultSecret(object):
 
     @classmethod
     def _from_secret_bundle(cls, secret_bundle: "_models.SecretBundle") -> "KeyVaultSecret":
-        """Construct a KeyVaultSecret from an autorest-generated SecretBundle"""
         return cls(
             properties=SecretProperties._from_secret_bundle(secret_bundle),  # pylint: disable=protected-access
             value=secret_bundle.value,
@@ -200,32 +230,36 @@ class KeyVaultSecret(object):
 
     @property
     def name(self) -> "Optional[str]":
-        """The secret's name
+        """The secret's name.
 
+        :returns: The secret's name.
         :rtype: str or None
         """
         return self._properties.name
 
     @property
     def id(self) -> "Optional[str]":
-        """The secret's id
+        """The secret's ID.
 
+        :returns: The secret's ID.
         :rtype: str or None
         """
         return self._properties.id
 
     @property
     def properties(self) -> SecretProperties:
-        """The secret's properties
+        """The secret's properties.
 
+        :returns: The secret's properties.
         :rtype: ~azure.keyvault.secrets.SecretProperties
         """
         return self._properties
 
     @property
     def value(self) -> "Optional[str]":
-        """The secret's value
+        """The secret's value.
 
+        :returns: The secret's value.
         :rtype: str or None
         """
         return self._value
@@ -268,8 +302,19 @@ class KeyVaultSecretIdentifier(object):
 
 
 class DeletedSecret(object):
-    """A deleted secret's properties and information about its deletion. If soft-delete
-    is enabled, returns information about its recovery as well."""
+    """A deleted secret's properties and information about its deletion.
+
+    If soft-delete is enabled, returns information about its recovery as well.
+
+    :param properties: The deleted secret's properties.
+    :type properties: ~azure.keyvault.secrets.SecretProperties
+    :param deleted_date: When the secret was deleted, in UTC.
+    :type deleted_date: ~datetime.datetime or None
+    :param recovery_id: An identifier used to recover the deleted secret.
+    :type recovery_id: str or None
+    :param scheduled_purge_date: When the secret is scheduled to be purged by Key Vault, in UTC.
+    :type scheduled_purge_date: ~datetime.datetime or None
+    """
 
     def __init__(
         self,
@@ -288,7 +333,6 @@ class DeletedSecret(object):
 
     @classmethod
     def _from_deleted_secret_bundle(cls, deleted_secret_bundle: "_models.DeletedSecretBundle") -> "DeletedSecret":
-        """Construct a DeletedSecret from an autorest-generated DeletedSecretBundle"""
         return cls(
             properties=SecretProperties._from_secret_bundle(deleted_secret_bundle),  # pylint: disable=protected-access
             deleted_date=deleted_secret_bundle.deleted_date,
@@ -298,7 +342,6 @@ class DeletedSecret(object):
 
     @classmethod
     def _from_deleted_secret_item(cls, deleted_secret_item: "_models.DeletedSecretItem") -> "DeletedSecret":
-        """Construct a DeletedSecret from an autorest-generated DeletedSecretItem"""
         return cls(
             properties=SecretProperties._from_secret_item(deleted_secret_item),  # pylint: disable=protected-access
             deleted_date=deleted_secret_item.deleted_date,
@@ -308,48 +351,54 @@ class DeletedSecret(object):
 
     @property
     def name(self) -> "Optional[str]":
-        """The secret's name
+        """The secret's name.
 
+        :returns: The secret's name.
         :rtype: str or None
         """
         return self._properties.name
 
     @property
     def id(self) -> "Optional[str]":
-        """The secret's id
+        """The secret's ID.
 
+        :returns: The secret's ID.
         :rtype: str or None
         """
         return self._properties.id
 
     @property
     def properties(self) -> SecretProperties:
-        """The properties of the deleted secret
+        """The properties of the deleted secret.
 
+        :returns: The properties of the deleted secret.
         :rtype: ~azure.keyvault.secrets.SecretProperties
         """
         return self._properties
 
     @property
     def deleted_date(self) -> "Optional[datetime]":
-        """When the secret was deleted, in UTC
+        """When the secret was deleted, in UTC.
 
+        :returns: When the secret was deleted, in UTC.
         :rtype: ~datetime.datetime or None
         """
         return self._deleted_date
 
     @property
     def recovery_id(self) -> "Optional[str]":
-        """An identifier used to recover the deleted secret. Returns ``None`` if soft-delete is disabled.
+        """An identifier used to recover the deleted secret.
 
+        :returns: An identifier used to recover the deleted secret.
         :rtype: str or None
         """
         return self._recovery_id
 
     @property
     def scheduled_purge_date(self) -> "Optional[datetime]":
-        """When the secret is scheduled to be purged, in UTC. Returns ``None`` if soft-delete is disabled.
+        """When the secret is scheduled to be purged by Key Vault, in UTC.
 
+        :returns: When the secret is scheduled to be purged by Key Vault, in UTC.
         :rtype: ~datetime.datetime or None
         """
         return self._scheduled_purge_date
