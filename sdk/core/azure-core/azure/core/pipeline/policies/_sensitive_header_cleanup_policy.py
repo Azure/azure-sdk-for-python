@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
     """A simple policy that cleans up sensitive headers
 
-    :keyword List[str] blocked_redirect_headers: The headers to clean up when redirecting to another domain.
+    :keyword list[str] blocked_redirect_headers: The headers to clean up when redirecting to another domain.
     :keyword bool disable_redirect_cleanup: Opt out cleaning up sensitive headers when redirecting to another domain.
     """
 
