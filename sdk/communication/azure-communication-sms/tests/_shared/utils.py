@@ -6,7 +6,6 @@
 import os
 from typing import cast, Tuple, Union  # pylint: disable=unused-import
 from azure.core.pipeline.policies import HttpLoggingPolicy, HeadersPolicy
-from azure.identity import DefaultAzureCredential
 from devtools_testutils import is_live
 from .async_fake_token_credential import AsyncFakeTokenCredential
 from .fake_token_credential import FakeTokenCredential
@@ -16,6 +15,7 @@ def create_token_credential():
     # type: () -> Union[FakeTokenCredential, DefaultAzureCredential]
     if not is_live():
         return FakeTokenCredential()
+    from azure.identity import DefaultAzureCredential
     return DefaultAzureCredential()
 
 
@@ -23,6 +23,7 @@ def async_create_token_credential():
     # type: () -> Union[AsyncFakeTokenCredential, DefaultAzureCredential]
     if not is_live():
         return AsyncFakeTokenCredential()
+    from azure.identity.aio import DefaultAzureCredential
     return DefaultAzureCredential()
 
 
