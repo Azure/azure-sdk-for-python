@@ -40,7 +40,7 @@ __all__ = ["AsyncLROBasePolling"]
 class AsyncLROBasePolling(LROBasePolling):
     """A subclass or LROBasePolling that redefine "run" as async."""
 
-    async def run(self):
+    async def run(self):  # pylint:disable=invalid-overridden-method
         try:
             await self._poll()
 
