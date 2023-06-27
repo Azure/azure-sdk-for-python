@@ -65,7 +65,8 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     :type display_name: str
     :param properties: A dictionary of properties for the job.
     :type properties: dict[str, str]
-    :param experiment_name: The name of the experiment that the job will be created under. Defaults to current directory name.
+    :param experiment_name: The name of the experiment that the job will be created under. Defaults to current
+        directory name.
     :type experiment_name: str
     :param services: Read-only information on services associated with the job.
     :type services: dict[str, ~azure.ai.ml.entities.JobService]

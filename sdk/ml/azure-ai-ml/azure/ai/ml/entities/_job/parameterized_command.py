@@ -38,7 +38,8 @@ OLD_INPUT_BINDING_PREFIX = "AZURE_ML_INPUT"
 
 
 class ParameterizedCommand:
-    """This class should not be instantiated directly. Instead, use the child class ~azure.ai.ml.entities.CommandComponent.
+    """This class should not be instantiated directly. Instead, use the child class
+    ~azure.ai.ml.entities.CommandComponent.
 
     Command component version that contains the command and supporting parameters for a Command component
     or job.
