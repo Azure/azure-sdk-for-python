@@ -18,24 +18,23 @@ from _decorators import RouterPreparers
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 
 from azure.communication.jobrouter import (
-    RouterClient,
-    RouterAdministrationClient,
+    JobRouterClient,
+    JobRouterAdministrationClient,
     LongestIdleMode,
     QueueAssignment,
     ChannelConfiguration,
     RouterJobStatus,
     RouterWorker,
-    JobOffer,
+    RouterJobOffer,
     AcceptJobOfferResult,
     CompleteJobResult,
     CloseJobResult,
     UnassignJobResult,
     RouterJob,
-    JobAssignment,
-    JobRouterError,
+    RouterJobAssignment,
     RouterWorkerState,
     DistributionPolicy,
-    JobQueue,
+    RouterQueue,
 )
 
 
@@ -48,8 +47,8 @@ class TestAssignmentScenario(RouterRecordedTestCase):
     def clean_up(self, **kwargs):
         # delete in live mode
         if not self.is_playback():
-            router_admin_client: RouterAdministrationClient = self.create_admin_client()
-            router_client: RouterClient = self.create_client()
+            router_admin_client: JobRouterAdministrationClient = self.create_admin_client()
+            router_client: JobRouterClient = self.create_client()
 
             if self._testMethodName in self.job_ids \
                     and any(self.job_ids[self._testMethodName]):
@@ -81,11 +80,11 @@ class TestAssignmentScenario(RouterRecordedTestCase):
         return self._testMethodName + "_tst_dp"
 
     def setup_distribution_policy(self, **kwargs):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
         distribution_policy_id = self.get_distribution_policy_id()
 
         policy: DistributionPolicy = DistributionPolicy(
-            offer_ttl_seconds = 10.0 * 60,
+            offer_expires_after_seconds = 10.0 * 60,
             mode = LongestIdleMode(min_concurrent_offers = 1,
                                    max_concurrent_offers = 1),
             name = "test"
@@ -107,10 +106,10 @@ class TestAssignmentScenario(RouterRecordedTestCase):
         return self._testMethodName + "_tst_q"
 
     def setup_job_queue(self, **kwargs):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_job_queue_id()
 
-        job_queue: JobQueue = JobQueue(
+        job_queue: RouterQueue = RouterQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
             name = "test"
         )
@@ -132,7 +131,7 @@ class TestAssignmentScenario(RouterRecordedTestCase):
 
     def setup_router_worker(self, **kwargs):
         w_identifier = self.get_router_worker_id()
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
         worker_channel_configs = {
             channel_id: ChannelConfiguration(capacity_cost_per_job = 1)
@@ -158,7 +157,7 @@ class TestAssignmentScenario(RouterRecordedTestCase):
             identifier,
             **kwargs
     ):
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         router_job = router_client.get_job(job_id = identifier)
         assert router_job.job_status == RouterJobStatus.QUEUED
 
@@ -168,7 +167,7 @@ class TestAssignmentScenario(RouterRecordedTestCase):
             job_id,  # type: str
             **kwargs,  # type: Any
     ):
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         router_worker: RouterWorker = router_client.get_worker(worker_id = worker_id)
         offer_for_jobs = [job_offer for job_offer in router_worker.offers if job_offer.job_id == job_id]
         assert any(offer_for_jobs)
@@ -178,10 +177,11 @@ class TestAssignmentScenario(RouterRecordedTestCase):
             worker_id,  # type: str
             **kwargs,  # type: Any
     ):
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
         router_worker: RouterWorker = router_client.get_worker(worker_id = worker_id)
         assert router_worker.state == RouterWorkerState.INACTIVE
 
+    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
@@ -189,7 +189,7 @@ class TestAssignmentScenario(RouterRecordedTestCase):
     @RouterPreparers.before_test_execute('setup_router_worker')
     @RouterPreparers.after_test_execute('clean_up')
     def test_assignment_scenario(self, **kwargs):
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
 
         # create job
         job_identifier = f"assignment_scenario_job_id"
@@ -220,7 +220,7 @@ class TestAssignmentScenario(RouterRecordedTestCase):
         job_offers = [job_offer for job_offer in router_worker.offers if job_offer.job_id == job_identifier]
 
         assert len(job_offers) == 1
-        job_offer: JobOffer = job_offers[0]
+        job_offer: RouterJobOffer = job_offers[0]
         assert job_offer.capacity_cost == 1
         assert job_offer.offer_time_utc is not None
         assert job_offer.expiry_time_utc is not None
@@ -263,7 +263,7 @@ class TestAssignmentScenario(RouterRecordedTestCase):
         job_offers = [job_offer for job_offer in router_worker.offers if job_offer.job_id == job_identifier]
 
         assert len(job_offers) == 1
-        job_offer: JobOffer = job_offers[0]
+        job_offer: RouterJobOffer = job_offers[0]
         assert job_offer.capacity_cost == 1
         assert job_offer.offer_time_utc is not None
         assert job_offer.expiry_time_utc is not None
@@ -295,7 +295,7 @@ class TestAssignmentScenario(RouterRecordedTestCase):
         # validate post closure job details
         queried_job: RouterJob = router_client.get_job(job_id = job_identifier)
 
-        job_assignment: JobAssignment = queried_job.assignments[assignment_id]
+        job_assignment: RouterJobAssignment = queried_job.assignments[assignment_id]
         assert job_assignment.assign_time is not None
         assert job_assignment.worker_id == self.get_router_worker_id()
         assert job_assignment.complete_time is not None

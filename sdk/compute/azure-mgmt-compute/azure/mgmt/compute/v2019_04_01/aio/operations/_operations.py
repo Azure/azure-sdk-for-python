@@ -51,6 +51,7 @@ class ResourceSkusOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def list(self, *, filter: Optional[str] = None, **kwargs: Any) -> AsyncIterable["_models.ResourceSku"]:
@@ -68,7 +69,7 @@ class ResourceSkusOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-04-01"))
         cls: ClsType[_models.ResourceSkusResult] = kwargs.pop("cls", None)
 
         error_map = {

@@ -3,6 +3,8 @@
 ## 4.8.0b2 (Unreleased)
 
 ### Features Added
+- Added `CertificateProperties.x509_thumbprint_string` to return the hexadecimal string representation of the SHA-1 hash
+  of the certificate.
 
 ### Breaking Changes
 
