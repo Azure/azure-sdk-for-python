@@ -75,7 +75,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
             :caption: Configuring an async retry policy.
     """
 
-    async def _sleep_for_retry(self, response, transport):  # pylint:disable=invalid-overridden-method
+    async def _sleep_for_retry(self, response, transport):
         """Sleep based on the Retry-After response header value.
 
         :param response: The PipelineResponse object.
@@ -88,7 +88,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
             return True
         return False
 
-    async def _sleep_backoff(self, settings, transport):  # pylint:disable=invalid-overridden-method
+    async def _sleep_backoff(self, settings, transport):
         """Sleep using exponential backoff. Immediately returns if backoff is 0.
 
         :param dict settings: The retry settings.
@@ -99,7 +99,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
             return
         await transport.sleep(backoff)
 
-    async def sleep(self, settings, transport, response=None):  # pylint:disable=invalid-overridden-method
+    async def sleep(self, settings, transport, response=None):
         """Sleep between retry attempts.
 
         This method will respect a server's ``Retry-After`` response header
@@ -118,7 +118,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
                 return
         await self._sleep_backoff(settings, transport)
 
-    async def send(self, request):  # pylint:disable=invalid-overridden-method
+    async def send(self, request):
         """Uses the configured retry policy to send the request to the next policy in the pipeline.
 
         :param request: The PipelineRequest object

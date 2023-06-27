@@ -48,7 +48,7 @@ class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy):
             :caption: Configuring an async redirect policy.
     """
 
-    async def send(self, request: PipelineRequest) -> PipelineResponse:  # pylint:disable=invalid-overridden-method
+    async def send(self, request: PipelineRequest) -> PipelineResponse:
         """Sends the PipelineRequest object to the next policy.
         Uses redirect settings to send the request to redirect endpoint if necessary.
 

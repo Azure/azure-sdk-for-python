@@ -36,7 +36,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         self._scopes = scopes
         self._token: Optional["AccessToken"] = None
 
-    async def on_request(self, request: "PipelineRequest") -> None:  # pylint:disable=invalid-overridden-method
+    async def on_request(self, request: "PipelineRequest") -> None:
         """Adds a bearer token Authorization header to request and sends request to next policy.
 
         :param request: The pipeline request object to be modified.

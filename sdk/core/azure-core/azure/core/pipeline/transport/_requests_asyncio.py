@@ -96,11 +96,11 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
     async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
         return super(AsyncioRequestsTransport, self).__exit__()
 
-    async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
+    async def sleep(self, duration):
         await asyncio.sleep(duration)
 
     @overload  # type: ignore
-    async def send(  # pylint:disable=invalid-overridden-method
+    async def send(
         self, request: HttpRequest, **kwargs: Any
     ) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
@@ -116,7 +116,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         """
 
     @overload
-    async def send(  # pylint:disable=invalid-overridden-method
+    async def send(
         self, request: "RestHttpRequest", **kwargs: Any
     ) -> "RestAsyncHttpResponse":
         """Send a `azure.core.rest` request using this HTTP sender.
@@ -131,7 +131,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    async def send(self, request, **kwargs):  # pylint:disable=invalid-overridden-method
+    async def send(self, request, **kwargs):
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest
