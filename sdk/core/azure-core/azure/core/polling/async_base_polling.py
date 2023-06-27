@@ -59,7 +59,7 @@ class AsyncLROBasePolling(LROBasePolling):
         except OperationFailed as err:
             raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
 
-    async def _poll(self):
+    async def _poll(self):  # pylint:disable=invalid-overridden-method
         """Poll status of operation so long as operation is incomplete and
         we have an endpoint to query.
 
@@ -83,23 +83,23 @@ class AsyncLROBasePolling(LROBasePolling):
             self._pipeline_response = await self.request_status(final_get_url)
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
-    async def _sleep(self, delay):
+    async def _sleep(self, delay):  # pylint:disable=invalid-overridden-method
         await self._transport.sleep(delay)
 
-    async def _delay(self):
+    async def _delay(self):  # pylint:disable=invalid-overridden-method
         """Check for a 'retry-after' header to set timeout,
         otherwise use configured timeout.
         """
         delay = self._extract_delay()
         await self._sleep(delay)
 
-    async def update_status(self):
+    async def update_status(self):  # pylint:disable=invalid-overridden-method
         """Update the current status of the LRO."""
         self._pipeline_response = await self.request_status(self._operation.get_polling_url())
         _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
 
-    async def request_status(self, status_link):
+    async def request_status(self, status_link):  # pylint:disable=invalid-overridden-method
         """Do a simple GET to this status link.
 
         This method re-inject 'x-ms-client-request-id'.

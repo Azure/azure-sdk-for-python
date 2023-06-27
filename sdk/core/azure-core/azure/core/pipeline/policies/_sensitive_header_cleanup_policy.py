@@ -58,7 +58,7 @@ class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
             else blocked_redirect_headers
         )
 
-    def on_request(self, request: "PipelineRequest") -> None:  # pylint: disable=arguments-differ
+    def on_request(self, request: "PipelineRequest") -> None:
         """This is executed before sending the request to the next policy.
 
         :param request: The PipelineRequest object.

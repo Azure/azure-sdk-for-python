@@ -73,11 +73,11 @@ def _read_raw_stream(response, chunk_size=1):
             for chunk in response.raw.stream(chunk_size, decode_content=False):
                 yield chunk
         except ProtocolError as e:
-            raise ServiceResponseError(e, error=e)
+            raise ServiceResponseError(e, error=e) from e
         except CoreDecodeError as e:
-            raise DecodeError(e, error=e)
+            raise DecodeError(e, error=e) from e
         except ReadTimeoutError as e:
-            raise ServiceRequestError(e, error=e)
+            raise ServiceRequestError(e, error=e) from e
     else:
         # Standard file-like object.
         while True:

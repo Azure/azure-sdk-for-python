@@ -163,11 +163,11 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
     async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
         return super(TrioRequestsTransport, self).__exit__()
 
-    async def sleep(self, duration):
+    async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
         await trio.sleep(duration)
 
     @overload  # type: ignore
-    async def send(
+    async def send(  # pylint:disable=invalid-overridden-method
         self, request: HttpRequest, **kwargs: Any
     ) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
@@ -183,7 +183,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         """
 
     @overload
-    async def send(
+    async def send(  # pylint:disable=invalid-overridden-method
         self, request: "RestHttpRequest", **kwargs: Any
     ) -> "RestAsyncHttpResponse":
         """Send an `azure.core.rest` request using this HTTP sender.
@@ -198,7 +198,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    async def send(self, request, **kwargs: Any):
+    async def send(self, request, **kwargs: Any):  # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest
