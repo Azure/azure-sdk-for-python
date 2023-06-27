@@ -26,34 +26,44 @@ import os
 
 class MLClientSamples(object):
     def ml_auth_azure_default_credential(self):
-        # [START create_ml_client_default_credential]
-        # Get a credential for authentication
-        # Default Azure Credentials attempt a chained set of authentication methods, per documentation here: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
-        # Alternately, one can specify the AZURE_TENANT_ID, AZURE_CLIENT_ID, and AZURE_CLIENT_SECRET to use the EnvironmentCredentialClass.
-        # The docs above specify all mechanisms which the defaultCredential internally support.
-        # Enter details of your subscription
         subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
         resource_group = os.environ["RESOURCE_GROUP_NAME"]
 
-        # Instantiate a MLClient
+        # [START create_ml_client_default_credential]
         from azure.identity import AzureAuthorityHosts, DefaultAzureCredential
 
         from azure.ai.ml import MLClient
 
-        # When using sovereign domains (that is, any cloud other than AZURE_PUBLIC_CLOUD),
-        # you must use an authority with DefaultAzureCredential.
-        # Default authority value : AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
-        # Expected values for authority for sovereign clouds:
-        # AzureAuthorityHosts.AZURE_CHINA or AzureAuthorityHosts.AZURE_GOVERNMENT
-        # credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_CHINA)
-        credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_PUBLIC_CLOUD)
-
-        # When using sovereign domains (that is, any cloud other than AZURE_PUBLIC_CLOUD),
-        # you must pass in the cloud name in kwargs. Default cloud is AzureCloud
-        kwargs = {"cloud": "AzureCloud"}
-        # get a handle to the subscription
-        ml_client = MLClient(credential, subscription_id, resource_group, **kwargs)
+        ml_client = MLClient(subscription_id, resource_group, credential=DefaultAzureCredential())
         # [END create_ml_client_default_credential]
+
+        # [START create_ml_client_sovereign_cloud]
+        from azure.identity import AzureAuthorityHosts, DefaultAzureCredential
+
+        from azure.ai.ml import MLClient
+
+        kwargs = {"cloud": "AzureChinaCloud"}
+        ml_client = MLClient(
+            subscription_id,
+            resource_group,
+            credential=DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_CHINA),
+            **kwargs
+        )
+        # [END create_ml_client_sovereign_cloud]
+
+        # [START create_ml_client_from_config_default]
+        from azure.ai.ml import MLClient
+
+        client = MLClient.from_config(credential=DefaultAzureCredential(), path="src")
+        # [END create_ml_client_from_config_default]
+
+        # [START create_ml_client_from_config_custom_filename]
+        from azure.ai.ml import MLClient
+
+        client = MLClient.from_config(
+            credential=DefaultAzureCredential(), file_name="team_workspace_configuration.json"
+        )
+        # [END create_ml_client_from_config_custom_filename]
 
         from azure.ai.ml.entities import Workspace
 
