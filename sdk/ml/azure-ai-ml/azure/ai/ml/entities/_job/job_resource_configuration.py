@@ -116,8 +116,8 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
         max_instance_count: Optional[int] = None,
-        **kwargs
-    ) -> None:  # pylint: disable=unused-argument
+        **kwargs  # pylint: disable=unused-argument
+    ) -> None:
         self.locations = locations
         self.instance_count = instance_count
         self.instance_type = instance_type
