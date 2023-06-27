@@ -107,7 +107,7 @@ class Command(BaseNode):
     :param experiment_name: The name of the experiment the job will be created under. Defaults to current directory
         name.
     :type experiment_name: str
-    :param command: The command to be executed during training.
+    :param command: The command to be executed during job.
     :type command: str
     :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
         to a remote location.
@@ -136,10 +136,10 @@ class Command(BaseNode):
         ~azure.ai.ml.entities.ManagedIdentityConfiguration,
         ~azure.ai.ml.entities.AmlTokenConfiguration,
         ~azure.ai.ml.entities.UserIdentityConfiguration]
-    :param distribution: The configuration for distributed training.
+    :param distribution: The configuration for distributed jobs.
     :type distribution: Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
         ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
-    :param environment: The environment that the training job will run in.
+    :param environment: The environment that the job will run in.
     :type environment: Union[str, ~azure.ai.ml.entities.Environment]
     :param environment_variables:  A dictionary of environment variable names and values.
         These environment variables are set on the process where the user script is being executed.
@@ -268,7 +268,7 @@ class Command(BaseNode):
     ) -> None:
         """Sets the configuration for the distributed command component or job.
 
-        :param value: The configuration for distributed training.
+        :param value: The configuration for distributed jobs.
         :type value: Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
         ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
         """
@@ -326,7 +326,7 @@ class Command(BaseNode):
     def identity(
         self,
     ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
-        """The identity that the training job will use while running on compute.
+        """The identity that the job will use while running on compute.
 
         :rtype: Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
         ~azure.ai.ml.UserIdentityConfiguration]
@@ -340,9 +340,9 @@ class Command(BaseNode):
             Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, None
         ],
     ) -> None:
-        """Sets the identity that the training job will use while running on compute.
+        """Sets the identity that the job will use while running on compute.
 
-        :param value: The identity that the training job will use while running on compute.
+        :param value: The identity that the job will use while running on compute.
         :type value: Union[dict[str, str], ~azure.ai.ml.ManagedIdentityConfiguration,
         ~azure.ai.ml.AmlTokenConfiguration, ~azure.ai.ml.UserIdentityConfiguration]
         """
@@ -401,7 +401,7 @@ class Command(BaseNode):
 
     @property
     def command(self) -> Optional[str]:
-        """Sets the command to be executed during training.
+        """Sets the command to be executed.
 
         :rtype: str
         """
@@ -412,9 +412,9 @@ class Command(BaseNode):
 
     @command.setter
     def command(self, value: str) -> None:
-        """The command to be executed during training.
+        """The command to be executed.
 
-        :param value: The command to be executed during training.
+        :param value: The command to be executed.
         :type value: str
         """
         if isinstance(self.component, CommandComponent):
@@ -629,7 +629,7 @@ class Command(BaseNode):
         values are "bandit", "median_stopping", or "truncation_selection".
         :type early_termination_policy: Union[~azure.ai.ml.sweep.BanditPolicy,
         ~azure.ai.ml.sweep.TruncationSelectionPolicy, ~azure.ai.ml.sweep.MedianStoppingPolicy, str]
-        :param identity: The identity that the training job will use while running on compute.
+        :param identity: The identity that the job will use while running on compute.
         :type identity: Union[
             ~azure.ai.ml.ManagedIdentityConfiguration,
             ~azure.ai.ml.AmlTokenConfiguration,

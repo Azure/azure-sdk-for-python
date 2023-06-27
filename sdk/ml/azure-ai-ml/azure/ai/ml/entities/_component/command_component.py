@@ -45,14 +45,14 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     :type tags: dict
     :param display_name: The display name of the component.
     :type display_name: str
-    :param command: The command to be executed during training.
+    :param command: The command to be executed.
     :type command: str
     :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
         to a remote location.
     :type code: str
-    :param environment: The environment that training job will run in.
+    :param environment: The environment that the job will run in.
     :type environment: Union[str, ~azure.ai.ml.entities.Environment]
-    :param distribution: The configuration for distributed training.
+    :param distribution: The configuration for distributed jobs.
     :type distribution: Union[~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
         ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
     :param resources: The compute resource configuration for the command.

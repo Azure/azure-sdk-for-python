@@ -63,7 +63,7 @@ class SparkComponent(
     :param conf: A dictionary with pre-defined Spark configurations key and values.
     :type conf: dict[str, str]
     :param environment: The Azure ML environment to run the job in.
-    :type environment: Union[str, azure.ai.ml.entities.Environment]
+    :type environment: Union[str, ~azure.ai.ml.entities.Environment]
     :param inputs: A mapping of input names to input data sources used in the job.
     :type inputs: dict[str, Union[
         ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,

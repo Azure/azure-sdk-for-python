@@ -87,9 +87,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     :type experiment_name: str
     :param name: The name of the job.
     :type name: str
-    :param display_name: The display name of the job.
+    :param display_name: The job display name.
     :type display_name: str
-    :param description: The description of the job.
+    :param description: The job description.
     :type description: str
     :param tags: The tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]

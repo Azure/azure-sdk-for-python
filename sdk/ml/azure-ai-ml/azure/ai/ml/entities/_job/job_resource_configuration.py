@@ -86,11 +86,11 @@ class Properties(BaseProperty):
 class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
     """Class for job resource, inherited and extended functionalities from ResourceConfiguration.
 
-    :param locations: Optional list of locations where the job can run.
+    :param locations: A list of locations where the job can run.
     :type locations: list[str]
-    :param instance_count: Optional number of instances or nodes used by the compute target.
+    :param instance_count: The number of instances or nodes used by the compute target.
     :type instance_count: int
-    :param instance_type: Optional type of VM used as supported by the compute target.
+    :param instance_type: The type of VM to be used, as supported by the compute target.
     :type instance_type: str
     :param properties: A dictionary of properties for the job.
     :type properties: dict[str, Any]
@@ -98,11 +98,11 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
      parameters that have already been set by the system, or in this section. This parameter is only
      supported for Azure ML compute types.
     :type docker_args: str
-    :param shm_size: Size of the docker container's shared memory block. This should be in the
+    :param shm_size: The size of the docker container's shared memory block. This should be in the
      format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
      b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
     :type shm_size: str
-    :param max_instance_count: Optional maximum number of instances or nodes used by the compute target.
+    :param max_instance_count: The maximum number of instances or nodes used by the compute target.
     :type max_instance_count: int
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict[str, Any]

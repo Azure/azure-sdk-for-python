@@ -157,17 +157,17 @@ def command(
     :type properties: dict[str, str]
     :param display_name: The display name of the job.
     :type display_name: str
-    :param command: The command to be executed during training.
+    :param command: The command to be executed.
     :type command: str
     :param experiment_name: The name of the experiment the job will be created under. Defaults to current directory
         name.
     :type experiment_name: str
-    :param environment: The environment that training job will run in.
+    :param environment: The environment that the job will run in.
     :type environment: Union[str, ~azure.ai.ml.entities.Environment]
     :param environment_variables:  A dictionary of environment variable names and values.
         These environment variables are set on the process where user script is being executed.
     :type environment_variables: dict[str, str]
-    :param distribution: The configuration for distributed training.
+    :param distribution: The configuration for distributed jobs.
     :type distribution: Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
         ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
     :param compute: The compute target the job will run on.
