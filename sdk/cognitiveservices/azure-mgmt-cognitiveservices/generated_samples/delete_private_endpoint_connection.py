@@ -29,14 +29,13 @@ def main():
         subscription_id="{subscription-id}",
     )
 
-    response = client.private_endpoint_connections.begin_delete(
+    client.private_endpoint_connections.begin_delete(
         resource_group_name="res6977",
         account_name="sto2527",
         private_endpoint_connection_name="{privateEndpointConnectionName}",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2022-12-01/examples/DeletePrivateEndpointConnection.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2023-05-01/examples/DeletePrivateEndpointConnection.json
 if __name__ == "__main__":
     main()

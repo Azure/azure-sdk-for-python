@@ -10,6 +10,13 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AbusePenaltyAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action of AbusePenalty."""
+
+    THROTTLE = "Throttle"
+    BLOCK = "Block"
+
+
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
 
@@ -37,6 +44,14 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class DeploymentModelVersionUpgradeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Deployment model version upgrade option."""
+
+    ONCE_NEW_DEFAULT_VERSION_AVAILABLE = "OnceNewDefaultVersionAvailable"
+    ONCE_CURRENT_VERSION_EXPIRED = "OnceCurrentVersionExpired"
+    NO_AUTO_UPGRADE = "NoAutoUpgrade"
+
+
 class DeploymentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the status of the resource at the time the operation was called."""
 
@@ -46,6 +61,8 @@ class DeploymentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MOVING = "Moving"
     FAILED = "Failed"
     SUCCEEDED = "Succeeded"
+    DISABLED = "Disabled"
+    CANCELED = "Canceled"
 
 
 class DeploymentScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -61,6 +78,7 @@ class HostingModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WEB = "Web"
     CONNECTED_CONTAINER = "ConnectedContainer"
     DISCONNECTED_CONTAINER = "DisconnectedContainer"
+    PROVISIONED_WEB = "ProvisionedWeb"
 
 
 class KeyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
