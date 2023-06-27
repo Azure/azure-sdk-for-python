@@ -65,6 +65,34 @@ class MLClientSamples(object):
         )
         # [END create_ml_client_from_config_custom_filename]
 
+        # [START ml_client_create_or_update]
+        from azure.ai.ml.entities import AmlTokenConfiguration, command
+
+        command_job = command(
+            description="description",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            inputs=inputs,
+            code="./tests/test_configs/training/",
+            command="echo ${{inputs.uri}} ${{inputs.data_asset}} ${{inputs.local_data}}",
+            display_name="builder_command_job",
+            compute="testCompute",
+            experiment_name="mfe-test1-dataset",
+            identity=AmlTokenConfiguration(),
+        )
+        created_job = client.create_or_update(command_job)
+        # [END ml_client_create_or_update]
+
+        # [START ml_client_begin_create_or_update]
+        from azure.ai.ml.entities import ManagedOnlineEndpoint
+
+        endpoint = ManagedOnlineEndpoint(
+            name="online_endpoint_name",
+            description="this is a sample online endpoint",
+            auth_mode="key",
+        )
+        created_job = client.begin_create_or_update(endpoint)
+        # [END ml_client_begin_create_or_update]
+
         from azure.ai.ml.entities import Workspace
 
         # Get a list of workspaces in a resource group

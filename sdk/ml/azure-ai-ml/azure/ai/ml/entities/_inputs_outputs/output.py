@@ -10,78 +10,88 @@ from typing_extensions import Literal
 
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import IOConstants
-from azure.ai.ml.exceptions import UserErrorException
 from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
+from azure.ai.ml.exceptions import UserErrorException
 
 from .base import _InputOutputBase
 from .utils import _remove_empty_values
 
 
 class Output(_InputOutputBase):
-    """Define an output of a Component or Job.
+    """Define an output for a Component or Job.
 
-    :param type: The type of the data output. Possible values include:
-                        'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', and user-defined types.
+    :param type: The type of the data output. Accepted values are 'uri_folder', 'uri_file', 'mltable', 'mlflow_model',
+        'custom_model', and user-defined types.
     :type type: str
-    :param path: The path to which the output is pointing. Needs to point to a cloud path.
+    :param path: The cloud path where the output should be stored.
     :type path: str
-    :param mode: The mode of the data output. Possible values are:
-                        'rw_mount': Read-write mount the data,
-                        'upload': Upload the data from the compute target,
-                        'direct': Pass in the URI as a string
+    :param mode: The access mode of the data output. Accepted values are:
+        'rw_mount': Read-write mount the data,
+        'upload': Upload the data from the compute target,
+        'direct': Pass in the URI as a string
     :type mode: str
-    :param description: Description of the output
+    :param description: The description of the output
     :type description: str
-    :param name: The name used to register output as data or model asset. Name can be set without setting version.
+    :param name: The name to be used to register the output as a Data or Model asset. A name can be set without
+        setting a version.
     :type name: str
-    :param version: The version used to register output as data or model asset.
-        Version can be set only when name is set.
+    :param version: The version used to register the output as a Data or Model asset. A version can be set only
+        when name is set.
     :type version: str
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_misc.py
+            :start-after: [START create_inputs_outputs]
+            :end-before: [END create_inputs_outputs]
+            :language: python
+            :dedent: 8
+            :caption: Creating a CommandJob with a folder output.
     """
 
     @overload
-    def __init__(self, type: Literal["uri_folder"] = "uri_folder", path=None, mode=None, description=None):
-        """Define a uri_folder output.
+    def __init__(self, type: Literal["uri_folder"] = "uri_folder", path=None, mode=None, description=None) -> None:
+        """Define a URI folder output for a Component or Job.
 
-        :param type: The type of the data output. Possible values include:
-                            'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', and user-defined types.
+        :param type: The type of the data output. Can only be set to "uri_folder".
         :type type: str
-        :param path: The path to which the output is pointing. Needs to point to a cloud path.
+        :param path: The cloud path where the output should be stored.
         :type path: str
-        :param mode: The mode of the data output. Possible values are:
-                            'rw_mount': Read-write mount the data,
-                            'upload': Upload the data from the compute target,
-                            'direct': Pass in the URI as a string
+        :param mode: The access mode of the data output. Accepted values are:
+            'rw_mount': Read-write mount the data,
+            'upload': Upload the data from the compute target,
+            'direct': Pass in the URI as a string
         :type mode: str
-        :param description: Description of the output
+        :param description: The description of the output
         :type description: str
-        :param name: The name used to register output as data or model asset. Name can be set without setting version.
+        :param name: The name to be used to register the output as a Data or Model asset. A name can be set without
+            setting a version.
         :type name: str
-        :param version: The version used to register output as data or model asset.
-            Version can be set only when name is set.
+        :param version: The version used to register the output as a Data or Model asset. A version can be set only
+            when name is set.
         :type version: str
         """
 
     @overload
     def __init__(self, type: Literal["uri_file"] = "uri_file", path=None, mode=None, description=None):
-        """Define a uri_file output.
+        """Define a URI file output for a Component or Job.
 
-        :param type: The type of the data output. Possible values include:
-                            'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', and user-defined types.
+        :param type: The type of the data output. Can only be set to 'uri_file'.
         :type type: str
-        :param path: The path to which the output is pointing. Needs to point to a cloud path.
+        :param path: The cloud path where the output should be stored.
         :type path: str
-        :param mode: The mode of the data output. Possible values are:
-                            'rw_mount': Read-write mount the data,
-                            'upload': Upload the data from the compute target,
-                            'direct': Pass in the URI as a string
+        :param mode: The access mode of the data output. Accepted values are:
+            'rw_mount': Read-write mount the data,
+            'upload': Upload the data from the compute target,
+            'direct': Pass in the URI as a string
         :type mode: str
-        :param description: Description of the output
+        :param description: The description of the output
         :type description: str
-        :param name: The name used to register output as data or model asset. Name can be set without setting version.
+        :param name: The name to be used to register the output as a Data or Model asset. A name can be set without
+            setting a version.
         :type name: str
-        :param version: The version used to register output as data or model asset.
-            Version can be set only when name is set.
+        :param version: The version used to register the output as a Data or Model asset. A version can be set only
+            when name is set.
         :type version: str
         """
 

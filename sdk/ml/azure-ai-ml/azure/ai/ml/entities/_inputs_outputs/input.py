@@ -26,33 +26,42 @@ from .utils import _get_param_with_standard_annotation, _remove_empty_values
 
 
 class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
-    """Define an input of a Component or Job.
+    """Defines an input for a Component or Job.
 
-    Default to be a uri_folder Input.
-
-    :param type: The type of the data input. Possible values include:
+    :param type: The type of the data input. Accepted values are:
         'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', 'integer', 'number', 'string', 'boolean'
     :type type: str
-    :param path: The path to which the input is pointing.
-        Could be pointing to local data, cloud data, a registered name, etc.
+    :param path: The path to the input data. Paths can be local paths, cloud data uris, or a registered AzureML asset
+        id.
     :type path: str
-    :param mode: The mode of the data input. Possible values are:
-                        'ro_mount': Read-only mount the data,
-                        'download': Download the data to the compute target,
-                        'direct': Pass in the URI as a string
+    :param mode: The access mode of the data input. Accepted are:
+        'ro_mount': Mount the data to the compute target as read-only,
+        'download': Download the data to the compute target,
+        'direct': Pass in the URI as a string to be accessed at runtime
     :type mode: str
-    :param default: The default value of this input. When a `default` is set, the input will be optional
-    :type default: Union[str, integer, float, bool]
-    :param min: The min value -- if a smaller value is passed to a job, the job execution will fail
-    :type min: Union[integer, float]
-    :param max: The max value -- if a larger value is passed to a job, the job execution will fail
+    :param default: The default value of the input. If a default is set, the input data will be optional.
+    :type default: Union[str, int, float, bool]
+    :param min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
+        execution will fail.
+    :type min: Union[int, float]
+    :param max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
+        execution will fail.
     :type max: Union[integer, float]
-    :param optional: Determine if this input is optional
+    :param optional: Specifies if the input is optional.
     :type optional: bool
     :param description: Description of the input
     :type description: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
         Details will be provided in the error message.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_misc.py
+            :start-after: [START create_inputs_outputs]
+            :end-before: [END create_inputs_outputs]
+            :language: python
+            :dedent: 8
+            :caption: Creating a CommandJob with two inputs.
     """
 
     _EMPTY = Parameter.empty
@@ -67,26 +76,23 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         optional: Optional[bool] = None,
         description: Optional[str] = None,
         **kwargs,
-    ):
-        """Initialize an input.
+    ) -> None:
+        """Defines a URI folder input for a Component or Job.
 
-        :param type: The type of the data input. Possible values include:
-                            'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', and user-defined types.
+        :param type: The type of the data input. Can only be set to "uri_folder".
         :type type: str
-        :param path: The path to which the input is pointing.
-            Could be pointing to local data, cloud data, a registered name, etc.
+        :param path: The path to the input data. Paths can be local paths, cloud data uris, or a registered AzureML
+            asset id.
         :type path: str
-        :param mode: The mode of the data input. Possible values are:
-                            'ro_mount': Read-only mount the data,
-                            'download': Download the data to the compute target,
-                            'direct': Pass in the URI as a string
+        :param mode: The mode of the data input. Accepted are:
+            'ro_mount': Mount the data to the compute target as read-only,
+            'download': Download the data to the compute target,
+            'direct': Pass in the URI as a string to be accessed at runtime
         :type mode: str
-        :param optional: Determine if this input is optional
+        :param optional: Specifies if the input is optional.
         :type optional: bool
         :param description: Description of the input
         :type description: str
-        :param datastore: The datastore to upload local files to.
-        :type datastore: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
             Details will be provided in the error message.
         """
@@ -102,18 +108,20 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         optional: Optional[bool] = None,
         description: Optional[str] = None,
         **kwargs,
-    ):
-        """Initialize a number input.
+    ) -> None:
+        """Defines a number input for a Component or Job.
 
         :param type: The type of the data input. Can only be set to "number".
         :type type: str
-        :param default: The default value of this input. When a `default` is set, input will be optional
-        :type default: float
-        :param min: The min value -- if a smaller value is passed to a job, the job execution will fail
-        :type min: float
-        :param max: The max value -- if a larger value is passed to a job, the job execution will fail
-        :type max: float
-        :param optional: Determine if this input is optional
+        :param default: The default value of the input. If a default is set, the input data will be optional.
+        :type default: Union[str, int, float, bool]
+        :param min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
+            execution will fail.
+        :type min: Union[int, float]
+        :param max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
+            execution will fail.
+        :type max: Union[integer, float]
+        :param optional: Specifies if the input is optional.
         :type optional: bool
         :param description: Description of the input
         :type description: str
@@ -132,18 +140,20 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         optional: Optional[bool] = None,
         description: Optional[str] = None,
         **kwargs,
-    ):
-        """Initialize an integer input.
+    ) -> None:
+        """Defines an integer input for a Component or Job.
 
         :param type: The type of the data input. Can only be set to "integer".
         :type type: str
-        :param default: The default value of this input. When a `default` is set, the input will be optional
-        :type default: integer
-        :param min: The min value -- if a smaller value is passed to a job, the job execution will fail
-        :type min: integer
-        :param max: The max value -- if a larger value is passed to a job, the job execution will fail
-        :type max: integer
-        :param optional: Determine if this input is optional
+        :param default: The default value of the input. If a default is set, the input data will be optional.
+        :type default: Union[str, int, float, bool]
+        :param min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
+            execution will fail.
+        :type min: Union[int, float]
+        :param max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
+            execution will fail.
+        :type max: Union[integer, float]
+        :param optional: Specifies if the input is optional.
         :type optional: bool
         :param description: Description of the input
         :type description: str
@@ -160,8 +170,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         optional: Optional[bool] = None,
         description: Optional[str] = None,
         **kwargs,
-    ):
-        """Initialize a string input.
+    ) -> None:
+        """Defines a string input for a Component or Job.
 
         :param type: The type of the data input. Can only be set to "string".
         :type type: str
@@ -184,14 +194,17 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         optional: Optional[bool] = None,
         description: Optional[str] = None,
         **kwargs,
-    ):
-        """Initialize a bool input.
+    ) -> None:
+        """Defines a boolean input for a Component or Job.
 
         :param type: The type of the data input. Can only be set to "boolean".
         :type type: str
-        :param default: The default value of this input. When a `default` is set, input will be optional
-        :type default: bool
-        :param optional: Determine if this input is optional
+        :param path: The path to the input data. Paths can be local paths, cloud data uris, or a registered AzureML
+            asset id.
+        :type path: str
+        :param default: The default value of the input. If a default is set, the input data will be optional.
+        :type default: Union[str, int, float, bool]
+        :param optional: Specifies if the input is optional.
         :type optional: bool
         :param description: Description of the input
         :type description: str
@@ -213,7 +226,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         description: Optional[str] = None,
         datastore: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         super(Input, self).__init__(type=type)
         # As an annotation, it is not allowed to initialize the _port_name.
         self._port_name = None

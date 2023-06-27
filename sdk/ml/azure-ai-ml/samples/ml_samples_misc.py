@@ -103,6 +103,66 @@ class MiscConfigurationOptions(object):
         ml_client.jobs.download(name=job_name, download_path="./job-1-logs", all=True)
         # [END job_operations_download]
 
+        # [START model_entity_create]
+        from azure.ai.ml.entities import Model
+
+        model = Model(
+            name="model1",
+            version="5",
+            description="my first model in prod",
+            path="models/very_important_model.pkl",
+            tags=["tag1", "tag2"],
+            properties={"prop1": "value1", "prop2": "value2"},
+            type="mlflow_model",
+            flavors={
+                "sklearn": {"sklearn_version": "0.23.2"},
+                "python_function": {"loader_module": "office.plrmodel", "python_version": 3.6},
+            },
+            stage="Production",
+        )
+        # [END model_entity_create]
+
+        # [START create_inputs_outputs]
+        from azure.ai.ml import Input, Output
+        from azure.ai.ml.entities import CommandJob, CommandJobLimits
+
+        command_job = CommandJob(
+            code="./src",
+            command="python train.py --ss {search_space.ss}",
+            inputs={
+                "input1": Input(path="trial.csv", mode="ro_mount", description="trial input data"),
+                "input_2": Input(
+                    path="azureml:list_data_v2_test:2", type="uri_folder", description="registered data asset"
+                ),
+            },
+            outputs={"default": Output(path="./foo")},
+            compute="trial",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            limits=CommandJobLimits(timeout=120),
+        )
+        # [END create_inputs_outputs]
+
+        # [START load_job]
+        from azure.ai.ml import load_job
+
+        job = load_job(source="./configs/batch_setup/lgb.yml")
+        # [END load_job]
+
+        # [START load_model]
+        from azure.ai.ml import load_model
+
+        model = load_model(
+            "./configs/model/model_minimal.yml",
+            params_override=[{"name": "new_model_name"}, {"version": "1"}],
+        )
+        # [END load_model]
+
+        # [START load_model_package]
+        from azure.ai.ml import load_model_package
+
+        model_package = load_model_package("./configs/model_packages/model_package_minimal.yml")
+        # [END load_model_package]
+
 
 if __name__ == "__main__":
     sample = MiscConfigurationOptions()

@@ -22,9 +22,9 @@ from azure.ai.ml.constants._common import (
     AssetTypes,
 )
 from azure.ai.ml.entities._assets import Artifact
+from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import get_md5_string, load_from_dict
-from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 
 from .artifact import ArtifactStorageInfo
 
@@ -32,23 +32,21 @@ from .artifact import ArtifactStorageInfo
 class Model(Artifact):  # pylint: disable=too-many-instance-attributes
     """Model for training and scoring.
 
-    :param name: Name of the resource.
+    :param name: The name of the model.
     :type name: str
-    :param version: Version of the resource.
+    :param version: The version of the model.
     :type version: str
-    :param type: The storage format for this entity. Used for NCD. Possible values include:
-     "custom_model", "mlflow_model", "triton_model".
+    :param type: The storage format for this entity, used for NCD (Novel Class Discovery). Accepted values are
+    "custom_model", "mlflow_model", or "triton_model".
     :type type: str
-    :param utc_time_created: Date and time when the model was created, in
+    :param utc_time_created: The date and time when the model was created, in
         UTC ISO 8601 format. (e.g. '2020-10-19 17:44:02.096572')
     :type utc_time_created: str
     :param flavors: The flavors in which the model can be interpreted.
-        e.g. {sklearn: {sklearn_version: 0.23.2}, python_function: {loader_module: office.plrmodel, python_version: 3.6}
     :type flavors: Dict[str, Any]
-    :param path: A remote uri or a local path pointing at a model.
-        Example: "azureml://subscriptions/{}/resourcegroups/{}/workspaces/{}/datastores/{}/paths/path_on_datastore/"
+    :param path: A remote uri or a local path pointing to a model.
     :type path: str
-    :param description: Description of the resource.
+    :param description: The description of the resource.
     :type description: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
@@ -57,7 +55,16 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
     :param stage: The stage of the resource.
     :type stage: str
     :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :type kwargs: dict[str, Any]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_misc.py
+            :start-after: [START model_entity_create]
+            :end-before: [END model_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Creating a Model object.
     """
 
     def __init__(
@@ -74,7 +81,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         properties: Optional[Dict] = None,
         stage: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         self.job_name = kwargs.pop("job_name", None)
         self._intellectual_property = kwargs.pop("intellectual_property", None)
         super().__init__(

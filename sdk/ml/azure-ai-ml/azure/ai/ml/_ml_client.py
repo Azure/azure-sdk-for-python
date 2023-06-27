@@ -520,10 +520,11 @@ class MLClient:
 
         :param credential: The credential object for the workspace.
         :type credential: ~azure.core.credentials.TokenCredential
-        :param path: The path to the configuration file or starting directory to search for the configuration file within.
-            Defaults to None which indicates the current directory.
+        :param path: The path to the configuration file or starting directory to search for the configuration file
+            within. Defaults to None which indicates the current directory.
         :type path: Union[os.PathLike, str]
-        :param file_name: The configuration file name to search for when path is a directory path. Defaults to "config.json".
+        :param file_name: The configuration file name to search for when path is a directory path. Defaults to
+            "config.json".
         :type file_name: str
         :param cloud: The cloud name to use. Defaults to AzureCloud.
         :type cloud: str
@@ -548,7 +549,8 @@ class MLClient:
                 :end-before: [END create_ml_client_from_config_custom_filename]
                 :language: python
                 :dedent: 8
-                :caption: Creating an MLClient from a file named "team_workspace_configuration.json" in the current directory.
+                :caption: Creating an MLClient from a file named "team_workspace_configuration.json" in the current
+                directory.
         """
 
         path = Path(".") if path is None else Path(path)
@@ -890,6 +892,15 @@ class MLClient:
         :return: The created or updated resource.
         :rtype: typing.Union[~azure.ai.ml.entities.Job, ~azure.ai.ml.entities.Model
             , ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component, ~azure.ai.ml.entities.Datastore]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_misc.py
+                :start-after: [START ml_client_create_or_update]
+                :end-before: [END ml_client_create_or_update]
+                :language: python
+                :dedent: 8
+                :caption: Creating a resource asynchronously via MLClient.
         """
 
         return _create_or_update(entity, self._operation_container.all_operations, **kwargs)
@@ -925,6 +936,15 @@ class MLClient:
             , ~azure.ai.ml.entities.Registry, ~azure.ai.ml.entities.Compute, ~azure.ai.ml.entities.OnlineDeployment
             , ~azure.ai.ml.entities.OnlineEndpoint, ~azure.ai.ml.entities.BatchDeployment
             , ~azure.ai.ml.entities.BatchEndpoint, ~azure.ai.ml.entities.Schedule]]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_misc.py
+                :start-after: [START ml_client_begin_create_or_update]
+                :end-before: [END ml_client_begin_create_or_update]
+                :language: python
+                :dedent: 8
+                :caption: Creating a resource asynchronously via MLClient.
         """
 
         return _begin_create_or_update(entity, self._operation_container.all_operations, **kwargs)
