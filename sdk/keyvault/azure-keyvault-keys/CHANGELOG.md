@@ -9,6 +9,8 @@
 ### Bugs Fixed
 
 ### Other Changes
+- The `KeyReleasePolicy` constructor raises a useful `TypeError` if the provided `encoded_policy` has an incorrect type
+  ([#30000](https://github.com/Azure/azure-sdk-for-python/issues/30000))
 
 ## 4.9.0b1 (2023-05-16)
 
