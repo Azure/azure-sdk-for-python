@@ -6,7 +6,6 @@
 from typing import (
     Any,
     Callable,
-    Mapping,
     Optional,
     Type,
     Union,

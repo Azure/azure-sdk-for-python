@@ -37,7 +37,6 @@ from typing import (
     overload,
     Union,
     Callable,
-    BinaryIO,
 )
 from typing_extensions import Literal
 from azure.schemaregistry import SchemaFormat

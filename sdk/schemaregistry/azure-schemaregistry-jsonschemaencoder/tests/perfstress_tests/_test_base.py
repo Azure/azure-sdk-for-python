@@ -25,8 +25,8 @@ class _SchemaRegistryJsonTest(PerfStressTest):
             "SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE"
         )
         self.group_name = self.get_from_env("SCHEMAREGISTRY_GROUP")
-        self.definition, num_propertys = self._create_schema_definition()
-        self.content = self._create_content(num_propertys)
+        self.definition, num_properties = self._create_schema_definition()
+        self.content = self._create_content(num_properties)
 
     def _create_schema_definition(self):
         schema_size = self.args.schema_size

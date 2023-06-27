@@ -129,6 +129,7 @@
     "adfs",
     "adls",
     "aiohttp",
+    "alru",
     "amqp",
     "amqps",
     "apim",
@@ -349,6 +350,7 @@
     "ukwest",
     "unpad",
     "unpadder",
+    "unpartial",
     "unredacted",
     "unseekable",
     "unsubscriptable",
@@ -823,9 +825,7 @@
     {
       "filename": "sdk/schemaregistry/azure-schemaregistry-avroencoder/**/*.py",
       "words": [
-        "currsize",
-        "unpartial",
-        "alru"
+        "currsize"
       ]
     },
     {
