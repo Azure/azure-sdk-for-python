@@ -202,6 +202,13 @@ def test_format_url_double_query():
     assert formatted == "https://bing.com/path/subpath?query=testvalue&x=2ndvalue&a=X&c=Y"
 
 
+def test_format_url_curly_braces():
+    client = PipelineClientBase("https://bing.com/path")
+    next_link = "https://management.azure.com/subscriptions/000000000000000/resourceGroups/resourceGroupName/providers/Microsoft.Network/dnsForwardingRulesets/XXX/virtualNetworkLinks?$skipToken=%5b{\"token\"%3a\"%2bRID%3a~kIByAPZ5oYKeSh8AAAAAAA%3d%3d%23RT%3a1%23TRC%3a100%23RTD%3aZ4EDKE9HD3IUT33r7gFKBXdqc3V2000000000000000000000000000000000000000000000000000000000%3d%3d%23ISV%3a2%23IEO%3a65567%23QCF%3a8%23FPC%3aAgF7fXsCAD28fSgAcgqA%2f5%2f2I0D%2ff307%2bv8RQOP%2bIUDK%2fxJA%2f%2b38%2fxJA%2f5f9%2fxJAH5gIAA%3d%3d\"%2c\"range\"%3a{\"min\"%3a\"\"%2c\"max\"%3a\"FF\"}}%5d&api-version=2022-07-01"
+    formatted = client.format_url(next_link)
+    assert formatted is None
+
+
 def test_format_incorrect_endpoint():
     # https://github.com/Azure/azure-sdk-for-python/pull/12106
     client = PipelineClientBase("{Endpoint}/text/analytics/v3.0")
