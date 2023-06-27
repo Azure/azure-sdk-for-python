@@ -53,7 +53,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     :param environment: The environment that training job will run in.
     :type environment: Union[str, ~azure.ai.ml.entities.Environment]
     :param distribution: The configuration for distributed training.
-    :type distribution: Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+    :type distribution: Union[~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
         ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
     :param resources: The compute resource configuration for the command.
     :type resources: ~azure.ai.ml.entities.JobResourceConfiguration
@@ -183,7 +183,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     def instance_count(self, value: int) -> None:
         """Sets the number of instances or nodes to be used by the compute target.
 
-        :param value: Tne number of instances of nodes to be used by the compute target. Defaults to 1.
+        :param value: The number of instances of nodes to be used by the compute target. Defaults to 1.
         :type instance_count: int
         """
         if not value:

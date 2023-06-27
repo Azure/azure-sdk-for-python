@@ -205,7 +205,6 @@ def command(
     :type code: Union[str, os.PathLike]
     :param identity: The identity that the command job will use while running on compute.
     :type identity: Union[
-        dict[str, str],
         ~azure.ai.ml.entities.ManagedIdentityConfiguration,
         ~azure.ai.ml.entities.AmlTokenConfiguration,
         ~azure.ai.ml.entities.UserIdentityConfiguration]

@@ -86,16 +86,14 @@ class Properties(BaseProperty):
 class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
     """Class for job resource, inherited and extended functionalities from ResourceConfiguration.
 
+    :param locations: Optional list of locations where the job can run.
+    :type locations: list[str]
     :param instance_count: Optional number of instances or nodes used by the compute target.
     :type instance_count: int
-    :param locations: Optional list of locations where the job can run.
-    :vartype locations: List[str]
     :param instance_type: Optional type of VM used as supported by the compute target.
     :type instance_type: str
-    :param max_instance_count: Optional maximum number of instances or nodes used by the compute target.
-    :type max_instance_count: int
-    :param properties: Additional properties bag.
-    :type properties: Dict[str, Any]
+    :param properties: A dictionary of properties for the job.
+    :type properties: dict[str, Any]
     :param docker_args: Extra arguments to pass to the Docker run command. This would override any
      parameters that have already been set by the system, or in this section. This parameter is only
      supported for Azure ML compute types.
@@ -104,6 +102,8 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
      format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
      b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
     :type shm_size: str
+    :param max_instance_count: Optional maximum number of instances or nodes used by the compute target.
+    :type max_instance_count: int
     """
 
     def __init__(
@@ -117,7 +117,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         shm_size: Optional[str] = None,
         max_instance_count: Optional[int] = None,
         **kwargs
-    ):  # pylint: disable=unused-argument
+    ) -> None:  # pylint: disable=unused-argument
         self.locations = locations
         self.instance_count = instance_count
         self.instance_type = instance_type
@@ -129,10 +129,20 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
 
     @property
     def properties(self) -> Properties:
+        """The properties of the job.
+
+        :rtype: ~azure.ai.ml.entities._job.job_resource_configuration.Properties
+        """
         return self._properties
 
     @properties.setter
     def properties(self, properties: Dict[str, Any]):
+        """Sets the properties of the job.
+
+        :param properties: A dictionary of properties for the job.
+        :type properties: Dict[str, Any]
+        :raises TypeError: Raised if properties is not a dictionary type.
+        """
         if properties is None:
             self._properties = Properties()
         elif isinstance(properties, dict):

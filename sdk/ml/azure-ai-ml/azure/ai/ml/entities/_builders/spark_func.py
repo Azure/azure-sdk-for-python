@@ -126,13 +126,13 @@ def spark(
     :param entry: The file or class entry point.
     :type entry: Union[dict[str, str], ~azure.ai.ml.entities.SparkJobEntry]
     :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
-    :type py_files: List[str]
+    :type py_files: list[str]
     :param jars: The list of .JAR files to include on the driver and executor classpaths.
-    :type jars: List[str]
+    :type jars: list[str]
     :param files: The list of files to be placed in the working directory of each executor.
-    :type files: List[str]
+    :type files: list[str]
     :param archives: The list of archives to be extracted into the working directory of each executor.
-    :type archives: List[str]
+    :type archives: list[str]
     :param identity: The identity that the Spark job will use while running on compute.
     :type identity: Union[
         dict[str, str],

@@ -77,6 +77,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     :type compute: str
     :param identity: The identity that the Spark job will use while running on compute.
     :type identity: Union[
+        dict[str, str],
         ~azure.ai.ml.ManagedIdentityConfiguration,
         ~azure.ai.ml.AmlTokenConfiguration,
         ~azure.ai.ml.UserIdentityConfiguration]
@@ -140,7 +141,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         identity: Optional[
             Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
-        resources: Union[Dict, SparkResourceConfiguration, None] = None,
+        resources: Optional[Union[Dict, SparkResourceConfiguration]] = None,
         **kwargs,
     ) -> None:
         kwargs[TYPE] = JobType.SPARK

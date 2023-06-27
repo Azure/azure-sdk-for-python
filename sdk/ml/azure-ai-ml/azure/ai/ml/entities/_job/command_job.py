@@ -31,8 +31,8 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 )
 from azure.ai.ml.entities._job.distribution import DistributionConfiguration
 from azure.ai.ml.entities._job.job_service import (
-    JobServiceBase,
     JobService,
+    JobServiceBase,
     JupyterLabJobService,
     SshJobService,
     TensorBoardJobService,
@@ -63,7 +63,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     :type tags: dict[str, str]
     :param display_name: Display name of the job.
     :type display_name: str
-    :param properties: The asset property dictionary.
+    :param properties: A dictionary of properties for the job.
     :type properties: dict[str, str]
     :param experiment_name:  Name of the experiment the job will be created under.
         If None is provided, default will be set to current directory name.
@@ -105,7 +105,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         self,
         *,
         inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
-        outputs: Optional[Dict[str, Union[Output]]] = None,
+        outputs: Optional[Dict[str, Output]] = None,
         limits: Optional[CommandJobLimits] = None,
         identity: Optional[
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]

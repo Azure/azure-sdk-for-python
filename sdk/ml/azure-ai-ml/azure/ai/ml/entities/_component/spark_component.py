@@ -27,10 +27,10 @@ class SparkComponent(
     """Spark component version, used to define a Spark Component or Job.
 
     :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
-        to a remote location.
+        to a remote location. Defaults to ".".
     :type code: Union[str, os.PathLike]
     :param entry: The file or class entry point.
-    :type entry: dict[str, str]
+    :type entry: Union[dict[str, str], ~azure.ai.ml.entities.SparkJobEntry]
     :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
     :type py_files: list[str]
     :param jars: The list of .JAR files to include on the driver and executor classpaths.
@@ -95,7 +95,7 @@ class SparkComponent(
         self,
         *,
         code: Union[str, os.PathLike] = ".",
-        entry: Union[Dict[str, str], SparkJobEntry, None] = None,
+        entry: Optional[Union[Dict[str, str], SparkJobEntry]] = None,
         py_files: Optional[List[str]] = None,
         jars: Optional[List[str]] = None,
         files: Optional[List[str]] = None,
