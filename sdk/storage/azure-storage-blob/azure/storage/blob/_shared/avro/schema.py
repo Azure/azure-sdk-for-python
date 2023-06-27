@@ -480,7 +480,7 @@ class Field(object):
           doc:
           other_props:
         """
-        if (not isinstance(name, _str)) or (not name):
+        if (not isinstance(name, str)) or (not name):
             raise SchemaParseException(f'Invalid record field name: {name!r}.')
         if (order is not None) and (order not in VALID_FIELD_SORT_ORDERS):
             raise SchemaParseException(f'Invalid record field order: {order!r}.')
@@ -555,8 +555,8 @@ class Field(object):
         return to_dump
 
     def __eq__(self, that):
-        to_cmp = json.loads(_str(self))
-        return to_cmp == json.loads(_str(that))
+        to_cmp = json.loads(str(self))
+        return to_cmp == json.loads(str(that))
 
 
 # ------------------------------------------------------------------------------
@@ -670,7 +670,7 @@ class EnumSchema(NamedSchema):
         symbols = tuple(symbols)
         symbol_set = frozenset(symbols)
         if (len(symbol_set) != len(symbols)
-                or not all(map(lambda symbol: isinstance(symbol, _str), symbols))):
+                or not all(map(lambda symbol: isinstance(symbol, str), symbols))):
             raise AvroException(
                 f'Invalid symbols for enum schema: {symbols!r}.')
 
@@ -738,8 +738,8 @@ class ArraySchema(Schema):
         return to_dump
 
     def __eq__(self, that):
-        to_cmp = json.loads(_str(self))
-        return to_cmp == json.loads(_str(that))
+        to_cmp = json.loads(str(self))
+        return to_cmp == json.loads(str(that))
 
 
 # ------------------------------------------------------------------------------
@@ -775,8 +775,8 @@ class MapSchema(Schema):
         return to_dump
 
     def __eq__(self, that):
-        to_cmp = json.loads(_str(self))
-        return to_cmp == json.loads(_str(that))
+        to_cmp = json.loads(str(self))
+        return to_cmp == json.loads(str(that))
 
 
 # ------------------------------------------------------------------------------
@@ -829,8 +829,8 @@ class UnionSchema(Schema):
         return to_dump
 
     def __eq__(self, that):
-        to_cmp = json.loads(_str(self))
-        return to_cmp == json.loads(_str(that))
+        to_cmp = json.loads(str(self))
+        return to_cmp == json.loads(str(that))
 
 
 # ------------------------------------------------------------------------------
@@ -1019,8 +1019,8 @@ class RecordSchema(NamedSchema):
         return to_dump
 
     def __eq__(self, that):
-        to_cmp = json.loads(_str(self))
-        return to_cmp == json.loads(_str(that))
+        to_cmp = json.loads(str(self))
+        return to_cmp == json.loads(str(that))
 
 
 # ------------------------------------------------------------------------------
@@ -1145,7 +1145,7 @@ def _schema_from_json_object(json_object, names):
 
 # Parsers for the JSON data types:
 _JSONDataParserTypeMap = {
-    _str: _schema_from_json_string,
+    str: _schema_from_json_string,
     list: _schema_from_json_array,
     dict: _schema_from_json_object,
 }
