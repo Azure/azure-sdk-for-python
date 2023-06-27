@@ -269,6 +269,8 @@ class KeyReleasePolicy(object):
     """
 
     def __init__(self, encoded_policy: bytes, **kwargs) -> None:
+        if not hasattr(encoded_policy, "decode"):
+            raise TypeError("The encoded release policy must be provided as bytes instead of a string.")
         self.encoded_policy = encoded_policy
         self.content_type = kwargs.get("content_type", None)
         self.immutable = kwargs.get("immutable", None)
