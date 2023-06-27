@@ -4,13 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 import time
+import unittest
 from azure.appconfiguration.provider import load, SettingSelector, AzureAppConfigurationRefreshOptions
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from azure.appconfiguration import AzureAppConfigurationClient
 from preparers import app_config_decorator_aad
 
 
-class TestAppConfigurationProvider(AzureRecordedTestCase):
+class TestAppConfigurationProvider(AzureRecordedTestCase, unittest.TestCase):
     def build_provider_aad(
         self,
         endpoint,
@@ -122,12 +123,6 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         client.refresh()
         assert client["refresh_all_message"] == "original value"
 
-    def my_callback(self):
-        assert True
-
-    def my_callback_on_fail(self):
-        assert False
-
     # method: refresh decorator
     @recorded_by_proxy
     @app_config_decorator_aad
@@ -199,8 +194,7 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         time.sleep(2)
         refresh_test_method("original value")
 
-        # method: refresh
-
+    # method: refresh
     @recorded_by_proxy
     @app_config_decorator_aad
     def test_empty_refresh(self, appconfiguration_endpoint_string):
@@ -230,6 +224,20 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         client._client.set_configuration_setting(setting)
         static_setting.value = "Static"
         client._client.set_configuration_setting(static_setting)
+
+    # method: refresh options
+    @recorded_by_proxy
+    @app_config_decorator_aad
+    def test_valid_refresh_options(self, appconfiguration_endpoint_string):
+        refresh_options = AzureAppConfigurationRefreshOptions()
+        refresh_options.refresh_interval = 1
+        refresh_options.register(key_filter="validKey")
+
+        self.assertRaises(ValueError, refresh_options.register, key_filter="invalidKey*")
+
+        refresh_options.register(key_filter="validKey", label_filter="validLabel")
+
+        self.assertRaises(ValueError, refresh_options.register, key_filter="validKey", label_filter="invalidLabel*")
 
     def my_callback(self):
         assert True

@@ -9,6 +9,8 @@ import random
 from datetime import datetime, timedelta
 from functools import wraps
 import logging
+from azure.core.exceptions import HttpResponseError
+from azure.core import MatchConditions
 from typing import (
     Any,
     Dict,
@@ -313,7 +315,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                         updated_registration.etag = updated_registration_etag
                         self._configuration_refresh.updated_configurations()
                         return
-        except Exception as ex:  # pylint:disable=broad-except
+        except HttpResponseError as ex:
             # refresh should never throw an exception
             self._configuration_refresh.failed_update(ex, "Refresh all trigger failed by exception: %s")
             return
@@ -345,10 +347,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                 # pylint:disable=protected-access
                 self._configuration_refresh.refresh_options._refresh_registrations = updated_registrations
                 self._configuration_refresh.updated_configurations()
-        except Exception as error:  # pylint:disable=broad-except
+        except HttpResponseError as ex:
             # refresh should never throw an exception
             self._configuration_refresh.failed_update(
-                error,
+                ex,
                 "An error occurred while checking for configuration updates. \
                 %s attempts have been made.\n %r",
             )
@@ -493,7 +495,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             logging.warning(message, self.attempts, error)
             # Refresh All or None, any failure will trigger a backoff
             # pylint:disable=protected-access
-            self.next_refresh_time = datetime.now() + timedelta(min(millisecond=self.calculate_backoff(), self.refresh_options.refresh_interval))
+            self.next_refresh_time = datetime.now() + timedelta(milliseconds=min(self.calculate_backoff(), self.refresh_options.refresh_interval/1000))
             self.attempts += 1
             self.refresh_options._on_error()
 
