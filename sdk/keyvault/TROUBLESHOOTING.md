@@ -132,7 +132,7 @@ If a `ValueError` is thrown with a message similar to:
 The challenge resource 'myvault.vault.azure.net' does not match the requested domain. Pass `verify_challenge_resource=False` to your client's constructor to disable this verification. See https://aka.ms/azsdk/blog/vault-uri for more information.
 ```
 
-Check that the resource is expected -- i.e. that you're not receiving an authentication challenge from an uknown host
+Check that the resource is expected -- i.e. that you're not receiving an authentication challenge from an unknown host
 which may indicate an incorrect request URI. If the resource is correct but you're using a mock service or
 non-transparent proxy, provide the `verify_challenge_resource` to your client's constructor; for example:
 
