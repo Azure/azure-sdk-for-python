@@ -24,12 +24,12 @@ class SparkConfigurationOptions(object):
 
         from azure.ai.ml import MLClient
 
-        # subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
-        # resource_group = os.environ["RESOURCE_GROUP_NAME"]
-        subscription_id = "e9b2ec51-5c94-4fa8-809a-dc1e695e4896"
-        resource_group = "dipeck-rg1"
+        subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+        resource_group = os.environ["RESOURCE_GROUP_NAME"]
         credential = DefaultAzureCredential()
-        ml_client = MLClient(credential, subscription_id, resource_group, workspace_name="r-bug-bash")
+        ml_client = MLClient(credential, subscription_id, resource_group, workspace_name="test-ws1")
+
+        cpu_cluster = ml_client.compute.get("cpu-cluster")
 
         # [START spark_monitor_definition]
         from azure.ai.ml.entities import (
@@ -261,6 +261,42 @@ class SparkConfigurationOptions(object):
             data=Input(path="/dataset/iris.csv", type=AssetTypes.URI_FILE, mode=InputOutputModes.DIRECT),
         )
         # [END spark_dsl_pipeline]
+
+        # [START spark_resource_configuration]
+        from azure.ai.ml import Input, Output
+        from azure.ai.ml.entities import AmlTokenConfiguration, SparkJob, SparkResourceConfiguration
+
+        spark_job = SparkJob(
+            code="./tests/test_configs/spark_job/basic_spark_job/src",
+            entry={"file": "./main.py"},
+            jars=["simple-1.1.1.jar"],
+            identity=AmlTokenConfiguration(),
+            driver_cores=1,
+            driver_memory="2g",
+            executor_cores=2,
+            executor_memory="2g",
+            executor_instances=2,
+            dynamic_allocation_enabled=True,
+            dynamic_allocation_min_executors=1,
+            dynamic_allocation_max_executors=3,
+            name="builder-spark-job",
+            experiment_name="builder-spark-experiment-name",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            inputs={
+                "input1": Input(
+                    type="uri_file", path="azureml://datastores/workspaceblobstore/paths/python/data.csv", mode="direct"
+                )
+            },
+            outputs={
+                "output1": Output(
+                    type="uri_file",
+                    path="azureml://datastores/workspaceblobstore/spark_titanic_output/titanic.parquet",
+                    mode="direct",
+                )
+            },
+            resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.2.0"),
+        )
+        # [END spark_resource_configuration]
 
 
 if __name__ == "__main__":
