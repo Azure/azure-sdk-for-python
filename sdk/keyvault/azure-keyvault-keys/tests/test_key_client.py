@@ -832,3 +832,9 @@ def test_empty_rotation_policy_actions():
     assert generated_policy.lifetime_actions is None
     policy = KeyRotationPolicy._from_generated(generated_policy)
     assert policy.lifetime_actions == []
+
+
+def test_release_policy_raises_on_string_policy():
+    """Ensure the KeyReleasePolicy constructor raises an error when the `encoded_policy` is given as a string"""
+    with pytest.raises(TypeError):
+        KeyReleasePolicy(encoded_policy="policy")
