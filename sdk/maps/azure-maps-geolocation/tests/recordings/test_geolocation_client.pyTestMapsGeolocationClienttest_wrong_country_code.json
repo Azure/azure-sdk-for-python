@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://atlas.microsoft.com/geolocation/ip/json?api-version=1.0.0b1\u0026ip=2001%3A4898%3A80e8%3Ab%3A%3A189",
+      "RequestUri": "https://atlas.microsoft.com/geolocation/ip/json?api-version=1.0.0b1\u0026ip=123451123123",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -11,7 +11,7 @@
         "User-Agent": "azsdk-python-maps-geolocation/1.0-preview Python/3.10.5 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
-      "StatusCode": 200,
+      "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
@@ -22,13 +22,13 @@
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
         "x-ms-azuremaps-region": "West US 2",
-        "X-MSEdge-Ref": "Ref A: 52A2372769C54F439EA511858F6A6A82 Ref B: TYO01EDGE1722 Ref C: 2023-06-27T08:09:05Z"
+        "X-MSEdge-Ref": "Ref A: 325DFE0C5C5C4CA8BE73A85D3C6B97F4 Ref B: TYO01EDGE1722 Ref C: 2023-06-27T08:09:06Z"
       },
       "ResponseBody": {
-        "countryRegion": {
-          "isoCode": "US"
-        },
-        "ipAddress": "2001:4898:80e8:b::189"
+        "error": {
+          "code": "400 BadRequest",
+          "message": "The provided IP address is not valid"
+        }
       }
     }
   ],

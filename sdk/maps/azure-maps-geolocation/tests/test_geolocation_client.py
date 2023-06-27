@@ -6,7 +6,7 @@
 import os
 import pytest
 from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import ServiceRequestError
+from azure.core.exceptions import HttpResponseError
 from azure.maps.geolocation import MapsGeolocationClient
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from geolocation_preparer import MapsGeolocationPreparer
@@ -28,5 +28,5 @@ class TestMapsGeolocationClient(AzureRecordedTestCase):
     @MapsGeolocationPreparer()
     @recorded_by_proxy
     def test_wrong_country_code(self):
-        with pytest.raises(ServiceRequestError):
-            self.client.get_country_code(ip_address="12345123")
+        with pytest.raises(HttpResponseError):
+            self.client.get_country_code(ip_address="123451123123")
