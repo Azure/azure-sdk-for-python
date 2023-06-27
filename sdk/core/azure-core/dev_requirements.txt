@@ -1,6 +1,7 @@
 trio
 requests
 aiohttp>=3.0
+isodate<1.0.0,>=0.6.1
 opencensus>=0.6.0
 opencensus-ext-azure
 opencensus-ext-threading

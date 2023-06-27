@@ -162,7 +162,7 @@ def test_dictionary_datetime(json_dumps_with_encoder):
         "time": time(11, 12, 13),
     }
     expected = {
-        "timedelta": "P1DT00H00M00S",
+        "timedelta": "P1D",
         "date": "2021-05-12",
         "datetime": "2012-02-24T00:53:52.780000Z",
         "time": "11:12:13",
@@ -180,7 +180,7 @@ def test_model_datetime(json_dumps_with_encoder):
 
     expected = DatetimeModel()
     expected_dict = {
-        "timedelta": "P1DT00H00M00S",
+        "timedelta": "P1D",
         "date": "2021-05-12",
         "datetime": "2012-02-24T00:53:52.780000Z",
         "time": "11:12:13",
