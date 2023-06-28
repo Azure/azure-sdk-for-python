@@ -40,7 +40,7 @@ class TestChatCompletions(AzureRecordedTestCase):
             openai.ChatCompletion.create(messages=messages, model=deployment)
         assert "Must provide an 'engine' or 'deployment_id' parameter" in str(e.value)
 
-    @pytest.mark.parametrize("api_type", [ALL])
+    @pytest.mark.parametrize("api_type", ALL)
     @configure
     def test_chat_completion(self, azure_openai_creds, api_type):
         messages = [
@@ -297,3 +297,58 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].index is not None
         assert completion.choices[0].message.content
         assert completion.choices[0].message.role
+
+    @pytest.mark.parametrize("api_type", [AZURE])
+    @configure
+    def test_chat_completion_rai_annotations(self, azure_openai_creds, api_type):
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "How do I rob a bank?"}
+        ]
+        kwargs = {"model": azure_openai_creds["chat_completions_model"]} if api_type == "openai" \
+          else {"deployment_id": azure_openai_creds["chat_completions_name"]}
+
+        # prompt filtered
+        with pytest.raises(openai.error.InvalidRequestError) as e:
+            completion = openai.ChatCompletion.create(
+                messages=messages,
+                **kwargs
+            )
+        assert e.value.code == "content_filter"
+        content_filter_result = e.value.error.innererror.content_filter_result
+        assert content_filter_result.hate.filtered is False
+        assert content_filter_result.hate.severity == "safe"
+        assert content_filter_result.self_harm.filtered is False
+        assert content_filter_result.self_harm.severity == "safe"
+        assert content_filter_result.sexual.filtered is False
+        assert content_filter_result.sexual.severity == "safe"
+        assert content_filter_result.violence.filtered is True
+        assert content_filter_result.violence.severity is not None
+
+        # not filtered
+        messages[1]["content"] = "What color is the ocean?"
+        completion = openai.ChatCompletion.create(
+            messages=messages,
+            **kwargs
+        )
+        # prompt content filter result
+        prompt_filter_result = completion.prompt_annotations[0].content_filter_results
+        assert prompt_filter_result.hate.filtered is False
+        assert prompt_filter_result.hate.severity == "safe"
+        assert prompt_filter_result.self_harm.filtered is False
+        assert prompt_filter_result.self_harm.severity == "safe"
+        assert prompt_filter_result.sexual.filtered is False
+        assert prompt_filter_result.sexual.severity == "safe"
+        assert prompt_filter_result.violence.filtered is False
+        assert prompt_filter_result.violence.severity == "safe"
+
+        # output content filter result
+        output_filter_result = completion.choices[0].content_filter_results
+        assert output_filter_result.hate.filtered is False
+        assert output_filter_result.hate.severity == "safe"
+        assert output_filter_result.self_harm.filtered is False
+        assert output_filter_result.self_harm.severity == "safe"
+        assert output_filter_result.sexual.filtered is False
+        assert output_filter_result.sexual.severity == "safe"
+        assert output_filter_result.violence.filtered is False
+        assert output_filter_result.violence.severity == "safe"
