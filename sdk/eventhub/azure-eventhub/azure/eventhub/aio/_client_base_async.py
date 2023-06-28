@@ -160,11 +160,15 @@ class EventHubSASTokenCredential(object):
     ) -> AccessToken:
         """
         This method is automatically called when token is about to expire.
+
+        :param str scopes: The list of scopes for which the token has access.
+        :rtype: ~azure.core.credentials.AccessToken
+        :return: The token object
         """
         return AccessToken(self.token, self.expiry)
 
 
-class EventhubAzureNamedKeyTokenCredentialAsync(object):
+class EventhubAzureNamedKeyTokenCredentialAsync(object): # pylint: disable=name-too-long
     """The named key credential used for authentication.
 
     :param credential: The AzureNamedKeyCredential that should be used.
@@ -201,6 +205,10 @@ class EventhubAzureSasTokenCredentialAsync(object):
     ) -> AccessToken:
         """
         This method is automatically called when token is about to expire.
+
+        :param str scopes: The list of scopes for which the token has access.
+        :rtype: ~azure.core.credentials.AccessToken
+        :return: The access token.
         """
         signature, expiry = parse_sas_credential(self._credential)
         return AccessToken(signature, expiry)
@@ -260,6 +268,9 @@ class ClientBaseAsync(ClientBase):
         """
         Create an ~uamqp.authentication.SASTokenAuthAsync instance to authenticate
         the session.
+
+        :rtype: ~uamqp.authentication.JWTTokenAsync or JWTTokenAuthAsync
+        :return: A JWTTokenAuthAsync instance to authenticate the session.
 
         """
         try:
@@ -372,7 +383,7 @@ class ClientBaseAsync(ClientBase):
                     _LOGGER.info(
                         "%r returns an exception %r", self._container_id, last_exception
                     )
-                    raise last_exception
+                    raise last_exception # pylint:disable=raise-missing-from
             finally:
                 await mgmt_client.close_async()
 
@@ -534,7 +545,7 @@ class ConsumerProducerMixin(_MIXIN_BASE):
                         self._name,
                         last_exception,
                     )
-                    raise last_exception
+                    raise last_exception # pylint:disable=raise-missing-from
         return None
 
     async def close(self) -> None:

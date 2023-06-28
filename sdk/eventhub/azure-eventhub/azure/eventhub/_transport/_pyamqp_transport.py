@@ -268,10 +268,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return connection.state
 
     @staticmethod
-    def create_send_client(*config, **kwargs):  # pylint:disable=unused-argument
+    def create_send_client(*, config, **kwargs):  # pylint:disable=unused-argument
         """
         Creates and returns the pyamqp SendClient.
-        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+        :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
         :keyword str target: Required. The target.
         :keyword JWTTokenAuth auth: Required.
@@ -390,10 +390,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return source
 
     @staticmethod
-    def create_receive_client(*config, **kwargs):
+    def create_receive_client(*, config, **kwargs):
         """
         Creates and returns the receive client.
-        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+        :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
         :keyword str source: Required. The source.
         :keyword str offset: Required.

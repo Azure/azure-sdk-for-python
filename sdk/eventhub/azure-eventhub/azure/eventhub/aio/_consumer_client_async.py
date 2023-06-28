@@ -190,7 +190,7 @@ class EventHubConsumerClient(
             **kwargs,
         )
         self._lock = asyncio.Lock(**self._internal_kwargs)
-        self._event_processors = dict()  # type: Dict[Tuple[str, str], EventProcessor]
+        self._event_processors = {}  # type: Dict[Tuple[str, str], EventProcessor]
 
     async def __aenter__(self):
         return self
@@ -683,6 +683,7 @@ class EventHubConsumerClient(
             - `partition_ids` (list[str])
 
         :rtype: Dict
+        :return: A dictionary containing information about the Event Hub.
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(
@@ -693,6 +694,7 @@ class EventHubConsumerClient(
         """Get partition IDs of the Event Hub.
 
         :rtype: list[str]
+        :return: A list of partition IDs.
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(EventHubConsumerClient, self)._get_partition_ids_async()
@@ -713,6 +715,7 @@ class EventHubConsumerClient(
         :param partition_id: The target partition ID.
         :type partition_id: str
         :rtype: Dict
+        :return: A dictionary containing partition properties.
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(

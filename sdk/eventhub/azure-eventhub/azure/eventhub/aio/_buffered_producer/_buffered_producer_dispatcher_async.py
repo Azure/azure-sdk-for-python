@@ -170,6 +170,6 @@ class BufferedProducerDispatcher:
 
     @property
     def total_buffered_event_count(self):
-        return sum(
+        return sum( # pylint: disable=consider-using-generator
             [self.get_buffered_event_count(pid) for pid in self._buffered_producers]
         )

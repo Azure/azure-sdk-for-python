@@ -66,6 +66,9 @@ if uamqp_installed:
             :keyword error_policy: Required.
             :keyword bool debug: Required.
             :keyword str encoding: Required.
+
+            :return: The connection.
+            :rtype: ~uamqp.ConnectionAsync
             """
             endpoint = kwargs.pop("endpoint") # pylint:disable=unused-variable
             host = kwargs.pop("host")
@@ -80,7 +83,7 @@ if uamqp_installed:
         async def close_connection_async(connection):
             """
             Closes existing connection.
-            :param connection: uamqp or pyamqp Connection.
+            :param Connection connection: uamqp or pyamqp Connection.
             """
             await connection.destroy_async()
 
@@ -88,7 +91,7 @@ if uamqp_installed:
         def create_send_client(*, config, **kwargs): # pylint:disable=unused-argument
             """
             Creates and returns the uamqp SendClient.
-            :param ~azure.eventhub._configuration.Configuration config: The configuration.
+            :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
             :keyword str target: Required. The target.
             :keyword JWTTokenAuth auth: Required.
@@ -99,6 +102,9 @@ if uamqp_installed:
             :keyword str client_name: Required.
             :keyword dict link_properties: Required.
             :keyword properties: Required.
+
+            :return: The send client.
+            :rtype: ~uamqp.SendClientAsync
             """
             target = kwargs.pop("target")
             retry_policy = kwargs.pop("retry_policy")
@@ -117,8 +123,8 @@ if uamqp_installed:
             Handles sending of event data messages.
             :param ~azure.eventhub._producer.EventHubProducer producer: The producer with handler to send messages.
             :param int timeout_time: Timeout time.
-            :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
-            :param logger: Logger.
+            :param Exception last_exception: Exception to raise if message timed out. Only used by uamqp transport.
+            :param any logger: Logger.
             """
             # pylint: disable=protected-access
             await producer._open()
@@ -137,7 +143,7 @@ if uamqp_installed:
         def create_receive_client(*, config, **kwargs): # pylint:disable=unused-argument
             """
             Creates and returns the receive client.
-            :param ~azure.eventhub._configuration.Configuration config: The configuration.
+            :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
             :keyword str source: Required. The source.
             :keyword str offset: Required.
@@ -155,6 +161,9 @@ if uamqp_installed:
             :keyword streaming_receive: Required.
             :keyword message_received_callback: Required.
             :keyword timeout: Required.
+
+            :return: The receive client.
+            :rtype: ~uamqp.ReceiveClientAsync
             """
 
             source = kwargs.pop("source")
@@ -235,7 +244,7 @@ if uamqp_installed:
                                 consumer._name,
                                 last_exception,
                             )
-                            raise last_exception
+                            raise last_exception # pylint: disable=raise-missing-from
 
             if consumer._message_buffer:
                 while consumer._message_buffer:
@@ -257,13 +266,16 @@ if uamqp_installed:
             """
             Creates the JWTTokenAuth.
             :param str auth_uri: The auth uri to pass to JWTTokenAuth.
-            :param get_token: The callback function used for getting and refreshing
+            :param callable get_token: The callback function used for getting and refreshing
             tokens. It should return a valid jwt token each time it is called.
             :param bytes token_type: Token type.
             :param ~azure.eventhub._configuration.Configuration config: EH config.
 
             :keyword bool update_token: Required. Whether to update token. If not updating token,
             then pass 300 to refresh_window.
+
+            :rtype: JWTTokenAsync
+            :return: A JWTTokenAsync instance.
             """
             update_token = kwargs.pop("update_token")
             refresh_window = 300
@@ -294,6 +306,9 @@ if uamqp_installed:
             :param _Address address: Required. The Address.
             :param JWTTokenAuth mgmt_auth: Auth for client.
             :param ~azure.eventhub._configuration.Configuration config: The configuration.
+
+            :rtype: ~uamqp.AMQPClientAsync
+            :return: The mgmt AMQP client.
             """
 
             mgmt_target = f"amqps://{address.hostname}{address.path}"
@@ -307,7 +322,9 @@ if uamqp_installed:
         async def get_updated_token_async(mgmt_auth):
             """
             Return updated auth token.
-            :param mgmt_auth: Auth.
+            :param JWTTokenAuth mgmt_auth: Auth.
+            :rtype: str
+            :return: Updated token.
             """
             return mgmt_auth.token
 
@@ -316,7 +333,7 @@ if uamqp_installed:
             """
             Opens the mgmt AMQP client.
             :param AMQPClient mgmt_client: uamqp AMQPClient.
-            :param conn: Connection.
+            :param Connection conn: Connection.
             """
             await mgmt_client.open_async(connection=conn)
 
@@ -330,6 +347,9 @@ if uamqp_installed:
             :keyword operation_type: Op type.
             :keyword status_code_field: mgmt status code.
             :keyword description_fields: mgmt status desc.
+
+            :rtype: tuple
+            :return: Status code, description, response.
             """
             operation_type = kwargs.pop("operation_type")
             operation = kwargs.pop("operation")

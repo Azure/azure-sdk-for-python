@@ -357,7 +357,11 @@ class EventProcessor(
         self._ownership_manager.release_ownership(partition_id)
 
     def _do_receive(self, partition_id: str, consumer: EventHubConsumer) -> None:
-        """Call the consumer.receive() and handle exceptions if any after it exhausts retries."""
+        """Call the consumer.receive() and handle exceptions if any after it exhausts retries.
+
+        :param str partition_id: The partition id.
+        :param EventHubConsumer consumer: The consumer object.
+        """
         try:
             consumer.receive(self._batch, self._max_batch_size, self._max_wait_time)
         except Exception as error:  # pylint:disable=broad-except

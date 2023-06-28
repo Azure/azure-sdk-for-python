@@ -31,6 +31,7 @@ class EventHubProducerClient(
     ClientBaseAsync
 ):  # pylint: disable=client-accepts-api-version-keyword
     # pylint: disable=too-many-instance-attributes
+    # pylint: disable=client-method-missing-tracing-decorator-async
     """
     The EventHubProducerClient class defines a high level interface for
     sending events to the Azure Event Hubs service.
@@ -702,18 +703,19 @@ class EventHubProducerClient(
 
         The max_size_in_bytes should be no greater than the max allowed message size defined by the service.
 
-        :param str partition_id: The specific partition ID to send to. Default is None, in which case the service
+        :keyword str partition_id: The specific partition ID to send to. Default is None, in which case the service
          will assign to all partitions using round-robin.
-        :param str partition_key: With the given partition_key, event data will be sent to
+        :keyword str partition_key: With the given partition_key, event data will be sent to
          a particular partition of the Event Hub decided by the service.
          If both partition_id and partition_key are provided, the partition_id will take precedence.
          **WARNING: Setting partition_key of non-string value on the events to be sent is discouraged
          as the partition_key will be ignored by the Event Hub service and events will be assigned
          to all partitions using round-robin. Furthermore, there are SDKs for consuming events which expect
          partition_key to only be string type, they might fail to parse the non-string value.**
-        :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold. By
+        :keyword int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold. By
          default, the value is determined by your Event Hubs tier.
         :rtype: ~azure.eventhub.EventDataBatch
+        :return: An EventDataBatch object
 
         .. admonition:: Example:
 
@@ -756,6 +758,7 @@ class EventHubProducerClient(
             - `partition_ids` (list[str])
 
         :rtype: Dict[str, Any]
+        :return: A dictionary containing information about the Event Hub.
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(
@@ -766,6 +769,7 @@ class EventHubProducerClient(
         """Get partition IDs of the Event Hub.
 
         :rtype: list[str]
+        :return: A list of partition IDs.
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(EventHubProducerClient, self)._get_partition_ids_async()
@@ -786,6 +790,7 @@ class EventHubProducerClient(
         :param partition_id: The target partition ID.
         :type partition_id: str
         :rtype: Dict[str, Any]
+        :return: A dict of partition properties.
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(
@@ -840,7 +845,7 @@ class EventHubProducerClient(
                 )
                 self._buffered_producer_dispatcher = None
 
-            for pid in self._producers:
+            for pid in self._producers: # pylint: disable=consider-using-dict-items
                 if self._producers[pid] is not None:
                     await self._producers[pid].close()  # type: ignore
                 self._producers[pid] = None

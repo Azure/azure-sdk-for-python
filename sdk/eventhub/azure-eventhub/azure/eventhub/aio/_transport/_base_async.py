@@ -117,7 +117,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     async def close_connection_async(connection):
         """
         Closes existing connection.
-        :param connection: uamqp or pyamqp Connection.
+        :param Connection connection: uamqp or pyamqp Connection.
         """
 
     @staticmethod
@@ -125,7 +125,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def get_connection_state(connection):
         """
         Gets connection state.
-        :param connection: uamqp or pyamqp Connection.
+        :param Connection connection: uamqp or pyamqp Connection.
         """
 
     @staticmethod
@@ -133,7 +133,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def create_send_client(*, config, **kwargs):
         """
         Creates and returns the send client.
-        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+        :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
         :keyword str target: Required. The target.
         :keyword JWTTokenAuth auth: Required.
@@ -153,8 +153,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         Handles sending of event data messages.
         :param ~azure.eventhub._producer.EventHubProducer producer: The producer with handler to send messages.
         :param int timeout_time: Timeout time.
-        :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
-        :param logger: Logger.
+        :param Exception last_exception: Exception to raise if message timed out. Only used by uamqp transport.
+        :param any logger: Logger.
         """
 
     @staticmethod
@@ -162,7 +162,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def set_message_partition_key(message, partition_key, **kwargs):
         """Set the partition key as an annotation on a uamqp message.
 
-        :param message: The message to update.
+        :param uamqp.Message or pyamqp.Message.message message: The message to update.
         :param str partition_key: The partition key value.
         :rtype: None
         """
@@ -183,7 +183,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def create_receive_client(*, config, **kwargs):
         """
         Creates and returns the receive client.
-        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+        :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
         :keyword Source source: Required. The source.
         :keyword JWTTokenAuth auth: Required.
@@ -218,7 +218,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
-        :param get_token: The callback function used for getting and refreshing
+        :param callable get_token: The callback function used for getting and refreshing
          tokens. It should return a valid jwt token each time it is called.
         :param bytes token_type: Token type.
         :param ~azure.eventhub._configuration.Configuration config: EH config.
@@ -242,7 +242,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     async def get_updated_token_async(mgmt_auth):
         """
         Return updated auth token.
-        :param mgmt_auth: Auth.
+        :param JWTTokenAuth mgmt_auth: Auth.
         """
 
     @staticmethod
@@ -263,7 +263,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def get_error(status_code, description):
         """
         Gets error corresponding to status code.
-        :param status_code: Status code.
+        :param int status_code: Status code.
         :param str description: Description of error.
         """
 
@@ -272,6 +272,6 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def check_timeout_exception(base, exception):
         """
         Checks if timeout exception.
-        :param base: ClientBase.
-        :param exception: Exception to check.
+        :param ClientBase base: ClientBase.
+        :param Exception exception: Exception to check.
         """

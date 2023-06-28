@@ -875,7 +875,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         Additionally if the client is retrieving messages for a batch
         or iterator, the message will be added to an internal queue.
 
-        :prarm NamedTuple frame: Received frame.
+        :param NamedTuple frame: Received frame.
         :param message: Received message.
         :type message: ~pyamqp.message.Message
         :param frame: Received frame.

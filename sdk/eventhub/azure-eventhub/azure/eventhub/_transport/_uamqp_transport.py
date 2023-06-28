@@ -307,10 +307,10 @@ if uamqp_installed:
             return connection._state    # pylint:disable=protected-access
 
         @staticmethod
-        def create_send_client(*config, **kwargs): # pylint:disable=unused-argument
+        def create_send_client(*, config, **kwargs): # pylint:disable=unused-argument
             """
             Creates and returns the uamqp SendClient.
-            :param ~azure.eventhub._configuration.Configuration config: The configuration.
+            :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
             :keyword str target: Required. The target.
             :keyword JWTTokenAuth auth: Required.
@@ -427,10 +427,10 @@ if uamqp_installed:
             return source
 
         @staticmethod
-        def create_receive_client(*config, **kwargs): # pylint: disable=unused-argument
+        def create_receive_client(*, config, **kwargs): # pylint: disable=unused-argument
             """
             Creates and returns the receive client.
-            :param ~azure.eventhub._configuration.Configuration config: The configuration.
+            :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
             :keyword str source: Required. The source.
             :keyword str offset: Required.
