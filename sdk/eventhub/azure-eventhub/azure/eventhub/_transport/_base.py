@@ -66,7 +66,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         Adds the given key/value to the application properties of the message.
         :param uamqp.Message or pyamqp.Message message: Message.
         :param str key: Key to set in application properties.
-        :param str Value: Value to set for key in application properties.
+        :param str value: Value to set for key in application properties.
         :rtype: uamqp.Message or pyamqp.Message
         """
 
@@ -130,6 +130,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         """
         Closes existing connection.
         :param connection: uamqp or pyamqp Connection.
+        :type connection: ~uamqp.Connection or ~azure.eventhub._pyamqp._connection.Connection
         """
 
     @staticmethod
@@ -138,6 +139,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         """
         Gets connection state.
         :param connection: uamqp or pyamqp Connection.
+        :type connection: ~uamqp.Connection or ~azure.eventhub._pyamqp._connection.Connection
         """
 
     @staticmethod
@@ -145,7 +147,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def create_send_client(*, config, **kwargs):
         """
         Creates and returns the send client.
-        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+        :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
         :keyword str target: Required. The target.
         :keyword JWTTokenAuth auth: Required.
@@ -165,8 +167,8 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         Handles sending of event data messages.
         :param ~azure.eventhub._producer.EventHubProducer producer: The producer with handler to send messages.
         :param int timeout_time: Timeout time.
-        :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
-        :param logger: Logger.
+        :param Exception last_exception: Exception to raise if message timed out. Only used by uamqp transport.
+        :param Any logger: Logger.
         """
 
     @staticmethod
@@ -174,9 +176,8 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def set_message_partition_key(message, partition_key, **kwargs):
         """Set the partition key as an annotation on a uamqp message.
 
-        :param message: The message to update.
+        :param Message message: The message to update.
         :param str partition_key: The partition key value.
-        :rtype: None
         """
 
     @staticmethod
@@ -184,10 +185,9 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def add_batch(event_data_batch, outgoing_event_data, event_data):
         """
         Add EventData to the data body of the BatchMessage.
-        :param event_data_batch: BatchMessage to add data to.
-        :param outgoing_event_data: Transformed EventData for sending.
-        :param event_data: EventData to add to internal batch events. uamqp use only.
-        :rtype: None
+        :param BatchMessage event_data_batch: BatchMessage to add data to.
+        :param Any outgoing_event_data: Transformed EventData for sending.
+        :param EventData event_data: EventData to add to internal batch events. uamqp use only.
         """
 
     @staticmethod
@@ -206,7 +206,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def create_receive_client(*, config, **kwargs):
         """
         Creates and returns the receive client.
-        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+        :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
         :keyword Source source: Required. The source.
         :keyword JWTTokenAuth auth: Required.
@@ -229,8 +229,9 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def open_receive_client(*, handler, client, auth):
         """
         Opens the receive client.
-        :param ReceiveClient handler: The receive client.
-        :param ~azure.eventhub.EventHubConsumerClient client: The consumer client.
+        :keyword ReceiveClient handler: The receive client.
+        :keyword ~azure.eventhub.EventHubConsumerClient client: The consumer client.
+        :keyword JWTTokenAuth auth: The auth.
         """
 
     @staticmethod
@@ -238,8 +239,8 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def check_link_stolen(consumer, exception):
         """
         Checks if link stolen and handles exception.
-        :param consumer: The EventHubConsumer.
-        :param exception: Exception to check.
+        :param EventHubConsumer consumer: The EventHubConsumer.
+        :param Exception exception: Exception to check.
         """
 
     @staticmethod
@@ -248,7 +249,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
-        :param get_token: The callback function used for getting and refreshing
+        :param callable get_token: The callback function used for getting and refreshing
          tokens. It should return a valid jwt token each time it is called.
         :param bytes token_type: Token type.
         :param ~azure.eventhub._configuration.Configuration config: EH config.
@@ -272,7 +273,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def get_updated_token(mgmt_auth):
         """
         Return updated auth token.
-        :param mgmt_auth: Auth.
+        :param JWTTokenAuth mgmt_auth: Auth.
         """
 
     @staticmethod
@@ -293,7 +294,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def get_error(status_code, description):
         """
         Gets error corresponding to status code.
-        :param status_code: Status code.
+        :param int status_code: Status code.
         :param str description: Description of error.
         """
 
@@ -302,6 +303,6 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def check_timeout_exception(base, exception):
         """
         Checks if timeout exception.
-        :param base: ClientBase.
-        :param exception: Exception to check.
+        :param ClientBase base: ClientBase.
+        :param Exception exception: Exception to check.
         """
