@@ -60,11 +60,11 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
                 **kwargs
             )
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "SearchIndexClient":
         await self._client.__aenter__()  # pylint:disable=no-member
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         return await self._client.__aexit__(*args)
 
     async def close(self) -> None:
