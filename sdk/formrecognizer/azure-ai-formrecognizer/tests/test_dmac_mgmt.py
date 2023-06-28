@@ -202,7 +202,7 @@ class TestManagement(FormRecognizerTest):
             assert classifier.expires_on
             for doc_type, source in classifier.doc_types.items():
                 assert doc_type
-                assert source.azure_blob_source or source.azure_blob_file_list_source
+                assert source.source
 
         # check failed op
         if failed_op:
