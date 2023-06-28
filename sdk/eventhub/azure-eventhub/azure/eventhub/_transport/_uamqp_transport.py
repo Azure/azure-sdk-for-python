@@ -616,7 +616,7 @@ if uamqp_installed:
             Gets error corresponding to status code.
             :param int status_code: Status code.
             :param str description: Description of error.
-            :rtype: ~uamqp.errors.AMQPConnectionError or 
+            :rtype: ~uamqp.errors.AMQPConnectionError or
              ~uamqp.errors.AuthenticationException or ~azure.eventhub.exceptions.ConnectError
             :return: Error corresponding to status code.
             """
