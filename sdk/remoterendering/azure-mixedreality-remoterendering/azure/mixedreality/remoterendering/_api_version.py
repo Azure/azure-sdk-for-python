@@ -6,6 +6,7 @@
 
 from enum import Enum
 
+
 class RemoteRenderingApiVersion(str, Enum):
     """Remote Rendering API versions supported by this package"""
 
