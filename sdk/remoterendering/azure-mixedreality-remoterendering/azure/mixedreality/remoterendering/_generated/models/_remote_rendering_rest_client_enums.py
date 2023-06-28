@@ -6,11 +6,27 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
-from azure.core import CaseInsensitiveEnumMeta
+from enum import Enum, EnumMeta
+from six import with_metaclass
+
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
 
 
-class AssetConversionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AssetConversionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the conversion. Terminal states are 'Cancelled', 'Failed', and 'Succeeded'.
     """
 
@@ -20,7 +36,7 @@ class AssetConversionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "Failed"  #: The conversion has failed. Check the 'error' field for more details. This is a terminal state.
     SUCCEEDED = "Succeeded"  #: The conversion has succeeded. Check the 'output' field for output asset location. This is a terminal state.
 
-class RenderingSessionSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class RenderingSessionSize(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The size of the server used for the rendering session. The size impacts the number of polygons
     the server can render. Refer to https://docs.microsoft.com/azure/remote-rendering/reference/vm-
     sizes for details.
@@ -29,7 +45,7 @@ class RenderingSessionSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD = "Standard"  #: Standard rendering session size.
     PREMIUM = "Premium"  #: Premium rendering session size.
 
-class RenderingSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class RenderingSessionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the rendering session. Terminal states are 'Error', 'Expired', and 'Stopped'.
     """
 
