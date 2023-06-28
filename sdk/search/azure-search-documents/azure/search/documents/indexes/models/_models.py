@@ -12,7 +12,6 @@ from .._generated.models import (
     LexicalTokenizer,
     AnalyzeRequest,
     CustomAnalyzer as _CustomAnalyzer,
-    EntityRecognitionSkill as _EntityRecognitionSkillV1,
     EntityRecognitionSkillV3 as _EntityRecognitionSkillV3,
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,
@@ -20,7 +19,6 @@ from .._generated.models import (
     SearchIndexerDataSource as _SearchIndexerDataSource,
     SearchIndexerSkill,
     SearchIndexerSkillset as _SearchIndexerSkillset,
-    SentimentSkill as _SentimentSkillV1,
     SentimentSkillV3 as _SentimentSkillV3,
     SynonymMap as _SynonymMap,
     DataSourceCredentials,
@@ -63,28 +61,25 @@ class SearchIndexerSkillset(_SearchIndexerSkillset):
     :paramtype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     """
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SearchIndexerSkillset, self).__init__(**kwargs)
 
     def _to_generated(self):
         generated_skills = []
         for skill in self.skills:
-            if hasattr(skill, '_to_generated'):
-                generated_skills.append(skill._to_generated()) # pylint:disable=protected-access
+            if hasattr(skill, "_to_generated"):
+                generated_skills.append(skill._to_generated())  # pylint:disable=protected-access
             else:
                 generated_skills.append(skill)
         assert len(generated_skills) == len(self.skills)
         return _SearchIndexerSkillset(
-            name=getattr(self, 'name', None),
-            description=getattr(self, 'description', None),
+            name=getattr(self, "name", None),
+            description=getattr(self, "description", None),
             skills=generated_skills,
-            cognitive_services_account=getattr(self, 'cognitive_services_account', None),
-            knowledge_store=getattr(self, 'knowledge_store', None),
-            e_tag=getattr(self, 'e_tag', None),
-            encryption_key=getattr(self, 'encryption_key', None)
+            cognitive_services_account=getattr(self, "cognitive_services_account", None),
+            knowledge_store=getattr(self, "knowledge_store", None),
+            e_tag=getattr(self, "e_tag", None),
+            encryption_key=getattr(self, "encryption_key", None),
         )
 
     @classmethod
@@ -92,23 +87,21 @@ class SearchIndexerSkillset(_SearchIndexerSkillset):
         custom_skills = []
         for skill in skillset.skills:
             skill_cls = type(skill)
-            if skill_cls in [_EntityRecognitionSkillV1, _EntityRecognitionSkillV3]:
-                custom_skills.append(EntityRecognitionSkill._from_generated(skill)) # pylint:disable=protected-access
-            elif skill_cls in [_SentimentSkillV1, _SentimentSkillV3]:
-                custom_skills.append(SentimentSkill._from_generated(skill)) # pylint:disable=protected-access
+            if skill_cls in [_EntityRecognitionSkillV3]:
+                custom_skills.append(EntityRecognitionSkill._from_generated(skill))  # pylint:disable=protected-access
+            elif skill_cls in [_SentimentSkillV3]:
+                custom_skills.append(SentimentSkill._from_generated(skill))  # pylint:disable=protected-access
             else:
                 custom_skills.append(skill)
         assert len(skillset.skills) == len(custom_skills)
         kwargs = skillset.as_dict()
-        kwargs['skills'] = custom_skills
+        kwargs["skills"] = custom_skills
         return cls(**kwargs)
 
 
 class EntityRecognitionSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the Entity Recognition skill version to use."""
 
-    #: Use Entity Recognition skill V1.
-    V1 = "#Microsoft.Skills.Text.EntityRecognitionSkill"
     #: Use Entity Recognition skill V3.
     V3 = "#Microsoft.Skills.Text.V3.EntityRecognitionSkill"
     #: Use latest version of Entity Recognition skill.
@@ -165,56 +158,41 @@ class EntityRecognitionSkill(SearchIndexerSkill):
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'inputs': {'required': True},
-        'outputs': {'required': True},
-        'minimum_precision': {'maximum': 1, 'minimum': 0},
+        "odata_type": {"required": True},
+        "inputs": {"required": True},
+        "outputs": {"required": True},
+        "minimum_precision": {"maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'context': {'key': 'context', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
-        'outputs': {'key': 'outputs', 'type': '[OutputFieldMappingEntry]'},
-        'categories': {'key': 'categories', 'type': '[str]'},
-        'default_language_code': {'key': 'defaultLanguageCode', 'type': 'str'},
-        'include_typeless_entities': {'key': 'includeTypelessEntities', 'type': 'bool'},
-        'minimum_precision': {'key': 'minimumPrecision', 'type': 'float'},
-        'model_version': {'key': 'modelVersion', 'type': 'str'},
-        'skill_version': {'key': 'skillVersion', 'type': 'str'}
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "context": {"key": "context", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[InputFieldMappingEntry]"},
+        "outputs": {"key": "outputs", "type": "[OutputFieldMappingEntry]"},
+        "categories": {"key": "categories", "type": "[str]"},
+        "default_language_code": {"key": "defaultLanguageCode", "type": "str"},
+        "include_typeless_entities": {"key": "includeTypelessEntities", "type": "bool"},
+        "minimum_precision": {"key": "minimumPrecision", "type": "float"},
+        "model_version": {"key": "modelVersion", "type": "str"},
+        "skill_version": {"key": "skillVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         # pop skill_version from kwargs to avoid warning in msrest
-        skill_version = kwargs.pop('skill_version', EntityRecognitionSkillVersion.V1)
+        skill_version = kwargs.pop("skill_version", EntityRecognitionSkillVersion.V3)
 
         super(EntityRecognitionSkill, self).__init__(**kwargs)
         self.skill_version = skill_version
         self.odata_type = self.skill_version  # type: str
-        self.categories = kwargs.get('categories', None)
-        self.default_language_code = kwargs.get('default_language_code', None)
-        self.minimum_precision = kwargs.get('minimum_precision', None)
-        self.include_typeless_entities = kwargs.get('include_typeless_entities', None)
-        self.model_version = kwargs.get('model_version', None)
-
+        self.categories = kwargs.get("categories", None)
+        self.default_language_code = kwargs.get("default_language_code", None)
+        self.minimum_precision = kwargs.get("minimum_precision", None)
+        self.include_typeless_entities = kwargs.get("include_typeless_entities", None)
+        self.model_version = kwargs.get("model_version", None)
 
     def _to_generated(self):
-        if self.skill_version == EntityRecognitionSkillVersion.V1:
-            return _EntityRecognitionSkillV1(
-                inputs=self.inputs,
-                outputs=self.outputs,
-                name=self.name,
-                odata_type=self.odata_type,
-                categories=self.categories,
-                default_language_code=self.default_language_code,
-                include_typeless_entities=self.include_typeless_entities,
-                minimum_precision=self.minimum_precision
-            )
         if self.skill_version in [EntityRecognitionSkillVersion.V3, EntityRecognitionSkillVersion.LATEST]:
             return _EntityRecognitionSkillV3(
                 inputs=self.inputs,
@@ -224,7 +202,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
                 categories=self.categories,
                 default_language_code=self.default_language_code,
                 minimum_precision=self.minimum_precision,
-                model_version=self.model_version
+                model_version=self.model_version,
             )
         return None
 
@@ -233,24 +211,14 @@ class EntityRecognitionSkill(SearchIndexerSkill):
         if not skill:
             return None
         kwargs = skill.as_dict()
-        if isinstance(skill, _EntityRecognitionSkillV1):
-            return EntityRecognitionSkill(
-                skill_version=EntityRecognitionSkillVersion.V1,
-                **kwargs
-            )
         if isinstance(skill, _EntityRecognitionSkillV3):
-            return EntityRecognitionSkill(
-                skill_version=EntityRecognitionSkillVersion.V3,
-                **kwargs
-            )
+            return EntityRecognitionSkill(skill_version=EntityRecognitionSkillVersion.V3, **kwargs)
         return None
 
 
 class SentimentSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ Specifies the Sentiment Skill version to use."""
+    """Specifies the Sentiment Skill version to use."""
 
-    #: Use Sentiment skill V1.
-    V1 = "#Microsoft.Skills.Text.SentimentSkill"
     #: Use Sentiment skill V3.
     V3 = "#Microsoft.Skills.Text.V3.SentimentSkill"
     #: Use latest version of Sentiment skill.
@@ -304,47 +272,36 @@ class SentimentSkill(SearchIndexerSkill):
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'inputs': {'required': True},
-        'outputs': {'required': True},
+        "odata_type": {"required": True},
+        "inputs": {"required": True},
+        "outputs": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'context': {'key': 'context', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
-        'outputs': {'key': 'outputs', 'type': '[OutputFieldMappingEntry]'},
-        'default_language_code': {'key': 'defaultLanguageCode', 'type': 'str'},
-        'include_opinion_mining': {'key': 'includeOpinionMining', 'type': 'bool'},
-        'model_version': {'key': 'modelVersion', 'type': 'str'},
-        'skill_version': {'key': 'skillVersion', 'type': 'str'}
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "context": {"key": "context", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[InputFieldMappingEntry]"},
+        "outputs": {"key": "outputs", "type": "[OutputFieldMappingEntry]"},
+        "default_language_code": {"key": "defaultLanguageCode", "type": "str"},
+        "include_opinion_mining": {"key": "includeOpinionMining", "type": "bool"},
+        "model_version": {"key": "modelVersion", "type": "str"},
+        "skill_version": {"key": "skillVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         # pop skill_version from kwargs to avoid warning in msrest
-        skill_version = kwargs.pop('skill_version', SentimentSkillVersion.V1)
+        skill_version = kwargs.pop("skill_version", SentimentSkillVersion.V3)
 
         super(SentimentSkill, self).__init__(**kwargs)
         self.skill_version = skill_version
         self.odata_type = self.skill_version  # type: str
-        self.default_language_code = kwargs.get('default_language_code', None)
-        self.include_opinion_mining = kwargs.get('include_opinion_mining', None)
-        self.model_version = kwargs.get('model_version', None)
+        self.default_language_code = kwargs.get("default_language_code", None)
+        self.include_opinion_mining = kwargs.get("include_opinion_mining", None)
+        self.model_version = kwargs.get("model_version", None)
 
     def _to_generated(self):
-        if self.skill_version == SentimentSkillVersion.V1:
-            return _SentimentSkillV1(
-                inputs=self.inputs,
-                outputs=self.outputs,
-                name=self.name,
-                odata_type=self.odata_type,
-                default_language_code=self.default_language_code
-        )
         if self.skill_version in [SentimentSkillVersion.V3, SentimentSkillVersion.LATEST]:
             return _SentimentSkillV3(
                 inputs=self.inputs,
@@ -353,7 +310,7 @@ class SentimentSkill(SearchIndexerSkill):
                 odata_type=self.odata_type,
                 default_language_code=self.default_language_code,
                 include_opinion_mining=self.include_opinion_mining,
-                model_version=self.model_version
+                model_version=self.model_version,
             )
         return None
 
@@ -362,16 +319,8 @@ class SentimentSkill(SearchIndexerSkill):
         if not skill:
             return None
         kwargs = skill.as_dict()
-        if isinstance(skill, _SentimentSkillV1):
-            return SentimentSkill(
-                skill_version=SentimentSkillVersion.V1,
-                **kwargs
-            )
         if isinstance(skill, _SentimentSkillV3):
-            return SentimentSkill(
-                skill_version=SentimentSkillVersion.V3,
-                **kwargs
-            )
+            return SentimentSkill(skill_version=SentimentSkillVersion.V3, **kwargs)
         return None
 
 
@@ -731,12 +680,8 @@ class SearchResourceEncryptionKey(_serialization.Model):
         if not search_resource_encryption_key:
             return None
         if search_resource_encryption_key.access_credentials:
-            application_id = (
-                search_resource_encryption_key.access_credentials.application_id
-            )
-            application_secret = (
-                search_resource_encryption_key.access_credentials.application_secret
-            )
+            application_id = search_resource_encryption_key.access_credentials.application_id
+            application_secret = search_resource_encryption_key.access_credentials.application_secret
         else:
             application_id = None
             application_secret = None
@@ -821,9 +766,7 @@ class SynonymMap(_serialization.Model):
             name=synonym_map.name,
             synonyms=synonym_map.synonyms.split("\n"),
             # pylint:disable=protected-access
-            encryption_key=SearchResourceEncryptionKey._from_generated(
-                synonym_map.encryption_key
-            ),
+            encryption_key=SearchResourceEncryptionKey._from_generated(synonym_map.encryption_key),
             e_tag=synonym_map.e_tag,
         )
 
@@ -889,9 +832,9 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
             "key": "dataDeletionDetectionPolicy",
             "type": "DataDeletionDetectionPolicy",
         },
-        'encryption_key': {'key': 'encryptionKey', 'type': 'SearchResourceEncryptionKey'},
+        "encryption_key": {"key": "encryptionKey", "type": "SearchResourceEncryptionKey"},
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
-        'identity': {'key': 'identity', 'type': 'SearchIndexerDataIdentity'},
+        "identity": {"key": "identity", "type": "SearchIndexerDataIdentity"},
     }
 
     def __init__(self, **kwargs):
@@ -901,12 +844,8 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         self.type = kwargs["type"]
         self.connection_string = kwargs["connection_string"]
         self.container = kwargs["container"]
-        self.data_change_detection_policy = kwargs.get(
-            "data_change_detection_policy", None
-        )
-        self.data_deletion_detection_policy = kwargs.get(
-            "data_deletion_detection_policy", None
-        )
+        self.data_change_detection_policy = kwargs.get("data_change_detection_policy", None)
+        self.data_deletion_detection_policy = kwargs.get("data_deletion_detection_policy", None)
         self.e_tag = kwargs.get("e_tag", None)
         self.encryption_key = kwargs.get("encryption_key", None)
         self.identity = kwargs.get("identity", None)
@@ -927,7 +866,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
             data_deletion_detection_policy=self.data_deletion_detection_policy,
             e_tag=self.e_tag,
             encryption_key=self.encryption_key,
-            identity=self.identity
+            identity=self.identity,
         )
 
     @classmethod
@@ -935,9 +874,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         if not search_indexer_data_source:
             return None
         connection_string = (
-            search_indexer_data_source.credentials.connection_string
-            if search_indexer_data_source.credentials
-            else None
+            search_indexer_data_source.credentials.connection_string if search_indexer_data_source.credentials else None
         )
         return cls(
             name=search_indexer_data_source.name,
@@ -949,8 +886,9 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
             data_deletion_detection_policy=search_indexer_data_source.data_deletion_detection_policy,
             e_tag=search_indexer_data_source.e_tag,
             encryption_key=search_indexer_data_source.encryption_key,
-            identity=search_indexer_data_source.identity
+            identity=search_indexer_data_source.identity,
         )
+
 
 def pack_analyzer(analyzer):
     if not analyzer:
@@ -964,11 +902,7 @@ def unpack_analyzer(analyzer):
     if not analyzer:
         return None
     if isinstance(analyzer, _PatternAnalyzer):
-        return PatternAnalyzer._from_generated(  # pylint:disable=protected-access
-            analyzer
-        )
+        return PatternAnalyzer._from_generated(analyzer)  # pylint:disable=protected-access
     if isinstance(analyzer, _CustomAnalyzer):
-        return CustomAnalyzer._from_generated(  # pylint:disable=protected-access
-            analyzer
-        )
+        return CustomAnalyzer._from_generated(analyzer)  # pylint:disable=protected-access
     return analyzer

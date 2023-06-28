@@ -32,17 +32,14 @@ from azure.search.documents.aio import SearchIndexingBufferedSender
 
 async def sample_batching_client():
     DOCUMENT = {
-        'Category': 'Hotel',
-        'HotelId': '1000',
-        'Rating': 4.0,
-        'Rooms': [],
-        'HotelName': 'Azure Inn',
+        "Category": "Hotel",
+        "HotelId": "1000",
+        "Rating": 4.0,
+        "Rooms": [],
+        "HotelName": "Azure Inn",
     }
 
-    async with SearchIndexingBufferedSender(
-            service_endpoint,
-            index_name,
-            AzureKeyCredential(key)) as batch_client:
+    async with SearchIndexingBufferedSender(service_endpoint, index_name, AzureKeyCredential(key)) as batch_client:
         # add upload actions
         await batch_client.upload_documents(documents=[DOCUMENT])
         # add merge actions
@@ -50,8 +47,10 @@ async def sample_batching_client():
         # add delete actions
         await batch_client.delete_documents(documents=[{"HotelId": "1000"}])
 
+
 async def main():
     await sample_batching_client()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())
