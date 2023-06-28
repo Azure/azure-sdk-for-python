@@ -41,7 +41,7 @@ from devtools_testutils import (
 SchemaRegistryEnvironmentVariableLoader = functools.partial(
     EnvironmentVariableLoader,
     "schemaregistry",
-    schemaregistry_json_fully_qualified_namespace="fake_resource_json.servicebus.windows.net/",
+    schemaregistry_json_fully_qualified_namespace="fake_resource_json.servicebus.windows.net",
     schemaregistry_group="fakegroup"
 )
 
