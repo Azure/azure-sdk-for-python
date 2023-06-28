@@ -328,8 +328,8 @@ def _format_data_helper(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[O
 
     :param data: The request field data.
     :type data: str or file-like object.
-    :rtype: tuple[str, file-like object, str]
-    :return: A tuple of (data name, data, content type)
+    :rtype: tuple[str, IO, str] or tuple[None, str]
+    :return: A tuple of (data name, data IO, "application/octet-stream") or (None, data str)
     """
     if hasattr(data, "read"):
         data = cast(IO, data)

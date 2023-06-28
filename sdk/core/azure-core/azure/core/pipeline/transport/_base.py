@@ -243,8 +243,8 @@ class HttpRequest:
 
         :param data: The request field data.
         :type data: str or file-like object.
-        :rtype: tuple[None, str] or tuple[Optional[str], IO, str]
-        :return: A tuple of (data, content_type). If data is a string,
+        :rtype: tuple[str, IO, str] or tuple[None, str]
+        :return: A tuple of (data name, data IO, "application/octet-stream") or (None, data str)
         """
         return _format_data_helper(data)
 
