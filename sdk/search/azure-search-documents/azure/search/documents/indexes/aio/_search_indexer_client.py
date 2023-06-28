@@ -67,7 +67,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return await self._client.__aexit__(*args)
 
     async def close(self) -> None:
-        """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexerClient` session."""
+        """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexerClient` session.
+        :return: None
+        :rtype: None
+        """
         return await self._client.close()
 
     @distributed_trace_async

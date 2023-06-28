@@ -68,7 +68,10 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         return await self._client.__aexit__(*args)
 
     async def close(self) -> None:
-        """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexClient` session."""
+        """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexClient` session.
+        :return: None
+        :rtype: None
+        """
         return await self._client.close()
 
     def get_search_client(self, index_name: str, **kwargs: Any) -> SearchClient:
@@ -76,6 +79,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         :param index_name: The name of the Search Index
         :type index_name: str
+        :return: SearchClient
         :rtype: ~azure.search.documents.aio.SearchClient
         """
         return SearchClient(self._endpoint, index_name, self._credential, **kwargs)
@@ -87,7 +91,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
          list of JSON property names, or '*' for all properties. The default is all
          properties.
-        :paramtype select: List[str]
+        :paramtype select: list[str]
         :return: List of indexes
         :rtype: ~azure.core.async_paging.AsyncItemPaged[:class:`~azure.search.documents.indexes.models.SearchIndex`]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -450,7 +454,10 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
     @distributed_trace_async
     async def get_service_statistics(self, **kwargs) -> Dict:
-        """Get service level statistics for a search service."""
+        """Get service level statistics for a search service.
+        :return: Service statistics result
+        :rtype: dict
+        """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.get_service_statistics(**kwargs)
         return result.as_dict()
@@ -462,7 +469,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
          list of JSON property names, or '*' for all properties. The default is all
          properties.
-        :paramtype select: List[str]
+        :paramtype select: list[str]
         :return: List of Aliases
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchAlias]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -487,7 +494,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         return self._client.aliases.list(cls=lambda objs: [x.name for x in objs], **kwargs)
 
-    @distributed_trace
+    @distributed_trace_async
     async def get_alias(self, name: str, **kwargs) -> SearchAlias:
         """
 
@@ -501,7 +508,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         result = await self._client.aliases.get(name, **kwargs)
         return result
 
-    @distributed_trace
+    @distributed_trace_async
     async def delete_alias(
         self,
         alias: Union[str, SearchAlias],
@@ -535,7 +542,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             alias_name = alias
         await self._client.aliases.delete(alias_name=alias_name, error_map=error_map, **kwargs)
 
-    @distributed_trace
+    @distributed_trace_async
     async def create_alias(self, alias: SearchIndex, **kwargs: Any) -> SearchAlias:
         """Creates a new search alias.
         :param alias: The alias object.
@@ -557,7 +564,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         result = await self._client.aliases.create(alias, **kwargs)
         return result  # pylint:disable=protected-access
 
-    @distributed_trace
+    @distributed_trace_async
     async def create_or_update_alias(
         self, alias: SearchAlias, *, match_condition: MatchConditions = MatchConditions.Unconditionally, **kwargs: Any
     ) -> SearchAlias:
