@@ -755,10 +755,6 @@ def encode_filter_set(value):
     :return: A set of encoded named filters.
     :rtype: dict
     """
-    if not value:
-        return {TYPE: AMQPTypes.null, VALUE: None}
-    fields = {TYPE: AMQPTypes.map, VALUE: cast(List, [])}
-    for name, data in value.items():
         described_filter: Dict[str, Union[Tuple[Dict[str, Any], Any], Optional[str]]]
         if data is None:
             described_filter = {TYPE: AMQPTypes.null, VALUE: None}
