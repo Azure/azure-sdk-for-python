@@ -29,15 +29,14 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.configurations.begin_update(
+    client.configurations.begin_update(
         resource_group_name="rg1",
         cluster_name="cluster1",
         configuration_name="gateway",
         parameters={"restAuthCredential.isEnabled": "false"},
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2021-06-01/examples/ChangeHttpConnectivityDisable.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/preview/2023-04-15-preview/examples/ChangeHttpConnectivityDisable.json
 if __name__ == "__main__":
     main()

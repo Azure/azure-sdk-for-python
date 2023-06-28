@@ -79,6 +79,7 @@ def main():
                     "storageaccounts": [
                         {
                             "container": "default8525",
+                            "enableSecureChannel": True,
                             "isDefault": True,
                             "key": "storagekey",
                             "name": "mystorage.blob.core.windows.net",
@@ -92,6 +93,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2021-06-01/examples/CreateHDInsightClusterWithEncryptionAtHost.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/preview/2023-04-15-preview/examples/CreateHDInsightClusterWithEncryptionAtHost.json
 if __name__ == "__main__":
     main()

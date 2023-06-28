@@ -1,5 +1,11 @@
 # Release History
 
+## 9.1.0b1 (2023-07-21)
+
+### Features Added
+
+  - Model StorageAccount has a new parameter enable_secure_channel
+
 ## 9.0.0b1 (2022-11-18)
 
 ### Other Changes
