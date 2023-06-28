@@ -308,10 +308,10 @@ class MetricsAdvisorClient:  # pylint: disable=client-accepts-api-version-keywor
 
         :param detection_configuration_id: anomaly detection configuration unique id.
         :type detection_configuration_id: str
-        :param start_time: start time filter under chosen time mode.
-        :type start_time: str or datetime.datetime
-        :param end_time: end time filter under chosen time mode.
-        :type end_time: str or datetime.datetime
+        :keyword start_time: start time filter under chosen time mode.
+        :paramtype start_time: str or datetime.datetime
+        :keyword end_time: end time filter under chosen time mode.
+        :paramtype end_time: str or datetime.datetime
         :keyword filter:
         :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionIncidentFilterCondition
         :return: AnomalyIncidents under a specific alert.
@@ -523,10 +523,10 @@ class MetricsAdvisorClient:  # pylint: disable=client-accepts-api-version-keywor
 
         :param detection_configuration_id: anomaly detection configuration unique id.
         :type detection_configuration_id: str
-        :param start_time: start time filter under chosen time mode.
-        :type start_time: str or datetime.datetime
-        :param end_time: end time filter under chosen time mode.
-        :type end_time: str or datetime.datetime
+        :keyword start_time: start time filter under chosen time mode.
+        :paramtype start_time: str or datetime.datetime
+        :keyword end_time: end time filter under chosen time mode.
+        :paramtype end_time: str or datetime.datetime
         :keyword int skip:
         :keyword filter:
         :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
