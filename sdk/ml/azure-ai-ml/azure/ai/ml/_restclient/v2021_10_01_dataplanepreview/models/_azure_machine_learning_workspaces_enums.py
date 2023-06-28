@@ -11,6 +11,12 @@ from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class BaseEnvironmentSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Base environment type.
+    """
+
+    ENVIRONMENT_ASSET = "EnvironmentAsset"
+
 class BindingType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Different Binding types
     """
@@ -95,6 +101,15 @@ class IdentityConfigurationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     MANAGED = "Managed"
     AML_TOKEN = "AMLToken"
 
+class InferencingServerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Inferencing server type for various targets.
+    """
+
+    AZURE_ML_ONLINE = "AzureMLOnline"
+    AZURE_ML_BATCH = "AzureMLBatch"
+    TRITON = "Triton"
+    CUSTOM = "Custom"
+
 class InputDataDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine the input data delivery mode.
     """
@@ -102,6 +117,14 @@ class InputDataDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     READ_ONLY_MOUNT = "ReadOnlyMount"
     READ_WRITE_MOUNT = "ReadWriteMount"
     DOWNLOAD = "Download"
+
+class InputPathType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Input path type for package inputs.
+    """
+
+    URL = "Url"
+    PATH_ID = "PathId"
+    PATH_VERSION = "PathVersion"
 
 class JobInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine the Job Input Type.
@@ -170,6 +193,29 @@ class OutputDataDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
 
     READ_WRITE_MOUNT = "ReadWriteMount"
     UPLOAD = "Upload"
+
+class PackageBuildState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Package build state returned in package response.
+    """
+
+    NOT_STARTED = "NotStarted"
+    RUNNING = "Running"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+
+class PackageInputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Mounting type of the model or the inputs
+    """
+
+    COPY = "Copy"
+    DOWNLOAD = "Download"
+
+class PackageInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of the inputs.
+    """
+
+    URI_FILE = "UriFile"
+    URI_FOLDER = "UriFolder"
 
 class ProtectionLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Protection level associated with the Intellectual Property.

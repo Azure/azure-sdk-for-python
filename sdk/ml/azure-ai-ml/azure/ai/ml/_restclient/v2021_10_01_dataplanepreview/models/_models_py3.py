@@ -290,71 +290,6 @@ class AmlToken(IdentityConfiguration):
         self.identity_type = 'AMLToken'  # type: str
 
 
-class DataReferenceCredentialDto(msrest.serialization.Model):
-    """DataReferenceCredentialDto.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DockerCredentialDto, ManagedIdentityCredentialDto, AnonymousAccessCredentialDto, SASCredentialDto.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar credential_type: Required. Constant filled by server. Possible values include: "SAS",
-     "DockerCredentials", "ManagedIdentity", "NoCredentials".
-    :vartype credential_type: str or
-     ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialType
-    """
-
-    _validation = {
-        'credential_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'credential_type': {'key': 'credentialType', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'credential_type': {'DockerCredentials': 'DockerCredentialDto', 'ManagedIdentity': 'ManagedIdentityCredentialDto', 'NoCredentials': 'AnonymousAccessCredentialDto', 'SAS': 'SASCredentialDto'}
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DataReferenceCredentialDto, self).__init__(**kwargs)
-        self.credential_type = 'DataReferenceCredentialDto'  # type: str
-
-
-class AnonymousAccessCredentialDto(DataReferenceCredentialDto):
-    """AnonymousAccessCredentialDto.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar credential_type: Required. Constant filled by server. Possible values include: "SAS",
-     "DockerCredentials", "ManagedIdentity", "NoCredentials".
-    :vartype credential_type: str or
-     ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialType
-    """
-
-    _validation = {
-        'credential_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'credential_type': {'key': 'credentialType', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AnonymousAccessCredentialDto, self).__init__(**kwargs)
-        self.credential_type = 'NoCredentials'  # type: str
-
-
 class ResourceBase(msrest.serialization.Model):
     """ResourceBase.
 
@@ -999,6 +934,113 @@ class AzureFileDatastore(Datastore):
         self.service_data_access_auth_identity = service_data_access_auth_identity
 
 
+class InferencingServer(msrest.serialization.Model):
+    """InferencingServer.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureMLBatchInferencingServer, AzureMLOnlineInferencingServer, CustomInferencingServer, TritonInferencingServer.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar server_type: Required. Inferencing server type for various targets.Constant filled by
+     server. Possible values include: "AzureMLOnline", "AzureMLBatch", "Triton", "Custom".
+    :vartype server_type: str or ~azure.mgmt.machinelearningservices.models.InferencingServerType
+    """
+
+    _validation = {
+        'server_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'server_type': {'key': 'serverType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'server_type': {'AzureMLBatch': 'AzureMLBatchInferencingServer', 'AzureMLOnline': 'AzureMLOnlineInferencingServer', 'Custom': 'CustomInferencingServer', 'Triton': 'TritonInferencingServer'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(InferencingServer, self).__init__(**kwargs)
+        self.server_type = None  # type: Optional[str]
+
+
+class AzureMLBatchInferencingServer(InferencingServer):
+    """Azure ML batch inferencing server configurations.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar server_type: Required. Inferencing server type for various targets.Constant filled by
+     server. Possible values include: "AzureMLOnline", "AzureMLBatch", "Triton", "Custom".
+    :vartype server_type: str or ~azure.mgmt.machinelearningservices.models.InferencingServerType
+    :ivar code_configuration: Code configuration for AML batch inferencing server.
+    :vartype code_configuration: ~azure.mgmt.machinelearningservices.models.CodeConfiguration
+    """
+
+    _validation = {
+        'server_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'server_type': {'key': 'serverType', 'type': 'str'},
+        'code_configuration': {'key': 'codeConfiguration', 'type': 'CodeConfiguration'},
+    }
+
+    def __init__(
+        self,
+        *,
+        code_configuration: Optional["CodeConfiguration"] = None,
+        **kwargs
+    ):
+        """
+        :keyword code_configuration: Code configuration for AML batch inferencing server.
+        :paramtype code_configuration: ~azure.mgmt.machinelearningservices.models.CodeConfiguration
+        """
+        super(AzureMLBatchInferencingServer, self).__init__(**kwargs)
+        self.server_type = 'AzureMLBatch'  # type: str
+        self.code_configuration = code_configuration
+
+
+class AzureMLOnlineInferencingServer(InferencingServer):
+    """Azure ML online inferencing configurations.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar server_type: Required. Inferencing server type for various targets.Constant filled by
+     server. Possible values include: "AzureMLOnline", "AzureMLBatch", "Triton", "Custom".
+    :vartype server_type: str or ~azure.mgmt.machinelearningservices.models.InferencingServerType
+    :ivar code_configuration: Code configuration for AML inferencing server.
+    :vartype code_configuration: ~azure.mgmt.machinelearningservices.models.CodeConfiguration
+    """
+
+    _validation = {
+        'server_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'server_type': {'key': 'serverType', 'type': 'str'},
+        'code_configuration': {'key': 'codeConfiguration', 'type': 'CodeConfiguration'},
+    }
+
+    def __init__(
+        self,
+        *,
+        code_configuration: Optional["CodeConfiguration"] = None,
+        **kwargs
+    ):
+        """
+        :keyword code_configuration: Code configuration for AML inferencing server.
+        :paramtype code_configuration: ~azure.mgmt.machinelearningservices.models.CodeConfiguration
+        """
+        super(AzureMLOnlineInferencingServer, self).__init__(**kwargs)
+        self.server_type = 'AzureMLOnline'  # type: str
+        self.code_configuration = code_configuration
+
+
 class EarlyTerminationPolicy(msrest.serialization.Model):
     """Early termination policies enable canceling poor-performing runs before they complete.
 
@@ -1104,6 +1146,80 @@ class BanditPolicy(EarlyTerminationPolicy):
         self.policy_type = 'Bandit'  # type: str
         self.slack_amount = slack_amount
         self.slack_factor = slack_factor
+
+
+class BaseEnvironmentSource(msrest.serialization.Model):
+    """BaseEnvironmentSource.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: BaseEnvironmentId.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar base_environment_source_type: Required. Base environment type.Constant filled by server.
+     Possible values include: "EnvironmentAsset".
+    :vartype base_environment_source_type: str or
+     ~azure.mgmt.machinelearningservices.models.BaseEnvironmentSourceType
+    """
+
+    _validation = {
+        'base_environment_source_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'base_environment_source_type': {'key': 'baseEnvironmentSourceType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'base_environment_source_type': {'EnvironmentAsset': 'BaseEnvironmentId'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(BaseEnvironmentSource, self).__init__(**kwargs)
+        self.base_environment_source_type = None  # type: Optional[str]
+
+
+class BaseEnvironmentId(BaseEnvironmentSource):
+    """Base environment type.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar base_environment_source_type: Required. Base environment type.Constant filled by server.
+     Possible values include: "EnvironmentAsset".
+    :vartype base_environment_source_type: str or
+     ~azure.mgmt.machinelearningservices.models.BaseEnvironmentSourceType
+    :ivar resource_id: Required. Resource id accepting ArmId or AzureMlId.
+    :vartype resource_id: str
+    """
+
+    _validation = {
+        'base_environment_source_type': {'required': True},
+        'resource_id': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'base_environment_source_type': {'key': 'baseEnvironmentSourceType', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_id: str,
+        **kwargs
+    ):
+        """
+        :keyword resource_id: Required. Resource id accepting ArmId or AzureMlId.
+        :paramtype resource_id: str
+        """
+        super(BaseEnvironmentId, self).__init__(**kwargs)
+        self.base_environment_source_type = 'EnvironmentAsset'  # type: str
+        self.resource_id = resource_id
 
 
 class Binding(msrest.serialization.Model):
@@ -1455,6 +1571,44 @@ class CertificateDatastoreSecrets(DatastoreSecrets):
         super(CertificateDatastoreSecrets, self).__init__(**kwargs)
         self.secrets_type = 'Certificate'  # type: str
         self.certificate = certificate
+
+
+class CodeConfiguration(msrest.serialization.Model):
+    """Configuration for a scoring code asset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar code_id: ARM resource ID of the code asset.
+    :vartype code_id: str
+    :ivar scoring_script: Required. The script to execute on startup. eg. "score.py".
+    :vartype scoring_script: str
+    """
+
+    _validation = {
+        'scoring_script': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'code_id': {'key': 'codeId', 'type': 'str'},
+        'scoring_script': {'key': 'scoringScript', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        scoring_script: str,
+        code_id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword code_id: ARM resource ID of the code asset.
+        :paramtype code_id: str
+        :keyword scoring_script: Required. The script to execute on startup. eg. "score.py".
+        :paramtype scoring_script: str
+        """
+        super(CodeConfiguration, self).__init__(**kwargs)
+        self.code_id = code_id
+        self.scoring_script = scoring_script
 
 
 class Resource(msrest.serialization.Model):
@@ -2506,6 +2660,44 @@ class ComponentVersionResourceArmPaginatedResult(msrest.serialization.Model):
         self.value = value
 
 
+class CustomInferencingServer(InferencingServer):
+    """Custom inference server configurations.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar server_type: Required. Inferencing server type for various targets.Constant filled by
+     server. Possible values include: "AzureMLOnline", "AzureMLBatch", "Triton", "Custom".
+    :vartype server_type: str or ~azure.mgmt.machinelearningservices.models.InferencingServerType
+    :ivar inference_configuration: Inference configuration for custom inferencing.
+    :vartype inference_configuration:
+     ~azure.mgmt.machinelearningservices.models.OnlineInferenceConfiguration
+    """
+
+    _validation = {
+        'server_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'server_type': {'key': 'serverType', 'type': 'str'},
+        'inference_configuration': {'key': 'inferenceConfiguration', 'type': 'OnlineInferenceConfiguration'},
+    }
+
+    def __init__(
+        self,
+        *,
+        inference_configuration: Optional["OnlineInferenceConfiguration"] = None,
+        **kwargs
+    ):
+        """
+        :keyword inference_configuration: Inference configuration for custom inferencing.
+        :paramtype inference_configuration:
+         ~azure.mgmt.machinelearningservices.models.OnlineInferenceConfiguration
+        """
+        super(CustomInferencingServer, self).__init__(**kwargs)
+        self.server_type = 'Custom'  # type: str
+        self.inference_configuration = inference_configuration
+
+
 class DataContainerData(Resource):
     """Azure Resource Manager resource envelope.
 
@@ -2700,6 +2892,42 @@ class DataPathAssetReference(AssetReferenceBase):
         self.reference_type = 'DataPath'  # type: str
         self.datastore_id = datastore_id
         self.path = path
+
+
+class DataReferenceCredentialDto(msrest.serialization.Model):
+    """DataReferenceCredentialDto.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: .
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar credential_type: Required. Constant filled by server. Possible values include: "SAS",
+     "DockerCredentials", "ManagedIdentity", "NoCredentials".
+    :vartype credential_type: str or
+     ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialType
+    """
+
+    _validation = {
+        'credential_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'credential_type': {'key': 'credentialType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'credential_type': {}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(DataReferenceCredentialDto, self).__init__(**kwargs)
+        self.credential_type = 'SAS'  # type: str
 
 
 class DataVersionBaseData(Resource):
@@ -2909,27 +3137,16 @@ class DistributionConfiguration(msrest.serialization.Model):
         self.distribution_type = None  # type: Optional[str]
 
 
-class DockerCredentialDto(DataReferenceCredentialDto):
+class DockerCredentialDto(msrest.serialization.Model):
     """DockerCredentialDto.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar credential_type: Required. Constant filled by server. Possible values include: "SAS",
-     "DockerCredentials", "ManagedIdentity", "NoCredentials".
-    :vartype credential_type: str or
-     ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialType
     :ivar password:
     :vartype password: str
     :ivar user_name:
     :vartype user_name: str
     """
 
-    _validation = {
-        'credential_type': {'required': True},
-    }
-
     _attribute_map = {
-        'credential_type': {'key': 'credentialType', 'type': 'str'},
         'password': {'key': 'password', 'type': 'str'},
         'user_name': {'key': 'userName', 'type': 'str'},
     }
@@ -2948,7 +3165,6 @@ class DockerCredentialDto(DataReferenceCredentialDto):
         :paramtype user_name: str
         """
         super(DockerCredentialDto, self).__init__(**kwargs)
-        self.credential_type = 'DockerCredentials'  # type: str
         self.password = password
         self.user_name = user_name
 
@@ -4157,15 +4373,9 @@ class ManagedIdentity(IdentityConfiguration):
         self.resource_id = resource_id
 
 
-class ManagedIdentityCredentialDto(DataReferenceCredentialDto):
+class ManagedIdentityCredentialDto(msrest.serialization.Model):
     """ManagedIdentityCredentialDto.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar credential_type: Required. Constant filled by server. Possible values include: "SAS",
-     "DockerCredentials", "ManagedIdentity", "NoCredentials".
-    :vartype credential_type: str or
-     ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialType
     :ivar managed_identity_type:
     :vartype managed_identity_type: str
     :ivar user_managed_identity_client_id: ClientId for the UAMI. For ManagedIdentityType =
@@ -4182,12 +4392,7 @@ class ManagedIdentityCredentialDto(DataReferenceCredentialDto):
     :vartype user_managed_identity_tenant_id: str
     """
 
-    _validation = {
-        'credential_type': {'required': True},
-    }
-
     _attribute_map = {
-        'credential_type': {'key': 'credentialType', 'type': 'str'},
         'managed_identity_type': {'key': 'managedIdentityType', 'type': 'str'},
         'user_managed_identity_client_id': {'key': 'userManagedIdentityClientId', 'type': 'str'},
         'user_managed_identity_principal_id': {'key': 'userManagedIdentityPrincipalId', 'type': 'str'},
@@ -4222,7 +4427,6 @@ class ManagedIdentityCredentialDto(DataReferenceCredentialDto):
         :paramtype user_managed_identity_tenant_id: str
         """
         super(ManagedIdentityCredentialDto, self).__init__(**kwargs)
-        self.credential_type = 'ManagedIdentity'  # type: str
         self.managed_identity_type = managed_identity_type
         self.user_managed_identity_client_id = user_managed_identity_client_id
         self.user_managed_identity_principal_id = user_managed_identity_principal_id
@@ -4354,6 +4558,38 @@ class MLTableData(DataVersionBaseDetails):
         super(MLTableData, self).__init__(description=description, properties=properties, tags=tags, is_anonymous=is_anonymous, is_archived=is_archived, data_uri=data_uri, intellectual_property=intellectual_property, **kwargs)
         self.data_type = 'mltable'  # type: str
         self.referenced_uris = referenced_uris
+
+
+class ModelConfiguration(msrest.serialization.Model):
+    """Model configuration options.
+
+    :ivar mode: Input delivery mode for the model. Possible values include: "Copy", "Download".
+    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.PackageInputDeliveryMode
+    :ivar mount_path: Relative mounting path of the model in the target image.
+    :vartype mount_path: str
+    """
+
+    _attribute_map = {
+        'mode': {'key': 'mode', 'type': 'str'},
+        'mount_path': {'key': 'mountPath', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "PackageInputDeliveryMode"]] = None,
+        mount_path: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword mode: Input delivery mode for the model. Possible values include: "Copy", "Download".
+        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.PackageInputDeliveryMode
+        :keyword mount_path: Relative mounting path of the model in the target image.
+        :paramtype mount_path: str
+        """
+        super(ModelConfiguration, self).__init__(**kwargs)
+        self.mode = mode
+        self.mount_path = mount_path
 
 
 class ModelContainerData(Resource):
@@ -4495,6 +4731,61 @@ class ModelContainerResourceArmPaginatedResult(msrest.serialization.Model):
         super(ModelContainerResourceArmPaginatedResult, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = value
+
+
+class ModelPackageInput(msrest.serialization.Model):
+    """Model package input options.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar input_type: Required. Type of the input included in the target image. Possible values
+     include: "UriFile", "UriFolder".
+    :vartype input_type: str or ~azure.mgmt.machinelearningservices.models.PackageInputType
+    :ivar mode: Input delivery mode of the input. Possible values include: "Copy", "Download".
+    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.PackageInputDeliveryMode
+    :ivar mount_path: Relative mount path of the input in the target image.
+    :vartype mount_path: str
+    :ivar path: Required. Location of the input.
+    :vartype path: ~azure.mgmt.machinelearningservices.models.PackageInputPathBase
+    """
+
+    _validation = {
+        'input_type': {'required': True},
+        'path': {'required': True},
+    }
+
+    _attribute_map = {
+        'input_type': {'key': 'inputType', 'type': 'str'},
+        'mode': {'key': 'mode', 'type': 'str'},
+        'mount_path': {'key': 'mountPath', 'type': 'str'},
+        'path': {'key': 'path', 'type': 'PackageInputPathBase'},
+    }
+
+    def __init__(
+        self,
+        *,
+        input_type: Union[str, "PackageInputType"],
+        path: "PackageInputPathBase",
+        mode: Optional[Union[str, "PackageInputDeliveryMode"]] = None,
+        mount_path: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword input_type: Required. Type of the input included in the target image. Possible values
+         include: "UriFile", "UriFolder".
+        :paramtype input_type: str or ~azure.mgmt.machinelearningservices.models.PackageInputType
+        :keyword mode: Input delivery mode of the input. Possible values include: "Copy", "Download".
+        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.PackageInputDeliveryMode
+        :keyword mount_path: Relative mount path of the input in the target image.
+        :paramtype mount_path: str
+        :keyword path: Required. Location of the input.
+        :paramtype path: ~azure.mgmt.machinelearningservices.models.PackageInputPathBase
+        """
+        super(ModelPackageInput, self).__init__(**kwargs)
+        self.input_type = input_type
+        self.mode = mode
+        self.mount_path = mount_path
+        self.path = path
 
 
 class ModelVersionData(Resource):
@@ -4782,6 +5073,61 @@ class Objective(msrest.serialization.Model):
         self.primary_metric = primary_metric
 
 
+class OnlineInferenceConfiguration(msrest.serialization.Model):
+    """Online inference configuration options.
+
+    :ivar configurations: Additional configurations.
+    :vartype configurations: dict[str, str]
+    :ivar entry_script: Entry script or command to invoke.
+    :vartype entry_script: str
+    :ivar liveness_route: The route to check the liveness of the inference server container.
+    :vartype liveness_route: ~azure.mgmt.machinelearningservices.models.Route
+    :ivar readiness_route: The route to check the readiness of the inference server container.
+    :vartype readiness_route: ~azure.mgmt.machinelearningservices.models.Route
+    :ivar scoring_route: The port to send the scoring requests to, within the inference server
+     container.
+    :vartype scoring_route: ~azure.mgmt.machinelearningservices.models.Route
+    """
+
+    _attribute_map = {
+        'configurations': {'key': 'configurations', 'type': '{str}'},
+        'entry_script': {'key': 'entryScript', 'type': 'str'},
+        'liveness_route': {'key': 'livenessRoute', 'type': 'Route'},
+        'readiness_route': {'key': 'readinessRoute', 'type': 'Route'},
+        'scoring_route': {'key': 'scoringRoute', 'type': 'Route'},
+    }
+
+    def __init__(
+        self,
+        *,
+        configurations: Optional[Dict[str, str]] = None,
+        entry_script: Optional[str] = None,
+        liveness_route: Optional["Route"] = None,
+        readiness_route: Optional["Route"] = None,
+        scoring_route: Optional["Route"] = None,
+        **kwargs
+    ):
+        """
+        :keyword configurations: Additional configurations.
+        :paramtype configurations: dict[str, str]
+        :keyword entry_script: Entry script or command to invoke.
+        :paramtype entry_script: str
+        :keyword liveness_route: The route to check the liveness of the inference server container.
+        :paramtype liveness_route: ~azure.mgmt.machinelearningservices.models.Route
+        :keyword readiness_route: The route to check the readiness of the inference server container.
+        :paramtype readiness_route: ~azure.mgmt.machinelearningservices.models.Route
+        :keyword scoring_route: The port to send the scoring requests to, within the inference server
+         container.
+        :paramtype scoring_route: ~azure.mgmt.machinelearningservices.models.Route
+        """
+        super(OnlineInferenceConfiguration, self).__init__(**kwargs)
+        self.configurations = configurations
+        self.entry_script = entry_script
+        self.liveness_route = liveness_route
+        self.readiness_route = readiness_route
+        self.scoring_route = scoring_route
+
+
 class OutputPathAssetReference(AssetReferenceBase):
     """Reference to an asset via its path in a job output.
 
@@ -4823,6 +5169,337 @@ class OutputPathAssetReference(AssetReferenceBase):
         self.reference_type = 'OutputPath'  # type: str
         self.job_id = job_id
         self.path = path
+
+
+class PackageInputPathBase(msrest.serialization.Model):
+    """PackageInputPathBase.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: PackageInputPathId, PackageInputPathVersion, PackageInputPathUrl.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar input_path_type: Required. Input path type for package inputs.Constant filled by server.
+     Possible values include: "Url", "PathId", "PathVersion".
+    :vartype input_path_type: str or ~azure.mgmt.machinelearningservices.models.InputPathType
+    """
+
+    _validation = {
+        'input_path_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'input_path_type': {'key': 'inputPathType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'input_path_type': {'PathId': 'PackageInputPathId', 'PathVersion': 'PackageInputPathVersion', 'Url': 'PackageInputPathUrl'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(PackageInputPathBase, self).__init__(**kwargs)
+        self.input_path_type = None  # type: Optional[str]
+
+
+class PackageInputPathId(PackageInputPathBase):
+    """Package input path specified with a resource id.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar input_path_type: Required. Input path type for package inputs.Constant filled by server.
+     Possible values include: "Url", "PathId", "PathVersion".
+    :vartype input_path_type: str or ~azure.mgmt.machinelearningservices.models.InputPathType
+    :ivar resource_id: Input resource id.
+    :vartype resource_id: str
+    """
+
+    _validation = {
+        'input_path_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'input_path_type': {'key': 'inputPathType', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword resource_id: Input resource id.
+        :paramtype resource_id: str
+        """
+        super(PackageInputPathId, self).__init__(**kwargs)
+        self.input_path_type = 'PathId'  # type: str
+        self.resource_id = resource_id
+
+
+class PackageInputPathUrl(PackageInputPathBase):
+    """Package input path specified as an url.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar input_path_type: Required. Input path type for package inputs.Constant filled by server.
+     Possible values include: "Url", "PathId", "PathVersion".
+    :vartype input_path_type: str or ~azure.mgmt.machinelearningservices.models.InputPathType
+    :ivar url: Input path url.
+    :vartype url: str
+    """
+
+    _validation = {
+        'input_path_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'input_path_type': {'key': 'inputPathType', 'type': 'str'},
+        'url': {'key': 'url', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        url: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword url: Input path url.
+        :paramtype url: str
+        """
+        super(PackageInputPathUrl, self).__init__(**kwargs)
+        self.input_path_type = 'Url'  # type: str
+        self.url = url
+
+
+class PackageInputPathVersion(PackageInputPathBase):
+    """Package input path specified with name and version.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar input_path_type: Required. Input path type for package inputs.Constant filled by server.
+     Possible values include: "Url", "PathId", "PathVersion".
+    :vartype input_path_type: str or ~azure.mgmt.machinelearningservices.models.InputPathType
+    :ivar resource_name: Input resource name.
+    :vartype resource_name: str
+    :ivar resource_version: Input resource version.
+    :vartype resource_version: str
+    """
+
+    _validation = {
+        'input_path_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'input_path_type': {'key': 'inputPathType', 'type': 'str'},
+        'resource_name': {'key': 'resourceName', 'type': 'str'},
+        'resource_version': {'key': 'resourceVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_name: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword resource_name: Input resource name.
+        :paramtype resource_name: str
+        :keyword resource_version: Input resource version.
+        :paramtype resource_version: str
+        """
+        super(PackageInputPathVersion, self).__init__(**kwargs)
+        self.input_path_type = 'PathVersion'  # type: str
+        self.resource_name = resource_name
+        self.resource_version = resource_version
+
+
+class PackageRequest(msrest.serialization.Model):
+    """Model package operation request properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar base_environment_source: Base environment to start with.
+    :vartype base_environment_source:
+     ~azure.mgmt.machinelearningservices.models.BaseEnvironmentSource
+    :ivar environment_variables: Collection of environment variables.
+    :vartype environment_variables: dict[str, str]
+    :ivar inferencing_server: Required. Inferencing server configurations.
+    :vartype inferencing_server: ~azure.mgmt.machinelearningservices.models.InferencingServer
+    :ivar inputs: Collection of inputs.
+    :vartype inputs: list[~azure.mgmt.machinelearningservices.models.ModelPackageInput]
+    :ivar model_configuration: Model configuration including the mount mode.
+    :vartype model_configuration: ~azure.mgmt.machinelearningservices.models.ModelConfiguration
+    :ivar properties: Properties dictionary.
+    :vartype properties: dict[str, str]
+    :ivar sku_architecture_type: The sku architecture type.
+    :vartype sku_architecture_type: str
+    :ivar tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    :ivar target_environment_id: Required. Arm ID of the target environment to be created by
+     package operation.
+    :vartype target_environment_id: str
+    """
+
+    _validation = {
+        'inferencing_server': {'required': True},
+        'target_environment_id': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'base_environment_source': {'key': 'baseEnvironmentSource', 'type': 'BaseEnvironmentSource'},
+        'environment_variables': {'key': 'environmentVariables', 'type': '{str}'},
+        'inferencing_server': {'key': 'inferencingServer', 'type': 'InferencingServer'},
+        'inputs': {'key': 'inputs', 'type': '[ModelPackageInput]'},
+        'model_configuration': {'key': 'modelConfiguration', 'type': 'ModelConfiguration'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'sku_architecture_type': {'key': 'skuArchitectureType', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'target_environment_id': {'key': 'targetEnvironmentId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        inferencing_server: "InferencingServer",
+        target_environment_id: str,
+        base_environment_source: Optional["BaseEnvironmentSource"] = None,
+        environment_variables: Optional[Dict[str, str]] = None,
+        inputs: Optional[List["ModelPackageInput"]] = None,
+        model_configuration: Optional["ModelConfiguration"] = None,
+        properties: Optional[Dict[str, str]] = None,
+        sku_architecture_type: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword base_environment_source: Base environment to start with.
+        :paramtype base_environment_source:
+         ~azure.mgmt.machinelearningservices.models.BaseEnvironmentSource
+        :keyword environment_variables: Collection of environment variables.
+        :paramtype environment_variables: dict[str, str]
+        :keyword inferencing_server: Required. Inferencing server configurations.
+        :paramtype inferencing_server: ~azure.mgmt.machinelearningservices.models.InferencingServer
+        :keyword inputs: Collection of inputs.
+        :paramtype inputs: list[~azure.mgmt.machinelearningservices.models.ModelPackageInput]
+        :keyword model_configuration: Model configuration including the mount mode.
+        :paramtype model_configuration: ~azure.mgmt.machinelearningservices.models.ModelConfiguration
+        :keyword properties: Properties dictionary.
+        :paramtype properties: dict[str, str]
+        :keyword sku_architecture_type: The sku architecture type.
+        :paramtype sku_architecture_type: str
+        :keyword tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+        :paramtype tags: dict[str, str]
+        :keyword target_environment_id: Required. Arm ID of the target environment to be created by
+         package operation.
+        :paramtype target_environment_id: str
+        """
+        super(PackageRequest, self).__init__(**kwargs)
+        self.base_environment_source = base_environment_source
+        self.environment_variables = environment_variables
+        self.inferencing_server = inferencing_server
+        self.inputs = inputs
+        self.model_configuration = model_configuration
+        self.properties = properties
+        self.sku_architecture_type = sku_architecture_type
+        self.tags = tags
+        self.target_environment_id = target_environment_id
+
+
+class PackageResponse(msrest.serialization.Model):
+    """Package response returned after async package operation completes successfully.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar base_environment_source: Base environment to start with.
+    :vartype base_environment_source:
+     ~azure.mgmt.machinelearningservices.models.BaseEnvironmentSource
+    :ivar build_id: Build id of the image build operation.
+    :vartype build_id: str
+    :ivar build_state: Build state of the image build operation. Possible values include:
+     "NotStarted", "Running", "Succeeded", "Failed".
+    :vartype build_state: str or ~azure.mgmt.machinelearningservices.models.PackageBuildState
+    :ivar environment_variables: Collection of environment variables.
+    :vartype environment_variables: dict[str, str]
+    :ivar inferencing_server: Inferencing server configurations.
+    :vartype inferencing_server: ~azure.mgmt.machinelearningservices.models.InferencingServer
+    :ivar inputs: Collection of inputs.
+    :vartype inputs: list[~azure.mgmt.machinelearningservices.models.ModelPackageInput]
+    :ivar log_url: Log url of the image build operation.
+    :vartype log_url: str
+    :ivar model_configuration: Model configuration including the mount mode.
+    :vartype model_configuration: ~azure.mgmt.machinelearningservices.models.ModelConfiguration
+    :ivar properties: Properties dictionary.
+    :vartype properties: dict[str, str]
+    :ivar sku_architecture_type: The sku architecture type.
+    :vartype sku_architecture_type: str
+    :ivar tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    :ivar target_environment_id: Asset ID of the target environment created by package operation.
+    :vartype target_environment_id: str
+    """
+
+    _validation = {
+        'base_environment_source': {'readonly': True},
+        'build_id': {'readonly': True},
+        'build_state': {'readonly': True},
+        'environment_variables': {'readonly': True},
+        'inferencing_server': {'readonly': True},
+        'inputs': {'readonly': True},
+        'log_url': {'readonly': True},
+        'model_configuration': {'readonly': True},
+        'tags': {'readonly': True},
+        'target_environment_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'base_environment_source': {'key': 'baseEnvironmentSource', 'type': 'BaseEnvironmentSource'},
+        'build_id': {'key': 'buildId', 'type': 'str'},
+        'build_state': {'key': 'buildState', 'type': 'str'},
+        'environment_variables': {'key': 'environmentVariables', 'type': '{str}'},
+        'inferencing_server': {'key': 'inferencingServer', 'type': 'InferencingServer'},
+        'inputs': {'key': 'inputs', 'type': '[ModelPackageInput]'},
+        'log_url': {'key': 'logUrl', 'type': 'str'},
+        'model_configuration': {'key': 'modelConfiguration', 'type': 'ModelConfiguration'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'sku_architecture_type': {'key': 'skuArchitectureType', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'target_environment_id': {'key': 'targetEnvironmentId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: Optional[Dict[str, str]] = None,
+        sku_architecture_type: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword properties: Properties dictionary.
+        :paramtype properties: dict[str, str]
+        :keyword sku_architecture_type: The sku architecture type.
+        :paramtype sku_architecture_type: str
+        """
+        super(PackageResponse, self).__init__(**kwargs)
+        self.base_environment_source = None
+        self.build_id = None
+        self.build_state = None
+        self.environment_variables = None
+        self.inferencing_server = None
+        self.inputs = None
+        self.log_url = None
+        self.model_configuration = None
+        self.properties = properties
+        self.sku_architecture_type = sku_architecture_type
+        self.tags = None
+        self.target_environment_id = None
 
 
 class PipelineJob(JobBase):
@@ -5172,25 +5849,14 @@ class Route(msrest.serialization.Model):
         self.port = port
 
 
-class SASCredentialDto(DataReferenceCredentialDto):
+class SASCredentialDto(msrest.serialization.Model):
     """SASCredentialDto.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar credential_type: Required. Constant filled by server. Possible values include: "SAS",
-     "DockerCredentials", "ManagedIdentity", "NoCredentials".
-    :vartype credential_type: str or
-     ~azure.mgmt.machinelearningservices.models.DataReferenceCredentialType
     :ivar sas_uri: Full SAS Uri, including the storage, container/blob path and SAS token.
     :vartype sas_uri: str
     """
 
-    _validation = {
-        'credential_type': {'required': True},
-    }
-
     _attribute_map = {
-        'credential_type': {'key': 'credentialType', 'type': 'str'},
         'sas_uri': {'key': 'sasUri', 'type': 'str'},
     }
 
@@ -5205,7 +5871,6 @@ class SASCredentialDto(DataReferenceCredentialDto):
         :paramtype sas_uri: str
         """
         super(SASCredentialDto, self).__init__(**kwargs)
-        self.credential_type = 'SAS'  # type: str
         self.sas_uri = sas_uri
 
 
@@ -5889,6 +6554,44 @@ class TrialComponent(msrest.serialization.Model):
         self.environment_id = environment_id
         self.environment_variables = environment_variables
         self.resources = resources
+
+
+class TritonInferencingServer(InferencingServer):
+    """Triton inferencing server configurations.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar server_type: Required. Inferencing server type for various targets.Constant filled by
+     server. Possible values include: "AzureMLOnline", "AzureMLBatch", "Triton", "Custom".
+    :vartype server_type: str or ~azure.mgmt.machinelearningservices.models.InferencingServerType
+    :ivar inference_configuration: Inference configuration for Triton.
+    :vartype inference_configuration:
+     ~azure.mgmt.machinelearningservices.models.OnlineInferenceConfiguration
+    """
+
+    _validation = {
+        'server_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'server_type': {'key': 'serverType', 'type': 'str'},
+        'inference_configuration': {'key': 'inferenceConfiguration', 'type': 'OnlineInferenceConfiguration'},
+    }
+
+    def __init__(
+        self,
+        *,
+        inference_configuration: Optional["OnlineInferenceConfiguration"] = None,
+        **kwargs
+    ):
+        """
+        :keyword inference_configuration: Inference configuration for Triton.
+        :paramtype inference_configuration:
+         ~azure.mgmt.machinelearningservices.models.OnlineInferenceConfiguration
+        """
+        super(TritonInferencingServer, self).__init__(**kwargs)
+        self.server_type = 'Triton'  # type: str
+        self.inference_configuration = inference_configuration
 
 
 class TruncationSelectionPolicy(EarlyTerminationPolicy):
