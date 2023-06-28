@@ -96,6 +96,7 @@ class SearchClient(HeadersMixin):
 
     async def close(self) -> None:
         """Close the :class:`~azure.search.documents.aio.SearchClient` session.
+
         :return: None
         :rtype: None
         """
