@@ -227,7 +227,7 @@ def _deserialize_datetime_rfc7231(attr: typing.Union[str, datetime]) -> datetime
     return email.utils.parsedate_to_datetime(attr)
 
 
-def _deserialize_datetime_unix_timestamp(attr: typing.Union[str, datetime]) -> datetime:
+def _deserialize_datetime_unix_timestamp(attr: typing.Union[float, datetime]) -> datetime:
     """Deserialize unix timestamp into Datetime object.
 
     :param str attr: response string to be deserialized.
