@@ -22,5 +22,5 @@ class FeatureStoreEntitySchema(YamlFileSchema):
     properties = fields.Dict(keys=fields.Str(), values=fields.Str())
 
     @post_dump
-    def remove_empty_values(self, data, **kwargs):
+    def remove_empty_values(self, data, **kwargs):  # pylint: disable=unused-argument
         return {key: value for key, value in data.items() if value}

@@ -25,5 +25,5 @@ class FeatureSetSchema(YamlFileSchema):
     materialization_settings = NestedField(MaterializationSettingsSchema)
 
     @post_dump
-    def remove_empty_values(self, data, **kwargs):
+    def remove_empty_values(self, data, **kwargs):  # pylint: disable=unused-argument
         return {key: value for key, value in data.items() if value}
