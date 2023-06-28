@@ -20,7 +20,7 @@ from azure.core.polling.base_polling import (
     BadResponse,
 )
 
-PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 
 def raise_error(response, errors, message):
@@ -37,7 +37,7 @@ def parse_operation_id(location):
 
 
 @runtime_checkable
-class DocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
+class DocumentModelAdministrationLROPoller(Protocol[PollingReturnType_co]):
     """Implements a protocol followed by returned poller objects."""
 
     @property
@@ -48,7 +48,7 @@ class DocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
 
     def polling_method(  # pylint: disable=no-self-use
         self,
-    ) -> PollingMethod[PollingReturnType]:
+    ) -> PollingMethod[PollingReturnType_co]:
         ...
 
     def continuation_token(self) -> str:  # pylint: disable=no-self-use
@@ -59,7 +59,7 @@ class DocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
 
     def result(  # pylint: disable=no-self-use, unused-argument
         self, timeout: Optional[int] = None
-    ) -> PollingReturnType:
+    ) -> PollingReturnType_co:
         ...
 
     def wait(self, timeout: Optional[float] = None) -> None:  # pylint: disable=no-self-use, unused-argument
@@ -75,7 +75,7 @@ class DocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
         ...
 
 
-class DocumentModelAdministrationClientLROPoller(LROPoller[PollingReturnType]):
+class DocumentModelAdministrationClientLROPoller(LROPoller[PollingReturnType_co]):
     """Custom poller for model build operations. Call `result()` on the poller to return
     a :class:`~azure.ai.formrecognizer.DocumentModelDetails`.
 
@@ -112,7 +112,7 @@ class DocumentModelAdministrationClientLROPoller(LROPoller[PollingReturnType]):
 
     @classmethod
     def from_continuation_token(
-        cls, polling_method: PollingMethod[PollingReturnType], continuation_token: str, **kwargs: Any
+        cls, polling_method: PollingMethod[PollingReturnType_co], continuation_token: str, **kwargs: Any
     ) -> "DocumentModelAdministrationClientLROPoller":
         (
             client,

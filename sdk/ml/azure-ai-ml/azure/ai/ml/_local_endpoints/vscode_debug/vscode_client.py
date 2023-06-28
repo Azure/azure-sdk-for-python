@@ -45,7 +45,7 @@ class VSCodeClient(object):
             run_cli_command(command)
         except Exception as e:
             output = e.output.decode(encoding="UTF-8")  # pylint: disable=no-member
-            raise VSCodeCommandNotFound(output)
+            raise VSCodeCommandNotFound(output) from e
 
 
 def _encode_hex(path: str):

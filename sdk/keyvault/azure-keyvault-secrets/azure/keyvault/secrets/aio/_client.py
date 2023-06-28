@@ -47,6 +47,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         :param str name: The name of the secret
         :param str version: (optional) Version of the secret to get. If unspecified, gets the latest version.
 
+        :returns: The fetched secret.
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
 
         :raises:
@@ -80,6 +81,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         :keyword ~datetime.datetime not_before: Not before date of the secret in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the secret in UTC
 
+        :returns: The created or updated secret.
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
 
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -135,6 +137,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         :keyword ~datetime.datetime not_before: Not before date of the secret in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the secret in UTC
 
+        :returns: The updated secret properties.
         :rtype: ~azure.keyvault.secrets.SecretProperties
 
         :raises:
@@ -230,6 +233,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: Name of the secret to back up
 
+        :returns: The backup result, in a protected bytes format that can only be used by Azure Key Vault.
         :rtype: bytes
 
         :raises:
@@ -283,6 +287,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: Name of the secret to delete.
 
+        :returns: The deleted secret.
         :rtype: ~azure.keyvault.secrets.DeletedSecret
 
         :raises:
@@ -321,6 +326,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: Name of the deleted secret
 
+        :returns: The deleted secret.
         :rtype: ~azure.keyvault.secrets.DeletedSecret
 
         :raises:
@@ -399,6 +405,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: Name of the deleted secret to recover
 
+        :returns: The recovered secret's properties.
         :rtype: ~azure.keyvault.secrets.SecretProperties
 
         :raises: :class:`~azure.core.exceptions.HttpResponseError`

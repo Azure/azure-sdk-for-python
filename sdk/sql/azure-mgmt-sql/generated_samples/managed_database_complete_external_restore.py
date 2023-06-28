@@ -29,13 +29,12 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.managed_databases.begin_complete_restore(
+    client.managed_databases.begin_complete_restore(
         resource_group_name="myRG",
         managed_instance_name="myManagedInstanceName",
         database_name="myDatabase",
         parameters={"lastBackupName": "testdb1_log4"},
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/ManagedDatabaseCompleteExternalRestore.json

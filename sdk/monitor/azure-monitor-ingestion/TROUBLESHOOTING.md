@@ -77,7 +77,7 @@ To resolve this issue:
 1. Check that the application or user making the request has sufficient permissions:
    * See this document to [manage access to data collection rule][dcr_role_permissions].
    * To ingest logs, ensure the user or service principal is assigned the **Monitoring Metrics Publisher** role for the DCR.
-1. If the user or application is granted sufficient privileges to upload logs, ensure you're authenticating as that user/application. If you're authenticating using the [DefaultAzureCredential](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/identity/azure-identity/README.md#authenticating-with-defaultazurecredential), check the logs to verify that the credential used is the one you expected. To enable logging, see the [Enable client logging](#enable-client-logging) section.
+1. If the user or application is granted sufficient privileges to upload logs, ensure you're authenticating as that user/application. If you're authenticating using the [DefaultAzureCredential][default_azure_credential], check the logs to verify that the credential used is the one you expected. To enable logging, see the [Enable client logging](#enable-client-logging) section.
 1. The permissions may take up to 30 minutes to propagate. So, if the permissions were granted recently, retry after some time.
 
 ### Troubleshooting missing logs
@@ -112,7 +112,7 @@ Some properties, including `retry_mode`, `timeout`, and `connection_verify`, can
 [data_collection_rule_structure]: https://learn.microsoft.com/azure/azure-monitor/essentials/data-collection-rule-structure
 [dcr_immutable_id]: https://learn.microsoft.com/azure/azure-monitor/logs/tutorial-logs-ingestion-portal#collect-information-from-the-dcr
 [dcr_role_permissions]: https://learn.microsoft.com/azure/azure-monitor/logs/tutorial-logs-ingestion-portal#assign-permissions-to-the-dcr
-[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md#authenticate-with-defaultazurecredential
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md#authenticate-with-defaultazurecredential
 [identity_docs]: https://learn.microsoft.com/python/api/overview/azure/identity-readme
 [identity_troubleshooting]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md
 [ingestion_service_limits]: https://learn.microsoft.com/azure/azure-monitor/service-limits#logs-ingestion-api

@@ -23,6 +23,7 @@
    - The `component` attribute was removed from all spans.
    - All `send` spans now contain links to `message` spans. Now, `message` spans will no longer contain a link to the `send` span.
    - Message application properties will now contain values for `traceparent` (and `tracestate` if applicable)
+   - Process spans will now be a direct children of message span contexts in when event handling on a per-message basis. ([#30537](https://github.com/Azure/azure-sdk-for-python/pull/30537))
 
 ## 5.11.2 (2023-03-20)
 

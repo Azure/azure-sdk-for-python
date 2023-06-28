@@ -362,15 +362,15 @@ class TestAppConfigurationClient(AppConfigTestCase):
     def test_list_configuration_settings_only_accepttime(self, appconfiguration_connection_string, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
         recorded_variables.setdefault("timestamp", str(datetime.datetime.utcnow()))
-        
+
         with AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string) as client:
             # Confirm all configuration settings are cleaned up
             current_config_settings = client.list_configuration_settings()
             assert len(list(current_config_settings)) == 0
-        
+
             revision = client.list_configuration_settings(accept_datetime=recorded_variables.get("timestamp"))
             assert len(list(revision)) >= 0
-        
+
         return recorded_variables
 
     # method: list_revisions

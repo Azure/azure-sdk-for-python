@@ -21,10 +21,14 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 from ..._schema import PathAwareSchema
 from .._util import validate_attribute_type
+from .._validation import MutableValidationResult
+from .code import ComponentCodeMixin
 from .component import Component
 
 
-class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=too-many-instance-attributes
+class ParallelComponent(
+    Component, ParameterizedParallel, ComponentCodeMixin
+):  # pylint: disable=too-many-instance-attributes
     """Parallel component version, used to define a parallel component.
 
     :param name: Name of the component.
@@ -79,7 +83,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
         Details will be provided in the error message.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         name: Optional[str] = None,
@@ -154,7 +158,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
 
             try:
                 self.mini_batch_size = int(self.mini_batch_size)
-            except ValueError:
+            except ValueError as e:
                 unit = self.mini_batch_size[-2:].lower()
                 if unit == "kb":
                     self.mini_batch_size = int(self.mini_batch_size[0:-2]) * 1024
@@ -163,7 +167,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
                 elif unit == "gb":
                     self.mini_batch_size = int(self.mini_batch_size[0:-2]) * 1024 * 1024 * 1024
                 else:
-                    raise ValueError("mini_batch_size unit must be kb, mb or gb")
+                    raise ValueError("mini_batch_size unit must be kb, mb or gb") from e
 
     @property
     def instance_count(self) -> int:
@@ -220,6 +224,11 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
             self.task = ParallelTask(environment=value)
         else:
             self.task.environment = value
+
+    def _customized_validate(self) -> MutableValidationResult:
+        validation_result = super()._customized_validate()
+        self._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(validation_result)
+        return validation_result
 
     @classmethod
     def _attr_type_map(cls) -> dict:

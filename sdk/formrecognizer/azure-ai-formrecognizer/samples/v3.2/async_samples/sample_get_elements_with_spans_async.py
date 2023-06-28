@@ -26,6 +26,7 @@ USAGE:
 import os
 import asyncio
 
+
 def get_styles(element_spans, styles):
     result = []
     for span in element_spans:
@@ -36,6 +37,7 @@ def get_styles(element_spans, styles):
                 ) <= (span.offset + span.length):
                     result.append(style)
     return result
+
 
 def get_lines(element_spans, document_page):
     result = []
@@ -48,11 +50,13 @@ def get_lines(element_spans, document_page):
                     result.append(line)
     return result
 
+
 def get_page(page_number, pages):
     for page in pages:
         if page.page_number == page_number:
             return page
     raise ValueError("could not find the requested page")
+
 
 async def get_elements_with_spans_async():
     path_to_sample_documents = os.path.abspath(
@@ -89,30 +93,24 @@ async def get_elements_with_spans_async():
     if result.tables is not None:
         for table_idx, table in enumerate(result.tables):
             print(
-                "Table # {} has {} rows and {} columns".format(
-                    table_idx, table.row_count, table.column_count
-                )
+                f"Table # {table_idx} has {table.row_count} rows and {table.column_count} columns"
             )
 
             lines = []
 
             if table.bounding_regions is not None:
                 for region in table.bounding_regions:
-                    print(
-                        "Table # {} location on page: {}".format(
-                            table_idx,
-                            region.page_number,
+                    print(f"Table # {table_idx} location on page: {region.page_number}")
+                    lines.extend(
+                        get_lines(
+                            table.spans, get_page(region.page_number, result.pages)
                         )
                     )
-                    lines.extend(get_lines(table.spans, get_page(region.page_number, result.pages)))
 
-            print("Found # {} lines in the table".format(len(lines)))
+            print(f"Found # {len(lines)} lines in the table")
             for line in lines:
                 print(
-                    "...Line '{}' is within bounding polygon: '{}'".format(
-                        line.content,
-                        line.polygon,
-                    )
+                    f"...Line '{line.content}' is within bounding polygon: '{line.polygon}'"
                 )
 
     # Below is a method to search for the style of a particular element by using spans.
@@ -121,20 +119,12 @@ async def get_elements_with_spans_async():
     if result.pages[0].lines is not None:
         for line in result.pages[0].lines:
             styles = get_styles(line.spans, result.styles)
-            print(
-                "Found line '{}' with style:".format(
-                    line.content
-                )
-            )
+            print(f"Found line '{line.content}' with style:")
             if not styles:
-                print(
-                    "...no handwritten text found"
-                )
+                print("...no handwritten text found")
             for style in styles:
                 if style.is_handwritten:
-                    print(
-                        "...handwritten with confidence {}".format(style.confidence)
-                    )
+                    print(f"...handwritten with confidence {style.confidence}")
     print("----------------------------------------")
 
 
@@ -142,14 +132,17 @@ async def main():
     await get_elements_with_spans_async()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         asyncio.run(main())
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

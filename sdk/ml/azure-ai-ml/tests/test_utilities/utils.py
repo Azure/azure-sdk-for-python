@@ -12,6 +12,7 @@ from contextlib import contextmanager
 from io import StringIO
 from pathlib import Path
 from typing import Callable, Dict, List, Optional, Union
+from unittest.mock import patch
 from zipfile import ZipFile
 
 import pydash
@@ -108,6 +109,7 @@ def prepare_dsl_curated(
                     "properties.jobs.*.trial.properties.isAnonymous",
                     "properties.jobs.*.trial.properties.componentSpec._source",
                     "properties.settings",
+                    "properties.jobs.*.trial.properties.properties.client_component_hash",
                 ]
             )
     else:
@@ -427,3 +429,22 @@ def reload_schema_for_nodes_in_pipeline_job(*, revert_after_yield: bool = True):
     finally:
         if revert_after_yield:
             declared_fields["jobs"] = original_jobs
+
+
+@contextmanager
+def mock_artifact_download_to_temp_directory():
+    with tempfile.TemporaryDirectory() as temp_dir:
+
+        def mock_get_artifacts(**kwargs):
+            version = kwargs.get("version")
+            artifact = Path(temp_dir) / version
+            if version in ["version_1", "version_3"]:
+                version = "version_1"
+            artifact.mkdir(parents=True, exist_ok=True)
+            (artifact / version).mkdir(exist_ok=True)
+            (artifact / version / "file").touch(exist_ok=True)
+            (artifact / f"file_{version}").touch(exist_ok=True)
+            return str(artifact)
+
+        with patch("azure.ai.ml._utils._artifact_utils.ArtifactCache.get", side_effect=mock_get_artifacts):
+            yield temp_dir
