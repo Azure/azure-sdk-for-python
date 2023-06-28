@@ -25,7 +25,7 @@ pip install azure-purview-sharing
 
 #### Using Azure Active Directory
 
-This document demonstrates using [DefaultAzureCredential][default_azure_credential] to authenticate via Azure Active Directory. However, any of the credentials offered by the [azure_identity][azure_identity_pip] will be accepted.  See the [azure_identity][azure_identity_credentials] documentation for more information about other credentials.
+This document demonstrates using [DefaultAzureCredential][default_azure_credential] to authenticate via Azure Active Directory. However, any of the credentials offered by the [azure-identity package][azure_identity_pip] will be accepted.  See the [azure-identity][azure_identity_credentials] documentation for more information about other credentials.
 
 Once you have chosen and configured your credential, you can create instances of the `PurviewSharingClient`.
 
@@ -578,7 +578,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
+[default_azure_credential]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-identity/latest/azure.identity.html#azure.identity.DefaultAzureCredential
 [request_builders_and_client]: https://aka.ms/azsdk/python/protocol/quickstart
 [enable_aad]: https://docs.microsoft.com/azure/purview/
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
