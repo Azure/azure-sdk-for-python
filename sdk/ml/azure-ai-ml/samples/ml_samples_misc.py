@@ -163,6 +163,90 @@ class MiscConfigurationOptions(object):
         model_package = load_model_package("./configs/model_packages/model_package_minimal.yml")
         # [END load_model_package]
 
+        # [START tensorflow_distribution_configuration]
+        from azure.ai.ml.entities import CommandComponent, TensorFlowDistribution
+
+        component = CommandComponent(
+            name="microsoftsamples_tf",
+            description="This is the TF command component",
+            inputs={
+                "component_in_number": {"description": "A number", "type": "number", "default": 10.99},
+                "component_in_path": {"description": "A path", "type": "uri_folder"},
+            },
+            outputs={"component_out_path": {"type": "uri_folder"}},
+            command="echo Hello World & echo ${{inputs.component_in_number}} & echo ${{inputs.component_in_path}} "
+            "& echo ${{outputs.component_out_path}}",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            distribution=TensorFlowDistribution(
+                parameter_server_count=1,
+                worker_count=2,
+            ),
+            instance_count=2,
+        )
+        # [END tensorflow_distribution_configuration]
+
+        # [START pytorch_distribution_configuration]
+        from azure.ai.ml.entities import CommandComponent, PyTorchDistribution
+
+        component = CommandComponent(
+            name="microsoftsamples_torch",
+            description="This is the PyTorch command component",
+            inputs={
+                "component_in_number": {"description": "A number", "type": "number", "default": 10.99},
+                "component_in_path": {"description": "A path", "type": "uri_folder"},
+            },
+            outputs={"component_out_path": {"type": "uri_folder"}},
+            command="echo Hello World & echo ${{inputs.component_in_number}} & echo ${{inputs.component_in_path}} "
+            "& echo ${{outputs.component_out_path}}",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            distribution=PyTorchDistribution(
+                process_count_per_instance=2,
+            ),
+            instance_count=2,
+        )
+        # [END pytorch_distribution_configuration]
+
+        # [START mpi_distribution_configuration]
+        from azure.ai.ml.entities import CommandComponent, MpiDistribution
+
+        component = CommandComponent(
+            name="microsoftsamples_mpi",
+            description="This is the MPI command component",
+            inputs={
+                "component_in_number": {"description": "A number", "type": "number", "default": 10.99},
+                "component_in_path": {"description": "A path", "type": "uri_folder"},
+            },
+            outputs={"component_out_path": {"type": "uri_folder"}},
+            command="echo Hello World & echo ${{inputs.component_in_number}} & echo ${{inputs.component_in_path}} "
+            "& echo ${{outputs.component_out_path}}",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            distribution=MpiDistribution(
+                process_count_per_instance=2,
+            ),
+            instance_count=2,
+        )
+        # [END mpi_distribution_configuration]
+
+        # [START code_configuration]
+        from azure.ai.ml.entities import BatchDeployment, CodeConfiguration
+
+        deployment = BatchDeployment(
+            name="non-mlflow-deployment",
+            description="this is a sample non-mlflow deployment",
+            endpoint_name="my-batch-endpoint",
+            model="model",
+            code_configuration=CodeConfiguration(
+                code="configs/deployments/model-2/onlinescoring", scoring_script="score1.py"
+            ),
+            environment="env",
+            compute="cpu-cluster",
+            instance_count=2,
+            max_concurrency_per_instance=2,
+            mini_batch_size=10,
+            output_file_name="predictions.csv",
+        )
+        # [END code_configuration]
+
 
 if __name__ == "__main__":
     sample = MiscConfigurationOptions()
