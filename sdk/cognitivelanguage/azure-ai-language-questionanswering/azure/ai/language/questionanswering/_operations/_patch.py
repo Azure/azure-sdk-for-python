@@ -55,7 +55,11 @@ def _get_positional_body(*args, **kwargs):
 
 
 def _verify_qna_id_and_question(query_knowledgebase_options):
-    """For query_knowledge_base we require either `question` or `qna_id`."""
+    """For query_knowledge_base we require either `question` or `qna_id`.
+
+    :param query_knowledgebase_options: The user-passed AnswersOptions or dict
+    :type query_knowledgebase_options: AnswersOptions or dict
+    """
     try:
         qna_id = query_knowledgebase_options.qna_id
         question = query_knowledgebase_options.question
@@ -85,8 +89,8 @@ def _handle_metadata_filter_conversion(options_input):
     try:
         if any(t for t in metadata_input if len(t) != 2):
             raise ValueError("'metadata' must be a sequence of key-value tuples.")
-    except TypeError:
-        raise ValueError("'metadata' must be a sequence of key-value tuples.")
+    except TypeError as exc:
+        raise ValueError("'metadata' must be a sequence of key-value tuples.") from exc
     metadata_modified = [{"key": m[0], "value": m[1]} for m in metadata_input]
     if in_class:
         filters.metadata_filter.metadata = metadata_modified
