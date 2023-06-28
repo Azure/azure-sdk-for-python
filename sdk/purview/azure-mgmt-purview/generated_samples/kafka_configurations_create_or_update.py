@@ -14,7 +14,7 @@ from azure.mgmt.purview import PurviewManagementClient
     pip install azure-identity
     pip install azure-mgmt-purview
 # USAGE
-    python accounts_list_keys.py
+    python kafka_configurations_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,16 +26,31 @@ from azure.mgmt.purview import PurviewManagementClient
 def main():
     client = PurviewManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="12345678-1234-1234-12345678abc",
+        subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.accounts.list_keys(
-        resource_group_name="SampleResourceGroup",
+    response = client.kafka_configurations.create_or_update(
+        resource_group_name="rgpurview",
         account_name="account1",
+        kafka_configuration_name="kafkaConfigName",
+        kafka_configuration={
+            "properties": {
+                "consumerGroup": "consumerGroup",
+                "credentials": {
+                    "identityId": "/subscriptions/47e8596d-ee73-4eb2-b6b4-cc13c2b87ssd/resourceGroups/testRG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testId",
+                    "type": "UserAssigned",
+                },
+                "eventHubPartitionId": "partitionId",
+                "eventHubResourceId": "/subscriptions/225be6fe-ec1c-4d51-a368-f69348d2e6c5/resourceGroups/testRG/providers/Microsoft.EventHub/namespaces/eventHubNameSpaceName",
+                "eventHubType": "Notification",
+                "eventStreamingState": "Enabled",
+                "eventStreamingType": "Azure",
+            }
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/purview/resource-manager/Microsoft.Purview/stable/2021-12-01/examples/Accounts_ListKeys.json
+# x-ms-original-file: specification/purview/resource-manager/Microsoft.Purview/stable/2021-12-01/examples/KafkaConfigurations_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

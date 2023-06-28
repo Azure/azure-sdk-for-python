@@ -29,13 +29,12 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.accounts.begin_delete(
+    client.accounts.begin_delete(
         resource_group_name="SampleResourceGroup",
         account_name="account1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/purview/resource-manager/Microsoft.Purview/stable/2021-07-01/examples/Accounts_Delete.json
+# x-ms-original-file: specification/purview/resource-manager/Microsoft.Purview/stable/2021-12-01/examples/Accounts_Delete.json
 if __name__ == "__main__":
     main()

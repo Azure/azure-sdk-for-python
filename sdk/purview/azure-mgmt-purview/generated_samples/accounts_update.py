@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/purview/resource-manager/Microsoft.Purview/stable/2021-07-01/examples/Accounts_Update.json
+# x-ms-original-file: specification/purview/resource-manager/Microsoft.Purview/stable/2021-12-01/examples/Accounts_Update.json
 if __name__ == "__main__":
     main()

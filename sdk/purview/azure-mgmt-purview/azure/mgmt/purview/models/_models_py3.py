@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -35,8 +35,8 @@ class AccessKeys(_serialization.Model):
         *,
         atlas_kafka_primary_endpoint: Optional[str] = None,
         atlas_kafka_secondary_endpoint: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword atlas_kafka_primary_endpoint: Gets or sets the primary connection string.
         :paramtype atlas_kafka_primary_endpoint: str
@@ -92,8 +92,8 @@ class TrackedResource(_serialization.Model):
         identity: Optional["_models.Identity"] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: Identity Info on the tracked resource.
         :paramtype identity: ~azure.mgmt.purview.models.Identity
@@ -133,6 +133,8 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype type: str
     :ivar sku: Gets or sets the Sku.
     :vartype sku: ~azure.mgmt.purview.models.AccountSku
+    :ivar account_status: Gets or sets the status of the account.
+    :vartype account_status: ~azure.mgmt.purview.models.AccountPropertiesAccountStatus
     :ivar cloud_connectors: Cloud connectors.
      External cloud identifier used as part of scanning configuration.
     :vartype cloud_connectors: ~azure.mgmt.purview.models.CloudConnectors
@@ -146,10 +148,18 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype endpoints: ~azure.mgmt.purview.models.AccountPropertiesEndpoints
     :ivar friendly_name: Gets or sets the friendly name.
     :vartype friendly_name: str
+    :ivar managed_event_hub_state: Gets or sets the state of managed eventhub. If enabled managed
+     eventhub will be created, if disabled the managed eventhub will be removed. Known values are:
+     "NotSpecified", "Disabled", and "Enabled".
+    :vartype managed_event_hub_state: str or ~azure.mgmt.purview.models.ManagedEventHubState
     :ivar managed_resource_group_name: Gets or sets the managed resource group name.
     :vartype managed_resource_group_name: str
     :ivar managed_resources: Gets the resource identifiers of the managed resources.
     :vartype managed_resources: ~azure.mgmt.purview.models.AccountPropertiesManagedResources
+    :ivar managed_resources_public_network_access: Gets or sets the public network access for
+     managed resources. Known values are: "NotSpecified", "Enabled", and "Disabled".
+    :vartype managed_resources_public_network_access: str or
+     ~azure.mgmt.purview.models.ManagedResourcesPublicNetworkAccess
     :ivar private_endpoint_connections: Gets the private endpoint connections information.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.purview.models.PrivateEndpointConnection]
@@ -168,6 +178,7 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "system_data": {"readonly": True},
         "type": {"readonly": True},
         "sku": {"readonly": True},
+        "account_status": {"readonly": True},
         "created_at": {"readonly": True},
         "created_by": {"readonly": True},
         "created_by_object_id": {"readonly": True},
@@ -187,14 +198,20 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "tags": {"key": "tags", "type": "{str}"},
         "type": {"key": "type", "type": "str"},
         "sku": {"key": "sku", "type": "AccountSku"},
+        "account_status": {"key": "properties.accountStatus", "type": "AccountPropertiesAccountStatus"},
         "cloud_connectors": {"key": "properties.cloudConnectors", "type": "CloudConnectors"},
         "created_at": {"key": "properties.createdAt", "type": "iso-8601"},
         "created_by": {"key": "properties.createdBy", "type": "str"},
         "created_by_object_id": {"key": "properties.createdByObjectId", "type": "str"},
         "endpoints": {"key": "properties.endpoints", "type": "AccountPropertiesEndpoints"},
         "friendly_name": {"key": "properties.friendlyName", "type": "str"},
+        "managed_event_hub_state": {"key": "properties.managedEventHubState", "type": "str"},
         "managed_resource_group_name": {"key": "properties.managedResourceGroupName", "type": "str"},
         "managed_resources": {"key": "properties.managedResources", "type": "AccountPropertiesManagedResources"},
+        "managed_resources_public_network_access": {
+            "key": "properties.managedResourcesPublicNetworkAccess",
+            "type": "str",
+        },
         "private_endpoint_connections": {
             "key": "properties.privateEndpointConnections",
             "type": "[PrivateEndpointConnection]",
@@ -210,10 +227,14 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         cloud_connectors: Optional["_models.CloudConnectors"] = None,
+        managed_event_hub_state: Union[str, "_models.ManagedEventHubState"] = "NotSpecified",
         managed_resource_group_name: Optional[str] = None,
+        managed_resources_public_network_access: Union[
+            str, "_models.ManagedResourcesPublicNetworkAccess"
+        ] = "NotSpecified",
         public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: Identity Info on the tracked resource.
         :paramtype identity: ~azure.mgmt.purview.models.Identity
@@ -224,22 +245,33 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :keyword cloud_connectors: Cloud connectors.
          External cloud identifier used as part of scanning configuration.
         :paramtype cloud_connectors: ~azure.mgmt.purview.models.CloudConnectors
+        :keyword managed_event_hub_state: Gets or sets the state of managed eventhub. If enabled
+         managed eventhub will be created, if disabled the managed eventhub will be removed. Known
+         values are: "NotSpecified", "Disabled", and "Enabled".
+        :paramtype managed_event_hub_state: str or ~azure.mgmt.purview.models.ManagedEventHubState
         :keyword managed_resource_group_name: Gets or sets the managed resource group name.
         :paramtype managed_resource_group_name: str
+        :keyword managed_resources_public_network_access: Gets or sets the public network access for
+         managed resources. Known values are: "NotSpecified", "Enabled", and "Disabled".
+        :paramtype managed_resources_public_network_access: str or
+         ~azure.mgmt.purview.models.ManagedResourcesPublicNetworkAccess
         :keyword public_network_access: Gets or sets the public network access. Known values are:
          "NotSpecified", "Enabled", and "Disabled".
         :paramtype public_network_access: str or ~azure.mgmt.purview.models.PublicNetworkAccess
         """
         super().__init__(identity=identity, location=location, tags=tags, **kwargs)
         self.sku = None
+        self.account_status = None
         self.cloud_connectors = cloud_connectors
         self.created_at = None
         self.created_by = None
         self.created_by_object_id = None
         self.endpoints = None
         self.friendly_name = None
+        self.managed_event_hub_state = managed_event_hub_state
         self.managed_resource_group_name = managed_resource_group_name
         self.managed_resources = None
+        self.managed_resources_public_network_access = managed_resources_public_network_access
         self.private_endpoint_connections = None
         self.provisioning_state = None
         self.public_network_access = public_network_access
@@ -270,7 +302,7 @@ class AccountEndpoints(_serialization.Model):
         "scan": {"key": "scan", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.catalog = None
@@ -279,7 +311,7 @@ class AccountEndpoints(_serialization.Model):
 
 
 class AccountList(_serialization.Model):
-    """Paged list of account resources.
+    """Paged list of Account resources.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -302,8 +334,13 @@ class AccountList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.Account"], count: Optional[int] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: List["_models.Account"],
+        count: Optional[int] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword count: Total item count.
         :paramtype count: int
@@ -323,6 +360,8 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar account_status: Gets or sets the status of the account.
+    :vartype account_status: ~azure.mgmt.purview.models.AccountPropertiesAccountStatus
     :ivar cloud_connectors: Cloud connectors.
      External cloud identifier used as part of scanning configuration.
     :vartype cloud_connectors: ~azure.mgmt.purview.models.CloudConnectors
@@ -336,10 +375,18 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
     :vartype endpoints: ~azure.mgmt.purview.models.AccountPropertiesEndpoints
     :ivar friendly_name: Gets or sets the friendly name.
     :vartype friendly_name: str
+    :ivar managed_event_hub_state: Gets or sets the state of managed eventhub. If enabled managed
+     eventhub will be created, if disabled the managed eventhub will be removed. Known values are:
+     "NotSpecified", "Disabled", and "Enabled".
+    :vartype managed_event_hub_state: str or ~azure.mgmt.purview.models.ManagedEventHubState
     :ivar managed_resource_group_name: Gets or sets the managed resource group name.
     :vartype managed_resource_group_name: str
     :ivar managed_resources: Gets the resource identifiers of the managed resources.
     :vartype managed_resources: ~azure.mgmt.purview.models.AccountPropertiesManagedResources
+    :ivar managed_resources_public_network_access: Gets or sets the public network access for
+     managed resources. Known values are: "NotSpecified", "Enabled", and "Disabled".
+    :vartype managed_resources_public_network_access: str or
+     ~azure.mgmt.purview.models.ManagedResourcesPublicNetworkAccess
     :ivar private_endpoint_connections: Gets the private endpoint connections information.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.purview.models.PrivateEndpointConnection]
@@ -353,6 +400,7 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
     """
 
     _validation = {
+        "account_status": {"readonly": True},
         "created_at": {"readonly": True},
         "created_by": {"readonly": True},
         "created_by_object_id": {"readonly": True},
@@ -364,14 +412,17 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
     }
 
     _attribute_map = {
+        "account_status": {"key": "accountStatus", "type": "AccountPropertiesAccountStatus"},
         "cloud_connectors": {"key": "cloudConnectors", "type": "CloudConnectors"},
         "created_at": {"key": "createdAt", "type": "iso-8601"},
         "created_by": {"key": "createdBy", "type": "str"},
         "created_by_object_id": {"key": "createdByObjectId", "type": "str"},
         "endpoints": {"key": "endpoints", "type": "AccountPropertiesEndpoints"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
+        "managed_event_hub_state": {"key": "managedEventHubState", "type": "str"},
         "managed_resource_group_name": {"key": "managedResourceGroupName", "type": "str"},
         "managed_resources": {"key": "managedResources", "type": "AccountPropertiesManagedResources"},
+        "managed_resources_public_network_access": {"key": "managedResourcesPublicNetworkAccess", "type": "str"},
         "private_endpoint_connections": {"key": "privateEndpointConnections", "type": "[PrivateEndpointConnection]"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
@@ -381,32 +432,105 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
         self,
         *,
         cloud_connectors: Optional["_models.CloudConnectors"] = None,
+        managed_event_hub_state: Union[str, "_models.ManagedEventHubState"] = "NotSpecified",
         managed_resource_group_name: Optional[str] = None,
+        managed_resources_public_network_access: Union[
+            str, "_models.ManagedResourcesPublicNetworkAccess"
+        ] = "NotSpecified",
         public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword cloud_connectors: Cloud connectors.
          External cloud identifier used as part of scanning configuration.
         :paramtype cloud_connectors: ~azure.mgmt.purview.models.CloudConnectors
+        :keyword managed_event_hub_state: Gets or sets the state of managed eventhub. If enabled
+         managed eventhub will be created, if disabled the managed eventhub will be removed. Known
+         values are: "NotSpecified", "Disabled", and "Enabled".
+        :paramtype managed_event_hub_state: str or ~azure.mgmt.purview.models.ManagedEventHubState
         :keyword managed_resource_group_name: Gets or sets the managed resource group name.
         :paramtype managed_resource_group_name: str
+        :keyword managed_resources_public_network_access: Gets or sets the public network access for
+         managed resources. Known values are: "NotSpecified", "Enabled", and "Disabled".
+        :paramtype managed_resources_public_network_access: str or
+         ~azure.mgmt.purview.models.ManagedResourcesPublicNetworkAccess
         :keyword public_network_access: Gets or sets the public network access. Known values are:
          "NotSpecified", "Enabled", and "Disabled".
         :paramtype public_network_access: str or ~azure.mgmt.purview.models.PublicNetworkAccess
         """
         super().__init__(**kwargs)
+        self.account_status = None
         self.cloud_connectors = cloud_connectors
         self.created_at = None
         self.created_by = None
         self.created_by_object_id = None
         self.endpoints = None
         self.friendly_name = None
+        self.managed_event_hub_state = managed_event_hub_state
         self.managed_resource_group_name = managed_resource_group_name
         self.managed_resources = None
+        self.managed_resources_public_network_access = managed_resources_public_network_access
         self.private_endpoint_connections = None
         self.provisioning_state = None
         self.public_network_access = public_network_access
+
+
+class AccountStatus(_serialization.Model):
+    """The account status.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar account_provisioning_state: Gets the account status code. Known values are: "Unknown",
+     "Creating", "Updating", "Moving", "Deleting", "SoftDeleting", "SoftDeleted", "Failed",
+     "Succeeded", and "Canceled".
+    :vartype account_provisioning_state: str or ~azure.mgmt.purview.models.AccountProvisioningState
+    :ivar error_details: Gets the account error details.
+    :vartype error_details: ~azure.mgmt.purview.models.AccountStatusErrorDetails
+    """
+
+    _validation = {
+        "account_provisioning_state": {"readonly": True},
+        "error_details": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "account_provisioning_state": {"key": "accountProvisioningState", "type": "str"},
+        "error_details": {"key": "errorDetails", "type": "AccountStatusErrorDetails"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.account_provisioning_state = None
+        self.error_details = None
+
+
+class AccountPropertiesAccountStatus(AccountStatus):
+    """Gets or sets the status of the account.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar account_provisioning_state: Gets the account status code. Known values are: "Unknown",
+     "Creating", "Updating", "Moving", "Deleting", "SoftDeleting", "SoftDeleted", "Failed",
+     "Succeeded", and "Canceled".
+    :vartype account_provisioning_state: str or ~azure.mgmt.purview.models.AccountProvisioningState
+    :ivar error_details: Gets the account error details.
+    :vartype error_details: ~azure.mgmt.purview.models.AccountStatusErrorDetails
+    """
+
+    _validation = {
+        "account_provisioning_state": {"readonly": True},
+        "error_details": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "account_provisioning_state": {"key": "accountProvisioningState", "type": "str"},
+        "error_details": {"key": "errorDetails", "type": "AccountStatusErrorDetails"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
 
 
 class AccountPropertiesEndpoints(AccountEndpoints):
@@ -434,7 +558,7 @@ class AccountPropertiesEndpoints(AccountEndpoints):
         "scan": {"key": "scan", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -465,7 +589,7 @@ class ManagedResources(_serialization.Model):
         "storage_account": {"key": "storageAccount", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.event_hub_namespace = None
@@ -499,7 +623,7 @@ class AccountPropertiesManagedResources(ManagedResources):
         "storage_account": {"key": "storageAccount", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -518,7 +642,9 @@ class AccountSkuAutoGenerated(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, capacity: Optional[int] = None, name: Optional[Union[str, "_models.Name"]] = None, **kwargs):
+    def __init__(
+        self, *, capacity: Optional[int] = None, name: Optional[Union[str, "_models.Name"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword capacity: Gets or sets the sku capacity.
         :paramtype capacity: int
@@ -544,7 +670,9 @@ class AccountSku(AccountSkuAutoGenerated):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, capacity: Optional[int] = None, name: Optional[Union[str, "_models.Name"]] = None, **kwargs):
+    def __init__(
+        self, *, capacity: Optional[int] = None, name: Optional[Union[str, "_models.Name"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword capacity: Gets or sets the sku capacity.
         :paramtype capacity: int
@@ -552,6 +680,78 @@ class AccountSku(AccountSkuAutoGenerated):
         :paramtype name: str or ~azure.mgmt.purview.models.Name
         """
         super().__init__(capacity=capacity, name=name, **kwargs)
+
+
+class ErrorModel(_serialization.Model):
+    """Default error model.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: Gets or sets the code.
+    :vartype code: str
+    :ivar details: Gets or sets the details.
+    :vartype details: list[~azure.mgmt.purview.models.ErrorModel]
+    :ivar message: Gets or sets the messages.
+    :vartype message: str
+    :ivar target: Gets or sets the target.
+    :vartype target: str
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "details": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorModel]"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.details = None
+        self.message = None
+        self.target = None
+
+
+class AccountStatusErrorDetails(ErrorModel):
+    """Gets the account error details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: Gets or sets the code.
+    :vartype code: str
+    :ivar details: Gets or sets the details.
+    :vartype details: list[~azure.mgmt.purview.models.ErrorModel]
+    :ivar message: Gets or sets the messages.
+    :vartype message: str
+    :ivar target: Gets or sets the target.
+    :vartype target: str
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "details": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorModel]"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
 
 
 class AccountUpdateParameters(_serialization.Model):
@@ -577,8 +777,8 @@ class AccountUpdateParameters(_serialization.Model):
         identity: Optional["_models.Identity"] = None,
         properties: Optional["_models.AccountProperties"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: Identity related info to add/remove userAssignedIdentities.
         :paramtype identity: ~azure.mgmt.purview.models.Identity
@@ -591,6 +791,50 @@ class AccountUpdateParameters(_serialization.Model):
         self.identity = identity
         self.properties = properties
         self.tags = tags
+
+
+class BatchFeatureRequest(_serialization.Model):
+    """Feature request model.
+
+    :ivar features: Set of features.
+    :vartype features: list[str]
+    """
+
+    _validation = {
+        "features": {"unique": True},
+    }
+
+    _attribute_map = {
+        "features": {"key": "features", "type": "[str]"},
+    }
+
+    def __init__(self, *, features: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword features: Set of features.
+        :paramtype features: list[str]
+        """
+        super().__init__(**kwargs)
+        self.features = features
+
+
+class BatchFeatureStatus(_serialization.Model):
+    """List of features with enabled status.
+
+    :ivar features: Features with enabled status.
+    :vartype features: dict[str, bool]
+    """
+
+    _attribute_map = {
+        "features": {"key": "features", "type": "{bool}"},
+    }
+
+    def __init__(self, *, features: Optional[Dict[str, bool]] = None, **kwargs: Any) -> None:
+        """
+        :keyword features: Features with enabled status.
+        :paramtype features: dict[str, bool]
+        """
+        super().__init__(**kwargs)
+        self.features = features
 
 
 class CheckNameAvailabilityRequest(_serialization.Model):
@@ -607,7 +851,7 @@ class CheckNameAvailabilityRequest(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Resource name to verify for availability.
         :paramtype name: str
@@ -643,8 +887,8 @@ class CheckNameAvailabilityResult(_serialization.Model):
         message: Optional[str] = None,
         name_available: Optional[bool] = None,
         reason: Optional[Union[str, "_models.Reason"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword message: Error message.
         :paramtype message: str
@@ -678,7 +922,7 @@ class CloudConnectors(_serialization.Model):
         "aws_external_id": {"key": "awsExternalId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.aws_external_id = None
@@ -695,13 +939,45 @@ class CollectionAdminUpdate(_serialization.Model):
         "object_id": {"key": "objectId", "type": "str"},
     }
 
-    def __init__(self, *, object_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, object_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword object_id: Gets or sets the object identifier of the admin.
         :paramtype object_id: str
         """
         super().__init__(**kwargs)
         self.object_id = object_id
+
+
+class Credentials(_serialization.Model):
+    """Credentials to access the event streaming service attached to the purview account.
+
+    :ivar identity_id: Identity identifier for UserAssign type.
+    :vartype identity_id: str
+    :ivar type: Identity Type. Known values are: "None", "SystemAssigned", and "UserAssigned".
+    :vartype type: str or ~azure.mgmt.purview.models.CredentialsType
+    """
+
+    _attribute_map = {
+        "identity_id": {"key": "identityId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        identity_id: Optional[str] = None,
+        type: Optional[Union[str, "_models.CredentialsType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword identity_id: Identity identifier for UserAssign type.
+        :paramtype identity_id: str
+        :keyword type: Identity Type. Known values are: "None", "SystemAssigned", and "UserAssigned".
+        :paramtype type: str or ~azure.mgmt.purview.models.CredentialsType
+        """
+        super().__init__(**kwargs)
+        self.identity_id = identity_id
+        self.type = type
 
 
 class DefaultAccountPayload(_serialization.Model):
@@ -740,8 +1016,8 @@ class DefaultAccountPayload(_serialization.Model):
         scope_tenant_id: Optional[str] = None,
         scope_type: Optional[Union[str, "_models.ScopeType"]] = None,
         subscription_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword account_name: The name of the account that is set as the default.
         :paramtype account_name: str
@@ -791,8 +1067,8 @@ class DimensionProperties(_serialization.Model):
         display_name: Optional[str] = None,
         name: Optional[str] = None,
         to_be_exported_for_customer: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: localized display name of the dimension to customer.
         :paramtype display_name: str
@@ -806,44 +1082,6 @@ class DimensionProperties(_serialization.Model):
         self.display_name = display_name
         self.name = name
         self.to_be_exported_for_customer = to_be_exported_for_customer
-
-
-class ErrorModel(_serialization.Model):
-    """Default error model.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar code: Gets or sets the code.
-    :vartype code: str
-    :ivar details: Gets or sets the details.
-    :vartype details: list[~azure.mgmt.purview.models.ErrorModel]
-    :ivar message: Gets or sets the messages.
-    :vartype message: str
-    :ivar target: Gets or sets the target.
-    :vartype target: str
-    """
-
-    _validation = {
-        "code": {"readonly": True},
-        "details": {"readonly": True},
-        "message": {"readonly": True},
-        "target": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorModel]"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
-        self.code = None
-        self.details = None
-        self.message = None
-        self.target = None
 
 
 class ErrorResponseModel(_serialization.Model):
@@ -863,7 +1101,7 @@ class ErrorResponseModel(_serialization.Model):
         "error": {"key": "error", "type": "ErrorResponseModelError"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.error = None
@@ -898,7 +1136,7 @@ class ErrorResponseModelError(ErrorModel):
         "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -935,8 +1173,8 @@ class Identity(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.Type"]] = None,
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Identity Type. Known values are: "None", "SystemAssigned", and "UserAssigned".
         :paramtype type: str or ~azure.mgmt.purview.models.Type
@@ -948,6 +1186,173 @@ class Identity(_serialization.Model):
         self.tenant_id = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
+
+
+class ProxyResource(_serialization.Model):
+    """Proxy Azure Resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Gets or sets the identifier.
+    :vartype id: str
+    :ivar name: Gets or sets the name.
+    :vartype name: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.purview.models.ProxyResourceSystemData
+    :ivar type: Gets or sets the type.
+    :vartype type: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "system_data": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "system_data": {"key": "systemData", "type": "ProxyResourceSystemData"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.system_data = None
+        self.type = None
+
+
+class KafkaConfiguration(ProxyResource):  # pylint: disable=too-many-instance-attributes
+    """The configuration of the event streaming service resource attached to the Purview account for
+    kafka notifications.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Gets or sets the identifier.
+    :vartype id: str
+    :ivar name: Gets or sets the name.
+    :vartype name: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.purview.models.ProxyResourceSystemData
+    :ivar type: Gets or sets the type.
+    :vartype type: str
+    :ivar consumer_group: Consumer group for hook event hub.
+    :vartype consumer_group: str
+    :ivar credentials: Credentials to access event hub.
+    :vartype credentials: ~azure.mgmt.purview.models.Credentials
+    :ivar event_hub_resource_id:
+    :vartype event_hub_resource_id: str
+    :ivar event_hub_type: The event hub type. Known values are: "Notification" and "Hook".
+    :vartype event_hub_type: str or ~azure.mgmt.purview.models.EventHubType
+    :ivar event_streaming_state: The state of the event streaming service. Known values are:
+     "Disabled" and "Enabled".
+    :vartype event_streaming_state: str or ~azure.mgmt.purview.models.EventStreamingState
+    :ivar event_streaming_type: The event streaming service type. Known values are: "None",
+     "Managed", and "Azure".
+    :vartype event_streaming_type: str or ~azure.mgmt.purview.models.EventStreamingType
+    :ivar event_hub_partition_id: Optional partition Id for notification event hub. If not set, all
+     partitions will be leveraged.
+    :vartype event_hub_partition_id: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "system_data": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "system_data": {"key": "systemData", "type": "ProxyResourceSystemData"},
+        "type": {"key": "type", "type": "str"},
+        "consumer_group": {"key": "properties.consumerGroup", "type": "str"},
+        "credentials": {"key": "properties.credentials", "type": "Credentials"},
+        "event_hub_resource_id": {"key": "properties.eventHubResourceId", "type": "str"},
+        "event_hub_type": {"key": "properties.eventHubType", "type": "str"},
+        "event_streaming_state": {"key": "properties.eventStreamingState", "type": "str"},
+        "event_streaming_type": {"key": "properties.eventStreamingType", "type": "str"},
+        "event_hub_partition_id": {"key": "properties.eventHubPartitionId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        consumer_group: Optional[str] = None,
+        credentials: Optional["_models.Credentials"] = None,
+        event_hub_resource_id: Optional[str] = None,
+        event_hub_type: Optional[Union[str, "_models.EventHubType"]] = None,
+        event_streaming_state: Union[str, "_models.EventStreamingState"] = "Enabled",
+        event_streaming_type: Union[str, "_models.EventStreamingType"] = "None",
+        event_hub_partition_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword consumer_group: Consumer group for hook event hub.
+        :paramtype consumer_group: str
+        :keyword credentials: Credentials to access event hub.
+        :paramtype credentials: ~azure.mgmt.purview.models.Credentials
+        :keyword event_hub_resource_id:
+        :paramtype event_hub_resource_id: str
+        :keyword event_hub_type: The event hub type. Known values are: "Notification" and "Hook".
+        :paramtype event_hub_type: str or ~azure.mgmt.purview.models.EventHubType
+        :keyword event_streaming_state: The state of the event streaming service. Known values are:
+         "Disabled" and "Enabled".
+        :paramtype event_streaming_state: str or ~azure.mgmt.purview.models.EventStreamingState
+        :keyword event_streaming_type: The event streaming service type. Known values are: "None",
+         "Managed", and "Azure".
+        :paramtype event_streaming_type: str or ~azure.mgmt.purview.models.EventStreamingType
+        :keyword event_hub_partition_id: Optional partition Id for notification event hub. If not set,
+         all partitions will be leveraged.
+        :paramtype event_hub_partition_id: str
+        """
+        super().__init__(**kwargs)
+        self.consumer_group = consumer_group
+        self.credentials = credentials
+        self.event_hub_resource_id = event_hub_resource_id
+        self.event_hub_type = event_hub_type
+        self.event_streaming_state = event_streaming_state
+        self.event_streaming_type = event_streaming_type
+        self.event_hub_partition_id = event_hub_partition_id
+
+
+class KafkaConfigurationList(_serialization.Model):
+    """Paged list of kafka configuration resources.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar next_link: The Url of next result page.
+    :vartype next_link: str
+    :ivar value: Collection of items of type results. Required.
+    :vartype value: list[~azure.mgmt.purview.models.KafkaConfiguration]
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[KafkaConfiguration]"},
+    }
+
+    def __init__(
+        self, *, value: List["_models.KafkaConfiguration"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword next_link: The Url of next result page.
+        :paramtype next_link: str
+        :keyword value: Collection of items of type results. Required.
+        :paramtype value: list[~azure.mgmt.purview.models.KafkaConfiguration]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
 
 
 class Operation(_serialization.Model):
@@ -984,8 +1389,8 @@ class Operation(_serialization.Model):
         name: Optional[str] = None,
         origin: Optional[str] = None,
         service_specification: Optional["_models.OperationMetaServiceSpecification"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display: Properties on the operation.
         :paramtype display: ~azure.mgmt.purview.models.OperationDisplay
@@ -1033,8 +1438,8 @@ class OperationDisplay(_serialization.Model):
         operation: Optional[str] = None,
         provider: Optional[str] = None,
         resource: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: Description of the operation for display purposes.
         :paramtype description: str
@@ -1057,8 +1462,6 @@ class OperationList(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar count: Total item count.
-    :vartype count: int
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
     :ivar value: Collection of items of type results. Required.
@@ -1070,29 +1473,18 @@ class OperationList(_serialization.Model):
     }
 
     _attribute_map = {
-        "count": {"key": "count", "type": "int"},
         "next_link": {"key": "nextLink", "type": "str"},
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.Operation"],
-        count: Optional[int] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.Operation"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword count: Total item count.
-        :paramtype count: int
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str
         :keyword value: Collection of items of type results. Required.
         :paramtype value: list[~azure.mgmt.purview.models.Operation]
         """
         super().__init__(**kwargs)
-        self.count = count
         self.next_link = next_link
         self.value = value
 
@@ -1120,8 +1512,8 @@ class OperationMetaLogSpecification(_serialization.Model):
         blob_duration: Optional[str] = None,
         display_name: Optional[str] = None,
         name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword blob_duration: blob duration of the log.
         :paramtype blob_duration: str
@@ -1198,8 +1590,8 @@ class OperationMetaMetricSpecification(_serialization.Model):  # pylint: disable
         supported_aggregation_types: Optional[List[str]] = None,
         supported_time_grain_types: Optional[List[str]] = None,
         unit: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword aggregation_type: aggregation type of metric.
         :paramtype aggregation_type: str
@@ -1264,8 +1656,8 @@ class OperationMetaServiceSpecification(_serialization.Model):
         *,
         log_specifications: Optional[List["_models.OperationMetaLogSpecification"]] = None,
         metric_specifications: Optional[List["_models.OperationMetaMetricSpecification"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword log_specifications: log specifications for the operation.
         :paramtype log_specifications: list[~azure.mgmt.purview.models.OperationMetaLogSpecification]
@@ -1289,46 +1681,13 @@ class PrivateEndpoint(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: The private endpoint identifier.
         :paramtype id: str
         """
         super().__init__(**kwargs)
         self.id = id
-
-
-class ProxyResource(_serialization.Model):
-    """Proxy Azure Resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Gets or sets the identifier.
-    :vartype id: str
-    :ivar name: Gets or sets the name.
-    :vartype name: str
-    :ivar type: Gets or sets the type.
-    :vartype type: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
 
 
 class PrivateEndpointConnection(ProxyResource):
@@ -1340,6 +1699,8 @@ class PrivateEndpointConnection(ProxyResource):
     :vartype id: str
     :ivar name: Gets or sets the name.
     :vartype name: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.purview.models.ProxyResourceSystemData
     :ivar type: Gets or sets the type.
     :vartype type: str
     :ivar private_endpoint: The private endpoint information.
@@ -1354,6 +1715,7 @@ class PrivateEndpointConnection(ProxyResource):
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
+        "system_data": {"readonly": True},
         "type": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
@@ -1361,6 +1723,7 @@ class PrivateEndpointConnection(ProxyResource):
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
+        "system_data": {"key": "systemData", "type": "ProxyResourceSystemData"},
         "type": {"key": "type", "type": "str"},
         "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
         "private_link_service_connection_state": {
@@ -1375,8 +1738,8 @@ class PrivateEndpointConnection(ProxyResource):
         *,
         private_endpoint: Optional["_models.PrivateEndpoint"] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: The private endpoint information.
         :paramtype private_endpoint: ~azure.mgmt.purview.models.PrivateEndpoint
@@ -1395,8 +1758,6 @@ class PrivateEndpointConnectionList(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar count: Total item count.
-    :vartype count: int
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
     :ivar value: Collection of items of type results. Required.
@@ -1408,29 +1769,20 @@ class PrivateEndpointConnectionList(_serialization.Model):
     }
 
     _attribute_map = {
-        "count": {"key": "count", "type": "int"},
         "next_link": {"key": "nextLink", "type": "str"},
         "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
     def __init__(
-        self,
-        *,
-        value: List["_models.PrivateEndpointConnection"],
-        count: Optional[int] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: List["_models.PrivateEndpointConnection"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword count: Total item count.
-        :paramtype count: int
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str
         :keyword value: Collection of items of type results. Required.
         :paramtype value: list[~azure.mgmt.purview.models.PrivateEndpointConnection]
         """
         super().__init__(**kwargs)
-        self.count = count
         self.next_link = next_link
         self.value = value
 
@@ -1464,7 +1816,7 @@ class PrivateLinkResource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -1478,8 +1830,6 @@ class PrivateLinkResourceList(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar count: Total item count.
-    :vartype count: int
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
     :ivar value: Collection of items of type results. Required.
@@ -1491,29 +1841,20 @@ class PrivateLinkResourceList(_serialization.Model):
     }
 
     _attribute_map = {
-        "count": {"key": "count", "type": "int"},
         "next_link": {"key": "nextLink", "type": "str"},
         "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
     def __init__(
-        self,
-        *,
-        value: List["_models.PrivateLinkResource"],
-        count: Optional[int] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: List["_models.PrivateLinkResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword count: Total item count.
-        :paramtype count: int
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str
         :keyword value: Collection of items of type results. Required.
         :paramtype value: list[~azure.mgmt.purview.models.PrivateLinkResource]
         """
         super().__init__(**kwargs)
-        self.count = count
         self.next_link = next_link
         self.value = value
 
@@ -1544,7 +1885,7 @@ class PrivateLinkResourceProperties(_serialization.Model):
         "required_zone_names": {"key": "requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.group_id = None
@@ -1576,8 +1917,8 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         actions_required: Optional[str] = None,
         description: Optional[str] = None,
         status: Optional[Union[str, "_models.Status"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword actions_required: The required actions.
         :paramtype actions_required: str
@@ -1632,7 +1973,7 @@ class SystemData(_serialization.Model):
         "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.created_at = None
@@ -1641,6 +1982,76 @@ class SystemData(_serialization.Model):
         self.last_modified_at = None
         self.last_modified_by = None
         self.last_modified_by_type = None
+
+
+class ProxyResourceSystemData(SystemData):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.purview.models.CreatedByType
+    :ivar last_modified_at: The timestamp of the last modification the resource (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.purview.models.LastModifiedByType
+    """
+
+    _validation = {
+        "created_at": {"readonly": True},
+        "created_by": {"readonly": True},
+        "created_by_type": {"readonly": True},
+        "last_modified_at": {"readonly": True},
+        "last_modified_by": {"readonly": True},
+        "last_modified_by_type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+
+
+class QuotaName(_serialization.Model):
+    """Quota name.
+
+    :ivar localized_value: Gets or sets the localized name value.
+    :vartype localized_value: str
+    :ivar value: Gets or sets the name value.
+    :vartype value: str
+    """
+
+    _attribute_map = {
+        "localized_value": {"key": "localizedValue", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(self, *, localized_value: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword localized_value: Gets or sets the localized name value.
+        :paramtype localized_value: str
+        :keyword value: Gets or sets the name value.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
+        self.localized_value = localized_value
+        self.value = value
 
 
 class TrackedResourceSystemData(SystemData):
@@ -1682,9 +2093,104 @@ class TrackedResourceSystemData(SystemData):
         "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
+
+
+class Usage(_serialization.Model):
+    """Response for usage information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar current_value: Current usage quota value.
+    :vartype current_value: int
+    :ivar id: Fully qualified ARM resource Id.
+    :vartype id: str
+    :ivar limit: Usage quota limit.
+    :vartype limit: int
+    :ivar name: Quota name.
+    :vartype name: ~azure.mgmt.purview.models.UsageName
+    :ivar unit: Quota usage unit.
+    :vartype unit: str
+    """
+
+    _validation = {
+        "current_value": {"readonly": True},
+        "id": {"readonly": True},
+        "limit": {"readonly": True},
+        "name": {"readonly": True},
+        "unit": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "current_value": {"key": "currentValue", "type": "int"},
+        "id": {"key": "id", "type": "str"},
+        "limit": {"key": "limit", "type": "int"},
+        "name": {"key": "name", "type": "UsageName"},
+        "unit": {"key": "unit", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.current_value = None
+        self.id = None
+        self.limit = None
+        self.name = None
+        self.unit = None
+
+
+class UsageList(_serialization.Model):
+    """Response for usage get request.
+
+    :ivar value: Collection of usage values.
+    :vartype value: list[~azure.mgmt.purview.models.Usage]
+    :ivar next_link: The Url of next result page.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Usage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.Usage"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: Collection of usage values.
+        :paramtype value: list[~azure.mgmt.purview.models.Usage]
+        :keyword next_link: The Url of next result page.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class UsageName(QuotaName):
+    """Quota name.
+
+    :ivar localized_value: Gets or sets the localized name value.
+    :vartype localized_value: str
+    :ivar value: Gets or sets the name value.
+    :vartype value: str
+    """
+
+    _attribute_map = {
+        "localized_value": {"key": "localizedValue", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(self, *, localized_value: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword localized_value: Gets or sets the localized name value.
+        :paramtype localized_value: str
+        :keyword value: Gets or sets the name value.
+        :paramtype value: str
+        """
+        super().__init__(localized_value=localized_value, value=value, **kwargs)
 
 
 class UserAssignedIdentity(_serialization.Model):
@@ -1708,7 +2214,7 @@ class UserAssignedIdentity(_serialization.Model):
         "principal_id": {"key": "principalId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.client_id = None

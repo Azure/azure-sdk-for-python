@@ -10,6 +10,21 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AccountProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the account status code."""
+
+    UNKNOWN = "Unknown"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    MOVING = "Moving"
+    DELETING = "Deleting"
+    SOFT_DELETING = "SoftDeleting"
+    SOFT_DELETED = "SoftDeleted"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -19,6 +34,36 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class CredentialsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Identity Type."""
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+
+
+class EventHubType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The event hub type."""
+
+    NOTIFICATION = "Notification"
+    HOOK = "Hook"
+
+
+class EventStreamingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of the event streaming service."""
+
+    DISABLED = "Disabled"
+    ENABLED = "Enabled"
+
+
+class EventStreamingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The event streaming service type."""
+
+    NONE = "None"
+    MANAGED = "Managed"
+    AZURE = "Azure"
+
+
 class LastModifiedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that last modified the resource."""
 
@@ -26,6 +71,24 @@ class LastModifiedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
+
+
+class ManagedEventHubState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the state of managed eventhub. If enabled managed eventhub will be created, if
+    disabled the managed eventhub will be removed.
+    """
+
+    NOT_SPECIFIED = "NotSpecified"
+    DISABLED = "Disabled"
+    ENABLED = "Enabled"
+
+
+class ManagedResourcesPublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the public network access for managed resources."""
+
+    NOT_SPECIFIED = "NotSpecified"
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 
 class Name(str, Enum, metaclass=CaseInsensitiveEnumMeta):

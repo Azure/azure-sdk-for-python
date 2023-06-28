@@ -32,11 +32,17 @@ def main():
     response = client.accounts.begin_create_or_update(
         resource_group_name="SampleResourceGroup",
         account_name="account1",
-        account={"location": "West US 2", "properties": {"managedResourceGroupName": "custom-rgname"}},
+        account={
+            "location": "West US 2",
+            "properties": {
+                "managedResourceGroupName": "custom-rgname",
+                "managedResourcesPublicNetworkAccess": "Enabled",
+            },
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/purview/resource-manager/Microsoft.Purview/stable/2021-07-01/examples/Accounts_CreateOrUpdate.json
+# x-ms-original-file: specification/purview/resource-manager/Microsoft.Purview/stable/2021-12-01/examples/Accounts_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

@@ -8,20 +8,26 @@
 
 from ._accounts_operations import AccountsOperations
 from ._default_accounts_operations import DefaultAccountsOperations
+from ._features_operations import FeaturesOperations
+from ._kafka_configurations_operations import KafkaConfigurationsOperations
 from ._operations import Operations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._usages_operations import UsagesOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AccountsOperations",
     "DefaultAccountsOperations",
+    "FeaturesOperations",
+    "KafkaConfigurationsOperations",
     "Operations",
     "PrivateEndpointConnectionsOperations",
     "PrivateLinkResourcesOperations",
+    "UsagesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

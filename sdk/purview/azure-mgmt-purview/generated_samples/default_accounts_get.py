@@ -30,12 +30,12 @@ def main():
     )
 
     response = client.default_accounts.get(
-        scope_tenant_id="11733A4E-BA84-46FF-91D1-AFF1A3215A90",
+        scope_tenant_id="ee85a74c-405e-4adc-bb47-ffa8ca0c9f31",
         scope_type="Tenant",
     )
     print(response)
 
 
-# x-ms-original-file: specification/purview/resource-manager/Microsoft.Purview/stable/2021-07-01/examples/DefaultAccounts_Get.json
+# x-ms-original-file: specification/purview/resource-manager/Microsoft.Purview/stable/2021-12-01/examples/DefaultAccounts_Get.json
 if __name__ == "__main__":
     main()

@@ -33,15 +33,15 @@ def main():
         default_account_payload={
             "accountName": "myDefaultAccount",
             "resourceGroupName": "rg-1",
-            "scope": "11733A4E-BA84-46FF-91D1-AFF1A3215A90",
-            "scopeTenantId": "11733A4E-BA84-46FF-91D1-AFF1A3215A90",
+            "scope": "12345678-1234-1234-1234-12345678abcd",
+            "scopeTenantId": "12345678-1234-1234-1234-12345678abcd",
             "scopeType": "Tenant",
-            "subscriptionId": "12345678-1234-1234-12345678aaa",
+            "subscriptionId": "12345678-1234-1234-1234-12345678aaaa",
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/purview/resource-manager/Microsoft.Purview/stable/2021-07-01/examples/DefaultAccounts_Set.json
+# x-ms-original-file: specification/purview/resource-manager/Microsoft.Purview/stable/2021-12-01/examples/DefaultAccounts_Set.json
 if __name__ == "__main__":
     main()
