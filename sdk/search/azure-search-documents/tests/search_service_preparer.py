@@ -53,6 +53,7 @@ def _load_batch(filename):
 
 def _clean_up_indexes(endpoint, api_key):
     from azure.search.documents.indexes import SearchIndexClient
+
     client = SearchIndexClient(endpoint, AzureKeyCredential(api_key), retry_backoff_factor=60)
 
     # wipe the synonym maps which seem to survive the index
@@ -70,6 +71,7 @@ def _clean_up_indexes(endpoint, api_key):
 
 def _clean_up_indexers(endpoint, api_key):
     from azure.search.documents.indexes import SearchIndexerClient
+
     client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key), retry_backoff_factor=60)
     for indexer in client.get_indexers():
         client.delete_indexer(indexer)
