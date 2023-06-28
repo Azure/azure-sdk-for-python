@@ -68,7 +68,7 @@ credential = DefaultAzureCredential()
 client = PurviewSharingClient(endpoint=endpoint, credential=credential)
 ```
 
-### Create a share
+### Create Share
 
 To begin sharing data, the data provider must first create a sent share that identifies the data they would like to share.
 
@@ -119,7 +119,7 @@ response = request.result()
 print(response)
 ```
 
-### Create sent share invitation to a User
+### Send Share Invitation to a User
 
 After creating a sent share, the data provider can extend invitations to consumers who may then view the shared data. In this example, an invitation is extended to an individual by specifying their email address.
 
@@ -158,9 +158,9 @@ invitation_response = invitation_request.result()
 created_invitation = json.loads(invitation_response)
 print(created_invitation)
 ```
-### Create a sent share to a Service
+### Send Share Invitation to a Service
 
-**NEW** Data providers can also extend invitations to services or applications by specifying the tenant id and object id of the service. _The object id used for sending an invitation to a service must be the object id associated with the Enterprise Application (not the application registration)._
+Data providers can also extend invitations to services or applications by specifying the tenant id and object id of the service. _The object id used for sending an invitation to a service must be the object id associated with the Enterprise Application (not the application registration)._
 
 ```python Snippet:send_a_service_invitation
 import os, uuid
@@ -192,7 +192,7 @@ invitation_response = client.sent_shares.create_invitation(
 print(invitation_response)
 ```
 
-### Get sent share
+### Get Sent Share
 
 After creating a sent share, data providers can retrieve it.
 
@@ -212,7 +212,7 @@ retrieved_sent_share = client.sent_shares.get(sent_share_id=str(sent_share_id))
 print(retrieved_sent_share)
 ```
 
-### List sent shares
+### List Sent Shares
 
 Data providers can also retrieve a list of the sent shares they have created.
 
@@ -237,7 +237,7 @@ for list_response in list_request:
     print(list_response)
 ```
 
-### Delete a sent share
+### Delete Sent Share
 
 A sent share can be deleted by the data provider to stop sharing their data with all data consumers.
 
@@ -259,9 +259,9 @@ delete_response = delete_request.result()
 print(delete_response)
 ```
 
-### Get sent share invitation
+### Get Sent Share Invitation
 
-**NEW** After creating a sent share invitation, data providers can retrieve it.
+After creating a sent share invitation, data providers can retrieve it.
 
 ```python Snippet:get_a_sent_share_invitation
 import os, uuid, json
@@ -285,7 +285,7 @@ retrieved_share_invitation = json.loads(get_invitation_response)
 print(retrieved_share_invitation)
 ```
 
-### List sent share invitations
+### List Sent Share Invitations
 
 Data providers can also retrieve a list of the sent share invitations they have created.
 
@@ -308,9 +308,9 @@ for list_response in list_request:
     print(list_response)
 ```
 
-### Delete a sent share invitation
+### Delete Sent Share Invitation
 
-**NEW** An individual sent share invitation can be deleted by the data provider to stop sharing their data with the specific data consumer to whom the invitation was addressed.
+An individual sent share invitation can be deleted by the data provider to stop sharing their data with the specific data consumer to whom the invitation was addressed.
 
 ```python Snippet:delete_a_sent_share_invitation
 import os, uuid, json
@@ -351,9 +351,9 @@ credential = DefaultAzureCredential()
 client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 ```
 
-### List detached received shares
+### List Detached Received Shares
 
-To begin viewing data shared with them, a data consumer must first retrieve a list of detached received shares. Within this list, they can identify a detached received share to attach.
+To begin viewing data shared with them, a data consumer must first retrieve a list of detached received shares. Within this list, they can identify a detached received share to attach. A "detached" received share refers to a received share that has never been attached or has been detached.
 
 ```python Snippet:get_all_detached_received_shares
 import os
@@ -370,7 +370,7 @@ list_detached_response = client.received_shares.list_detached(orderby="propertie
 print(list_detached_response)
 ```
 
-### Attach a received share
+### Attach a Received Share
 
 Once the data consumer has identified a received share, they can attach the received share to a location where they can access the shared data. If the received share is already attached, the shared data will be made accessible at the new location specified.
 
@@ -416,7 +416,7 @@ update_response = update_request.result()
 print(update_response)
 ```
 
-### Get received share
+### Get Received Share
 
 A data consumer can retrieve an individual received share.
 
@@ -440,7 +440,7 @@ retrieved_share = json.loads(get_share_response)
 print(retrieved_share)
 ```
 
-### List attached shares
+### List Attached Received Shares
 
 Data consumers can also retrieve a list of their attached received shares.
 
@@ -463,7 +463,7 @@ list_attached_response = client.received_shares.list_attached(
 print(list_attached_response)
 ```
 
-### Delete received share
+### Delete Received Share
 
 A received share can be deleted by the data consumer to terminate their access to shared data.
 
@@ -489,7 +489,7 @@ The following code examples demonstrate how to use the Microsoft Azure Python SD
 
 ### List Share Resources
 
-**NEW** A list of share resources can be retrieved to view all resources within an account where sharing activities have taken place.
+A list of share resources can be retrieved to view all resources within an account where sharing activities have taken place.
 
 ```python Snippet:list_share_resources
 import os
