@@ -473,6 +473,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         # type: (int, Tuple[Any, ...]) -> None
         """Process incoming Open frame to finish the connection negotiation.
 
+        :param int channel: The incoming channel number.
+        :param tuple frame: The incoming Close frame.
+
         The incoming frame format is::
 
             - frame[0]: error (Optional[AMQPError])
@@ -740,6 +743,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
          is 1, i.e. process frames one-at-a-time. A higher value should only be used when a receiver is established
          and is processing incoming Transfer frames.
         :rtype: None
+        :return: None
         """
         try:
             raise self._error
