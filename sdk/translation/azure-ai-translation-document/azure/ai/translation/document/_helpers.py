@@ -74,11 +74,11 @@ def get_translation_input(args, kwargs, continuation_token):
                     storage_type=storage_type
                 )
             ]
-        except (AttributeError, TypeError, IndexError):
+        except (AttributeError, TypeError, IndexError) as exc:
             raise ValueError(
                 "Pass 'inputs' for multiple inputs or 'source_url', 'target_url', "
                 "and 'target_language' for a single input."
-            )
+            ) from exc
 
     return request
 
