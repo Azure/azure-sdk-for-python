@@ -40,7 +40,7 @@ class TestChatCompletions(AzureRecordedTestCase):
             openai.ChatCompletion.create(messages=messages, model=deployment)
         assert "Must provide an 'engine' or 'deployment_id' parameter" in str(e.value)
 
-    @pytest.mark.parametrize("api_type", [ALL])
+    @pytest.mark.parametrize("api_type", ALL)
     @configure
     def test_chat_completion(self, azure_openai_creds, api_type):
         messages = [

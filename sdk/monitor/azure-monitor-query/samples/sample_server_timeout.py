@@ -10,30 +10,31 @@ USAGE:
     1) LOGS_WORKSPACE_ID - The first (primary) workspace ID.
 
 This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
-For more information on DefaultAzureCredential, see https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
+For more information on DefaultAzureCredential, see https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 
 **Note** - Although this example uses pandas to print the response, it's optional and
 isn't a required package for querying. Alternatively, native Python can be used as well.
 """
-import os
-import pandas as pd
 from datetime import timedelta
-from azure.monitor.query import LogsQueryClient, LogsQueryStatus
+import os
+
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
+from azure.monitor.query import LogsQueryClient, LogsQueryStatus
+import pandas as pd
+
 
 credential = DefaultAzureCredential()
-
 client = LogsQueryClient(credential)
 
-query= "range x from 1 to 10000000000 step 1 | count"
+query = "range x from 1 to 10000000000 step 1 | count"
 
 try:
     response = client.query_workspace(
-        os.environ['LOGS_WORKSPACE_ID'],
+        os.environ["LOGS_WORKSPACE_ID"],
         query,
         timespan=timedelta(days=1),
-        server_timeout=600 # sets the timeout to 10 minutes
+        server_timeout=600,  # sets the timeout to 10 minutes
     )
     if response.status == LogsQueryStatus.PARTIAL:
         error = response.partial_error
@@ -46,4 +47,4 @@ try:
         print(df)
 except HttpResponseError as err:
     print("something fatal happened")
-    print (err)
+    print(err)
