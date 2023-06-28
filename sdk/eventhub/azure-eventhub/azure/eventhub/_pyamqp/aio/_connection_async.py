@@ -274,16 +274,10 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :return: Whether the connection is in a state where it is legal to write outgoing frames.
         :rtype: bool
         """
-        return self.state not in _CLOSING_STATES
-
-    async def _send_frame(self, channel, frame, timeout=None, **kwargs):
-        # type: (int, NamedTuple, Optional[int], Any) -> None
-        """Send a frame over the connection.
 
         :param int channel: The outgoing channel number.
         :param NamedTuple frame: The outgoing frame.
         :param int timeout: An optional timeout value to wait until the socket is ready to send the frame.
-        :rtype: None
         """
         try:
             raise self._error
@@ -489,6 +483,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
     async def _incoming_close(self, channel, frame):
         # type: (int, Tuple[Any, ...]) -> None
         """Process incoming Open frame to finish the connection negotiation.
+
+        :param int channel: The incoming channel number.
+        :param tuple frame: The incoming Close frame.
 
         The incoming frame format is::
 
