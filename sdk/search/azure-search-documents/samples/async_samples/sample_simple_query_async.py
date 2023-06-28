@@ -28,6 +28,7 @@ service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
 index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
 key = os.getenv("AZURE_SEARCH_API_KEY")
 
+
 async def simple_text_query():
     # [START simple_query_async]
     from azure.core.credentials import AzureKeyCredential
@@ -43,5 +44,6 @@ async def simple_text_query():
             print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
     # [END simple_query_async]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(simple_text_query())

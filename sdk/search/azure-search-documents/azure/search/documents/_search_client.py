@@ -33,6 +33,7 @@ from ._headers_mixin import HeadersMixin
 from ._utils import get_authentication_policy
 from ._version import SDK_MONIKER
 
+
 class SearchClient(HeadersMixin):
     """A client to interact with an existing Azure search index.
 
@@ -60,11 +61,7 @@ class SearchClient(HeadersMixin):
     _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
 
     def __init__(
-            self,
-            endpoint: str,
-            index_name: str,
-            credential: Union[AzureKeyCredential, TokenCredential],
-            **kwargs
+        self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any
     ) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = endpoint
@@ -93,9 +90,7 @@ class SearchClient(HeadersMixin):
             )
 
     def __repr__(self) -> str:
-        return "<SearchClient [endpoint={}, index={}]>".format(
-            repr(self._endpoint), repr(self._index_name)
-        )[:1024]
+        return "<SearchClient [endpoint={}, index={}]>".format(repr(self._endpoint), repr(self._index_name))[:1024]
 
     def close(self) -> None:
         """Close the :class:`~azure.search.documents.SearchClient` session."""
@@ -130,48 +125,49 @@ class SearchClient(HeadersMixin):
                 :caption: Get a specific document from the search index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.documents.get(
-            key=key, selected_fields=selected_fields, **kwargs
-        )
+        result = self._client.documents.get(key=key, selected_fields=selected_fields, **kwargs)
         return cast(dict, result)
 
     @distributed_trace
     def search(
-            self,
-            search_text: str,
-            *,
-            include_total_count: Optional[bool] = None,
-            facets: Optional[List[str]] = None,
-            filter: Optional[str] = None,
-            highlight_fields: Optional[str] = None,
-            highlight_post_tag: Optional[str] = None,
-            highlight_pre_tag: Optional[str] = None,
-            minimum_coverage: Optional[float] = None,
-            order_by: Optional[List[str]] = None,
-            query_type: Optional[Union[str, QueryType]] = None,
-            scoring_parameters: Optional[List[str]] = None,
-            scoring_profile: Optional[str] = None,
-            search_fields: Optional[List[str]] = None,
-            search_mode: Optional[Union[str, SearchMode]] = None,
-            query_language: Optional[Union[str, QueryLanguage]] = None,
-            query_speller: Optional[Union[str, QuerySpellerType]] = None,
-            query_answer: Optional[Union[str, QueryAnswerType]] = None,
-            query_answer_count: Optional[int] = None,
-            query_answer_threshold: Optional[float] = None,
-            query_caption: Optional[Union[str, QueryCaptionType]] = None,
-            query_caption_highlight: Optional[bool] = None,
-            semantic_fields: Optional[List[str]] = None,
-            semantic_configuration_name: Optional[str] = None,
-            select: Optional[List[str]] = None,
-            skip: Optional[int] = None,
-            top: Optional[int] = None,
-            scoring_statistics: Optional[Union[str, ScoringStatistics]] = None,
-            session_id: Optional[str] = None,
-            vector:Optional[Vector] = None,
-            semantic_error_handling: Optional[Union[str, SemanticErrorHandling]] = None,
-            semantic_max_wait_in_milliseconds: Optional[int] = None,
-            debug: Optional[Union[str, QueryDebugMode]] = None,
-            **kwargs: Any) -> SearchItemPaged[Dict]:
+        self,
+        search_text: str,
+        *,
+        include_total_count: Optional[bool] = None,
+        facets: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        highlight_fields: Optional[str] = None,
+        highlight_post_tag: Optional[str] = None,
+        highlight_pre_tag: Optional[str] = None,
+        minimum_coverage: Optional[float] = None,
+        order_by: Optional[List[str]] = None,
+        query_type: Optional[Union[str, QueryType]] = None,
+        scoring_parameters: Optional[List[str]] = None,
+        scoring_profile: Optional[str] = None,
+        search_fields: Optional[List[str]] = None,
+        search_mode: Optional[Union[str, SearchMode]] = None,
+        query_language: Optional[Union[str, QueryLanguage]] = None,
+        query_speller: Optional[Union[str, QuerySpellerType]] = None,
+        query_answer: Optional[Union[str, QueryAnswerType]] = None,
+        query_answer_count: Optional[int] = None,
+        query_answer_threshold: Optional[float] = None,
+        query_caption: Optional[Union[str, QueryCaptionType]] = None,
+        query_caption_highlight: Optional[bool] = None,
+        semantic_fields: Optional[List[str]] = None,
+        semantic_configuration_name: Optional[str] = None,
+        select: Optional[List[str]] = None,
+        skip: Optional[int] = None,
+        top: Optional[int] = None,
+        scoring_statistics: Optional[Union[str, ScoringStatistics]] = None,
+        session_id: Optional[str] = None,
+        vector: Optional[List[float]] = None,
+        top_k: Optional[int] = None,
+        vector_fields: Optional[str] = None,
+        semantic_error_handling: Optional[Union[str, SemanticErrorHandling]] = None,
+        semantic_max_wait_in_milliseconds: Optional[int] = None,
+        debug: Optional[Union[str, QueryDebugMode]] = None,
+        **kwargs: Any
+    ) -> SearchItemPaged[Dict]:
         # pylint:disable=too-many-locals, disable=redefined-builtin
         """Search the Azure search index for documents.
 
@@ -277,8 +273,13 @@ class SearchClient(HeadersMixin):
         :keyword debug: Enables a debugging tool that can be used to further explore your Semantic search
          results. Known values are: "disabled", "speller", "semantic", and "all".
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
-        :keyword vector: The query parameters for vector and hybrid search queries.
-        :paramtype vector: str or ~azure.search.documents.models.Vector
+        :keyword vector: The vector representation of a search query.
+        :paramtype vector: List[float]
+        :keyword top_k: Number of nearest neighbors to return as top hits.
+        :paramtype top_k: int
+        :keyword vector_fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
+          searched.
+        :paramtype vector_fields: str
         :rtype:  SearchItemPaged[Dict]
 
         .. admonition:: Example:
@@ -312,18 +313,19 @@ class SearchClient(HeadersMixin):
         filter_arg = filter
         search_fields_str = ",".join(search_fields) if search_fields else None
 
-        answers = query_answer if not query_answer_count else '{}|count-{}'.format(
-            query_answer, query_answer_count
-        )
-        answers = answers if not query_answer_threshold else '{}|threshold-{}'.format(
-            answers, query_answer_threshold
-        )
+        answers = query_answer if not query_answer_count else "{}|count-{}".format(query_answer, query_answer_count)
+        answers = answers if not query_answer_threshold else "{}|threshold-{}".format(answers, query_answer_threshold)
 
-        captions = query_caption if not query_caption_highlight else '{}|highlight-{}'.format(
-            query_caption, query_caption_highlight
+        captions = (
+            query_caption
+            if not query_caption_highlight
+            else "{}|highlight-{}".format(query_caption, query_caption_highlight)
         )
 
         semantic_configuration = semantic_configuration_name
+        vector_option = None
+        if vector or top_k or vector_fields:
+            vector_option = Vector(value=vector, top_k=top_k, fields=vector_fields)
 
         query = SearchQuery(
             search_text=search_text,
@@ -351,7 +353,7 @@ class SearchClient(HeadersMixin):
             top=top,
             session_id=session_id,
             scoring_statistics=scoring_statistics,
-            vector=vector,
+            vector=vector_option,
             semantic_error_handling=semantic_error_handling,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
             debug=debug,
@@ -361,25 +363,24 @@ class SearchClient(HeadersMixin):
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         kwargs["api_version"] = self._api_version
-        return SearchItemPaged(
-            self._client, query, kwargs, page_iterator_class=SearchPageIterator
-        )
+        return SearchItemPaged(self._client, query, kwargs, page_iterator_class=SearchPageIterator)
 
     @distributed_trace
     def suggest(
-            self,
-            search_text: str,
-            suggester_name: str,
-            *,
-            use_fuzzy_matching: Optional[bool] = None,
-            highlight_post_tag: Optional[str] = None,
-            highlight_pre_tag: Optional[str] = None,
-            minimum_coverage: Optional[float] = None,
-            order_by: Optional[List[str]] = None,
-            search_fields: Optional[List[str]] = None,
-            select: Optional[List[str]] = None,
-            top: Optional[int] = None,
-            **kwargs) -> List[Dict]:
+        self,
+        search_text: str,
+        suggester_name: str,
+        *,
+        use_fuzzy_matching: Optional[bool] = None,
+        highlight_post_tag: Optional[str] = None,
+        highlight_pre_tag: Optional[str] = None,
+        minimum_coverage: Optional[float] = None,
+        order_by: Optional[List[str]] = None,
+        search_fields: Optional[List[str]] = None,
+        select: Optional[List[str]] = None,
+        top: Optional[int] = None,
+        **kwargs
+    ) -> List[Dict]:
         """Get search suggestion results from the Azure search index.
 
         :param str search_text: Required. The search text to use to suggest documents. Must be at least 1
@@ -441,26 +442,25 @@ class SearchClient(HeadersMixin):
         if isinstance(select, list):
             query.select(select)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        response = self._client.documents.suggest_post(
-            suggest_request=query.request, **kwargs
-        )
+        response = self._client.documents.suggest_post(suggest_request=query.request, **kwargs)
         results = [r.as_dict() for r in response.results]
         return results
 
     @distributed_trace
     def autocomplete(
-            self,
-            search_text: str,
-            suggester_name: str,
-            *,
-            mode: Optional[Union[str, AutocompleteMode]] = None,
-            use_fuzzy_matching: Optional[bool] = None,
-            highlight_post_tag: Optional[str] = None,
-            highlight_pre_tag: Optional[str] = None,
-            minimum_coverage: Optional[float] = None,
-            search_fields: Optional[List[str]] = None,
-            top: Optional[int] = None,
-            **kwargs) -> List[Dict]:
+        self,
+        search_text: str,
+        suggester_name: str,
+        *,
+        mode: Optional[Union[str, AutocompleteMode]] = None,
+        use_fuzzy_matching: Optional[bool] = None,
+        highlight_post_tag: Optional[str] = None,
+        highlight_pre_tag: Optional[str] = None,
+        minimum_coverage: Optional[float] = None,
+        search_fields: Optional[List[str]] = None,
+        top: Optional[int] = None,
+        **kwargs
+    ) -> List[Dict]:
         """Get search auto-completion results from the Azure search index.
 
         :param str search_text: The search text on which to base autocomplete results.
@@ -517,9 +517,7 @@ class SearchClient(HeadersMixin):
         )
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        response = self._client.documents.autocomplete_post(
-            autocomplete_request=query.request, **kwargs
-        )
+        response = self._client.documents.autocomplete_post(autocomplete_request=query.request, **kwargs)
         results = [r.as_dict() for r in response.results]
         return results
 
@@ -646,9 +644,7 @@ class SearchClient(HeadersMixin):
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch = IndexBatch(actions=actions)
         try:
-            batch_response = self._client.documents.index(
-                batch=batch, error_map=error_map, **kwargs
-            )
+            batch_response = self._client.documents.index(batch=batch, error_map=error_map, **kwargs)
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError:
             if len(actions) == 1:
@@ -658,25 +654,21 @@ class SearchClient(HeadersMixin):
                 actions=actions[:pos], error_map=error_map, **kwargs
             )
             if batch_response_first_half:
-                result_first_half = cast(
-                    List[IndexingResult], batch_response_first_half.results
-                )
+                result_first_half = cast(List[IndexingResult], batch_response_first_half.results)
             else:
                 result_first_half = []
             batch_response_second_half = self._index_documents_actions(
                 actions=actions[pos:], error_map=error_map, **kwargs
             )
             if batch_response_second_half:
-                result_second_half = cast(
-                    List[IndexingResult], batch_response_second_half.results
-                )
+                result_second_half = cast(List[IndexingResult], batch_response_second_half.results)
             else:
                 result_second_half = []
             return result_first_half.extend(result_second_half)
 
-    def __enter__(self):
+    def __enter__(self) -> "SearchClient":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args) -> None:
         self._client.__exit__(*args)

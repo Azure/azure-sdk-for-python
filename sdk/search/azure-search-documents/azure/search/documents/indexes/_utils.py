@@ -43,8 +43,7 @@ def prep_if_none_match(etag: str, match_condition: MatchConditions) -> Optional[
 
 
 def get_access_conditions(
-        model: Any,
-        match_condition: MatchConditions = MatchConditions.Unconditionally
+    model: Any, match_condition: MatchConditions = MatchConditions.Unconditionally
 ) -> Tuple[Dict[int, Any], Dict[str, bool]]:
     error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
 
@@ -75,9 +74,7 @@ def normalize_endpoint(endpoint):
         if not endpoint.lower().startswith("http"):
             endpoint = "https://" + endpoint
         elif not endpoint.lower().startswith("https"):
-            raise ValueError(
-                "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
-            )
+            raise ValueError("Bearer token authentication is not permitted for non-TLS protected (non-https) URLs.")
         return endpoint
     except AttributeError:
         raise ValueError("Endpoint must be a string.")

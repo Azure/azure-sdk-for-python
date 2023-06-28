@@ -20,16 +20,16 @@ class SearchIndexingBufferedSenderBase(HeadersMixin):
     _DEFAULT_MAX_RETRIES = 3
 
     def __init__(
-            self,
-            endpoint: str,
-            index_name: str,
-            credential: Union[AzureKeyCredential, TokenCredential],
-            *,
-            auto_flush: bool = True,
-            initial_batch_action_count: int = _DEFAULT_INITIAL_BATCH_ACTION_COUNT,
-            auto_flush_interval: int = _DEFAULT_AUTO_FLUSH_INTERVAL,
-            max_retries_per_action: int = _DEFAULT_MAX_RETRIES,
-            **kwargs: Any
+        self,
+        endpoint: str,
+        index_name: str,
+        credential: Union[AzureKeyCredential, TokenCredential],
+        *,
+        auto_flush: bool = True,
+        initial_batch_action_count: int = _DEFAULT_INITIAL_BATCH_ACTION_COUNT,
+        auto_flush_interval: int = _DEFAULT_AUTO_FLUSH_INTERVAL,
+        max_retries_per_action: int = _DEFAULT_MAX_RETRIES,
+        **kwargs: Any
     ) -> None:
 
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)

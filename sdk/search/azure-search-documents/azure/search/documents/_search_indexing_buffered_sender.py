@@ -53,7 +53,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     # pylint: disable=too-many-instance-attributes
 
     def __init__(
-            self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any
+        self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any
     ) -> None:
         super(SearchIndexingBufferedSender, self).__init__(
             endpoint=endpoint, index_name=index_name, credential=credential, **kwargs
@@ -159,11 +159,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             results = self._index_documents_actions(actions=actions, timeout=timeout)
             for result in results:
                 try:
-                    action = next(
-                        x
-                        for x in actions
-                        if x.additional_properties.get(self._index_key) == result.key
-                    )
+                    action = next(x for x in actions if x.additional_properties.get(self._index_key) == result.key)
                     if result.succeeded:
                         self._callback_succeed(action)
                     elif is_retryable_status_code(result.status_code):
@@ -240,9 +236,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         self._process_if_needed()
 
     @distributed_trace
-    def merge_or_upload_documents(
-        self, documents: List[Dict], **kwargs
-    ) -> None:
+    def merge_or_upload_documents(self, documents: List[Dict], **kwargs) -> None:
         # pylint: disable=unused-argument
         """Queue merge documents or upload documents actions
 
@@ -272,9 +266,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch = IndexBatch(actions=actions)
         try:
-            batch_response = self._client.documents.index(
-                batch=batch, error_map=error_map, **kwargs
-            )
+            batch_response = self._client.documents.index(batch=batch, error_map=error_map, **kwargs)
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError:
             if len(actions) == 1:
@@ -290,9 +282,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
                 actions=actions[:pos], error_map=error_map, timeout=remaining, **kwargs
             )
             if len(batch_response_first_half) > 0:
-                result_first_half = cast(
-                    List[IndexingResult], batch_response_first_half.results
-                )
+                result_first_half = cast(List[IndexingResult], batch_response_first_half.results)
             else:
                 result_first_half = []
             now = int(time.time())
@@ -303,18 +293,16 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
                 actions=actions[pos:], error_map=error_map, timeout=remaining, **kwargs
             )
             if len(batch_response_second_half) > 0:
-                result_second_half = cast(
-                    List[IndexingResult], batch_response_second_half.results
-                )
+                result_second_half = cast(List[IndexingResult], batch_response_second_half.results)
             else:
                 result_second_half = []
             return result_first_half.extend(result_second_half)
 
-    def __enter__(self):
+    def __enter__(self) -> "SearchIndexingBufferedSender":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args) -> None:
         self.close()
         self._client.__exit__(*args)
 
