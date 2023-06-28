@@ -152,8 +152,6 @@ class QuickQueryStreamer(object):
         self._download_offset += len(next_part)
         return next_part
 
-    next = __next__  # Python 2 compatibility.
-
     def tell(self):
         return self._point
 

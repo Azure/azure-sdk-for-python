@@ -4,6 +4,7 @@
 # ------------------------------------
 
 import pytest
+from azure.ai.textanalytics import AnalyzeSentimentAction
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsPreparer
@@ -28,6 +29,27 @@ class TestAuth(TextAnalyticsTest):
                 {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
 
         response = await text_analytics.detect_language(docs)
+
+    @pytest.mark.live_test_only
+    @TextAnalyticsPreparer()
+    async def test_analyze_active_directory_auth(self, **kwargs):
+        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        token = self.get_credential(TextAnalyticsClient, is_async=True)
+        text_analytics_endpoint_suffix = os.environ.get("TEXTANALYTICS_ENDPOINT_SUFFIX",".cognitiveservices.azure.com")
+        credential_scopes = ["https://{}/.default".format(text_analytics_endpoint_suffix[1:])]
+        text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, token, credential_scopes=credential_scopes)
+
+        docs = ["Microsoft was founded by Bill Gates and Paul Allen."]
+
+        async with text_analytics:
+            poller = await text_analytics.begin_analyze_actions(
+                docs,
+                actions=[AnalyzeSentimentAction()],
+            )
+            result = await poller.result()
+
+            async for res in result:
+                assert res
 
     @TextAnalyticsPreparer()
     async def test_empty_credentials(self, **kwargs):

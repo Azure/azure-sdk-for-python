@@ -99,6 +99,7 @@ class Workspace(Resource):
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
+        self.print_as_yaml = True
         self._discovery_url = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
         self._kind = kwargs.pop("kind", "default")

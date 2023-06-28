@@ -29,11 +29,10 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.virtual_network_gateway_connections.begin_delete(
+    client.virtual_network_gateway_connections.begin_delete(
         resource_group_name="rg1",
         virtual_network_gateway_connection_name="conn1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/VirtualNetworkGatewayConnectionDelete.json

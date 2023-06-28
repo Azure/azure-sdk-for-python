@@ -112,7 +112,9 @@ def authentication_with_api_key_credential_document_model_admin_client():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
+    document_model_admin_client = DocumentModelAdministrationClient(
+        endpoint, AzureKeyCredential(key)
+    )
     # [END create_dt_client_with_key]
     info = document_model_admin_client.get_resource_details()
 
@@ -128,9 +130,9 @@ def authentication_with_azure_active_directory_document_model_admin_client():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     credential = DefaultAzureCredential()
 
-    form_recognizer_endpoint_suffix = os.environ.get("FORMRECOGNIZER_ENDPOINT_SUFFIX",".cognitiveservices.azure.com")
-    credential_scopes = ["https://{}/.default".format(form_recognizer_endpoint_suffix[1:])]
-    document_model_admin_client = DocumentModelAdministrationClient(endpoint, credential, credential_scopes=credential_scopes)
+    document_model_admin_client = DocumentModelAdministrationClient(
+        endpoint, credential
+    )
     # [END create_dt_client_with_aad]
     info = document_model_admin_client.get_resource_details()
 
@@ -138,14 +140,17 @@ def authentication_with_azure_active_directory_document_model_admin_client():
 if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         authentication_with_api_key_credential_document_analysis_client()
         authentication_with_azure_active_directory_document_analysis_client()
         authentication_with_api_key_credential_document_model_admin_client()
         authentication_with_azure_active_directory_document_model_admin_client()
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

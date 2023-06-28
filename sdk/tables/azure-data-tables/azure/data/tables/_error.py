@@ -204,31 +204,35 @@ def _process_table_error(storage_error, table_name=None):
 
 
 def _reprocess_error(decoded_error, identifiers=None):
-    error_code = decoded_error.error_code
-    message = decoded_error.message
-    authentication_failed = "Server failed to authenticate the request"
-    invalid_input = "The number of keys specified in the URI does not match number of key properties for the resource"
-    invalid_query_parameter_value = "Value for one of the query parameters specified in the request URI is invalid"
-    invalid_url = "Request url is invalid"
-    properties_need_value = "The values are not specified for all properties in the entity"
-    table_does_not_exist = "The table specified does not exist"
-    if (error_code == "AuthenticationFailed" and authentication_failed in message or # pylint: disable=too-many-boolean-expressions
-        error_code == "InvalidInput" and invalid_input in message or
-        error_code == "InvalidInput" and invalid_url in message or
-        error_code == "InvalidQueryParameterValue" and invalid_query_parameter_value in message or
-        error_code == "PropertiesNeedValue" and properties_need_value in message or
-        error_code =="TableNotFound" and table_does_not_exist in message
-        ):
-        args_list = list(decoded_error.args)
-        args_list[0] += "\nA possible cause of this error could be that the account URL used to"\
-            "create the Client includes an invalid path, for example the table name. Please check your account URL."
-        decoded_error.args = tuple(args_list)
+    try:
+        error_code = decoded_error.error_code
+        message = decoded_error.message
+        authentication_failed = "Server failed to authenticate the request"
+        invalid_input = "The number of keys specified in the URI does not match number of key properties "\
+            "for the resource"
+        invalid_query_parameter_value = "Value for one of the query parameters specified in the request URI is invalid"
+        invalid_url = "Request url is invalid"
+        properties_need_value = "The values are not specified for all properties in the entity"
+        table_does_not_exist = "The table specified does not exist"
+        if (error_code == "AuthenticationFailed" and authentication_failed in message or # pylint: disable=too-many-boolean-expressions
+            error_code == "InvalidInput" and invalid_input in message or
+            error_code == "InvalidInput" and invalid_url in message or
+            error_code == "InvalidQueryParameterValue" and invalid_query_parameter_value in message or
+            error_code == "PropertiesNeedValue" and properties_need_value in message or
+            error_code =="TableNotFound" and table_does_not_exist in message
+            ):
+            args_list = list(decoded_error.args)
+            args_list[0] += "\nA possible cause of this error could be that the account URL used to"\
+                "create the Client includes an invalid path, for example the table name. Please check your account URL."
+            decoded_error.args = tuple(args_list)
 
-    if (identifiers is not None and error_code == "InvalidXmlDocument" and len(identifiers) > 5):
-        raise ValueError(
-            "Too many access policies provided. The server does not support setting more than 5 access policies"\
-                "on a single resource."
-            )
+        if (identifiers is not None and error_code == "InvalidXmlDocument" and len(identifiers) > 5):
+            raise ValueError(
+                "Too many access policies provided. The server does not support setting more than 5 access policies"\
+                    "on a single resource."
+                )
+    except AttributeError:
+        raise decoded_error
 
 
 class TableTransactionError(HttpResponseError):

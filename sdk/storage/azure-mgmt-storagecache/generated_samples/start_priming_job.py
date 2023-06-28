@@ -29,13 +29,12 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.caches.begin_start_priming_job(
+    client.caches.begin_start_priming_job(
         resource_group_name="scgroup",
         cache_name="sc1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2023-01-01/examples/StartPrimingJob.json
+# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2023-05-01/examples/StartPrimingJob.json
 if __name__ == "__main__":
     main()

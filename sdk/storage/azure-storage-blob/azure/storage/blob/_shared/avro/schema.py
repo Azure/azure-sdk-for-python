@@ -151,7 +151,7 @@ class Schema(with_metaclass(abc.ABCMeta, object)):
           other_props: Optional dictionary of additional properties.
         """
         if data_type not in VALID_TYPES:
-            raise SchemaParseException('%r is not a valid Avro type.' % data_type)
+            raise SchemaParseException(f'{data_type!r} is not a valid Avro type.')
 
         # All properties of this schema, as a map: property name -> property value
         self._props = {}
@@ -243,7 +243,7 @@ class Name(object):
             match = _RE_FULL_NAME.match(self._fullname)
             if match is None:
                 raise SchemaParseException(
-                    'Invalid absolute schema name: %r.' % self._fullname)
+                    f'Invalid absolute schema name: {self._fullname!r}.')
 
             self._name = match.group(1)
             self._namespace = self._fullname[:-(len(self._name) + 1)]
@@ -254,13 +254,12 @@ class Name(object):
             self._namespace = namespace
             self._fullname = (self._name
                               if (not self._namespace) else
-                              '%s.%s' % (self._namespace, self._name))
+                              f'{self._namespace}.{self._name}')
 
             # Validate the fullname:
             if _RE_FULL_NAME.match(self._fullname) is None:
-                raise SchemaParseException(
-                    'Invalid schema name %r inferred from name %r and namespace %r.'
-                    % (self._fullname, self._name, self._namespace))
+                raise SchemaParseException(f"Invalid schema name {self._fullname!r} inferred from "
+                                           f"name {self._name!r} and namespace {self._namespace!r}.")
 
     def __eq__(self, other):
         if not isinstance(other, Name):
@@ -372,10 +371,10 @@ class Names(object):
         """
         if schema.fullname in VALID_TYPES:
             raise SchemaParseException(
-                '%s is a reserved type name.' % schema.fullname)
+                f'{schema.fullname} is a reserved type name.')
         if schema.fullname in self.names:
             raise SchemaParseException(
-                'Avro name %r already exists.' % schema.fullname)
+                f'Avro name {schema.fullname!r} already exists.')
 
         logger.log(DEBUG_VERBOSE, 'Register new name for %r', schema.fullname)
         self._names[schema.fullname] = schema
@@ -407,7 +406,7 @@ class NamedSchema(Schema):
           names: Tracker to resolve and register Avro names.
           other_props: Optional map of additional properties of the schema.
         """
-        assert (data_type in NAMED_TYPES), ('Invalid named type: %r' % data_type)
+        assert (data_type in NAMED_TYPES), (f'Invalid named type: {data_type!r}')
         self._avro_name = names.get_name(name=name, namespace=namespace)
 
         super(NamedSchema, self).__init__(data_type, other_props)
@@ -490,9 +489,9 @@ class Field(object):
           other_props:
         """
         if (not isinstance(name, _str)) or (not name):
-            raise SchemaParseException('Invalid record field name: %r.' % name)
+            raise SchemaParseException(f'Invalid record field name: {name!r}.')
         if (order is not None) and (order not in VALID_FIELD_SORT_ORDERS):
-            raise SchemaParseException('Invalid record field order: %r.' % order)
+            raise SchemaParseException(f'Invalid record field order: {order!r}.')
 
         # All properties of this record field:
         self._props = {}
@@ -585,7 +584,7 @@ class PrimitiveSchema(Schema):
           data_type: Type of the schema to construct. Must be primitive.
         """
         if data_type not in PRIMITIVE_TYPES:
-            raise AvroException('%r is not a valid primitive type.' % data_type)
+            raise AvroException(f'{data_type!r} is not a valid primitive type.')
         super(PrimitiveSchema, self).__init__(data_type, other_props=other_props)
 
     @property
@@ -681,7 +680,7 @@ class EnumSchema(NamedSchema):
         if (len(symbol_set) != len(symbols)
                 or not all(map(lambda symbol: isinstance(symbol, _str), symbols))):
             raise AvroException(
-                'Invalid symbols for enum schema: %r.' % (symbols,))
+                f'Invalid symbols for enum schema: {symbols!r}.')
 
         super(EnumSchema, self).__init__(
             data_type=ENUM,
@@ -810,22 +809,19 @@ class UnionSchema(Schema):
             filter(lambda schema: schema.type in NAMED_TYPES, self._schemas))
         unique_names = frozenset(map(lambda schema: schema.fullname, named_branches))
         if len(unique_names) != len(named_branches):
-            raise AvroException(
-                'Invalid union branches with duplicate schema name:%s'
-                % ''.join(map(lambda schema: ('\n\t - %s' % schema), self._schemas)))
+            schemas = ''.join(map(lambda schema: (f'\n\t - {schema}'), self._schemas))
+            raise AvroException(f'Invalid union branches with duplicate schema name:{schemas}')
 
         # Types are unique within unnamed schemas, and union is not allowed:
         unnamed_branches = tuple(
             filter(lambda schema: schema.type not in NAMED_TYPES, self._schemas))
         unique_types = frozenset(map(lambda schema: schema.type, unnamed_branches))
         if UNION in unique_types:
-            raise AvroException(
-                'Invalid union branches contain other unions:%s'
-                % ''.join(map(lambda schema: ('\n\t - %s' % schema), self._schemas)))
+            schemas = ''.join(map(lambda schema: (f'\n\t - {schema}'), self._schemas))
+            raise AvroException(f'Invalid union branches contain other unions:{schemas}')
         if len(unique_types) != len(unnamed_branches):
-            raise AvroException(
-                'Invalid union branches with duplicate type:%s'
-                % ''.join(map(lambda schema: ('\n\t - %s' % schema), self._schemas)))
+            schemas = ''.join(map(lambda schema: (f'\n\t - {schema}'), self._schemas))
+            raise AvroException(f'Invalid union branches with duplicate type:{schemas}')
 
     @property
     def schemas(self):
@@ -936,7 +932,7 @@ class RecordSchema(NamedSchema):
         for field in fields:
             if field.name in field_map:
                 raise SchemaParseException(
-                    'Duplicate record field name %r.' % field.name)
+                    f'Duplicate record field name {field.name!r}.')
             field_map[field.name] = field
         return field_map
 
@@ -984,7 +980,7 @@ class RecordSchema(NamedSchema):
             )
         else:
             raise SchemaParseException(
-                'Invalid record type: %r.' % record_type)
+                f'Invalid record type: {record_type!r}.')
 
         if record_type in [RECORD, ERROR]:
             avro_name = names.get_name(name=name, namespace=namespace)
@@ -1066,9 +1062,7 @@ def _schema_from_json_string(json_string, names):
     # Look for a known named schema:
     schema = names.get_schema(name=json_string)
     if schema is None:
-        raise SchemaParseException(
-            'Unknown named schema %r, known names: %r.'
-            % (json_string, sorted(names.names)))
+        raise SchemaParseException(f"Unknown named schema {json_string!r}, known names: {sorted(names.names)!r}.")
     return schema
 
 
@@ -1083,7 +1077,7 @@ def _schema_from_json_object(json_object, names):
     data_type = json_object.get('type')
     if data_type is None:
         raise SchemaParseException(
-            'Avro schema JSON descriptor has no "type" property: %r' % json_object)
+            f'Avro schema JSON descriptor has no "type" property: {json_object!r}')
 
     other_props = dict(
         filter_keys_out(items=json_object, keys=SCHEMA_RESERVED_PROPS))
@@ -1119,7 +1113,7 @@ def _schema_from_json_object(json_object, names):
                 other_props=other_props,
             )
         else:
-            raise Exception('Internal error: unknown type %r.' % data_type)
+            raise Exception(f'Internal error: unknown type {data_type!r}.')
 
     elif data_type in VALID_TYPES:
         # Unnamed, non-primitive Avro type:
@@ -1127,9 +1121,7 @@ def _schema_from_json_object(json_object, names):
         if data_type == ARRAY:
             items_desc = json_object.get('items')
             if items_desc is None:
-                raise SchemaParseException(
-                    'Invalid array schema descriptor with no "items" : %r.'
-                    % json_object)
+                raise SchemaParseException(f'Invalid array schema descriptor with no "items" : {json_object!r}.')
             result = ArraySchema(
                 items=schema_from_json_data(items_desc, names),
                 other_props=other_props,
@@ -1138,9 +1130,7 @@ def _schema_from_json_object(json_object, names):
         elif data_type == MAP:
             values_desc = json_object.get('values')
             if values_desc is None:
-                raise SchemaParseException(
-                    'Invalid map schema descriptor with no "values" : %r.'
-                    % json_object)
+                raise SchemaParseException(f'Invalid map schema descriptor with no "values" : {json_object!r}.')
             result = MapSchema(
                 values=schema_from_json_data(values_desc, names=names),
                 other_props=other_props,
@@ -1155,10 +1145,9 @@ def _schema_from_json_object(json_object, names):
             result = ErrorUnionSchema(schemas=error_schemas)
 
         else:
-            raise Exception('Internal error: unknown type %r.' % data_type)
+            raise Exception(f'Internal error: unknown type {data_type!r}.')
     else:
-        raise SchemaParseException(
-            'Invalid JSON descriptor for an Avro schema: %r' % json_object)
+        raise SchemaParseException(f'Invalid JSON descriptor for an Avro schema: {json_object!r}')
     return result
 
 
@@ -1188,7 +1177,7 @@ def schema_from_json_data(json_data, names=None):
     parser = _JSONDataParserTypeMap.get(type(json_data))
     if parser is None:
         raise SchemaParseException(
-            'Invalid JSON descriptor for an Avro schema: %r.' % json_data)
+            f'Invalid JSON descriptor for an Avro schema: {json_data!r}.')
     return parser(json_data, names=names)
 
 
@@ -1210,9 +1199,8 @@ def parse(json_string):
         json_data = json.loads(json_string)
     except Exception as exn:
         raise SchemaParseException(
-            'Error parsing schema from JSON: %r. '
-            'Error message: %r.'
-            % (json_string, exn))
+            f'Error parsing schema from JSON: {json_string!r}. '
+            f'Error message: {exn!r}.')
 
     # Initialize the names object
     names = Names()

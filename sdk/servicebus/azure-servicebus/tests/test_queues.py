@@ -1070,6 +1070,11 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 sender.send_messages(ServiceBusMessage("test session sender", session_id="test"))
+            
+            with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
+                messages = receiver.receive_messages()
+                for message in messages:
+                    receiver.complete_message(message)
     
 
     @pytest.mark.liveTest
@@ -2451,7 +2456,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 self._connection.work()
             else:
                 try:
-                # TODO: update for uamqp
                     self._link.update_pending_deliveries()
                     self._connection.listen(wait=self._socket_timeout, **kwargs)
                 except ValueError:
@@ -2466,6 +2470,72 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 sender._handler._client_run = types.MethodType(_hack_amqp_sender_run, sender._handler)
                 with pytest.raises(OperationTimeoutError):
                     sender.send_messages(ServiceBusMessage("body"), timeout=5)
+
+        if not uamqp_transport:
+            # Amqp
+            with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string,
+                uamqp_transport=uamqp_transport
+            ) as sb_client:
+                with sb_client.get_queue_sender(servicebus_queue.name, socket_timeout=0.6) as sender:
+                    payload = "A" * 250 * 1024
+                    sender.send_messages(ServiceBusMessage(payload))
+
+            if uamqp:
+                transport_type = uamqp.constants.TransportType.AmqpOverWebsocket
+            else:
+                transport_type = TransportType.AmqpOverWebsocket
+            # AmqpOverWebsocket
+            with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string,
+                transport_type=transport_type,
+                uamqp_transport=uamqp_transport
+            ) as sb_client:
+                with sb_client.get_queue_sender(servicebus_queue.name, socket_timeout=0.8) as sender:
+                    payload = "A" * 250 * 1024
+                    sender.send_messages(ServiceBusMessage(payload))
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_queue_send_large_message_receive(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+        # Amqp
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string,
+            uamqp_transport=uamqp_transport
+        ) as sb_client:
+            with sb_client.get_queue_sender(servicebus_queue.name, socket_timeout=0.6) as sender:
+                payload = "A" * 250 * 1024
+                sender.send_messages(ServiceBusMessage(payload))
+
+        if uamqp:
+            transport_type = uamqp.constants.TransportType.AmqpOverWebsocket
+        else:
+            transport_type = TransportType.AmqpOverWebsocket
+        # AmqpOverWebsocket
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string,
+            transport_type=transport_type,
+            uamqp_transport=uamqp_transport
+        ) as sb_client:
+            with sb_client.get_queue_sender(servicebus_queue.name, socket_timeout=0.8) as sender:
+                payload = "A" * 250 * 1024
+                sender.send_messages(ServiceBusMessage(payload))
+
+        # ReceiveMessages
+        with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
+            with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                messages = receiver.receive_messages(max_message_count=5, max_wait_time=5)
+                for message in messages:
+                    if not uamqp_transport:
+                        assert message._delivery_id is not None
+                        assert message._message.data[0].decode("utf-8")  == "A" * 250 * 1024
+                    receiver.complete_message(message)  # complete messages             
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

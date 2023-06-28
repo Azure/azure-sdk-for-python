@@ -20,7 +20,7 @@ from azure.core.exceptions import ResourceNotFoundError
 
 SERVICE_URL_FMT = "https://{}.{}/indexes?api-version=2021-04-30-Preview"
 TIME_TO_SLEEP = 3
-SEARCH_ENDPOINT_SUFFIX = environ.get("SEARCH_ENDPOINT_SUFFIX", "servicebus.windows.net")
+SEARCH_ENDPOINT_SUFFIX = environ.get("SEARCH_ENDPOINT_SUFFIX", "search.windows.net")
 
 SearchEnvVarPreparer = functools.partial(
     EnvironmentVariableLoader,
@@ -50,7 +50,7 @@ def _load_batch(filename):
 
 def _clean_up_indexes(endpoint, api_key):
     from azure.search.documents.indexes import SearchIndexClient
-    client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
+    client = SearchIndexClient(endpoint, AzureKeyCredential(api_key), retry_backoff_factor=60)
 
     # wipe the synonym maps which seem to survive the index
     for map in client.get_synonym_maps():
@@ -67,7 +67,7 @@ def _clean_up_indexes(endpoint, api_key):
 
 def _clean_up_indexers(endpoint, api_key):
     from azure.search.documents.indexes import SearchIndexerClient
-    client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
+    client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key), retry_backoff_factor=60)
     for indexer in client.get_indexers():
         client.delete_indexer(indexer)
     for datasource in client.get_data_source_connection_names():

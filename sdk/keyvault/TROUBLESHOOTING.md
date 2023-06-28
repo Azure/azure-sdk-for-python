@@ -17,11 +17,14 @@ For package-specific troubleshooting guides, see any of the following:
   * [HTTP 401 errors](#http-401-errors)
     * [Frequent HTTP 401 errors in logs](#frequent-http-401-errors-in-logs)
     * [AKV10032: Invalid issuer](#akv10032-invalid-issuer)
-    * [Other authentication issues](#other-authentication-issues)
   * [HTTP 403 errors](#http-403-errors)
     * [Operation not permitted](#operation-not-permitted)
+  * [Other authentication issues](#other-authentication-issues)
+    * [Tenant authentication issues](#tenant-authentication-issues)
+    * [Incorrect challenge resource](#incorrect-challenge-resource)
 * [Other service errors](#other-service-errors)
   * [HTTP 429: Too many requests](#http-429-too-many-requests)
+* [Support](#support)
 
 ## Authentication issues
 
@@ -67,11 +70,6 @@ Package | Minimum Version
 Upgrading to these package versions should resolve any "Invalid Issuer" errors as long as the application or user is a
 member of the resource's tenant.
 
-#### Other authentication issues
-
-If you are using the [azure-identity] package - which contains [DefaultAzureCredential] - to authenticate requests to
-Azure Key Vault, please see the package's [troubleshooting guide][identity_troubleshooting].
-
 ### HTTP 403 errors
 
 HTTP 403 errors indicate the user is not authorized to perform a specific operation in Key Vault or Managed HSM.
@@ -98,7 +96,12 @@ user.
     [Enable logging][identity_logging] and you will see which credential the [DefaultAzureCredential] used as shown
     below, and why previously-attempted credentials were rejected.
 
-### Failing token requests
+### Other authentication issues
+
+If you are using the [azure-identity] package - which contains [DefaultAzureCredential] - to authenticate requests to
+Azure Key Vault, please see the package's [troubleshooting guide][identity_troubleshooting].
+
+#### Tenant authentication issues
 
 Depending on the versions of `azure-keyvault-x` and [azure-identity] you have installed, you may see an error similar
 to:
@@ -107,8 +110,8 @@ to:
 {CredentialType}.get_token failed: request() got an unexpected keyword argument 'tenant_id'
 ```
 
-This indicates that your `azure-keyvault-x` package supports multitenant authentication, but your version of
-[azure-identity] does not. Multitenant authentication is supported by [azure-identity] version 1.8.0 and newer, and is
+This indicates that your `azure-keyvault-x` package supports multi-tenant authentication, but your version of
+[azure-identity] does not. Multi-tenant authentication is supported by [azure-identity] version 1.8.0 and newer, and is
 enabled on the following `azure-keyvault-x` versions or newer:
 
 Package | Minimum Version
@@ -117,6 +120,32 @@ Package | Minimum Version
 `azure-keyvault-certificates` | 4.4.0
 `azure-keyvault-keys` | 4.5.0
 `azure-keyvault-secrets` | 4.4.0
+
+Refer to `azure-identity`'s [troubleshooting guide section on multi-tenant authentication][identity_multitenant] for
+further guidance; read our [release notes][release_notes_tenant] for more information about this change.
+
+#### Incorrect challenge resource
+
+If a `ValueError` is thrown with a message similar to:
+
+```text
+The challenge resource 'myvault.vault.azure.net' does not match the requested domain. Pass `verify_challenge_resource=False` to your client's constructor to disable this verification. See https://aka.ms/azsdk/blog/vault-uri for more information.
+```
+
+Check that the resource is expected -- i.e. that you're not receiving an authentication challenge from an unknown host
+which may indicate an incorrect request URI. If the resource is correct but you're using a mock service or
+non-transparent proxy, provide the `verify_challenge_resource` to your client's constructor; for example:
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
+
+credential = DefaultAzureCredential()
+
+client = SecretClient("https://my-key-vault.vault.azure.net/", credential, verify_challenge_resource=False)
+```
+
+Read our [release notes][release_notes_resource] for more information about this change.
 
 ## Other service errors
 
@@ -141,6 +170,13 @@ key -- this may also improve application throughput.
 
 See the [Azure Key Vault throttling guide][throttling_guide] for more information.
 
+## Support
+
+For additional support, please search our [existing issues](https://github.com/Azure/azure-sdk-for-python/issues) or
+[open a new issue](https://github.com/Azure/azure-sdk-for-python/issues/new/choose).
+You may also find existing answers on community sites like
+[Stack Overflow](https://stackoverflow.com/questions/tagged/azure-keyvault+python).
+
 
 [access_policies]: https://docs.microsoft.com/azure/key-vault/general/assign-access-policy
 [azure-appconfiguration]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/README.md
@@ -149,6 +185,7 @@ See the [Azure Key Vault throttling guide][throttling_guide] for more informatio
 [DefaultAzureCredential]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md#defaultazurecredential
 
 [identity_logging]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md#logging
+[identity_multitenant]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md#troubleshoot-multi-tenant-authentication-issues
 [identity_troubleshooting]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md
 
 [kv_admin_troubleshooting]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/TROUBLESHOOTING.md
@@ -158,5 +195,7 @@ See the [Azure Key Vault throttling guide][throttling_guide] for more informatio
 [kv_secrets_troubleshooting]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-secrets/TROUBLESHOOTING.md
 
 [rbac]: https://docs.microsoft.com/azure/key-vault/general/rbac-guide
+[release_notes_resource]: https://aka.ms/azsdk/blog/vault-uri
+[release_notes_tenant]: https://aka.ms/azsdk/blog/multi-tenant-guidance
 
 [throttling_guide]: https://docs.microsoft.com/azure/key-vault/general/overview-throttling

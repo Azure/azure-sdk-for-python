@@ -7,9 +7,9 @@
 from marshmallow import fields, post_load
 
 from azure.ai.ml._schema import NestedField
+from azure.ai.ml._schema._notification.notification_schema import NotificationSchema
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._schema.schedule.trigger import RecurrenceTriggerSchema
-from azure.ai.ml._schema._notification.notification_schema import NotificationSchema
 
 
 class MaterializationComputeResourceSchema(metaclass=PatchedSchemaMeta):
@@ -27,8 +27,8 @@ class MaterializationSettingsSchema(metaclass=PatchedSchemaMeta):
     notification = NestedField(NotificationSchema)
     resource = NestedField(MaterializationComputeResourceSchema)
     spark_configuration = fields.Dict()
-    offline_enabled = fields.Boolean()
-    online_enabled = fields.Boolean()
+    offline_enabled = fields.Boolean(required=True, allow_none=False)
+    online_enabled = fields.Boolean(required=True, allow_none=False)
 
     @post_load
     def make(self, data, **kwargs):

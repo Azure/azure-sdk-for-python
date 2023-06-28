@@ -9,7 +9,6 @@ from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 from cryptography.hazmat.backends import default_backend
-import six
 
 from .._internal import validate_tenant_id
 from .._internal.client_credential_base import ClientCredentialBase
@@ -118,7 +117,7 @@ def load_pkcs12_certificate(
         )
     except ValueError as ex:
         # mentioning PEM here because we raise this error when certificate_data is garbage
-        six.raise_from(ValueError("Failed to deserialize certificate in PEM or PKCS12 format"), ex)
+        raise ValueError("Failed to deserialize certificate in PEM or PKCS12 format") from ex
     if not private_key:
         raise ValueError("The certificate must include its private key")
     if not cert:
@@ -154,8 +153,9 @@ def get_client_credential(
         raise ValueError('CertificateCredential requires a value for either "certificate_path" or "certificate_data"')
 
     if password:
-        # if password is already bytes, this won't change its encoding
-        password = six.ensure_binary(password, "utf-8")
+        # if password is already bytes, no need to encode.
+        if isinstance(password, str):
+            password = password.encode("utf-8")
     password = cast("Optional[bytes]", password)
 
     if b"-----BEGIN" in certificate_data:
@@ -175,9 +175,9 @@ def get_client_credential(
         try:
             # the JWT needs the whole chain but load_pem_x509_certificate deserializes only the signing cert
             chain = extract_cert_chain(cert.pem_bytes)
-            client_credential["public_certificate"] = six.ensure_str(chain)
+            client_credential["public_certificate"] = chain.decode("utf-8")
         except ValueError as ex:
             # we shouldn't land here--cryptography already loaded the cert and would have raised if it were malformed
-            six.raise_from(ValueError("Malformed certificate"), ex)
+            raise ValueError("Malformed certificate") from ex
 
     return client_credential

@@ -29,11 +29,10 @@ def main():
         subscription_id="20d7082a-0fc7-4468-82bd-542694d5042b",
     )
 
-    response = client.virtual_clusters.begin_delete(
+    client.virtual_clusters.begin_delete(
         resource_group_name="testrg",
         virtual_cluster_name="vc-subnet1-f769ed71-b3ad-491a-a9d5-26eeceaa6be2",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-05-01-preview/examples/VirtualClusterDelete.json
