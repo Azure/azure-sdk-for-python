@@ -158,7 +158,7 @@ class Output(_InputOutputBase):
 
 
 class OutputMetadata(object):
-    """This is the meta datas of Inputs/Outputs."""
+    """This is the meta data of Inputs/Outputs."""
 
     def __init__(
         self,
