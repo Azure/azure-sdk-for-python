@@ -142,8 +142,8 @@ class RoadUseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
 class SearchAddressResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """One of:
-
-
+    
+    
     * POI
     * Street
     * Geography
