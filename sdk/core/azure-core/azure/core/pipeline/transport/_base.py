@@ -154,7 +154,7 @@ class HttpTransport(AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HT
 
         You should always ask the transport to sleep, and not call directly
         the stdlib. This is mostly important in async, as the transport
-        may not use asyncio but other implementation like trio and they their own
+        may not use asyncio but other implementations like trio and they have their own
         way to sleep, but to keep design
         consistent, it's cleaner to always ask the transport to sleep and let the transport
         implementor decide how to do it.
