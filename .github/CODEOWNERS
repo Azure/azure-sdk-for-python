@@ -296,7 +296,7 @@
 /sdk/template/                                                       @scbedd @weshaggard @benbp
 
 # PRLabel: %Cognitive - Text Analytics
-/sdk/textanalytics/                                                  @kristapratico @iscai-msft
+/sdk/textanalytics/                                                  @kristapratico @quentinRobinson @wangyuantao
 
 # PRLabel: %Cognitive - Form Recognizer
 /sdk/formrecognizer/                                                 @kristapratico @iscai-msft @catalinaperalta
@@ -308,10 +308,11 @@
 /sdk/anomalydetector/                                                @conhua @mengaims @juaduan @moreOver0
 
 # PRLabel: %Cognitive - Translator
-/sdk/translation/                                                    @kristapratico @mohamedshabanofficial
+/sdk/translation/                                                    @kristapratico
+/sdk/translation/azure-ai-translation-text/                          @MikeyMCZ
 
 # PRLabel: %Cognitive - Language
-/sdk/cognitivelanguage/                                              @kristapratico @mohamedshabanofficial
+/sdk/cognitivelanguage/                                              @kristapratico @quentinRobinson @wangyuantao
 
 # PRLabel: %Cognitive - Personalizer
 /sdk/personalizer/                                                   @sharathmalladi
