@@ -127,8 +127,9 @@ class IndexDocumentsBatch:
     def enqueue_actions(self, new_actions: Union[IndexAction, List[IndexAction]], **kwargs: Any) -> None:
         # pylint: disable=unused-argument
         """Enqueue a list of index actions to index.
+
         :param new_actions: the actions to enqueue
-        :type new_actions: Union[IndexAction, List[IndexAction]]
+        :type new_actions: IndexAction or List[IndexAction]
         """
         if isinstance(new_actions, IndexAction):
             with self._lock:
