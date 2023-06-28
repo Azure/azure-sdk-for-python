@@ -52,7 +52,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     # pylint: disable=too-many-instance-attributes
 
     def __init__(
-        self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs
+        self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
     ) -> None:
         super(SearchIndexingBufferedSender, self).__init__(
             endpoint=endpoint, index_name=index_name, credential=credential, **kwargs
@@ -294,11 +294,11 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
                 result_second_half = []
             return result_first_half.extend(result_second_half)
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "SearchIndexingBufferedSender":
         await self._client.__aenter__()  # pylint: disable=no-member
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args) -> None:
         await self.close()
         await self._client.__aexit__(*args)
 

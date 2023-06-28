@@ -63,11 +63,11 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 **kwargs
             )
 
-    def __enter__(self):
+    def __enter__(self) -> "SearchIndexerClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args) -> None:
         return self._client.__exit__(*args)
 
     def close(self) -> None:
