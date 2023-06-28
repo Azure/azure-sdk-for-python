@@ -250,6 +250,7 @@ class AMQPClient(
 
         :returns: True if ready, False otherwise.
         :rtype: bool
+        :return: Whether or not the client is ready to start sending and/or receiving
         """
         return True
 
@@ -386,6 +387,7 @@ class AMQPClient(
 
         :return: Whether the authentication handshake is complete.
         :rtype: bool
+        :return: True if the authentication handshake is complete, False otherwise.
         """
         if self._cbs_authenticator and not self._cbs_authenticator.handle_token():
             self._connection.listen(wait=self._socket_timeout)
@@ -400,6 +402,7 @@ class AMQPClient(
 
         :return: Whether the handler is ready to process messages.
         :rtype: bool
+        :return: True if the client is ready to process messages, False otherwise.
         """
         if not self.auth_complete():
             return False
@@ -419,6 +422,7 @@ class AMQPClient(
 
         :return: Whether the connection is still open and ready to be used.
         :rtype: bool
+        :return: Whether the connection is still open and ready to be used for further work.
         :raises: TimeoutError if CBS authentication timeout reached.
         """
         if self._shutdown:
@@ -442,6 +446,7 @@ class AMQPClient(
          to the management request must be received.
         :returns: The response to the management request.
         :rtype: ~pyamqp.message.Message
+        :return: The pyamqp message.
         """
 
         # The method also takes "status_code_field" and "status_description_field"
@@ -577,6 +582,7 @@ class SendClient(AMQPClient):
 
         :return: Whether the client is ready to start receiving messages.
         :rtype: bool
+        :return: True if client is ready to start receiving messages.
         """
         # pylint: disable=protected-access
         if not self._link:
@@ -602,6 +608,7 @@ class SendClient(AMQPClient):
 
         :return: Whether the client can remain open for further work.
         :rtype: bool
+        :return: True if client can remain open for further work.
         """
         self._link.update_pending_deliveries()
         self._connection.listen(wait=self._socket_timeout, **kwargs)
@@ -822,6 +829,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
 
         :return: True if the client is ready to start receiving messages.
         :rtype: bool
+        :return: True if client is ready to receive messages, False otherwise.
         """
         # pylint: disable=protected-access
         if not self._link:
@@ -849,6 +857,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
 
         :return: Whether the client can remain open for further work.
         :rtype: bool
+        :return: True if client can remain open for further work, False otherwise.
         """
         try:
             if self._link.current_link_credit == 0:
@@ -866,6 +875,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         Additionally if the client is retrieving messages for a batch
         or iterator, the message will be added to an internal queue.
 
+        :prarm NamedTuple frame: Received frame.
         :param message: Received message.
         :type message: ~pyamqp.message.Message
         :param frame: Received frame.
