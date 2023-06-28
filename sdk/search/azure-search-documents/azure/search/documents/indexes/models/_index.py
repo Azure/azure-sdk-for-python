@@ -214,7 +214,6 @@ class SearchField(_serialization.Model):
         self.vector_search_dimensions = kwargs.get("vector_search_dimensions", None)
         self.vector_search_configuration = kwargs.get("vector_search_configuration", None)
 
-
     def _to_generated(self):
         fields = [pack_search_field(x) for x in self.fields] if self.fields else None
         retrievable = not self.hidden if self.hidden is not None else None
@@ -242,16 +241,8 @@ class SearchField(_serialization.Model):
         if not search_field:
             return None
         # pylint:disable=protected-access
-        fields = (
-            [SearchField._from_generated(x) for x in search_field.fields]
-            if search_field.fields
-            else None
-        )
-        hidden = (
-            not search_field.retrievable
-            if search_field.retrievable is not None
-            else None
-        )
+        fields = [SearchField._from_generated(x) for x in search_field.fields] if search_field.fields else None
+        hidden = not search_field.retrievable if search_field.retrievable is not None else None
         try:
             normalizer = search_field.normalizer_name
         except AttributeError:
@@ -590,16 +581,12 @@ class SearchIndex(_serialization.Model):
 
     def _to_generated(self):
         if self.analyzers:
-            analyzers = [
-                pack_analyzer(x) for x in self.analyzers  # type: ignore
-            ]  # mypy: ignore
+            analyzers = [pack_analyzer(x) for x in self.analyzers]  # type: ignore  # mypy: ignore
         else:
             analyzers = None
         if self.tokenizers:
             tokenizers = [
-                x._to_generated()  # pylint:disable=protected-access
-                if isinstance(x, PatternTokenizer)
-                else x
+                x._to_generated() if isinstance(x, PatternTokenizer) else x  # pylint:disable=protected-access
                 for x in self.tokenizers
             ]
         else:
@@ -621,9 +608,7 @@ class SearchIndex(_serialization.Model):
             char_filters=self.char_filters,
             normalizers=self.normalizers,
             # pylint:disable=protected-access
-            encryption_key=self.encryption_key._to_generated()
-            if self.encryption_key
-            else None,
+            encryption_key=self.encryption_key._to_generated() if self.encryption_key else None,
             similarity=self.similarity,
             semantic_settings=self.semantic_settings,
             e_tag=self.e_tag,
@@ -635,9 +620,7 @@ class SearchIndex(_serialization.Model):
         if not search_index:
             return None
         if search_index.analyzers:
-            analyzers = [
-                unpack_analyzer(x) for x in search_index.analyzers  # type: ignore
-            ]
+            analyzers = [unpack_analyzer(x) for x in search_index.analyzers]  # type: ignore
         else:
             analyzers = None
         if search_index.tokenizers:
@@ -650,9 +633,7 @@ class SearchIndex(_serialization.Model):
         else:
             tokenizers = None
         if search_index.fields:
-            fields = [
-                SearchField._from_generated(x) for x in search_index.fields  # pylint:disable=protected-access
-            ]
+            fields = [SearchField._from_generated(x) for x in search_index.fields]  # pylint:disable=protected-access
         else:
             fields = None
         try:
@@ -672,9 +653,7 @@ class SearchIndex(_serialization.Model):
             char_filters=search_index.char_filters,
             normalizers=normalizers,
             # pylint:disable=protected-access
-            encryption_key=SearchResourceEncryptionKey._from_generated(
-                search_index.encryption_key
-            ),
+            encryption_key=SearchResourceEncryptionKey._from_generated(search_index.encryption_key),
             similarity=search_index.similarity,
             semantic_settings=search_index.semantic_settings,
             e_tag=search_index.e_tag,

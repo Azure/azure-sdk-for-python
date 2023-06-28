@@ -14,6 +14,7 @@ def _flatten_args(args: Union[List[Dict], List[List[Dict]]]) -> List[Dict]:
         return args[0]
     return args
 
+
 class IndexDocumentsBatch:
     """Represent a batch of update operations for documents in an Azure
     Search index.
@@ -127,10 +128,7 @@ class IndexDocumentsBatch:
                 self._actions.extend(new_actions)
 
     async def _extend_batch(self, documents: List[Dict], action_type: str) -> List[IndexAction]:
-        new_actions = [
-            IndexAction(additional_properties=document, action_type=action_type)
-            for document in documents
-        ]
+        new_actions = [IndexAction(additional_properties=document, action_type=action_type) for document in documents]
         async with self._lock:
             self._actions.extend(new_actions)
         return new_actions

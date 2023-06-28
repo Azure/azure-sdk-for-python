@@ -28,6 +28,7 @@ service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
 index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
 key = os.getenv("AZURE_SEARCH_API_KEY")
 
+
 async def filter_query():
     # [START filter_query_async]
     from azure.core.credentials import AzureKeyCredential
@@ -41,7 +42,7 @@ async def filter_query():
             search_text="WiFi",
             filter="Address/StateProvince eq 'FL' and Address/Country eq 'USA'",
             select=",".join(select),
-            order_by="Rating desc"
+            order_by="Rating desc",
         )
 
         print("Florida hotels containing 'WiFi', sorted by Rating:")
@@ -49,5 +50,6 @@ async def filter_query():
             print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
     # [END filter_query_async]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(filter_query())
