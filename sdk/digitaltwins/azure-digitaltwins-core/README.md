@@ -28,6 +28,16 @@ authentication as demonstrated below.
 
 ### How to use
 
+#### Import the packages
+Once the modules are installed, you can use them in your Python code by importing them as shown above. 
+For example, you could use the following code to create a Digital Twins Client and authenticate to an Azure Digital Twins instance:
+
+```Bash
+from azure.identity import DefaultAzureCredential
+from azure.digitaltwins.core import DigitalTwinsClient
+```
+
+
 #### Authentication, permission
 
 To create a new digital twins client, you need the endpoint to an Azure Digital Twin instance and credentials.
@@ -65,7 +75,7 @@ You can learn more about Azure Digital Twins by visiting [Azure Digital Twins Do
 
 ## Examples
 
-You can explore the digital twins APIs (using the client library) using the samples project.
+You can explore the digital twins APIs (using the client library) using the samples project. More samples on DigitalTwins are available [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/digitaltwins/azure-mgmt-digitaltwins/generated_samples).
 
 The samples project demonstrates the following:
 
