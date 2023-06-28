@@ -62,7 +62,7 @@ class SearchClient(HeadersMixin):
     _ODATA_ACCEPT: str = "application/json;odata.metadata=none"
 
     def __init__(
-        self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs
+        self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
     ) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._index_documents_batch = IndexDocumentsBatch()
@@ -666,9 +666,9 @@ class SearchClient(HeadersMixin):
                 result_second_half = []
             return result_first_half.extend(result_second_half)
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "SearchClient":
         await self._client.__aenter__()  # pylint: disable=no-member
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args) -> None:
         await self._client.__aexit__(*args)
