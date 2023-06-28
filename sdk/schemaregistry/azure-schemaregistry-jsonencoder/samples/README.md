@@ -5,7 +5,7 @@ languages:
 products:
   - azure
   - azure-event-hubs
-urlFragment: schemaregistry-jsonschemaencoder-samples
+urlFragment: schemaregistry-jsonencoder-samples
 ---
 
 # Azure Schema Registry JSON Schema Encoder library for Python Samples
@@ -52,7 +52,7 @@ pip install azure-eventhub>=5.9.0
 
 ## Next steps
 
-Check out the [API reference documentation][api_reference] to learn more about
+Check out the API reference documentation to learn more about
 what you can do with the Azure Schema Registry JSON Schema Encoder library.
 
 <!-- LINKS -->
@@ -62,4 +62,4 @@ what you can do with the Azure Schema Registry JSON Schema Encoder library.
 [encode_and_decode_event_data_message_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonencoder/samples/async_samples/encode_and_decode_event_data_message_async.py
 [eventhub_send_integration_async_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonencoder/samples/async_samples/eventhub_send_integration_async.py
 [eventhub_receive_integration_async_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonencoder/samples/async_samples/eventhub_receive_integration_async.py
-[api_reference]: https://docs.microsoft.com/python/api/overview/azure/schemaregistry-jsonschemaencoder-readme
+<!-- [api_reference]: https://docs.microsoft.com/python/api/overview/azure/schemaregistry-jsonencoder-readme -->

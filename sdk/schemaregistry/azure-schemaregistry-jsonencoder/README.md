@@ -4,7 +4,7 @@ Azure Schema Registry is a schema repository service hosted by Azure Event Hubs,
 and management. This package provides an JSON encoder capable of encoding and decoding payloads containing
 Schema Registry schema identifiers and corresponding encoded content.
 
-[Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_reference] | [Samples][sr_json_samples] | [Changelog][change_log]
+[Source code][source_code] | Package (PyPi) | API reference documentation | [Samples][sr_json_samples] | [Changelog][change_log]
 
 ## _Disclaimer_
 
@@ -340,13 +340,13 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 <!-- LINKS -->
 [pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/project/azure-schemaregistry-jsonencoder/
+<!-- [pypi]: https://pypi.org/project/azure-schemaregistry-jsonencoder/ -->
 [python]: https://www.python.org/downloads/
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [azure_sub]: https://azure.microsoft.com/free/
 [python_logging]: https://docs.python.org/3/library/logging.html
 [sr_json_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonencoder/samples
-[api_reference]: https://docs.microsoft.com/python/api/overview/azure/schemaregistry-jsonschemaencoder-readme
+<!-- [api_reference]: https://docs.microsoft.com/python/api/overview/azure/schemaregistry-jsonencoder-readme -->
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonencoder
 [change_log]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-jsonencoder/CHANGELOG.md
 [schemaregistry_client]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry
