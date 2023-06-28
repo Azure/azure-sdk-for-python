@@ -4,7 +4,7 @@
 
 # pylint: disable=unused-argument,no-self-use
 
-from marshmallow import fields, validate
+from marshmallow import fields, post_dump, validate
 
 from azure.ai.ml._schema import NestedField
 from azure.ai.ml._schema.core.schema import YamlFileSchema
@@ -23,3 +23,7 @@ class FeatureSetSchema(YamlFileSchema):
     description = fields.Str()
     tags = fields.Dict(keys=fields.Str(), values=fields.Str())
     materialization_settings = NestedField(MaterializationSettingsSchema)
+
+    @post_dump
+    def remove_empty_values(self, data, **kwargs):
+        return {key: value for key, value in data.items() if value}
