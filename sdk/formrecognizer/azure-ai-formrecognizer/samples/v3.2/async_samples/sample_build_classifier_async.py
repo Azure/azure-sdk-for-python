@@ -34,7 +34,7 @@ async def sample_build_classifier_async():
     from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
     from azure.ai.formrecognizer import (
         ClassifierDocumentTypeDetails,
-        AzureBlobContentSource,
+        AzureBlobSource,
         AzureBlobFileListSource,
     )
     from azure.core.credentials import AzureKeyCredential
@@ -48,16 +48,15 @@ async def sample_build_classifier_async():
     )
 
     async with document_model_admin_client:
-        # pass either a azure_blob_source or azure_blob_file_list_source
         poller = await document_model_admin_client.begin_build_document_classifier(
             doc_types={
                 "IRS-1040-A": ClassifierDocumentTypeDetails(
-                    azure_blob_source=AzureBlobContentSource(
+                    source=AzureBlobSource(
                         container_url=container_sas_url, prefix="IRS-1040-A/train"
                     )
                 ),
                 "IRS-1040-D": ClassifierDocumentTypeDetails(
-                    azure_blob_file_list_source=AzureBlobFileListSource(
+                    source=AzureBlobFileListSource(
                         container_url=container_sas_url, file_list="IRS-1040-D.jsonl"
                     )
                 ),
@@ -69,14 +68,9 @@ async def sample_build_classifier_async():
         print(f"API version used to build the classifier model: {result.api_version}")
         print(f"Classifier description: {result.description}")
         print(f"Document classes used for training the model:")
-        for doc_type, source in result.doc_types.items():
+        for doc_type, details in result.doc_types.items():
             print(f"Document type: {doc_type}")
-            blob_source = (
-                source.azure_blob_source
-                if source.azure_blob_source
-                else source.azure_blob_file_list_source
-            )
-            print(f"Container source: {blob_source.container_url}\n")
+            print(f"Container source: {details.source.container_url}\n")
     # [END build_classifier_async]
 
 

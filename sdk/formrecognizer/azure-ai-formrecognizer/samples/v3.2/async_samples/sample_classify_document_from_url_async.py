@@ -68,7 +68,7 @@ async def main():
         from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
         from azure.ai.formrecognizer import (
             ClassifierDocumentTypeDetails,
-            AzureBlobContentSource,
+            AzureBlobSource,
         )
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
@@ -82,13 +82,13 @@ async def main():
             poller = await document_model_admin_client.begin_build_document_classifier(
                 doc_types={
                     "IRS-1040-A": ClassifierDocumentTypeDetails(
-                        azure_blob_source=AzureBlobContentSource(
+                        source=AzureBlobSource(
                             container_url=blob_container_sas_url,
                             prefix="IRS-1040-A/train",
                         )
                     ),
                     "IRS-1040-D": ClassifierDocumentTypeDetails(
-                        azure_blob_source=AzureBlobContentSource(
+                        source=AzureBlobSource(
                             container_url=blob_container_sas_url,
                             prefix="IRS-1040-D/train",
                         )

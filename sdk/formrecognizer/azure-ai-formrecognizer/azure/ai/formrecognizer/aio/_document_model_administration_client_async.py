@@ -29,6 +29,7 @@ from .._api_versions import DocumentAnalysisApiVersion
 from .._polling import DocumentModelAdministrationPolling
 from .._models import (
     ModelBuildMode,
+    ClassifierDocumentTypeDetails,
     DocumentClassifierDetails,
     DocumentModelDetails,
     DocumentModelSummary,
@@ -37,7 +38,6 @@ from .._models import (
     ResourceDetails,
     TargetAuthorization,
 )
-from .._generated.models import ClassifierDocumentTypeDetails
 
 
 class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):

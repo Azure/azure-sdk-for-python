@@ -29,6 +29,7 @@ from ._form_base_client import FormRecognizerClientBase
 from ._document_analysis_client import DocumentAnalysisClient
 from ._models import (
     ModelBuildMode,
+    ClassifierDocumentTypeDetails,
     DocumentClassifierDetails,
     DocumentModelDetails,
     DocumentModelSummary,
@@ -37,7 +38,6 @@ from ._models import (
     ResourceDetails,
     TargetAuthorization,
 )
-from ._generated.models import ClassifierDocumentTypeDetails
 
 
 class DocumentModelAdministrationClient(FormRecognizerClientBase):
@@ -628,11 +628,21 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if classifier_id is None:
             classifier_id = str(uuid.uuid4())
 
+        _doc_types = {}
+        for doc, details in doc_types.items():
+            _source = None
+            if hasattr(details.source, "prefix"):
+                _source = self._generated_models.ClassifierDocumentTypeDetails(
+                    azure_blob_source=self._generated_models.AzureBlobContentSource(container_url=details.source.container_url, prefix=details.source.prefix))
+            elif hasattr(details.source, "file_list"):
+                _source = self._generated_models.ClassifierDocumentTypeDetails(
+                    azure_blob_file_list_source=self._generated_models.AzureBlobFileListSource(container_url=details.source.container_url, file_list=details.source.file_list))
+            _doc_types[doc] = _source
         return self._client.document_classifiers.begin_build_classifier(
             build_request=self._generated_models.BuildDocumentClassifierRequest(
                 classifier_id=classifier_id,
                 description=description,
-                doc_types=doc_types,
+                doc_types=_doc_types,
             ),
             cls=cls,
             continuation_token=continuation_token,

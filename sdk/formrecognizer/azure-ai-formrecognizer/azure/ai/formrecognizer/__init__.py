@@ -44,6 +44,9 @@ from ._models import (
     CurrencyValue,
     CustomDocumentModelsDetails,
     ModelBuildMode,
+    ClassifierDocumentTypeDetails,
+    AzureBlobSource,
+    AzureBlobFileListSource,
     DocumentClassifierDetails,
     DocumentField,
     DocumentKeyValuePair,
@@ -71,11 +74,6 @@ from ._models import (
     DocumentFormula,
     DocumentBarcode,
     DocumentAnnotation,
-)
-from ._generated.models import (  # patched models
-    ClassifierDocumentTypeDetails,
-    AzureBlobFileListSource,
-    AzureBlobContentSource,
 )
 from ._api_versions import FormRecognizerApiVersion, DocumentAnalysisApiVersion
 
@@ -147,7 +145,7 @@ __all__ = [
     "TargetAuthorization",
     "ClassifierDocumentTypeDetails",
     "AzureBlobFileListSource",
-    "AzureBlobContentSource",
+    "AzureBlobSource",
     "QuotaDetails",
     "DocumentFormula",
     "DocumentBarcode",
