@@ -90,7 +90,7 @@ class BlobCheckpointStore(CheckpointStore):
         :param container_name:
             The container name for the blob.
         :type container_name: str
-        :param credential:
+        :param any credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account
@@ -156,7 +156,7 @@ class BlobCheckpointStore(CheckpointStore):
         try:
             self._upload_ownership(updated_ownership, **kwargs)
             return updated_ownership
-        except (ResourceModifiedError, ResourceExistsError):
+        except (ResourceModifiedError, ResourceExistsError) as exc:
             logger.info(
                 "EventProcessor instance %r of namespace %r eventhub %r consumer group %r "
                 "lost ownership to partition %r",
@@ -166,7 +166,7 @@ class BlobCheckpointStore(CheckpointStore):
                 updated_ownership["consumer_group"],
                 updated_ownership["partition_id"],
             )
-            raise OwnershipLostError()
+            raise OwnershipLostError() from exc
         except Exception as error:  # pylint:disable=broad-except
             logger.warning(
                 "An exception occurred when EventProcessor instance %r claim_ownership for "
@@ -191,7 +191,8 @@ class BlobCheckpointStore(CheckpointStore):
         :param str eventhub_name: The name of the specific Event Hub the partition ownerships are associated with,
          relative to the Event Hubs namespace that contains it.
         :param str consumer_group: The name of the consumer group the ownerships are associated with.
-        :rtype: Iterable[Dict[str, Any]], Iterable of dictionaries containing partition ownership information:
+        :rtype: Iterable[Dict[str, Any]]
+        :return: Iterable of dictionaries containing partition ownership information:
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
                   The format is like "<namespace>.servicebus.windows.net".
@@ -241,7 +242,8 @@ class BlobCheckpointStore(CheckpointStore):
         """Tries to claim ownership for a list of specified partitions.
 
         :param Iterable[Dict[str,Any]] ownership_list: Iterable of dictionaries containing all the ownerships to claim.
-        :rtype: Iterable[Dict[str,Any]], Iterable of dictionaries containing partition ownership information:
+        :rtype: Iterable[Dict[str,Any]]
+        :return: Iterable of dictionaries containing partition ownership information:
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
                   The format is like "<namespace>.servicebus.windows.net".
@@ -316,7 +318,8 @@ class BlobCheckpointStore(CheckpointStore):
         :param str eventhub_name: The name of the specific Event Hub the checkpoints are associated with, relative to
          the Event Hubs namespace that contains it.
         :param str consumer_group: The name of the consumer group the checkpoints are associated with.
-        :rtype: Iterable[Dict[str,Any]], Iterable of dictionaries containing partition checkpoint information:
+        :rtype: Iterable[Dict[str,Any]]
+        :return: Iterable of dictionaries containing partition checkpoint information:
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
                   The format is like "<namespace>.servicebus.windows.net".
