@@ -160,7 +160,7 @@ class JsonSchemaEncoder(object):
         self,
         content: Mapping[str, Any],
         *,
-        schema: Optional[str] = None,
+        schema: Optional[Union[str, bytes, Callable[[Mapping[str, Any]], Mapping[str, Any]]]] = None,
         message_type: Type[MessageType],
         validate: Optional[Union[Callable[[Mapping[str, Any], Mapping[str, Any]], None], Literal[False]]] = False,
         request_options: Optional[Dict[str, Any]] = None,
@@ -173,64 +173,12 @@ class JsonSchemaEncoder(object):
         self,
         content: Mapping[str, Any],
         *,
-        schema: bytes,
-        message_type: Type[MessageType],
-        validate: Optional[Union[Callable[[Mapping[str, Any], Mapping[str, Any]], None], Literal[False]]] = False,
-        request_options: Optional[Dict[str, Any]] = None,
-        **kwargs: Any,
-    ) -> MessageType:
-        ...
-
-    @overload
-    def encode(
-        self,
-        content: Mapping[str, Any],
-        *,
-        schema: Callable[[Mapping[str, Any]], Mapping[str, Any]],
-        message_type: Type[MessageType],
-        validate: Optional[Union[Callable[[Mapping[str, Any], Mapping[str, Any]], None], Literal[False]]] = False,
-        request_options: Optional[Dict[str, Any]] = None,
-        **kwargs: Any,
-    ) -> MessageType:
-        ...
-
-    @overload
-    def encode(
-        self,
-        content: Mapping[str, Any],
-        *,
-        schema: Optional[str] = None,
+        schema: Optional[Union[str, bytes, Callable[[Mapping[str, Any]], Mapping[str, Any]]]] = None,
         message_type: None = None,
         validate: Optional[Union[Callable[[Mapping[str, Any], Mapping[str, Any]], None], Literal[False]]] = None,
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> MessageContent:
-        ...
-
-    @overload
-    def encode(
-        self,
-        content: Mapping[str, Any],
-        *,
-        schema: bytes,
-        message_type: None = None,
-        validate: Optional[Union[Callable[[Mapping[str, Any], Mapping[str, Any]], None], Literal[False]]] = None,
-        request_options: Optional[Dict[str, Any]] = None,
-        **kwargs: Any,
-    ) -> MessageType:
-        ...
-
-    @overload
-    def encode(
-        self,
-        content: Mapping[str, Any],
-        *,
-        schema: Callable[[Mapping[str, Any]], Mapping[str, Any]],
-        message_type: None = None,
-        validate: Optional[Union[Callable[[Mapping[str, Any], Mapping[str, Any]], None], Literal[False]]] = None,
-        request_options: Optional[Dict[str, Any]] = None,
-        **kwargs: Any,
-    ) -> MessageType:
         ...
 
     def encode(
