@@ -7,16 +7,19 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import PipelineClient
-from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest, HttpResponse
 
 from . import models as _models
 from ._configuration import MapsRenderClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import RenderOperations
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
 
 
 class MapsRenderClient:  # pylint: disable=client-accepts-api-version-keyword
@@ -25,7 +28,7 @@ class MapsRenderClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar render: RenderOperations operations
     :vartype render: azure.maps.render.operations.RenderOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param client_id: Specifies which account is intended for usage in conjunction with the Azure
      AD security model.  It represents a unique ID for the Azure Maps account and can be retrieved
      from the Azure Maps management  plane Account API. To use Azure AD security in Azure Maps see
@@ -40,7 +43,7 @@ class MapsRenderClient:  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(
         self,
-        credential: AzureKeyCredential,
+        credential: "TokenCredential",
         client_id: Optional[str] = None,
         *,
         endpoint: str = "https://atlas.microsoft.com",

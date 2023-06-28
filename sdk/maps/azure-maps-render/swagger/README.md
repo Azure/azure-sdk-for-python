@@ -30,6 +30,7 @@ license-header: MICROSOFT_MIT_NO_VERSION
 credential-scopes: https://atlas.microsoft.com/.default
 clear-output-folder: true
 python: true
+add-credential: true
 title: MapsRenderClient
 disable-async-iterators: true
 python-sdks-folder: $(python-sdks-folder)
