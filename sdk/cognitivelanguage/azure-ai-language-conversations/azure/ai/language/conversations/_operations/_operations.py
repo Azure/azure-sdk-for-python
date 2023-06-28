@@ -41,7 +41,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_conversation_analysis_analyze_conversation_request(**kwargs: Any) -> HttpRequest:
+def build_conversation_analysis_analyze_conversation_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -63,7 +63,7 @@ def build_conversation_analysis_analyze_conversation_request(**kwargs: Any) -> H
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_analysis_conversation_analysis_request(**kwargs: Any) -> HttpRequest:
+def build_conversation_analysis_conversation_analysis_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -85,7 +85,7 @@ def build_conversation_analysis_conversation_analysis_request(**kwargs: Any) -> 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinABC):
+class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinABC):  # pylint: disable=name-too-long
     @overload
     def analyze_conversation(self, task: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         """Analyzes the input conversation utterance.
