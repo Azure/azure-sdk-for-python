@@ -28,4 +28,4 @@ stages:
           Location: 'usgovarizona'
         China:
           SubscriptionConfiguration: $(sub-config-cn-test-resources)
-          Location: 'chinanorth2'
+          Location: 'chinanorth3'

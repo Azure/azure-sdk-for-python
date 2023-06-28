@@ -14,7 +14,7 @@ stages:
           SubscriptionConfiguration: $(sub-config-gov-test-resources)
         China:
           SubscriptionConfiguration: $(sub-config-cn-test-resources)
-          Location: 'chinanorth2'
+          Location: 'chinanorth3'
       MatrixReplace:
         - TestSamples=.*/true
       MatrixFilters:
