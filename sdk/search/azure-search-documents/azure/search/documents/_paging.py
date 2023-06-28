@@ -88,7 +88,7 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         """Return answers.
 
         :return: answers
-        :rtype: list[~azure.search.documents.models.AnswerResult]
+        :rtype: list[~azure.search.documents.models.AnswerResult] or None
         """
         return self._first_iterator_instance().get_answers()
 
