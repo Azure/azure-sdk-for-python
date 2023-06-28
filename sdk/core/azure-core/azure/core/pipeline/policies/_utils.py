@@ -70,5 +70,10 @@ def get_retry_after(response):
     return None
 
 
-def get_domain(url):
+def get_domain(url: str) -> str:
+    """Get the domain of an url.
+    :param str url: The url.
+    :rtype: str
+    :return: The domain of the url.
+    """
     return str(urlparse(url).netloc).lower()

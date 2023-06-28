@@ -40,6 +40,12 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def domain_changed(original_domain: str, url: str) -> bool:
+    """Checks if the domain has changed.
+    :param str original_domain: The original domain.
+    :param str url: The new url.
+    :rtype: bool
+    :return: Whether the domain has changed.
+    """
     domain = get_domain(url)
     if not original_domain:
         return False
