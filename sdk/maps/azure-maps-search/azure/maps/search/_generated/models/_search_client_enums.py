@@ -49,6 +49,7 @@ class EntryPointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MINOR = "minor"
 
 class GeographicEntityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
     COUNTRY = "Country"
     COUNTRY_SUBDIVISION = "CountrySubdivision"
     COUNTRY_SECONDARY_SUBDIVISION = "CountrySecondarySubdivision"
@@ -75,9 +76,11 @@ class GeoJsonObjectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     GEO_JSON_FEATURE_COLLECTION = "FeatureCollection"  #: ``GeoJSON FeatureCollection`` object.
 
 class JsonFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
     JSON = "json"  #: `The JavaScript Object Notation Data Interchange Format <https://tools.ietf.org/html/rfc8259>`_.
 
 class LocalizedMapView(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
     AE = "AE"  #: United Arab Emirates (Arabic View).
     AR = "AR"  #: Argentina (Argentinian View).
     BH = "BH"  #: Bahrain (Arabic View).
@@ -106,9 +109,11 @@ class MatchType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STREET = "Street"
 
 class OperatingHoursRange(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
     NEXT_SEVEN_DAYS = "nextSevenDays"  #: Shows the hours of operation for the next week, starting with the current day in the local time of the POI.
 
 class PointOfInterestExtendedPostalCodes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
     POI = "POI"
     NONE = "None"
 
@@ -120,6 +125,7 @@ class QueryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     GLOBAL_ENUM = "NON_NEAR"  #: Search was performed globally, without biasing to a certain latitude and longitude, and no defined radius.
 
 class ResponseFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
     JSON = "json"  #: `The JavaScript Object Notation Data Interchange Format <https://tools.ietf.org/html/rfc8259>`_.
     XML = "xml"  #: `The Extensible Markup Language <https://www.w3.org/TR/xml/>`_.
 
@@ -136,6 +142,8 @@ class RoadUseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
 class SearchAddressResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """One of:
+
+
     * POI
     * Street
     * Geography
@@ -152,6 +160,7 @@ class SearchAddressResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     CROSS_STREET = "Cross Street"
 
 class SearchIndexes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
     ADDRESS = "Addr"  #: Address range interpolation.
     GEOGRAPHIES = "Geo"  #: Geographies.
     POINT_ADDRESSES = "PAD"  #: Point Addresses.
