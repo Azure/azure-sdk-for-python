@@ -24,19 +24,24 @@ from . import http_challenge_cache as ChallengeCache
 from .challenge_auth_policy import _enforce_tls, _update_challenge
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
+    from typing import Optional
     from azure.core.credentials import AccessToken
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
 class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
-    """policy for handling HTTP authentication challenges"""
+    """Policy for handling HTTP authentication challenges.
+
+    :param credential: An object which can provide an access token for the vault, such as a credential from
+        :mod:`azure.identity.aio`
+    :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
+    """
 
     def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs) -> None:
         super().__init__(credential, *scopes, **kwargs)
         self._credential = credential
-        self._token = None  # type: Optional[AccessToken]
+        self._token: "Optional[AccessToken]" = None
         self._verify_challenge_resource = kwargs.pop("verify_challenge_resource", True)
 
     async def on_request(self, request: "PipelineRequest") -> None:

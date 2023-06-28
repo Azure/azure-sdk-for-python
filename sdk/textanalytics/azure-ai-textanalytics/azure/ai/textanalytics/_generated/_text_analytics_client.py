@@ -59,10 +59,10 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
-            'analyze_text': '2022-05-01',
-            'analyze_text_job_status': '2022-05-01',
-            'begin_analyze_text_cancel_job': '2022-05-01',
-            'begin_analyze_text_submit_job': '2022-05-01',
+            'analyze_text': '2023-04-01',
+            'analyze_text_job_status': '2023-04-01',
+            'begin_analyze_text_cancel_job': '2023-04-01',
+            'begin_analyze_text_submit_job': '2023-04-01',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -75,7 +75,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
-        if api_version == '2022-05-01' or api_version == '2022-10-01-preview':
+        if api_version == '2022-05-01' or api_version == '2023-04-01':
             base_url = '{Endpoint}/language'
         elif api_version == 'v3.0':
             base_url = '{Endpoint}/text/analytics/v3.0'
@@ -99,15 +99,15 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
         """Module depends on the API version:
 
            * 2022-05-01: :mod:`v2022_05_01.models<azure.ai.textanalytics.v2022_05_01.models>`
-           * 2022-10-01-preview: :mod:`v2022_10_01_preview.models<azure.ai.textanalytics.v2022_10_01_preview.models>`
+           * 2023-04-01: :mod:`v2023_04_01.models<azure.ai.textanalytics.v2023_04_01.models>`
            * v3.0: :mod:`v3_0.models<azure.ai.textanalytics.v3_0.models>`
            * v3.1: :mod:`v3_1.models<azure.ai.textanalytics.v3_1.models>`
         """
         if api_version == '2022-05-01':
             from .v2022_05_01 import models
             return models
-        elif api_version == '2022-10-01-preview':
-            from .v2022_10_01_preview import models
+        elif api_version == '2023-04-01':
+            from .v2023_04_01 import models
             return models
         elif api_version == 'v3.0':
             from .v3_0 import models

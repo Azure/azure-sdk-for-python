@@ -291,6 +291,8 @@ $PackageExclusions = @{
   'azure-mgmt-signalr' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18085';
   'azure-mgmt-mixedreality' = 'Missing version info https://github.com/Azure/azure-sdk-for-python/issues/18457';
   'azure-mgmt-network' = 'Manual process used to build';
+  'azureml-fsspec' = 'Build issues related to Python requirements: https://github.com/Azure/azure-sdk-for-python/issues/30565';
+  'mltable' = 'Build issues related to Python requirements: https://github.com/Azure/azure-sdk-for-python/issues/30565';
 
   'azure-mgmt-compute' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
   'azure-mgmt-consumption' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
@@ -300,6 +302,7 @@ $PackageExclusions = @{
   'azure-mgmt-netapp' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
   'azure-synapse-artifacts' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
   'azure-mgmt-streamanalytics' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-ai-ml' = 'Docs CI build issues https://github.com/Azure/azure-sdk-for-python/issues/30774';
 
   'azure-keyvault' = 'Metapackages should not be documented';
 }

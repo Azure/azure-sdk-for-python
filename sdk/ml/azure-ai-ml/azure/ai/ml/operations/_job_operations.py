@@ -400,7 +400,7 @@ class JobOperations(_ScopeDependentOperations):
                 # so we raise a more helpful one
                 response = e.response
                 response.reason = "Not found compute with name {}".format(compute_name)
-                raise ResourceNotFoundError(response=response)
+                raise ResourceNotFoundError(response=response) from e
         return None
 
     @distributed_trace
@@ -1074,7 +1074,7 @@ class JobOperations(_ScopeDependentOperations):
                 error=e,
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
-            )
+            ) from e
 
     def _resolve_job_inputs_arm_id(self, job: Job) -> None:
         try:
@@ -1236,7 +1236,7 @@ class JobOperations(_ScopeDependentOperations):
                 target=ErrorTarget.JOB,
                 no_personal_data_message=e.no_personal_data_message,
                 error_category=e.error_category,
-            )
+            ) from e
 
         # Create a pipeline component for pipeline job if user specified component in job yaml.
         if (

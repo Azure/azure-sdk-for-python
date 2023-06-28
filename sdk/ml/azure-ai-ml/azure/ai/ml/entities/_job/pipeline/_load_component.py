@@ -286,7 +286,7 @@ def _generate_component_function(
                     _type=_type,
                 )
         return pipeline_node_factory.load_from_dict(
-            data=dict(component=component_entity, inputs=kwargs, _from_component_func=True),
+            data={"component": component_entity, "inputs": kwargs, "_from_component_func": True},
             _type=_type,
         )
 

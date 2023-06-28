@@ -29,12 +29,11 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.network_groups.begin_delete(
+    client.network_groups.begin_delete(
         resource_group_name="rg1",
         network_manager_name="testNetworkManager",
         network_group_name="testNetworkGroup",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/NetworkManagerGroupDelete.json

@@ -36,11 +36,15 @@ def get_environment_artifacts(
     """
     # Validate environment for local endpoint
     if _environment_contains_cloud_artifacts(deployment=deployment):
-        name, version = parse_name_version(deployment.environment)
-        label = None
-        if not version:
-            name, label = parse_name_label(deployment.environment)
-        environment_asset = environment_operations.get(name=name, version=version, label=label)
+        if isinstance(deployment.environment, Environment):
+            environment_asset = deployment.environment
+        else:
+            name, version = parse_name_version(deployment.environment)
+            label = None
+            if not version:
+                name, label = parse_name_label(deployment.environment)
+            environment_asset = environment_operations.get(name=name, version=version, label=label)
+
         if not _cloud_environment_is_valid(environment=environment_asset):
             msg = (
                 "Cloud environment must have environment.image "
@@ -83,7 +87,7 @@ def _get_cloud_environment_artifacts(
             blob_url=environment_asset.build.path,
             destination=download_path,
             datastore_operation=environment_operations._datastore_operation,
-            datastore_name=None,
+            datastore_name="workspaceartifactstore",
         )
         dockerfile_path = Path(environment_build_directory, environment_asset.build.dockerfile_path)
         dockerfile_contents = dockerfile_path.read_text()
@@ -160,4 +164,4 @@ def _cloud_environment_is_valid(environment: Environment):
 
 
 def _environment_contains_cloud_artifacts(deployment: OnlineDeployment):
-    return isinstance(deployment.environment, str)
+    return isinstance(deployment.environment, str) or deployment.environment.id is not None

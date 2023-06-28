@@ -14,19 +14,19 @@ from _shared.asynctestcase import AsyncCommunicationTestCase
 from _decorators_async import RouterPreparersAsync
 from _validators import ClassificationPolicyValidator
 from azure.communication.jobrouter._shared.utils import parse_connection_str
-from azure.communication.jobrouter.aio import RouterAdministrationClient
+from azure.communication.jobrouter.aio import JobRouterAdministrationClient
 from azure.communication.jobrouter import (
     RoundRobinMode,
     ClassificationPolicy,
     LabelOperator,
-    QueueSelector,
+    RouterQueueSelector,
     StaticQueueSelectorAttachment,
     ConditionalQueueSelectorAttachment,
     RuleEngineQueueSelectorAttachment,
     PassThroughQueueSelectorAttachment,
     QueueWeightedAllocation,
     WeightedAllocationQueueSelectorAttachment,
-    WorkerSelector,
+    RouterWorkerSelector,
     StaticWorkerSelectorAttachment,
     ConditionalWorkerSelectorAttachment,
     RuleEngineWorkerSelectorAttachment,
@@ -38,7 +38,7 @@ from azure.communication.jobrouter import (
     FunctionRule,
     FunctionRuleCredential,
     DistributionPolicy,
-    JobQueue,
+    RouterQueue,
 )
 
 
@@ -52,21 +52,21 @@ queue_labels = {
 
 queue_selectors = [
     StaticQueueSelectorAttachment(
-        label_selector = QueueSelector(
+        queue_selector = RouterQueueSelector(
             key = "test_key", label_operator = LabelOperator.EQUAL, value = "test_value"
         )
     ),
     ConditionalQueueSelectorAttachment(
         condition = StaticRule(value = True),
-        label_selectors = [
-            QueueSelector(
+        queue_selectors = [
+            RouterQueueSelector(
                 key = "test_key", label_operator = LabelOperator.EQUAL, value = "test_value"
             )
         ]
     ),
     RuleEngineQueueSelectorAttachment(
         rule = StaticRule(value = [
-            QueueSelector(
+            RouterQueueSelector(
                 key = "test_key",
                 label_operator = LabelOperator.EQUAL,
                 value = "test_value"
@@ -81,8 +81,8 @@ queue_selectors = [
         allocations = [
             QueueWeightedAllocation(
                 weight = 1.0,
-                label_selectors = [
-                    QueueSelector(
+                queue_selectors = [
+                    RouterQueueSelector(
                         key = "test_key", label_operator = LabelOperator.EQUAL, value = "test_value"
                     )
                 ]
@@ -101,7 +101,7 @@ prioritization_rules = [
 
 worker_selectors = [
     StaticWorkerSelectorAttachment(
-        label_selector = WorkerSelector(
+        worker_selector = RouterWorkerSelector(
             key = "test_key",
             label_operator = LabelOperator.EQUAL,
             value = "test_value",
@@ -111,8 +111,8 @@ worker_selectors = [
     ),
     ConditionalWorkerSelectorAttachment(
         condition = StaticRule(value = True),
-        label_selectors = [
-            WorkerSelector(
+        worker_selectors = [
+            RouterWorkerSelector(
                 key = "test_key",
                 label_operator = LabelOperator.EQUAL,
                 value = "test_value",
@@ -123,7 +123,7 @@ worker_selectors = [
     ),
     RuleEngineWorkerSelectorAttachment(
         rule = StaticRule(value = [
-            WorkerSelector(
+            RouterWorkerSelector(
                 key = "test_key",
                 label_operator = LabelOperator.EQUAL,
                 value = "test_value",
@@ -140,8 +140,8 @@ worker_selectors = [
         allocations = [
             WorkerWeightedAllocation(
                 weight = 1.0,
-                label_selectors = [
-                    WorkerSelector(
+                worker_selectors = [
+                    RouterWorkerSelector(
                         key = "test_key",
                         label_operator = LabelOperator.EQUAL,
                         value = "test_value",
@@ -160,7 +160,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
     async def clean_up(self):
         # delete in live mode
         if not self.is_playback():
-            router_client: RouterAdministrationClient = self.create_admin_client()
+            router_client: JobRouterAdministrationClient = self.create_admin_client()
             async with router_client:
                 if self._testMethodName in self.classification_policy_ids \
                         and any(self.classification_policy_ids[self._testMethodName]):
@@ -181,14 +181,14 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
         return self._testMethodName + "_tst_dp_async"
 
     async def setup_distribution_policy(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
 
         async with client:
             distribution_policy_id = self.get_distribution_policy_id()
 
             policy: DistributionPolicy = DistributionPolicy(
                 name = distribution_policy_id,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = RoundRobinMode(min_concurrent_offers = 1,
                                       max_concurrent_offers = 1)
             )
@@ -209,12 +209,12 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
         return self._testMethodName + "_tst_q_async"
 
     async def setup_job_queue(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
 
         async with client:
             job_queue_id = self.get_job_queue_id()
 
-            job_queue: JobQueue = JobQueue(
+            job_queue: RouterQueue = RouterQueue(
                 name = job_queue_id,
                 labels = queue_labels,
                 distribution_policy_id = self.get_distribution_policy_id()
@@ -238,7 +238,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_create_classification_policy(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_create_cp_async'
 
         async with router_client:
@@ -276,7 +276,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_update_classification_policy(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_update_cp_async'
 
         async with router_client:
@@ -331,7 +331,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_update_classification_policy_w_kwargs(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_update_cp_w_args_async'
 
         async with router_client:
@@ -386,7 +386,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_get_classification_policy(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_get_cp_async'
 
         async with router_client:
@@ -437,7 +437,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_list_classification_policies(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         cp_identifiers = ['tst_list_cp_1_async', 'tst_list_cp_2_async']
         created_cp_response = {}
         policy_count = 0
@@ -509,7 +509,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_delete_classification_policy(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_delete_cp'
 
         async with router_client:

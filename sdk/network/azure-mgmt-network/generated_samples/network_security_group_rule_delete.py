@@ -29,12 +29,11 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.security_rules.begin_delete(
+    client.security_rules.begin_delete(
         resource_group_name="rg1",
         network_security_group_name="testnsg",
         security_rule_name="rule1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/NetworkSecurityGroupRuleDelete.json

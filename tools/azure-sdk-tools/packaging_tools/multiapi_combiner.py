@@ -185,9 +185,9 @@ class Operation(VersionedObject):
         # all of the api versions of the operation group
         # because the operation group handles first round of validation
         if self._need_method_api_version_check:
-            retval.append(f"        api_versions={self.api_versions},")
+            retval.append(f"       method_valid_on={self.api_versions},")
         if self._need_params_api_version_check:
-            retval.append("        params={")
+            retval.append("        params_valid_on={")
             retval.extend([f'            "{p.name}": {p.api_versions},' for p in self.parameters if p.need_decorator])
             retval.append("        }")
         retval.append("    )")
@@ -259,7 +259,7 @@ class OperationGroup(VersionedObject):
 
     @property
     def decorator(self) -> str:
-        return "\n".join(["@api_version_validation(", f"    api_versions={self.api_versions}", ")"])
+        return "\n".join(["@api_version_validation(", f"    method_valid_on={self.api_versions}", ")"])
 
     def combine_operations(self) -> None:
         api_versions = [v for v in self.code_model.sorted_api_versions if v in self.api_versions]
@@ -271,12 +271,12 @@ class OperationGroup(VersionedObject):
         def _get_operation(code_model: "CodeModel", name: str) -> Operation:
             return Operation(code_model, name, operation_group=self)
 
-        self.operations = _combine_helper(
+        self.operations = [o for o in _combine_helper(
             code_model=self.code_model,
             sorted_api_versions=api_versions,
             get_cls=_get_operation,
             get_names_by_api_version=_get_names_by_api_version,
-        )
+        ) if o.name != "_api_version"]
 
     def doc(self, async_mode: bool) -> str:
         return strip_version_from_docs(self.generated_class(async_mode).__doc__)

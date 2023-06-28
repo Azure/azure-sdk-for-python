@@ -18,7 +18,10 @@ def _validate_input(documents, hint, whole_input_hint):
     basis.
 
     :param list documents: The input documents.
+    :param str hint: the type of hint -- country_hint or language
+    :param str whole_input_hint: client or method level hint provided
     :return: A list of DetectLanguageInput or TextDocumentInput
+    :rtype: list
     """
     if not documents:
         raise ValueError("Input documents can not be empty or None")

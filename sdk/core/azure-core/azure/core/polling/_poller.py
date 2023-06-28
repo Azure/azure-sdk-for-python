@@ -33,12 +33,12 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
 
 
-PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class PollingMethod(Generic[PollingReturnType]):
+class PollingMethod(Generic[PollingReturnType_co]):
     """ABC class for polling method."""
 
     def initialize(self, client: Any, initial_response: Any, deserialization_callback: Any) -> None:
@@ -53,7 +53,7 @@ class PollingMethod(Generic[PollingReturnType]):
     def finished(self) -> bool:
         raise NotImplementedError("This method needs to be implemented")
 
-    def resource(self) -> PollingReturnType:
+    def resource(self) -> PollingReturnType_co:
         raise NotImplementedError("This method needs to be implemented")
 
     def get_continuation_token(self) -> str:
@@ -112,7 +112,7 @@ class NoPolling(PollingMethod):
         return None, initial_response, deserialization_callback
 
 
-class LROPoller(Generic[PollingReturnType]):
+class LROPoller(Generic[PollingReturnType_co]):
     """Poller for long running operations.
 
     :param client: A pipeline service client
@@ -131,7 +131,7 @@ class LROPoller(Generic[PollingReturnType]):
         client: Any,
         initial_response: Any,
         deserialization_callback: Callable,
-        polling_method: PollingMethod[PollingReturnType],
+        polling_method: PollingMethod[PollingReturnType_co],
     ) -> None:
         self._callbacks: List[Callable] = []
         self._polling_method = polling_method
@@ -188,7 +188,7 @@ class LROPoller(Generic[PollingReturnType]):
                 call(self._polling_method)
             callbacks, self._callbacks = self._callbacks, []
 
-    def polling_method(self) -> PollingMethod[PollingReturnType]:
+    def polling_method(self) -> PollingMethod[PollingReturnType_co]:
         """Return the polling method associated to this poller."""
         return self._polling_method
 
@@ -202,8 +202,8 @@ class LROPoller(Generic[PollingReturnType]):
 
     @classmethod
     def from_continuation_token(
-        cls, polling_method: PollingMethod[PollingReturnType], continuation_token: str, **kwargs
-    ) -> "LROPoller[PollingReturnType]":
+        cls, polling_method: PollingMethod[PollingReturnType_co], continuation_token: str, **kwargs
+    ) -> "LROPoller[PollingReturnType_co]":
         (
             client,
             initial_response,
@@ -219,7 +219,7 @@ class LROPoller(Generic[PollingReturnType]):
         """
         return self._polling_method.status()
 
-    def result(self, timeout: Optional[float] = None) -> PollingReturnType:
+    def result(self, timeout: Optional[float] = None) -> PollingReturnType_co:
         """Return the result of the long running operation, or
         the result available after the specified timeout.
 
