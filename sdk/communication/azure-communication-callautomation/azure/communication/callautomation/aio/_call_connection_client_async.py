@@ -21,7 +21,8 @@ from .._models import (
     CallConnectionProperties,
     AddParticipantResult,
     RemoveParticipantResult,
-    TransferCallResult
+    TransferCallResult,
+    MuteParticipantsResult,
 )
 from .._generated.aio import AzureCommunicationCallAutomationService
 from .._generated.models import (
@@ -37,6 +38,7 @@ from .._generated.models import (
     SpeechOptions,
     PlayOptions,
     RecognizeOptions,
+    MuteParticipantsRequest,
 )
 from .._generated.models._enums import RecognizeInputType
 from .._shared.utils import (
@@ -572,6 +574,36 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             self._call_connection_id,
             send_dtmf_request,
             **kwargs)
+
+    @distributed_trace_async
+    async def mute_participants(
+        self,
+        target_participant: 'CommunicationIdentifier',
+        *,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> MuteParticipantsResult:
+        """Mute participants from the call using identifier.
+
+        :param target_participant: Participant to be muted from the call. Only ACS Users are supported. Required.
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the request to the
+         response event.
+        :paramtype operation_context: str
+        :return: MuteParticipantsResult
+        :rtype: ~azure.communication.callautomation.MuteParticipantsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        mute_participants_request = MuteParticipantsRequest(
+            target_participants=[serialize_identifier(target_participant)],
+            operation_context=operation_context)
+
+        response =  await self._call_connection_client.mute(
+            self._call_connection_id,
+            mute_participants_request,
+            **kwargs)
+
+        return MuteParticipantsResult._from_generated(response) # pylint:disable=protected-access
 
     async def __aenter__(self) -> "CallConnectionClient":
         await self._client.__aenter__()

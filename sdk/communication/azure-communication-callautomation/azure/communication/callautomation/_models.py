@@ -43,6 +43,7 @@ if TYPE_CHECKING:
         RemoveParticipantResponse as RemoveParticipantResultRest,
         TransferCallResponse as TransferParticipantResultRest,
         RecordingStateResponse as RecordingStateResultRest,
+        MuteParticipantsResponse as MuteParticipantsResultRest,
     )
 
 class CallInvite(object):
@@ -571,3 +572,22 @@ class Choice(object):
 
     def _to_generated(self):
         return ChoiceInternal(label=self.label, phrases=self.phrases, tone=self.tone)
+
+class MuteParticipantsResult(object):
+    """The response payload for muting participants from the call.
+
+    :ivar operation_context: The operation context provided by client.
+    :vartype operation_context: str
+    """
+    def __init__(
+        self,
+        *,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        super().__init__(**kwargs)
+        self.operation_context = operation_context
+
+    @classmethod
+    def _from_generated(cls, mute_participants_result_generated: 'MuteParticipantsResultRest'):
+        return cls(operation_context=mute_participants_result_generated.operation_context)

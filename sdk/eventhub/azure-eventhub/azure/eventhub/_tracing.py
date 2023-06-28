@@ -105,12 +105,21 @@ def receive_context_manager(
 
 
 @contextmanager
-def process_context_manager(client: Optional[ClientBase], links: Optional[List[Link]] = None) -> Iterator[None]:
+def process_context_manager(
+    client: Optional[ClientBase], links: Optional[List[Link]] = None, is_batch: bool = False
+) -> Iterator[None]:
     """Tracing for message processing."""
     span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
     if span_impl_type is not None:
+        context = None
         links = links or []
-        with span_impl_type(name="EventHubs.process", kind=SpanKind.CONSUMER, links=links) as span:
+
+        # If the processing callback is called per single message, the processing span should be a child of the
+        # context of the message (as opposed to messages being links in the processing span).
+        if not is_batch and links:
+            context = links[0].headers
+            links = []
+        with span_impl_type(name="EventHubs.process", kind=SpanKind.CONSUMER, links=links, context=context) as span:
             add_span_attributes(span, TraceOperationTypes.PROCESS, client, message_count=len(links))
             yield
     else:
