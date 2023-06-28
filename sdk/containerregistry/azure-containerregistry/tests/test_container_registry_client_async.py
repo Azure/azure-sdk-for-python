@@ -33,7 +33,7 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline import PipelineRequest
 from azure.identity import AzureAuthorityHosts
 from asynctestcase import AsyncContainerRegistryTestClass, get_authority, get_audience
-from testcase import is_public_endpoint, is_china_endpoint
+from testcase import is_public_endpoint
 from constants import HELLO_WORLD, DOES_NOT_EXIST
 from preparer import acr_preparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -506,8 +506,8 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_set_oci_manifest_without_spaces(self, containerregistry_endpoint):
-        if is_china_endpoint(containerregistry_endpoint):
-            pytest.skip("Running in china cloud may cause all tests finishing longer than the max time of 120 mins.")
+        if not is_public_endpoint(containerregistry_endpoint):
+            pytest.skip("This test is for testing test_set_docker_manifest in playback.")
         
         repo = self.get_resource_name("repo")
         path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest_without_spaces.json")
@@ -579,8 +579,8 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_set_docker_manifest_without_spaces(self, containerregistry_endpoint):
-        if is_china_endpoint(containerregistry_endpoint):
-            pytest.skip("Running in china cloud may cause all tests finishing longer than the max time of 120 mins.")
+        if not is_public_endpoint(containerregistry_endpoint):
+            pytest.skip("This test is for testing test_set_docker_manifest in playback.")
         
         repo = self.get_resource_name("repo")
         path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest_without_spaces.json")
@@ -630,6 +630,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     async def test_upload_large_blob_in_chunk(self, **kwargs):
         containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
+        if not is_public_endpoint(containerregistry_endpoint):
+            pytest.skip("Running on non-public cloud may cause all tests finishing longer than the max time of 120 mins.")
+        
         repo = self.get_resource_name("repo")
         async with self.create_registry_client(containerregistry_endpoint) as client:
             # Test blob upload and download in equal size chunks
