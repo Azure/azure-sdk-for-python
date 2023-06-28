@@ -246,7 +246,8 @@ class AzureError(Exception):
     def raise_with_traceback(self):
         """Raise the exception with the existing traceback.
 
-        This method is deprecated as we don't support Python 2 anymore. Use raise/from instead.
+        .. deprecated:: 1.22.0
+           This method is deprecated as we don't support Python 2 anymore. Use raise/from instead.
         """
         try:
             raise super(AzureError, self).with_traceback(self.exc_traceback)  # pylint: disable=raise-missing-from
