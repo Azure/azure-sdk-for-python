@@ -62,7 +62,7 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         """Return any facet results if faceting was requested.
 
         :return: facet results
-        :rtype: dict
+        :rtype: dict or None
         """
         return self._first_iterator_instance().get_facets()
 
