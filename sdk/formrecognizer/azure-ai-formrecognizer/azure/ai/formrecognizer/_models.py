@@ -15,7 +15,6 @@ from ._generated.v2023_07_31.models import (
     DocumentClassifierDetails as ClassifierDetails,
     Error
 )
-from ._generated.models import ClassifierDocumentTypeDetails
 from ._helpers import (
     adjust_value_type,
     adjust_confidence,
@@ -3665,6 +3664,161 @@ class DocumentModelSummary:
             api_version=data.get("api_version", None),
             tags=data.get("tags", {}),
             expires_on=data.get("expires_on", None),
+        )
+
+class AzureBlobFileListSource:
+    """Content source for a file list in Azure Blob Storage."""
+
+    container_url: str
+    """Azure Blob Storage container URL."""
+    file_list: str
+    """Path to a JSONL file within the container specifying a subset of documents for training."""
+
+    def __init__(
+        self,
+        container_url: str,
+        file_list: str,
+        **kwargs: Any  # pylint: disable=unused-argument
+    ) -> None:
+        self.container_url = container_url
+        self.file_list = file_list
+
+    def __repr__(self) -> str:
+        return (
+            f"AzureBlobFileListSource(container_url={self.container_url}, file_list={self.file_list})"
+        )
+
+    @classmethod
+    def _from_generated(cls, model):
+        return cls(
+            container_url=model.container_url,
+            file_list=model.file_list
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of AzureBlobFileListSource."""
+        return {
+            "container_url": self.container_url,
+            "file_list": self.file_list
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "AzureBlobFileListSource":
+        """Converts a dict in the shape of a AzureBlobFileListSource to the model itself.
+
+        :param Dict[str, Any] data: A dictionary in the shape of AzureBlobFileListSource.
+        :return: AzureBlobFileListSource
+        :rtype: AzureBlobFileListSource
+        """
+        return cls(
+            container_url=data.get("container_url", None),
+            file_list=data.get("file_list", None),
+        )
+
+
+class AzureBlobSource:
+    """Content source for Azure Blob Storage."""
+
+    container_url: str
+    """Azure Blob Storage container URL."""
+    prefix: Optional[str]
+    """Blob name prefix."""
+
+    def __init__(
+        self,
+        container_url: str,
+        *,
+        prefix: Optional[str] = None,
+        **kwargs: Any  # pylint: disable=unused-argument
+    ) -> None:
+        self.container_url = container_url
+        self.prefix = prefix
+
+    def __repr__(self) -> str:
+        return (
+            f"AzureBlobSource(container_url={self.container_url}, prefix={self.prefix})"
+        )
+
+    @classmethod
+    def _from_generated(cls, model):
+        return cls(
+            container_url=model.container_url,
+            prefix=model.prefix
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of AzureBlobSource."""
+        return {
+            "container_url": self.container_url,
+            "prefix": self.prefix
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "AzureBlobSource":
+        """Converts a dict in the shape of a AzureBlobSource to the model itself.
+
+        :param Dict[str, Any] data: A dictionary in the shape of AzureBlobSource.
+        :return: AzureBlobSource
+        :rtype: AzureBlobSource
+        """
+        return cls(
+            container_url=data.get("container_url", None),
+            prefix=data.get("prefix", None),
+        )
+
+
+class ClassifierDocumentTypeDetails:
+    """Training data source."""
+
+    source: Union[AzureBlobSource, AzureBlobFileListSource]
+    """Content source containing the training data."""
+
+    def __init__(
+        self,
+        source: Union[AzureBlobSource, AzureBlobFileListSource],
+        **kwargs: Any  # pylint: disable=unused-argument
+    ) -> None:
+        self.source = source
+
+    def __repr__(self) -> str:
+        return (
+            f"ClassifierDocumentTypeDetails(source={self.source})"
+        )
+
+    @classmethod
+    def _from_generated(cls, model):
+        source = None
+        if model.azure_blob_source is not None:
+            source = AzureBlobSource._from_generated(model.azure_blob_source)
+        elif model.azure_blob_file_list_source is not None:
+            source=AzureBlobFileListSource._from_generated(model.azure_blob_file_list_source)
+
+        return cls(
+            source=source,
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of ClassifierDocumentTypeDetails."""
+        return {
+            "source": self.source.to_dict() if self.source else None,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "ClassifierDocumentTypeDetails":
+        """Converts a dict in the shape of a ClassifierDocumentTypeDetails to the model itself.
+
+        :param Dict[str, Any] data: A dictionary in the shape of ClassifierDocumentTypeDetails.
+        :return: ClassifierDocumentTypeDetails
+        :rtype: ClassifierDocumentTypeDetails
+        """
+        source = data.get("source", None)
+        if source is not None & source.get("file_list") is not None:
+            source = AzureBlobFileListSource.from_dict(source)
+        elif source is not None:
+            source = AzureBlobSource.from_dict(source)
+        
+        return cls(
+            source=source,
         )
 
 
