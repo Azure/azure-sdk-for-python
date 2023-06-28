@@ -5,11 +5,11 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     FlavorData,
-    ModelContainerData,
-    ModelVersionData,
-    ModelVersionDetails,
+    ModelContainer,
+    ModelVersion,
+    ModelVersionProperties,
 )
 from azure.ai.ml._schema import ModelSchema
 from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId, AMLVersionedArmId
@@ -24,11 +24,12 @@ from azure.ai.ml.constants._common import (
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import get_md5_string, load_from_dict
+from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 
 from .artifact import ArtifactStorageInfo
 
 
-class Model(Artifact):
+class Model(Artifact):  # pylint: disable=too-many-instance-attributes
     """Model for training and scoring.
 
     :param name: Name of the resource.
@@ -53,6 +54,8 @@ class Model(Artifact):
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
+    :param stage: The stage of the resource.
+    :type stage: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -69,9 +72,11 @@ class Model(Artifact):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
+        stage: Optional[str] = None,
         **kwargs,
     ):
         self.job_name = kwargs.pop("job_name", None)
+        self._intellectual_property = kwargs.pop("intellectual_property", None)
         super().__init__(
             name=name,
             version=version,
@@ -85,6 +90,7 @@ class Model(Artifact):
         self.flavors = dict(flavors) if flavors else None
         self._arm_type = ArmConstants.MODEL_VERSION_TYPE
         self.type = type or AssetTypes.CUSTOM_MODEL
+        self.stage = stage
         if self._is_anonymous and self.path:
             _ignore_file = get_ignore_file(self.path)
             _upload_hash = get_object_hash(self.path, _ignore_file)
@@ -110,10 +116,12 @@ class Model(Artifact):
         return ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
     @classmethod
-    def _from_rest_object(cls, model_rest_object: ModelVersionData) -> "Model":
-        rest_model_version: ModelVersionDetails = model_rest_object.properties
+    def _from_rest_object(cls, model_rest_object: ModelVersion) -> "Model":
+        rest_model_version: ModelVersionProperties = model_rest_object.properties
         arm_id = AMLVersionedArmId(arm_id=model_rest_object.id)
-        flavors = {key: flavor.data for key, flavor in rest_model_version.flavors.items()}
+        model_stage = rest_model_version.stage if hasattr(rest_model_version, "stage") else None
+        if hasattr(rest_model_version, "flavors"):
+            flavors = {key: flavor.data for key, flavor in rest_model_version.flavors.items()}
         model = Model(
             id=model_rest_object.id,
             name=arm_id.asset_name,
@@ -123,15 +131,19 @@ class Model(Artifact):
             tags=rest_model_version.tags,
             flavors=flavors,
             properties=rest_model_version.properties,
+            stage=model_stage,
             # pylint: disable=protected-access
             creation_context=SystemData._from_rest_object(model_rest_object.system_data),
             type=rest_model_version.model_type,
             job_name=rest_model_version.job_name,
+            intellectual_property=IntellectualProperty._from_rest_object(rest_model_version.intellectual_property)
+            if rest_model_version.intellectual_property
+            else None,
         )
         return model
 
     @classmethod
-    def _from_container_rest_object(cls, model_container_rest_object: ModelContainerData) -> "Model":
+    def _from_container_rest_object(cls, model_container_rest_object: ModelContainer) -> "Model":
         model = Model(
             name=model_container_rest_object.name,
             version="1",
@@ -146,8 +158,8 @@ class Model(Artifact):
         model.version = None
         return model
 
-    def _to_rest_object(self) -> ModelVersionData:
-        model_version = ModelVersionDetails(
+    def _to_rest_object(self) -> ModelVersion:
+        model_version = ModelVersionProperties(
             description=self.description,
             tags=self.tags,
             properties=self.properties,
@@ -156,14 +168,14 @@ class Model(Artifact):
             else None,  # flatten OrderedDict to dict
             model_type=self.type,
             model_uri=self.path,
+            stage=self.stage,
             is_anonymous=self._is_anonymous,
         )
-        model_version_resource = ModelVersionData(properties=model_version)
+        model_version_resource = ModelVersion(properties=model_version)
 
         return model_version_resource
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
-
         # datastore_arm_id is null for registry scenario, so capture the full_storage_path
         if not asset_artifact.datastore_arm_id and asset_artifact.full_storage_path:
             self.path = asset_artifact.full_storage_path
@@ -184,6 +196,6 @@ class Model(Artifact):
             self._arm_type: {
                 ArmConstants.NAME: self.name,
                 ArmConstants.VERSION: self.version,
-                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(properties, "ModelVersionDetails"),
+                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(properties, "ModelVersionProperties"),
             }
         }

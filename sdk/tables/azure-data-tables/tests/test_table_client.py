@@ -7,14 +7,16 @@ import pytest
 import platform
 import os
 
+from datetime import datetime, timedelta
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
-from azure.data.tables._error import _validate_storage_tablename
-from azure.data.tables import TableServiceClient, TableClient
+from azure.data.tables import TableServiceClient, TableClient, AccountSasPermissions, ResourceTypes, generate_account_sas
 from azure.data.tables import __version__ as VERSION
 from azure.data.tables._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
+from azure.data.tables._error import _validate_storage_tablename
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ClientAuthenticationError
+from azure.identity import DefaultAzureCredential
 
 from _shared.testcase import (
     TableTestCase
@@ -172,6 +174,66 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
         assert ("URI does not match number of key properties for the resource") in str(exc.value)
         assert ("Please check your account URL.") in str(exc.value)
         valid_tc.delete_table()
+    
+    @tables_decorator
+    @recorded_by_proxy
+    def test_error_handling(self, tables_storage_account_name, tables_primary_storage_account_key):
+        with TableServiceClient(
+            self.account_url(tables_storage_account_name, "table"),
+            credential=DefaultAzureCredential(
+                exclude_shared_token_cache_credential=True,
+                exclude_powershell_credential=True,
+                exclude_cli_credential=True,
+                exclude_environment_credential=True,
+            )
+        ) as service_client:
+            with pytest.raises(ClientAuthenticationError):
+                service_client.create_table_if_not_exists(table_name="TestInsert")
+    
+    @tables_decorator
+    @recorded_by_proxy
+    def test_client_with_sas_token(self, tables_storage_account_name, tables_primary_storage_account_key):
+        base_url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        sas_token = self.generate_sas(
+            generate_account_sas,
+            tables_primary_storage_account_key,
+            resource_types=ResourceTypes.from_string("sco"),
+            permission=AccountSasPermissions.from_string("rwdlacu"),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        
+        with TableServiceClient(base_url, credential=AzureSasCredential(sas_token)) as client:
+            client.create_table(table_name)
+            name_filter = "TableName eq '{}'".format(table_name)
+            result = client.query_tables(name_filter)
+            assert len(list(result)) == 1
+        
+        with TableClient(base_url, table_name, credential=AzureSasCredential(sas_token)) as client:
+            entities = client.query_entities(
+                query_filter='PartitionKey eq @pk',
+                parameters={'pk': 'dummy-pk'},
+            )
+            for e in entities:
+                pass
+        
+        with TableClient.from_table_url(f"{base_url}/{table_name}", credential=AzureSasCredential(sas_token)) as client:
+            entities = client.query_entities(
+                query_filter='PartitionKey eq @pk',
+                parameters={'pk': 'dummy-pk'},
+            )
+            for e in entities:
+                pass
+        
+        sas_url = f"{base_url}/{table_name}?{sas_token}"
+        with TableClient.from_table_url(sas_url) as client:
+            entities = client.query_entities(
+                query_filter='PartitionKey eq @pk',
+                parameters={'pk': 'dummy-pk'},
+            )
+            for e in entities:
+                pass
+            client.delete_table()
 
 
 # --Helpers-----------------------------------------------------------------

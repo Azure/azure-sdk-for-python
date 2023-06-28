@@ -6,11 +6,13 @@ import asyncio
 import functools
 import json
 import logging
+from unittest.mock import Mock, patch
 
 import pytest
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.secrets.aio import SecretClient
+from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
 from dateutil import parser as date_parse
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -20,6 +22,7 @@ from _shared.test_case_async import KeyVaultTestCase
 from _test_case import get_decorator
 
 all_api_versions = get_decorator()
+only_latest = get_decorator(api_versions=[DEFAULT_VERSION])
 list_test_size = 7
 
 
@@ -144,8 +147,8 @@ class TestKeyVaultSecret(KeyVaultTestCase):
 
         # create many secrets
         for x in range(0, max_secrets):
-            secret_name = self.get_resource_name("sec{}".format(x))
-            secret_value = "secVal{}".format(x)
+            secret_name = self.get_resource_name(f"sec{x}")
+            secret_value = f"secVal{x}"
             secret = None
             while not secret:
                 secret = await client.set_secret(secret_name, secret_value)
@@ -165,8 +168,8 @@ class TestKeyVaultSecret(KeyVaultTestCase):
         async with client:
             # create secrets
             for i in range(list_test_size):
-                secret_name = self.get_resource_name("secret{}".format(i))
-                secret_value = "value{}".format(i)
+                secret_name = self.get_resource_name(f"secret{i}")
+                secret_value = f"value{i}"
                 expected[secret_name] = await client.set_secret(secret_name, secret_value)
 
             # delete them
@@ -251,8 +254,8 @@ class TestKeyVaultSecret(KeyVaultTestCase):
         async with client:
             # create secrets to recover
             for i in range(list_test_size):
-                secret_name = self.get_resource_name("secret{}".format(i))
-                secret_value = "value{}".format(i)
+                secret_name = self.get_resource_name(f"secret{i}")
+                secret_value = f"value{i}"
                 secrets[secret_name] = await client.set_secret(secret_name, secret_value)
 
             # delete all secrets
@@ -283,8 +286,8 @@ class TestKeyVaultSecret(KeyVaultTestCase):
         async with client:
             # create secrets to purge
             for i in range(list_test_size):
-                secret_name = self.get_resource_name("secret{}".format(i))
-                secret_value = "value{}".format(i)
+                secret_name = self.get_resource_name(f"secret{i}")
+                secret_value = f"value{i}"
                 secrets[secret_name] = await client.set_secret(secret_name, secret_value)
 
             # delete all secrets
@@ -371,6 +374,25 @@ class TestKeyVaultSecret(KeyVaultTestCase):
                             pass
 
         mock_handler.close()
+
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("api_version", only_latest)
+    @AsyncSecretsClientPreparer()
+    @recorded_by_proxy_async
+    async def test_40x_handling(self, client, **kwargs):
+        """Ensure 404 and 409 responses are raised with azure-core exceptions instead of generated KV ones"""
+
+        # Test that 404 is raised correctly by fetching a nonexistent secret
+        with pytest.raises(ResourceNotFoundError):
+            await client.get_secret("secret-that-does-not-exist")
+
+        # Test that 409 is raised correctly (`set_secret` shouldn't actually trigger this, but for raising behavior)
+        async def run(*_, **__):
+            return Mock(http_response=Mock(status_code=409))
+        with patch.object(client._client._client._pipeline, "run", run):
+            with pytest.raises(ResourceExistsError):
+                await client.set_secret("...", "...")
+        await client.close()
 
 
 def test_service_headers_allowed_in_logs():

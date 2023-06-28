@@ -133,7 +133,7 @@ class AuthSamplesAsync(object):
         # [END create_blob_service_client_oauth_default_credential]
 
         # Get account information for the Blob Service
-        account_info = blob_service_client.get_service_properties()
+        account_info = await blob_service_client.get_service_properties()
 
 async def main():
     sample = AuthSamplesAsync()

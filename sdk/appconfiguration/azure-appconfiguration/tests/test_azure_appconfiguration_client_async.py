@@ -8,7 +8,6 @@ import copy
 import datetime
 import json
 import re
-import copy
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceModifiedError,
@@ -63,9 +62,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                 and created_kv.tags == kv.tags
             )
             assert (
-                created_kv.etag is not None
-                and created_kv.last_modified is not None
-                and created_kv.read_only is False
+                created_kv.etag is not None and created_kv.last_modified is not None and created_kv.read_only is False
             )
             await client.delete_configuration_setting(key=created_kv.key, label=created_kv.label)
 
@@ -174,9 +171,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         async with self.create_client(appconfiguration_connection_string) as client:
             compare_kv = self.create_config_setting()
             await self.add_for_test(client, compare_kv)
-            fetched_kv = await client.get_configuration_setting(
-                compare_kv.key, compare_kv.label
-            )
+            fetched_kv = await client.get_configuration_setting(compare_kv.key, compare_kv.label)
             assert (
                 fetched_kv.key == compare_kv.key
                 and fetched_kv.value == compare_kv.value
@@ -193,9 +188,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             compare_kv = self.create_config_setting()
             await self.add_for_test(client, compare_kv)
             with pytest.raises(ResourceNotFoundError):
-                await client.get_configuration_setting(
-                    compare_kv.key, compare_kv.label + "a"
-                )
+                await client.get_configuration_setting(compare_kv.key, compare_kv.label + "a")
             await client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
 
     # method: delete_configuration_setting
@@ -283,9 +276,9 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_fields(self, appconfiguration_connection_string):
         await self.set_up(appconfiguration_connection_string)
-        items = await self.convert_to_list(self.client.list_configuration_settings(
-            key_filter="*", label_filter=LABEL, fields=["key", "content_type"]
-        ))
+        items = await self.convert_to_list(
+            self.client.list_configuration_settings(key_filter="*", label_filter=LABEL, fields=["key", "content_type"])
+        )
         assert len(items) == 1
         assert all(x.key and not x.label and x.content_type for x in items)
         await self.tear_down()
@@ -318,9 +311,11 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             to_list_kv = self.create_config_setting()
             await self.add_for_test(client, to_list_kv)
             custom_headers = {"If-Match": to_list_kv.etag or ""}
-            items = await self.convert_to_list(client.list_configuration_settings(
-                key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
-            ))
+            items = await self.convert_to_list(
+                client.list_configuration_settings(
+                    key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
+                )
+            )
             assert len(items) == 1
             assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
             await client.delete_configuration_setting(to_list_kv.key)
@@ -369,15 +364,18 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_only_accepttime(self, appconfiguration_connection_string, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        await self.set_up(appconfiguration_connection_string)
-        exclude_today = await self.convert_to_list(self.client.list_configuration_settings(
-            accept_datetime=recorded_variables.setdefault(
-                "datetime", str(datetime.datetime.today() + datetime.timedelta(days=-1))
+        recorded_variables.setdefault("timestamp", str(datetime.datetime.utcnow()))
+
+        async with AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string) as client:
+            # Confirm all configuration settings are cleaned up
+            current_config_settings = await self.convert_to_list(client.list_configuration_settings())
+            assert len(current_config_settings) == 0
+
+            revision = await self.convert_to_list(
+                client.list_configuration_settings(accept_datetime=recorded_variables.get("timestamp"))
             )
-        ))
-        all_inclusive = await self.convert_to_list(self.client.list_configuration_settings())
-        assert len(all_inclusive) > len(exclude_today)
-        await self.tear_down()
+            assert len(revision) >= 0
+
         return recorded_variables
 
     # method: list_revisions
@@ -386,9 +384,9 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     async def test_list_revisions_key_label(self, appconfiguration_connection_string):
         await self.set_up(appconfiguration_connection_string)
         to_list1 = self.create_config_setting()
-        items = await self.convert_to_list(self.client.list_revisions(
-            label_filter=to_list1.label, key_filter=to_list1.key
-        ))
+        items = await self.convert_to_list(
+            self.client.list_revisions(label_filter=to_list1.label, key_filter=to_list1.key)
+        )
         assert len(items) >= 2
         assert all(x.key == to_list1.key and x.label == to_list1.label for x in items)
         await self.tear_down()
@@ -415,9 +413,9 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_revisions_fields(self, appconfiguration_connection_string):
         await self.set_up(appconfiguration_connection_string)
-        items = await self.convert_to_list(self.client.list_revisions(
-            key_filter="*", label_filter=LABEL, fields=["key", "content_type"]
-        ))
+        items = await self.convert_to_list(
+            self.client.list_revisions(key_filter="*", label_filter=LABEL, fields=["key", "content_type"])
+        )
         assert all(x.key and not x.label and x.content_type and not x.tags and not x.etag for x in items)
         await self.tear_down()
 
@@ -427,9 +425,9 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         await self.set_up(appconfiguration_connection_string)
         to_list_kv = self.create_config_setting()
         custom_headers = {"If-Match": to_list_kv.etag or ""}
-        items = await self.convert_to_list(self.client.list_revisions(
-            key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
-        ))
+        items = await self.convert_to_list(
+            self.client.list_revisions(key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers)
+        )
         assert len(items) >= 1
         assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
         await self.tear_down()
@@ -476,12 +474,12 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             readable_kv.tags = to_set_kv.tags
             set_kv = await client.set_configuration_setting(readable_kv)
             assert (
-                    to_set_kv.key == set_kv.key
-                    and to_set_kv.label == to_set_kv.label
-                    and to_set_kv.value == set_kv.value
-                    and to_set_kv.content_type == set_kv.content_type
-                    and to_set_kv.tags == set_kv.tags
-                    and to_set_kv.etag != set_kv.etag
+                to_set_kv.key == set_kv.key
+                and to_set_kv.label == to_set_kv.label
+                and to_set_kv.value == set_kv.value
+                and to_set_kv.content_type == set_kv.content_type
+                and to_set_kv.tags == set_kv.tags
+                and to_set_kv.etag != set_kv.etag
             )
             set_kv.etag = "bad"
             with pytest.raises(ResourceModifiedError):
@@ -497,11 +495,11 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             sync_token_header = ",".join(str(x) for x in sync_token_header.values())
 
             new = ConfigurationSetting(
-                    key="KEY1",
-                    label=None,
-                    value="TEST_VALUE1",
-                    content_type=TEST_CONTENT_TYPE,
-                    tags={"tag1": "tag1", "tag2": "tag2"},
+                key="KEY1",
+                label=None,
+                value="TEST_VALUE1",
+                content_type=TEST_CONTENT_TYPE,
+                tags={"tag1": "tag1", "tag2": "tag2"},
             )
 
             await client.set_configuration_setting(new)
@@ -511,11 +509,11 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             assert sync_token_header != sync_token_header2
 
             new = ConfigurationSetting(
-                    key="KEY2",
-                    label=None,
-                    value="TEST_VALUE2",
-                    content_type=TEST_CONTENT_TYPE,
-                    tags={"tag1": "tag1", "tag2": "tag2"},
+                key="KEY2",
+                label=None,
+                value="TEST_VALUE2",
+                content_type=TEST_CONTENT_TYPE,
+                tags={"tag1": "tag1", "tag2": "tag2"},
             )
 
             await client.set_configuration_setting(new)
@@ -531,17 +529,17 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     async def test_sync_tokens_with_feature_flag_configuration_setting(self, appconfiguration_connection_string):
         await self.set_up(appconfiguration_connection_string)
         new = FeatureFlagConfigurationSetting(
-            'custom',
+            "custom",
             enabled=True,
-            filters = [
+            filters=[
                 {
                     "name": "Microsoft.Percentage",
                     "parameters": {
                         "Value": 10,
                         "User": "user1",
-                    }
+                    },
                 }
-            ]
+            ],
         )
 
         sync_tokens = copy.deepcopy(self.client._sync_token_policy._sync_tokens)
@@ -550,17 +548,14 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         await self.client.set_configuration_setting(new)
 
         new = FeatureFlagConfigurationSetting(
-            'time_window',
+            "time_window",
             enabled=True,
-            filters = [
+            filters=[
                 {
-                    u"name": FILTER_TIME_WINDOW,
-                    u"parameters": {
-                        "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
-                        "End": "Fri, 02 Apr 2021 04:00:00 GMT"
-                    }
+                    "name": FILTER_TIME_WINDOW,
+                    "parameters": {"Start": "Wed, 10 Mar 2021 05:00:00 GMT", "End": "Fri, 02 Apr 2021 04:00:00 GMT"},
                 },
-            ]
+            ],
         )
 
         await self.client.set_configuration_setting(new)
@@ -575,14 +570,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                 {
                     "name": FILTER_TARGETING,
                     "parameters": {
-                        u"Audience": {
-                            u"Users": [u"abc", u"def"],
-                            u"Groups": [u"ghi", u"jkl"],
-                            u"DefaultRolloutPercentage": 75
-                        }
-                    }
+                        "Audience": {"Users": ["abc", "def"], "Groups": ["ghi", "jkl"], "DefaultRolloutPercentage": 75}
+                    },
                 },
-            ]
+            ],
         )
 
         await self.client.set_configuration_setting(new)
@@ -610,16 +601,16 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
 
             changed_flag.enabled = False
             temp = json.loads(changed_flag.value)
-            assert temp['enabled'] == False
+            assert temp["enabled"] == False
 
             c = json.loads(copy.deepcopy(changed_flag.value))
-            c['enabled'] = True
+            c["enabled"] = True
             changed_flag.value = json.dumps(c)
             assert changed_flag.enabled == True
 
             changed_flag.value = json.dumps({})
             assert changed_flag.enabled == None
-            assert changed_flag.value == json.dumps({'enabled': None, "conditions": {"client_filters": None}})
+            assert changed_flag.value == json.dumps({"enabled": None, "conditions": {"client_filters": None}})
 
             set_flag.value = "bad_value"
             assert set_flag.enabled == None
@@ -632,7 +623,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     async def test_config_setting_secret_reference(self, appconfiguration_connection_string):
         async with self.create_client(appconfiguration_connection_string) as client:
             secret_reference = SecretReferenceConfigurationSetting(
-                "ConnectionString", "https://test-test.vault.azure.net/secrets/connectionString")
+                "ConnectionString", "https://test-test.vault.azure.net/secrets/connectionString"
+            )
             set_flag = await client.set_configuration_setting(secret_reference)
             self._assert_same_keys(secret_reference, set_flag)
 
@@ -645,9 +637,9 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             new_uri2 = "https://aka.ms/azsdk/python"
             updated_flag.secret_id = new_uri
             temp = json.loads(updated_flag.value)
-            assert temp['uri'] == new_uri
+            assert temp["uri"] == new_uri
 
-            updated_flag.value = json.dumps({'uri': new_uri2})
+            updated_flag.value = json.dumps({"uri": new_uri2})
             assert updated_flag.secret_id == new_uri2
 
             set_flag.value = "bad_value"
@@ -666,14 +658,14 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                     {
                         "name": FILTER_TARGETING,
                         "parameters": {
-                            u"Audience": {
-                                u"Users": [u"abc", u"def"],
-                                u"Groups": [u"ghi", u"jkl"],
-                                u"DefaultRolloutPercentage": 75
+                            "Audience": {
+                                "Users": ["abc", "def"],
+                                "Groups": ["ghi", "jkl"],
+                                "DefaultRolloutPercentage": 75,
                             }
-                        }
+                        },
                     }
-                ]
+                ],
             )
 
             sent_config = await client.set_configuration_setting(new)
@@ -690,24 +682,24 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                 {
                     "name": FILTER_TARGETING,
                     "parameters": {
-                        u"Audience": {
-                            u"Users": [u"abcd", u"defg"], # cspell:disable-line
-                            u"Groups": [u"ghij", u"jklm"], # cspell:disable-line
-                            u"DefaultRolloutPercentage": 50
+                        "Audience": {
+                            "Users": ["abcd", "defg"],  # cspell:disable-line
+                            "Groups": ["ghij", "jklm"],  # cspell:disable-line
+                            "DefaultRolloutPercentage": 50,
                         }
-                    }
+                    },
                 }
             )
             updated_sent_config.filters.append(
                 {
                     "name": FILTER_TARGETING,
                     "parameters": {
-                        u"Audience": {
-                            u"Users": [u"abcde", u"defgh"], # cspell:disable-line
-                            u"Groups": [u"ghijk", u"jklmn"], # cspell:disable-line
-                            u"DefaultRolloutPercentage": 100
+                        "Audience": {
+                            "Users": ["abcde", "defgh"],  # cspell:disable-line
+                            "Groups": ["ghijk", "jklmn"],  # cspell:disable-line
+                            "DefaultRolloutPercentage": 100,
                         }
-                    }
+                    },
                 }
             )
             sent_config = await client.set_configuration_setting(updated_sent_config)
@@ -721,17 +713,17 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     async def test_feature_filter_time_window(self, appconfiguration_connection_string):
         async with self.create_client(appconfiguration_connection_string) as client:
             new = FeatureFlagConfigurationSetting(
-                'time_window',
+                "time_window",
                 enabled=True,
                 filters=[
                     {
                         "name": FILTER_TIME_WINDOW,
                         "parameters": {
                             "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
-                            "End": "Fri, 02 Apr 2021 04:00:00 GMT"
-                        }
+                            "End": "Fri, 02 Apr 2021 04:00:00 GMT",
+                        },
                     }
-                ]
+                ],
             )
 
             sent = await client.set_configuration_setting(new)
@@ -748,17 +740,9 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     async def test_feature_filter_custom(self, appconfiguration_connection_string):
         async with self.create_client(appconfiguration_connection_string) as client:
             new = FeatureFlagConfigurationSetting(
-                'custom',
+                "custom",
                 enabled=True,
-                filters=[
-                    {
-                        "name": FILTER_PERCENTAGE,
-                        "parameters": {
-                            "Value": 10,
-                            "User": "user1"
-                        }
-                    }
-                ]
+                filters=[{"name": FILTER_PERCENTAGE, "parameters": {"Value": 10, "User": "user1"}}],
             )
 
             sent = await client.set_configuration_setting(new)
@@ -775,33 +759,28 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     async def test_feature_filter_multiple(self, appconfiguration_connection_string):
         async with self.create_client(appconfiguration_connection_string) as client:
             new = FeatureFlagConfigurationSetting(
-                'custom',
+                "custom",
                 enabled=True,
                 filters=[
-                    {
-                        "name": FILTER_PERCENTAGE,
-                        "parameters": {
-                            "Value": 10
-                        }
-                    },
+                    {"name": FILTER_PERCENTAGE, "parameters": {"Value": 10}},
                     {
                         "name": FILTER_TIME_WINDOW,
                         "parameters": {
                             "Start": "Wed, 10 Mar 2021 05:00:00 GMT",
-                            "End": "Fri, 02 Apr 2021 04:00:00 GMT"
-                        }
+                            "End": "Fri, 02 Apr 2021 04:00:00 GMT",
+                        },
                     },
                     {
                         "name": FILTER_TARGETING,
                         "parameters": {
-                            u"Audience": {
-                                u"Users": [u"abcde", u"defgh"], # cspell:disable-line
-                                u"Groups": [u"ghijk", u"jklmn"], # cspell:disable-line
-                                u"DefaultRolloutPercentage": 100
+                            "Audience": {
+                                "Users": ["abcde", "defgh"],  # cspell:disable-line
+                                "Groups": ["ghijk", "jklmn"],  # cspell:disable-line
+                                "DefaultRolloutPercentage": 100,
                             }
-                        }
-                    }
-                ]
+                        },
+                    },
+                ],
             )
 
             sent = await client.set_configuration_setting(new)
@@ -819,125 +798,90 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             assert new_sent.filters[2]["parameters"]["Audience"]["DefaultRolloutPercentage"] == 100
 
             await client.delete_configuration_setting(new_sent.key)
-    
+
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_breaking_with_feature_flag_configuration_setting(self, appconfiguration_connection_string):
         async with self.create_client(appconfiguration_connection_string) as client:
             new = FeatureFlagConfigurationSetting(
-                'breaking1',
+                "breaking1",
                 enabled=True,
                 filters=[
                     {
                         "name": FILTER_TIME_WINDOW,
                         "parameters": {
-                            "Start": "bababooey, 31 Mar 2021 25:00:00 GMT", # cspell:disable-line
-                            "End": "Fri, 02 Apr 2021 04:00:00 GMT"
-                        }
+                            "Start": "bababooey, 31 Mar 2021 25:00:00 GMT",  # cspell:disable-line
+                            "End": "Fri, 02 Apr 2021 04:00:00 GMT",
+                        },
                     },
-                ]
+                ],
             )
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
 
             new = FeatureFlagConfigurationSetting(
-                'breaking2',
+                "breaking2",
                 enabled=True,
                 filters=[
                     {
                         "name": FILTER_TIME_WINDOW,
                         "parameters": {
-                            "Start": "bababooey, 31 Mar 2021 25:00:00 GMT", # cspell:disable-line
-                            "End": "not even trying to be a date"
-                        }
+                            "Start": "bababooey, 31 Mar 2021 25:00:00 GMT",  # cspell:disable-line
+                            "End": "not even trying to be a date",
+                        },
                     },
-                ]
+                ],
             )
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
 
             # This will show up as a Custom filter
             new = FeatureFlagConfigurationSetting(
-                'breaking3',
+                "breaking3",
                 enabled=True,
                 filters=[
                     {
                         "name": FILTER_TIME_WINDOW,
                         "parameters": {
-                            "Start": "bababooey, 31 Mar 2021 25:00:00 GMT", # cspell:disable-line
-                            "End": "not even trying to be a date"
-                        }
+                            "Start": "bababooey, 31 Mar 2021 25:00:00 GMT",  # cspell:disable-line
+                            "End": "not even trying to be a date",
+                        },
                     },
-                ]
+                ],
             )
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
 
             new = FeatureFlagConfigurationSetting(
-                'breaking4',
+                "breaking4",
                 enabled=True,
                 filters=[
-                    {
-                        "name": FILTER_TIME_WINDOW,
-                        "parameters": "stringystring"
-                    },
-                ]
+                    {"name": FILTER_TIME_WINDOW, "parameters": "stringystring"},
+                ],
             )
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
 
             new = FeatureFlagConfigurationSetting(
-                'breaking5',
+                "breaking5",
                 enabled=True,
-                filters=[
-                    {
-                        "name": FILTER_TARGETING,
-                        "parameters": {
-                            u"Audience": {
-                                u"Users": '123'
-                            }
-                        }
-                    }
-                ]
+                filters=[{"name": FILTER_TARGETING, "parameters": {"Audience": {"Users": "123"}}}],
             )
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
 
             new = FeatureFlagConfigurationSetting(
-                'breaking6',
-                enabled=True,
-                filters=[
-                    {
-                        "name": FILTER_TARGETING,
-                        "parameters": "invalidformat"
-                    }
-                ]
+                "breaking6", enabled=True, filters=[{"name": FILTER_TARGETING, "parameters": "invalidformat"}]
             )
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
 
-            new = FeatureFlagConfigurationSetting(
-                'breaking7',
-                enabled=True,
-                filters=[
-                    {
-                        'abc': 'def'
-                    }
-                ]
-            )
+            new = FeatureFlagConfigurationSetting("breaking7", enabled=True, filters=[{"abc": "def"}])
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
 
-            new = FeatureFlagConfigurationSetting(
-                'breaking8',
-                enabled=True,
-                filters=[
-                    {
-                        'abc': 'def'
-                    }
-                ]
-            )
-            new.feature_flag_content_type = "fakeyfakey" # cspell:disable-line
+            new = FeatureFlagConfigurationSetting("breaking8", enabled=True, filters=[{"abc": "def"}])
+            new.feature_flag_content_type = "fakeyfakey"  # cspell:disable-line
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
 
@@ -947,18 +891,12 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_breaking_with_secret_reference_configuration_setting(self, appconfiguration_connection_string):
         async with self.create_client(appconfiguration_connection_string) as client:
-            new = SecretReferenceConfigurationSetting(
-                "aref", # cspell:disable-line
-                "notaurl"
-            )
+            new = SecretReferenceConfigurationSetting("aref", "notaurl")  # cspell:disable-line
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
 
-            new = SecretReferenceConfigurationSetting(
-                "aref1", # cspell:disable-line
-                "notaurl"
-            )
-            new.content_type = "fkaeyjfdkal;" # cspell:disable-line
+            new = SecretReferenceConfigurationSetting("aref1", "notaurl")  # cspell:disable-line
+            new.content_type = "fkaeyjfdkal;"  # cspell:disable-line
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
 
@@ -971,19 +909,23 @@ class TestAppConfigurationClientUnitTest:
         from azure.core.pipeline.transport import HttpResponse, AsyncHttpTransport
         from azure.core.pipeline import PipelineRequest, PipelineResponse
         from consts import APPCONFIGURATION_CONNECTION_STRING
+
         class MockTransport(AsyncHttpTransport):
             def __init__(self):
                 self.auth_headers = []
+
             async def __aexit__(self, exc_type, exc_val, exc_tb):
                 pass
+
             async def close(self):
                 pass
+
             async def open(self):
                 pass
 
             async def send(self, request: PipelineRequest, **kwargs: Any) -> PipelineResponse:
-                assert request.headers['Authorization'] != self.auth_headers
-                self.auth_headers.append(request.headers['Authorization'])
+                assert request.headers["Authorization"] != self.auth_headers
+                self.auth_headers.append(request.headers["Authorization"])
                 response = HttpResponse(request, None)
                 response.status_code = 429
                 return response
@@ -992,6 +934,7 @@ class TestAppConfigurationClientUnitTest:
             request.http_request.headers["Authorization"] = str(uuid4())
 
         from azure.appconfiguration._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+
         # Store the method to restore later
         temp = AppConfigRequestsCredentialsPolicy._signed_request
         AppConfigRequestsCredentialsPolicy._signed_request = new_method

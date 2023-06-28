@@ -24,7 +24,7 @@ class KeyVaultClientConfiguration(Configuration):
 
     def __init__(
         self,
-        **kwargs  # type: Any
+        **kwargs: Any
     ) -> None:
         super(KeyVaultClientConfiguration, self).__init__(**kwargs)
 

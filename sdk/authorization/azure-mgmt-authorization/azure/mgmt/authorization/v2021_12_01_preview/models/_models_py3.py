@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -54,7 +54,7 @@ class AccessReviewContactedReviewer(_serialization.Model):
         "created_date_time": {"key": "properties.createdDateTime", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -85,8 +85,8 @@ class AccessReviewContactedReviewerListResult(_serialization.Model):
         *,
         value: Optional[List["_models.AccessReviewContactedReviewer"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Access Review Contacted Reviewer.
         :paramtype value:
@@ -257,8 +257,8 @@ class AccessReviewDecision(_serialization.Model):  # pylint: disable=too-many-in
             List[Union[str, "_models.AccessReviewDecisionPrincipalResourceMembershipType"]]
         ] = None,
         type_properties_resource_type: Optional[Union[str, "_models.DecisionResourceType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword decision: The decision on the approval step. This value is initially set to
          NotReviewed. Approvers can take action of Approve/Deny. Known values are: "Approve", "Deny",
@@ -302,7 +302,7 @@ class AccessReviewDecision(_serialization.Model):  # pylint: disable=too-many-in
         self.type_properties_resource_type = type_properties_resource_type
         self.id_properties_resource_id = None
         self.display_name_properties_resource_display_name = None
-        self.type_properties_principal_type = None  # type: Optional[str]
+        self.type_properties_principal_type: Optional[str] = None
         self.id_properties_principal_id = None
         self.display_name_properties_principal_display_name = None
 
@@ -345,10 +345,10 @@ class AccessReviewDecisionIdentity(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.id = None
         self.display_name = None
 
@@ -386,13 +386,13 @@ class AccessReviewDecisionInsight(_serialization.Model):
         "insight_created_date_time": {"key": "properties.insightCreatedDateTime", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.type_properties_type = None  # type: Optional[str]
+        self.type_properties_type: Optional[str] = None
         self.insight_created_date_time = None
 
 
@@ -425,10 +425,10 @@ class AccessReviewDecisionInsightProperties(_serialization.Model):
 
     _subtype_map = {"type": {"userSignInInsight": "AccessReviewDecisionUserSignInInsightProperties"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.insight_created_date_time = None
 
 
@@ -447,8 +447,12 @@ class AccessReviewDecisionListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.AccessReviewDecision"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.AccessReviewDecision"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Access Review Decision list.
         :paramtype value:
@@ -587,8 +591,8 @@ class AccessReviewDecisionProperties(_serialization.Model):  # pylint: disable=t
             List[Union[str, "_models.AccessReviewDecisionPrincipalResourceMembershipType"]]
         ] = None,
         type_resource_type: Optional[Union[str, "_models.DecisionResourceType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword decision: The decision on the approval step. This value is initially set to
          NotReviewed. Approvers can take action of Approve/Deny. Known values are: "Approve", "Deny",
@@ -629,7 +633,7 @@ class AccessReviewDecisionProperties(_serialization.Model):  # pylint: disable=t
         self.type_resource_type = type_resource_type
         self.id_resource_id = None
         self.display_name_resource_display_name = None
-        self.type_principal_type = None  # type: Optional[str]
+        self.type_principal_type: Optional[str] = None
         self.id_principal_id = None
         self.display_name_principal_display_name = None
 
@@ -666,10 +670,10 @@ class AccessReviewDecisionServicePrincipalIdentity(AccessReviewDecisionIdentity)
         "app_id": {"key": "appId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = "servicePrincipal"  # type: str
+        self.type: str = "servicePrincipal"
         self.app_id = None
 
 
@@ -705,10 +709,10 @@ class AccessReviewDecisionUserIdentity(AccessReviewDecisionIdentity):
         "user_principal_name": {"key": "userPrincipalName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = "user"  # type: str
+        self.type: str = "user"
         self.user_principal_name = None
 
 
@@ -740,10 +744,10 @@ class AccessReviewDecisionUserSignInInsightProperties(AccessReviewDecisionInsigh
         "last_sign_in_date_time": {"key": "lastSignInDateTime", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = "userSignInInsight"  # type: str
+        self.type: str = "userSignInInsight"
         self.last_sign_in_date_time = None
 
 
@@ -860,8 +864,8 @@ class AccessReviewDefaultSettings(_serialization.Model):  # pylint: disable=too-
             Union[str, "_models.AccessReviewRecurrencePatternType"]
         ] = None,
         interval: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword mail_notifications_enabled: Flag to indicate whether sending mails to reviewers and
          the review creator is enabled.
@@ -1061,8 +1065,8 @@ class AccessReviewHistoryDefinition(_serialization.Model):  # pylint: disable=to
         end_date: Optional[datetime.datetime] = None,
         type_properties_settings_pattern_type: Optional[Union[str, "_models.AccessReviewRecurrencePatternType"]] = None,
         interval: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: The display name for the history definition.
         :paramtype display_name: str
@@ -1141,8 +1145,8 @@ class AccessReviewHistoryDefinitionInstanceListResult(_serialization.Model):
         *,
         value: Optional[List["_models.AccessReviewHistoryInstance"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Access Review History Definition's Instance list.
         :paramtype value:
@@ -1175,8 +1179,8 @@ class AccessReviewHistoryDefinitionListResult(_serialization.Model):
         *,
         value: Optional[List["_models.AccessReviewHistoryDefinition"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Access Review History Definition list.
         :paramtype value:
@@ -1297,8 +1301,8 @@ class AccessReviewHistoryDefinitionProperties(_serialization.Model):  # pylint: 
         end_date: Optional[datetime.datetime] = None,
         type_settings_pattern_type: Optional[Union[str, "_models.AccessReviewRecurrencePatternType"]] = None,
         interval: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: The display name for the history definition.
         :paramtype display_name: str
@@ -1428,8 +1432,8 @@ class AccessReviewHistoryInstance(_serialization.Model):  # pylint: disable=too-
         run_date_time: Optional[datetime.datetime] = None,
         fulfilled_date_time: Optional[datetime.datetime] = None,
         expiration: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword review_history_period_start_date_time: Date time used when selecting review data, all
          reviews included in data start on or after this date. For use only with one-time/non-recurring
@@ -1525,8 +1529,8 @@ class AccessReviewInstance(_serialization.Model):
         end_date_time: Optional[datetime.datetime] = None,
         reviewers: Optional[List["_models.AccessReviewReviewer"]] = None,
         backup_reviewers: Optional[List["_models.AccessReviewReviewer"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword start_date_time: The DateTime when the review instance is scheduled to be start.
         :paramtype start_date_time: ~datetime.datetime
@@ -1566,8 +1570,12 @@ class AccessReviewInstanceListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.AccessReviewInstance"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.AccessReviewInstance"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Access Review Instance list.
         :paramtype value:
@@ -1629,8 +1637,8 @@ class AccessReviewInstanceProperties(_serialization.Model):
         end_date_time: Optional[datetime.datetime] = None,
         reviewers: Optional[List["_models.AccessReviewReviewer"]] = None,
         backup_reviewers: Optional[List["_models.AccessReviewReviewer"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword start_date_time: The DateTime when the review instance is scheduled to be start.
         :paramtype start_date_time: ~datetime.datetime
@@ -1674,7 +1682,7 @@ class AccessReviewReviewer(_serialization.Model):
         "principal_type": {"key": "principalType", "type": "str"},
     }
 
-    def __init__(self, *, principal_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, principal_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword principal_id: The id of the reviewer(user/servicePrincipal).
         :paramtype principal_id: str
@@ -1925,8 +1933,8 @@ class AccessReviewScheduleDefinition(_serialization.Model):  # pylint: disable=t
             Union[str, "_models.AccessReviewRecurrencePatternType"]
         ] = None,
         interval: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: The display name for the schedule definition.
         :paramtype display_name: str
@@ -2082,8 +2090,8 @@ class AccessReviewScheduleDefinitionListResult(_serialization.Model):
         *,
         value: Optional[List["_models.AccessReviewScheduleDefinition"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Access Review Schedule Definition list.
         :paramtype value:
@@ -2306,8 +2314,8 @@ class AccessReviewScheduleDefinitionProperties(_serialization.Model):  # pylint:
         end_date: Optional[datetime.datetime] = None,
         type_settings_recurrence_pattern_type: Optional[Union[str, "_models.AccessReviewRecurrencePatternType"]] = None,
         interval: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: The display name for the schedule definition.
         :paramtype display_name: str
@@ -2532,8 +2540,8 @@ class AccessReviewScheduleSettings(_serialization.Model):  # pylint: disable=too
         end_date: Optional[datetime.datetime] = None,
         type_recurrence_pattern_type: Optional[Union[str, "_models.AccessReviewRecurrencePatternType"]] = None,
         interval: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword mail_notifications_enabled: Flag to indicate whether sending mails to reviewers and
          the review creator is enabled.
@@ -2672,8 +2680,8 @@ class AccessReviewScope(_serialization.Model):
         include_access_below_resource: Optional[bool] = None,
         exclude_resource_id: Optional[str] = None,
         exclude_role_definition_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword inactive_duration: Duration users are inactive for. The value should be in ISO  8601
          format (http://en.wikipedia.org/wiki/ISO_8601#Durations).This code can be used to convert
@@ -2767,7 +2775,7 @@ class Alert(_serialization.Model):  # pylint: disable=too-many-instance-attribut
         "alert_configuration": {"key": "properties.alertConfiguration", "type": "AlertConfiguration"},
     }
 
-    def __init__(self, *, is_active: Optional[bool] = None, **kwargs):
+    def __init__(self, *, is_active: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword is_active: False by default; true if the alert is active.
         :paramtype is_active: bool
@@ -2806,6 +2814,8 @@ class AlertConfiguration(_serialization.Model):
     :vartype is_enabled: bool
     :ivar alert_configuration_type: The alert configuration type.
     :vartype alert_configuration_type: str
+    :ivar alert_definition: The alert definition.
+    :vartype alert_definition: ~azure.mgmt.authorization.v2021_12_01_preview.models.AlertDefinition
     """
 
     _validation = {
@@ -2814,6 +2824,7 @@ class AlertConfiguration(_serialization.Model):
         "type": {"readonly": True},
         "alert_definition_id": {"readonly": True},
         "scope": {"readonly": True},
+        "alert_definition": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2824,9 +2835,10 @@ class AlertConfiguration(_serialization.Model):
         "scope": {"key": "properties.scope", "type": "str"},
         "is_enabled": {"key": "properties.isEnabled", "type": "bool"},
         "alert_configuration_type": {"key": "properties.alertConfigurationType", "type": "str"},
+        "alert_definition": {"key": "properties.alertDefinition", "type": "AlertDefinition"},
     }
 
-    def __init__(self, *, is_enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, is_enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword is_enabled: True if the alert is enabled, false will disable the scanning for the
          specific alert.
@@ -2839,7 +2851,8 @@ class AlertConfiguration(_serialization.Model):
         self.alert_definition_id = None
         self.scope = None
         self.is_enabled = is_enabled
-        self.alert_configuration_type = None  # type: Optional[str]
+        self.alert_configuration_type: Optional[str] = None
+        self.alert_definition = None
 
 
 class AlertConfigurationListResult(_serialization.Model):
@@ -2857,8 +2870,12 @@ class AlertConfigurationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.AlertConfiguration"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.AlertConfiguration"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Alert configuration list.
         :paramtype value: list[~azure.mgmt.authorization.v2021_12_01_preview.models.AlertConfiguration]
@@ -2892,12 +2909,15 @@ class AlertConfigurationProperties(_serialization.Model):
     :vartype is_enabled: bool
     :ivar alert_configuration_type: The alert configuration type. Required.
     :vartype alert_configuration_type: str
+    :ivar alert_definition: The alert definition.
+    :vartype alert_definition: ~azure.mgmt.authorization.v2021_12_01_preview.models.AlertDefinition
     """
 
     _validation = {
         "alert_definition_id": {"readonly": True},
         "scope": {"readonly": True},
         "alert_configuration_type": {"required": True},
+        "alert_definition": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2905,6 +2925,7 @@ class AlertConfigurationProperties(_serialization.Model):
         "scope": {"key": "scope", "type": "str"},
         "is_enabled": {"key": "isEnabled", "type": "bool"},
         "alert_configuration_type": {"key": "alertConfigurationType", "type": "str"},
+        "alert_definition": {"key": "alertDefinition", "type": "AlertDefinition"},
     }
 
     _subtype_map = {
@@ -2916,7 +2937,7 @@ class AlertConfigurationProperties(_serialization.Model):
         }
     }
 
-    def __init__(self, *, is_enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, is_enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword is_enabled: True if the alert is enabled, false will disable the scanning for the
          specific alert.
@@ -2926,7 +2947,8 @@ class AlertConfigurationProperties(_serialization.Model):
         self.alert_definition_id = None
         self.scope = None
         self.is_enabled = is_enabled
-        self.alert_configuration_type = None  # type: Optional[str]
+        self.alert_configuration_type: Optional[str] = None
+        self.alert_definition = None
 
 
 class AlertDefinition(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -2992,7 +3014,7 @@ class AlertDefinition(_serialization.Model):  # pylint: disable=too-many-instanc
         "is_configurable": {"key": "properties.isConfigurable", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -3024,8 +3046,8 @@ class AlertDefinitionListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.AlertDefinition"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.AlertDefinition"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Alert definition list.
         :paramtype value: list[~azure.mgmt.authorization.v2021_12_01_preview.models.AlertDefinition]
@@ -3065,13 +3087,13 @@ class AlertIncident(_serialization.Model):
         "alert_incident_type": {"key": "properties.alertIncidentType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.alert_incident_type = None  # type: Optional[str]
+        self.alert_incident_type: Optional[str] = None
 
 
 class AlertIncidentListResult(_serialization.Model):
@@ -3089,8 +3111,8 @@ class AlertIncidentListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.AlertIncident"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.AlertIncident"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Alert incident list.
         :paramtype value: list[~azure.mgmt.authorization.v2021_12_01_preview.models.AlertIncident]
@@ -3134,10 +3156,10 @@ class AlertIncidentProperties(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.alert_incident_type = None  # type: Optional[str]
+        self.alert_incident_type: Optional[str] = None
 
 
 class AlertListResult(_serialization.Model):
@@ -3154,7 +3176,9 @@ class AlertListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Alert"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Alert"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Alert list.
         :paramtype value: list[~azure.mgmt.authorization.v2021_12_01_preview.models.Alert]
@@ -3181,8 +3205,12 @@ class AlertOperationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.AlertOperationResult"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.AlertOperationResult"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Alert operation list.
         :paramtype value:
@@ -3216,7 +3244,7 @@ class AlertOperationResult(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -3239,12 +3267,15 @@ class AzureRolesAssignedOutsidePimAlertConfigurationProperties(AlertConfiguratio
     :vartype is_enabled: bool
     :ivar alert_configuration_type: The alert configuration type. Required.
     :vartype alert_configuration_type: str
+    :ivar alert_definition: The alert definition.
+    :vartype alert_definition: ~azure.mgmt.authorization.v2021_12_01_preview.models.AlertDefinition
     """
 
     _validation = {
         "alert_definition_id": {"readonly": True},
         "scope": {"readonly": True},
         "alert_configuration_type": {"required": True},
+        "alert_definition": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3252,16 +3283,17 @@ class AzureRolesAssignedOutsidePimAlertConfigurationProperties(AlertConfiguratio
         "scope": {"key": "scope", "type": "str"},
         "is_enabled": {"key": "isEnabled", "type": "bool"},
         "alert_configuration_type": {"key": "alertConfigurationType", "type": "str"},
+        "alert_definition": {"key": "alertDefinition", "type": "AlertDefinition"},
     }
 
-    def __init__(self, *, is_enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, is_enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword is_enabled: True if the alert is enabled, false will disable the scanning for the
          specific alert.
         :paramtype is_enabled: bool
         """
         super().__init__(is_enabled=is_enabled, **kwargs)
-        self.alert_configuration_type = "AzureRolesAssignedOutsidePimAlertConfiguration"  # type: str
+        self.alert_configuration_type: str = "AzureRolesAssignedOutsidePimAlertConfiguration"
 
 
 class AzureRolesAssignedOutsidePimAlertIncidentProperties(
@@ -3325,10 +3357,10 @@ class AzureRolesAssignedOutsidePimAlertIncidentProperties(
         "requestor_user_principal_name": {"key": "requestorUserPrincipalName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.alert_incident_type = "AzureRolesAssignedOutsidePimAlertIncident"  # type: str
+        self.alert_incident_type: str = "AzureRolesAssignedOutsidePimAlertIncident"
         self.assignee_display_name = None
         self.assignee_user_principal_name = None
         self.assignee_id = None
@@ -3357,7 +3389,7 @@ class CloudErrorBody(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -3387,12 +3419,15 @@ class DuplicateRoleCreatedAlertConfigurationProperties(AlertConfigurationPropert
     :vartype is_enabled: bool
     :ivar alert_configuration_type: The alert configuration type. Required.
     :vartype alert_configuration_type: str
+    :ivar alert_definition: The alert definition.
+    :vartype alert_definition: ~azure.mgmt.authorization.v2021_12_01_preview.models.AlertDefinition
     """
 
     _validation = {
         "alert_definition_id": {"readonly": True},
         "scope": {"readonly": True},
         "alert_configuration_type": {"required": True},
+        "alert_definition": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3400,16 +3435,17 @@ class DuplicateRoleCreatedAlertConfigurationProperties(AlertConfigurationPropert
         "scope": {"key": "scope", "type": "str"},
         "is_enabled": {"key": "isEnabled", "type": "bool"},
         "alert_configuration_type": {"key": "alertConfigurationType", "type": "str"},
+        "alert_definition": {"key": "alertDefinition", "type": "AlertDefinition"},
     }
 
-    def __init__(self, *, is_enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, is_enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword is_enabled: True if the alert is enabled, false will disable the scanning for the
          specific alert.
         :paramtype is_enabled: bool
         """
         super().__init__(is_enabled=is_enabled, **kwargs)
-        self.alert_configuration_type = "DuplicateRoleCreatedAlertConfiguration"  # type: str
+        self.alert_configuration_type: str = "DuplicateRoleCreatedAlertConfiguration"
 
 
 class DuplicateRoleCreatedAlertIncidentProperties(AlertIncidentProperties):
@@ -3443,10 +3479,10 @@ class DuplicateRoleCreatedAlertIncidentProperties(AlertIncidentProperties):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.alert_incident_type = "DuplicateRoleCreatedAlertIncident"  # type: str
+        self.alert_incident_type: str = "DuplicateRoleCreatedAlertIncident"
         self.role_name = None
         self.duplicate_roles = None
         self.reason = None
@@ -3463,7 +3499,7 @@ class ErrorDefinition(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDefinitionProperties"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDefinitionProperties"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDefinitionProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword error: Error of the list gateway status.
         :paramtype error:
@@ -3493,7 +3529,7 @@ class ErrorDefinitionProperties(_serialization.Model):
         "code": {"key": "code", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code of list gateway.
         :paramtype code: str
@@ -3530,8 +3566,8 @@ class Operation(_serialization.Model):
         is_data_action: Optional[bool] = None,
         display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the operation.
         :paramtype name: str
@@ -3578,7 +3614,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -3601,7 +3637,9 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection value.
         :paramtype value: list[~azure.mgmt.authorization.v2021_12_01_preview.models.Operation]
@@ -3647,8 +3685,8 @@ class RecordAllDecisionsProperties(_serialization.Model):
         *,
         decision: Optional[Union[str, "_models.RecordAllDecisionsResult"]] = None,
         justification: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword decision: The decision to make. Approvers can take action of Approve/Deny. Known
          values are: "Approve" and "Deny".
@@ -3680,6 +3718,8 @@ class TooManyOwnersAssignedToResourceAlertConfigurationProperties(AlertConfigura
     :vartype is_enabled: bool
     :ivar alert_configuration_type: The alert configuration type. Required.
     :vartype alert_configuration_type: str
+    :ivar alert_definition: The alert definition.
+    :vartype alert_definition: ~azure.mgmt.authorization.v2021_12_01_preview.models.AlertDefinition
     :ivar threshold_number_of_owners: The threshold number of owners.
     :vartype threshold_number_of_owners: int
     :ivar threshold_percentage_of_owners_out_of_all_role_members: The threshold percentage of
@@ -3691,6 +3731,7 @@ class TooManyOwnersAssignedToResourceAlertConfigurationProperties(AlertConfigura
         "alert_definition_id": {"readonly": True},
         "scope": {"readonly": True},
         "alert_configuration_type": {"required": True},
+        "alert_definition": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3698,6 +3739,7 @@ class TooManyOwnersAssignedToResourceAlertConfigurationProperties(AlertConfigura
         "scope": {"key": "scope", "type": "str"},
         "is_enabled": {"key": "isEnabled", "type": "bool"},
         "alert_configuration_type": {"key": "alertConfigurationType", "type": "str"},
+        "alert_definition": {"key": "alertDefinition", "type": "AlertDefinition"},
         "threshold_number_of_owners": {"key": "thresholdNumberOfOwners", "type": "int"},
         "threshold_percentage_of_owners_out_of_all_role_members": {
             "key": "thresholdPercentageOfOwnersOutOfAllRoleMembers",
@@ -3711,8 +3753,8 @@ class TooManyOwnersAssignedToResourceAlertConfigurationProperties(AlertConfigura
         is_enabled: Optional[bool] = None,
         threshold_number_of_owners: Optional[int] = None,
         threshold_percentage_of_owners_out_of_all_role_members: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: True if the alert is enabled, false will disable the scanning for the
          specific alert.
@@ -3724,7 +3766,7 @@ class TooManyOwnersAssignedToResourceAlertConfigurationProperties(AlertConfigura
         :paramtype threshold_percentage_of_owners_out_of_all_role_members: int
         """
         super().__init__(is_enabled=is_enabled, **kwargs)
-        self.alert_configuration_type = "TooManyOwnersAssignedToResourceAlertConfiguration"  # type: str
+        self.alert_configuration_type: str = "TooManyOwnersAssignedToResourceAlertConfiguration"
         self.threshold_number_of_owners = threshold_number_of_owners
         self.threshold_percentage_of_owners_out_of_all_role_members = (
             threshold_percentage_of_owners_out_of_all_role_members
@@ -3758,10 +3800,10 @@ class TooManyOwnersAssignedToResourceAlertIncidentProperties(AlertIncidentProper
         "assignee_type": {"key": "assigneeType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.alert_incident_type = "TooManyOwnersAssignedToResourceAlertIncident"  # type: str
+        self.alert_incident_type: str = "TooManyOwnersAssignedToResourceAlertIncident"
         self.assignee_name = None
         self.assignee_type = None
 
@@ -3782,6 +3824,8 @@ class TooManyPermanentOwnersAssignedToResourceAlertConfigurationProperties(Alert
     :vartype is_enabled: bool
     :ivar alert_configuration_type: The alert configuration type. Required.
     :vartype alert_configuration_type: str
+    :ivar alert_definition: The alert definition.
+    :vartype alert_definition: ~azure.mgmt.authorization.v2021_12_01_preview.models.AlertDefinition
     :ivar threshold_number_of_permanent_owners: The threshold number of permanent owners.
     :vartype threshold_number_of_permanent_owners: int
     :ivar threshold_percentage_of_permanent_owners_out_of_all_owners: The threshold percentage of
@@ -3793,6 +3837,7 @@ class TooManyPermanentOwnersAssignedToResourceAlertConfigurationProperties(Alert
         "alert_definition_id": {"readonly": True},
         "scope": {"readonly": True},
         "alert_configuration_type": {"required": True},
+        "alert_definition": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3800,6 +3845,7 @@ class TooManyPermanentOwnersAssignedToResourceAlertConfigurationProperties(Alert
         "scope": {"key": "scope", "type": "str"},
         "is_enabled": {"key": "isEnabled", "type": "bool"},
         "alert_configuration_type": {"key": "alertConfigurationType", "type": "str"},
+        "alert_definition": {"key": "alertDefinition", "type": "AlertDefinition"},
         "threshold_number_of_permanent_owners": {"key": "thresholdNumberOfPermanentOwners", "type": "int"},
         "threshold_percentage_of_permanent_owners_out_of_all_owners": {
             "key": "thresholdPercentageOfPermanentOwnersOutOfAllOwners",
@@ -3813,8 +3859,8 @@ class TooManyPermanentOwnersAssignedToResourceAlertConfigurationProperties(Alert
         is_enabled: Optional[bool] = None,
         threshold_number_of_permanent_owners: Optional[int] = None,
         threshold_percentage_of_permanent_owners_out_of_all_owners: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: True if the alert is enabled, false will disable the scanning for the
          specific alert.
@@ -3826,7 +3872,7 @@ class TooManyPermanentOwnersAssignedToResourceAlertConfigurationProperties(Alert
         :paramtype threshold_percentage_of_permanent_owners_out_of_all_owners: int
         """
         super().__init__(is_enabled=is_enabled, **kwargs)
-        self.alert_configuration_type = "TooManyPermanentOwnersAssignedToResourceAlertConfiguration"  # type: str
+        self.alert_configuration_type: str = "TooManyPermanentOwnersAssignedToResourceAlertConfiguration"
         self.threshold_number_of_permanent_owners = threshold_number_of_permanent_owners
         self.threshold_percentage_of_permanent_owners_out_of_all_owners = (
             threshold_percentage_of_permanent_owners_out_of_all_owners
@@ -3860,9 +3906,9 @@ class TooManyPermanentOwnersAssignedToResourceAlertIncidentProperties(AlertIncid
         "assignee_type": {"key": "assigneeType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.alert_incident_type = "TooManyPermanentOwnersAssignedToResourceAlertIncident"  # type: str
+        self.alert_incident_type: str = "TooManyPermanentOwnersAssignedToResourceAlertIncident"
         self.assignee_name = None
         self.assignee_type = None

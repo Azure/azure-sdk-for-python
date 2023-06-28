@@ -3,16 +3,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import base64
-
+from typing import Optional
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 from cryptography.hazmat.backends import default_backend
-import six
 
 
-class AadClientCertificate(object):
+class AadClientCertificate:
     """Wraps 'cryptography' to provide the crypto operations AadClient requires for certificate authentication.
 
     :param bytes pem_bytes: bytes of a a PEM-encoded certificate including the (RSA) private key
@@ -21,7 +20,7 @@ class AadClientCertificate(object):
     def __init__(
             self,
             pem_bytes: bytes,
-            password: bytes = None
+            password: Optional[bytes] = None
     ) -> None:
         private_key = serialization.load_pem_private_key(pem_bytes, password=password, backend=default_backend())
         if not isinstance(private_key, RSAPrivateKey):
@@ -30,7 +29,7 @@ class AadClientCertificate(object):
 
         cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())
         fingerprint = cert.fingerprint(hashes.SHA1())  # nosec
-        self._thumbprint = six.ensure_str(base64.urlsafe_b64encode(fingerprint), encoding="utf-8")
+        self._thumbprint = base64.urlsafe_b64encode(fingerprint).decode("utf-8")
 
     @property
     def thumbprint(self) -> str:

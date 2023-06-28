@@ -35,8 +35,12 @@ pip install azure-keyvault-administration azure-identity
 | [access_control_operations_async.py][access_control_operations_async_sample] | create/update/delete role definitions and role assignments with an async client |
 | [backup_restore_operations.py][backup_operations_sample] | full backup and restore |
 | [backup_restore_operations_async.py][backup_operations_async_sample] | full backup and restore with an async client |
+| [settings_operations.py][settings_operations_sample] | list and update Key Vault settings |
+| [settings_operations_async.py][settings_operations_async_sample] | list and update Key Vault settings with an async client |
 
 [access_control_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/access_control_operations.py
 [access_control_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/access_control_operations_async.py
 [backup_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/backup_restore_operations.py
 [backup_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/backup_restore_operations_async.py
+[settings_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/settings_operations.py
+[settings_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/settings_operations_async.py

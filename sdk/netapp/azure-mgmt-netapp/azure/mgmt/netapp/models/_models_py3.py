@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -44,8 +44,8 @@ class AccountEncryption(_serialization.Model):
         key_source: Union[str, "_models.KeySource"] = "Microsoft.NetApp",
         key_vault_properties: Optional["_models.KeyVaultProperties"] = None,
         identity: Optional["_models.EncryptionIdentity"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_source: The encryption keySource (provider). Possible values (case-insensitive):
          Microsoft.NetApp, Microsoft.KeyVault. Known values are: "Microsoft.NetApp" and
@@ -71,7 +71,7 @@ class ActiveDirectory(_serialization.Model):  # pylint: disable=too-many-instanc
 
     :ivar active_directory_id: Id of the Active Directory.
     :vartype active_directory_id: str
-    :ivar username: Username of Active Directory domain administrator.
+    :ivar username: A domain user account with permission to create machine accounts.
     :vartype username: str
     :ivar password: Plain text password of Active Directory domain administrator, value is masked
      in the response.
@@ -128,6 +128,9 @@ class ActiveDirectory(_serialization.Model):  # pylint: disable=too-many-instanc
     :vartype encrypt_dc_connections: bool
     :ivar ldap_search_scope: LDAP Search scope options.
     :vartype ldap_search_scope: ~azure.mgmt.netapp.models.LdapSearchScopeOpt
+    :ivar preferred_servers_for_ldap_client: Comma separated list of IPv4 addresses of preferred
+     servers for LDAP client. At most two comma separated IPv4 addresses can be passed.
+    :vartype preferred_servers_for_ldap_client: str
     """
 
     _validation = {
@@ -141,6 +144,10 @@ class ActiveDirectory(_serialization.Model):  # pylint: disable=too-many-instanc
         },
         "ad_name": {"max_length": 64, "min_length": 1},
         "server_root_ca_certificate": {"max_length": 10240, "min_length": 1},
+        "preferred_servers_for_ldap_client": {
+            "max_length": 32,
+            "pattern": r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)((, ?)(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))?)?$",
+        },
     }
 
     _attribute_map = {
@@ -166,6 +173,7 @@ class ActiveDirectory(_serialization.Model):  # pylint: disable=too-many-instanc
         "allow_local_nfs_users_with_ldap": {"key": "allowLocalNfsUsersWithLdap", "type": "bool"},
         "encrypt_dc_connections": {"key": "encryptDCConnections", "type": "bool"},
         "ldap_search_scope": {"key": "ldapSearchScope", "type": "LdapSearchScopeOpt"},
+        "preferred_servers_for_ldap_client": {"key": "preferredServersForLdapClient", "type": "str"},
     }
 
     def __init__(
@@ -191,12 +199,13 @@ class ActiveDirectory(_serialization.Model):  # pylint: disable=too-many-instanc
         allow_local_nfs_users_with_ldap: Optional[bool] = None,
         encrypt_dc_connections: Optional[bool] = None,
         ldap_search_scope: Optional["_models.LdapSearchScopeOpt"] = None,
-        **kwargs
-    ):
+        preferred_servers_for_ldap_client: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword active_directory_id: Id of the Active Directory.
         :paramtype active_directory_id: str
-        :keyword username: Username of Active Directory domain administrator.
+        :keyword username: A domain user account with permission to create machine accounts.
         :paramtype username: str
         :keyword password: Plain text password of Active Directory domain administrator, value is
          masked in the response.
@@ -248,6 +257,9 @@ class ActiveDirectory(_serialization.Model):  # pylint: disable=too-many-instanc
         :paramtype encrypt_dc_connections: bool
         :keyword ldap_search_scope: LDAP Search scope options.
         :paramtype ldap_search_scope: ~azure.mgmt.netapp.models.LdapSearchScopeOpt
+        :keyword preferred_servers_for_ldap_client: Comma separated list of IPv4 addresses of preferred
+         servers for LDAP client. At most two comma separated IPv4 addresses can be passed.
+        :paramtype preferred_servers_for_ldap_client: str
         """
         super().__init__(**kwargs)
         self.active_directory_id = active_directory_id
@@ -272,6 +284,7 @@ class ActiveDirectory(_serialization.Model):  # pylint: disable=too-many-instanc
         self.allow_local_nfs_users_with_ldap = allow_local_nfs_users_with_ldap
         self.encrypt_dc_connections = encrypt_dc_connections
         self.ldap_search_scope = ldap_search_scope
+        self.preferred_servers_for_ldap_client = preferred_servers_for_ldap_client
 
 
 class AuthorizeRequest(_serialization.Model):
@@ -285,7 +298,7 @@ class AuthorizeRequest(_serialization.Model):
         "remote_volume_resource_id": {"key": "remoteVolumeResourceId", "type": "str"},
     }
 
-    def __init__(self, *, remote_volume_resource_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, remote_volume_resource_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword remote_volume_resource_id: Resource id of the remote volume.
         :paramtype remote_volume_resource_id: str
@@ -294,21 +307,105 @@ class AuthorizeRequest(_serialization.Model):
         self.remote_volume_resource_id = remote_volume_resource_id
 
 
-class Backup(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class Resource(_serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.system_data = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+
+
+class Backup(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Backup of a Volume.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
     :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
     :ivar backup_id: UUID v4 used to identify the Backup.
     :vartype backup_id: str
     :ivar creation_date: The creation date of the backup.
@@ -332,10 +429,11 @@ class Backup(_serialization.Model):  # pylint: disable=too-many-instance-attribu
     """
 
     _validation = {
-        "location": {"required": True},
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
         "backup_id": {
             "readonly": True,
             "max_length": 36,
@@ -351,10 +449,11 @@ class Backup(_serialization.Model):  # pylint: disable=too-many-instance-attribu
     }
 
     _attribute_map = {
-        "location": {"key": "location", "type": "str"},
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "location": {"key": "location", "type": "str"},
         "backup_id": {"key": "properties.backupId", "type": "str"},
         "creation_date": {"key": "properties.creationDate", "type": "iso-8601"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
@@ -366,7 +465,9 @@ class Backup(_serialization.Model):  # pylint: disable=too-many-instance-attribu
         "use_existing_snapshot": {"key": "properties.useExistingSnapshot", "type": "bool"},
     }
 
-    def __init__(self, *, location: str, label: Optional[str] = None, use_existing_snapshot: bool = False, **kwargs):
+    def __init__(
+        self, *, location: str, label: Optional[str] = None, use_existing_snapshot: bool = False, **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -378,9 +479,6 @@ class Backup(_serialization.Model):  # pylint: disable=too-many-instance-attribu
         """
         super().__init__(**kwargs)
         self.location = location
-        self.id = None
-        self.name = None
-        self.type = None
         self.backup_id = None
         self.creation_date = None
         self.provisioning_state = None
@@ -455,8 +553,8 @@ class BackupPatch(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         label: Optional[str] = None,
         use_existing_snapshot: bool = False,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -490,7 +588,7 @@ class BackupPoliciesList(_serialization.Model):
         "value": {"key": "value", "type": "[BackupPolicy]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.BackupPolicy"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.BackupPolicy"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of backup policies.
         :paramtype value: list[~azure.mgmt.netapp.models.BackupPolicy]
@@ -499,49 +597,9 @@ class BackupPoliciesList(_serialization.Model):
         self.value = value
 
 
-class Resource(_serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
-
-
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -581,7 +639,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -675,8 +733,8 @@ class BackupPolicy(TrackedResource):  # pylint: disable=too-many-instance-attrib
         weekly_backups_to_keep: Optional[int] = None,
         monthly_backups_to_keep: Optional[int] = None,
         enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -703,21 +761,28 @@ class BackupPolicy(TrackedResource):  # pylint: disable=too-many-instance-attrib
         self.volume_backups = None
 
 
-class BackupPolicyDetails(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class BackupPolicyDetails(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Backup policy properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar location: Resource location.
-    :vartype location: str
-    :ivar id: Resource Id.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar backup_policy_id: Backup Policy Resource ID.
     :vartype backup_policy_id: str
     :ivar provisioning_state: Azure lifecycle management.
@@ -740,6 +805,8 @@ class BackupPolicyDetails(_serialization.Model):  # pylint: disable=too-many-ins
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
         "backup_policy_id": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "volumes_assigned": {"readonly": True},
@@ -747,11 +814,12 @@ class BackupPolicyDetails(_serialization.Model):  # pylint: disable=too-many-ins
     }
 
     _attribute_map = {
-        "location": {"key": "location", "type": "str"},
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "backup_policy_id": {"key": "properties.backupPolicyId", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "daily_backups_to_keep": {"key": "properties.dailyBackupsToKeep", "type": "int"},
@@ -765,19 +833,19 @@ class BackupPolicyDetails(_serialization.Model):  # pylint: disable=too-many-ins
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
+        location: str,
         tags: Optional[Dict[str, str]] = None,
         daily_backups_to_keep: Optional[int] = None,
         weekly_backups_to_keep: Optional[int] = None,
         monthly_backups_to_keep: Optional[int] = None,
         enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword location: Resource location.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword daily_backups_to_keep: Daily backups count to keep.
         :paramtype daily_backups_to_keep: int
         :keyword weekly_backups_to_keep: Weekly backups count to keep.
@@ -787,12 +855,7 @@ class BackupPolicyDetails(_serialization.Model):  # pylint: disable=too-many-ins
         :keyword enabled: The property to decide policy is enabled or not.
         :paramtype enabled: bool
         """
-        super().__init__(**kwargs)
-        self.location = location
-        self.id = None
-        self.name = None
-        self.type = None
-        self.tags = tags
+        super().__init__(tags=tags, location=location, **kwargs)
         self.backup_policy_id = None
         self.provisioning_state = None
         self.daily_backups_to_keep = daily_backups_to_keep
@@ -871,8 +934,8 @@ class BackupPolicyPatch(_serialization.Model):  # pylint: disable=too-many-insta
         weekly_backups_to_keep: Optional[int] = None,
         monthly_backups_to_keep: Optional[int] = None,
         enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -903,6 +966,59 @@ class BackupPolicyPatch(_serialization.Model):  # pylint: disable=too-many-insta
         self.volume_backups = None
 
 
+class BackupRestoreFiles(_serialization.Model):
+    """Restore payload for single file backup restore.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar file_list: List of files to be restored. Required.
+    :vartype file_list: list[str]
+    :ivar restore_file_path: Destination folder where the files will be restored. The path name
+     should start with a forward slash. If it is omitted from request then restore is done at the
+     root folder of the destination volume by default.
+    :vartype restore_file_path: str
+    :ivar destination_volume_id: Resource Id of the destination volume on which the files need to
+     be restored. Required.
+    :vartype destination_volume_id: str
+    """
+
+    _validation = {
+        "file_list": {"required": True, "max_items": 8, "min_items": 1},
+        "restore_file_path": {"pattern": r"^\/.*$"},
+        "destination_volume_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "file_list": {"key": "fileList", "type": "[str]"},
+        "restore_file_path": {"key": "restoreFilePath", "type": "str"},
+        "destination_volume_id": {"key": "destinationVolumeId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        file_list: List[str],
+        destination_volume_id: str,
+        restore_file_path: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword file_list: List of files to be restored. Required.
+        :paramtype file_list: list[str]
+        :keyword restore_file_path: Destination folder where the files will be restored. The path name
+         should start with a forward slash. If it is omitted from request then restore is done at the
+         root folder of the destination volume by default.
+        :paramtype restore_file_path: str
+        :keyword destination_volume_id: Resource Id of the destination volume on which the files need
+         to be restored. Required.
+        :paramtype destination_volume_id: str
+        """
+        super().__init__(**kwargs)
+        self.file_list = file_list
+        self.restore_file_path = restore_file_path
+        self.destination_volume_id = destination_volume_id
+
+
 class BackupsList(_serialization.Model):
     """List of Backups.
 
@@ -914,7 +1030,7 @@ class BackupsList(_serialization.Model):
         "value": {"key": "value", "type": "[Backup]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Backup"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Backup"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of Backups.
         :paramtype value: list[~azure.mgmt.netapp.models.Backup]
@@ -970,7 +1086,7 @@ class BackupStatus(_serialization.Model):
         "total_transfer_bytes": {"key": "totalTransferBytes", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.healthy = None
@@ -981,6 +1097,42 @@ class BackupStatus(_serialization.Model):
         self.last_transfer_size = None
         self.last_transfer_type = None
         self.total_transfer_bytes = None
+
+
+class BreakFileLocksRequest(_serialization.Model):
+    """Break file locks request.
+
+    :ivar client_ip: To clear file locks on a volume for a particular client.
+    :vartype client_ip: str
+    :ivar confirm_running_disruptive_operation: Break File locks could be a disruptive operation
+     for application as locks on the volume will be broken, if want to process, set to true.
+    :vartype confirm_running_disruptive_operation: bool
+    """
+
+    _validation = {
+        "client_ip": {
+            "pattern": r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+        },
+    }
+
+    _attribute_map = {
+        "client_ip": {"key": "clientIp", "type": "str"},
+        "confirm_running_disruptive_operation": {"key": "confirmRunningDisruptiveOperation", "type": "bool"},
+    }
+
+    def __init__(
+        self, *, client_ip: Optional[str] = None, confirm_running_disruptive_operation: bool = False, **kwargs: Any
+    ) -> None:
+        """
+        :keyword client_ip: To clear file locks on a volume for a particular client.
+        :paramtype client_ip: str
+        :keyword confirm_running_disruptive_operation: Break File locks could be a disruptive operation
+         for application as locks on the volume will be broken, if want to process, set to true.
+        :paramtype confirm_running_disruptive_operation: bool
+        """
+        super().__init__(**kwargs)
+        self.client_ip = client_ip
+        self.confirm_running_disruptive_operation = confirm_running_disruptive_operation
 
 
 class BreakReplicationRequest(_serialization.Model):
@@ -995,7 +1147,7 @@ class BreakReplicationRequest(_serialization.Model):
         "force_break_replication": {"key": "forceBreakReplication", "type": "bool"},
     }
 
-    def __init__(self, *, force_break_replication: Optional[bool] = None, **kwargs):
+    def __init__(self, *, force_break_replication: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword force_break_replication: If replication is in status transferring and you want to
          force break the replication, set to true.
@@ -1102,8 +1254,8 @@ class CapacityPool(TrackedResource):  # pylint: disable=too-many-instance-attrib
         qos_type: Optional[Union[str, "_models.QosType"]] = None,
         cool_access: bool = False,
         encryption_type: Union[str, "_models.EncryptionType"] = "Single",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1152,8 +1304,8 @@ class CapacityPoolList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.CapacityPool"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.CapacityPool"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of Capacity pools.
         :paramtype value: list[~azure.mgmt.netapp.models.CapacityPool]
@@ -1214,8 +1366,8 @@ class CapacityPoolPatch(_serialization.Model):
         size: int = 4398046511104,
         qos_type: Optional[Union[str, "_models.QosType"]] = None,
         cool_access: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -1269,8 +1421,8 @@ class CheckAvailabilityResponse(_serialization.Model):
         is_available: Optional[bool] = None,
         reason: Optional[Union[str, "_models.InAvailabilityReasonType"]] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_available: :code:`<code>true</code>` indicates name is valid and available.
          :code:`<code>false</code>` indicates the name is invalid, unavailable, or both.
@@ -1307,7 +1459,7 @@ class CloudErrorBody(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -1348,8 +1500,8 @@ class DailySchedule(_serialization.Model):
         hour: Optional[int] = None,
         minute: Optional[int] = None,
         used_bytes: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword snapshots_to_keep: Daily snapshot count to keep.
         :paramtype snapshots_to_keep: int
@@ -1381,7 +1533,7 @@ class Dimension(_serialization.Model):
         "display_name": {"key": "displayName", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Display name of dimension.
         :paramtype name: str
@@ -1416,7 +1568,7 @@ class EncryptionIdentity(_serialization.Model):
         "user_assigned_identity": {"key": "userAssignedIdentity", "type": "str"},
     }
 
-    def __init__(self, *, user_assigned_identity: Optional[str] = None, **kwargs):
+    def __init__(self, *, user_assigned_identity: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword user_assigned_identity: The ARM resource identifier of the user assigned identity used
          to authenticate with key vault. Applicable if identity.type has 'UserAssigned'. It should match
@@ -1508,8 +1660,8 @@ class ExportPolicyRule(_serialization.Model):  # pylint: disable=too-many-instan
         allowed_clients: Optional[str] = None,
         has_root_access: bool = True,
         chown_mode: Union[str, "_models.ChownMode"] = "Restricted",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword rule_index: Order index.
         :paramtype rule_index: int
@@ -1592,7 +1744,7 @@ class FilePathAvailabilityRequest(_serialization.Model):
         "subnet_id": {"key": "subnetId", "type": "str"},
     }
 
-    def __init__(self, *, name: str, subnet_id: str, **kwargs):
+    def __init__(self, *, name: str, subnet_id: str, **kwargs: Any) -> None:
         """
         :keyword name: File path to verify. Required.
         :paramtype name: str
@@ -1628,8 +1780,8 @@ class HourlySchedule(_serialization.Model):
         snapshots_to_keep: Optional[int] = None,
         minute: Optional[int] = None,
         used_bytes: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword snapshots_to_keep: Hourly snapshot count to keep.
         :paramtype snapshots_to_keep: int
@@ -1642,62 +1794,6 @@ class HourlySchedule(_serialization.Model):
         self.snapshots_to_keep = snapshots_to_keep
         self.minute = minute
         self.used_bytes = used_bytes
-
-
-class Identity(_serialization.Model):
-    """Identity for the resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar principal_id: The principal ID of resource identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of resource.
-    :vartype tenant_id: str
-    :ivar type: The identity type. Required. Known values are: "None", "SystemAssigned",
-     "UserAssigned", and "SystemAssigned,UserAssigned".
-    :vartype type: str or ~azure.mgmt.netapp.models.IdentityType
-    :ivar user_assigned_identities: Gets or sets a list of key value pairs that describe the set of
-     User Assigned identities that will be used with this storage account. The key is the ARM
-     resource identifier of the identity. Only 1 User Assigned identity is permitted here.
-    :vartype user_assigned_identities: dict[str, ~azure.mgmt.netapp.models.UserAssignedIdentity]
-    """
-
-    _validation = {
-        "principal_id": {"readonly": True},
-        "tenant_id": {"readonly": True},
-        "type": {"required": True},
-    }
-
-    _attribute_map = {
-        "principal_id": {"key": "principalId", "type": "str"},
-        "tenant_id": {"key": "tenantId", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
-    }
-
-    def __init__(
-        self,
-        *,
-        type: Union[str, "_models.IdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword type: The identity type. Required. Known values are: "None", "SystemAssigned",
-         "UserAssigned", and "SystemAssigned,UserAssigned".
-        :paramtype type: str or ~azure.mgmt.netapp.models.IdentityType
-        :keyword user_assigned_identities: Gets or sets a list of key value pairs that describe the set
-         of User Assigned identities that will be used with this storage account. The key is the ARM
-         resource identifier of the identity. Only 1 User Assigned identity is permitted here.
-        :paramtype user_assigned_identities: dict[str, ~azure.mgmt.netapp.models.UserAssignedIdentity]
-        """
-        super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
-        self.type = type
-        self.user_assigned_identities = user_assigned_identities
 
 
 class KeyVaultProperties(_serialization.Model):
@@ -1741,7 +1837,7 @@ class KeyVaultProperties(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, *, key_vault_uri: str, key_name: str, key_vault_resource_id: str, **kwargs):
+    def __init__(self, *, key_vault_uri: str, key_name: str, key_vault_resource_id: str, **kwargs: Any) -> None:
         """
         :keyword key_vault_uri: The Uri of KeyVault. Required.
         :paramtype key_vault_uri: str
@@ -1788,8 +1884,8 @@ class LdapSearchScopeOpt(_serialization.Model):
         user_dn: Optional[str] = None,
         group_dn: Optional[str] = None,
         group_membership_filter: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword user_dn: This specifies the user DN, which overrides the base DN for user lookups.
         :paramtype user_dn: str
@@ -1816,7 +1912,7 @@ class ListReplications(_serialization.Model):
         "value": {"key": "value", "type": "[Replication]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Replication"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Replication"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of replications.
         :paramtype value: list[~azure.mgmt.netapp.models.Replication]
@@ -1839,7 +1935,7 @@ class LogSpecification(_serialization.Model):
         "display_name": {"key": "displayName", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Name of log specification.
         :paramtype name: str
@@ -1849,6 +1945,68 @@ class LogSpecification(_serialization.Model):
         super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
+
+
+class ManagedServiceIdentity(_serialization.Model):
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: Type of managed service identity (where both SystemAssigned and UserAssigned types
+     are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+     "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.netapp.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The set of user assigned identities associated with the
+     resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     The dictionary values can be empty objects ({}) in requests.
+    :vartype user_assigned_identities: dict[str, ~azure.mgmt.netapp.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Type of managed service identity (where both SystemAssigned and UserAssigned
+         types are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+         "SystemAssigned,UserAssigned".
+        :paramtype type: str or ~azure.mgmt.netapp.models.ManagedServiceIdentityType
+        :keyword user_assigned_identities: The set of user assigned identities associated with the
+         resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         The dictionary values can be empty objects ({}) in requests.
+        :paramtype user_assigned_identities: dict[str, ~azure.mgmt.netapp.models.UserAssignedIdentity]
+        """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
 class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -1927,8 +2085,8 @@ class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-ins
         category: Optional[str] = None,
         resource_id_dimension_name_override: Optional[str] = None,
         is_internal: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of metric specification.
         :paramtype name: str
@@ -2016,8 +2174,8 @@ class MonthlySchedule(_serialization.Model):
         hour: Optional[int] = None,
         minute: Optional[int] = None,
         used_bytes: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword snapshots_to_keep: Monthly snapshot count to keep.
         :paramtype snapshots_to_keep: int
@@ -2105,8 +2263,8 @@ class MountTarget(_serialization.Model):
         file_system_id: str,
         tags: Optional[Dict[str, str]] = None,
         smb_server_fqdn: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -2169,7 +2327,7 @@ class MountTargetProperties(_serialization.Model):
         "smb_server_fqdn": {"key": "smbServerFqdn", "type": "str"},
     }
 
-    def __init__(self, *, file_system_id: str, smb_server_fqdn: Optional[str] = None, **kwargs):
+    def __init__(self, *, file_system_id: str, smb_server_fqdn: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword file_system_id: UUID v4 used to identify the MountTarget. Required.
         :paramtype file_system_id: str
@@ -2207,8 +2365,8 @@ class NetAppAccount(TrackedResource):  # pylint: disable=too-many-instance-attri
     :vartype location: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar identity: The identity of the resource.
-    :vartype identity: ~azure.mgmt.netapp.models.Identity
+    :ivar identity: The identity used for the resource.
+    :vartype identity: ~azure.mgmt.netapp.models.ManagedServiceIdentity
     :ivar provisioning_state: Azure lifecycle management.
     :vartype provisioning_state: str
     :ivar active_directories: Active Directories.
@@ -2239,7 +2397,7 @@ class NetAppAccount(TrackedResource):  # pylint: disable=too-many-instance-attri
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "etag": {"key": "etag", "type": "str"},
-        "identity": {"key": "identity", "type": "Identity"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "active_directories": {"key": "properties.activeDirectories", "type": "[ActiveDirectory]"},
         "encryption": {"key": "properties.encryption", "type": "AccountEncryption"},
@@ -2251,18 +2409,18 @@ class NetAppAccount(TrackedResource):  # pylint: disable=too-many-instance-attri
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["_models.Identity"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         active_directories: Optional[List["_models.ActiveDirectory"]] = None,
         encryption: Optional["_models.AccountEncryption"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
-        :keyword identity: The identity of the resource.
-        :paramtype identity: ~azure.mgmt.netapp.models.Identity
+        :keyword identity: The identity used for the resource.
+        :paramtype identity: ~azure.mgmt.netapp.models.ManagedServiceIdentity
         :keyword active_directories: Active Directories.
         :paramtype active_directories: list[~azure.mgmt.netapp.models.ActiveDirectory]
         :keyword encryption: Encryption settings.
@@ -2292,8 +2450,8 @@ class NetAppAccountList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.NetAppAccount"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.NetAppAccount"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Multiple NetApp accounts.
         :paramtype value: list[~azure.mgmt.netapp.models.NetAppAccount]
@@ -2358,8 +2516,8 @@ class NetAppAccountPatch(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         active_directories: Optional[List["_models.ActiveDirectory"]] = None,
         encryption: Optional["_models.AccountEncryption"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -2409,8 +2567,8 @@ class Operation(_serialization.Model):
         display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
         service_specification: Optional["_models.ServiceSpecification"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -2455,8 +2613,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Service provider: Microsoft NetApp.
         :paramtype provider: str
@@ -2475,7 +2633,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """Result of the request to list Cloud Volume operations. It contains a list of operations and a URL link to get the next set of results.
+    """Result of the request to list Cloud Volume operations. It contains a list of operations and a
+    URL link to get the next set of results.
 
     :ivar value: List of Storage operations supported by the Storage resource provider.
     :vartype value: list[~azure.mgmt.netapp.models.Operation]
@@ -2485,7 +2644,7 @@ class OperationListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Storage operations supported by the Storage resource provider.
         :paramtype value: list[~azure.mgmt.netapp.models.Operation]
@@ -2517,7 +2676,7 @@ class PlacementKeyValuePairs(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, key: str, value: str, **kwargs):
+    def __init__(self, *, key: str, value: str, **kwargs: Any) -> None:
         """
         :keyword key: Key for an application specific parameter for the placement of volumes in the
          volume group. Required.
@@ -2548,50 +2707,13 @@ class PoolChangeRequest(_serialization.Model):
         "new_pool_resource_id": {"key": "newPoolResourceId", "type": "str"},
     }
 
-    def __init__(self, *, new_pool_resource_id: str, **kwargs):
+    def __init__(self, *, new_pool_resource_id: str, **kwargs: Any) -> None:
         """
         :keyword new_pool_resource_id: Resource id of the pool to move volume to. Required.
         :paramtype new_pool_resource_id: str
         """
         super().__init__(**kwargs)
         self.new_pool_resource_id = new_pool_resource_id
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
 
 
 class QuotaAvailabilityRequest(_serialization.Model):
@@ -2623,8 +2745,8 @@ class QuotaAvailabilityRequest(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, type: Union[str, "_models.CheckQuotaNameResourceTypes"], resource_group: str, **kwargs
-    ):
+        self, *, name: str, type: Union[str, "_models.CheckQuotaNameResourceTypes"], resource_group: str, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the resource to verify. Required.
         :paramtype name: str
@@ -2653,7 +2775,7 @@ class ReestablishReplicationRequest(_serialization.Model):
         "source_volume_id": {"key": "sourceVolumeId", "type": "str"},
     }
 
-    def __init__(self, *, source_volume_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, source_volume_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword source_volume_id: Resource id of the source volume for the replication.
         :paramtype source_volume_id: str
@@ -2688,8 +2810,8 @@ class RegionInfo(_serialization.Model):
         *,
         storage_to_network_proximity: Optional[Union[str, "_models.RegionStorageToNetworkProximity"]] = None,
         availability_zone_mappings: Optional[List["_models.RegionInfoAvailabilityZoneMappingsItem"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_to_network_proximity: Provides storage to network proximity information in the
          region. Known values are: "Default", "T1", "T2", and "T1AndT2".
@@ -2719,7 +2841,9 @@ class RegionInfoAvailabilityZoneMappingsItem(_serialization.Model):
         "is_available": {"key": "isAvailable", "type": "bool"},
     }
 
-    def __init__(self, *, availability_zone: Optional[str] = None, is_available: Optional[bool] = None, **kwargs):
+    def __init__(
+        self, *, availability_zone: Optional[str] = None, is_available: Optional[bool] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword availability_zone: Logical availability zone.
         :paramtype availability_zone: str
@@ -2742,7 +2866,7 @@ class RelocateVolumeRequest(_serialization.Model):
         "creation_token": {"key": "creationToken", "type": "str"},
     }
 
-    def __init__(self, *, creation_token: Optional[str] = None, **kwargs):
+    def __init__(self, *, creation_token: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword creation_token: New creation token for the volume that controls the mount point name.
         :paramtype creation_token: str
@@ -2785,8 +2909,8 @@ class Replication(_serialization.Model):
         endpoint_type: Optional[Union[str, "_models.EndpointType"]] = None,
         replication_schedule: Optional[Union[str, "_models.ReplicationSchedule"]] = None,
         remote_volume_region: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword endpoint_type: Indicates whether the local volume is the source or destination for the
          Volume Replication. Known values are: "src" and "dst".
@@ -2844,8 +2968,8 @@ class ReplicationObject(_serialization.Model):
         endpoint_type: Optional[Union[str, "_models.EndpointType"]] = None,
         replication_schedule: Optional[Union[str, "_models.ReplicationSchedule"]] = None,
         remote_volume_region: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword replication_id: Id.
         :paramtype replication_id: str
@@ -2901,8 +3025,8 @@ class ReplicationStatus(_serialization.Model):
         mirror_state: Optional[Union[str, "_models.MirrorState"]] = None,
         total_progress: Optional[str] = None,
         error_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword healthy: Replication health check.
         :paramtype healthy: bool
@@ -2949,7 +3073,7 @@ class ResourceIdentity(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[str] = None, **kwargs):
+    def __init__(self, *, type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword type: Type of Identity. Supported values are: 'None', 'SystemAssigned'.
         :paramtype type: str
@@ -2988,7 +3112,9 @@ class ResourceNameAvailabilityRequest(_serialization.Model):
         "resource_group": {"key": "resourceGroup", "type": "str"},
     }
 
-    def __init__(self, *, name: str, type: Union[str, "_models.CheckNameResourceTypes"], resource_group: str, **kwargs):
+    def __init__(
+        self, *, name: str, type: Union[str, "_models.CheckNameResourceTypes"], resource_group: str, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Resource name to verify. Required.
         :paramtype name: str
@@ -3045,7 +3171,7 @@ class RestoreStatus(_serialization.Model):
         "total_transfer_bytes": {"key": "totalTransferBytes", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.healthy = None
@@ -3075,8 +3201,8 @@ class ServiceSpecification(_serialization.Model):
         *,
         metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
         log_specifications: Optional[List["_models.LogSpecification"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metric_specifications: Metric specifications of operation.
         :paramtype metric_specifications: list[~azure.mgmt.netapp.models.MetricSpecification]
@@ -3088,21 +3214,26 @@ class ServiceSpecification(_serialization.Model):
         self.log_specifications = log_specifications
 
 
-class Snapshot(_serialization.Model):
+class Snapshot(ProxyResource):
     """Snapshot of a Volume.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
     :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
     :ivar snapshot_id: UUID v4 used to identify the Snapshot.
     :vartype snapshot_id: str
     :ivar created: The creation date of the snapshot.
@@ -3112,10 +3243,11 @@ class Snapshot(_serialization.Model):
     """
 
     _validation = {
-        "location": {"required": True},
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
         "snapshot_id": {
             "readonly": True,
             "max_length": 36,
@@ -3127,25 +3259,23 @@ class Snapshot(_serialization.Model):
     }
 
     _attribute_map = {
-        "location": {"key": "location", "type": "str"},
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "location": {"key": "location", "type": "str"},
         "snapshot_id": {"key": "properties.snapshotId", "type": "str"},
         "created": {"key": "properties.created", "type": "iso-8601"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, location: str, **kwargs):
+    def __init__(self, *, location: str, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
         """
         super().__init__(**kwargs)
         self.location = location
-        self.id = None
-        self.name = None
-        self.type = None
         self.snapshot_id = None
         self.created = None
         self.provisioning_state = None
@@ -3162,7 +3292,7 @@ class SnapshotPoliciesList(_serialization.Model):
         "value": {"key": "value", "type": "[SnapshotPolicy]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.SnapshotPolicy"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.SnapshotPolicy"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of snapshot policies.
         :paramtype value: list[~azure.mgmt.netapp.models.SnapshotPolicy]
@@ -3245,8 +3375,8 @@ class SnapshotPolicy(TrackedResource):  # pylint: disable=too-many-instance-attr
         weekly_schedule: Optional["_models.WeeklySchedule"] = None,
         monthly_schedule: Optional["_models.MonthlySchedule"] = None,
         enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -3333,8 +3463,8 @@ class SnapshotPolicyDetails(_serialization.Model):  # pylint: disable=too-many-i
         weekly_schedule: Optional["_models.WeeklySchedule"] = None,
         monthly_schedule: Optional["_models.MonthlySchedule"] = None,
         enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -3425,8 +3555,8 @@ class SnapshotPolicyPatch(_serialization.Model):  # pylint: disable=too-many-ins
         weekly_schedule: Optional["_models.WeeklySchedule"] = None,
         monthly_schedule: Optional["_models.MonthlySchedule"] = None,
         enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -3468,7 +3598,7 @@ class SnapshotPolicyVolumeList(_serialization.Model):
         "value": {"key": "value", "type": "[Volume]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Volume"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Volume"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of volumes.
         :paramtype value: list[~azure.mgmt.netapp.models.Volume]
@@ -3497,7 +3627,7 @@ class SnapshotRestoreFiles(_serialization.Model):
         "destination_path": {"key": "destinationPath", "type": "str"},
     }
 
-    def __init__(self, *, file_paths: List[str], destination_path: Optional[str] = None, **kwargs):
+    def __init__(self, *, file_paths: List[str], destination_path: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword file_paths: List of files to be restored. Required.
         :paramtype file_paths: list[str]
@@ -3520,7 +3650,7 @@ class SnapshotsList(_serialization.Model):
         "value": {"key": "value", "type": "[Snapshot]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Snapshot"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Snapshot"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of Snapshots.
         :paramtype value: list[~azure.mgmt.netapp.models.Snapshot]
@@ -3569,7 +3699,7 @@ class SubscriptionQuotaItem(ProxyResource):
         "default": {"key": "properties.default", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.current = None
@@ -3587,7 +3717,7 @@ class SubscriptionQuotaItemList(_serialization.Model):
         "value": {"key": "value", "type": "[SubscriptionQuotaItem]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.SubscriptionQuotaItem"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.SubscriptionQuotaItem"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of SubscriptionQuotaItems.
         :paramtype value: list[~azure.mgmt.netapp.models.SubscriptionQuotaItem]
@@ -3642,8 +3772,13 @@ class SubvolumeInfo(ProxyResource):
     }
 
     def __init__(
-        self, *, path: Optional[str] = None, size: Optional[int] = None, parent_path: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        path: Optional[str] = None,
+        size: Optional[int] = None,
+        parent_path: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword path: Path to the subvolume.
         :paramtype path: str
@@ -3727,8 +3862,8 @@ class SubvolumeModel(_serialization.Model):  # pylint: disable=too-many-instance
         modified_time_stamp: Optional[datetime.datetime] = None,
         changed_time_stamp: Optional[datetime.datetime] = None,
         provisioning_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword path: Path to the subvolume.
         :paramtype path: str
@@ -3781,7 +3916,7 @@ class SubvolumePatchRequest(_serialization.Model):
         "path": {"key": "properties.path", "type": "str"},
     }
 
-    def __init__(self, *, size: Optional[int] = None, path: Optional[str] = None, **kwargs):
+    def __init__(self, *, size: Optional[int] = None, path: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword size: Truncate subvolume to the provided size in bytes.
         :paramtype size: int
@@ -3808,8 +3943,8 @@ class SubvolumesList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.SubvolumeInfo"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.SubvolumeInfo"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of Subvolumes.
         :paramtype value: list[~azure.mgmt.netapp.models.SubvolumeInfo]
@@ -3858,8 +3993,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -3886,13 +4021,13 @@ class SystemData(_serialization.Model):
 
 
 class UserAssignedIdentity(_serialization.Model):
-    """UserAssignedIdentity for the resource.
+    """User assigned identity properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar principal_id: The principal ID of the identity.
+    :ivar principal_id: The principal ID of the assigned identity.
     :vartype principal_id: str
-    :ivar client_id: The client ID of the identity.
+    :ivar client_id: The client ID of the assigned identity.
     :vartype client_id: str
     """
 
@@ -3906,71 +4041,11 @@ class UserAssignedIdentity(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
-
-
-class Vault(_serialization.Model):
-    """Vault information.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar vault_name: Vault Name.
-    :vartype vault_name: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "vault_name": {"key": "properties.vaultName", "type": "str"},
-    }
-
-    def __init__(self, *, vault_name: Optional[str] = None, **kwargs):
-        """
-        :keyword vault_name: Vault Name.
-        :paramtype vault_name: str
-        """
-        super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.vault_name = vault_name
-
-
-class VaultList(_serialization.Model):
-    """List of Vaults.
-
-    :ivar value: A list of vaults.
-    :vartype value: list[~azure.mgmt.netapp.models.Vault]
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[Vault]"},
-    }
-
-    def __init__(self, *, value: Optional[List["_models.Vault"]] = None, **kwargs):
-        """
-        :keyword value: A list of vaults.
-        :paramtype value: list[~azure.mgmt.netapp.models.Vault]
-        """
-        super().__init__(**kwargs)
-        self.value = value
 
 
 class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
@@ -4008,7 +4083,7 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
      "Premium", "Ultra", and "StandardZRS".
     :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
-     quota used for alerting only. Minimum size is 500 GiB. Upper limit is 100TiB, 500Tib for
+     quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB, 500Tib for
      LargeVolume. Specified in bytes.
     :vartype usage_threshold: int
     :ivar export_policy: Set of export policy rules.
@@ -4103,9 +4178,15 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
      cloning process currently happening on this volume. This value will update every 5 minutes
      during cloning.
     :vartype clone_progress: int
+    :ivar file_access_logs: Flag indicating whether file access logs are enabled for the volume,
+     based on active diagnostic settings present on the volume. Known values are: "Enabled" and
+     "Disabled".
+    :vartype file_access_logs: str or ~azure.mgmt.netapp.models.FileAccessLogs
     :ivar avs_data_store: Specifies whether the volume is enabled for Azure VMware Solution (AVS)
      datastore purpose. Known values are: "Enabled" and "Disabled".
     :vartype avs_data_store: str or ~azure.mgmt.netapp.models.AvsDataStore
+    :ivar data_store_resource_id: Data store resource unique identifier.
+    :vartype data_store_resource_id: list[str]
     :ivar is_default_quota_enabled: Specifies if default quota is enabled for the volume.
     :vartype is_default_quota_enabled: bool
     :ivar default_user_quota_in_ki_bs: Default user quota for volume in KiBs. If
@@ -4137,6 +4218,11 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
      volume. Known values are: "Enabled" and "Disabled".
     :vartype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
+    :ivar provisioned_availability_zone: The availability zone where the volume is provisioned.
+     This refers to the logical availability zone where the volume resides.
+    :vartype provisioned_availability_zone: str
+    :ivar is_large_volume: Specifies whether volume is a Large Volume or Regular Volume.
+    :vartype is_large_volume: bool
     """
 
     _validation = {
@@ -4173,10 +4259,13 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "coolness_period": {"maximum": 63, "minimum": 7},
         "unix_permissions": {"max_length": 4, "min_length": 4},
         "clone_progress": {"readonly": True},
+        "file_access_logs": {"readonly": True},
+        "data_store_resource_id": {"readonly": True},
         "maximum_number_of_files": {"readonly": True},
         "volume_group_name": {"readonly": True},
         "t2_network": {"readonly": True},
         "encrypted": {"readonly": True},
+        "provisioned_availability_zone": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4225,7 +4314,9 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "coolness_period": {"key": "properties.coolnessPeriod", "type": "int"},
         "unix_permissions": {"key": "properties.unixPermissions", "type": "str"},
         "clone_progress": {"key": "properties.cloneProgress", "type": "int"},
+        "file_access_logs": {"key": "properties.fileAccessLogs", "type": "str"},
         "avs_data_store": {"key": "properties.avsDataStore", "type": "str"},
+        "data_store_resource_id": {"key": "properties.dataStoreResourceId", "type": "[str]"},
         "is_default_quota_enabled": {"key": "properties.isDefaultQuotaEnabled", "type": "bool"},
         "default_user_quota_in_ki_bs": {"key": "properties.defaultUserQuotaInKiBs", "type": "int"},
         "default_group_quota_in_ki_bs": {"key": "properties.defaultGroupQuotaInKiBs", "type": "int"},
@@ -4238,6 +4329,8 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "encrypted": {"key": "properties.encrypted", "type": "bool"},
         "placement_rules": {"key": "properties.placementRules", "type": "[PlacementKeyValuePairs]"},
         "enable_subvolumes": {"key": "properties.enableSubvolumes", "type": "str"},
+        "provisioned_availability_zone": {"key": "properties.provisionedAvailabilityZone", "type": "str"},
+        "is_large_volume": {"key": "properties.isLargeVolume", "type": "bool"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -4282,8 +4375,9 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         volume_spec_name: Optional[str] = None,
         placement_rules: Optional[List["_models.PlacementKeyValuePairs"]] = None,
         enable_subvolumes: Union[str, "_models.EnableSubvolumes"] = "Disabled",
-        **kwargs
-    ):
+        is_large_volume: bool = False,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -4298,7 +4392,7 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
          "Premium", "Ultra", and "StandardZRS".
         :paramtype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
         :keyword usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a
-         soft quota used for alerting only. Minimum size is 500 GiB. Upper limit is 100TiB, 500Tib for
+         soft quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB, 500Tib for
          LargeVolume. Specified in bytes.
         :paramtype usage_threshold: int
         :keyword export_policy: Set of export policy rules.
@@ -4399,6 +4493,8 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :keyword enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
          volume. Known values are: "Enabled" and "Disabled".
         :paramtype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
+        :keyword is_large_volume: Specifies whether volume is a Large Volume or Regular Volume.
+        :paramtype is_large_volume: bool
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.etag = None
@@ -4437,7 +4533,9 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.coolness_period = coolness_period
         self.unix_permissions = unix_permissions
         self.clone_progress = None
+        self.file_access_logs = None
         self.avs_data_store = avs_data_store
+        self.data_store_resource_id = None
         self.is_default_quota_enabled = is_default_quota_enabled
         self.default_user_quota_in_ki_bs = default_user_quota_in_ki_bs
         self.default_group_quota_in_ki_bs = default_group_quota_in_ki_bs
@@ -4450,6 +4548,8 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.encrypted = None
         self.placement_rules = placement_rules
         self.enable_subvolumes = enable_subvolumes
+        self.provisioned_availability_zone = None
+        self.is_large_volume = is_large_volume
 
 
 class VolumeBackupProperties(_serialization.Model):
@@ -4459,8 +4559,6 @@ class VolumeBackupProperties(_serialization.Model):
     :vartype backup_policy_id: str
     :ivar policy_enforced: Policy Enforced.
     :vartype policy_enforced: bool
-    :ivar vault_id: Vault Resource ID.
-    :vartype vault_id: str
     :ivar backup_enabled: Backup Enabled.
     :vartype backup_enabled: bool
     """
@@ -4468,7 +4566,6 @@ class VolumeBackupProperties(_serialization.Model):
     _attribute_map = {
         "backup_policy_id": {"key": "backupPolicyId", "type": "str"},
         "policy_enforced": {"key": "policyEnforced", "type": "bool"},
-        "vault_id": {"key": "vaultId", "type": "str"},
         "backup_enabled": {"key": "backupEnabled", "type": "bool"},
     }
 
@@ -4477,24 +4574,20 @@ class VolumeBackupProperties(_serialization.Model):
         *,
         backup_policy_id: Optional[str] = None,
         policy_enforced: Optional[bool] = None,
-        vault_id: Optional[str] = None,
         backup_enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backup_policy_id: Backup Policy Resource ID.
         :paramtype backup_policy_id: str
         :keyword policy_enforced: Policy Enforced.
         :paramtype policy_enforced: bool
-        :keyword vault_id: Vault Resource ID.
-        :paramtype vault_id: str
         :keyword backup_enabled: Backup Enabled.
         :paramtype backup_enabled: bool
         """
         super().__init__(**kwargs)
         self.backup_policy_id = backup_policy_id
         self.policy_enforced = policy_enforced
-        self.vault_id = vault_id
         self.backup_enabled = backup_enabled
 
 
@@ -4521,8 +4614,8 @@ class VolumeBackups(_serialization.Model):
         volume_name: Optional[str] = None,
         backups_count: Optional[int] = None,
         policy_enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword volume_name: Volume name.
         :paramtype volume_name: str
@@ -4577,8 +4670,8 @@ class VolumeGroup(_serialization.Model):
         *,
         location: Optional[str] = None,
         group_meta_data: Optional["_models.VolumeGroupMetaData"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -4638,8 +4731,8 @@ class VolumeGroupDetails(_serialization.Model):
         location: Optional[str] = None,
         group_meta_data: Optional["_models.VolumeGroupMetaData"] = None,
         volumes: Optional[List["_models.VolumeGroupVolumeProperties"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -4669,7 +4762,7 @@ class VolumeGroupList(_serialization.Model):
         "value": {"key": "value", "type": "[VolumeGroup]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.VolumeGroup"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.VolumeGroup"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of volume Groups.
         :paramtype value: list[~azure.mgmt.netapp.models.VolumeGroup]
@@ -4719,8 +4812,8 @@ class VolumeGroupMetaData(_serialization.Model):
         application_identifier: Optional[str] = None,
         global_placement_rules: Optional[List["_models.PlacementKeyValuePairs"]] = None,
         deployment_spec_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword group_description: Group Description.
         :paramtype group_description: str
@@ -4767,7 +4860,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
      "Premium", "Ultra", and "StandardZRS".
     :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
-     quota used for alerting only. Minimum size is 500 GiB. Upper limit is 100TiB, 500Tib for
+     quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB, 500Tib for
      LargeVolume. Specified in bytes.
     :vartype usage_threshold: int
     :ivar export_policy: Set of export policy rules.
@@ -4862,9 +4955,15 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
      cloning process currently happening on this volume. This value will update every 5 minutes
      during cloning.
     :vartype clone_progress: int
+    :ivar file_access_logs: Flag indicating whether file access logs are enabled for the volume,
+     based on active diagnostic settings present on the volume. Known values are: "Enabled" and
+     "Disabled".
+    :vartype file_access_logs: str or ~azure.mgmt.netapp.models.FileAccessLogs
     :ivar avs_data_store: Specifies whether the volume is enabled for Azure VMware Solution (AVS)
      datastore purpose. Known values are: "Enabled" and "Disabled".
     :vartype avs_data_store: str or ~azure.mgmt.netapp.models.AvsDataStore
+    :ivar data_store_resource_id: Data store resource unique identifier.
+    :vartype data_store_resource_id: list[str]
     :ivar is_default_quota_enabled: Specifies if default quota is enabled for the volume.
     :vartype is_default_quota_enabled: bool
     :ivar default_user_quota_in_ki_bs: Default user quota for volume in KiBs. If
@@ -4896,6 +4995,11 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
     :ivar enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
      volume. Known values are: "Enabled" and "Disabled".
     :vartype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
+    :ivar provisioned_availability_zone: The availability zone where the volume is provisioned.
+     This refers to the logical availability zone where the volume resides.
+    :vartype provisioned_availability_zone: str
+    :ivar is_large_volume: Specifies whether volume is a Large Volume or Regular Volume.
+    :vartype is_large_volume: bool
     """
 
     _validation = {
@@ -4928,10 +5032,13 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         "coolness_period": {"maximum": 63, "minimum": 7},
         "unix_permissions": {"max_length": 4, "min_length": 4},
         "clone_progress": {"readonly": True},
+        "file_access_logs": {"readonly": True},
+        "data_store_resource_id": {"readonly": True},
         "maximum_number_of_files": {"readonly": True},
         "volume_group_name": {"readonly": True},
         "t2_network": {"readonly": True},
         "encrypted": {"readonly": True},
+        "provisioned_availability_zone": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4976,7 +5083,9 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         "coolness_period": {"key": "properties.coolnessPeriod", "type": "int"},
         "unix_permissions": {"key": "properties.unixPermissions", "type": "str"},
         "clone_progress": {"key": "properties.cloneProgress", "type": "int"},
+        "file_access_logs": {"key": "properties.fileAccessLogs", "type": "str"},
         "avs_data_store": {"key": "properties.avsDataStore", "type": "str"},
+        "data_store_resource_id": {"key": "properties.dataStoreResourceId", "type": "[str]"},
         "is_default_quota_enabled": {"key": "properties.isDefaultQuotaEnabled", "type": "bool"},
         "default_user_quota_in_ki_bs": {"key": "properties.defaultUserQuotaInKiBs", "type": "int"},
         "default_group_quota_in_ki_bs": {"key": "properties.defaultGroupQuotaInKiBs", "type": "int"},
@@ -4989,6 +5098,8 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         "encrypted": {"key": "properties.encrypted", "type": "bool"},
         "placement_rules": {"key": "properties.placementRules", "type": "[PlacementKeyValuePairs]"},
         "enable_subvolumes": {"key": "properties.enableSubvolumes", "type": "str"},
+        "provisioned_availability_zone": {"key": "properties.provisionedAvailabilityZone", "type": "str"},
+        "is_large_volume": {"key": "properties.isLargeVolume", "type": "bool"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -5032,8 +5143,9 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         volume_spec_name: Optional[str] = None,
         placement_rules: Optional[List["_models.PlacementKeyValuePairs"]] = None,
         enable_subvolumes: Union[str, "_models.EnableSubvolumes"] = "Disabled",
-        **kwargs
-    ):
+        is_large_volume: bool = False,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Resource name.
         :paramtype name: str
@@ -5046,7 +5158,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
          "Premium", "Ultra", and "StandardZRS".
         :paramtype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
         :keyword usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a
-         soft quota used for alerting only. Minimum size is 500 GiB. Upper limit is 100TiB, 500Tib for
+         soft quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB, 500Tib for
          LargeVolume. Specified in bytes.
         :paramtype usage_threshold: int
         :keyword export_policy: Set of export policy rules.
@@ -5147,6 +5259,8 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         :keyword enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
          volume. Known values are: "Enabled" and "Disabled".
         :paramtype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
+        :keyword is_large_volume: Specifies whether volume is a Large Volume or Regular Volume.
+        :paramtype is_large_volume: bool
         """
         super().__init__(**kwargs)
         self.id = None
@@ -5187,7 +5301,9 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         self.coolness_period = coolness_period
         self.unix_permissions = unix_permissions
         self.clone_progress = None
+        self.file_access_logs = None
         self.avs_data_store = avs_data_store
+        self.data_store_resource_id = None
         self.is_default_quota_enabled = is_default_quota_enabled
         self.default_user_quota_in_ki_bs = default_user_quota_in_ki_bs
         self.default_group_quota_in_ki_bs = default_group_quota_in_ki_bs
@@ -5200,6 +5316,8 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         self.encrypted = None
         self.placement_rules = placement_rules
         self.enable_subvolumes = enable_subvolumes
+        self.provisioned_availability_zone = None
+        self.is_large_volume = is_large_volume
 
 
 class VolumeList(_serialization.Model):
@@ -5216,7 +5334,9 @@ class VolumeList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Volume"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Volume"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of volumes.
         :paramtype value: list[~azure.mgmt.netapp.models.Volume]
@@ -5252,7 +5372,7 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
     :vartype usage_threshold: int
     :ivar export_policy: Set of export policy rules.
     :vartype export_policy: ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
-    :ivar throughput_mibps: Maximum throughput in Mibps that can be achieved by this volume and
+    :ivar throughput_mibps: Maximum throughput in MiB/s that can be achieved by this volume and
      this will be accepted as input only for manual qosType volume.
     :vartype throughput_mibps: float
     :ivar data_protection: DataProtection type volumes include an object containing details of the
@@ -5324,8 +5444,8 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         unix_permissions: Optional[str] = None,
         cool_access: Optional[bool] = None,
         coolness_period: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -5340,7 +5460,7 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         :paramtype usage_threshold: int
         :keyword export_policy: Set of export policy rules.
         :paramtype export_policy: ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
-        :keyword throughput_mibps: Maximum throughput in Mibps that can be achieved by this volume and
+        :keyword throughput_mibps: Maximum throughput in MiB/s that can be achieved by this volume and
          this will be accepted as input only for manual qosType volume.
         :paramtype throughput_mibps: float
         :keyword data_protection: DataProtection type volumes include an object containing details of
@@ -5405,8 +5525,8 @@ class VolumePatchPropertiesDataProtection(_serialization.Model):
         *,
         backup: Optional["_models.VolumeBackupProperties"] = None,
         snapshot: Optional["_models.VolumeSnapshotProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backup: Backup Properties.
         :paramtype backup: ~azure.mgmt.netapp.models.VolumeBackupProperties
@@ -5429,7 +5549,7 @@ class VolumePatchPropertiesExportPolicy(_serialization.Model):
         "rules": {"key": "rules", "type": "[ExportPolicyRule]"},
     }
 
-    def __init__(self, *, rules: Optional[List["_models.ExportPolicyRule"]] = None, **kwargs):
+    def __init__(self, *, rules: Optional[List["_models.ExportPolicyRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword rules: Export policy rule.
         :paramtype rules: list[~azure.mgmt.netapp.models.ExportPolicyRule]
@@ -5447,12 +5567,15 @@ class VolumePropertiesDataProtection(_serialization.Model):
     :vartype replication: ~azure.mgmt.netapp.models.ReplicationObject
     :ivar snapshot: Snapshot properties.
     :vartype snapshot: ~azure.mgmt.netapp.models.VolumeSnapshotProperties
+    :ivar volume_relocation: VolumeRelocation properties.
+    :vartype volume_relocation: ~azure.mgmt.netapp.models.VolumeRelocationProperties
     """
 
     _attribute_map = {
         "backup": {"key": "backup", "type": "VolumeBackupProperties"},
         "replication": {"key": "replication", "type": "ReplicationObject"},
         "snapshot": {"key": "snapshot", "type": "VolumeSnapshotProperties"},
+        "volume_relocation": {"key": "volumeRelocation", "type": "VolumeRelocationProperties"},
     }
 
     def __init__(
@@ -5461,8 +5584,9 @@ class VolumePropertiesDataProtection(_serialization.Model):
         backup: Optional["_models.VolumeBackupProperties"] = None,
         replication: Optional["_models.ReplicationObject"] = None,
         snapshot: Optional["_models.VolumeSnapshotProperties"] = None,
-        **kwargs
-    ):
+        volume_relocation: Optional["_models.VolumeRelocationProperties"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backup: Backup Properties.
         :paramtype backup: ~azure.mgmt.netapp.models.VolumeBackupProperties
@@ -5470,11 +5594,14 @@ class VolumePropertiesDataProtection(_serialization.Model):
         :paramtype replication: ~azure.mgmt.netapp.models.ReplicationObject
         :keyword snapshot: Snapshot properties.
         :paramtype snapshot: ~azure.mgmt.netapp.models.VolumeSnapshotProperties
+        :keyword volume_relocation: VolumeRelocation properties.
+        :paramtype volume_relocation: ~azure.mgmt.netapp.models.VolumeRelocationProperties
         """
         super().__init__(**kwargs)
         self.backup = backup
         self.replication = replication
         self.snapshot = snapshot
+        self.volume_relocation = volume_relocation
 
 
 class VolumePropertiesExportPolicy(_serialization.Model):
@@ -5488,7 +5615,7 @@ class VolumePropertiesExportPolicy(_serialization.Model):
         "rules": {"key": "rules", "type": "[ExportPolicyRule]"},
     }
 
-    def __init__(self, *, rules: Optional[List["_models.ExportPolicyRule"]] = None, **kwargs):
+    def __init__(self, *, rules: Optional[List["_models.ExportPolicyRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword rules: Export policy rule.
         :paramtype rules: list[~azure.mgmt.netapp.models.ExportPolicyRule]
@@ -5564,8 +5691,8 @@ class VolumeQuotaRule(TrackedResource):
         quota_size_in_ki_bs: Optional[int] = None,
         quota_type: Optional[Union[str, "_models.Type"]] = None,
         quota_target: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -5593,6 +5720,8 @@ class VolumeQuotaRulePatch(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     :ivar provisioning_state: Gets the status of the VolumeQuotaRule at the time the operation was
      called. Known values are: "Accepted", "Creating", "Patching", "Deleting", "Moving", "Failed",
      and "Succeeded".
@@ -5613,6 +5742,7 @@ class VolumeQuotaRulePatch(_serialization.Model):
     }
 
     _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "quota_size_in_ki_bs": {"key": "properties.quotaSizeInKiBs", "type": "int"},
         "quota_type": {"key": "properties.quotaType", "type": "str"},
@@ -5622,12 +5752,15 @@ class VolumeQuotaRulePatch(_serialization.Model):
     def __init__(
         self,
         *,
+        tags: Optional[Dict[str, str]] = None,
         quota_size_in_ki_bs: Optional[int] = None,
         quota_type: Optional[Union[str, "_models.Type"]] = None,
         quota_target: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
         :keyword quota_size_in_ki_bs: Size of quota.
         :paramtype quota_size_in_ki_bs: int
         :keyword quota_type: Type of quota. Known values are: "DefaultUserQuota", "DefaultGroupQuota",
@@ -5639,6 +5772,7 @@ class VolumeQuotaRulePatch(_serialization.Model):
         :paramtype quota_target: str
         """
         super().__init__(**kwargs)
+        self.tags = tags
         self.provisioning_state = None
         self.quota_size_in_ki_bs = quota_size_in_ki_bs
         self.quota_type = quota_type
@@ -5656,7 +5790,7 @@ class VolumeQuotaRulesList(_serialization.Model):
         "value": {"key": "value", "type": "[VolumeQuotaRule]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.VolumeQuotaRule"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.VolumeQuotaRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of Volume Quota Rules.
         :paramtype value: list[~azure.mgmt.netapp.models.VolumeQuotaRule]
@@ -5668,41 +5802,31 @@ class VolumeQuotaRulesList(_serialization.Model):
 class VolumeRelocationProperties(_serialization.Model):
     """Volume relocation properties.
 
-    :ivar old_volume_id: The id of the old volume that is being relocated.
-    :vartype old_volume_id: str
-    :ivar old_bare_metal_tenant_id: The id of the bare metal tenant owned by the existing volume.
-    :vartype old_bare_metal_tenant_id: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar relocation_requested: Has relocation been requested for this volume.
     :vartype relocation_requested: bool
+    :ivar ready_to_be_finalized: Has relocation finished and is ready to be cleaned up.
+    :vartype ready_to_be_finalized: bool
     """
 
-    _attribute_map = {
-        "old_volume_id": {"key": "oldVolumeId", "type": "str"},
-        "old_bare_metal_tenant_id": {"key": "oldBareMetalTenantId", "type": "str"},
-        "relocation_requested": {"key": "relocationRequested", "type": "bool"},
+    _validation = {
+        "ready_to_be_finalized": {"readonly": True},
     }
 
-    def __init__(
-        self,
-        *,
-        old_volume_id: Optional[str] = None,
-        old_bare_metal_tenant_id: Optional[str] = None,
-        relocation_requested: Optional[bool] = None,
-        **kwargs
-    ):
+    _attribute_map = {
+        "relocation_requested": {"key": "relocationRequested", "type": "bool"},
+        "ready_to_be_finalized": {"key": "readyToBeFinalized", "type": "bool"},
+    }
+
+    def __init__(self, *, relocation_requested: Optional[bool] = None, **kwargs: Any) -> None:
         """
-        :keyword old_volume_id: The id of the old volume that is being relocated.
-        :paramtype old_volume_id: str
-        :keyword old_bare_metal_tenant_id: The id of the bare metal tenant owned by the existing
-         volume.
-        :paramtype old_bare_metal_tenant_id: str
         :keyword relocation_requested: Has relocation been requested for this volume.
         :paramtype relocation_requested: bool
         """
         super().__init__(**kwargs)
-        self.old_volume_id = old_volume_id
-        self.old_bare_metal_tenant_id = old_bare_metal_tenant_id
         self.relocation_requested = relocation_requested
+        self.ready_to_be_finalized = None
 
 
 class VolumeRevert(_serialization.Model):
@@ -5716,7 +5840,7 @@ class VolumeRevert(_serialization.Model):
         "snapshot_id": {"key": "snapshotId", "type": "str"},
     }
 
-    def __init__(self, *, snapshot_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, snapshot_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword snapshot_id: Resource id of the snapshot.
         :paramtype snapshot_id: str
@@ -5736,7 +5860,7 @@ class VolumeSnapshotProperties(_serialization.Model):
         "snapshot_policy_id": {"key": "snapshotPolicyId", "type": "str"},
     }
 
-    def __init__(self, *, snapshot_policy_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, snapshot_policy_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword snapshot_policy_id: Snapshot Policy ResourceId.
         :paramtype snapshot_policy_id: str
@@ -5777,8 +5901,8 @@ class WeeklySchedule(_serialization.Model):
         hour: Optional[int] = None,
         minute: Optional[int] = None,
         used_bytes: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword snapshots_to_keep: Weekly snapshot count to keep.
         :paramtype snapshots_to_keep: int

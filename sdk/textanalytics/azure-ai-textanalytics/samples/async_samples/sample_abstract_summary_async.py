@@ -14,9 +14,6 @@ DESCRIPTION:
     Abstractive summarization generates a summary that may not use the same words as those in
     the document, but captures the main idea.
 
-    The abstractive summarization feature is part of a gated preview. Request access here:
-    https://aka.ms/applyforgatedsummarizationfeatures
-
 USAGE:
     python sample_abstract_summary_async.py
 
@@ -25,15 +22,14 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-
-import os
 import asyncio
 
 
 async def sample_abstractive_summarization_async() -> None:
+    # [START abstract_summary_async]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
-    from azure.ai.textanalytics import AbstractSummaryAction
 
     endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
     key = os.environ["AZURE_LANGUAGE_KEY"]
@@ -62,23 +58,17 @@ async def sample_abstractive_summarization_async() -> None:
         "component of this aspiration, if grounded with external knowledge sources in the downstream AI tasks."
     ]
     async with text_analytics_client:
-        poller = await text_analytics_client.begin_analyze_actions(
-            document,
-            actions=[
-                AbstractSummaryAction(),
-            ],
-        )
-
-        document_results = await poller.result()
-        async for abstract_summary_results in document_results:
-            for result in abstract_summary_results:
-                if result.kind == "AbstractiveSummarization":
-                    print("Summaries abstracted:")
-                    [print(f"{summary.text}\n") for summary in result.summaries]
-                elif result.is_error is True:
-                    print("...Is an error with code '{}' and message '{}'".format(
-                        result.code, result.message
-                    ))
+        poller = await text_analytics_client.begin_abstract_summary(document)
+        abstract_summary_results = await poller.result()
+        async for result in abstract_summary_results:
+            if result.kind == "AbstractiveSummarization":
+                print("Summaries abstracted:")
+                [print(f"{summary.text}\n") for summary in result.summaries]
+            elif result.is_error is True:
+                print("...Is an error with code '{}' and message '{}'".format(
+                    result.error.code, result.error.message
+                ))
+    # [END abstract_summary_async]
 
 
 async def main():

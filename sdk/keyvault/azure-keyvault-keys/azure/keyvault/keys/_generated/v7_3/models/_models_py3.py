@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -53,8 +53,8 @@ class Attributes(_serialization.Model):
         enabled: Optional[bool] = None,
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -88,7 +88,7 @@ class BackupKeyResult(_serialization.Model):
         "value": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -131,8 +131,8 @@ class KeyBundle(_serialization.Model):
         attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         release_policy: Optional["_models.KeyReleasePolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key: The Json web key.
         :paramtype key: ~azure.keyvault.v7_3.models.JsonWebKey
@@ -201,8 +201,8 @@ class DeletedKeyBundle(KeyBundle):
         tags: Optional[Dict[str, str]] = None,
         release_policy: Optional["_models.KeyReleasePolicy"] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key: The Json web key.
         :paramtype key: ~azure.keyvault.v7_3.models.JsonWebKey
@@ -255,8 +255,8 @@ class KeyItem(_serialization.Model):
         kid: Optional[str] = None,
         attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kid: Key identifier.
         :paramtype kid: str
@@ -318,8 +318,8 @@ class DeletedKeyItem(KeyItem):
         attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kid: Key identifier.
         :paramtype kid: str
@@ -359,7 +359,7 @@ class DeletedKeyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -391,7 +391,7 @@ class Error(_serialization.Model):
         "inner_error": {"key": "innererror", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -416,7 +416,7 @@ class GetRandomBytesRequest(_serialization.Model):
         "count": {"key": "count", "type": "int"},
     }
 
-    def __init__(self, *, count: int, **kwargs):
+    def __init__(self, *, count: int, **kwargs: Any) -> None:
         """
         :keyword count: The requested number of random bytes. Required.
         :paramtype count: int
@@ -503,8 +503,8 @@ class JsonWebKey(_serialization.Model):  # pylint: disable=too-many-instance-att
         crv: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
         x: Optional[bytes] = None,
         y: Optional[bytes] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kid: Key identifier.
         :paramtype kid: str
@@ -616,8 +616,8 @@ class KeyAttributes(Attributes):
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
         exportable: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -645,7 +645,8 @@ class KeyCreateParameters(_serialization.Model):
     :vartype kty: str or ~azure.keyvault.v7_3.models.JsonWebKeyType
     :ivar key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
     :vartype key_size: int
-    :ivar public_exponent: The public exponent for a RSA key.
+    :ivar public_exponent: The public exponent for a RSA key. This applies only to keys created in
+     a Managed HSM.
     :vartype public_exponent: int
     :ivar key_ops:
     :vartype key_ops: list[str or ~azure.keyvault.v7_3.models.JsonWebKeyOperation]
@@ -686,15 +687,16 @@ class KeyCreateParameters(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         curve: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
         release_policy: Optional["_models.KeyReleasePolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kty: The type of key to create. For valid values, see JsonWebKeyType. Required. Known
          values are: "EC", "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
         :paramtype kty: str or ~azure.keyvault.v7_3.models.JsonWebKeyType
         :keyword key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
         :paramtype key_size: int
-        :keyword public_exponent: The public exponent for a RSA key.
+        :keyword public_exponent: The public exponent for a RSA key. This applies only to keys created
+         in a Managed HSM.
         :paramtype public_exponent: int
         :keyword key_ops:
         :paramtype key_ops: list[str or ~azure.keyvault.v7_3.models.JsonWebKeyOperation]
@@ -745,8 +747,8 @@ class KeyExportParameters(_serialization.Model):
         wrapping_key: Optional["_models.JsonWebKey"] = None,
         wrapping_kid: Optional[str] = None,
         enc: Optional[Union[str, "_models.KeyEncryptionAlgorithm"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword wrapping_key: The export key encryption Json web key. This key MUST be a RSA key that
          supports encryption.
@@ -801,8 +803,8 @@ class KeyImportParameters(_serialization.Model):
         key_attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         release_policy: Optional["_models.KeyReleasePolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword hsm: Whether to import as a hardware key (HSM) or software key.
         :paramtype hsm: bool
@@ -845,7 +847,7 @@ class KeyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -885,7 +887,7 @@ class KeyOperationResult(_serialization.Model):
         "additional_authenticated_data": {"key": "aad", "type": "base64"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.kid = None
@@ -937,8 +939,8 @@ class KeyOperationsParameters(_serialization.Model):
         iv: Optional[bytes] = None,
         aad: Optional[bytes] = None,
         tag: Optional[bytes] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword algorithm: algorithm identifier. Required. Known values are: "RSA-OAEP",
          "RSA-OAEP-256", "RSA1_5", "A128GCM", "A192GCM", "A256GCM", "A128KW", "A192KW", "A256KW",
@@ -998,8 +1000,8 @@ class KeyProperties(_serialization.Model):
         key_size: Optional[int] = None,
         reuse_key: Optional[bool] = None,
         curve: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword exportable: Indicates if the private key can be exported. Release policy must be
          provided when creating the 1st version of an exportable key.
@@ -1054,8 +1056,8 @@ class KeyReleaseParameters(_serialization.Model):
         target_attestation_token: str,
         nonce: Optional[str] = None,
         enc: Optional[Union[str, "_models.KeyEncryptionAlgorithm"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_attestation_token: The attestation assertion for the target of the key release.
          Required.
@@ -1097,8 +1099,8 @@ class KeyReleasePolicy(_serialization.Model):
         content_type: str = "application/json; charset=utf-8",
         immutable: Optional[bool] = None,
         encoded_policy: Optional[bytes] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword content_type: Content type and version of key release policy.
         :paramtype content_type: str
@@ -1132,7 +1134,7 @@ class KeyReleaseResult(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1155,7 +1157,7 @@ class KeyRestoreParameters(_serialization.Model):
         "key_bundle_backup": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, *, key_bundle_backup: bytes, **kwargs):
+    def __init__(self, *, key_bundle_backup: bytes, **kwargs: Any) -> None:
         """
         :keyword key_bundle_backup: The backup blob associated with a key bundle. Required.
         :paramtype key_bundle_backup: bytes
@@ -1194,8 +1196,8 @@ class KeyRotationPolicy(_serialization.Model):
         *,
         lifetime_actions: Optional[List["_models.LifetimeActions"]] = None,
         attributes: Optional["_models.KeyRotationPolicyAttributes"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a
          key. For preview, lifetimeActions can only have two items at maximum: one for rotate, one for
@@ -1236,7 +1238,7 @@ class KeyRotationPolicyAttributes(_serialization.Model):
         "updated": {"key": "updated", "type": "unix-time"},
     }
 
-    def __init__(self, *, expiry_time: Optional[str] = None, **kwargs):
+    def __init__(self, *, expiry_time: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword expiry_time: The expiryTime will be applied on the new key version. It should be at
          least 28 days. It will be in ISO 8601 Format. Examples: 90 days: P90D, 3 months: P3M, 48 hours:
@@ -1273,7 +1275,9 @@ class KeySignParameters(_serialization.Model):
         "value": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, *, algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"], value: bytes, **kwargs):
+    def __init__(
+        self, *, algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"], value: bytes, **kwargs: Any
+    ) -> None:
         """
         :keyword algorithm: The signing/verification algorithm identifier. For more information on
          possible algorithm types, see JsonWebKeySignatureAlgorithm. Required. Known values are:
@@ -1316,8 +1320,8 @@ class KeyUpdateParameters(_serialization.Model):
         key_attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         release_policy: Optional["_models.KeyReleasePolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_ops: Json web key operations. For more information on possible key operations, see
          JsonWebKeyOperation.
@@ -1353,7 +1357,7 @@ class KeyVaultError(_serialization.Model):
         "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.error = None
@@ -1392,8 +1396,8 @@ class KeyVerifyParameters(_serialization.Model):
         algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"],
         digest: bytes,
         signature: bytes,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword algorithm: The signing/verification algorithm. For more information on possible
          algorithm types, see JsonWebKeySignatureAlgorithm. Required. Known values are: "PS256",
@@ -1427,7 +1431,7 @@ class KeyVerifyResult(_serialization.Model):
         "value": {"key": "value", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1452,8 +1456,8 @@ class LifetimeActions(_serialization.Model):
         *,
         trigger: Optional["_models.LifetimeActionsTrigger"] = None,
         action: Optional["_models.LifetimeActionsType"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword trigger: The condition that will execute the action.
         :paramtype trigger: ~azure.keyvault.v7_3.models.LifetimeActionsTrigger
@@ -1481,7 +1485,9 @@ class LifetimeActionsTrigger(_serialization.Model):
         "time_before_expiry": {"key": "timeBeforeExpiry", "type": "str"},
     }
 
-    def __init__(self, *, time_after_create: Optional[str] = None, time_before_expiry: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, time_after_create: Optional[str] = None, time_before_expiry: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword time_after_create: Time after creation to attempt to rotate. It only applies to
          rotate. It will be in ISO 8601 duration format. Example: 90 days : "P90D".
@@ -1506,7 +1512,7 @@ class LifetimeActionsType(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.ActionType"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Union[str, "_models.ActionType"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: The type of the action. Known values are: "rotate" and "notify".
         :paramtype type: str or ~azure.keyvault.v7_3.models.ActionType
@@ -1532,7 +1538,7 @@ class RandomBytes(_serialization.Model):
         "value": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, *, value: bytes, **kwargs):
+    def __init__(self, *, value: bytes, **kwargs: Any) -> None:
         """
         :keyword value: The bytes encoded as a base64url string. Required.
         :paramtype value: bytes

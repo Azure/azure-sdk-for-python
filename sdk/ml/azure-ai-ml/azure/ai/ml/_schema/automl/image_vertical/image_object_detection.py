@@ -8,7 +8,7 @@ from typing import Any, Dict
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     InstanceSegmentationPrimaryMetrics,
     ObjectDetectionPrimaryMetrics,
     TaskType,
@@ -17,10 +17,7 @@ from azure.ai.ml._schema.automl.image_vertical.image_model_distribution_settings
     ImageModelDistributionSettingsInstanceSegmentationSchema,
     ImageModelDistributionSettingsObjectDetectionSchema,
 )
-from azure.ai.ml._schema.automl.image_vertical.image_model_settings import (
-    ImageModelSettingsInstanceSegmentationSchema,
-    ImageModelSettingsObjectDetectionSchema,
-)
+from azure.ai.ml._schema.automl.image_vertical.image_model_settings import ImageModelSettingsObjectDetectionSchema
 from azure.ai.ml._schema.automl.image_vertical.image_vertical import ImageVerticalSchema
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -60,7 +57,7 @@ class ImageInstanceSegmentationSchema(ImageVerticalSchema):
         casing_transform=camel_to_snake,
         load_default=camel_to_snake(InstanceSegmentationPrimaryMetrics.MEAN_AVERAGE_PRECISION),
     )
-    training_parameters = NestedField(ImageModelSettingsInstanceSegmentationSchema())
+    training_parameters = NestedField(ImageModelSettingsObjectDetectionSchema())
     search_space = fields.List(NestedField(ImageModelDistributionSettingsInstanceSegmentationSchema()))
 
     @post_load

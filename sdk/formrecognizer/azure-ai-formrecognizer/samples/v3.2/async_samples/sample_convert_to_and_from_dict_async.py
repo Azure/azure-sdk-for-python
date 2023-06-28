@@ -26,6 +26,7 @@ import os
 import json
 import asyncio
 
+
 async def convert_to_and_from_dict_async():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
@@ -61,7 +62,7 @@ async def convert_to_and_from_dict_async():
     # save the dictionary as JSON content in a JSON file, use the AzureJSONEncoder
     # to help make types, such as dates, JSON serializable
     # NOTE: AzureJSONEncoder is only available with azure.core>=1.18.0.
-    with open('data.json', 'w') as output_file:
+    with open("data.json", "w") as output_file:
         json.dump(analyze_result_dict, output_file, cls=AzureJSONEncoder)
 
     # convert the dictionary back to the original model
@@ -69,9 +70,9 @@ async def convert_to_and_from_dict_async():
 
     # use the model as normal
     print("----Converted from dictionary AnalyzeResult----")
-    print("Model ID: '{}'".format(model.model_id))
-    print("Number of pages analyzed {}".format(len(model.pages)))
-    print("API version used: {}".format(model.api_version))
+    print(f"Model ID: '{model.model_id}'")
+    print(f"Number of pages analyzed {len(model.pages)}")
+    print(f"API version used: {model.api_version}")
 
     print("----------------------------------------")
 
@@ -80,5 +81,28 @@ async def main():
     await convert_to_and_from_dict_async()
 
 
-if __name__ == '__main__':
-    asyncio.run(main())
+if __name__ == "__main__":
+    import sys
+    from azure.core.exceptions import HttpResponseError
+
+    try:
+        asyncio.run(main())
+    except HttpResponseError as error:
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
+        # Examples of how to check an HttpResponseError
+        # Check by error code:
+        if error.error is not None:
+            if error.error.code == "InvalidImage":
+                print(f"Received an invalid image error: {error.error}")
+            if error.error.code == "InvalidRequest":
+                print(f"Received an invalid request error: {error.error}")
+            # Raise the error again after printing it
+            raise
+        # If the inner error is None and then it is possible to check the message to get more information:
+        if "Invalid request".casefold() in error.message.casefold():
+            print(f"Uh-oh! Seems there was an invalid request: {error}")
+        # Raise the error again
+        raise

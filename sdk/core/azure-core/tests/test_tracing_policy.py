@@ -37,7 +37,7 @@ def test_distributed_tracing_policy_solo(http_request, http_response):
         response.status_code = 202
         response.headers["x-ms-request-id"] = "some request id"
 
-        assert request.headers.get("traceparent") == '123456789'
+        assert request.headers.get("traceparent") == "123456789"
 
         policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
         time.sleep(0.001)
@@ -75,9 +75,7 @@ def test_distributed_tracing_policy_attributes(http_request, http_response):
     """Test policy with no other policy and happy path"""
     settings.tracing_implementation.set_value(FakeSpan)
     with FakeSpan(name="parent") as root_span:
-        policy = DistributedTracingPolicy(tracing_attributes={
-            'myattr': 'myvalue'
-        })
+        policy = DistributedTracingPolicy(tracing_attributes={"myattr": "myvalue"})
 
         request = http_request("GET", "http://localhost/temp?query=query")
 
@@ -133,7 +131,7 @@ def test_distributed_tracing_policy_badurl(caplog, http_request, http_response):
 def test_distributed_tracing_policy_with_user_agent(http_request, http_response):
     """Test policy working with user agent."""
     settings.tracing_implementation.set_value(FakeSpan)
-    with mock.patch.dict('os.environ', {"AZURE_HTTP_USER_AGENT": "mytools"}):
+    with mock.patch.dict("os.environ", {"AZURE_HTTP_USER_AGENT": "mytools"}):
         with FakeSpan(name="parent") as root_span:
             policy = DistributedTracingPolicy()
 
@@ -152,7 +150,7 @@ def test_distributed_tracing_policy_with_user_agent(http_request, http_response)
             response.headers["x-ms-request-id"] = "some request id"
             pipeline_response = PipelineResponse(request, response, PipelineContext(None))
 
-            assert request.headers.get("traceparent") == '123456789'
+            assert request.headers.get("traceparent") == "123456789"
 
             policy.on_response(pipeline_request, pipeline_response)
 
@@ -185,7 +183,7 @@ def test_distributed_tracing_policy_with_user_agent(http_request, http_response)
         assert network_span.attributes.get("x-ms-request-id") is None
         assert network_span.attributes.get("http.status_code") == 504
         # Exception should propagate status for Opencensus
-        assert network_span.status == 'Transport trouble'
+        assert network_span.status == "Transport trouble"
 
 
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
@@ -214,7 +212,7 @@ def test_span_namer(http_request, http_response):
             assert http_request is request
             return "operation level name"
 
-        pipeline_request.context.options['network_span_namer'] = operation_namer
+        pipeline_request.context.options["network_span_namer"] = operation_namer
 
         policy.on_request(pipeline_request)
 

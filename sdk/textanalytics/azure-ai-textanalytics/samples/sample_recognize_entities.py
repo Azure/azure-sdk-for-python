@@ -20,17 +20,16 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-from __future__ import annotations
-import os
-
 
 def sample_recognize_entities() -> None:
     print(
         "In this sample, we are a catering business, and we're looking to sort the reviews "
         "for our organization based off of the organization that hired us for catering"
     )
-    organization_to_reviews: dict[str, list[str]] = {}
+
     # [START recognize_entities]
+    import os
+    import typing
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -49,11 +48,11 @@ def sample_recognize_entities() -> None:
 
     result = text_analytics_client.recognize_entities(reviews)
     result = [review for review in result if not review.is_error]
+    organization_to_reviews: typing.Dict[str, typing.List[str]] = {}
 
     for idx, review in enumerate(result):
         for entity in review.entities:
             print(f"Entity '{entity.text}' has category '{entity.category}'")
-    # [END recognize_entities]
             if entity.category == 'Organization':
                 organization_to_reviews.setdefault(entity.text, [])
                 organization_to_reviews[entity.text].append(reviews[idx])
@@ -64,6 +63,7 @@ def sample_recognize_entities() -> None:
                 organization, "\n\n".join(reviews)
             )
         )
+    # [END recognize_entities]
 
 
 if __name__ == '__main__':

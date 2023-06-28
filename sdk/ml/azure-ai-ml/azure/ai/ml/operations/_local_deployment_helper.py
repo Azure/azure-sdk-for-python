@@ -19,6 +19,7 @@ from azure.ai.ml._local_endpoints.docker_client import (
     get_deployment_json_from_container,
     get_status_from_container,
 )
+from azure.ai.ml._local_endpoints.mdc_config_resolver import MdcConfigResolver
 from azure.ai.ml._local_endpoints.validators.code_validator import get_code_configuration_artifacts
 from azure.ai.ml._local_endpoints.validators.environment_validator import get_environment_artifacts
 from azure.ai.ml._local_endpoints.validators.model_validator import get_model_artifacts
@@ -37,8 +38,7 @@ module_logger = logging.getLogger(__name__)
 class _LocalDeploymentHelper(object):
     """A helper class to interact with Azure ML endpoints locally.
 
-    Use this helper to manage Azure ML endpoints locally, e.g. create,
-    invoke, show, list, delete.
+    Use this helper to manage Azure ML endpoints locally, e.g. create, invoke, show, list, delete.
     """
 
     def __init__(
@@ -51,7 +51,10 @@ class _LocalDeploymentHelper(object):
         self._environment_operations = operation_container.all_operations.get(AzureMLResourceType.ENVIRONMENT)
 
     def create_or_update(
-        self, deployment: OnlineDeployment, local_endpoint_mode: LocalEndpointMode
+        self,
+        deployment: OnlineDeployment,
+        local_endpoint_mode: LocalEndpointMode,
+        local_enable_gpu: Optional[bool] = False,
     ) -> OnlineDeployment:
         """Create or update an deployment locally using Docker.
 
@@ -59,6 +62,8 @@ class _LocalDeploymentHelper(object):
         :type deployment: OnlineDeployment
         :param local_endpoint_mode: Mode for how to create the local user container.
         :type local_endpoint_mode: LocalEndpointMode
+        :param local_enable_gpu: enable local container to access gpu
+        :type local_enable_gpu: bool
         """
         try:
             if deployment is None:
@@ -85,6 +90,7 @@ class _LocalDeploymentHelper(object):
                 endpoint_name=deployment.endpoint_name,
                 deployment=deployment,
                 local_endpoint_mode=local_endpoint_mode,
+                local_enable_gpu=local_enable_gpu,
                 endpoint_metadata=endpoint_metadata,
                 deployment_metadata=deployment_metadata,
             )
@@ -154,6 +160,7 @@ class _LocalDeploymentHelper(object):
         endpoint_name: str,
         deployment: OnlineDeployment,
         local_endpoint_mode: LocalEndpointMode,
+        local_enable_gpu: Optional[bool] = False,
         endpoint_metadata: Optional[dict] = None,
         deployment_metadata: Optional[dict] = None,
     ):
@@ -165,6 +172,8 @@ class _LocalDeploymentHelper(object):
         :type deployment: Deployment entity
         :param local_endpoint_mode: Mode for local endpoint.
         :type local_endpoint_mode: LocalEndpointMode
+        :param local_enable_gpu: enable local container to access gpu
+        :type local_enable_gpu: bool
         :param endpoint_metadata: Endpoint metadata (json serialied Endpoint entity)
         :type endpoint_metadata: dict
         :param deployment_metadata: Deployment metadata (json serialied Deployment entity)
@@ -260,6 +269,17 @@ class _LocalDeploymentHelper(object):
             **image_context.environment,
             **user_environment_variables,
         }
+
+        volumes = {}
+        volumes.update(image_context.volumes)
+
+        if deployment.data_collector:
+            mdc_config = MdcConfigResolver(deployment.data_collector)
+            mdc_config.write_file(deployment_directory_path)
+
+            environment_variables.update(mdc_config.environment_variables)
+            volumes.update(mdc_config.volumes)
+
         # Determine whether we need to use local context or downloaded context
         build_directory = downloaded_build_context if downloaded_build_context else deployment_directory
         self._docker_client.create_deployment(
@@ -271,17 +291,17 @@ class _LocalDeploymentHelper(object):
             dockerfile_path=None if is_byoc else dockerfile.local_path,
             conda_source_path=yaml_env_conda_file_path,
             conda_yaml_contents=yaml_env_conda_file_contents,
-            volumes=image_context.volumes,
+            volumes=volumes,
             environment=environment_variables,
             azureml_port=inference_config.scoring_route.port if is_byoc else LocalEndpointConstants.DOCKER_PORT,
             local_endpoint_mode=local_endpoint_mode,
             prebuilt_image_name=yaml_base_image_name if is_byoc else None,
+            local_enable_gpu=local_enable_gpu,
         )
 
 
 def _convert_container_to_deployment(container: "docker.models.containers.Container") -> OnlineDeployment:
-    """Converts provided Container for local deployment to OnlineDeployment
-    entity.
+    """Converts provided Container for local deployment to OnlineDeployment entity.
 
     :param container: Container for a local deployment.
     :type container: docker.models.containers.Container

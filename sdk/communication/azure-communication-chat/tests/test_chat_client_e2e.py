@@ -4,10 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-import os
 import time
 from datetime import datetime
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 from msrest.serialization import TZ_UTC
 from uuid import uuid4
 
@@ -18,30 +17,16 @@ from azure.communication.chat import (
     ChatParticipant
 )
 from azure.communication.chat._shared.utils import parse_connection_str
-
-from azure_devtools.scenario_tests import RecordingProcessor
-from _shared.helper import URIIdentityReplacer
-from chat_e2e_helper import ChatURIReplacer
-from _shared.testcase import (
-    CommunicationTestCase,
-    BodyReplacerProcessor
-)
+from chat_e2e_helper import get_connection_str
 from _shared.utils import get_http_logging_policy
 
 
-class ChatClientTest(CommunicationTestCase):
-    def setUp(self):
-        super(ChatClientTest, self).setUp()
+class TestChatClient(AzureRecordedTestCase):
+    def setup_method(self):
+        connection_str = get_connection_str()
+        self.identity_client = CommunicationIdentityClient.from_connection_string(connection_str)
 
-        self.recording_processors.extend([
-            BodyReplacerProcessor(keys=["id", "token", "createdBy", "participants", "multipleStatus", "value"]),
-            URIIdentityReplacer(),
-            ChatURIReplacer()])
-
-        self.identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str)
-
-        endpoint, _ = parse_connection_str(self.connection_str)
+        endpoint, _ = parse_connection_str(connection_str)
         self.endpoint = endpoint
 
         # create user and issue token
@@ -56,11 +41,9 @@ class ChatClientTest(CommunicationTestCase):
             http_logging_policy=get_http_logging_policy()
         )
 
-    def tearDown(self):
-        super(ChatClientTest, self).tearDown()
-
+    def teardown_method(self):
         # delete created users and chat threads
-        if not self.is_playback():
+        if is_live():
             self.chat_client.delete_chat_thread(self.thread_id)
             self.identity_client.delete_user(self.user)
 

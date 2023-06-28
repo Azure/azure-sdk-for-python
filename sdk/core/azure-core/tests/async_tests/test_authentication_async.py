@@ -17,6 +17,7 @@ import pytest
 pytestmark = pytest.mark.asyncio
 from utils import HTTP_REQUESTS
 
+
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_bearer_policy_adds_header(http_request):
     """The bearer token policy should add a header containing a token from its credential"""
@@ -57,6 +58,23 @@ async def test_bearer_policy_send(http_request):
         return expected_response
 
     fake_credential = Mock(get_token=lambda *_, **__: get_completed_future(AccessToken("", 0)))
+    policies = [AsyncBearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_request)]
+    response = await AsyncPipeline(transport=Mock(), policies=policies).run(expected_request)
+
+    assert response is expected_response
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_bearer_policy_sync_send(http_request):
+    """The bearer token policy should invoke the next policy's send method and return the result"""
+    expected_request = http_request("GET", "https://spam.eggs")
+    expected_response = Mock()
+
+    async def verify_request(request):
+        assert request.http_request is expected_request
+        return expected_response
+
+    fake_credential = Mock(get_token=lambda _: AccessToken("", 0))
     policies = [AsyncBearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_request)]
     response = await AsyncPipeline(transport=Mock(), policies=policies).run(expected_request)
 
@@ -209,6 +227,7 @@ async def test_bearer_policy_calls_sansio_methods(http_request):
             fake_send.calls = 1
             return Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
         raise TestException()
+
     fake_send.calls = 0
 
     policy = TestPolicy(credential, "scope")

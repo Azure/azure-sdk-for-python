@@ -8,27 +8,22 @@ import time
 import threading
 from datetime import timedelta
 from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any, Callable, Union
-
-try:
-    from urllib.parse import quote_plus, urlparse
-except ImportError:
-    from urllib import quote_plus  # type: ignore
-    from urlparse import urlparse  # type: ignore
-
-import uamqp
-from uamqp import utils, compat
-from uamqp.message import MessageProperties
-
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 from azure.core.pipeline.policies import RetryMode
 
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse  # type: ignore
+
+from ._pyamqp.utils import generate_sas_token
+from ._transport._pyamqp_transport import PyamqpTransport
+
 from ._common._configuration import Configuration
 from .exceptions import (
-    ServiceBusError,
     ServiceBusConnectionError,
     OperationTimeoutError,
     SessionLockLostError,
-    _create_servicebus_exception,
 )
 from ._common.utils import create_properties, strip_protocol_from_uri, parse_sas_credential
 from ._common.constants import (
@@ -37,27 +32,33 @@ from ._common.constants import (
     TOKEN_TYPE_SASTOKEN,
     MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
     ASSOCIATEDLINKPROPERTYNAME,
-    TRACE_NAMESPACE_PROPERTY,
-    TRACE_COMPONENT_PROPERTY,
-    TRACE_COMPONENT,
-    TRACE_PEER_ADDRESS_PROPERTY,
-    TRACE_BUS_DESTINATION_PROPERTY,
 )
 
 if TYPE_CHECKING:
+    from .exceptions import ServiceBusError
+    try:
+        # pylint:disable=unused-import
+        from uamqp import AMQPClient as uamqp_AMQPClientSync
+    except ImportError:
+        pass
+
+    from ._pyamqp.message import Message as pyamqp_Message
+    from ._pyamqp.client import AMQPClient as pyamqp_AMQPClientSync
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def _parse_conn_str(conn_str, check_case=False):
-    # type: (str, Optional[bool]) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]
+def _parse_conn_str(
+    conn_str: str,
+    check_case: Optional[bool] = False
+) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]:
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
-    entity_path = None  # type: Optional[str]
-    shared_access_signature = None  # type: Optional[str]
-    shared_access_signature_expiry = None  # type: Optional[int]
+    entity_path: Optional[str]= None
+    shared_access_signature: Optional[str] = None
+    shared_access_signature_expiry: Optional[int] = None
 
     # split connection string into properties
     conn_properties = [s.split("=", 1) for s in conn_str.strip().rstrip(";").split(";")]
@@ -136,8 +137,9 @@ def _parse_conn_str(conn_str, check_case=False):
     )
 
 
-def _generate_sas_token(uri, policy, key, expiry=None):
-    # type: (str, str, str, Optional[timedelta]) -> AccessToken
+def _generate_sas_token(
+    uri: str, policy: str, key: str, expiry: Optional[timedelta] = None
+) -> AccessToken:
     """Create a shared access signiture token as a string literal.
     :returns: SAS token as string literal.
     :rtype: str
@@ -146,11 +148,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
         expiry = timedelta(hours=1)  # Default to 1 hour.
 
     abs_expiry = int(time.time()) + expiry.seconds
-    encoded_uri = quote_plus(uri).encode("utf-8")  # pylint: disable=no-member
-    encoded_policy = quote_plus(policy).encode("utf-8")  # pylint: disable=no-member
-    encoded_key = key.encode("utf-8")
-
-    token = utils.create_sas_token(encoded_policy, encoded_key, encoded_uri, expiry)
+    token = generate_sas_token(uri, policy, key, abs_expiry)
     return AccessToken(token=token, expires_on=abs_expiry)
 
 def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
@@ -166,8 +164,7 @@ class ServiceBusSASTokenCredential(object):
     :param int expiry: The epoch timestamp
     """
 
-    def __init__(self, token, expiry):
-        # type: (str, int) -> None
+    def __init__(self, token: str, expiry: int) -> None:
         """
         :param str token: The shared access token string
         :param float expiry: The epoch timestamp
@@ -176,8 +173,7 @@ class ServiceBusSASTokenCredential(object):
         self.expiry = expiry
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
         """
@@ -191,14 +187,12 @@ class ServiceBusSharedKeyCredential(object):
     :param str key: The shared access key.
     """
 
-    def __init__(self, policy, key):
-        # type: (str, str) -> None
+    def __init__(self, policy: str, key: str) -> None:
         self.policy = policy
         self.key = key
         self.token_type = TOKEN_TYPE_SASTOKEN
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
@@ -210,13 +204,11 @@ class ServiceBusAzureNamedKeyTokenCredential(object):
     :type credential: ~azure.core.credentials.AzureNamedKeyCredential
     """
 
-    def __init__(self, azure_named_key_credential):
-        # type: (AzureNamedKeyCredential) -> None
+    def __init__(self, azure_named_key_credential: AzureNamedKeyCredential) -> None:
         self._credential = azure_named_key_credential
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         name, key = self._credential.named_key
@@ -229,13 +221,11 @@ class ServiceBusAzureSasTokenCredential(object):
     :param azure_sas_credential: The credential to be used for authentication.
     :type azure_sas_credential: ~azure.core.credentials.AzureSasCredential
     """
-    def __init__(self, azure_sas_credential):
-        # type: (AzureSasCredential) -> None
+    def __init__(self, azure_sas_credential: AzureSasCredential) -> None:
         self._credential = azure_sas_credential
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
         """
@@ -244,8 +234,15 @@ class ServiceBusAzureSasTokenCredential(object):
 
 
 class BaseHandler:  # pylint:disable=too-many-instance-attributes
-    def __init__(self, fully_qualified_namespace, entity_name, credential, **kwargs):
-        # type: (str, str, Union[TokenCredential, AzureSasCredential, AzureNamedKeyCredential], Any) -> None
+    def __init__(
+        self,
+        fully_qualified_namespace: str,
+        entity_name: str,
+        credential: Union["TokenCredential", AzureSasCredential, AzureNamedKeyCredential],
+        **kwargs: Any
+    ) -> None:
+        self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
+
         # If the user provided http:// or sb://, let's be polite and strip that.
         self.fully_qualified_namespace = strip_protocol_from_uri(
             fully_qualified_namespace.strip()
@@ -256,7 +253,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._entity_path = self._entity_name + (
             ("/Subscriptions/" + subscription_name) if subscription_name else ""
         )
-        self._mgmt_target = "{}{}".format(self._entity_path, MANAGEMENT_PATH_SUFFIX)
+        self._mgmt_target = f"{self._entity_path}{MANAGEMENT_PATH_SUFFIX}"
         if isinstance(credential, AzureSasCredential):
             self._credential = ServiceBusAzureSasTokenCredential(credential)
         elif isinstance(credential, AzureNamedKeyCredential):
@@ -264,16 +261,24 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         else:
             self._credential = credential # type: ignore
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
-        self._config = Configuration(**kwargs)
+        self._config = Configuration(
+            hostname=self.fully_qualified_namespace,
+            amqp_transport=self._amqp_transport,
+            **kwargs
+        )
         self._running = False
-        self._handler = None  # type: uamqp.AMQPClient
+        self._handler: Optional[Union["uamqp_AMQPClientSync", "pyamqp_AMQPClientSync"]] = None
         self._auth_uri = None
-        self._properties = create_properties(self._config.user_agent)
+        self._properties = create_properties(
+            self._config.user_agent,
+            amqp_transport=self._amqp_transport,
+        )
         self._shutdown = threading.Event()
 
     @classmethod
-    def _convert_connection_string_to_kwargs(cls, conn_str, **kwargs):
-        # type: (str, Any) -> Dict[str, Any]
+    def _convert_connection_string_to_kwargs(
+        cls, conn_str: str, **kwargs: Any
+    ) -> Dict[str, Any]:
         host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(
             conn_str
         )
@@ -297,10 +302,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             and (entity_in_conn_str != entity_in_kwargs)
         ):
             raise ValueError(
-                "The queue or topic name provided: {} which does not match the EntityPath in"
-                " the connection string passed to the ServiceBusClient constructor: {}.".format(
-                    entity_in_conn_str, entity_in_kwargs
-                )
+                f"The queue or topic name provided: {entity_in_conn_str} which does not match the EntityPath in"
+                f" the connection string passed to the ServiceBusClient constructor: {entity_in_kwargs}."
             )
 
         kwargs["fully_qualified_namespace"] = host
@@ -330,16 +333,18 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def __exit__(self, *args):
         self.close()
 
-    def _handle_exception(self, exception):
-        # type: (BaseException) -> ServiceBusError
+    def _handle_exception(self, exception: BaseException) -> "ServiceBusError":
         # pylint: disable=protected-access, line-too-long
-        error = _create_servicebus_exception(_LOGGER, exception)
+        error = self._amqp_transport.create_servicebus_exception(
+            _LOGGER, exception, custom_endpoint_address=self._config.custom_endpoint_address
+        )
 
         try:
-            # If SessionLockLostError or ServiceBusConnectionError happen when a session receiver is running,
-            # the receiver should no longer be used and should create a new session receiver
-            # instance to receive from session. There are pitfalls WRT both next session IDs,
-            # and the diversity of session failure modes, that motivates us to disallow this.
+            # If SessionLockLostError or ServiceBusConnectionError happen when a
+            # session receiver is running, the receiver should no longer be used and
+            # should create a new session receiver instance to receive from session.
+            # There are pitfalls WRT both next session IDs, and the diversity of session
+            # failure modes, that motivates us to disallow this.
             if self._session and self._running and isinstance(error, (SessionLockLostError, ServiceBusConnectionError)):  # type: ignore
                 self._session._lock_lost = True  # type: ignore
                 self._close_handler()
@@ -380,8 +385,12 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         except AttributeError:
             pass
 
-    def _do_retryable_operation(self, operation, timeout=None, **kwargs):
-        # type: (Callable, Optional[float], Any) -> Any
+    def _do_retryable_operation(
+        self,
+        operation: Callable,
+        timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> Any:
         # pylint: disable=protected-access
         require_last_exception = kwargs.pop("require_last_exception", False)
         operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
@@ -402,6 +411,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 return operation(**kwargs)
             except StopIteration:
                 raise
+            except ImportError:
+                # If dependency is not installed, do not retry.
+                raise
             except Exception as exception:  # pylint: disable=broad-except
                 last_exception = self._handle_exception(exception)
                 if require_last_exception:
@@ -421,9 +433,12 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 )
 
     def _backoff(
-        self, retried_times, last_exception, abs_timeout_time=None, entity_name=None
-    ):
-        # type: (int, Exception, Optional[float], str) -> None
+        self,
+        retried_times: int,
+        last_exception: Exception,
+        abs_timeout_time: Optional[float] = None,
+        entity_name: Optional[str] = None
+    ) -> None:
         entity_name = entity_name or self._container_id
         backoff = _get_backoff_time(
                     self._config.retry_mode,
@@ -450,14 +465,13 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
     def _mgmt_request_response(
         self,
-        mgmt_operation,
-        message,
-        callback,
-        keep_alive_associated_link=True,
-        timeout=None,
-        **kwargs
-    ):
-        # type: (bytes, Any, Callable, bool, Optional[float], Any) -> uamqp.Message
+        mgmt_operation: bytes,
+        message: Any,
+        callback: Callable,
+        keep_alive_associated_link: bool = True,
+        timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> "pyamqp_Message":
         """
         Execute an amqp management operation.
 
@@ -467,11 +481,11 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         :param message: The message to send in the management request.
         :paramtype message: Any
         :param callback: The callback which is used to parse the returning message.
-        :paramtype callback: Callable[int, ~uamqp.message.Message, str]
+        :paramtype callback: Callable[int, Union[~uamqp.message.Message, Message], str]
         :param keep_alive_associated_link: A boolean flag for keeping associated amqp sender/receiver link alive when
          executing operation on mgmt links.
         :param timeout: timeout in seconds executing the mgmt operation.
-        :rtype: None
+        :rtype: Tuple
         """
         self._open()
         application_properties = {}
@@ -480,36 +494,42 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         if keep_alive_associated_link:
             try:
                 application_properties = {
-                    ASSOCIATEDLINKPROPERTYNAME: self._handler.message_handler.name
+                    ASSOCIATEDLINKPROPERTYNAME: self._amqp_transport.get_handler_link_name(self._handler)
                 }
             except AttributeError:
                 pass
 
-        mgmt_msg = uamqp.Message(
-            body=message,
-            properties=MessageProperties(
-                reply_to=self._mgmt_target, encoding=self._config.encoding, **kwargs
-            ),
+        mgmt_msg = self._amqp_transport.create_mgmt_msg(
+            message=message,
             application_properties=application_properties,
+            config=self._config,
+            reply_to=self._mgmt_target,
+            **kwargs
         )
+
         try:
-            return self._handler.mgmt_request(
+            return self._amqp_transport.mgmt_client_request(
+                self._handler,
                 mgmt_msg,
-                mgmt_operation,
-                op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
+                operation=mgmt_operation,
+                operation_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
                 node=self._mgmt_target.encode(self._config.encoding),
-                timeout=timeout * 1000 if timeout else None,
-                callback=callback,
+                timeout=timeout,
+                callback=callback
             )
         except Exception as exp:  # pylint: disable=broad-except
-            if isinstance(exp, compat.TimeoutException):
+            if isinstance(exp, self._amqp_transport.TIMEOUT_ERROR):
                 raise OperationTimeoutError(error=exp)
             raise
 
     def _mgmt_request_response_with_retry(
-        self, mgmt_operation, message, callback, timeout=None, **kwargs
-    ):
-        # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
+        self,
+        mgmt_operation: bytes,
+        message: Dict[str, Any],
+        callback: Callable,
+        timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> Any:
         return self._do_retryable_operation(
             self._mgmt_request_response,
             mgmt_operation=mgmt_operation,
@@ -519,12 +539,6 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             operation_requires_timeout=True,
             **kwargs
         )
-
-    def _add_span_request_attributes(self, span):
-        span.add_attribute(TRACE_COMPONENT_PROPERTY, TRACE_COMPONENT)
-        span.add_attribute(TRACE_NAMESPACE_PROPERTY, TRACE_NAMESPACE_PROPERTY)
-        span.add_attribute(TRACE_BUS_DESTINATION_PROPERTY, self._entity_path)
-        span.add_attribute(TRACE_PEER_ADDRESS_PROPERTY, self.fully_qualified_namespace)
 
     def _open(self):  # pylint: disable=no-self-use
         raise ValueError("Subclass should override the method.")
@@ -538,8 +552,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             self._handler = None
         self._running = False
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close down the handler links (and connection if the handler uses a separate connection).
 
         If the handler has already closed, this operation will do nothing.

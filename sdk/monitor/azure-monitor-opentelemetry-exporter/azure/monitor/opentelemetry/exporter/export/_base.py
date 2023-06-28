@@ -9,7 +9,13 @@ from typing import List, Any
 from urllib.parse import urlparse
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
-from azure.core.pipeline.policies import ContentDecodePolicy, HttpLoggingPolicy, RedirectPolicy, RequestIdPolicy
+from azure.core.pipeline.policies import (
+    BearerTokenCredentialPolicy,
+    ContentDecodePolicy,
+    HttpLoggingPolicy,
+    RedirectPolicy,
+    RequestIdPolicy,
+)
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated._configuration import AzureMonitorClientConfiguration
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
@@ -42,6 +48,7 @@ logger = logging.getLogger(__name__)
 _AZURE_TEMPDIR_PREFIX = "Microsoft/AzureMonitor"
 _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
+_APPLICATION_INSIGHTS_RESOURCE_SCOPE = "https://monitor.azure.com//.default"
 
 class ExportResult(Enum):
     SUCCESS = 0
@@ -60,6 +67,7 @@ class BaseExporter:
 
         :keyword str api_version: The service API version used. Defaults to latest.
         :keyword str connection_string: The connection string used for your Application Insights resource.
+        :keyword ManagedIdentityCredential/ClientSecretCredential credential: Token credential, such as ManagedIdentityCredential or ClientSecretCredential, used for Azure Active Directory (AAD) authentication. Defaults to None.
         :keyword bool disable_offline_storage: Determines whether to disable storing failed telemetry records for retry. Defaults to `False`.
         :keyword str storage_directory: Storage path in which to store retry files. Defaults to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
         :rtype: None
@@ -67,6 +75,7 @@ class BaseExporter:
         parsed_connection_string = ConnectionStringParser(kwargs.get('connection_string'))
 
         self._api_version = kwargs.get('api_version') or _SERVICE_API_LATEST
+        self._credential = kwargs.get('credential')
         self._consecutive_redirects = 0  # To prevent circular redirects
         self._disable_offline_storage = kwargs.get('disable_offline_storage', False)
         self._endpoint = parsed_connection_string.endpoint
@@ -92,13 +101,14 @@ class BaseExporter:
             # Handle redirects in exporter, set new endpoint if redirected
             RedirectPolicy(permit_redirects=False),
             config.retry_policy,
-            config.authentication_policy,
+            _get_auth_policy(self._credential, config.authentication_policy),
             config.custom_hook_policy,
             config.logging_policy,
             # Explicitly disabling to avoid infinite loop of Span creation when data is exported
             # DistributedTracingPolicy(**kwargs),
             config.http_logging_policy or HttpLoggingPolicy(**kwargs)
         ]
+
         self.client = AzureMonitorClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs)
         self.storage = None
@@ -306,6 +316,19 @@ class BaseExporter:
 
     def _is_stats_exporter(self):
         return self.__class__.__name__ == "_StatsBeatExporter"
+
+
+def _get_auth_policy(credential, default_auth_policy):
+    if credential:
+        if hasattr(credential, 'get_token'):
+            return BearerTokenCredentialPolicy(
+                credential,
+                _APPLICATION_INSIGHTS_RESOURCE_SCOPE,
+            )
+        raise ValueError(
+            'Must pass in valid TokenCredential.'
+        )
+    return default_auth_policy
 
 
 def _is_redirect_code(response_code: int) -> bool:

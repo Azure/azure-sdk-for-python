@@ -43,6 +43,7 @@ _dsl_settings_stack = _DSLSettingsStack()
 
 class _DSLSettings:
     """Initialization & finalization job settings for DSL pipeline job.
+
     Store settings from `dsl.set_pipeline_settings` during pipeline definition.
     """
 

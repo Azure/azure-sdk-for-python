@@ -4,7 +4,7 @@
 # ------------------------------------
 import logging
 import os
-from typing import Optional, Union, TYPE_CHECKING
+from typing import Optional, Union, Any
 from azure.core.credentials import AccessToken
 
 from .. import CredentialUnavailableError
@@ -14,14 +14,12 @@ from .certificate import CertificateCredential
 from .client_secret import ClientSecretCredential
 from .user_password import UsernamePasswordCredential
 
-
-if TYPE_CHECKING:
-    EnvironmentCredentialTypes = Union["CertificateCredential", "ClientSecretCredential", "UsernamePasswordCredential"]
+EnvironmentCredentialTypes = Union[CertificateCredential, ClientSecretCredential, UsernamePasswordCredential]
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class EnvironmentCredential(object):
+class EnvironmentCredential:
     """A credential configured by environment variables.
 
     This credential is capable of authenticating as a service principal using a client secret or a certificate, or as
@@ -54,10 +52,19 @@ class EnvironmentCredential(object):
       - **AZURE_AUTHORITY_HOST**: authority of an Azure Active Directory endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
         when no value is given.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_environment_credential]
+            :end-before: [END create_environment_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create an EnvironmentCredential.
     """
 
-    def __init__(self, **kwargs) -> None:
-        self._credential = None  # type: Optional[EnvironmentCredentialTypes]
+    def __init__(self, **kwargs: Any) -> None:
+        self._credential: Optional[EnvironmentCredentialTypes] = None
 
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
             self._credential = ClientSecretCredential(
@@ -113,7 +120,7 @@ class EnvironmentCredential(object):
         self.__exit__()
 
     @log_get_token("EnvironmentCredential")
-    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -130,7 +137,7 @@ class EnvironmentCredential(object):
         if not self._credential:
             message = (
                 "EnvironmentCredential authentication unavailable. Environment variables are not fully configured.\n"
-                "Visit https://aka.ms/azsdk/python/identity/environmentcredential/troubleshoot to troubleshoot."
+                "Visit https://aka.ms/azsdk/python/identity/environmentcredential/troubleshoot to troubleshoot "
                 "this issue."
             )
             raise CredentialUnavailableError(message=message)

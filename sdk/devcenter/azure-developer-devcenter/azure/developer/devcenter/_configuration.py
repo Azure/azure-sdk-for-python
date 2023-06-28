@@ -6,12 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import sys
 from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from ._version import VERSION
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -24,53 +30,32 @@ class DevCenterClientConfiguration(Configuration):  # pylint: disable=too-many-i
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param tenant_id: The tenant to operate on. Required.
-    :type tenant_id: str
-    :param dev_center: The DevCenter to operate on. Required.
-    :type dev_center: str
+    :param endpoint: The DevCenter-specific URI to operate on. Required.
+    :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param dev_center_dns_suffix: The DNS suffix used as the base for all devcenter requests.
-     Default value is "devcenter.azure.com".
-    :type dev_center_dns_suffix: str
-    :keyword api_version: Api Version. Default value is "2022-03-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-11-11-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        tenant_id: str,
-        dev_center: str,
-        credential: "TokenCredential",
-        dev_center_dns_suffix: str = "devcenter.azure.com",
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         super(DevCenterClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-03-01-preview")  # type: str
+        api_version: Literal["2022-11-11-preview"] = kwargs.pop("api_version", "2022-11-11-preview")
 
-        if tenant_id is None:
-            raise ValueError("Parameter 'tenant_id' must not be None.")
-        if dev_center is None:
-            raise ValueError("Parameter 'dev_center' must not be None.")
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        if dev_center_dns_suffix is None:
-            raise ValueError("Parameter 'dev_center_dns_suffix' must not be None.")
 
-        self.tenant_id = tenant_id
-        self.dev_center = dev_center
+        self.endpoint = endpoint
         self.credential = credential
-        self.dev_center_dns_suffix = dev_center_dns_suffix
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://devcenter.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "developer-devcenter/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)

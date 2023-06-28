@@ -10,6 +10,14 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AccessRight(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Access rights of the access policy."""
+
+    READ = "Read"
+    WRITE = "Write"
+    DELETE = "Delete"
+
+
 class CopyStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CopyStatusType."""
 
@@ -102,6 +110,12 @@ class ShareRootSquash(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NO_ROOT_SQUASH = "NoRootSquash"
     ROOT_SQUASH = "RootSquash"
     ALL_SQUASH = "AllSquash"
+
+
+class ShareTokenIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ShareTokenIntent."""
+
+    BACKUP = "backup"
 
 
 class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

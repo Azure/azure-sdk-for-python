@@ -6,7 +6,7 @@ name: py_torch_hello_world
 display_name: PyTorch-hello-world
 version: 1
 compute: azureml:gpu-cluster
-environment: azureml:AzureML-pytorch-1.9-ubuntu18.04-py37-cuda11-gpu:7
+environment: azureml:AzureML-ACPT-pytorch-1.12-py39-cuda11.6-gpu:8
 command: >-
   echo "
   RANK: $RANK \n

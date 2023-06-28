@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.cassandra_clusters.begin_delete(
+    client.cassandra_clusters.begin_delete(
         resource_group_name="cassandra-prod-rg",
         cluster_name="cassandra-prod",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2022-08-15-preview/examples/CosmosDBManagedCassandraClusterDelete.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBManagedCassandraClusterDelete.json
 if __name__ == "__main__":
     main()

@@ -16,24 +16,22 @@ from ._models_py3 import HostingEnvironmentProfile
 from ._models_py3 import ProxyOnlyResource
 from ._models_py3 import Resource
 
-
-from ._web_site_management_client_enums import (
-    KeyVaultSecretStatus,
-)
+from ._web_site_management_client_enums import KeyVaultSecretStatus
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'Certificate',
-    'CertificateCollection',
-    'CertificatePatchResource',
-    'DefaultErrorResponse',
-    'DefaultErrorResponseError',
-    'DefaultErrorResponseErrorDetailsItem',
-    'HostingEnvironmentProfile',
-    'ProxyOnlyResource',
-    'Resource',
-    'KeyVaultSecretStatus',
+    "Certificate",
+    "CertificateCollection",
+    "CertificatePatchResource",
+    "DefaultErrorResponse",
+    "DefaultErrorResponseError",
+    "DefaultErrorResponseErrorDetailsItem",
+    "HostingEnvironmentProfile",
+    "ProxyOnlyResource",
+    "Resource",
+    "KeyVaultSecretStatus",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

@@ -22,6 +22,7 @@ from typing_extensions import Literal
 from ._client_base import ClientBase
 from ._producer import EventHubProducer
 from ._constants import ALL_PARTITIONS
+from ._tracing import TraceAttributes
 from ._common import EventDataBatch, EventData
 from ._buffered_producer import BufferedProducerDispatcher
 from ._utils import set_event_partition_key
@@ -90,8 +91,9 @@ class EventHubProducerClient(
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
     :keyword str user_agent: If specified, this will be added in front of the user agent string.
-    :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs. Default
+    :keyword retry_total: The total number of attempts to redo a failed operation when an error occurs. Default
      value is 3.
+    :paramtype retry_total: int
     :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay).
      In fixed mode, retry policy will always sleep for {backoff factor}.
@@ -113,16 +115,19 @@ class EventHubProducerClient(
     :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
-    :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+    :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Event Hubs service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
      The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
-    :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+    :paramtype custom_endpoint_address: Optional[str]
+    :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
-    :keyword bool uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
+    :paramtype connection_verify: Optional[str]
+    :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
      False and the Pure Python AMQP library will be used as the underlying transport.
+    :paramtype uamqp_transport: bool
 
     .. admonition:: Example:
 
@@ -340,9 +345,7 @@ class EventHubProducerClient(
                 and partition_id != ALL_PARTITIONS
             ):
                 raise ConnectError(
-                    "Invalid partition {} for the event hub {}".format(
-                        partition_id, self.eventhub_name
-                    )
+                    f"Invalid partition {partition_id} for the event hub {self.eventhub_name}"
                 )
 
             if (
@@ -361,7 +364,7 @@ class EventHubProducerClient(
         partition_id: Optional[str] = None,
         send_timeout: Optional[Union[int, float]] = None
     ) -> EventHubProducer:
-        target = "amqps://{}{}".format(self._address.hostname, self._address.path)
+        target = f"amqps://{self._address.hostname}{self._address.path}"
         send_timeout = (
             self._config.send_timeout if send_timeout is None else send_timeout
         )
@@ -466,8 +469,9 @@ class EventHubProducerClient(
         :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
          The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
         :keyword str user_agent: If specified, this will be added in front of the user agent string.
-        :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
+        :keyword retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
+        :paramtype retry_total: int
         :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
          (most errors are resolved immediately by a second try without a delay).
          In fixed mode, retry policy will always sleep for {backoff factor}.
@@ -489,14 +493,19 @@ class EventHubProducerClient(
         :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
-        :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+        :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
          the Event Hubs service, allowing network requests to be routed through any application gateways or
          other paths needed for the host environment. Default is None.
          The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
          If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
-        :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+        :paramtype custom_endpoint_address: Optional[str]
+        :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.
+        :paramtype connection_verify: Optional[str]
+        :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
+         False and the Pure Python AMQP library will be used as the underlying transport.
+        :paramtype uamqp_transport: bool
         :rtype: ~azure.eventhub.EventHubProducerClient
 
         .. admonition:: Example:
@@ -737,19 +746,19 @@ class EventHubProducerClient(
 
         if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
             raise ValueError(
-                "Max message size: {} is too large, acceptable max batch size is: {} bytes.".format(
-                    max_size_in_bytes, self._max_message_size_on_link
-                )
+                f"Max message size: {max_size_in_bytes} is too large, acceptable max batch size is: {self._max_message_size_on_link} bytes."
             )
 
-        event_data_batch = EventDataBatch(
+        return EventDataBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
             partition_id=partition_id,
             partition_key=partition_key,
             amqp_transport=self._amqp_transport,
+            tracing_attributes={
+                TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE: self._address.hostname if self._address else None,
+                TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self._address.path if self._address else None
+            }
         )
-
-        return event_data_batch
 
     def get_eventhub_properties(self) -> Dict[str, Any]:
         """Get properties of the Event Hub.

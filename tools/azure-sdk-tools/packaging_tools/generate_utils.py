@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import re
+from functools import wraps
 
 from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
@@ -23,8 +24,33 @@ DEFAULT_DEST_FOLDER = "./dist"
 _DPG_README = "README.md"
 
 
+def check_api_version_in_subfolder(sdk_code_path: str):
+    folders = glob(f"{sdk_code_path}/**/_configuration.py", recursive=True)
+    configs = [str(Path(f)) for f in folders if re.compile("v\d{4}_\d{2}_\d{2}").search(f)]
+    if configs:
+        result = []
+        for config in configs:
+            with open(config, "r") as file_in:
+                content = file_in.readlines()
+                if "self.api_version = api_version" not in "".join(content):
+                    result.append(config)
+        if result:
+            raise Exception("Found files that do not set api_version: \n" + "\n".join(result))
+
+
 def dpg_relative_folder(spec_folder: str) -> str:
     return ("../" * 4) + spec_folder + "/"
+
+
+def return_origin_path(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        current_path = os.getcwd()
+        result = func(*args, **kwargs)
+        os.chdir(current_path)
+        return result
+
+    return wrapper
 
 
 def get_package_names(sdk_folder):
@@ -34,21 +60,26 @@ def get_package_names(sdk_folder):
     return package_names
 
 
-def init_new_service(package_name, folder_name):
-    setup = Path(folder_name, package_name, "setup.py")
-    if not setup.exists():
-        check_call(
-            f"python -m packaging_tools --build-conf {package_name} -o {folder_name}",
-            shell=True,
-        )
-        ci = Path(folder_name, "ci.yml")
-        if not ci.exists():
-            with open("ci_template.yml", "r") as file_in:
-                content = file_in.readlines()
-            name = package_name.replace("azure-", "").replace("mgmt-", "")
-            content = [line.replace("MyService", name) for line in content]
-            with open(str(ci), "w") as file_out:
-                file_out.writelines(content)
+def init_new_service(package_name, folder_name, is_typespec = False):
+    if not is_typespec:
+        setup = Path(folder_name, package_name, "setup.py")
+        if not setup.exists():
+            check_call(
+                f"python -m packaging_tools --build-conf {package_name} -o {folder_name}",
+                shell=True,
+            )
+    else:
+        output_path = Path(folder_name) / package_name
+        if not (output_path / "sdk_packaging.toml").exists():
+            with open(output_path / "sdk_packaging.toml", "w") as file_out:
+                file_out.write("[packaging]\nauto_update = false")
+
+    # add ci.yaml
+    generate_ci(
+        template_path=Path("scripts/quickstart_tooling_dpg/template_ci"),
+        folder_path=Path(folder_name),
+        package_name=package_name
+    )
 
 
 def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, spec_folder, input_readme):
@@ -77,7 +108,7 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
             "readme": input_readme,
         })
     else:
-        metadata["cadl_src"] = input_readme
+        metadata["typespec_src"] = input_readme
         metadata.update(config)
 
     _LOGGER.info("Metadata json:\n {}".format(json.dumps(metadata, indent=2)))
@@ -316,17 +347,6 @@ def format_samples(sdk_code_path) -> None:
 
     _LOGGER.info(f"format generated_samples successfully")
 
-def get_npm_package_version(package: str) -> Dict[any, any]:
-    temp_file = "python_temp.json"
-    check_call(f"npm list {package} -json > {temp_file}", shell=True)
-    with open(temp_file, "r") as file_in:
-        data = json.load(file_in)
-    if "dependencies" not in data:
-        _LOGGER.info(f"can not find {package}: {data}")
-        return {}
-    
-    return data["dependencies"]
-
 def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> None:
     ci = Path(folder_path, "ci.yml")
     service_name = folder_path.name
@@ -346,49 +366,15 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
     with open(ci, "w") as file_out:
         file_out.writelines(content)
 
-def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
-    # update config file
-    cadl_python = "@azure-tools/cadl-python"
-    autorest_python = "@autorest/python"
-    project_yaml_path = Path(spec_folder) / cadl_relative_path / "cadl-project.yaml"
-    with open(project_yaml_path, "r") as file_in:
-        project_yaml = yaml.safe_load(file_in)
-    if not project_yaml.get("emitters", {}).get(cadl_python):
-        return
-    if not project_yaml["emitters"][cadl_python].get("sdk-folder"):
-        raise Exception("no sdk-folder is defined")
-    output_path = Path(os.getcwd()) / project_yaml["emitters"][cadl_python]["sdk-folder"]
-    if not output_path.exists():
-        os.makedirs(output_path)
+def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, rest_repo_url: str) -> Dict[str, Any]:
+    typespec_python = "@azure-tools/typespec-python"
 
-    project_yaml["emitters"][cadl_python].pop("sdk-folder")
-    with open(project_yaml_path, "w") as file_out:
-        yaml.safe_dump(project_yaml, file_out)
-
-    # npm install tool
-    origin_path = os.getcwd()
-    os.chdir(Path(spec_folder) / cadl_relative_path)
-    check_call("npm install", shell=True)
-
-    # generate code
-    check_call(f"npx cadl compile . --emit {cadl_python} --output-path={str(output_path)}", shell=True)
-    if (output_path / "output.yaml").exists():
-        os.remove(output_path / "output.yaml")
-    if not (output_path / "sdk_packaging.toml").exists():
-        with open(output_path / "sdk_packaging.toml", "w") as file_out:
-            file_out.write("[packaging]\nauto_update = false")
+    # call scirpt to generate sdk
+    check_call(f'pwsh {Path("eng/common/scripts/TypeSpec-Project-Process.ps1")} {(Path(spec_folder) / typespec_relative_path).resolve()} {head_sha} {rest_repo_url}', shell=True)
 
     # get version of codegen used in generation
-    npm_package_verstion = get_npm_package_version(autorest_python)
-
-    # return to original folder
-    os.chdir(origin_path)
-
-    # add ci.yaml
-    generate_ci(
-        template_path=Path("scripts/quickstart_tooling_dpg/template_ci"),
-        folder_path=output_path.parent,
-        package_name=project_yaml["emitters"][cadl_python]["package-name"]
-    )
+    with open(Path("eng/emitter-package.json"), "r") as file_in:
+        data = json.load(file_in)
+        npm_package_verstion = {typespec_python: data["dependencies"][typespec_python]}
 
     return npm_package_verstion

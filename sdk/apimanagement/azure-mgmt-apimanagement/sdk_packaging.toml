@@ -5,5 +5,5 @@ package_pprint_name = "API Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
-sample_link = "apimanagement"
+sample_link = ""
 title = "ApiManagementClient"

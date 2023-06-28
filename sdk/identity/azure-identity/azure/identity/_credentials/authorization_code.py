@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional
+from typing import Optional, Any
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -29,6 +29,15 @@ class AuthorizationCodeCredential(GetTokenMixin):
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_authorization_code_credential]
+            :end-before: [END create_authorization_code_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create an AuthorizationCodeCredential.
     """
 
     def __init__(
@@ -37,9 +46,9 @@ class AuthorizationCodeCredential(GetTokenMixin):
             client_id: str,
             authorization_code: str,
             redirect_uri: str,
-            **kwargs
+            **kwargs: Any
     ) -> None:
-        self._authorization_code = authorization_code  # type: Optional[str]
+        self._authorization_code: Optional[str] = authorization_code
         self._client_id = client_id
         self._client_secret = kwargs.pop("client_secret", None)
         self._client = kwargs.pop("client", None) or AadClient(tenant_id, client_id, **kwargs)
@@ -57,7 +66,7 @@ class AuthorizationCodeCredential(GetTokenMixin):
         """Close the credential's transport session."""
         self.__exit__()
 
-    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -79,7 +88,9 @@ class AuthorizationCodeCredential(GetTokenMixin):
         # pylint:disable=useless-super-delegation
         return super(AuthorizationCodeCredential, self).get_token(*scopes, **kwargs)
 
-    def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
+    def _acquire_token_silently(
+        self, *scopes: str, **kwargs
+    ) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
     def _request_token(self, *scopes: str, **kwargs) -> AccessToken:

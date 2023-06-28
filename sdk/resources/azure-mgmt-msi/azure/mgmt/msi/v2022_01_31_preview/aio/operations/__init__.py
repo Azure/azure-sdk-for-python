@@ -12,13 +12,14 @@ from ._user_assigned_identities_operations import UserAssignedIdentitiesOperatio
 from ._federated_identity_credentials_operations import FederatedIdentityCredentialsOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'SystemAssignedIdentitiesOperations',
-    'Operations',
-    'UserAssignedIdentitiesOperations',
-    'FederatedIdentityCredentialsOperations',
+    "SystemAssignedIdentitiesOperations",
+    "Operations",
+    "UserAssignedIdentitiesOperations",
+    "FederatedIdentityCredentialsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

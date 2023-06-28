@@ -2,17 +2,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,no-self-use
+# pylint: disable=protected-access,no-self-use,broad-except
 
 import random
 import re
+import subprocess
 from typing import Dict, Optional
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._local_endpoints import LocalEndpointMode
-from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DeploymentLogsRequest
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -22,17 +23,19 @@ from azure.ai.ml._scope_dependent_operations import (
 )
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
+from azure.ai.ml._utils._package_utils import package_deployment
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
-from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType
-from azure.ai.ml.entities import OnlineDeployment
+from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType, SmallSKUs, DEFAULT_MDC_PATH
+from azure.ai.ml.entities import OnlineDeployment, Data
 from azure.ai.ml.exceptions import (
     ErrorCategory,
     ErrorTarget,
     InvalidVSCodeRequestError,
+    LocalDeploymentGPUNotAvailable,
     ValidationErrorType,
     ValidationException,
 )
@@ -45,38 +48,37 @@ from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class OnlineDeploymentOperations(_ScopeDependentOperations):
     """OnlineDeploymentOperations.
 
-    You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
-    attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
+    for you and attaches it as an attribute.
     """
 
     def __init__(
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client_02_2022_preview: ServiceClient022022Preview,
+        service_client_04_2023_preview: ServiceClient042023Preview,
         all_operations: OperationsContainer,
         local_deployment_helper: _LocalDeploymentHelper,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
         super(OnlineDeploymentOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self._local_deployment_helper = local_deployment_helper
-        self._online_deployment = service_client_02_2022_preview.online_deployments
-        self._online_endpoint_operations = service_client_02_2022_preview.online_endpoints
+        self._online_deployment = service_client_04_2023_preview.online_deployments
+        self._online_endpoint_operations = service_client_04_2023_preview.online_endpoints
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs
 
     @distributed_trace
-    # @monitor_with_activity(logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
         deployment: OnlineDeployment,
@@ -84,6 +86,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         local: bool = False,
         vscode_debug: bool = False,
         skip_script_validation: bool = False,
+        local_enable_gpu: Optional[bool] = False,
+        **kwargs,
     ) -> LROPoller[OnlineDeployment]:
         """Create or update a deployment.
 
@@ -93,6 +97,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :type local: bool, optional
         :param vscode_debug: Whether to open VSCode instance to debug local deployment, defaults to False
         :type vscode_debug: bool, optional
+        :param local_enable_gpu: enable local container to access gpu
+        :type local_enable_gpu: bool, optional
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot
             be successfully validated. Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineDeployment assets
@@ -112,6 +118,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             found for local deployment.
         :raises ~azure.ai.ml.exceptions.InvalidVSCodeRequestError: Raised if VS Debug is invoked with a remote endpoint.
             VSCode debug is only supported for local endpoints.
+        :raises ~azure.ai.ml.exceptions.LocalDeploymentGPUNotAvailable: Raised if Nvidia GPU is not available in the
+            system and local_enable_gpu is set while local deployment
         :raises ~azure.ai.ml.exceptions.VSCodeCommandNotFound: Raised if VSCode instance cannot be instantiated.
         :return: A poller to track the operation status
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.OnlineDeployment]
@@ -122,9 +130,27 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                     msg="VSCode Debug is only support for local endpoints. Please set local to True."
                 )
             if local:
+                if local_enable_gpu:
+                    try:
+                        subprocess.run("nvidia-smi", check=True)
+                    except Exception as ex:
+                        raise LocalDeploymentGPUNotAvailable(
+                            msg=(
+                                "Nvidia GPU is not available in your local system."
+                                " Use nvidia-smi command to see the available GPU"
+                            )
+                        ) from ex
                 return self._local_deployment_helper.create_or_update(
                     deployment=deployment,
                     local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug),
+                    local_enable_gpu=local_enable_gpu,
+                )
+            if deployment and deployment.instance_type and deployment.instance_type.lower() in SmallSKUs:
+                module_logger.warning(
+                    "Instance type %s may be too small for compute resources. "  # pylint: disable=line-too-long
+                    "Minimum recommended compute SKU is Standard_DS3_v2 for general purpose endpoints. Learn more about SKUs here: "  # pylint: disable=line-too-long
+                    "https://learn.microsoft.com/en-us/azure/machine-learning/referencemanaged-online-endpoints-vm-sku-list",
+                    deployment.instance_type,  # pylint: disable=line-too-long
                 )
             if (
                 not skip_script_validation
@@ -153,10 +179,16 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 operation_scope=self._operation_scope,
                 operation_config=self._operation_config,
             )
+            if deployment.data_collector:
+                self._register_collection_data_assets(deployment=deployment)
 
             upload_dependencies(deployment, orchestrators)
             try:
                 location = self._get_workspace_location()
+                if kwargs.pop("package_model", False):
+                    deployment = package_deployment(deployment, self._all_operations.all_operations)
+                    module_logger.info("\nStarting deployment")
+
                 deployment_rest = deployment._to_rest_object(location=location)
 
                 poller = self._online_deployment.begin_create_or_update(
@@ -184,7 +216,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 raise ex
 
     @distributed_trace
-    # @monitor_with_activity(logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> OnlineDeployment:
         """Get a deployment resource.
 
@@ -215,7 +247,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         return deployment
 
     @distributed_trace
-    # @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> LROPoller[None]:
         """Delete a deployment.
 
@@ -240,7 +272,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    # @monitor_with_activity(logger, "OnlineDeployment.GetLogs", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "OnlineDeployment.GetLogs", ActivityType.PUBLICAPI)
     def get_logs(
         self,
         name: str,
@@ -283,7 +315,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         ).content
 
     @distributed_trace
-    # @monitor_with_activity(logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
     def list(self, endpoint_name: str, *, local: bool = False) -> ItemPaged[OnlineDeployment]:
         """List a deployment resource.
 
@@ -330,9 +362,43 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         return f"{self._workspace_name}-{name}-{random.randint(1, 10000000)}"
 
     def _get_workspace_location(self) -> str:
-        """Get the workspace location TODO[TASK 1260265]: can we cache this
-        information and only refresh when the operation_scope is changed?"""
+        """Get the workspace location TODO[TASK 1260265]: can we cache this information and only refresh when the
+        operation_scope is changed?"""
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
 
     def _get_local_endpoint_mode(self, vscode_debug):
         return LocalEndpointMode.VSCodeDevContainer if vscode_debug else LocalEndpointMode.DetachedContainer
+
+    def _register_collection_data_assets(self, deployment: OnlineDeployment) -> None:
+        for name, value in deployment.data_collector.collections.items():
+            data_name = f"{deployment.endpoint_name}-{deployment.name}-{name}"
+            data_version = "1"
+            data_path = f"{DEFAULT_MDC_PATH}/{deployment.endpoint_name}/{deployment.name}/{name}"
+            if value.data:
+                if value.data.name:
+                    data_name = value.data.name
+
+                if value.data.version:
+                    data_version = value.data.version
+
+                if value.data.path:
+                    data_path = value.data.path
+
+            data_object = Data(
+                name=data_name,
+                version=data_version,
+                path=data_path,
+            )
+
+            try:
+                result = self._all_operations._all_operations[AzureMLResourceType.DATA].create_or_update(data_object)
+            except Exception as e:
+                if "already exists" in str(e):
+                    result = self._all_operations._all_operations[AzureMLResourceType.DATA].get(data_name, data_version)
+                else:
+                    raise e
+            deployment.data_collector.collections[name].data = (
+                f"/subscriptions/{self._subscription_id}/resourceGroups/{self._resource_group_name}"
+                f"/providers/Microsoft.MachineLearningServices/workspaces/{self._workspace_name}"
+                f"/data/{result.name}/versions/{result.version}"
+            )

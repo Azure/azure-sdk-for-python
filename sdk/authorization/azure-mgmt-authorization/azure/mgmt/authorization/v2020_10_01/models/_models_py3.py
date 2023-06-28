@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -51,8 +51,8 @@ class ApprovalSettings(_serialization.Model):
         is_requestor_justification_required: Optional[bool] = None,
         approval_mode: Optional[Union[str, "_models.ApprovalMode"]] = None,
         approval_stages: Optional[List["_models.ApprovalStage"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_approval_required: Determines whether approval is required or not.
         :paramtype is_approval_required: bool
@@ -114,8 +114,8 @@ class ApprovalStage(_serialization.Model):
         primary_approvers: Optional[List["_models.UserSet"]] = None,
         is_escalation_enabled: Optional[bool] = None,
         escalation_approvers: Optional[List["_models.UserSet"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword approval_stage_time_out_in_days: The time in days when approval request would be timed
          out.
@@ -158,7 +158,7 @@ class CloudErrorBody(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -197,7 +197,7 @@ class EligibleChildResource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -224,8 +224,8 @@ class EligibleChildResourcesListResult(_serialization.Model):
         *,
         value: Optional[List["_models.EligibleChildResource"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Eligible child resource list.
         :paramtype value: list[~azure.mgmt.authorization.v2020_10_01.models.EligibleChildResource]
@@ -261,8 +261,8 @@ class ExpandedProperties(_serialization.Model):
         scope: Optional["_models.ExpandedPropertiesScope"] = None,
         role_definition: Optional["_models.ExpandedPropertiesRoleDefinition"] = None,
         principal: Optional["_models.ExpandedPropertiesPrincipal"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scope: Details of the resource scope.
         :paramtype scope: ~azure.mgmt.authorization.v2020_10_01.models.ExpandedPropertiesScope
@@ -305,8 +305,8 @@ class ExpandedPropertiesPrincipal(_serialization.Model):
         display_name: Optional[str] = None,
         email: Optional[str] = None,
         type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Id of the principal.
         :paramtype id: str
@@ -347,8 +347,8 @@ class ExpandedPropertiesRoleDefinition(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         display_name: Optional[str] = None,
         type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Id of the role definition.
         :paramtype id: str
@@ -386,8 +386,8 @@ class ExpandedPropertiesScope(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         display_name: Optional[str] = None,
         type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Scope id of the resource.
         :paramtype id: str
@@ -429,8 +429,8 @@ class Permission(_serialization.Model):
         not_actions: Optional[List[str]] = None,
         data_actions: Optional[List[str]] = None,
         not_data_actions: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword actions: Allowed actions.
         :paramtype actions: list[str]
@@ -472,8 +472,8 @@ class PolicyAssignmentProperties(_serialization.Model):
         scope: Optional["_models.PolicyAssignmentPropertiesScope"] = None,
         role_definition: Optional["_models.PolicyAssignmentPropertiesRoleDefinition"] = None,
         policy: Optional["_models.PolicyAssignmentPropertiesPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scope: Details of the resource scope.
         :paramtype scope: ~azure.mgmt.authorization.v2020_10_01.models.PolicyAssignmentPropertiesScope
@@ -518,8 +518,8 @@ class PolicyAssignmentPropertiesPolicy(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         last_modified_date_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Id of the policy.
         :paramtype id: str
@@ -555,8 +555,8 @@ class PolicyAssignmentPropertiesRoleDefinition(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         display_name: Optional[str] = None,
         type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Id of the role definition.
         :paramtype id: str
@@ -594,8 +594,8 @@ class PolicyAssignmentPropertiesScope(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         display_name: Optional[str] = None,
         type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Scope id of the resource.
         :paramtype id: str
@@ -627,7 +627,7 @@ class PolicyProperties(_serialization.Model):
         "scope": {"key": "scope", "type": "PolicyPropertiesScope"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.scope = None
@@ -656,8 +656,8 @@ class PolicyPropertiesScope(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         display_name: Optional[str] = None,
         type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Scope id of the resource.
         :paramtype id: str
@@ -699,8 +699,8 @@ class Principal(_serialization.Model):
         display_name: Optional[str] = None,
         type: Optional[str] = None,
         email: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The id of the principal made changes.
         :paramtype id: str
@@ -823,8 +823,8 @@ class RoleAssignmentSchedule(_serialization.Model):  # pylint: disable=too-many-
         created_on: Optional[datetime.datetime] = None,
         updated_on: Optional[datetime.datetime] = None,
         expanded_properties: Optional["_models.ExpandedProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scope: The role assignment schedule scope.
         :paramtype scope: str
@@ -917,8 +917,8 @@ class RoleAssignmentScheduleFilter(_serialization.Model):
         principal_id: Optional[str] = None,
         role_definition_id: Optional[str] = None,
         status: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword principal_id: Returns role assignment schedule of the specific principal.
         :paramtype principal_id: str
@@ -1044,8 +1044,8 @@ class RoleAssignmentScheduleInstance(_serialization.Model):  # pylint: disable=t
         condition_version: Optional[str] = None,
         created_on: Optional[datetime.datetime] = None,
         expanded_properties: Optional["_models.ExpandedProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scope: The role assignment schedule scope.
         :paramtype scope: str
@@ -1146,8 +1146,8 @@ class RoleAssignmentScheduleInstanceFilter(_serialization.Model):
         role_definition_id: Optional[str] = None,
         status: Optional[str] = None,
         role_assignment_schedule_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword principal_id: Returns role assignment schedule instances of the specific principal.
         :paramtype principal_id: str
@@ -1187,8 +1187,8 @@ class RoleAssignmentScheduleInstanceListResult(_serialization.Model):
         *,
         value: Optional[List["_models.RoleAssignmentScheduleInstance"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Role assignment schedule instance list.
         :paramtype value:
@@ -1220,8 +1220,8 @@ class RoleAssignmentScheduleListResult(_serialization.Model):
         *,
         value: Optional[List["_models.RoleAssignmentSchedule"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Role assignment schedule list.
         :paramtype value: list[~azure.mgmt.authorization.v2020_10_01.models.RoleAssignmentSchedule]
@@ -1355,8 +1355,8 @@ class RoleAssignmentScheduleRequest(_serialization.Model):  # pylint: disable=to
         ticket_info: Optional["_models.RoleAssignmentScheduleRequestPropertiesTicketInfo"] = None,
         condition: Optional[str] = None,
         condition_version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword role_definition_id: The role definition ID.
         :paramtype role_definition_id: str
@@ -1442,8 +1442,8 @@ class RoleAssignmentScheduleRequestFilter(_serialization.Model):
         role_definition_id: Optional[str] = None,
         requestor_id: Optional[str] = None,
         status: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword principal_id: Returns role assignment requests of the specific principal.
         :paramtype principal_id: str
@@ -1481,8 +1481,8 @@ class RoleAssignmentScheduleRequestListResult(_serialization.Model):
         *,
         value: Optional[List["_models.RoleAssignmentScheduleRequest"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Role assignment schedule request list.
         :paramtype value:
@@ -1515,8 +1515,8 @@ class RoleAssignmentScheduleRequestPropertiesScheduleInfo(_serialization.Model):
         *,
         start_date_time: Optional[datetime.datetime] = None,
         expiration: Optional["_models.RoleAssignmentScheduleRequestPropertiesScheduleInfoExpiration"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword start_date_time: Start DateTime of the role assignment schedule.
         :paramtype start_date_time: ~datetime.datetime
@@ -1553,8 +1553,8 @@ class RoleAssignmentScheduleRequestPropertiesScheduleInfoExpiration(_serializati
         type: Optional[Union[str, "_models.Type"]] = None,
         end_date_time: Optional[datetime.datetime] = None,
         duration: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Type of the role assignment schedule expiration. Known values are:
          "AfterDuration", "AfterDateTime", and "NoExpiration".
@@ -1584,7 +1584,9 @@ class RoleAssignmentScheduleRequestPropertiesTicketInfo(_serialization.Model):
         "ticket_system": {"key": "ticketSystem", "type": "str"},
     }
 
-    def __init__(self, *, ticket_number: Optional[str] = None, ticket_system: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, ticket_number: Optional[str] = None, ticket_system: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword ticket_number: Ticket number for the role assignment.
         :paramtype ticket_number: str
@@ -1691,8 +1693,8 @@ class RoleEligibilitySchedule(_serialization.Model):  # pylint: disable=too-many
         created_on: Optional[datetime.datetime] = None,
         updated_on: Optional[datetime.datetime] = None,
         expanded_properties: Optional["_models.ExpandedProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scope: The role eligibility schedule scope.
         :paramtype scope: str
@@ -1777,8 +1779,8 @@ class RoleEligibilityScheduleFilter(_serialization.Model):
         principal_id: Optional[str] = None,
         role_definition_id: Optional[str] = None,
         status: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword principal_id: Returns role eligibility schedule of the specific principal.
         :paramtype principal_id: str
@@ -1883,8 +1885,8 @@ class RoleEligibilityScheduleInstance(_serialization.Model):  # pylint: disable=
         condition_version: Optional[str] = None,
         created_on: Optional[datetime.datetime] = None,
         expanded_properties: Optional["_models.ExpandedProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scope: The role eligibility schedule scope.
         :paramtype scope: str
@@ -1971,8 +1973,8 @@ class RoleEligibilityScheduleInstanceFilter(_serialization.Model):
         role_definition_id: Optional[str] = None,
         status: Optional[str] = None,
         role_eligibility_schedule_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword principal_id: Returns role eligibility schedule instances of the specific principal.
         :paramtype principal_id: str
@@ -2012,8 +2014,8 @@ class RoleEligibilityScheduleInstanceListResult(_serialization.Model):
         *,
         value: Optional[List["_models.RoleEligibilityScheduleInstance"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Role eligibility schedule instance list.
         :paramtype value:
@@ -2045,8 +2047,8 @@ class RoleEligibilityScheduleListResult(_serialization.Model):
         *,
         value: Optional[List["_models.RoleEligibilitySchedule"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: role eligibility schedule list.
         :paramtype value: list[~azure.mgmt.authorization.v2020_10_01.models.RoleEligibilitySchedule]
@@ -2175,8 +2177,8 @@ class RoleEligibilityScheduleRequest(_serialization.Model):  # pylint: disable=t
         ticket_info: Optional["_models.RoleEligibilityScheduleRequestPropertiesTicketInfo"] = None,
         condition: Optional[str] = None,
         condition_version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword role_definition_id: The role definition ID.
         :paramtype role_definition_id: str
@@ -2258,8 +2260,8 @@ class RoleEligibilityScheduleRequestFilter(_serialization.Model):
         role_definition_id: Optional[str] = None,
         requestor_id: Optional[str] = None,
         status: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword principal_id: Returns role eligibility requests of the specific principal.
         :paramtype principal_id: str
@@ -2297,8 +2299,8 @@ class RoleEligibilityScheduleRequestListResult(_serialization.Model):
         *,
         value: Optional[List["_models.RoleEligibilityScheduleRequest"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Role eligibility schedule request list.
         :paramtype value:
@@ -2331,8 +2333,8 @@ class RoleEligibilityScheduleRequestPropertiesScheduleInfo(_serialization.Model)
         *,
         start_date_time: Optional[datetime.datetime] = None,
         expiration: Optional["_models.RoleEligibilityScheduleRequestPropertiesScheduleInfoExpiration"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword start_date_time: Start DateTime of the role eligibility schedule.
         :paramtype start_date_time: ~datetime.datetime
@@ -2369,8 +2371,8 @@ class RoleEligibilityScheduleRequestPropertiesScheduleInfoExpiration(_serializat
         type: Optional[Union[str, "_models.Type"]] = None,
         end_date_time: Optional[datetime.datetime] = None,
         duration: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Type of the role eligibility schedule expiration. Known values are:
          "AfterDuration", "AfterDateTime", and "NoExpiration".
@@ -2400,7 +2402,9 @@ class RoleEligibilityScheduleRequestPropertiesTicketInfo(_serialization.Model):
         "ticket_system": {"key": "ticketSystem", "type": "str"},
     }
 
-    def __init__(self, *, ticket_number: Optional[str] = None, ticket_system: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, ticket_number: Optional[str] = None, ticket_system: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword ticket_number: Ticket number for the role eligibility.
         :paramtype ticket_number: str
@@ -2477,8 +2481,8 @@ class RoleManagementPolicy(_serialization.Model):  # pylint: disable=too-many-in
         description: Optional[str] = None,
         is_organization_default: Optional[bool] = None,
         rules: Optional[List["_models.RoleManagementPolicyRule"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scope: The role management policy scope.
         :paramtype scope: str
@@ -2553,8 +2557,8 @@ class RoleManagementPolicyRule(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         target: Optional["_models.RoleManagementPolicyRuleTarget"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The id of the rule.
         :paramtype id: str
@@ -2563,7 +2567,7 @@ class RoleManagementPolicyRule(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.id = id
-        self.rule_type = None  # type: Optional[str]
+        self.rule_type: Optional[str] = None
         self.target = target
 
 
@@ -2603,8 +2607,8 @@ class RoleManagementPolicyApprovalRule(RoleManagementPolicyRule):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         target: Optional["_models.RoleManagementPolicyRuleTarget"] = None,
         setting: Optional["_models.ApprovalSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The id of the rule.
         :paramtype id: str
@@ -2614,7 +2618,7 @@ class RoleManagementPolicyApprovalRule(RoleManagementPolicyRule):
         :paramtype setting: ~azure.mgmt.authorization.v2020_10_01.models.ApprovalSettings
         """
         super().__init__(id=id, target=target, **kwargs)
-        self.rule_type = "RoleManagementPolicyApprovalRule"  # type: str
+        self.rule_type: str = "RoleManagementPolicyApprovalRule"
         self.setting = setting
 
 
@@ -2671,8 +2675,8 @@ class RoleManagementPolicyAssignment(_serialization.Model):
         scope: Optional[str] = None,
         role_definition_id: Optional[str] = None,
         policy_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scope: The role management policy scope.
         :paramtype scope: str
@@ -2712,8 +2716,8 @@ class RoleManagementPolicyAssignmentListResult(_serialization.Model):
         *,
         value: Optional[List["_models.RoleManagementPolicyAssignment"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Role management policy assignment list.
         :paramtype value:
@@ -2766,8 +2770,8 @@ class RoleManagementPolicyAuthenticationContextRule(RoleManagementPolicyRule):
         target: Optional["_models.RoleManagementPolicyRuleTarget"] = None,
         is_enabled: Optional[bool] = None,
         claim_value: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The id of the rule.
         :paramtype id: str
@@ -2779,7 +2783,7 @@ class RoleManagementPolicyAuthenticationContextRule(RoleManagementPolicyRule):
         :paramtype claim_value: str
         """
         super().__init__(id=id, target=target, **kwargs)
-        self.rule_type = "RoleManagementPolicyAuthenticationContextRule"  # type: str
+        self.rule_type: str = "RoleManagementPolicyAuthenticationContextRule"
         self.is_enabled = is_enabled
         self.claim_value = claim_value
 
@@ -2821,8 +2825,8 @@ class RoleManagementPolicyEnablementRule(RoleManagementPolicyRule):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         target: Optional["_models.RoleManagementPolicyRuleTarget"] = None,
         enabled_rules: Optional[List[Union[str, "_models.EnablementRules"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The id of the rule.
         :paramtype id: str
@@ -2833,7 +2837,7 @@ class RoleManagementPolicyEnablementRule(RoleManagementPolicyRule):
          ~azure.mgmt.authorization.v2020_10_01.models.EnablementRules]
         """
         super().__init__(id=id, target=target, **kwargs)
-        self.rule_type = "RoleManagementPolicyEnablementRule"  # type: str
+        self.rule_type: str = "RoleManagementPolicyEnablementRule"
         self.enabled_rules = enabled_rules
 
 
@@ -2877,8 +2881,8 @@ class RoleManagementPolicyExpirationRule(RoleManagementPolicyRule):
         target: Optional["_models.RoleManagementPolicyRuleTarget"] = None,
         is_expiration_required: Optional[bool] = None,
         maximum_duration: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The id of the rule.
         :paramtype id: str
@@ -2890,7 +2894,7 @@ class RoleManagementPolicyExpirationRule(RoleManagementPolicyRule):
         :paramtype maximum_duration: str
         """
         super().__init__(id=id, target=target, **kwargs)
-        self.rule_type = "RoleManagementPolicyExpirationRule"  # type: str
+        self.rule_type: str = "RoleManagementPolicyExpirationRule"
         self.is_expiration_required = is_expiration_required
         self.maximum_duration = maximum_duration
 
@@ -2910,8 +2914,12 @@ class RoleManagementPolicyListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.RoleManagementPolicy"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.RoleManagementPolicy"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Role management policy list.
         :paramtype value: list[~azure.mgmt.authorization.v2020_10_01.models.RoleManagementPolicy]
@@ -2980,8 +2988,8 @@ class RoleManagementPolicyNotificationRule(RoleManagementPolicyRule):
         recipient_type: Optional[Union[str, "_models.RecipientType"]] = None,
         notification_recipients: Optional[List[str]] = None,
         is_default_recipients_enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The id of the rule.
         :paramtype id: str
@@ -3004,7 +3012,7 @@ class RoleManagementPolicyNotificationRule(RoleManagementPolicyRule):
         :paramtype is_default_recipients_enabled: bool
         """
         super().__init__(id=id, target=target, **kwargs)
-        self.rule_type = "RoleManagementPolicyNotificationRule"  # type: str
+        self.rule_type: str = "RoleManagementPolicyNotificationRule"
         self.notification_type = notification_type
         self.notification_level = notification_level
         self.recipient_type = recipient_type
@@ -3047,8 +3055,8 @@ class RoleManagementPolicyRuleTarget(_serialization.Model):
         target_objects: Optional[List[str]] = None,
         inheritable_settings: Optional[List[str]] = None,
         enforced_settings: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword caller: The caller of the setting.
         :paramtype caller: str
@@ -3099,8 +3107,8 @@ class UserSet(_serialization.Model):
         is_backup: Optional[bool] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword user_type: The type of user. Known values are: "User" and "Group".
         :paramtype user_type: str or ~azure.mgmt.authorization.v2020_10_01.models.UserType

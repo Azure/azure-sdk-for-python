@@ -47,25 +47,26 @@ class EmailMultipleRecipientSample(object):
             },
             "recipients": {
                 "to": [
-                    {"email": self.recipient_address, "displayName": "Customer Name"},
-                    {"email": self.second_recipient_address, "displayName": "Customer Name 2"}
+                    {"address": self.recipient_address, "displayName": "Customer Name"},
+                    {"address": self.second_recipient_address, "displayName": "Customer Name 2"}
                 ],
                 "cc": [
-                    {"email": self.recipient_address, "displayName": "Customer Name"},
-                    {"email": self.second_recipient_address, "displayName": "Customer Name 2"}
+                    {"address": self.recipient_address, "displayName": "Customer Name"},
+                    {"address": self.second_recipient_address, "displayName": "Customer Name 2"}
                 ],
                 "bcc": [
-                    {"email": self.recipient_address, "displayName": "Customer Name"},
-                    {"email": self.second_recipient_address, "displayName": "Customer Name 2"}
+                    {"address": self.recipient_address, "displayName": "Customer Name"},
+                    {"address": self.second_recipient_address, "displayName": "Customer Name 2"}
                 ]
             },
-            "sender": self.sender_address
+            "senderAddress": self.sender_address
         }
 
         try:
             # sending the email message
-            response = email_client.send(message)
-            print("Message ID: " + response['messageId'])
+            poller = email_client.begin_send(message)
+            response = poller.result()
+            print("Operation ID: " + response['id'])
         except HttpResponseError as ex:
             print(ex)
             pass

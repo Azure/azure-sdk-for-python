@@ -1,5 +1,11 @@
 # Release History
 
+## 8.2.0 (2023-02-15)
+
+### Features Added
+
+  - Model SBNamespace has a new parameter premium_messaging_partitions
+
 ## 8.1.0 (2022-08-10)
 
 ### Features Added

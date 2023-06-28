@@ -15,10 +15,10 @@
     },
     "UploadToCosmos": {
       "type": "enum",
-      "default": "False",
+      "default": "false",
       "enum": [
-        "True",
-        "False"
+        "true",
+        "false"
       ],
       "optional": false
     },

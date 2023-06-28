@@ -46,7 +46,7 @@ setup(
     url='https://github.com/Azure/azure-sdk-for-python',
     keywords="azure, form recognizer, cognitive services, document analyzer, document analysis, applied ai",
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
@@ -64,6 +64,9 @@ setup(
         'azure',
         'azure.ai',
     ]),
+    package_data={
+        'azure.ai.formrecognizer': ['py.typed'],
+    },
     python_requires=">=3.7",
     install_requires=[
         "azure-core<2.0.0,>=1.23.0",

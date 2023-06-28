@@ -37,8 +37,8 @@ def build_register_request(id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -47,7 +47,7 @@ def build_register_request(id: str, **kwargs: Any) -> HttpRequest:
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -64,7 +64,7 @@ def build_get_database_operations_request(id: str, **kwargs: Any) -> HttpRequest
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -73,7 +73,7 @@ def build_get_database_operations_request(id: str, **kwargs: Any) -> HttpRequest
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -88,8 +88,8 @@ def build_update_request(id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -98,7 +98,7 @@ def build_update_request(id: str, **kwargs: Any) -> HttpRequest:
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -115,7 +115,7 @@ def build_delete_request(id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -124,7 +124,7 @@ def build_delete_request(id: str, **kwargs: Any) -> HttpRequest:
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -179,9 +179,9 @@ class MetastoreOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetastoreRegistrationResponse]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_models.MetastoreRegistrationResponse] = kwargs.pop("cls", None)
 
         _register_body = _models.MetastoreRegisterObject(input_folder=input_folder)
         _json = self._serialize.body(_register_body, "MetastoreRegisterObject")
@@ -199,10 +199,11 @@ class MetastoreOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -219,7 +220,7 @@ class MetastoreOperations:
 
         return deserialized
 
-    register.metadata = {"url": "/metastore/create-database-operations/{id}"}  # type: ignore
+    register.metadata = {"url": "/metastore/create-database-operations/{id}"}
 
     @distributed_trace
     def get_database_operations(self, id: str, **kwargs: Any) -> _models.MetastoreRequestSuccessResponse:
@@ -243,8 +244,8 @@ class MetastoreOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetastoreRequestSuccessResponse]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))
+        cls: ClsType[_models.MetastoreRequestSuccessResponse] = kwargs.pop("cls", None)
 
         request = build_get_database_operations_request(
             id=id,
@@ -257,10 +258,11 @@ class MetastoreOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -277,7 +279,7 @@ class MetastoreOperations:
 
         return deserialized
 
-    get_database_operations.metadata = {"url": "/metastore/create-database-operations/{id}"}  # type: ignore
+    get_database_operations.metadata = {"url": "/metastore/create-database-operations/{id}"}
 
     @distributed_trace
     def update(self, id: str, input_folder: str, **kwargs: Any) -> _models.MetastoreUpdationResponse:
@@ -303,9 +305,9 @@ class MetastoreOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetastoreUpdationResponse]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_models.MetastoreUpdationResponse] = kwargs.pop("cls", None)
 
         _update_body = _models.MetastoreUpdateObject(input_folder=input_folder)
         _json = self._serialize.body(_update_body, "MetastoreUpdateObject")
@@ -323,10 +325,11 @@ class MetastoreOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -343,7 +346,7 @@ class MetastoreOperations:
 
         return deserialized
 
-    update.metadata = {"url": "/metastore/update-database-operations/{id}"}  # type: ignore
+    update.metadata = {"url": "/metastore/update-database-operations/{id}"}
 
     @distributed_trace
     def delete(self, id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -367,8 +370,8 @@ class MetastoreOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             id=id,
@@ -381,10 +384,11 @@ class MetastoreOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -397,4 +401,4 @@ class MetastoreOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/metastore/databases/{id}"}  # type: ignore
+    delete.metadata = {"url": "/metastore/databases/{id}"}

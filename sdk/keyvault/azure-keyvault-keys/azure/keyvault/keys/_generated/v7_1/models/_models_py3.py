@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -53,8 +53,8 @@ class Attributes(_serialization.Model):
         enabled: Optional[bool] = None,
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -88,7 +88,7 @@ class BackupKeyResult(_serialization.Model):
         "value": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -127,8 +127,8 @@ class KeyBundle(_serialization.Model):
         key: Optional["_models.JsonWebKey"] = None,
         attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key: The Json web key.
         :paramtype key: ~azure.keyvault.v7_1.models.JsonWebKey
@@ -190,8 +190,8 @@ class DeletedKeyBundle(KeyBundle):
         attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key: The Json web key.
         :paramtype key: ~azure.keyvault.v7_1.models.JsonWebKey
@@ -242,8 +242,8 @@ class KeyItem(_serialization.Model):
         kid: Optional[str] = None,
         attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kid: Key identifier.
         :paramtype kid: str
@@ -305,8 +305,8 @@ class DeletedKeyItem(KeyItem):
         attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kid: Key identifier.
         :paramtype kid: str
@@ -346,7 +346,7 @@ class DeletedKeyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -378,7 +378,7 @@ class Error(_serialization.Model):
         "inner_error": {"key": "innererror", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -464,8 +464,8 @@ class JsonWebKey(_serialization.Model):  # pylint: disable=too-many-instance-att
         crv: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
         x: Optional[bytes] = None,
         y: Optional[bytes] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kid: Key identifier.
         :paramtype kid: str
@@ -572,8 +572,8 @@ class KeyAttributes(Attributes):
         enabled: Optional[bool] = None,
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -630,8 +630,8 @@ class KeyCreateParameters(_serialization.Model):
         key_attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         curve: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kty: The type of key to create. For valid values, see JsonWebKeyType. Required. Known
          values are: "EC", "EC-HSM", "RSA", "RSA-HSM", and "oct".
@@ -690,8 +690,8 @@ class KeyImportParameters(_serialization.Model):
         hsm: Optional[bool] = None,
         key_attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword hsm: Whether to import as a hardware key (HSM) or software key.
         :paramtype hsm: bool
@@ -731,7 +731,7 @@ class KeyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -759,7 +759,7 @@ class KeyOperationResult(_serialization.Model):
         "result": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.kid = None
@@ -788,7 +788,9 @@ class KeyOperationsParameters(_serialization.Model):
         "value": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, *, algorithm: Union[str, "_models.JsonWebKeyEncryptionAlgorithm"], value: bytes, **kwargs):
+    def __init__(
+        self, *, algorithm: Union[str, "_models.JsonWebKeyEncryptionAlgorithm"], value: bytes, **kwargs: Any
+    ) -> None:
         """
         :keyword algorithm: algorithm identifier. Required. Known values are: "RSA-OAEP",
          "RSA-OAEP-256", and "RSA1_5".
@@ -834,8 +836,8 @@ class KeyProperties(_serialization.Model):
         key_size: Optional[int] = None,
         reuse_key: Optional[bool] = None,
         curve: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword exportable: Not supported in this version. Indicates if the private key can be
          exported.
@@ -876,7 +878,7 @@ class KeyRestoreParameters(_serialization.Model):
         "key_bundle_backup": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, *, key_bundle_backup: bytes, **kwargs):
+    def __init__(self, *, key_bundle_backup: bytes, **kwargs: Any) -> None:
         """
         :keyword key_bundle_backup: The backup blob associated with a key bundle. Required.
         :paramtype key_bundle_backup: bytes
@@ -909,7 +911,9 @@ class KeySignParameters(_serialization.Model):
         "value": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, *, algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"], value: bytes, **kwargs):
+    def __init__(
+        self, *, algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"], value: bytes, **kwargs: Any
+    ) -> None:
         """
         :keyword algorithm: The signing/verification algorithm identifier. For more information on
          possible algorithm types, see JsonWebKeySignatureAlgorithm. Required. Known values are:
@@ -948,8 +952,8 @@ class KeyUpdateParameters(_serialization.Model):
         key_ops: Optional[List[Union[str, "_models.JsonWebKeyOperation"]]] = None,
         key_attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_ops: Json web key operations. For more information on possible key operations, see
          JsonWebKeyOperation.
@@ -982,7 +986,7 @@ class KeyVaultError(_serialization.Model):
         "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.error = None
@@ -1021,8 +1025,8 @@ class KeyVerifyParameters(_serialization.Model):
         algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"],
         digest: bytes,
         signature: bytes,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword algorithm: The signing/verification algorithm. For more information on possible
          algorithm types, see JsonWebKeySignatureAlgorithm. Required. Known values are: "PS256",
@@ -1056,7 +1060,7 @@ class KeyVerifyResult(_serialization.Model):
         "value": {"key": "value", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None

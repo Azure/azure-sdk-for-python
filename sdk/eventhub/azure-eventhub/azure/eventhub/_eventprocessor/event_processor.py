@@ -21,7 +21,12 @@ from typing import (
 )
 from functools import partial
 
-from .._utils import get_event_links
+from .._tracing import (
+    process_context_manager,
+    receive_context_manager,
+    get_span_links_from_received_events,
+    is_tracing_enabled,
+)
 from .partition_context import PartitionContext
 from .in_memory_checkpoint_store import InMemoryCheckpointStore
 from .ownership_manager import OwnershipManager
@@ -98,7 +103,7 @@ class EventProcessor(
         )
 
         self._load_balancing_interval: float = kwargs.get(
-            "load_balancing_interval", 10.0
+            "load_balancing_interval", 30.0
         )
         self._load_balancing_strategy = (
             kwargs.get("load_balancing_strategy") or LoadBalancingStrategy.GREEDY
@@ -132,8 +137,10 @@ class EventProcessor(
             self._partition_id,
         )
 
+        self._last_received_time = time.time_ns()
+
     def __repr__(self) -> str:
-        return "EventProcessor: id {}".format(self._id)
+        return f"EventProcessor: id {self._id}"
 
     def _process_error(self, partition_context, err):
         if self._error_handler:
@@ -245,9 +252,19 @@ class EventProcessor(
                 partition_context._last_received_event = event[-1]  #pylint:disable=protected-access
             except TypeError:
                 event = cast(Optional[EventData], event)
-                partition_context._last_received_event = event  #pylint:disable=protected-access
-            links = get_event_links(event)
-            with self._context(links=links):
+                partition_context._last_received_event = event  # type: ignore  #pylint:disable=protected-access
+
+            links = []
+            is_batch = False
+            if is_tracing_enabled():
+                links = get_span_links_from_received_events(event)
+                if isinstance(event, list):
+                    is_batch = True
+
+            with receive_context_manager(self._eventhub_client, links=links, start_time=self._last_received_time):  # pylint:disable=protected-access
+                self._last_received_time = time.time_ns()
+
+            with process_context_manager(self._eventhub_client, links=links, is_batch=is_batch):
                 self._event_handler(partition_context, event)
         else:
             self._event_handler(partition_context, event)

@@ -667,7 +667,7 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The private endpoint connection with updated properties. Is
-         either a model type or a IO type. Required.
+         either a PrivateEndpointConnection type or a IO type. Required.
         :type private_endpoint_connection:
          ~azure.mgmt.digitaltwins.v2022_05_31.models.PrivateEndpointConnection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

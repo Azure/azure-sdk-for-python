@@ -4,7 +4,7 @@
 # ------------------------------------
 import asyncio
 import logging
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Any
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken
@@ -27,6 +27,15 @@ class ChainedTokenCredential(AsyncContextManager):
 
     :param credentials: credential instances to form the chain
     :type credentials: :class:`azure.core.credentials.AsyncTokenCredential`
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_chained_token_credential_async]
+            :end-before: [END create_chained_token_credential_async]
+            :language: python
+            :dedent: 4
+            :caption: Create a ChainedTokenCredential.
     """
 
     def __init__(self, *credentials: "AsyncTokenCredential") -> None:
@@ -36,12 +45,12 @@ class ChainedTokenCredential(AsyncContextManager):
         self._successful_credential = None  # type: Optional[AsyncTokenCredential]
         self.credentials = credentials
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the transport sessions of all credentials in the chain."""
 
         await asyncio.gather(*(credential.close() for credential in self.credentials))
 
-    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Asynchronously request a token from each credential, in order, returning the first token received.
 
         If no credential provides a token, raises :class:`azure.core.exceptions.ClientAuthenticationError`

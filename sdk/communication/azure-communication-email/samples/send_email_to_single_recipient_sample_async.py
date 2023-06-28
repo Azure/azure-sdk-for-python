@@ -14,7 +14,7 @@ DESCRIPTION:
 USAGE:
     python send_email_to_single_recipient_sample_async.py
     Set the environment variable with your own value before running the sample:
-    1) COMMUNICATION_CONNECTION_STRING - the connection string in your ACS resource
+    1) COMMUNICATION_CONNECTION_STRING_EMAIL - the connection string in your ACS resource
     2) SENDER_ADDRESS - the address found in the linked domain that will send the email
     3) RECIPIENT_ADDRESS - the address that will receive the email
 """
@@ -47,19 +47,20 @@ class EmailSingleRecipientSampleAsync(object):
             "recipients": {
                 "to": [
                     {
-                        "email": self.recipient_address,
+                        "address": self.recipient_address,
                         "displayName": "Customer Name"
                     }
                 ]
             },
-            "sender": self.sender_address
+            "senderAddress": self.sender_address
         }
 
         async with email_client:
             try:
                 # sending the email message
-                response = await email_client.send(message)
-                print("Message ID: " + response['messageId'])
+                poller = await email_client.begin_send(message)
+                response = await poller.result()
+                print("Operation ID: " + response['id'])
             except HttpResponseError as ex:
                 print(ex)
                 pass

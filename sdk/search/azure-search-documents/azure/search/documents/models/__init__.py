@@ -36,9 +36,12 @@ from .._generated.models import (
     QuerySpellerType,
     QueryType,
     ScoringStatistics,
-    SearchMode
+    SearchMode,
+    SemanticErrorHandling,
+    QueryDebugMode,
+    Vector,
 )
-from .._search_client import odata
+from .._utils import odata
 
 
 __all__ = (
@@ -55,4 +58,7 @@ __all__ = (
     "QueryType",
     "ScoringStatistics",
     "SearchMode",
+    "SemanticErrorHandling",
+    "QueryDebugMode",
+    "Vector",
 )

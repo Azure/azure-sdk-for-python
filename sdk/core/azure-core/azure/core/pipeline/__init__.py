@@ -24,17 +24,13 @@
 #
 # --------------------------------------------------------------------------
 
-import abc
-from typing import TypeVar, Generic
-from contextlib import AbstractContextManager  # pylint: disable=unused-import
-
-ABC = abc.ABC
+from typing import TypeVar, Generic, Dict, Any
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 
-class PipelineContext(dict):
+class PipelineContext(Dict[str, Any]):
     """A context object carried by the pipeline request and response containers.
 
     This is transport specific and can contain data persisted between
@@ -124,8 +120,7 @@ class PipelineRequest(Generic[HTTPRequestType]):
     :type context: ~azure.core.pipeline.PipelineContext
     """
 
-    def __init__(self, http_request, context):
-        # type: (HTTPRequestType, PipelineContext) -> None
+    def __init__(self, http_request: HTTPRequestType, context: PipelineContext) -> None:
         self.http_request = http_request
         self.context = context
 
@@ -148,8 +143,12 @@ class PipelineResponse(Generic[HTTPRequestType, HTTPResponseType]):
     :type context: ~azure.core.pipeline.PipelineContext
     """
 
-    def __init__(self, http_request, http_response, context):
-        # type: (HTTPRequestType, HTTPResponseType, PipelineContext) -> None
+    def __init__(
+        self,
+        http_request: HTTPRequestType,
+        http_response: HTTPResponseType,
+        context: PipelineContext,
+    ) -> None:
         self.http_request = http_request
         self.http_response = http_response
         self.context = context

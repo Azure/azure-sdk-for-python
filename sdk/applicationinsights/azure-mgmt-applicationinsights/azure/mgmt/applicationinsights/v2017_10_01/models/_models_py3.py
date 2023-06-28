@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,12 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional
+from typing import Any, List, Optional, TYPE_CHECKING
 
-import msrest.serialization
+from ... import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """An Azure resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -26,24 +31,20 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -78,24 +79,27 @@ class ApplicationInsightsComponentPricingPlan(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'reset_hour': {'readonly': True},
-        'max_history_cap': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "reset_hour": {"readonly": True},
+        "max_history_cap": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'plan_type': {'key': 'properties.planType', 'type': 'str'},
-        'cap': {'key': 'properties.cap', 'type': 'float'},
-        'reset_hour': {'key': 'properties.resetHour', 'type': 'int'},
-        'warning_threshold': {'key': 'properties.warningThreshold', 'type': 'int'},
-        'stop_send_notification_when_hit_threshold': {'key': 'properties.stopSendNotificationWhenHitThreshold', 'type': 'bool'},
-        'stop_send_notification_when_hit_cap': {'key': 'properties.stopSendNotificationWhenHitCap', 'type': 'bool'},
-        'max_history_cap': {'key': 'properties.maxHistoryCap', 'type': 'float'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "plan_type": {"key": "properties.planType", "type": "str"},
+        "cap": {"key": "properties.cap", "type": "float"},
+        "reset_hour": {"key": "properties.resetHour", "type": "int"},
+        "warning_threshold": {"key": "properties.warningThreshold", "type": "int"},
+        "stop_send_notification_when_hit_threshold": {
+            "key": "properties.stopSendNotificationWhenHitThreshold",
+            "type": "bool",
+        },
+        "stop_send_notification_when_hit_cap": {"key": "properties.stopSendNotificationWhenHitCap", "type": "bool"},
+        "max_history_cap": {"key": "properties.maxHistoryCap", "type": "float"},
     }
 
     def __init__(
@@ -106,8 +110,8 @@ class ApplicationInsightsComponentPricingPlan(Resource):
         warning_threshold: Optional[int] = None,
         stop_send_notification_when_hit_threshold: Optional[bool] = None,
         stop_send_notification_when_hit_cap: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword plan_type: Pricing Plan Type Name.
         :paramtype plan_type: str
@@ -121,7 +125,7 @@ class ApplicationInsightsComponentPricingPlan(Resource):
          data volume cap is met.
         :paramtype stop_send_notification_when_hit_cap: bool
         """
-        super(ApplicationInsightsComponentPricingPlan, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.plan_type = plan_type
         self.cap = cap
         self.reset_hour = None
@@ -131,7 +135,7 @@ class ApplicationInsightsComponentPricingPlan(Resource):
         self.max_history_cap = None
 
 
-class CloudErrorBody(msrest.serialization.Model):
+class CloudErrorBody(_serialization.Model):
     """An error response from the Batch service.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
@@ -148,10 +152,10 @@ class CloudErrorBody(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CloudErrorBody]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBody]"},
     }
 
     def __init__(
@@ -160,9 +164,9 @@ class CloudErrorBody(msrest.serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["CloudErrorBody"]] = None,
-        **kwargs
-    ):
+        details: Optional[List["_models.CloudErrorBody"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -176,14 +180,14 @@ class CloudErrorBody(msrest.serialization.Model):
         :keyword details: A list of additional details about the error.
         :paramtype details: list[~azure.mgmt.applicationinsights.v2017_10_01.models.CloudErrorBody]
         """
-        super(CloudErrorBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
         self.details = details
 
 
-class EASubscriptionMigrationDate(msrest.serialization.Model):
+class EASubscriptionMigrationDate(_serialization.Model):
     """Subscription migrate date information properties.
 
     :ivar is_grand_fatherable_subscription: Is subscription in the grand fatherable subscription
@@ -194,8 +198,8 @@ class EASubscriptionMigrationDate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'is_grand_fatherable_subscription': {'key': 'isGrandFatherableSubscription', 'type': 'bool'},
-        'opted_in_date': {'key': 'optedInDate', 'type': 'iso-8601'},
+        "is_grand_fatherable_subscription": {"key": "isGrandFatherableSubscription", "type": "bool"},
+        "opted_in_date": {"key": "optedInDate", "type": "iso-8601"},
     }
 
     def __init__(
@@ -203,8 +207,8 @@ class EASubscriptionMigrationDate(msrest.serialization.Model):
         *,
         is_grand_fatherable_subscription: Optional[bool] = None,
         opted_in_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_grand_fatherable_subscription: Is subscription in the grand fatherable subscription
          list.
@@ -212,6 +216,6 @@ class EASubscriptionMigrationDate(msrest.serialization.Model):
         :keyword opted_in_date: Time to start using new pricing model.
         :paramtype opted_in_date: ~datetime.datetime
         """
-        super(EASubscriptionMigrationDate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.is_grand_fatherable_subscription = is_grand_fatherable_subscription
         self.opted_in_date = opted_in_date

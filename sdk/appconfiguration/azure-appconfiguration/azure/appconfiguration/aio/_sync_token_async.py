@@ -37,7 +37,7 @@ class AsyncSyncTokenPolicy(SansIOHTTPPolicy):
     :keyword callback raw_response_hook: Callback function. Will be invoked on response.
     """
 
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
+    def __init__(self, **kwargs) -> None:  # pylint: disable=unused-argument
         self._sync_token_header = "Sync-Token"
         self._sync_tokens = {}  # type: Dict[str, Any]
         self._lock = Lock()
@@ -50,9 +50,7 @@ class AsyncSyncTokenPolicy(SansIOHTTPPolicy):
         async with self._lock:
             sync_token_header = ",".join(str(x) for x in self._sync_tokens.values())
             if sync_token_header:
-                request.http_request.headers.update(
-                    {self._sync_token_header: sync_token_header}
-                )
+                request.http_request.headers.update({self._sync_token_header: sync_token_header})
 
     async def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:  # type: ignore # pylint: disable=arguments-differ, invalid-overridden-method
         """This is executed after the request comes back from the policy.

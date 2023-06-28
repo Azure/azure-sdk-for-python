@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from msal import ConfidentialClientApplication
 from azure.core import CaseInsensitiveEnumMeta
 
 
@@ -12,7 +11,7 @@ class RegionalAuthority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     #: Attempt to discover the appropriate authority. This works on some Azure hosts, such as VMs and
     #: Azure Functions. The non-regional authority is used when discovery fails.
-    AUTO_DISCOVER_REGION = ConfidentialClientApplication.ATTEMPT_REGION_DISCOVERY
+    AUTO_DISCOVER_REGION = "tryautodetect"
 
     ASIA_EAST = "eastasia"
     ASIA_SOUTHEAST = "southeastasia"

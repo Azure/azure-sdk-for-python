@@ -24,401 +24,6 @@ if TYPE_CHECKING:
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class Alias(_serialization.Model):
-    """The alias type.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: The alias name.
-    :vartype name: str
-    :ivar paths: The paths for an alias.
-    :vartype paths: list[~azure.mgmt.resource.policy.v2021_06_01.models.AliasPath]
-    :ivar type: The type of the alias. Known values are: "NotSpecified", "PlainText", and "Mask".
-    :vartype type: str or ~azure.mgmt.resource.policy.v2021_06_01.models.AliasType
-    :ivar default_path: The default path for an alias.
-    :vartype default_path: str
-    :ivar default_pattern: The default pattern for an alias.
-    :vartype default_pattern: ~azure.mgmt.resource.policy.v2021_06_01.models.AliasPattern
-    :ivar default_metadata: The default alias path metadata. Applies to the default path and to any
-     alias path that doesn't have metadata.
-    :vartype default_metadata: ~azure.mgmt.resource.policy.v2021_06_01.models.AliasPathMetadata
-    """
-
-    _validation = {
-        "default_metadata": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "paths": {"key": "paths", "type": "[AliasPath]"},
-        "type": {"key": "type", "type": "str"},
-        "default_path": {"key": "defaultPath", "type": "str"},
-        "default_pattern": {"key": "defaultPattern", "type": "AliasPattern"},
-        "default_metadata": {"key": "defaultMetadata", "type": "AliasPathMetadata"},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        paths: Optional[List["_models.AliasPath"]] = None,
-        type: Optional[Union[str, "_models.AliasType"]] = None,
-        default_path: Optional[str] = None,
-        default_pattern: Optional["_models.AliasPattern"] = None,
-        **kwargs
-    ):
-        """
-        :keyword name: The alias name.
-        :paramtype name: str
-        :keyword paths: The paths for an alias.
-        :paramtype paths: list[~azure.mgmt.resource.policy.v2021_06_01.models.AliasPath]
-        :keyword type: The type of the alias. Known values are: "NotSpecified", "PlainText", and
-         "Mask".
-        :paramtype type: str or ~azure.mgmt.resource.policy.v2021_06_01.models.AliasType
-        :keyword default_path: The default path for an alias.
-        :paramtype default_path: str
-        :keyword default_pattern: The default pattern for an alias.
-        :paramtype default_pattern: ~azure.mgmt.resource.policy.v2021_06_01.models.AliasPattern
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.paths = paths
-        self.type = type
-        self.default_path = default_path
-        self.default_pattern = default_pattern
-        self.default_metadata = None
-
-
-class AliasPath(_serialization.Model):
-    """The type of the paths for alias.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar path: The path of an alias.
-    :vartype path: str
-    :ivar api_versions: The API versions.
-    :vartype api_versions: list[str]
-    :ivar pattern: The pattern for an alias path.
-    :vartype pattern: ~azure.mgmt.resource.policy.v2021_06_01.models.AliasPattern
-    :ivar metadata: The metadata of the alias path. If missing, fall back to the default metadata
-     of the alias.
-    :vartype metadata: ~azure.mgmt.resource.policy.v2021_06_01.models.AliasPathMetadata
-    """
-
-    _validation = {
-        "metadata": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "path": {"key": "path", "type": "str"},
-        "api_versions": {"key": "apiVersions", "type": "[str]"},
-        "pattern": {"key": "pattern", "type": "AliasPattern"},
-        "metadata": {"key": "metadata", "type": "AliasPathMetadata"},
-    }
-
-    def __init__(
-        self,
-        *,
-        path: Optional[str] = None,
-        api_versions: Optional[List[str]] = None,
-        pattern: Optional["_models.AliasPattern"] = None,
-        **kwargs
-    ):
-        """
-        :keyword path: The path of an alias.
-        :paramtype path: str
-        :keyword api_versions: The API versions.
-        :paramtype api_versions: list[str]
-        :keyword pattern: The pattern for an alias path.
-        :paramtype pattern: ~azure.mgmt.resource.policy.v2021_06_01.models.AliasPattern
-        """
-        super().__init__(**kwargs)
-        self.path = path
-        self.api_versions = api_versions
-        self.pattern = pattern
-        self.metadata = None
-
-
-class AliasPathMetadata(_serialization.Model):
-    """AliasPathMetadata.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar type: The type of the token that the alias path is referring to. Known values are:
-     "NotSpecified", "Any", "String", "Object", "Array", "Integer", "Number", and "Boolean".
-    :vartype type: str or ~azure.mgmt.resource.policy.v2021_06_01.models.AliasPathTokenType
-    :ivar attributes: The attributes of the token that the alias path is referring to. Known values
-     are: "None" and "Modifiable".
-    :vartype attributes: str or ~azure.mgmt.resource.policy.v2021_06_01.models.AliasPathAttributes
-    """
-
-    _validation = {
-        "type": {"readonly": True},
-        "attributes": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "attributes": {"key": "attributes", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
-        self.type = None
-        self.attributes = None
-
-
-class AliasPattern(_serialization.Model):
-    """The type of the pattern for an alias path.
-
-    :ivar phrase: The alias pattern phrase.
-    :vartype phrase: str
-    :ivar variable: The alias pattern variable.
-    :vartype variable: str
-    :ivar type: The type of alias pattern. Known values are: "NotSpecified" and "Extract".
-    :vartype type: str or ~azure.mgmt.resource.policy.v2021_06_01.models.AliasPatternType
-    """
-
-    _attribute_map = {
-        "phrase": {"key": "phrase", "type": "str"},
-        "variable": {"key": "variable", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        phrase: Optional[str] = None,
-        variable: Optional[str] = None,
-        type: Optional[Union[str, "_models.AliasPatternType"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword phrase: The alias pattern phrase.
-        :paramtype phrase: str
-        :keyword variable: The alias pattern variable.
-        :paramtype variable: str
-        :keyword type: The type of alias pattern. Known values are: "NotSpecified" and "Extract".
-        :paramtype type: str or ~azure.mgmt.resource.policy.v2021_06_01.models.AliasPatternType
-        """
-        super().__init__(**kwargs)
-        self.phrase = phrase
-        self.variable = variable
-        self.type = type
-
-
-class DataEffect(_serialization.Model):
-    """The data effect definition.
-
-    :ivar name: The data effect name.
-    :vartype name: str
-    :ivar details_schema: The data effect details schema.
-    :vartype details_schema: JSON
-    """
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "details_schema": {"key": "detailsSchema", "type": "object"},
-    }
-
-    def __init__(self, *, name: Optional[str] = None, details_schema: Optional[JSON] = None, **kwargs):
-        """
-        :keyword name: The data effect name.
-        :paramtype name: str
-        :keyword details_schema: The data effect details schema.
-        :paramtype details_schema: JSON
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.details_schema = details_schema
-
-
-class DataManifestCustomResourceFunctionDefinition(_serialization.Model):
-    """The custom resource function definition.
-
-    :ivar name: The function name as it will appear in the policy rule. eg - 'vault'.
-    :vartype name: str
-    :ivar fully_qualified_resource_type: The fully qualified control plane resource type that this
-     function represents. eg - 'Microsoft.KeyVault/vaults'.
-    :vartype fully_qualified_resource_type: str
-    :ivar default_properties: The top-level properties that can be selected on the function's
-     output. eg - [ "name", "location" ] if vault().name and vault().location are supported.
-    :vartype default_properties: list[str]
-    :ivar allow_custom_properties: A value indicating whether the custom properties within the
-     property bag are allowed. Needs api-version to be specified in the policy rule eg -
-     vault('2019-06-01').
-    :vartype allow_custom_properties: bool
-    """
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "fully_qualified_resource_type": {"key": "fullyQualifiedResourceType", "type": "str"},
-        "default_properties": {"key": "defaultProperties", "type": "[str]"},
-        "allow_custom_properties": {"key": "allowCustomProperties", "type": "bool"},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        fully_qualified_resource_type: Optional[str] = None,
-        default_properties: Optional[List[str]] = None,
-        allow_custom_properties: Optional[bool] = None,
-        **kwargs
-    ):
-        """
-        :keyword name: The function name as it will appear in the policy rule. eg - 'vault'.
-        :paramtype name: str
-        :keyword fully_qualified_resource_type: The fully qualified control plane resource type that
-         this function represents. eg - 'Microsoft.KeyVault/vaults'.
-        :paramtype fully_qualified_resource_type: str
-        :keyword default_properties: The top-level properties that can be selected on the function's
-         output. eg - [ "name", "location" ] if vault().name and vault().location are supported.
-        :paramtype default_properties: list[str]
-        :keyword allow_custom_properties: A value indicating whether the custom properties within the
-         property bag are allowed. Needs api-version to be specified in the policy rule eg -
-         vault('2019-06-01').
-        :paramtype allow_custom_properties: bool
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.fully_qualified_resource_type = fully_qualified_resource_type
-        self.default_properties = default_properties
-        self.allow_custom_properties = allow_custom_properties
-
-
-class DataPolicyManifest(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """The data policy manifest.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The ID of the data policy manifest.
-    :vartype id: str
-    :ivar name: The name of the data policy manifest (it's the same as the Policy Mode).
-    :vartype name: str
-    :ivar type: The type of the resource (Microsoft.Authorization/dataPolicyManifests).
-    :vartype type: str
-    :ivar namespaces: The list of namespaces for the data policy manifest.
-    :vartype namespaces: list[str]
-    :ivar policy_mode: The policy mode of the data policy manifest.
-    :vartype policy_mode: str
-    :ivar is_built_in_only: A value indicating whether policy mode is allowed only in built-in
-     definitions.
-    :vartype is_built_in_only: bool
-    :ivar resource_type_aliases: An array of resource type aliases.
-    :vartype resource_type_aliases:
-     list[~azure.mgmt.resource.policy.v2021_06_01.models.ResourceTypeAliases]
-    :ivar effects: The effect definition.
-    :vartype effects: list[~azure.mgmt.resource.policy.v2021_06_01.models.DataEffect]
-    :ivar field_values: The non-alias field accessor values that can be used in the policy rule.
-    :vartype field_values: list[str]
-    :ivar standard: The standard resource functions (subscription and/or resourceGroup).
-    :vartype standard: list[str]
-    :ivar custom: An array of data manifest custom resource definition.
-    :vartype custom:
-     list[~azure.mgmt.resource.policy.v2021_06_01.models.DataManifestCustomResourceFunctionDefinition]
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "namespaces": {"key": "properties.namespaces", "type": "[str]"},
-        "policy_mode": {"key": "properties.policyMode", "type": "str"},
-        "is_built_in_only": {"key": "properties.isBuiltInOnly", "type": "bool"},
-        "resource_type_aliases": {"key": "properties.resourceTypeAliases", "type": "[ResourceTypeAliases]"},
-        "effects": {"key": "properties.effects", "type": "[DataEffect]"},
-        "field_values": {"key": "properties.fieldValues", "type": "[str]"},
-        "standard": {"key": "properties.resourceFunctions.standard", "type": "[str]"},
-        "custom": {
-            "key": "properties.resourceFunctions.custom",
-            "type": "[DataManifestCustomResourceFunctionDefinition]",
-        },
-    }
-
-    def __init__(
-        self,
-        *,
-        namespaces: Optional[List[str]] = None,
-        policy_mode: Optional[str] = None,
-        is_built_in_only: Optional[bool] = None,
-        resource_type_aliases: Optional[List["_models.ResourceTypeAliases"]] = None,
-        effects: Optional[List["_models.DataEffect"]] = None,
-        field_values: Optional[List[str]] = None,
-        standard: Optional[List[str]] = None,
-        custom: Optional[List["_models.DataManifestCustomResourceFunctionDefinition"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword namespaces: The list of namespaces for the data policy manifest.
-        :paramtype namespaces: list[str]
-        :keyword policy_mode: The policy mode of the data policy manifest.
-        :paramtype policy_mode: str
-        :keyword is_built_in_only: A value indicating whether policy mode is allowed only in built-in
-         definitions.
-        :paramtype is_built_in_only: bool
-        :keyword resource_type_aliases: An array of resource type aliases.
-        :paramtype resource_type_aliases:
-         list[~azure.mgmt.resource.policy.v2021_06_01.models.ResourceTypeAliases]
-        :keyword effects: The effect definition.
-        :paramtype effects: list[~azure.mgmt.resource.policy.v2021_06_01.models.DataEffect]
-        :keyword field_values: The non-alias field accessor values that can be used in the policy rule.
-        :paramtype field_values: list[str]
-        :keyword standard: The standard resource functions (subscription and/or resourceGroup).
-        :paramtype standard: list[str]
-        :keyword custom: An array of data manifest custom resource definition.
-        :paramtype custom:
-         list[~azure.mgmt.resource.policy.v2021_06_01.models.DataManifestCustomResourceFunctionDefinition]
-        """
-        super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.namespaces = namespaces
-        self.policy_mode = policy_mode
-        self.is_built_in_only = is_built_in_only
-        self.resource_type_aliases = resource_type_aliases
-        self.effects = effects
-        self.field_values = field_values
-        self.standard = standard
-        self.custom = custom
-
-
-class DataPolicyManifestListResult(_serialization.Model):
-    """List of data policy manifests.
-
-    :ivar value: An array of data policy manifests.
-    :vartype value: list[~azure.mgmt.resource.policy.v2021_06_01.models.DataPolicyManifest]
-    :ivar next_link: The URL to use for getting the next set of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[DataPolicyManifest]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.DataPolicyManifest"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
-        """
-        :keyword value: An array of data policy manifests.
-        :paramtype value: list[~azure.mgmt.resource.policy.v2021_06_01.models.DataPolicyManifest]
-        :keyword next_link: The URL to use for getting the next set of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
 class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
@@ -440,7 +45,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -448,7 +53,8 @@ class ErrorAdditionalInfo(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -481,7 +87,7 @@ class ErrorResponse(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -492,7 +98,8 @@ class ErrorResponse(_serialization.Model):
 
 
 class Identity(_serialization.Model):
-    """Identity for the resource.  Policy assignments support a maximum of one identity.  That is either a system assigned identity or a single user assigned identity.
+    """Identity for the resource.  Policy assignments support a maximum of one identity.  That is
+    either a system assigned identity or a single user assigned identity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -530,8 +137,8 @@ class Identity(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentitiesValue"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The identity type. This is the only required field when adding a system or user
          assigned identity to a resource. Known values are: "SystemAssigned", "UserAssigned", and
@@ -551,7 +158,8 @@ class Identity(_serialization.Model):
 
 
 class NonComplianceMessage(_serialization.Model):
-    """A message that describes why a resource is non-compliant with the policy. This is shown in 'deny' error messages and on resource's non-compliant compliance results.
+    """A message that describes why a resource is non-compliant with the policy. This is shown in
+    'deny' error messages and on resource's non-compliant compliance results.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -574,7 +182,7 @@ class NonComplianceMessage(_serialization.Model):
         "policy_definition_reference_id": {"key": "policyDefinitionReferenceId", "type": "str"},
     }
 
-    def __init__(self, *, message: str, policy_definition_reference_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, message: str, policy_definition_reference_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword message: A message that describes why a resource is non-compliant with the policy.
          This is shown in 'deny' error messages and on resource's non-compliant compliance results.
@@ -620,8 +228,8 @@ class ParameterDefinitionsValue(_serialization.Model):
         allowed_values: Optional[List[JSON]] = None,
         default_value: Optional[JSON] = None,
         metadata: Optional["_models.ParameterDefinitionsValueMetadata"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The data type of the parameter. Known values are: "String", "Array", "Object",
          "Boolean", "Integer", "Float", and "DateTime".
@@ -676,8 +284,8 @@ class ParameterDefinitionsValueMetadata(_serialization.Model):
         description: Optional[str] = None,
         strong_type: Optional[str] = None,
         assign_permissions: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -713,7 +321,7 @@ class ParameterValuesValue(_serialization.Model):
         "value": {"key": "value", "type": "object"},
     }
 
-    def __init__(self, *, value: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, value: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword value: The value of the parameter.
         :paramtype value: JSON
@@ -807,8 +415,8 @@ class PolicyAssignment(_serialization.Model):  # pylint: disable=too-many-instan
         metadata: Optional[JSON] = None,
         enforcement_mode: Union[str, "_models.EnforcementMode"] = "Default",
         non_compliance_messages: Optional[List["_models.NonComplianceMessage"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the policy assignment. Only required when utilizing managed
          identity.
@@ -873,8 +481,12 @@ class PolicyAssignmentListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PolicyAssignment"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.PolicyAssignment"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: An array of policy assignments.
         :paramtype value: list[~azure.mgmt.resource.policy.v2021_06_01.models.PolicyAssignment]
@@ -901,7 +513,9 @@ class PolicyAssignmentUpdate(_serialization.Model):
         "identity": {"key": "identity", "type": "Identity"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, identity: Optional["_models.Identity"] = None, **kwargs):
+    def __init__(
+        self, *, location: Optional[str] = None, identity: Optional["_models.Identity"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the policy assignment. Only required when utilizing managed
          identity.
@@ -979,8 +593,8 @@ class PolicyDefinition(_serialization.Model):  # pylint: disable=too-many-instan
         policy_rule: Optional[JSON] = None,
         metadata: Optional[JSON] = None,
         parameters: Optional[Dict[str, "_models.ParameterDefinitionsValue"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
          Custom, and Static. Known values are: "NotSpecified", "BuiltIn", "Custom", and "Static".
@@ -1054,8 +668,8 @@ class PolicyDefinitionGroup(_serialization.Model):
         category: Optional[str] = None,
         description: Optional[str] = None,
         additional_metadata_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the group. Required.
         :paramtype name: str
@@ -1092,8 +706,12 @@ class PolicyDefinitionListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PolicyDefinition"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.PolicyDefinition"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: An array of policy definitions.
         :paramtype value: list[~azure.mgmt.resource.policy.v2021_06_01.models.PolicyDefinition]
@@ -1141,8 +759,8 @@ class PolicyDefinitionReference(_serialization.Model):
         parameters: Optional[Dict[str, "_models.ParameterValuesValue"]] = None,
         policy_definition_reference_id: Optional[str] = None,
         group_names: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword policy_definition_id: The ID of the policy definition or policy set definition.
          Required.
@@ -1162,144 +780,6 @@ class PolicyDefinitionReference(_serialization.Model):
         self.parameters = parameters
         self.policy_definition_reference_id = policy_definition_reference_id
         self.group_names = group_names
-
-
-class PolicyExemption(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """The policy exemption.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.resource.policy.v2021_06_01.models.SystemData
-    :ivar id: The ID of the policy exemption.
-    :vartype id: str
-    :ivar name: The name of the policy exemption.
-    :vartype name: str
-    :ivar type: The type of the resource (Microsoft.Authorization/policyExemptions).
-    :vartype type: str
-    :ivar policy_assignment_id: The ID of the policy assignment that is being exempted. Required.
-    :vartype policy_assignment_id: str
-    :ivar policy_definition_reference_ids: The policy definition reference ID list when the
-     associated policy assignment is an assignment of a policy set definition.
-    :vartype policy_definition_reference_ids: list[str]
-    :ivar exemption_category: The policy exemption category. Possible values are Waiver and
-     Mitigated. Required. Known values are: "Waiver" and "Mitigated".
-    :vartype exemption_category: str or
-     ~azure.mgmt.resource.policy.v2021_06_01.models.ExemptionCategory
-    :ivar expires_on: The expiration date and time (in UTC ISO 8601 format yyyy-MM-ddTHH:mm:ssZ) of
-     the policy exemption.
-    :vartype expires_on: ~datetime.datetime
-    :ivar display_name: The display name of the policy exemption.
-    :vartype display_name: str
-    :ivar description: The description of the policy exemption.
-    :vartype description: str
-    :ivar metadata: The policy exemption metadata. Metadata is an open ended object and is
-     typically a collection of key value pairs.
-    :vartype metadata: JSON
-    """
-
-    _validation = {
-        "system_data": {"readonly": True},
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "policy_assignment_id": {"required": True},
-        "exemption_category": {"required": True},
-    }
-
-    _attribute_map = {
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "policy_assignment_id": {"key": "properties.policyAssignmentId", "type": "str"},
-        "policy_definition_reference_ids": {"key": "properties.policyDefinitionReferenceIds", "type": "[str]"},
-        "exemption_category": {"key": "properties.exemptionCategory", "type": "str"},
-        "expires_on": {"key": "properties.expiresOn", "type": "iso-8601"},
-        "display_name": {"key": "properties.displayName", "type": "str"},
-        "description": {"key": "properties.description", "type": "str"},
-        "metadata": {"key": "properties.metadata", "type": "object"},
-    }
-
-    def __init__(
-        self,
-        *,
-        policy_assignment_id: str,
-        exemption_category: Union[str, "_models.ExemptionCategory"],
-        policy_definition_reference_ids: Optional[List[str]] = None,
-        expires_on: Optional[datetime.datetime] = None,
-        display_name: Optional[str] = None,
-        description: Optional[str] = None,
-        metadata: Optional[JSON] = None,
-        **kwargs
-    ):
-        """
-        :keyword policy_assignment_id: The ID of the policy assignment that is being exempted.
-         Required.
-        :paramtype policy_assignment_id: str
-        :keyword policy_definition_reference_ids: The policy definition reference ID list when the
-         associated policy assignment is an assignment of a policy set definition.
-        :paramtype policy_definition_reference_ids: list[str]
-        :keyword exemption_category: The policy exemption category. Possible values are Waiver and
-         Mitigated. Required. Known values are: "Waiver" and "Mitigated".
-        :paramtype exemption_category: str or
-         ~azure.mgmt.resource.policy.v2021_06_01.models.ExemptionCategory
-        :keyword expires_on: The expiration date and time (in UTC ISO 8601 format yyyy-MM-ddTHH:mm:ssZ)
-         of the policy exemption.
-        :paramtype expires_on: ~datetime.datetime
-        :keyword display_name: The display name of the policy exemption.
-        :paramtype display_name: str
-        :keyword description: The description of the policy exemption.
-        :paramtype description: str
-        :keyword metadata: The policy exemption metadata. Metadata is an open ended object and is
-         typically a collection of key value pairs.
-        :paramtype metadata: JSON
-        """
-        super().__init__(**kwargs)
-        self.system_data = None
-        self.id = None
-        self.name = None
-        self.type = None
-        self.policy_assignment_id = policy_assignment_id
-        self.policy_definition_reference_ids = policy_definition_reference_ids
-        self.exemption_category = exemption_category
-        self.expires_on = expires_on
-        self.display_name = display_name
-        self.description = description
-        self.metadata = metadata
-
-
-class PolicyExemptionListResult(_serialization.Model):
-    """List of policy exemptions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: An array of policy exemptions.
-    :vartype value: list[~azure.mgmt.resource.policy.v2021_06_01.models.PolicyExemption]
-    :ivar next_link: The URL to use for getting the next set of results.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[PolicyExemption]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: Optional[List["_models.PolicyExemption"]] = None, **kwargs):
-        """
-        :keyword value: An array of policy exemptions.
-        :paramtype value: list[~azure.mgmt.resource.policy.v2021_06_01.models.PolicyExemption]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = None
 
 
 class PolicySetDefinition(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -1369,8 +849,8 @@ class PolicySetDefinition(_serialization.Model):  # pylint: disable=too-many-ins
         parameters: Optional[Dict[str, "_models.ParameterDefinitionsValue"]] = None,
         policy_definitions: Optional[List["_models.PolicyDefinitionReference"]] = None,
         policy_definition_groups: Optional[List["_models.PolicyDefinitionGroup"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
          Custom, and Static. Known values are: "NotSpecified", "BuiltIn", "Custom", and "Static".
@@ -1423,8 +903,12 @@ class PolicySetDefinitionListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PolicySetDefinition"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.PolicySetDefinition"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: An array of policy set definitions.
         :paramtype value: list[~azure.mgmt.resource.policy.v2021_06_01.models.PolicySetDefinition]
@@ -1434,95 +918,6 @@ class PolicySetDefinitionListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
-
-
-class PolicyVariableColumn(_serialization.Model):
-    """The variable column.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar column_name: The name of this policy variable column. Required.
-    :vartype column_name: str
-    """
-
-    _validation = {
-        "column_name": {"required": True},
-    }
-
-    _attribute_map = {
-        "column_name": {"key": "columnName", "type": "str"},
-    }
-
-    def __init__(self, *, column_name: str, **kwargs):
-        """
-        :keyword column_name: The name of this policy variable column. Required.
-        :paramtype column_name: str
-        """
-        super().__init__(**kwargs)
-        self.column_name = column_name
-
-
-class PolicyVariableValueColumnValue(_serialization.Model):
-    """The name value tuple for this variable value column.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar column_name: Column name for the variable value. Required.
-    :vartype column_name: str
-    :ivar column_value: Column value for the variable value; this can be an integer, double,
-     boolean, null or a string. Required.
-    :vartype column_value: JSON
-    """
-
-    _validation = {
-        "column_name": {"required": True},
-        "column_value": {"required": True},
-    }
-
-    _attribute_map = {
-        "column_name": {"key": "columnName", "type": "str"},
-        "column_value": {"key": "columnValue", "type": "object"},
-    }
-
-    def __init__(self, *, column_name: str, column_value: JSON, **kwargs):
-        """
-        :keyword column_name: Column name for the variable value. Required.
-        :paramtype column_name: str
-        :keyword column_value: Column value for the variable value; this can be an integer, double,
-         boolean, null or a string. Required.
-        :paramtype column_value: JSON
-        """
-        super().__init__(**kwargs)
-        self.column_name = column_name
-        self.column_value = column_value
-
-
-class ResourceTypeAliases(_serialization.Model):
-    """The resource type aliases definition.
-
-    :ivar resource_type: The resource type name.
-    :vartype resource_type: str
-    :ivar aliases: The aliases for property names.
-    :vartype aliases: list[~azure.mgmt.resource.policy.v2021_06_01.models.Alias]
-    """
-
-    _attribute_map = {
-        "resource_type": {"key": "resourceType", "type": "str"},
-        "aliases": {"key": "aliases", "type": "[Alias]"},
-    }
-
-    def __init__(
-        self, *, resource_type: Optional[str] = None, aliases: Optional[List["_models.Alias"]] = None, **kwargs
-    ):
-        """
-        :keyword resource_type: The resource type name.
-        :paramtype resource_type: str
-        :keyword aliases: The aliases for property names.
-        :paramtype aliases: list[~azure.mgmt.resource.policy.v2021_06_01.models.Alias]
-        """
-        super().__init__(**kwargs)
-        self.resource_type = resource_type
-        self.aliases = aliases
 
 
 class SystemData(_serialization.Model):
@@ -1563,8 +958,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -1612,168 +1007,8 @@ class UserAssignedIdentitiesValue(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
-
-
-class Variable(_serialization.Model):
-    """The variable.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.resource.policy.v2021_06_01.models.SystemData
-    :ivar id: The ID of the variable.
-    :vartype id: str
-    :ivar name: The name of the variable.
-    :vartype name: str
-    :ivar type: The type of the resource (Microsoft.Authorization/variables).
-    :vartype type: str
-    :ivar columns: Variable column definitions. Required.
-    :vartype columns: list[~azure.mgmt.resource.policy.v2021_06_01.models.PolicyVariableColumn]
-    """
-
-    _validation = {
-        "system_data": {"readonly": True},
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "columns": {"required": True},
-    }
-
-    _attribute_map = {
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "columns": {"key": "properties.columns", "type": "[PolicyVariableColumn]"},
-    }
-
-    def __init__(self, *, columns: List["_models.PolicyVariableColumn"], **kwargs):
-        """
-        :keyword columns: Variable column definitions. Required.
-        :paramtype columns: list[~azure.mgmt.resource.policy.v2021_06_01.models.PolicyVariableColumn]
-        """
-        super().__init__(**kwargs)
-        self.system_data = None
-        self.id = None
-        self.name = None
-        self.type = None
-        self.columns = columns
-
-
-class VariableListResult(_serialization.Model):
-    """List of variables.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: An array of variables.
-    :vartype value: list[~azure.mgmt.resource.policy.v2021_06_01.models.Variable]
-    :ivar next_link: The URL to use for getting the next set of results.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[Variable]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: Optional[List["_models.Variable"]] = None, **kwargs):
-        """
-        :keyword value: An array of variables.
-        :paramtype value: list[~azure.mgmt.resource.policy.v2021_06_01.models.Variable]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = None
-
-
-class VariableValue(_serialization.Model):
-    """The variable value.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.resource.policy.v2021_06_01.models.SystemData
-    :ivar id: The ID of the variable.
-    :vartype id: str
-    :ivar name: The name of the variable.
-    :vartype name: str
-    :ivar type: The type of the resource (Microsoft.Authorization/variables/values).
-    :vartype type: str
-    :ivar values: Variable value column value array. Required.
-    :vartype values:
-     list[~azure.mgmt.resource.policy.v2021_06_01.models.PolicyVariableValueColumnValue]
-    """
-
-    _validation = {
-        "system_data": {"readonly": True},
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "values": {"required": True},
-    }
-
-    _attribute_map = {
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "values": {"key": "properties.values", "type": "[PolicyVariableValueColumnValue]"},
-    }
-
-    def __init__(self, *, values: List["_models.PolicyVariableValueColumnValue"], **kwargs):
-        """
-        :keyword values: Variable value column value array. Required.
-        :paramtype values:
-         list[~azure.mgmt.resource.policy.v2021_06_01.models.PolicyVariableValueColumnValue]
-        """
-        super().__init__(**kwargs)
-        self.system_data = None
-        self.id = None
-        self.name = None
-        self.type = None
-        self.values = values
-
-
-class VariableValueListResult(_serialization.Model):
-    """List of variable values.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: An array of variable values.
-    :vartype value: list[~azure.mgmt.resource.policy.v2021_06_01.models.VariableValue]
-    :ivar next_link: The URL to use for getting the next set of results.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[VariableValue]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: Optional[List["_models.VariableValue"]] = None, **kwargs):
-        """
-        :keyword value: An array of variable values.
-        :paramtype value: list[~azure.mgmt.resource.policy.v2021_06_01.models.VariableValue]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = None

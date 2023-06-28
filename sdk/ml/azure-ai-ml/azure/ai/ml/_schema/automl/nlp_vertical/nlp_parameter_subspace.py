@@ -6,7 +6,7 @@
 
 from marshmallow import fields, post_dump, post_load, pre_load
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import NlpLearningRateScheduler
+from azure.ai.ml._restclient.v2023_04_01_preview.models import NlpLearningRateScheduler
 from azure.ai.ml._schema._sweep.search_space import (
     ChoiceSchema,
     NormalSchema,
@@ -23,8 +23,7 @@ from azure.ai.ml._schema.core.fields import (
     UnionField,
 )
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
-from azure.ai.ml._utils.utils import camel_to_snake, snake_to_kebab
-from azure.ai.ml.constants import NlpModels
+from azure.ai.ml._utils.utils import camel_to_snake
 
 
 def get_choice_schema_of_type(cls, **kwargs):
@@ -72,11 +71,7 @@ class NlpParameterSubspaceSchema(metaclass=PatchedSchemaMeta):
         allowed_values=[obj.value for obj in NlpLearningRateScheduler],
         casing_transform=camel_to_snake,
     )
-    model_name = get_choice_and_single_value_schema_of_type(
-        StringTransformedEnum,
-        allowed_values=[obj.value for obj in NlpModels],
-        casing_transform=snake_to_kebab,
-    )
+    model_name = STRING_SEARCH_SPACE_DISTRIBUTION_FIELD
     number_of_epochs = INT_SEARCH_SPACE_DISTRIBUTION_FIELD
     training_batch_size = INT_SEARCH_SPACE_DISTRIBUTION_FIELD
     validation_batch_size = INT_SEARCH_SPACE_DISTRIBUTION_FIELD

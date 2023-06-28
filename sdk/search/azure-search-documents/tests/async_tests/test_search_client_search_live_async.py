@@ -72,7 +72,9 @@ class TestClientTestAsync(AzureRecordedTestCase):
             "hotelName",
             "description",
             "@search.score",
+            "@search.reranker_score",
             "@search.highlights",
+            "@search.captions",
         }
         assert all(set(x) == expected for x in results)
         assert all(x["category"] == "Budget" for x in results)
@@ -95,7 +97,9 @@ class TestClientTestAsync(AzureRecordedTestCase):
             "hotelName",
             "description",
             "@search.score",
+            "@search.reranker_score",
             "@search.highlights",
+            "@search.captions",
         }
         assert all(set(x) == expected for x in results)
         assert all(x["category"] == "Budget" for x in results)

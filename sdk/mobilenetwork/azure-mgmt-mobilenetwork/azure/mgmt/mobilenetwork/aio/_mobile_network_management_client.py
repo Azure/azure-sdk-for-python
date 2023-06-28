@@ -20,13 +20,11 @@ from .operations import (
     DataNetworksOperations,
     MobileNetworksOperations,
     Operations,
-    PacketCoreControlPlaneOperations,
     PacketCoreControlPlaneVersionsOperations,
     PacketCoreControlPlanesOperations,
     PacketCoreDataPlanesOperations,
     ServicesOperations,
     SimGroupsOperations,
-    SimOperations,
     SimPoliciesOperations,
     SimsOperations,
     SitesOperations,
@@ -54,9 +52,6 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
     :ivar packet_core_control_planes: PacketCoreControlPlanesOperations operations
     :vartype packet_core_control_planes:
      azure.mgmt.mobilenetwork.aio.operations.PacketCoreControlPlanesOperations
-    :ivar packet_core_control_plane: PacketCoreControlPlaneOperations operations
-    :vartype packet_core_control_plane:
-     azure.mgmt.mobilenetwork.aio.operations.PacketCoreControlPlaneOperations
     :ivar packet_core_control_plane_versions: PacketCoreControlPlaneVersionsOperations operations
     :vartype packet_core_control_plane_versions:
      azure.mgmt.mobilenetwork.aio.operations.PacketCoreControlPlaneVersionsOperations
@@ -67,8 +62,6 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
     :vartype services: azure.mgmt.mobilenetwork.aio.operations.ServicesOperations
     :ivar sims: SimsOperations operations
     :vartype sims: azure.mgmt.mobilenetwork.aio.operations.SimsOperations
-    :ivar sim: SimOperations operations
-    :vartype sim: azure.mgmt.mobilenetwork.aio.operations.SimOperations
     :ivar sim_groups: SimGroupsOperations operations
     :vartype sim_groups: azure.mgmt.mobilenetwork.aio.operations.SimGroupsOperations
     :ivar sim_policies: SimPoliciesOperations operations
@@ -115,9 +108,6 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
         self.packet_core_control_planes = PacketCoreControlPlanesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.packet_core_control_plane = PacketCoreControlPlaneOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.packet_core_control_plane_versions = PacketCoreControlPlaneVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -126,7 +116,6 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
         )
         self.services = ServicesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sims = SimsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.sim = SimOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sim_groups = SimGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sim_policies = SimPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sites = SitesOperations(self._client, self._config, self._serialize, self._deserialize)

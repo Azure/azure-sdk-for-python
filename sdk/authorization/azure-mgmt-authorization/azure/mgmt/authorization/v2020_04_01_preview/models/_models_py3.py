@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -38,7 +38,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -79,7 +79,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -90,7 +90,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.authorization.v2020_04_01_preview.models.ErrorDetail
@@ -100,7 +101,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.authorization.v2020_04_01_preview.models.ErrorDetail
@@ -197,8 +198,8 @@ class RoleAssignment(_serialization.Model):  # pylint: disable=too-many-instance
         created_by: Optional[str] = None,
         updated_by: Optional[str] = None,
         delegated_managed_identity_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scope: The role assignment scope.
         :paramtype scope: str
@@ -310,8 +311,8 @@ class RoleAssignmentCreateParameters(_serialization.Model):
         condition: Optional[str] = None,
         condition_version: Optional[str] = None,
         delegated_managed_identity_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword role_definition_id: The role definition ID used in the role assignment. Required.
         :paramtype role_definition_id: str
@@ -361,7 +362,9 @@ class RoleAssignmentFilter(_serialization.Model):
         "can_delegate": {"key": "canDelegate", "type": "bool"},
     }
 
-    def __init__(self, *, principal_id: Optional[str] = None, can_delegate: Optional[bool] = None, **kwargs):
+    def __init__(
+        self, *, principal_id: Optional[str] = None, can_delegate: Optional[bool] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword principal_id: Returns role assignment of the specific principal.
         :paramtype principal_id: str
@@ -388,8 +391,8 @@ class RoleAssignmentListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.RoleAssignment"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.RoleAssignment"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Role assignment list.
         :paramtype value: list[~azure.mgmt.authorization.v2020_04_01_preview.models.RoleAssignment]

@@ -10,7 +10,7 @@ from azure.identity import CredentialUnavailableError
 from azure.identity.aio._credentials.application import AzureApplicationCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
-from six.moves.urllib_parse import urlparse
+from urllib.parse import urlparse
 
 from helpers import build_aad_response, mock_response
 from helpers_async import get_completed_future

@@ -245,6 +245,7 @@ def test_bearer_policy_calls_sansio_methods(http_request):
             raise_the_second_time.calls = 1
             return Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
         raise TestException()
+
     raise_the_second_time.calls = 0
 
     policy = TestPolicy(credential, "scope")
@@ -270,7 +271,7 @@ def test_key_vault_regression(http_request):
     assert policy._credential is credential
 
     headers = {}
-    token = "alphanums" # cspell:disable-line
+    token = "alphanums"  # cspell:disable-line
     policy._update_headers(headers, token)
     assert headers["Authorization"] == "Bearer " + token
 
@@ -299,7 +300,7 @@ def test_azure_key_credential_policy(http_request):
 
 
 def test_azure_key_credential_policy_raises():
-    """Tests AzureKeyCredential and AzureKeyCredentialPolicy raises with non-string input parameters."""
+    """Tests AzureKeyCredential and AzureKeyCredentialPolicy raises with non-compliant input parameters."""
     api_key = 1234
     key_header = 5678
     with pytest.raises(TypeError):
@@ -308,6 +309,9 @@ def test_azure_key_credential_policy_raises():
     credential = AzureKeyCredential(str(api_key))
     with pytest.raises(TypeError):
         credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
+
+    with pytest.raises(TypeError):
+        credential_policy = AzureKeyCredentialPolicy(credential=str(api_key), name=key_header)
 
 
 def test_azure_key_credential_updates():
@@ -321,30 +325,50 @@ def test_azure_key_credential_updates():
     credential.update(api_key)
     assert credential.key == api_key
 
+
 combinations = [
     ("sig=test_signature", "https://test_sas_credential", "https://test_sas_credential?sig=test_signature"),
     ("?sig=test_signature", "https://test_sas_credential", "https://test_sas_credential?sig=test_signature"),
-    ("sig=test_signature", "https://test_sas_credential?sig=test_signature", "https://test_sas_credential?sig=test_signature"),
-    ("?sig=test_signature", "https://test_sas_credential?sig=test_signature", "https://test_sas_credential?sig=test_signature"),
+    (
+        "sig=test_signature",
+        "https://test_sas_credential?sig=test_signature",
+        "https://test_sas_credential?sig=test_signature",
+    ),
+    (
+        "?sig=test_signature",
+        "https://test_sas_credential?sig=test_signature",
+        "https://test_sas_credential?sig=test_signature",
+    ),
     ("sig=test_signature", "https://test_sas_credential?", "https://test_sas_credential?sig=test_signature"),
     ("?sig=test_signature", "https://test_sas_credential?", "https://test_sas_credential?sig=test_signature"),
-    ("sig=test_signature", "https://test_sas_credential?foo=bar", "https://test_sas_credential?foo=bar&sig=test_signature"),
-    ("?sig=test_signature", "https://test_sas_credential?foo=bar", "https://test_sas_credential?foo=bar&sig=test_signature"),
+    (
+        "sig=test_signature",
+        "https://test_sas_credential?foo=bar",
+        "https://test_sas_credential?foo=bar&sig=test_signature",
+    ),
+    (
+        "?sig=test_signature",
+        "https://test_sas_credential?foo=bar",
+        "https://test_sas_credential?foo=bar&sig=test_signature",
+    ),
 ]
+
 
 @pytest.mark.parametrize("combinations,http_request", product(combinations, HTTP_REQUESTS))
 def test_azure_sas_credential_policy(combinations, http_request):
     """Tests to see if we can create an AzureSasCredentialPolicy"""
     sas, url, expected_url = combinations
+
     def verify_authorization(request):
         assert request.url == expected_url
 
-    transport=Mock(send=verify_authorization)
+    transport = Mock(send=verify_authorization)
     credential = AzureSasCredential(sas)
     credential_policy = AzureSasCredentialPolicy(credential=credential)
     pipeline = Pipeline(transport=transport, policies=[credential_policy])
 
     pipeline.run(http_request("GET", url))
+
 
 def test_azure_sas_credential_updates():
     """Tests AzureSasCredential updates"""
@@ -357,11 +381,13 @@ def test_azure_sas_credential_updates():
     credential.update(sas)
     assert credential.signature == sas
 
+
 def test_azure_sas_credential_policy_raises():
     """Tests AzureSasCredential and AzureSasCredentialPolicy raises with non-string input parameters."""
     sas = 1234
     with pytest.raises(TypeError):
         credential = AzureSasCredential(sas)
+
 
 def test_azure_named_key_credential():
     cred = AzureNamedKeyCredential("sample_name", "samplekey")
@@ -375,6 +401,7 @@ def test_azure_named_key_credential():
     assert cred.named_key.key == "newkey"
     assert isinstance(cred.named_key, tuple)
 
+
 def test_azure_named_key_credential_raises():
     with pytest.raises(TypeError, match="Both name and key must be strings."):
         cred = AzureNamedKeyCredential("sample_name", 123345)
@@ -385,3 +412,22 @@ def test_azure_named_key_credential_raises():
 
     with pytest.raises(TypeError, match="Both name and key must be strings."):
         cred.update(1234, "newkey")
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_azure_http_credential_policy(http_request):
+    """Tests to see if we can create an AzureHttpKeyCredentialPolicy"""
+
+    prefix = "SharedAccessKey"
+    api_key = "test_key"
+    header_content = f"{prefix} {api_key}"
+
+    def verify_authorization_header(request):
+        assert request.headers["Authorization"] == header_content
+
+    transport = Mock(send=verify_authorization_header)
+    credential = AzureKeyCredential(api_key)
+    credential_policy = AzureKeyCredentialPolicy(credential=credential, name="Authorization", prefix=prefix)
+    pipeline = Pipeline(transport=transport, policies=[credential_policy])
+
+    pipeline.run(http_request("GET", "https://test_key_credential"))

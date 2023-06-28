@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-from typing import Any, Union
+from typing import Any, Union, List, Dict, Optional
 from ._generated._serialization import Model
 from ._generated.models import KeyValue
 
@@ -50,7 +50,7 @@ class ConfigurationSetting(Model):
     kind = "Generic"
     content_type = None
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, **kwargs) -> None:
         super(ConfigurationSetting, self).__init__(**kwargs)
         self.key = kwargs.get("key", None)
         self.label = kwargs.get("label", None)
@@ -108,7 +108,7 @@ class ConfigurationSetting(Model):
         )
 
 
-class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=too-many-instance-attributes
+class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=too-many-instance-attributes
     """A feature flag configuration value.
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -150,12 +150,17 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=t
         "tags": {"key": "tags", "type": "{str}"},
     }
     _key_prefix = ".appconfig.featureflag/"
-    _feature_flag_content_type = (
-        "application/vnd.microsoft.appconfig.ff+json;charset=utf-8"
-    )
+    _feature_flag_content_type = "application/vnd.microsoft.appconfig.ff+json;charset=utf-8"
     kind = "FeatureFlag"
 
-    def __init__(self, feature_id: str, **kwargs: Any) -> None:  # pylint: disable=dangerous-default-value, super-init-not-called
+    def __init__(  # pylint: disable=super-init-not-called
+        self,
+        feature_id: str,
+        *,
+        enabled: Optional[bool] = None,
+        filters: Optional[List[Dict[str, Any]]] = None,
+        **kwargs
+    ) -> None:
         if "key" in kwargs.keys() or "value" in kwargs.keys():
             raise TypeError("Unexpected keyword argument, do not provide 'key' or 'value' as a keyword-arg")
         self.feature_id = feature_id
@@ -168,8 +173,8 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=t
         self.etag = kwargs.get("etag", None)
         self.description = kwargs.get("description", None)
         self.display_name = kwargs.get("display_name", None)
-        self.filters = kwargs.get("filters", [])
-        self.enabled = kwargs.get("enabled", None)
+        self.filters = [] if filters is None else filters
+        self.enabled = enabled
         self._value = json.dumps({"enabled": self.enabled, "conditions": {"client_filters": self.filters}})
 
     @property
@@ -225,7 +230,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=t
             read_only=key_value.locked,
             etag=key_value.etag,
             enabled=enabled,
-            filters=filters
+            filters=filters,
         )
 
     def _to_generated(self) -> KeyValue:
@@ -276,19 +281,15 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         "read_only": {"key": "read_only", "type": "bool"},
         "tags": {"key": "tags", "type": "{str}"},
     }
-    _secret_reference_content_type = (
-        "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
-    )
+    _secret_reference_content_type = "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
     kind = "SecretReference"
 
-    def __init__(self, key: str, secret_id: str, **kwargs: Any) -> None: # pylint: disable=super-init-not-called
+    def __init__(self, key: str, secret_id: str, **kwargs) -> None:  # pylint: disable=super-init-not-called
         if "value" in kwargs.keys():
             raise TypeError("Unexpected keyword argument, do not provide 'value' as a keyword-arg")
         self.key = key
         self.label = kwargs.pop("label", None)
-        self.content_type = kwargs.get(
-            "content_type", self._secret_reference_content_type
-        )
+        self.content_type = kwargs.get("content_type", self._secret_reference_content_type)
         self.etag = kwargs.get("etag", None)
         self.last_modified = kwargs.get("last_modified", None)
         self.read_only = kwargs.get("read_only", None)
@@ -312,7 +313,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             temp = json.loads(new_value)
             self._value = new_value
             self.secret_id = temp.get("uri")
-        except(json.JSONDecodeError, ValueError):
+        except (json.JSONDecodeError, ValueError):
             self._value = new_value
             self.secret_id = None
 

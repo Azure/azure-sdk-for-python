@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -40,7 +40,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -55,7 +55,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -70,7 +70,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -81,7 +81,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -98,7 +98,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -114,7 +114,7 @@ def build_get_request(
         "dataCollectionRuleName": _SERIALIZER.url("data_collection_rule_name", data_collection_rule_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -131,8 +131,8 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -148,7 +148,7 @@ def build_create_request(
         "dataCollectionRuleName": _SERIALIZER.url("data_collection_rule_name", data_collection_rule_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -167,8 +167,8 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -184,7 +184,7 @@ def build_update_request(
         "dataCollectionRuleName": _SERIALIZER.url("data_collection_rule_name", data_collection_rule_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -203,7 +203,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -219,7 +219,7 @@ def build_delete_request(
         "dataCollectionRuleName": _SERIALIZER.url("data_collection_rule_name", data_collection_rule_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -236,7 +236,7 @@ class DataCollectionRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2021_04_01.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2021_04_01.MonitorManagementClient`'s
         :attr:`data_collection_rules` attribute.
     """
 
@@ -264,14 +264,14 @@ class DataCollectionRulesOperations:
         :return: An iterator like instance of either DataCollectionRuleResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleResource]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.monitor.v2021_04_01.models.DataCollectionRuleResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DataCollectionRuleResourceListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
+        cls: ClsType[_models.DataCollectionRuleResourceListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -293,16 +293,23 @@ class DataCollectionRulesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -310,14 +317,15 @@ class DataCollectionRulesOperations:
             deserialized = self._deserialize("DataCollectionRuleResourceListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -330,7 +338,9 @@ class DataCollectionRulesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/dataCollectionRules"}  # type: ignore
+    list_by_resource_group.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/dataCollectionRules"
+    }
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.DataCollectionRuleResource"]:
@@ -342,14 +352,14 @@ class DataCollectionRulesOperations:
         :return: An iterator like instance of either DataCollectionRuleResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleResource]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.monitor.v2021_04_01.models.DataCollectionRuleResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DataCollectionRuleResourceListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
+        cls: ClsType[_models.DataCollectionRuleResourceListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -370,16 +380,23 @@ class DataCollectionRulesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -387,14 +404,15 @@ class DataCollectionRulesOperations:
             deserialized = self._deserialize("DataCollectionRuleResourceListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -407,7 +425,9 @@ class DataCollectionRulesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/dataCollectionRules"}  # type: ignore
+    list_by_subscription.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/dataCollectionRules"
+    }
 
     @distributed_trace
     def get(
@@ -425,7 +445,7 @@ class DataCollectionRulesOperations:
         :type data_collection_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DataCollectionRuleResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleResource
+        :rtype: ~azure.mgmt.monitor.v2021_04_01.models.DataCollectionRuleResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -439,8 +459,8 @@ class DataCollectionRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DataCollectionRuleResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
+        cls: ClsType[_models.DataCollectionRuleResource] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -452,10 +472,11 @@ class DataCollectionRulesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -472,7 +493,9 @@ class DataCollectionRulesOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/dataCollectionRules/{dataCollectionRuleName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/dataCollectionRules/{dataCollectionRuleName}"
+    }
 
     @overload
     def create(
@@ -495,13 +518,13 @@ class DataCollectionRulesOperations:
          insensitive. Required.
         :type data_collection_rule_name: str
         :param body: The payload. Default value is None.
-        :type body: ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleResource
+        :type body: ~azure.mgmt.monitor.v2021_04_01.models.DataCollectionRuleResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DataCollectionRuleResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleResource
+        :rtype: ~azure.mgmt.monitor.v2021_04_01.models.DataCollectionRuleResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -532,7 +555,7 @@ class DataCollectionRulesOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DataCollectionRuleResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleResource
+        :rtype: ~azure.mgmt.monitor.v2021_04_01.models.DataCollectionRuleResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -554,14 +577,15 @@ class DataCollectionRulesOperations:
         :param data_collection_rule_name: The name of the data collection rule. The name is case
          insensitive. Required.
         :type data_collection_rule_name: str
-        :param body: The payload. Is either a model type or a IO type. Default value is None.
-        :type body: ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleResource or IO
+        :param body: The payload. Is either a DataCollectionRuleResource type or a IO type. Default
+         value is None.
+        :type body: ~azure.mgmt.monitor.v2021_04_01.models.DataCollectionRuleResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DataCollectionRuleResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleResource
+        :rtype: ~azure.mgmt.monitor.v2021_04_01.models.DataCollectionRuleResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -575,9 +599,9 @@ class DataCollectionRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DataCollectionRuleResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DataCollectionRuleResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -603,10 +627,11 @@ class DataCollectionRulesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -623,11 +648,13 @@ class DataCollectionRulesOperations:
             deserialized = self._deserialize("DataCollectionRuleResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    create.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/dataCollectionRules/{dataCollectionRuleName}"}  # type: ignore
+    create.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/dataCollectionRules/{dataCollectionRuleName}"
+    }
 
     @overload
     def update(
@@ -650,13 +677,13 @@ class DataCollectionRulesOperations:
          insensitive. Required.
         :type data_collection_rule_name: str
         :param body: The payload. Default value is None.
-        :type body: ~$(python-base-namespace).v2021_04_01.models.ResourceForUpdate
+        :type body: ~azure.mgmt.monitor.v2021_04_01.models.ResourceForUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DataCollectionRuleResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleResource
+        :rtype: ~azure.mgmt.monitor.v2021_04_01.models.DataCollectionRuleResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -687,7 +714,7 @@ class DataCollectionRulesOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DataCollectionRuleResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleResource
+        :rtype: ~azure.mgmt.monitor.v2021_04_01.models.DataCollectionRuleResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -709,14 +736,15 @@ class DataCollectionRulesOperations:
         :param data_collection_rule_name: The name of the data collection rule. The name is case
          insensitive. Required.
         :type data_collection_rule_name: str
-        :param body: The payload. Is either a model type or a IO type. Default value is None.
-        :type body: ~$(python-base-namespace).v2021_04_01.models.ResourceForUpdate or IO
+        :param body: The payload. Is either a ResourceForUpdate type or a IO type. Default value is
+         None.
+        :type body: ~azure.mgmt.monitor.v2021_04_01.models.ResourceForUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DataCollectionRuleResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2021_04_01.models.DataCollectionRuleResource
+        :rtype: ~azure.mgmt.monitor.v2021_04_01.models.DataCollectionRuleResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -730,9 +758,9 @@ class DataCollectionRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DataCollectionRuleResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DataCollectionRuleResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -758,10 +786,11 @@ class DataCollectionRulesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -778,7 +807,9 @@ class DataCollectionRulesOperations:
 
         return deserialized
 
-    update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/dataCollectionRules/{dataCollectionRuleName}"}  # type: ignore
+    update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/dataCollectionRules/{dataCollectionRuleName}"
+    }
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -810,8 +841,8 @@ class DataCollectionRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-04-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             resource_group_name=resource_group_name,
@@ -823,10 +854,11 @@ class DataCollectionRulesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -839,4 +871,6 @@ class DataCollectionRulesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/dataCollectionRules/{dataCollectionRuleName}"}  # type: ignore
+    delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/dataCollectionRules/{dataCollectionRuleName}"
+    }

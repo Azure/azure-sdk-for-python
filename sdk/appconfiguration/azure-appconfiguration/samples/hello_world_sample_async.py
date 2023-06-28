@@ -15,21 +15,23 @@ USAGE: python hello_world_async_sample.py
 
 import asyncio
 from azure.appconfiguration import ConfigurationSetting
-from azure.appconfiguration.aio import AzureAppConfigurationClient
-from util import print_configuration_setting, get_connection_string
+from util import print_configuration_setting
+
 
 async def main():
-    CONNECTION_STRING = get_connection_string()
+    # [START create_app_config_client]
+    import os
+    from azure.appconfiguration.aio import AzureAppConfigurationClient
+
+    CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
     # Create app config client
     client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
+    # [END create_app_config_client]
 
     print("Set new configuration setting")
     config_setting = ConfigurationSetting(
-        key="MyKey",
-        value="my value",
-        content_type="my content type",
-        tags={"my tag": "my tag value"}
+        key="MyKey", value="my value", content_type="my content type", tags={"my tag": "my tag value"}
     )
     returned_config_setting = await client.set_configuration_setting(config_setting)
     print("New configuration setting:")
@@ -37,17 +39,16 @@ async def main():
     print("")
 
     print("Get configuration setting")
-    fetched_config_setting = await client.get_configuration_setting(
-        key="MyKey"
-    )
+    # [START get_config_setting]
+    fetched_config_setting = await client.get_configuration_setting(key="MyKey")
+    # [END get_config_setting]
     print("Fetched configuration setting:")
     print_configuration_setting(fetched_config_setting)
     print("")
 
     print("Delete configuration setting")
-    await client.delete_configuration_setting(
-        key="MyKey"
-    )
+    await client.delete_configuration_setting(key="MyKey")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

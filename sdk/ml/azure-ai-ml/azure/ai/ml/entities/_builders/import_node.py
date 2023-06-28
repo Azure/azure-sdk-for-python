@@ -29,8 +29,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class Import(BaseNode):
-    """Base class for import node, used for import component version
-    consumption.
+    """Base class for import node, used for import component version consumption.
 
     You should not instantiate this class directly. Instead, you should
     create from a builder function.
@@ -117,9 +116,9 @@ class Import(BaseNode):
         rest_obj = super()._to_rest_object(**kwargs)
         rest_obj.update(
             convert_ordered_dict_to_dict(
-                dict(
-                    componentId=self._get_component_id(),
-                )
+                {
+                    "componentId": self._get_component_id(),
+                }
             )
         )
         return rest_obj

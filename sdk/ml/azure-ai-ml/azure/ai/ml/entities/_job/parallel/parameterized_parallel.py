@@ -13,8 +13,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class ParameterizedParallel:
-    """Parallel component that contains the traning parallel and supporting
-    parameters for the parallel.
+    """Parallel component that contains the traning parallel and supporting parameters for the parallel.
 
     :param retry_settings: parallel component run failed retry
     :type retry_settings: BatchRetrySettings

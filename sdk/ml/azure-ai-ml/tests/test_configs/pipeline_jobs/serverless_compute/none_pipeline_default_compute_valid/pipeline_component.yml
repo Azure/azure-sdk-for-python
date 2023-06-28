@@ -1,0 +1,26 @@
+$schema: https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json
+type: pipeline
+
+name: simple_pipeline_component
+
+jobs:
+  node_with_compute_target:
+    type: command
+    component: ../component.yml
+    compute: azureml:cpu-cluster
+  node_with_compute_target_and_resources:
+    type: command
+    component: ../component.yml
+    compute: azureml:cpu-cluster
+    resources:
+      instance_count: 2
+  serverless_node:
+    type: command
+    component: ../component.yml
+    compute: azureml:serverless
+  serverless_node_with_resources:
+    type: command
+    component: ../component.yml
+    compute: azureml:serverless
+    resources:
+      instance_count: 2

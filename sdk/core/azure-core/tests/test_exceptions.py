@@ -29,17 +29,24 @@ import requests
 from unittest.mock import Mock
 
 # module under test
-from azure.core.exceptions import HttpResponseError, ODataV4Error, ODataV4Format, SerializationError, DeserializationError
+from azure.core.exceptions import (
+    HttpResponseError,
+    ODataV4Error,
+    ODataV4Format,
+    SerializationError,
+    DeserializationError,
+)
 from azure.core.pipeline.transport import RequestsTransportResponse
 from azure.core.pipeline.transport._base import _HttpResponseBase as PipelineTransportHttpResponseBase
 from azure.core.rest._http_response_impl import _HttpResponseBaseImpl as RestHttpResponseBase
 from utils import HTTP_REQUESTS
 
+
 class PipelineTransportMockResponse(PipelineTransportHttpResponseBase):
     def __init__(self, json_body):
         super(PipelineTransportMockResponse, self).__init__(
             request=None,
-            internal_response = None,
+            internal_response=None,
         )
         self.status_code = 400
         self.reason = "Bad Request"
@@ -48,6 +55,7 @@ class PipelineTransportMockResponse(PipelineTransportHttpResponseBase):
 
     def body(self):
         return self._body
+
 
 class RestMockResponse(RestHttpResponseBase):
     def __init__(self, json_body):
@@ -69,30 +77,28 @@ class RestMockResponse(RestHttpResponseBase):
     def content(self):
         return self._body
 
+
 MOCK_RESPONSES = [PipelineTransportMockResponse, RestMockResponse]
 
-class FakeErrorOne(object):
 
+class FakeErrorOne(object):
     def __init__(self):
         self.error = Mock(message="A fake error", code="FakeErrorOne")
 
 
 class FakeErrorTwo(object):
-
     def __init__(self):
         self.code = "FakeErrorTwo"
         self.message = "A different fake error"
 
 
 class FakeHttpResponse(HttpResponseError):
-
     def __init__(self, response, error, *args, **kwargs):
         self.error = error
         super(FakeHttpResponse, self).__init__(self, response=response, *args, **kwargs)
 
 
 class TestExceptions(object):
-
     def test_empty_httpresponse_error(self):
         error = HttpResponseError()
         assert str(error) == "Operation returned an invalid status 'None'"
@@ -112,14 +118,14 @@ class TestExceptions(object):
         assert error.status_code is None
 
     def test_error_continuation_token(self):
-        error = HttpResponseError(message="Specific error message", continuation_token='foo')
+        error = HttpResponseError(message="Specific error message", continuation_token="foo")
         assert str(error) == "Specific error message"
         assert error.message == "Specific error message"
         assert error.response is None
         assert error.reason is None
         assert error.error is None
         assert error.status_code is None
-        assert error.continuation_token == 'foo'
+        assert error.continuation_token == "foo"
 
     @pytest.mark.parametrize("mock_response", MOCK_RESPONSES)
     def test_deserialized_httpresponse_error_code(self, mock_response):
@@ -150,7 +156,6 @@ class TestExceptions(object):
         assert error.error.error.message == "A fake error"
 
         assert str(error) == "(FakeErrorOne) A fake error\nCode: FakeErrorOne\nMessage: A fake error"
-
 
     @pytest.mark.parametrize("mock_response", MOCK_RESPONSES)
     def test_deserialized_httpresponse_error_message(self, mock_response):
@@ -183,7 +188,7 @@ class TestExceptions(object):
         error = HttpResponseError(response=http_response)
         assert error.message == "Operation returned an invalid status 'OK'"
         assert error.response is not None
-        assert error.reason == 'OK'
+        assert error.reason == "OK"
         assert isinstance(error.status_code, int)
         assert error.error is None
 
@@ -194,15 +199,14 @@ class TestExceptions(object):
                 "code": "501",
                 "message": "Unsupported functionality",
                 "target": "query",
-                "details": [{
-                    "code": "301",
-                    "target": "$search",
-                    "message": "$search query option not supported",
-                }],
-                "innererror": {
-                    "trace": [],
-                    "context": {}
-                }
+                "details": [
+                    {
+                        "code": "301",
+                        "target": "$search",
+                        "message": "$search query option not supported",
+                    }
+                ],
+                "innererror": {"trace": [], "context": {}},
             }
         }
         exp = ODataV4Error(mock_response(json.dumps(message).encode("utf-8")))
@@ -225,8 +229,7 @@ class TestExceptions(object):
 
     @pytest.mark.parametrize("mock_response", MOCK_RESPONSES)
     def test_odata_v4_minimal(self, mock_response):
-        """Minimal valid OData v4 is code/message and nothing else.
-        """
+        """Minimal valid OData v4 is code/message and nothing else."""
         message = {
             "error": {
                 "code": "501",
@@ -242,17 +245,14 @@ class TestExceptions(object):
 
     @pytest.mark.parametrize("mock_response", MOCK_RESPONSES)
     def test_broken_odata_details(self, mock_response):
-        """Do not block creating a nice exception if "details" only is broken
-        """
+        """Do not block creating a nice exception if "details" only is broken"""
         message = {
             "error": {
                 "code": "Conflict",
                 "message": "The maximum number of Free ServerFarms allowed in a Subscription is 10.",
                 "target": None,
                 "details": [
-                    {
-                        "message": "The maximum number of Free ServerFarms allowed in a Subscription is 10."
-                    },
+                    {"message": "The maximum number of Free ServerFarms allowed in a Subscription is 10."},
                     {"code": "Conflict"},
                     {
                         "errorentity": {
@@ -291,7 +291,10 @@ class TestExceptions(object):
         response = client.send_request(request)
         with pytest.raises(HttpResponseError) as ex:
             response.raise_for_status()
-        assert str(ex.value) == "Operation returned an invalid status 'BAD REQUEST'\nContent: {\"code\": 400, \"error\": {\"global\": [\"MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API\"]}}"
+        assert (
+            str(ex.value)
+            == 'Operation returned an invalid status \'BAD REQUEST\'\nContent: {"code": 400, "error": {"global": ["MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API"]}}'
+        )
 
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
     def test_malformed_json(self, client, http_request):
@@ -299,7 +302,10 @@ class TestExceptions(object):
         response = client.send_request(request)
         with pytest.raises(HttpResponseError) as ex:
             response.raise_for_status()
-        assert str(ex.value) == "Operation returned an invalid status 'BAD REQUEST'\nContent: {\"code\": 400, \"error\": {\"global\": [\"MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API\"]"
+        assert (
+            str(ex.value)
+            == 'Operation returned an invalid status \'BAD REQUEST\'\nContent: {"code": 400, "error": {"global": ["MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API"]'
+        )
 
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
     def test_text(self, client, http_request):
@@ -315,7 +321,8 @@ class TestExceptions(object):
         response = client.send_request(request)
         with pytest.raises(HttpResponseError) as ex:
             response.raise_for_status()
-        assert "Content: {\"" not in str(ex.value)
+        assert 'Content: {"' not in str(ex.value)
+
 
 def test_serialization_error():
     message = "Oopsy bad input passed for serialization"
@@ -327,6 +334,7 @@ def test_serialization_error():
     with pytest.raises(ValueError) as ex:
         raise error
     assert str(ex.value) == message
+
 
 def test_deserialization_error():
     message = "Oopsy bad input passed for serialization"

@@ -1,0 +1,19 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineComponent.schema.json
+type: pipeline
+
+name: pipeline_component_with_group
+display_name: Pipeline Component with Group
+
+inputs:
+  pg.int_param:
+    type: number
+  pg.str_param:
+    type: string
+
+jobs:
+  task:
+    type: command
+    component: ./command_component.yml
+    inputs:
+      component_in_number: ${{parent.inputs.pg.int_param}}
+      component_in_string: ${{parent.inputs.pg.str_param}}

@@ -35,7 +35,7 @@ class AcceptedAudiences(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: GUID or valid URL representing an accepted audience.
         :paramtype value: str
@@ -71,7 +71,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -80,7 +80,8 @@ class Resource(_serialization.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -106,7 +107,7 @@ class ProxyResource(Resource):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -189,8 +190,8 @@ class AttachedDatabaseConfiguration(ProxyResource):  # pylint: disable=too-many-
         table_level_sharing_properties: Optional["_models.TableLevelSharingProperties"] = None,
         database_name_override: Optional[str] = None,
         database_name_prefix: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -237,7 +238,7 @@ class AttachedDatabaseConfigurationListResult(_serialization.Model):
         "value": {"key": "value", "type": "[AttachedDatabaseConfiguration]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.AttachedDatabaseConfiguration"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.AttachedDatabaseConfiguration"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of attached database configurations.
         :paramtype value: list[~azure.mgmt.kusto.models.AttachedDatabaseConfiguration]
@@ -273,7 +274,7 @@ class AttachedDatabaseConfigurationsCheckNameRequest(_serialization.Model):
 
     type = "Microsoft.Kusto/clusters/attachedDatabaseConfigurations"
 
-    def __init__(self, *, name: str, **kwargs):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
         :keyword name: Attached database resource name. Required.
         :paramtype name: str
@@ -312,8 +313,14 @@ class AzureCapacity(_serialization.Model):
     }
 
     def __init__(
-        self, *, scale_type: Union[str, "_models.AzureScaleType"], minimum: int, maximum: int, default: int, **kwargs
-    ):
+        self,
+        *,
+        scale_type: Union[str, "_models.AzureScaleType"],
+        minimum: int,
+        maximum: int,
+        default: int,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scale_type: Scale type. Required. Known values are: "automatic", "manual", and "none".
         :paramtype scale_type: str or ~azure.mgmt.kusto.models.AzureScaleType
@@ -354,8 +361,8 @@ class AzureResourceSku(_serialization.Model):
         resource_type: Optional[str] = None,
         sku: Optional["_models.AzureSku"] = None,
         capacity: Optional["_models.AzureCapacity"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_type: Resource Namespace and Type.
         :paramtype resource_type: str
@@ -380,19 +387,20 @@ class AzureSku(_serialization.Model):
      "Standard_D14_v2", "Standard_D32d_v4", "Standard_D16d_v5", "Standard_D32d_v5",
      "Standard_DS13_v2+1TB_PS", "Standard_DS13_v2+2TB_PS", "Standard_DS14_v2+3TB_PS",
      "Standard_DS14_v2+4TB_PS", "Standard_L4s", "Standard_L8s", "Standard_L16s", "Standard_L8s_v2",
-     "Standard_L16s_v2", "Standard_L8s_v3", "Standard_L16s_v3", "Standard_L8as_v3",
-     "Standard_L16as_v3", "Standard_E64i_v3", "Standard_E80ids_v4", "Standard_E2a_v4",
-     "Standard_E4a_v4", "Standard_E8a_v4", "Standard_E16a_v4", "Standard_E8as_v4+1TB_PS",
-     "Standard_E8as_v4+2TB_PS", "Standard_E16as_v4+3TB_PS", "Standard_E16as_v4+4TB_PS",
-     "Standard_E8as_v5+1TB_PS", "Standard_E8as_v5+2TB_PS", "Standard_E16as_v5+3TB_PS",
-     "Standard_E16as_v5+4TB_PS", "Standard_E2ads_v5", "Standard_E4ads_v5", "Standard_E8ads_v5",
-     "Standard_E16ads_v5", "Standard_EC8as_v5+1TB_PS", "Standard_EC8as_v5+2TB_PS",
-     "Standard_EC16as_v5+3TB_PS", "Standard_EC16as_v5+4TB_PS", "Standard_EC8ads_v5",
-     "Standard_EC16ads_v5", "Standard_E8s_v4+1TB_PS", "Standard_E8s_v4+2TB_PS",
-     "Standard_E16s_v4+3TB_PS", "Standard_E16s_v4+4TB_PS", "Standard_E8s_v5+1TB_PS",
-     "Standard_E8s_v5+2TB_PS", "Standard_E16s_v5+3TB_PS", "Standard_E16s_v5+4TB_PS",
-     "Standard_E2d_v4", "Standard_E4d_v4", "Standard_E8d_v4", "Standard_E16d_v4", "Standard_E2d_v5",
-     "Standard_E4d_v5", "Standard_E8d_v5", and "Standard_E16d_v5".
+     "Standard_L16s_v2", "Standard_L8s_v3", "Standard_L16s_v3", "Standard_L32s_v3",
+     "Standard_L8as_v3", "Standard_L16as_v3", "Standard_L32as_v3", "Standard_E64i_v3",
+     "Standard_E80ids_v4", "Standard_E2a_v4", "Standard_E4a_v4", "Standard_E8a_v4",
+     "Standard_E16a_v4", "Standard_E8as_v4+1TB_PS", "Standard_E8as_v4+2TB_PS",
+     "Standard_E16as_v4+3TB_PS", "Standard_E16as_v4+4TB_PS", "Standard_E8as_v5+1TB_PS",
+     "Standard_E8as_v5+2TB_PS", "Standard_E16as_v5+3TB_PS", "Standard_E16as_v5+4TB_PS",
+     "Standard_E2ads_v5", "Standard_E4ads_v5", "Standard_E8ads_v5", "Standard_E16ads_v5",
+     "Standard_EC8as_v5+1TB_PS", "Standard_EC8as_v5+2TB_PS", "Standard_EC16as_v5+3TB_PS",
+     "Standard_EC16as_v5+4TB_PS", "Standard_EC8ads_v5", "Standard_EC16ads_v5",
+     "Standard_E8s_v4+1TB_PS", "Standard_E8s_v4+2TB_PS", "Standard_E16s_v4+3TB_PS",
+     "Standard_E16s_v4+4TB_PS", "Standard_E8s_v5+1TB_PS", "Standard_E8s_v5+2TB_PS",
+     "Standard_E16s_v5+3TB_PS", "Standard_E16s_v5+4TB_PS", "Standard_E2d_v4", "Standard_E4d_v4",
+     "Standard_E8d_v4", "Standard_E16d_v4", "Standard_E2d_v5", "Standard_E4d_v5", "Standard_E8d_v5",
+     and "Standard_E16d_v5".
     :vartype name: str or ~azure.mgmt.kusto.models.AzureSkuName
     :ivar capacity: The number of instances of the cluster.
     :vartype capacity: int
@@ -417,27 +425,28 @@ class AzureSku(_serialization.Model):
         name: Union[str, "_models.AzureSkuName"],
         tier: Union[str, "_models.AzureSkuTier"],
         capacity: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: SKU name. Required. Known values are: "Dev(No SLA)_Standard_D11_v2", "Dev(No
          SLA)_Standard_E2a_v4", "Standard_D11_v2", "Standard_D12_v2", "Standard_D13_v2",
          "Standard_D14_v2", "Standard_D32d_v4", "Standard_D16d_v5", "Standard_D32d_v5",
          "Standard_DS13_v2+1TB_PS", "Standard_DS13_v2+2TB_PS", "Standard_DS14_v2+3TB_PS",
          "Standard_DS14_v2+4TB_PS", "Standard_L4s", "Standard_L8s", "Standard_L16s", "Standard_L8s_v2",
-         "Standard_L16s_v2", "Standard_L8s_v3", "Standard_L16s_v3", "Standard_L8as_v3",
-         "Standard_L16as_v3", "Standard_E64i_v3", "Standard_E80ids_v4", "Standard_E2a_v4",
-         "Standard_E4a_v4", "Standard_E8a_v4", "Standard_E16a_v4", "Standard_E8as_v4+1TB_PS",
-         "Standard_E8as_v4+2TB_PS", "Standard_E16as_v4+3TB_PS", "Standard_E16as_v4+4TB_PS",
-         "Standard_E8as_v5+1TB_PS", "Standard_E8as_v5+2TB_PS", "Standard_E16as_v5+3TB_PS",
-         "Standard_E16as_v5+4TB_PS", "Standard_E2ads_v5", "Standard_E4ads_v5", "Standard_E8ads_v5",
-         "Standard_E16ads_v5", "Standard_EC8as_v5+1TB_PS", "Standard_EC8as_v5+2TB_PS",
-         "Standard_EC16as_v5+3TB_PS", "Standard_EC16as_v5+4TB_PS", "Standard_EC8ads_v5",
-         "Standard_EC16ads_v5", "Standard_E8s_v4+1TB_PS", "Standard_E8s_v4+2TB_PS",
-         "Standard_E16s_v4+3TB_PS", "Standard_E16s_v4+4TB_PS", "Standard_E8s_v5+1TB_PS",
-         "Standard_E8s_v5+2TB_PS", "Standard_E16s_v5+3TB_PS", "Standard_E16s_v5+4TB_PS",
-         "Standard_E2d_v4", "Standard_E4d_v4", "Standard_E8d_v4", "Standard_E16d_v4", "Standard_E2d_v5",
-         "Standard_E4d_v5", "Standard_E8d_v5", and "Standard_E16d_v5".
+         "Standard_L16s_v2", "Standard_L8s_v3", "Standard_L16s_v3", "Standard_L32s_v3",
+         "Standard_L8as_v3", "Standard_L16as_v3", "Standard_L32as_v3", "Standard_E64i_v3",
+         "Standard_E80ids_v4", "Standard_E2a_v4", "Standard_E4a_v4", "Standard_E8a_v4",
+         "Standard_E16a_v4", "Standard_E8as_v4+1TB_PS", "Standard_E8as_v4+2TB_PS",
+         "Standard_E16as_v4+3TB_PS", "Standard_E16as_v4+4TB_PS", "Standard_E8as_v5+1TB_PS",
+         "Standard_E8as_v5+2TB_PS", "Standard_E16as_v5+3TB_PS", "Standard_E16as_v5+4TB_PS",
+         "Standard_E2ads_v5", "Standard_E4ads_v5", "Standard_E8ads_v5", "Standard_E16ads_v5",
+         "Standard_EC8as_v5+1TB_PS", "Standard_EC8as_v5+2TB_PS", "Standard_EC16as_v5+3TB_PS",
+         "Standard_EC16as_v5+4TB_PS", "Standard_EC8ads_v5", "Standard_EC16ads_v5",
+         "Standard_E8s_v4+1TB_PS", "Standard_E8s_v4+2TB_PS", "Standard_E16s_v4+3TB_PS",
+         "Standard_E16s_v4+4TB_PS", "Standard_E8s_v5+1TB_PS", "Standard_E8s_v5+2TB_PS",
+         "Standard_E16s_v5+3TB_PS", "Standard_E16s_v5+4TB_PS", "Standard_E2d_v4", "Standard_E4d_v4",
+         "Standard_E8d_v4", "Standard_E16d_v4", "Standard_E2d_v5", "Standard_E4d_v5", "Standard_E8d_v5",
+         and "Standard_E16d_v5".
         :paramtype name: str or ~azure.mgmt.kusto.models.AzureSkuName
         :keyword capacity: The number of instances of the cluster.
         :paramtype capacity: int
@@ -473,7 +482,7 @@ class CheckNameRequest(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: str, type: Union[str, "_models.Type"], **kwargs):
+    def __init__(self, *, name: str, type: Union[str, "_models.Type"], **kwargs: Any) -> None:
         """
         :keyword name: Resource name. Required.
         :paramtype name: str
@@ -516,8 +525,8 @@ class CheckNameResult(_serialization.Model):
         name: Optional[str] = None,
         message: Optional[str] = None,
         reason: Optional[Union[str, "_models.Reason"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name_available: Specifies a Boolean value that indicates if the name is available.
         :paramtype name_available: bool
@@ -567,8 +576,8 @@ class CloudErrorBody(_serialization.Model):
         message: Optional[str] = None,
         target: Optional[str] = None,
         details: Optional[List["_models.CloudErrorBody"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -590,7 +599,8 @@ class CloudErrorBody(_serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -625,7 +635,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -817,8 +827,8 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         allowed_fqdn_list: Optional[List[str]] = None,
         public_ip_type: Union[str, "_models.PublicIPType"] = "IPv4",
         virtual_cluster_graduation_properties: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -937,7 +947,7 @@ class ClusterCheckNameRequest(_serialization.Model):
 
     type = "Microsoft.Kusto/clusters"
 
-    def __init__(self, *, name: str, **kwargs):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
         :keyword name: Cluster name. Required.
         :paramtype name: str
@@ -957,7 +967,7 @@ class ClusterListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Cluster]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Cluster"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Cluster"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of Kusto clusters.
         :paramtype value: list[~azure.mgmt.kusto.models.Cluster]
@@ -1031,8 +1041,8 @@ class ClusterPrincipalAssignment(ProxyResource):  # pylint: disable=too-many-ins
         role: Optional[Union[str, "_models.ClusterPrincipalRole"]] = None,
         tenant_id: Optional[str] = None,
         principal_type: Optional[Union[str, "_models.PrincipalType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword principal_id: The principal ID assigned to the cluster principal. It can be a user
          email, application ID, or security group name.
@@ -1082,7 +1092,7 @@ class ClusterPrincipalAssignmentCheckNameRequest(_serialization.Model):
 
     type = "Microsoft.Kusto/clusters/principalAssignments"
 
-    def __init__(self, *, name: str, **kwargs):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
         :keyword name: Principal Assignment resource name. Required.
         :paramtype name: str
@@ -1102,7 +1112,7 @@ class ClusterPrincipalAssignmentListResult(_serialization.Model):
         "value": {"key": "value", "type": "[ClusterPrincipalAssignment]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ClusterPrincipalAssignment"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ClusterPrincipalAssignment"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of Kusto cluster principal assignments.
         :paramtype value: list[~azure.mgmt.kusto.models.ClusterPrincipalAssignment]
@@ -1275,8 +1285,8 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
         allowed_fqdn_list: Optional[List[str]] = None,
         public_ip_type: Union[str, "_models.PublicIPType"] = "IPv4",
         virtual_cluster_graduation_properties: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1387,7 +1397,7 @@ class ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalp
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -1443,7 +1453,7 @@ class DataConnection(ProxyResource):
         }
     }
 
-    def __init__(self, *, location: Optional[str] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -1536,8 +1546,8 @@ class CosmosDbDataConnection(DataConnection):  # pylint: disable=too-many-instan
         cosmos_db_database: Optional[str] = None,
         cosmos_db_container: Optional[str] = None,
         retrieval_start_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -1616,7 +1626,7 @@ class Database(ProxyResource):
 
     _subtype_map = {"kind": {"ReadOnlyFollowing": "ReadOnlyFollowingDatabase", "ReadWrite": "ReadWriteDatabase"}}
 
-    def __init__(self, *, location: Optional[str] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -1637,7 +1647,7 @@ class DatabaseListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Database]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Database"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Database"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of Kusto databases.
         :paramtype value: list[~azure.mgmt.kusto.models.Database]
@@ -1696,8 +1706,8 @@ class DatabasePrincipal(_serialization.Model):
         fqn: Optional[str] = None,
         email: Optional[str] = None,
         app_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword role: Database principal role. Required. Known values are: "Admin", "Ingestor",
          "Monitor", "User", "UnrestrictedViewer", and "Viewer".
@@ -1788,8 +1798,8 @@ class DatabasePrincipalAssignment(ProxyResource):  # pylint: disable=too-many-in
         role: Optional[Union[str, "_models.DatabasePrincipalRole"]] = None,
         tenant_id: Optional[str] = None,
         principal_type: Optional[Union[str, "_models.PrincipalType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword principal_id: The principal ID assigned to the database principal. It can be a user
          email, application ID, or security group name.
@@ -1839,7 +1849,7 @@ class DatabasePrincipalAssignmentCheckNameRequest(_serialization.Model):
 
     type = "Microsoft.Kusto/clusters/databases/principalAssignments"
 
-    def __init__(self, *, name: str, **kwargs):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
         :keyword name: Principal Assignment resource name. Required.
         :paramtype name: str
@@ -1859,7 +1869,7 @@ class DatabasePrincipalAssignmentListResult(_serialization.Model):
         "value": {"key": "value", "type": "[DatabasePrincipalAssignment]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.DatabasePrincipalAssignment"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.DatabasePrincipalAssignment"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of Kusto database principal assignments.
         :paramtype value: list[~azure.mgmt.kusto.models.DatabasePrincipalAssignment]
@@ -1879,7 +1889,7 @@ class DatabasePrincipalListRequest(_serialization.Model):
         "value": {"key": "value", "type": "[DatabasePrincipal]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.DatabasePrincipal"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.DatabasePrincipal"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of Kusto database principals.
         :paramtype value: list[~azure.mgmt.kusto.models.DatabasePrincipal]
@@ -1899,7 +1909,7 @@ class DatabasePrincipalListResult(_serialization.Model):
         "value": {"key": "value", "type": "[DatabasePrincipal]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.DatabasePrincipal"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.DatabasePrincipal"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of Kusto database principals.
         :paramtype value: list[~azure.mgmt.kusto.models.DatabasePrincipal]
@@ -1919,7 +1929,7 @@ class DatabaseStatistics(_serialization.Model):
         "size": {"key": "size", "type": "float"},
     }
 
-    def __init__(self, *, size: Optional[float] = None, **kwargs):
+    def __init__(self, *, size: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword size: The database size - the total size of compressed data and index in bytes.
         :paramtype size: float
@@ -1954,7 +1964,7 @@ class DataConnectionCheckNameRequest(_serialization.Model):
 
     type = "Microsoft.Kusto/clusters/databases/dataConnections"
 
-    def __init__(self, *, name: str, **kwargs):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
         :keyword name: Data Connection name. Required.
         :paramtype name: str
@@ -1974,7 +1984,7 @@ class DataConnectionListResult(_serialization.Model):
         "value": {"key": "value", "type": "[DataConnection]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.DataConnection"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.DataConnection"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of Kusto data connections.
         :paramtype value: list[~azure.mgmt.kusto.models.DataConnection]
@@ -2002,8 +2012,8 @@ class DataConnectionValidation(_serialization.Model):
         *,
         data_connection_name: Optional[str] = None,
         properties: Optional["_models.DataConnection"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_connection_name: The name of the data connection.
         :paramtype data_connection_name: str
@@ -2026,7 +2036,9 @@ class DataConnectionValidationListResult(_serialization.Model):
         "value": {"key": "value", "type": "[DataConnectionValidationResult]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.DataConnectionValidationResult"]] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.DataConnectionValidationResult"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of Kusto data connection validation errors.
         :paramtype value: list[~azure.mgmt.kusto.models.DataConnectionValidationResult]
@@ -2046,7 +2058,7 @@ class DataConnectionValidationResult(_serialization.Model):
         "error_message": {"key": "errorMessage", "type": "str"},
     }
 
-    def __init__(self, *, error_message: Optional[str] = None, **kwargs):
+    def __init__(self, *, error_message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword error_message: A message which indicates a problem in data connection validation.
         :paramtype error_message: str
@@ -2066,7 +2078,7 @@ class DiagnoseVirtualNetworkResult(_serialization.Model):
         "findings": {"key": "findings", "type": "[str]"},
     }
 
-    def __init__(self, *, findings: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, findings: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword findings: The list of network connectivity diagnostic finding.
         :paramtype findings: list[str]
@@ -2094,8 +2106,8 @@ class EndpointDependency(_serialization.Model):
         *,
         domain_name: Optional[str] = None,
         endpoint_details: Optional[List["_models.EndpointDetail"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword domain_name: The domain name of the dependency.
         :paramtype domain_name: str
@@ -2118,7 +2130,7 @@ class EndpointDetail(_serialization.Model):
         "port": {"key": "port", "type": "int"},
     }
 
-    def __init__(self, *, port: Optional[int] = None, **kwargs):
+    def __init__(self, *, port: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword port: The port an endpoint is connected to.
         :paramtype port: int
@@ -2232,8 +2244,8 @@ class EventGridDataConnection(DataConnection):  # pylint: disable=too-many-insta
         blob_storage_event_type: Optional[Union[str, "_models.BlobStorageEventType"]] = None,
         managed_identity_resource_id: Optional[str] = None,
         database_routing: Optional[Union[str, "_models.DatabaseRouting"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -2390,8 +2402,8 @@ class EventHubDataConnection(DataConnection):  # pylint: disable=too-many-instan
         managed_identity_resource_id: Optional[str] = None,
         database_routing: Optional[Union[str, "_models.DatabaseRouting"]] = None,
         retrieval_start_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -2482,7 +2494,7 @@ class FollowerDatabaseDefinition(_serialization.Model):
         "database_share_origin": {"key": "databaseShareOrigin", "type": "str"},
     }
 
-    def __init__(self, *, cluster_resource_id: str, attached_database_configuration_name: str, **kwargs):
+    def __init__(self, *, cluster_resource_id: str, attached_database_configuration_name: str, **kwargs: Any) -> None:
         """
         :keyword cluster_resource_id: Resource id of the cluster that follows a database owned by this
          cluster. Required.
@@ -2510,7 +2522,7 @@ class FollowerDatabaseListResult(_serialization.Model):
         "value": {"key": "value", "type": "[FollowerDatabaseDefinition]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.FollowerDatabaseDefinition"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.FollowerDatabaseDefinition"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of follower database result.
         :paramtype value: list[~azure.mgmt.kusto.models.FollowerDatabaseDefinition]
@@ -2565,8 +2577,8 @@ class Identity(_serialization.Model):
         user_assigned_identities: Optional[
             Dict[str, "_models.ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties"]
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of managed identity used. The type 'SystemAssigned, UserAssigned'
          includes both an implicitly created identity and a set of user-assigned identities. The type
@@ -2677,8 +2689,8 @@ class IotHubDataConnection(DataConnection):  # pylint: disable=too-many-instance
         shared_access_policy_name: Optional[str] = None,
         database_routing: Optional[Union[str, "_models.DatabaseRouting"]] = None,
         retrieval_start_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -2751,8 +2763,8 @@ class KeyVaultProperties(_serialization.Model):
         key_version: Optional[str] = None,
         key_vault_uri: Optional[str] = None,
         user_identity: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_name: The name of the key vault key.
         :paramtype key_name: str
@@ -2792,8 +2804,8 @@ class LanguageExtension(_serialization.Model):
         *,
         language_extension_name: Optional[Union[str, "_models.LanguageExtensionName"]] = None,
         language_extension_image_name: Optional[Union[str, "_models.LanguageExtensionImageName"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword language_extension_name: The language extension name. Known values are: "PYTHON" and
          "R".
@@ -2819,7 +2831,7 @@ class LanguageExtensionsList(_serialization.Model):
         "value": {"key": "value", "type": "[LanguageExtension]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.LanguageExtension"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.LanguageExtension"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of language extensions.
         :paramtype value: list[~azure.mgmt.kusto.models.LanguageExtension]
@@ -2839,7 +2851,7 @@ class ListResourceSkusResult(_serialization.Model):
         "value": {"key": "value", "type": "[AzureResourceSku]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.AzureResourceSku"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.AzureResourceSku"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The collection of available SKUs for an existing resource.
         :paramtype value: list[~azure.mgmt.kusto.models.AzureResourceSku]
@@ -2905,8 +2917,8 @@ class ManagedPrivateEndpoint(ProxyResource):
         private_link_resource_region: Optional[str] = None,
         group_id: Optional[str] = None,
         request_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_link_resource_id: The ARM resource ID of the resource for which the managed
          private endpoint is created.
@@ -2939,7 +2951,7 @@ class ManagedPrivateEndpointListResult(_serialization.Model):
         "value": {"key": "value", "type": "[ManagedPrivateEndpoint]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ManagedPrivateEndpoint"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ManagedPrivateEndpoint"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of managed private endpoints.
         :paramtype value: list[~azure.mgmt.kusto.models.ManagedPrivateEndpoint]
@@ -2975,7 +2987,7 @@ class ManagedPrivateEndpointsCheckNameRequest(_serialization.Model):
 
     type = "Microsoft.Kusto/clusters/managedPrivateEndpoints"
 
-    def __init__(self, *, name: str, **kwargs):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
         :keyword name: Managed private endpoint resource name. Required.
         :paramtype name: str
@@ -3011,8 +3023,8 @@ class Operation(_serialization.Model):
         display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
         properties: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: This is of the format {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -3057,8 +3069,8 @@ class OperationDisplay(_serialization.Model):
         operation: Optional[str] = None,
         resource: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Friendly name of the resource provider.
         :paramtype provider: str
@@ -3077,7 +3089,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """Result of the request to list REST API operations. It contains a list of operations and a URL nextLink to get the next set of results.
+    """Result of the request to list REST API operations. It contains a list of operations and a URL
+    nextLink to get the next set of results.
 
     :ivar value: The list of operations supported by the resource provider.
     :vartype value: list[~azure.mgmt.kusto.models.Operation]
@@ -3090,7 +3103,9 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of operations supported by the resource provider.
         :paramtype value: list[~azure.mgmt.kusto.models.Operation]
@@ -3165,8 +3180,8 @@ class OperationResult(_serialization.Model):  # pylint: disable=too-many-instanc
         message: Optional[str] = None,
         operation_kind: Optional[str] = None,
         operation_state: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword start_time: The operation start time.
         :paramtype start_time: ~datetime.datetime
@@ -3227,7 +3242,7 @@ class OptimizedAutoscale(_serialization.Model):
         "maximum": {"key": "maximum", "type": "int"},
     }
 
-    def __init__(self, *, version: int, is_enabled: bool, minimum: int, maximum: int, **kwargs):
+    def __init__(self, *, version: int, is_enabled: bool, minimum: int, maximum: int, **kwargs: Any) -> None:
         """
         :keyword version: The version of the template defined, for instance 1. Required.
         :paramtype version: int
@@ -3247,7 +3262,8 @@ class OptimizedAutoscale(_serialization.Model):
 
 
 class OutboundNetworkDependenciesEndpoint(ProxyResource):
-    """Endpoints accessed for a common purpose that the Kusto Service Environment requires outbound network access to.
+    """Endpoints accessed for a common purpose that the Kusto Service Environment requires outbound
+    network access to.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3294,8 +3310,8 @@ class OutboundNetworkDependenciesEndpoint(ProxyResource):
         *,
         category: Optional[str] = None,
         endpoints: Optional[List["_models.EndpointDependency"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword category: The type of service accessed by the Kusto Service Environment, e.g., Azure
          Storage, Azure SQL Database, and Azure Active Directory.
@@ -3333,7 +3349,7 @@ class OutboundNetworkDependenciesEndpointListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.OutboundNetworkDependenciesEndpoint"], **kwargs):
+    def __init__(self, *, value: List["_models.OutboundNetworkDependenciesEndpoint"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.kusto.models.OutboundNetworkDependenciesEndpoint]
@@ -3398,8 +3414,8 @@ class PrivateEndpointConnection(ProxyResource):
         self,
         *,
         private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionStateProperty"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_link_service_connection_state: Connection State of the Private Endpoint
          Connection.
@@ -3425,7 +3441,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private endpoint connections.
         :paramtype value: list[~azure.mgmt.kusto.models.PrivateEndpointConnection]
@@ -3451,7 +3467,7 @@ class PrivateEndpointProperty(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -3500,7 +3516,7 @@ class PrivateLinkResource(Resource):
         "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.system_data = None
@@ -3520,7 +3536,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private link resources.
         :paramtype value: list[~azure.mgmt.kusto.models.PrivateLinkResource]
@@ -3553,7 +3569,7 @@ class PrivateLinkServiceConnectionStateProperty(_serialization.Model):
         "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
-    def __init__(self, *, status: Optional[str] = None, description: Optional[str] = None, **kwargs):
+    def __init__(self, *, status: Optional[str] = None, description: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword status: The private link service connection status.
         :paramtype status: str
@@ -3653,8 +3669,8 @@ class ReadOnlyFollowingDatabase(Database):  # pylint: disable=too-many-instance-
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, hot_cache_period: Optional[datetime.timedelta] = None, **kwargs
-    ):
+        self, *, location: Optional[str] = None, hot_cache_period: Optional[datetime.timedelta] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -3739,8 +3755,8 @@ class ReadWriteDatabase(Database):
         location: Optional[str] = None,
         soft_delete_period: Optional[datetime.timedelta] = None,
         hot_cache_period: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -3781,7 +3797,7 @@ class ResourceSkuCapabilities(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -3810,7 +3826,7 @@ class ResourceSkuZoneDetails(_serialization.Model):
         "capabilities": {"key": "capabilities", "type": "[ResourceSkuCapabilities]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -3880,8 +3896,8 @@ class Script(ProxyResource):
         script_content: Optional[str] = None,
         force_update_tag: Optional[str] = None,
         continue_on_errors: bool = False,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword script_url: The url to the KQL script blob file. Must not be used together with
          scriptContent property.
@@ -3935,7 +3951,7 @@ class ScriptCheckNameRequest(_serialization.Model):
 
     type = "Microsoft.Kusto/clusters/databases/scripts"
 
-    def __init__(self, *, name: str, **kwargs):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
         :keyword name: Script name. Required.
         :paramtype name: str
@@ -3955,7 +3971,7 @@ class ScriptListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Script]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Script"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Script"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of Kusto scripts.
         :paramtype value: list[~azure.mgmt.kusto.models.Script]
@@ -4001,7 +4017,7 @@ class SkuDescription(_serialization.Model):
         "restrictions": {"key": "restrictions", "type": "[object]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.resource_type = None
@@ -4029,7 +4045,7 @@ class SkuDescriptionList(_serialization.Model):
         "value": {"key": "value", "type": "[SkuDescription]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -4064,8 +4080,8 @@ class SkuLocationInfoItem(_serialization.Model):
         location: str,
         zones: Optional[List[str]] = None,
         zone_details: Optional[List["_models.ResourceSkuZoneDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The available location of the SKU. Required.
         :paramtype location: str
@@ -4117,8 +4133,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -4153,14 +4169,19 @@ class TableLevelSharingProperties(_serialization.Model):
     :vartype tables_to_exclude: list[str]
     :ivar external_tables_to_include: List of external tables to include in the follower database.
     :vartype external_tables_to_include: list[str]
-    :ivar external_tables_to_exclude: List of external tables exclude from the follower database.
+    :ivar external_tables_to_exclude: List of external tables to exclude from the follower
+     database.
     :vartype external_tables_to_exclude: list[str]
     :ivar materialized_views_to_include: List of materialized views to include in the follower
      database.
     :vartype materialized_views_to_include: list[str]
-    :ivar materialized_views_to_exclude: List of materialized views exclude from the follower
+    :ivar materialized_views_to_exclude: List of materialized views to exclude from the follower
      database.
     :vartype materialized_views_to_exclude: list[str]
+    :ivar functions_to_include: List of functions to include in the follower database.
+    :vartype functions_to_include: list[str]
+    :ivar functions_to_exclude: List of functions to exclude from the follower database.
+    :vartype functions_to_exclude: list[str]
     """
 
     _attribute_map = {
@@ -4170,6 +4191,8 @@ class TableLevelSharingProperties(_serialization.Model):
         "external_tables_to_exclude": {"key": "externalTablesToExclude", "type": "[str]"},
         "materialized_views_to_include": {"key": "materializedViewsToInclude", "type": "[str]"},
         "materialized_views_to_exclude": {"key": "materializedViewsToExclude", "type": "[str]"},
+        "functions_to_include": {"key": "functionsToInclude", "type": "[str]"},
+        "functions_to_exclude": {"key": "functionsToExclude", "type": "[str]"},
     }
 
     def __init__(
@@ -4181,8 +4204,10 @@ class TableLevelSharingProperties(_serialization.Model):
         external_tables_to_exclude: Optional[List[str]] = None,
         materialized_views_to_include: Optional[List[str]] = None,
         materialized_views_to_exclude: Optional[List[str]] = None,
-        **kwargs
-    ):
+        functions_to_include: Optional[List[str]] = None,
+        functions_to_exclude: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tables_to_include: List of tables to include in the follower database.
         :paramtype tables_to_include: list[str]
@@ -4191,15 +4216,19 @@ class TableLevelSharingProperties(_serialization.Model):
         :keyword external_tables_to_include: List of external tables to include in the follower
          database.
         :paramtype external_tables_to_include: list[str]
-        :keyword external_tables_to_exclude: List of external tables exclude from the follower
+        :keyword external_tables_to_exclude: List of external tables to exclude from the follower
          database.
         :paramtype external_tables_to_exclude: list[str]
         :keyword materialized_views_to_include: List of materialized views to include in the follower
          database.
         :paramtype materialized_views_to_include: list[str]
-        :keyword materialized_views_to_exclude: List of materialized views exclude from the follower
+        :keyword materialized_views_to_exclude: List of materialized views to exclude from the follower
          database.
         :paramtype materialized_views_to_exclude: list[str]
+        :keyword functions_to_include: List of functions to include in the follower database.
+        :paramtype functions_to_include: list[str]
+        :keyword functions_to_exclude: List of functions to exclude from the follower database.
+        :paramtype functions_to_exclude: list[str]
         """
         super().__init__(**kwargs)
         self.tables_to_include = tables_to_include
@@ -4208,6 +4237,8 @@ class TableLevelSharingProperties(_serialization.Model):
         self.external_tables_to_exclude = external_tables_to_exclude
         self.materialized_views_to_include = materialized_views_to_include
         self.materialized_views_to_exclude = materialized_views_to_exclude
+        self.functions_to_include = functions_to_include
+        self.functions_to_exclude = functions_to_exclude
 
 
 class TrustedExternalTenant(_serialization.Model):
@@ -4221,7 +4252,7 @@ class TrustedExternalTenant(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: GUID representing an external tenant.
         :paramtype value: str
@@ -4256,7 +4287,9 @@ class VirtualNetworkConfiguration(_serialization.Model):
         "data_management_public_ip_id": {"key": "dataManagementPublicIpId", "type": "str"},
     }
 
-    def __init__(self, *, subnet_id: str, engine_public_ip_id: str, data_management_public_ip_id: str, **kwargs):
+    def __init__(
+        self, *, subnet_id: str, engine_public_ip_id: str, data_management_public_ip_id: str, **kwargs: Any
+    ) -> None:
         """
         :keyword subnet_id: The subnet resource id. Required.
         :paramtype subnet_id: str

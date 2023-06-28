@@ -63,9 +63,7 @@ class AmlComputeSshSettings:
         )
 
     @classmethod
-    def _from_user_account_credentials(
-        cls, credentials: UserAccountCredentials
-    ) -> "AmlComputeSshSettings":
+    def _from_user_account_credentials(cls, credentials: UserAccountCredentials) -> "AmlComputeSshSettings":
         return cls(
             admin_username=credentials.admin_user_name,
             admin_password=credentials.admin_user_password,
@@ -82,6 +80,8 @@ class AmlCompute(Compute):
     :type description: str, optional
     :param size: Compute Size, defaults to None.
     :type size: str, optional
+    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :type tags: Optional[dict[str, str]]
     :param ssh_settings: SSH settings to access the AzureML compute cluster.
     :type ssh_settings: AmlComputeSshSettings, optional
     :param network_settings: Virtual network settings for the AzureML compute cluster.
@@ -116,6 +116,7 @@ class AmlCompute(Compute):
         name: str,
         description: Optional[str] = None,
         size: Optional[str] = None,
+        tags: Optional[dict] = None,
         ssh_public_access_enabled: Optional[bool] = None,
         ssh_settings: Optional[AmlComputeSshSettings] = None,
         min_instances: Optional[int] = None,
@@ -124,7 +125,7 @@ class AmlCompute(Compute):
         idle_time_before_scale_down: Optional[int] = None,
         identity: Optional[IdentityConfiguration] = None,
         tier: Optional[str] = None,
-        enable_node_public_ip: Optional[bool] = True,
+        enable_node_public_ip: bool = True,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.AMLCOMPUTE
@@ -132,6 +133,7 @@ class AmlCompute(Compute):
             name=name,
             description=description,
             location=kwargs.pop("location", None),
+            tags=tags,
             **kwargs,
         )
         self.size = size
@@ -151,17 +153,13 @@ class AmlCompute(Compute):
         prop = rest_obj.properties
 
         network_settings = None
-        if prop.properties.subnet or (
-            prop.properties.enable_node_public_ip is not None
-        ):
+        if prop.properties.subnet or (prop.properties.enable_node_public_ip is not None):
             network_settings = NetworkSettings(
                 subnet=prop.properties.subnet.id if prop.properties.subnet else None,
             )
 
         ssh_settings = (
-            AmlComputeSshSettings._from_user_account_credentials(
-                prop.properties.user_account_credentials
-            )
+            AmlComputeSshSettings._from_user_account_credentials(prop.properties.user_account_credentials)
             if prop.properties.user_account_credentials
             else None
         )
@@ -171,33 +169,25 @@ class AmlCompute(Compute):
             id=rest_obj.id,
             description=prop.description,
             location=rest_obj.location,
+            tags=rest_obj.tags if rest_obj.tags else None,
             provisioning_state=prop.provisioning_state,
             provisioning_errors=prop.provisioning_errors[0].error.code
             if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
             else None,
             size=prop.properties.vm_size,
             tier=camel_to_snake(prop.properties.vm_priority),
-            min_instances=prop.properties.scale_settings.min_node_count
-            if prop.properties.scale_settings
-            else None,
-            max_instances=prop.properties.scale_settings.max_node_count
-            if prop.properties.scale_settings
-            else None,
+            min_instances=prop.properties.scale_settings.min_node_count if prop.properties.scale_settings else None,
+            max_instances=prop.properties.scale_settings.max_node_count if prop.properties.scale_settings else None,
             network_settings=network_settings or None,
             ssh_settings=ssh_settings,
-            ssh_public_access_enabled=(
-                prop.properties.remote_login_port_public_access == "Enabled"
-            ),
+            ssh_public_access_enabled=(prop.properties.remote_login_port_public_access == "Enabled"),
             idle_time_before_scale_down=prop.properties.scale_settings.node_idle_time_before_scale_down.total_seconds()
-            if prop.properties.scale_settings
-            and prop.properties.scale_settings.node_idle_time_before_scale_down
+            if prop.properties.scale_settings and prop.properties.scale_settings.node_idle_time_before_scale_down
             else None,
-            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity)
-            if rest_obj.identity
-            else None,
+            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
             created_on=prop.additional_properties.get("createdOn", None),
             enable_node_public_ip=prop.properties.enable_node_public_ip
-            if prop.properties.enable_node_public_ip
+            if prop.properties.enable_node_public_ip is not None
             else True,
         )
         return response
@@ -230,38 +220,29 @@ class AmlCompute(Compute):
         scale_settings = ScaleSettings(
             max_node_count=self.max_instances,
             min_node_count=self.min_instances,
-            node_idle_time_before_scale_down=to_iso_duration_format(
-                int(self.idle_time_before_scale_down)
-            )
+            node_idle_time_before_scale_down=to_iso_duration_format(int(self.idle_time_before_scale_down))
             if self.idle_time_before_scale_down
             else None,
         )
         remote_login_public_access = "Enabled"
         if self.ssh_public_access_enabled is not None:
-            remote_login_public_access = (
-                "Enabled" if self.ssh_public_access_enabled else "Disabled"
-            )
+            remote_login_public_access = "Enabled" if self.ssh_public_access_enabled else "Disabled"
         else:
             remote_login_public_access = "NotSpecified"
         aml_prop = AmlComputeProperties(
             vm_size=self.size if self.size else ComputeDefaults.VMSIZE,
             vm_priority=snake_to_pascal(self.tier),
-            user_account_credentials=self.ssh_settings._to_user_account_credentials()
-            if self.ssh_settings
-            else None,
+            user_account_credentials=self.ssh_settings._to_user_account_credentials() if self.ssh_settings else None,
             scale_settings=scale_settings,
             subnet=subnet_resource,
             remote_login_port_public_access=remote_login_public_access,
             enable_node_public_ip=self.enable_node_public_ip,
         )
 
-        aml_comp = AmlComputeRest(
-            description=self.description, compute_type=self.type, properties=aml_prop
-        )
+        aml_comp = AmlComputeRest(description=self.description, compute_type=self.type, properties=aml_prop)
         return ComputeResource(
             location=self.location,
             properties=aml_comp,
-            identity=(
-                self.identity._to_compute_rest_object() if self.identity else None
-            ),
-       )
+            identity=(self.identity._to_compute_rest_object() if self.identity else None),
+            tags=self.tags,
+        )

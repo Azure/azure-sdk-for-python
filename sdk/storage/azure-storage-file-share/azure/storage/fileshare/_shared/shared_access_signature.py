@@ -220,4 +220,4 @@ class _SharedAccessHelper(object):
                         sign_string(account_key, string_to_sign))
 
     def get_token(self):
-        return '&'.join(['{0}={1}'.format(n, url_quote(v)) for n, v in self.query_dict.items() if v is not None])
+        return '&'.join([f'{n}={url_quote(v)}' for n, v in self.query_dict.items() if v is not None])

@@ -90,8 +90,8 @@ class AccountSasParameters(_serialization.Model):
         protocols: Optional[Union[str, "_models.HttpProtocol"]] = None,
         shared_access_start_time: Optional[datetime.datetime] = None,
         key_to_sign: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword services: The signed services accessible with the account SAS. Possible values
          include: Blob (b), Queue (q), Table (t), File (f). Required. Known values are: "b", "q", "t",
@@ -159,7 +159,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -198,7 +198,7 @@ class AzureEntityResource(Resource):
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.etag = None
@@ -288,8 +288,8 @@ class BlobContainer(AzureEntityResource):  # pylint: disable=too-many-instance-a
         *,
         public_access: Optional[Union[str, "_models.PublicAccess"]] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword public_access: Specifies whether data in the container may be accessed publicly and
          the level of access. Known values are: "Container", "Blob", and "None".
@@ -339,7 +339,7 @@ class CheckNameAvailabilityResult(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name_available = None
@@ -369,7 +369,7 @@ class CustomDomain(_serialization.Model):
         "use_sub_domain_name": {"key": "useSubDomainName", "type": "bool"},
     }
 
-    def __init__(self, *, name: str, use_sub_domain_name: Optional[bool] = None, **kwargs):
+    def __init__(self, *, name: str, use_sub_domain_name: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword name: Gets or sets the custom domain name assigned to the storage account. Name is the
          CNAME source. Required.
@@ -397,7 +397,7 @@ class Dimension(_serialization.Model):
         "display_name": {"key": "displayName", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Display name of dimension.
         :paramtype name: str
@@ -441,8 +441,8 @@ class Encryption(_serialization.Model):
         key_source: Union[str, "_models.KeySource"] = "Microsoft.Storage",
         services: Optional["_models.EncryptionServices"] = None,
         key_vault_properties: Optional["_models.KeyVaultProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword services: List of services which support encryption.
         :paramtype services: ~azure.mgmt.storage.v2018_03_01_preview.models.EncryptionServices
@@ -483,7 +483,7 @@ class EncryptionService(_serialization.Model):
         "last_enabled_time": {"key": "lastEnabledTime", "type": "iso-8601"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: A boolean indicating whether or not the service encrypts the data as it is
          stored.
@@ -526,8 +526,8 @@ class EncryptionServices(_serialization.Model):
         *,
         blob: Optional["_models.EncryptionService"] = None,
         file: Optional["_models.EncryptionService"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword blob: The encryption function of the blob storage service.
         :paramtype blob: ~azure.mgmt.storage.v2018_03_01_preview.models.EncryptionService
@@ -542,7 +542,8 @@ class EncryptionServices(_serialization.Model):
 
 
 class Endpoints(_serialization.Model):
-    """The URIs that are used to perform a retrieval of a public blob, queue, table, web or dfs object.
+    """The URIs that are used to perform a retrieval of a public blob, queue, table, web or dfs
+    object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -578,7 +579,7 @@ class Endpoints(_serialization.Model):
         "dfs": {"key": "dfs", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.blob = None
@@ -618,7 +619,7 @@ class Identity(_serialization.Model):
 
     type = "SystemAssigned"
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -626,7 +627,8 @@ class Identity(_serialization.Model):
 
 
 class ImmutabilityPolicy(AzureEntityResource):
-    """The ImmutabilityPolicy property of a blob container, including Id, resource name, resource type, Etag.
+    """The ImmutabilityPolicy property of a blob container, including Id, resource name, resource
+    type, Etag.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -671,7 +673,7 @@ class ImmutabilityPolicy(AzureEntityResource):
         "state": {"key": "properties.state", "type": "str"},
     }
 
-    def __init__(self, *, immutability_period_since_creation_in_days: int, **kwargs):
+    def __init__(self, *, immutability_period_since_creation_in_days: int, **kwargs: Any) -> None:
         """
         :keyword immutability_period_since_creation_in_days: The immutability period for the blobs in
          the container since the policy creation, in days. Required.
@@ -716,7 +718,7 @@ class ImmutabilityPolicyProperties(_serialization.Model):
         "state": {"key": "properties.state", "type": "str"},
     }
 
-    def __init__(self, *, immutability_period_since_creation_in_days: Optional[int] = None, **kwargs):
+    def __init__(self, *, immutability_period_since_creation_in_days: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword immutability_period_since_creation_in_days: The immutability period for the blobs in
          the container since the policy creation, in days.
@@ -750,7 +752,7 @@ class IPRule(_serialization.Model):
         "action": {"key": "action", "type": "str"},
     }
 
-    def __init__(self, *, ip_address_or_range: str, action: Optional[Literal["Allow"]] = None, **kwargs):
+    def __init__(self, *, ip_address_or_range: str, action: Optional[Literal["Allow"]] = None, **kwargs: Any) -> None:
         """
         :keyword ip_address_or_range: Specifies the IP or IP range in CIDR format. Only IPV4 address is
          allowed. Required.
@@ -786,8 +788,8 @@ class KeyVaultProperties(_serialization.Model):
         key_name: Optional[str] = None,
         key_version: Optional[str] = None,
         key_vault_uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_name: The name of KeyVault key.
         :paramtype key_name: str
@@ -844,8 +846,8 @@ class LeaseContainerRequest(_serialization.Model):
         break_period: Optional[int] = None,
         lease_duration: Optional[int] = None,
         proposed_lease_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword action: Specifies the lease action. Can be one of the available actions. Required.
          Known values are: "Acquire", "Renew", "Change", "Release", and "Break".
@@ -886,7 +888,9 @@ class LeaseContainerResponse(_serialization.Model):
         "lease_time_seconds": {"key": "leaseTimeSeconds", "type": "str"},
     }
 
-    def __init__(self, *, lease_id: Optional[str] = None, lease_time_seconds: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, lease_id: Optional[str] = None, lease_time_seconds: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword lease_id: Returned unique lease ID that must be included with any request to delete
          the container, or to renew, change, or release the lease.
@@ -926,7 +930,7 @@ class LegalHold(_serialization.Model):
         "tags": {"key": "tags", "type": "[str]"},
     }
 
-    def __init__(self, *, tags: List[str], **kwargs):
+    def __init__(self, *, tags: List[str], **kwargs: Any) -> None:
         """
         :keyword tags: Each tag should be 3 to 23 alphanumeric characters and is normalized to lower
          case at SRP. Required.
@@ -960,7 +964,7 @@ class LegalHoldProperties(_serialization.Model):
         "tags": {"key": "tags", "type": "[TagProperty]"},
     }
 
-    def __init__(self, *, tags: Optional[List["_models.TagProperty"]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[List["_models.TagProperty"]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: The list of LegalHold tags of a blob container.
         :paramtype tags: list[~azure.mgmt.storage.v2018_03_01_preview.models.TagProperty]
@@ -987,7 +991,7 @@ class ListAccountSasResponse(_serialization.Model):
         "account_sas_token": {"key": "accountSasToken", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.account_sas_token = None
@@ -1077,8 +1081,8 @@ class ListContainerItem(AzureEntityResource):  # pylint: disable=too-many-instan
         *,
         public_access: Optional[Union[str, "_models.PublicAccess"]] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword public_access: Specifies whether data in the container may be accessed publicly and
          the level of access. Known values are: "Container", "Blob", and "None".
@@ -1110,7 +1114,7 @@ class ListContainerItems(_serialization.Model):
         "value": {"key": "value", "type": "[ListContainerItem]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ListContainerItem"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ListContainerItem"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of blob containers.
         :paramtype value: list[~azure.mgmt.storage.v2018_03_01_preview.models.ListContainerItem]
@@ -1136,14 +1140,15 @@ class ListServiceSasResponse(_serialization.Model):
         "service_sas_token": {"key": "serviceSasToken", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.service_sas_token = None
 
 
 class ManagementPoliciesRules(_serialization.Model):
-    """The Storage Account ManagementPolicies Rules, in JSON format. See more details in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
+    """The Storage Account ManagementPolicies Rules, in JSON format. See more details in:
+    https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
 
     :ivar policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
      in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
@@ -1154,7 +1159,7 @@ class ManagementPoliciesRules(_serialization.Model):
         "policy": {"key": "policy", "type": "object"},
     }
 
-    def __init__(self, *, policy: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, policy: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
          in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
@@ -1165,7 +1170,8 @@ class ManagementPoliciesRules(_serialization.Model):
 
 
 class ManagementPoliciesRulesSetParameter(_serialization.Model):
-    """The Storage Account ManagementPolicies Rules, in JSON format. See more details in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
+    """The Storage Account ManagementPolicies Rules, in JSON format. See more details in:
+    https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
 
     :ivar policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
      in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
@@ -1176,7 +1182,7 @@ class ManagementPoliciesRulesSetParameter(_serialization.Model):
         "policy": {"key": "properties.policy", "type": "object"},
     }
 
-    def __init__(self, *, policy: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, policy: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
          in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
@@ -1233,8 +1239,8 @@ class MetricSpecification(_serialization.Model):
         fill_gap_with_zero: Optional[bool] = None,
         category: Optional[str] = None,
         resource_id_dimension_name_override: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of metric specification.
         :paramtype name: str
@@ -1305,8 +1311,8 @@ class NetworkRuleSet(_serialization.Model):
         bypass: Union[str, "_models.Bypass"] = "AzureServices",
         virtual_network_rules: Optional[List["_models.VirtualNetworkRule"]] = None,
         ip_rules: Optional[List["_models.IPRule"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword bypass: Specifies whether traffic is bypassed for Logging/Metrics/AzureServices.
          Possible values are any combination of Logging|Metrics|AzureServices (For example, "Logging,
@@ -1357,8 +1363,8 @@ class Operation(_serialization.Model):
         display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
         service_specification: Optional["_models.ServiceSpecification"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -1404,8 +1410,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Service provider: Microsoft Storage.
         :paramtype provider: str
@@ -1424,7 +1430,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """Result of the request to list Storage operations. It contains a list of operations and a URL link to get the next set of results.
+    """Result of the request to list Storage operations. It contains a list of operations and a URL
+    link to get the next set of results.
 
     :ivar value: List of Storage operations supported by the Storage resource provider.
     :vartype value: list[~azure.mgmt.storage.v2018_03_01_preview.models.Operation]
@@ -1434,7 +1441,7 @@ class OperationListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Storage operations supported by the Storage resource provider.
         :paramtype value: list[~azure.mgmt.storage.v2018_03_01_preview.models.Operation]
@@ -1471,7 +1478,7 @@ class Restriction(_serialization.Model):
         "reason_code": {"key": "reasonCode", "type": "str"},
     }
 
-    def __init__(self, *, reason_code: Optional[Union[str, "_models.ReasonCode"]] = None, **kwargs):
+    def __init__(self, *, reason_code: Optional[Union[str, "_models.ReasonCode"]] = None, **kwargs: Any) -> None:
         """
         :keyword reason_code: The reason for the restriction. As of now this can be "QuotaId" or
          "NotAvailableForSubscription". Quota Id is set when the SKU has requiredQuotas parameter as the
@@ -1581,8 +1588,8 @@ class ServiceSasParameters(_serialization.Model):  # pylint: disable=too-many-in
         content_encoding: Optional[str] = None,
         content_language: Optional[str] = None,
         content_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword canonicalized_resource: The canonical path to the signed resource. Required.
         :paramtype canonicalized_resource: str
@@ -1662,7 +1669,9 @@ class ServiceSpecification(_serialization.Model):
         "metric_specifications": {"key": "metricSpecifications", "type": "[MetricSpecification]"},
     }
 
-    def __init__(self, *, metric_specifications: Optional[List["_models.MetricSpecification"]] = None, **kwargs):
+    def __init__(
+        self, *, metric_specifications: Optional[List["_models.MetricSpecification"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword metric_specifications: Metric specifications of operation.
         :paramtype metric_specifications:
@@ -1726,8 +1735,8 @@ class Sku(_serialization.Model):
         *,
         name: Union[str, "_models.SkuName"],
         restrictions: Optional[List["_models.Restriction"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Gets or sets the sku name. Required for account creation; optional for update.
          Note that in older versions, sku name was called accountType. Required. Known values are:
@@ -1748,7 +1757,8 @@ class Sku(_serialization.Model):
 
 
 class SKUCapability(_serialization.Model):
-    """The capability information in the specified sku, including file encryption, network acls, change notification, etc.
+    """The capability information in the specified sku, including file encryption, network acls,
+    change notification, etc.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1769,7 +1779,7 @@ class SKUCapability(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -1777,7 +1787,8 @@ class SKUCapability(_serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1812,7 +1823,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1953,8 +1964,8 @@ class StorageAccount(TrackedResource):  # pylint: disable=too-many-instance-attr
         identity: Optional["_models.Identity"] = None,
         enable_https_traffic_only: bool = False,
         is_hns_enabled: bool = False,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2015,7 +2026,7 @@ class StorageAccountCheckNameAvailabilityParameters(_serialization.Model):
 
     type = "Microsoft.Storage/storageAccounts"
 
-    def __init__(self, *, name: str, **kwargs):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
         :keyword name: The storage account name. Required.
         :paramtype name: str
@@ -2098,8 +2109,8 @@ class StorageAccountCreateParameters(_serialization.Model):  # pylint: disable=t
         access_tier: Optional[Union[str, "_models.AccessTier"]] = None,
         enable_https_traffic_only: bool = False,
         is_hns_enabled: bool = False,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: Required. Gets or sets the sku name. Required.
         :paramtype sku: ~azure.mgmt.storage.v2018_03_01_preview.models.Sku
@@ -2176,7 +2187,7 @@ class StorageAccountKey(_serialization.Model):
         "permissions": {"key": "permissions", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.key_name = None
@@ -2202,7 +2213,7 @@ class StorageAccountListKeysResult(_serialization.Model):
         "keys": {"key": "keys", "type": "[StorageAccountKey]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.keys = None
@@ -2225,7 +2236,7 @@ class StorageAccountListResult(_serialization.Model):
         "value": {"key": "value", "type": "[StorageAccount]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2266,7 +2277,7 @@ class StorageAccountManagementPolicies(Resource):
         "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
     }
 
-    def __init__(self, *, policy: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, policy: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
          in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
@@ -2298,7 +2309,7 @@ class StorageAccountManagementPoliciesRulesProperty(ManagementPoliciesRules):
         "last_modified_time": {"key": "lastModifiedTime", "type": "iso-8601"},
     }
 
-    def __init__(self, *, policy: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, policy: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
          in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
@@ -2326,7 +2337,7 @@ class StorageAccountRegenerateKeyParameters(_serialization.Model):
         "key_name": {"key": "keyName", "type": "str"},
     }
 
-    def __init__(self, *, key_name: str, **kwargs):
+    def __init__(self, *, key_name: str, **kwargs: Any) -> None:
         """
         :keyword key_name: The name of storage keys that want to be regenerated, possible values are
          key1, key2. Required.
@@ -2392,8 +2403,8 @@ class StorageAccountUpdateParameters(_serialization.Model):
         access_tier: Optional[Union[str, "_models.AccessTier"]] = None,
         enable_https_traffic_only: bool = False,
         network_rule_set: Optional["_models.NetworkRuleSet"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: Gets or sets the SKU name. Note that the SKU name cannot be updated to
          Standard_ZRS or Premium_LRS, nor can accounts of those sku names be updated to any other value.
@@ -2453,7 +2464,7 @@ class StorageSkuListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Sku]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2492,7 +2503,7 @@ class TagProperty(_serialization.Model):
         "upn": {"key": "upn", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.tag = None
@@ -2543,7 +2554,7 @@ class UpdateHistoryProperty(_serialization.Model):
         "upn": {"key": "upn", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.update = None
@@ -2584,7 +2595,7 @@ class Usage(_serialization.Model):
         "name": {"key": "name", "type": "UsageName"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.unit = None
@@ -2604,7 +2615,7 @@ class UsageListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Usage]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Gets or sets the list of Storage Resource Usages.
         :paramtype value: list[~azure.mgmt.storage.v2018_03_01_preview.models.Usage]
@@ -2634,7 +2645,7 @@ class UsageName(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2673,8 +2684,8 @@ class VirtualNetworkRule(_serialization.Model):
         virtual_network_resource_id: str,
         action: Optional[Literal["Allow"]] = None,
         state: Optional[Union[str, "_models.State"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword virtual_network_resource_id: Resource ID of a subnet, for example:
          /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.

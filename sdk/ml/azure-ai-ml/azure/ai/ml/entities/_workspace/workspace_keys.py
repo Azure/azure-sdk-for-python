@@ -4,14 +4,14 @@
 
 from typing import List, Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ListWorkspaceKeysResult
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ListWorkspaceKeysResult
 
 
 class ContainerRegistryCredential:
     def __init__(
         self, *, location: Optional[str] = None, username: Optional[str] = None, passwords: Optional[List[str]] = None
     ):
-        """Key for ACR associated with given workspace
+        """Key for ACR associated with given workspace.
 
         :param location:  Location of the ACR
         :type location: str
@@ -28,7 +28,7 @@ class ContainerRegistryCredential:
 
 class NotebookAccessKeys:
     def __init__(self, *, primary_access_key: Optional[str] = None, secondary_access_key: Optional[str] = None):
-        """Key for notebook resource associated with given workspace
+        """Key for notebook resource associated with given workspace.
 
         :param primary_access_key:  Primary access key of notebook resource
         :type primary_access_key: str
@@ -50,7 +50,7 @@ class WorkspaceKeys:
         container_registry_credentials: Optional[ContainerRegistryCredential] = None,
         notebook_access_keys: Optional[NotebookAccessKeys] = None
     ):
-        """Workspace Keys
+        """Workspace Keys.
 
         :param user_storage_key: Key for storage account associated with given workspace
         :type user_storage_key: str
@@ -71,21 +71,20 @@ class WorkspaceKeys:
 
     @classmethod
     def _from_rest_object(cls, rest_obj: ListWorkspaceKeysResult) -> "WorkspaceKeys":
-
         if not rest_obj:
             return None
 
         container_registry_credentials = None
         notebook_access_keys = None
 
-        if hasattr(rest_obj, "container_registry_credentials"):
+        if hasattr(rest_obj, "container_registry_credentials") and rest_obj.container_registry_credentials is not None:
             container_registry_credentials = ContainerRegistryCredential(
                 location=rest_obj.container_registry_credentials.location,
                 username=rest_obj.container_registry_credentials.username,
                 passwords=rest_obj.container_registry_credentials.passwords,
             )
 
-        if hasattr(rest_obj, "notebook_access_keys"):
+        if hasattr(rest_obj, "notebook_access_keys") and rest_obj.notebook_access_keys is not None:
             notebook_access_keys = NotebookAccessKeys(
                 primary_access_key=rest_obj.notebook_access_keys.primary_access_key,
                 secondary_access_key=rest_obj.notebook_access_keys.secondary_access_key,

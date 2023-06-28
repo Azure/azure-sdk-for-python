@@ -6,11 +6,10 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import NlpLearningRateScheduler
+from azure.ai.ml._restclient.v2023_04_01_preview.models import NlpLearningRateScheduler
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
-from azure.ai.ml._utils.utils import camel_to_snake, snake_to_kebab
-from azure.ai.ml.constants import NlpModels
+from azure.ai.ml._utils.utils import camel_to_snake
 
 
 class NlpFixedParametersSchema(metaclass=PatchedSchemaMeta):
@@ -20,10 +19,7 @@ class NlpFixedParametersSchema(metaclass=PatchedSchemaMeta):
         allowed_values=[obj.value for obj in NlpLearningRateScheduler],
         casing_transform=camel_to_snake,
     )
-    model_name = StringTransformedEnum(
-        allowed_values=[obj.value for obj in NlpModels],
-        casing_transform=snake_to_kebab,
-    )
+    model_name = fields.Str()
     number_of_epochs = fields.Int()
     training_batch_size = fields.Int()
     validation_batch_size = fields.Int()

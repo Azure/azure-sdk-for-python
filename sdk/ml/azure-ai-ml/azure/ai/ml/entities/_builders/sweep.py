@@ -22,6 +22,7 @@ from azure.ai.ml.entities._credentials import (
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
 from azure.ai.ml.entities._job.pipeline._io import NodeInput
+from azure.ai.ml.entities._job.queue_settings import QueueSettings
 from azure.ai.ml.entities._job.sweep.early_termination_policy import (
     BanditPolicy,
     EarlyTerminationPolicy,
@@ -97,6 +98,8 @@ class Sweep(ParameterizedSweep, BaseNode):
         ManagedIdentityConfiguration,
         AmlTokenConfiguration,
         UserIdentityConfiguration]
+    :param queue_settings: Queue settings for the job.
+    :type queue_settings: QueueSettings
     """
 
     def __init__(
@@ -121,6 +124,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         identity: Optional[
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
+        queue_settings: Optional[QueueSettings] = None,
         **kwargs,
     ):
         # TODO: get rid of self._job_inputs, self._job_outputs once we have general Input
@@ -145,6 +149,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             limits=limits,
             early_termination=early_termination,
             search_space=search_space,
+            queue_settings=queue_settings,
         )
 
         self.identity = identity
@@ -207,6 +212,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             "objective",
             "early_termination",
             "search_space",
+            "queue_settings",
         ]
 
     def _to_rest_object(self, **kwargs) -> dict:
@@ -222,10 +228,10 @@ class Sweep(ParameterizedSweep, BaseNode):
             rest_obj["early_termination"] = self.early_termination._to_rest_object().as_dict()
 
         rest_obj.update(
-            dict(
-                type=self.type,
-                trial=self._get_trial_component_rest_obj(),
-            )
+            {
+                "type": self.type,
+                "trial": self._get_trial_component_rest_obj(),
+            }
         )
         return rest_obj
 
@@ -261,7 +267,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         if trial_component_id is None:
             return None
         if isinstance(trial_component_id, str):
-            return dict(componentId=trial_component_id)
+            return {"componentId": trial_component_id}
         if isinstance(trial_component_id, CommandComponent):
             return trial_component_id._to_rest_object()
         raise UserErrorException(f"invalid trial in sweep node {self.name}: {str(self.trial)}")
@@ -293,6 +299,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             inputs=self._job_inputs,
             outputs=self._job_outputs,
             identity=self.identity,
+            queue_settings=self.queue_settings,
         )
 
     @classmethod

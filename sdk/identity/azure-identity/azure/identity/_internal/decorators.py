@@ -7,7 +7,6 @@ import logging
 import json
 import base64
 
-from six import raise_from
 from azure.core.exceptions import ClientAuthenticationError
 
 from .utils import within_credential_chain
@@ -76,6 +75,6 @@ def wrap_exceptions(fn):
             raise
         except Exception as ex:  # pylint:disable=broad-except
             auth_error = ClientAuthenticationError(message="Authentication failed: {}".format(ex))
-            raise_from(auth_error, ex)
+            raise auth_error from ex
 
     return wrapper

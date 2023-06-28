@@ -29,7 +29,7 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.sim.begin_bulk_upload_encrypted(
+    response = client.sims.begin_bulk_upload_encrypted(
         resource_group_name="rg1",
         sim_group_name="testSimGroup",
         parameters={

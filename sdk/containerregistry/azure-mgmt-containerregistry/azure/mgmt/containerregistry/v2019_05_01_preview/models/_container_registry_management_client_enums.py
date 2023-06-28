@@ -7,31 +7,29 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class LastModifiedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that last modified the resource.
-    """
+
+class LastModifiedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that last modified the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the resource.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the resource."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -40,21 +38,23 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class TokenCertificateName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class TokenCertificateName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TokenCertificateName."""
 
     CERTIFICATE1 = "certificate1"
     CERTIFICATE2 = "certificate2"
 
-class TokenPasswordName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The password name "password1" or "password2"
-    """
+
+class TokenPasswordName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The password name "password1" or "password2"."""
 
     PASSWORD1 = "password1"
     PASSWORD2 = "password2"
 
-class TokenStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the token example enabled or disabled.
-    """
+
+class TokenStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the token example enabled or disabled."""
 
     ENABLED = "enabled"
     DISABLED = "disabled"

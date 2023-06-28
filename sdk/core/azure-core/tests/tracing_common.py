@@ -6,6 +6,7 @@
 from contextlib import contextmanager
 from azure.core.tracing import HttpSpanMixin, SpanKind
 from typing import Union, Sequence, Optional, Dict
+
 AttributeValue = Union[
     str,
     bool,
@@ -17,6 +18,7 @@ AttributeValue = Union[
     Sequence[float],
 ]
 Attributes = Optional[Dict[str, AttributeValue]]
+
 
 class FakeSpan(HttpSpanMixin, object):
     # Keep a fake context of the current one
@@ -74,7 +76,6 @@ class FakeSpan(HttpSpanMixin, object):
         """Get the span kind of this span."""
         return self._kind
 
-
     @kind.setter
     def kind(self, value):
         # type: (SpanKind) -> None
@@ -107,7 +108,7 @@ class FakeSpan(HttpSpanMixin, object):
         Returns a dictionary with the header labels and values.
         :return: A key value pair dictionary
         """
-        return {'traceparent': '123456789'}
+        return {"traceparent": "123456789"}
 
     def add_attribute(self, key, value):
         # type: (str, Union[str, int]) -> None
@@ -134,7 +135,7 @@ class FakeSpan(HttpSpanMixin, object):
         :return: a traceparent string
         :rtype: str
         """
-        return self.to_header()['traceparent']
+        return self.to_header()["traceparent"]
 
     @classmethod
     def link(cls, traceparent, attributes=None):
@@ -145,9 +146,7 @@ class FakeSpan(HttpSpanMixin, object):
         :param traceparent: A complete traceparent
         :type traceparent: str
         """
-        cls.link_from_headers({
-            'traceparent': traceparent
-        })
+        cls.link_from_headers({"traceparent": traceparent})
 
     @classmethod
     def link_from_headers(cls, headers, attributes=None):
@@ -180,8 +179,7 @@ class FakeSpan(HttpSpanMixin, object):
     @contextmanager
     def change_context(cls, span):
         # type: (Span) -> ContextManager
-        """Change the context for the life of this context manager.
-        """
+        """Change the context for the life of this context manager."""
         try:
             cls.CONTEXT.append(span)
             yield
@@ -191,8 +189,7 @@ class FakeSpan(HttpSpanMixin, object):
     @classmethod
     def set_current_span(cls, span):
         # type: (Span) -> None
-        """Not supported by OpenTelemetry.
-        """
+        """Not supported by OpenTelemetry."""
         raise NotImplementedError()
 
     @classmethod

@@ -11,6 +11,7 @@ from typing import (  # pylint: disable=unused-import
 
 import logging
 from os import fstat
+import stat
 from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
 
 import isodate
@@ -41,10 +42,7 @@ def serialize_iso(attr):
         if utc.tm_year > 9999 or utc.tm_year < 1:
             raise OverflowError("Hit max or min date")
 
-        date = (
-            f"{utc.tm_year:04}-{utc.tm_mon:02}-{utc.tm_mday:02}"
-            f"T{utc.tm_hour:02}:{utc.tm_min:02}:{utc.tm_sec:02}"
-        )
+        date = f"{utc.tm_year:04}-{utc.tm_mon:02}-{utc.tm_mday:02}T{utc.tm_hour:02}:{utc.tm_min:02}:{utc.tm_sec:02}"
         return date + 'Z'
     except (ValueError, OverflowError) as err:
         msg = "Unable to serialize datetime object."
@@ -71,7 +69,11 @@ def get_length(data):
             pass
         else:
             try:
-                return fstat(fileno).st_size
+                mode = fstat(fileno).st_mode
+                if stat.S_ISREG(mode) or stat.S_ISLNK(mode):
+                    #st_size only meaningful if regular file or symlink, other types
+                    # e.g. sockets may return misleading sizes like 0
+                    return fstat(fileno).st_size
             except OSError:
                 # Not a valid fileno, may be possible requests returned
                 # a socket number?
@@ -174,7 +176,7 @@ def serialize_batch_body(requests, batch_id):
 
     delimiter_bytes = (_get_batch_request_delimiter(batch_id, True, False) + _HTTP_LINE_ENDING).encode('utf-8')
     newline_bytes = _HTTP_LINE_ENDING.encode('utf-8')
-    batch_body = list()
+    batch_body = []
 
     content_index = 0
     for request in requests:
@@ -233,7 +235,7 @@ def _make_body_from_sub_request(sub_request):
      """
 
     # put the sub-request's headers into a list for efficient str concatenation
-    sub_request_body = list()
+    sub_request_body = []
 
     # get headers for ease of manipulation; remove headers as they are used
     headers = sub_request.headers

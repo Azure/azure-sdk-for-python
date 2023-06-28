@@ -38,8 +38,7 @@ module_logger = logging.getLogger(__name__)
 def _get_sorted_filtered_logs(
     logs_dict: dict, job_type: str, processed_logs: Optional[dict] = None, only_streamable=True
 ) -> List[str]:
-    """Filters log file names, sorts, and returns list starting with where we
-    left off last iteration.
+    """Filters log file names, sorts, and returns list starting with where we left off last iteration.
 
     :param run_details:
     :type run_details: dict
@@ -178,8 +177,7 @@ def stream_logs_until_completion(
     *,
     requests_pipeline: HttpPipeline
 ) -> None:
-    """Stream the experiment run output to the specified file handle. By
-    default the the file handle points to stdout.
+    """Stream the experiment run output to the specified file handle. By default the the file handle points to stdout.
 
     :param run_operations: The run history operations class.
     :type run_operations: RunOperations
@@ -196,6 +194,23 @@ def stream_logs_until_completion(
     job_name = job_resource.name
     studio_endpoint = job_resource.properties.services.get("Studio", None)
     studio_endpoint = studio_endpoint.endpoint if studio_endpoint else None
+    # Feature store jobs should be linked to the Feature Store Workspace UI.
+    # Todo: Consolidate this logic to service side
+    if "FeatureStoreJobType" in job_resource.properties.properties:
+        url_format = (
+            "https://ml.azure.com/featureStore/{fs_name}/featureSets/{fset_name}/{fset_version}/matJobs/"
+            "jobs/{run_id}?wsid=/subscriptions/{fs_sub_id}/resourceGroups/{fs_rg_name}/providers/"
+            "Microsoft.MachineLearningServices/workspaces/{fs_name}"
+        )
+        studio_endpoint = url_format.format(
+            fs_name=job_resource.properties.properties["FeatureStoreName"],
+            fs_sub_id=run_operations._subscription_id,
+            fs_rg_name=run_operations._resource_group_name,
+            fset_name=job_resource.properties.properties["FeatureSetName"],
+            fset_version=job_resource.properties.properties["FeatureSetVersion"],
+            run_id=job_name,
+        )
+
     file_handle = sys.stdout
     ds_properties = None
     prefix = None
@@ -303,7 +318,7 @@ def stream_logs_until_completion(
 
         file_handle.write("\n")
         file_handle.flush()
-    except KeyboardInterrupt:
+    except KeyboardInterrupt as e:
         error_message = (
             "The output streaming for the run interrupted.\n"
             "But the run is still executing on the compute target. \n"
@@ -315,7 +330,7 @@ def stream_logs_until_completion(
             target=ErrorTarget.JOB,
             no_personal_data_message=error_message,
             error_category=ErrorCategory.USER_ERROR,
-        )
+        ) from e
 
 
 def get_git_properties() -> Dict[str, str]:
@@ -336,8 +351,7 @@ def get_git_properties() -> Dict[str, str]:
         return str(value).strip() or None
 
     def _run_git_cmd(args) -> Optional[str]:
-        """Return the output of running git with arguments, or None if it
-        fails."""
+        """Return the output of running git with arguments, or None if it fails."""
         try:
             with open(os.devnull, "wb") as devnull:
                 return subprocess.check_output(["git"] + list(args), stderr=devnull).decode()
@@ -400,8 +414,7 @@ def get_job_output_uris_from_dataplane(
     model_dataplane_operations: ModelDataplaneOperations,
     output_names: Optional[Union[Iterable[str], str]] = None,
 ) -> Dict[str, str]:
-    """Returns the output path for the given output in cloud storage of the
-    given job.
+    """Returns the output path for the given output in cloud storage of the given job.
 
     If no output names are given, the output paths for all outputs will be returned.
     URIs obtained from the service will be in the long-form azureml:// format.

@@ -28,13 +28,13 @@ from ._models import TranslationStatus
 
 ResponseType = Union[HttpResponse, AsyncHttpResponse]
 PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
-PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 _FINISHED = frozenset(["succeeded", "cancelled", "cancelling", "failed"])
 _FAILED = frozenset(["validationfailed"])
 
 
-class DocumentTranslationLROPoller(LROPoller[PollingReturnType]):
+class DocumentTranslationLROPoller(LROPoller[PollingReturnType_co]):
     """A custom poller implementation for Document Translation. Call `result()` on the poller to return
     a pageable of :class:`~azure.ai.translation.document.DocumentStatus`."""
 
@@ -65,12 +65,12 @@ class DocumentTranslationLROPoller(LROPoller[PollingReturnType]):
         return TranslationStatus(id=self._polling_method._get_id_from_headers())  # type: ignore # pylint: disable=protected-access
 
     @classmethod
-    def from_continuation_token(  # type: ignore
+    def from_continuation_token(
         cls,
-        polling_method: "DocumentTranslationLROPollingMethod",
-        continuation_token: str,
+        polling_method,
+        continuation_token,
         **kwargs: Any
-    ) -> "DocumentTranslationLROPoller":  # type: ignore
+    ):
         """
         :meta private:
         """
@@ -95,7 +95,7 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
         return _TranslationStatus.deserialize(self._pipeline_response)
 
     def _get_id_from_headers(self) -> str:
-        return self._initial_response.http_response.headers[
+        return self._initial_response.http_response.headers[  # type: ignore
             "Operation-Location"
         ].split("/batches/")[1]
 
@@ -151,13 +151,15 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
         """
 
         while not self.finished():
+            self.update_status()
+        while not self.finished():
             self._delay()
             self.update_status()
 
         if self._failed(self.status()):
             raise OperationFailed("Operation failed or canceled")
 
-        final_get_url = self._operation.get_final_get_url(self._pipeline_response)
+        final_get_url = self._operation.get_final_get_url(self._pipeline_response)  # type: ignore
         if final_get_url:
             self._pipeline_response = self.request_status(final_get_url)
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
@@ -181,8 +183,10 @@ class TranslationPolling(OperationResourcePolling):
         return False
 
     def _set_async_url_if_present(self, response: ResponseType) -> None:
-        self._async_url = response.headers.get(self._operation_location_header)
-        if not self._async_url:
+        location_header = response.headers.get(self._operation_location_header)
+        if location_header:
+            self._async_url = location_header
+        else:
             self._async_url = response.request.url
 
     def get_status(self, pipeline_response: PipelineResponseType) -> str:

@@ -142,6 +142,7 @@ from ._models_py3 import StorageProfile
 from ._models_py3 import SubResource
 from ._models_py3 import SubResourceReadOnly
 from ._models_py3 import SubResourceWithColocationStatus
+from ._models_py3 import SystemData
 from ._models_py3 import TerminateNotificationProfile
 from ._models_py3 import ThrottledRequestsInput
 from ._models_py3 import UefiSettings
@@ -328,7 +329,7 @@ from ._compute_management_client_enums import WindowsPatchAssessmentMode
 from ._compute_management_client_enums import WindowsVMGuestPatchAutomaticByPlatformRebootSetting
 from ._compute_management_client_enums import WindowsVMGuestPatchMode
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -468,6 +469,7 @@ __all__ = [
     "SubResource",
     "SubResourceReadOnly",
     "SubResourceWithColocationStatus",
+    "SystemData",
     "TerminateNotificationProfile",
     "ThrottledRequestsInput",
     "UefiSettings",

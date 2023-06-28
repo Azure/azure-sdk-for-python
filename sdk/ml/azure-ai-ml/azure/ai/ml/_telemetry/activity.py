@@ -23,7 +23,7 @@ from uuid import uuid4
 from marshmallow import ValidationError
 
 from azure.ai.ml._utils.utils import _is_user_error_from_exception_type, _is_user_error_from_status_code, _str_to_bool
-from azure.ai.ml.exceptions import ErrorCategory, MLException
+from azure.ai.ml.exceptions import ErrorCategory, MlException
 from azure.core.exceptions import HttpResponseError
 
 # Get environment variable IS_IN_CI_PIPELINE to decide whether it's in CI test
@@ -121,8 +121,8 @@ def error_preprocess(activityLogger, exception):
         activityLogger.activity_info["errorCategory"] = error_category
         if exception.inner_exception:
             activityLogger.activity_info["innerException"] = type(exception.inner_exception).__name__
-    elif isinstance(exception, MLException):
-        # If exception is MLException, it will have error_category, message and target attributes and will log those
+    elif isinstance(exception, MlException):
+        # If exception is MlException, it will have error_category, message and target attributes and will log those
         # information in log_activity, no need more actions here.
         pass
     elif isinstance(exception, ValidationError):
@@ -166,11 +166,11 @@ def log_activity(
     :param custom_dimensions: The custom properties of the activity.
     :type custom_dimensions: dict
     """
-    activity_info = dict(
-        activity_id=str(uuid.uuid4()),
-        activity_name=activity_name,
-        activity_type=activity_type,
-    )
+    activity_info = {
+        "activity_id": str(uuid.uuid4()),
+        "activity_name": activity_name,
+        "activity_type": activity_type,
+    }
     custom_dimensions = custom_dimensions or {}
     custom_dimensions.update({"client_request_id": str(uuid4())})
     activity_info.update(custom_dimensions)
@@ -191,7 +191,7 @@ def log_activity(
         # All the system and unknown errors except for NotImplementedError will be wrapped with a new exception.
         if IS_IN_CI_PIPELINE and not isinstance(e, NotImplementedError):
             if (
-                isinstance(exception, MLException)
+                isinstance(exception, MlException)
                 and exception.error_category  # pylint: disable=no-member
                 in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN]
             ) or (
@@ -214,7 +214,7 @@ def log_activity(
             if exception:
                 message += ", Exception={}".format(type(exception).__name__)
                 activityLogger.activity_info["exception"] = type(exception).__name__
-                if isinstance(exception, MLException):
+                if isinstance(exception, MlException):
                     activityLogger.activity_info[
                         "errorMessage"
                     ] = exception.no_personal_data_message  # pylint: disable=no-member

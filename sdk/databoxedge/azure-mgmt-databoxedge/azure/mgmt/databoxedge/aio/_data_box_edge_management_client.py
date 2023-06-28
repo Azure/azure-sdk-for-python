@@ -11,12 +11,11 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from msrest import Deserializer, Serializer
 
+from .._serialization import Deserializer, Serializer
 from ._configuration import DataBoxEdgeManagementClientConfiguration
 
 if TYPE_CHECKING:
@@ -41,9 +40,9 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The subscription ID.
+    :param subscription_id: The subscription ID. Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -54,7 +53,7 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2020-09-01'
+    DEFAULT_API_VERSION = '2022-03-01'
     _PROFILE_TAG = "azure.mgmt.databoxedge.DataBoxEdgeManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -69,12 +68,10 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
         credential: "AsyncTokenCredential",
         subscription_id: str,
         api_version: Optional[str] = None,
-        base_url: Optional[str] = None,
+        base_url: str = "https://management.azure.com",
         profile: KnownProfiles = KnownProfiles.default,
-        **kwargs  # type: Any
+        **kwargs: Any
     ) -> None:
-        if not base_url:
-            base_url = 'https://management.azure.com'
         self._config = DataBoxEdgeManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(DataBoxEdgeManagementClient, self).__init__(
@@ -96,7 +93,10 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01-preview: :mod:`v2020_05_01_preview.models<azure.mgmt.databoxedge.v2020_05_01_preview.models>`
            * 2020-09-01: :mod:`v2020_09_01.models<azure.mgmt.databoxedge.v2020_09_01.models>`
            * 2020-09-01-preview: :mod:`v2020_09_01_preview.models<azure.mgmt.databoxedge.v2020_09_01_preview.models>`
+           * 2020-12-01: :mod:`v2020_12_01.models<azure.mgmt.databoxedge.v2020_12_01.models>`
+           * 2021-02-01: :mod:`v2021_02_01.models<azure.mgmt.databoxedge.v2021_02_01.models>`
            * 2021-02-01-preview: :mod:`v2021_02_01_preview.models<azure.mgmt.databoxedge.v2021_02_01_preview.models>`
+           * 2022-03-01: :mod:`v2022_03_01.models<azure.mgmt.databoxedge.v2022_03_01.models>`
         """
         if api_version == '2019-03-01':
             from ..v2019_03_01 import models
@@ -116,8 +116,17 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview import models
             return models
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01 import models
+            return models
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01 import models
+            return models
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview import models
+            return models
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -127,17 +136,27 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2020-09-01: :class:`AddonsOperations<azure.mgmt.databoxedge.v2020_09_01.aio.operations.AddonsOperations>`
            * 2020-09-01-preview: :class:`AddonsOperations<azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations.AddonsOperations>`
+           * 2020-12-01: :class:`AddonsOperations<azure.mgmt.databoxedge.v2020_12_01.aio.operations.AddonsOperations>`
+           * 2021-02-01: :class:`AddonsOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.AddonsOperations>`
            * 2021-02-01-preview: :class:`AddonsOperations<azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations.AddonsOperations>`
+           * 2022-03-01: :class:`AddonsOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.AddonsOperations>`
         """
         api_version = self._get_api_version('addons')
         if api_version == '2020-09-01':
             from ..v2020_09_01.aio.operations import AddonsOperations as OperationClass
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview.aio.operations import AddonsOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01.aio.operations import AddonsOperations as OperationClass
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import AddonsOperations as OperationClass
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview.aio.operations import AddonsOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import AddonsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'addons'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -150,7 +169,10 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01-preview: :class:`AlertsOperations<azure.mgmt.databoxedge.v2020_05_01_preview.aio.operations.AlertsOperations>`
            * 2020-09-01: :class:`AlertsOperations<azure.mgmt.databoxedge.v2020_09_01.aio.operations.AlertsOperations>`
            * 2020-09-01-preview: :class:`AlertsOperations<azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations.AlertsOperations>`
+           * 2020-12-01: :class:`AlertsOperations<azure.mgmt.databoxedge.v2020_12_01.aio.operations.AlertsOperations>`
+           * 2021-02-01: :class:`AlertsOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.AlertsOperations>`
            * 2021-02-01-preview: :class:`AlertsOperations<azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations.AlertsOperations>`
+           * 2022-03-01: :class:`AlertsOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.AlertsOperations>`
         """
         api_version = self._get_api_version('alerts')
         if api_version == '2019-03-01':
@@ -165,10 +187,17 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_09_01.aio.operations import AlertsOperations as OperationClass
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview.aio.operations import AlertsOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01.aio.operations import AlertsOperations as OperationClass
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import AlertsOperations as OperationClass
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview.aio.operations import AlertsOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import AlertsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'alerts'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -178,7 +207,10 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01-preview: :class:`AvailableSkusOperations<azure.mgmt.databoxedge.v2020_05_01_preview.aio.operations.AvailableSkusOperations>`
            * 2020-09-01: :class:`AvailableSkusOperations<azure.mgmt.databoxedge.v2020_09_01.aio.operations.AvailableSkusOperations>`
            * 2020-09-01-preview: :class:`AvailableSkusOperations<azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations.AvailableSkusOperations>`
+           * 2020-12-01: :class:`AvailableSkusOperations<azure.mgmt.databoxedge.v2020_12_01.aio.operations.AvailableSkusOperations>`
+           * 2021-02-01: :class:`AvailableSkusOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.AvailableSkusOperations>`
            * 2021-02-01-preview: :class:`AvailableSkusOperations<azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations.AvailableSkusOperations>`
+           * 2022-03-01: :class:`AvailableSkusOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.AvailableSkusOperations>`
         """
         api_version = self._get_api_version('available_skus')
         if api_version == '2020-05-01-preview':
@@ -187,10 +219,17 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_09_01.aio.operations import AvailableSkusOperations as OperationClass
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview.aio.operations import AvailableSkusOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01.aio.operations import AvailableSkusOperations as OperationClass
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import AvailableSkusOperations as OperationClass
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview.aio.operations import AvailableSkusOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import AvailableSkusOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'available_skus'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -203,7 +242,10 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01-preview: :class:`BandwidthSchedulesOperations<azure.mgmt.databoxedge.v2020_05_01_preview.aio.operations.BandwidthSchedulesOperations>`
            * 2020-09-01: :class:`BandwidthSchedulesOperations<azure.mgmt.databoxedge.v2020_09_01.aio.operations.BandwidthSchedulesOperations>`
            * 2020-09-01-preview: :class:`BandwidthSchedulesOperations<azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations.BandwidthSchedulesOperations>`
+           * 2020-12-01: :class:`BandwidthSchedulesOperations<azure.mgmt.databoxedge.v2020_12_01.aio.operations.BandwidthSchedulesOperations>`
+           * 2021-02-01: :class:`BandwidthSchedulesOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.BandwidthSchedulesOperations>`
            * 2021-02-01-preview: :class:`BandwidthSchedulesOperations<azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations.BandwidthSchedulesOperations>`
+           * 2022-03-01: :class:`BandwidthSchedulesOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.BandwidthSchedulesOperations>`
         """
         api_version = self._get_api_version('bandwidth_schedules')
         if api_version == '2019-03-01':
@@ -218,10 +260,17 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_09_01.aio.operations import BandwidthSchedulesOperations as OperationClass
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview.aio.operations import BandwidthSchedulesOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01.aio.operations import BandwidthSchedulesOperations as OperationClass
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import BandwidthSchedulesOperations as OperationClass
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview.aio.operations import BandwidthSchedulesOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import BandwidthSchedulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'bandwidth_schedules'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -232,7 +281,10 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01-preview: :class:`ContainersOperations<azure.mgmt.databoxedge.v2020_05_01_preview.aio.operations.ContainersOperations>`
            * 2020-09-01: :class:`ContainersOperations<azure.mgmt.databoxedge.v2020_09_01.aio.operations.ContainersOperations>`
            * 2020-09-01-preview: :class:`ContainersOperations<azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations.ContainersOperations>`
+           * 2020-12-01: :class:`ContainersOperations<azure.mgmt.databoxedge.v2020_12_01.aio.operations.ContainersOperations>`
+           * 2021-02-01: :class:`ContainersOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.ContainersOperations>`
            * 2021-02-01-preview: :class:`ContainersOperations<azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations.ContainersOperations>`
+           * 2022-03-01: :class:`ContainersOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.ContainersOperations>`
         """
         api_version = self._get_api_version('containers')
         if api_version == '2019-08-01':
@@ -243,10 +295,45 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_09_01.aio.operations import ContainersOperations as OperationClass
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview.aio.operations import ContainersOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01.aio.operations import ContainersOperations as OperationClass
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import ContainersOperations as OperationClass
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview.aio.operations import ContainersOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import ContainersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'containers'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def device_capacity_check(self):
+        """Instance depends on the API version:
+
+           * 2022-03-01: :class:`DeviceCapacityCheckOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.DeviceCapacityCheckOperations>`
+        """
+        api_version = self._get_api_version('device_capacity_check')
+        if api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import DeviceCapacityCheckOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'device_capacity_check'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def device_capacity_info(self):
+        """Instance depends on the API version:
+
+           * 2022-03-01: :class:`DeviceCapacityInfoOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.DeviceCapacityInfoOperations>`
+        """
+        api_version = self._get_api_version('device_capacity_info')
+        if api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import DeviceCapacityInfoOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'device_capacity_info'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -259,7 +346,10 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01-preview: :class:`DevicesOperations<azure.mgmt.databoxedge.v2020_05_01_preview.aio.operations.DevicesOperations>`
            * 2020-09-01: :class:`DevicesOperations<azure.mgmt.databoxedge.v2020_09_01.aio.operations.DevicesOperations>`
            * 2020-09-01-preview: :class:`DevicesOperations<azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations.DevicesOperations>`
+           * 2020-12-01: :class:`DevicesOperations<azure.mgmt.databoxedge.v2020_12_01.aio.operations.DevicesOperations>`
+           * 2021-02-01: :class:`DevicesOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.DevicesOperations>`
            * 2021-02-01-preview: :class:`DevicesOperations<azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations.DevicesOperations>`
+           * 2022-03-01: :class:`DevicesOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.DevicesOperations>`
         """
         api_version = self._get_api_version('devices')
         if api_version == '2019-03-01':
@@ -274,10 +364,34 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_09_01.aio.operations import DevicesOperations as OperationClass
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview.aio.operations import DevicesOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01.aio.operations import DevicesOperations as OperationClass
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import DevicesOperations as OperationClass
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview.aio.operations import DevicesOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import DevicesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'devices'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def diagnostic_settings(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01: :class:`DiagnosticSettingsOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.DiagnosticSettingsOperations>`
+           * 2022-03-01: :class:`DiagnosticSettingsOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.DiagnosticSettingsOperations>`
+        """
+        api_version = self._get_api_version('diagnostic_settings')
+        if api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import DiagnosticSettingsOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import DiagnosticSettingsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'diagnostic_settings'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -290,7 +404,10 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01-preview: :class:`JobsOperations<azure.mgmt.databoxedge.v2020_05_01_preview.aio.operations.JobsOperations>`
            * 2020-09-01: :class:`JobsOperations<azure.mgmt.databoxedge.v2020_09_01.aio.operations.JobsOperations>`
            * 2020-09-01-preview: :class:`JobsOperations<azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations.JobsOperations>`
+           * 2020-12-01: :class:`JobsOperations<azure.mgmt.databoxedge.v2020_12_01.aio.operations.JobsOperations>`
+           * 2021-02-01: :class:`JobsOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.JobsOperations>`
            * 2021-02-01-preview: :class:`JobsOperations<azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations.JobsOperations>`
+           * 2022-03-01: :class:`JobsOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.JobsOperations>`
         """
         api_version = self._get_api_version('jobs')
         if api_version == '2019-03-01':
@@ -305,10 +422,17 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_09_01.aio.operations import JobsOperations as OperationClass
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview.aio.operations import JobsOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01.aio.operations import JobsOperations as OperationClass
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import JobsOperations as OperationClass
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview.aio.operations import JobsOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import JobsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'jobs'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -317,17 +441,27 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2020-09-01: :class:`MonitoringConfigOperations<azure.mgmt.databoxedge.v2020_09_01.aio.operations.MonitoringConfigOperations>`
            * 2020-09-01-preview: :class:`MonitoringConfigOperations<azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations.MonitoringConfigOperations>`
+           * 2020-12-01: :class:`MonitoringConfigOperations<azure.mgmt.databoxedge.v2020_12_01.aio.operations.MonitoringConfigOperations>`
+           * 2021-02-01: :class:`MonitoringConfigOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.MonitoringConfigOperations>`
            * 2021-02-01-preview: :class:`MonitoringConfigOperations<azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations.MonitoringConfigOperations>`
+           * 2022-03-01: :class:`MonitoringConfigOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.MonitoringConfigOperations>`
         """
         api_version = self._get_api_version('monitoring_config')
         if api_version == '2020-09-01':
             from ..v2020_09_01.aio.operations import MonitoringConfigOperations as OperationClass
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview.aio.operations import MonitoringConfigOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01.aio.operations import MonitoringConfigOperations as OperationClass
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import MonitoringConfigOperations as OperationClass
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview.aio.operations import MonitoringConfigOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import MonitoringConfigOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'monitoring_config'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -339,7 +473,10 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01-preview: :class:`NodesOperations<azure.mgmt.databoxedge.v2020_05_01_preview.aio.operations.NodesOperations>`
            * 2020-09-01: :class:`NodesOperations<azure.mgmt.databoxedge.v2020_09_01.aio.operations.NodesOperations>`
            * 2020-09-01-preview: :class:`NodesOperations<azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations.NodesOperations>`
+           * 2020-12-01: :class:`NodesOperations<azure.mgmt.databoxedge.v2020_12_01.aio.operations.NodesOperations>`
+           * 2021-02-01: :class:`NodesOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.NodesOperations>`
            * 2021-02-01-preview: :class:`NodesOperations<azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations.NodesOperations>`
+           * 2022-03-01: :class:`NodesOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.NodesOperations>`
         """
         api_version = self._get_api_version('nodes')
         if api_version == '2019-07-01':
@@ -352,10 +489,17 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_09_01.aio.operations import NodesOperations as OperationClass
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview.aio.operations import NodesOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01.aio.operations import NodesOperations as OperationClass
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import NodesOperations as OperationClass
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview.aio.operations import NodesOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import NodesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'nodes'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -368,7 +512,10 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01-preview: :class:`Operations<azure.mgmt.databoxedge.v2020_05_01_preview.aio.operations.Operations>`
            * 2020-09-01: :class:`Operations<azure.mgmt.databoxedge.v2020_09_01.aio.operations.Operations>`
            * 2020-09-01-preview: :class:`Operations<azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations.Operations>`
+           * 2020-12-01: :class:`Operations<azure.mgmt.databoxedge.v2020_12_01.aio.operations.Operations>`
+           * 2021-02-01: :class:`Operations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.Operations>`
            * 2021-02-01-preview: :class:`Operations<azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations.Operations>`
+           * 2022-03-01: :class:`Operations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2019-03-01':
@@ -383,10 +530,17 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_09_01.aio.operations import Operations as OperationClass
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview.aio.operations import Operations as OperationClass
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01.aio.operations import Operations as OperationClass
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import Operations as OperationClass
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview.aio.operations import Operations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -399,7 +553,10 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01-preview: :class:`OperationsStatusOperations<azure.mgmt.databoxedge.v2020_05_01_preview.aio.operations.OperationsStatusOperations>`
            * 2020-09-01: :class:`OperationsStatusOperations<azure.mgmt.databoxedge.v2020_09_01.aio.operations.OperationsStatusOperations>`
            * 2020-09-01-preview: :class:`OperationsStatusOperations<azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations.OperationsStatusOperations>`
+           * 2020-12-01: :class:`OperationsStatusOperations<azure.mgmt.databoxedge.v2020_12_01.aio.operations.OperationsStatusOperations>`
+           * 2021-02-01: :class:`OperationsStatusOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.OperationsStatusOperations>`
            * 2021-02-01-preview: :class:`OperationsStatusOperations<azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations.OperationsStatusOperations>`
+           * 2022-03-01: :class:`OperationsStatusOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.OperationsStatusOperations>`
         """
         api_version = self._get_api_version('operations_status')
         if api_version == '2019-03-01':
@@ -414,10 +571,17 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_09_01.aio.operations import OperationsStatusOperations as OperationClass
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview.aio.operations import OperationsStatusOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01.aio.operations import OperationsStatusOperations as OperationClass
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import OperationsStatusOperations as OperationClass
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview.aio.operations import OperationsStatusOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import OperationsStatusOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations_status'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -430,7 +594,10 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01-preview: :class:`OrdersOperations<azure.mgmt.databoxedge.v2020_05_01_preview.aio.operations.OrdersOperations>`
            * 2020-09-01: :class:`OrdersOperations<azure.mgmt.databoxedge.v2020_09_01.aio.operations.OrdersOperations>`
            * 2020-09-01-preview: :class:`OrdersOperations<azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations.OrdersOperations>`
+           * 2020-12-01: :class:`OrdersOperations<azure.mgmt.databoxedge.v2020_12_01.aio.operations.OrdersOperations>`
+           * 2021-02-01: :class:`OrdersOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.OrdersOperations>`
            * 2021-02-01-preview: :class:`OrdersOperations<azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations.OrdersOperations>`
+           * 2022-03-01: :class:`OrdersOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.OrdersOperations>`
         """
         api_version = self._get_api_version('orders')
         if api_version == '2019-03-01':
@@ -445,10 +612,17 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_09_01.aio.operations import OrdersOperations as OperationClass
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview.aio.operations import OrdersOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01.aio.operations import OrdersOperations as OperationClass
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import OrdersOperations as OperationClass
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview.aio.operations import OrdersOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import OrdersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'orders'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -461,7 +635,10 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01-preview: :class:`RolesOperations<azure.mgmt.databoxedge.v2020_05_01_preview.aio.operations.RolesOperations>`
            * 2020-09-01: :class:`RolesOperations<azure.mgmt.databoxedge.v2020_09_01.aio.operations.RolesOperations>`
            * 2020-09-01-preview: :class:`RolesOperations<azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations.RolesOperations>`
+           * 2020-12-01: :class:`RolesOperations<azure.mgmt.databoxedge.v2020_12_01.aio.operations.RolesOperations>`
+           * 2021-02-01: :class:`RolesOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.RolesOperations>`
            * 2021-02-01-preview: :class:`RolesOperations<azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations.RolesOperations>`
+           * 2022-03-01: :class:`RolesOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.RolesOperations>`
         """
         api_version = self._get_api_version('roles')
         if api_version == '2019-03-01':
@@ -476,10 +653,17 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_09_01.aio.operations import RolesOperations as OperationClass
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview.aio.operations import RolesOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01.aio.operations import RolesOperations as OperationClass
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import RolesOperations as OperationClass
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview.aio.operations import RolesOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import RolesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'roles'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -492,7 +676,10 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01-preview: :class:`SharesOperations<azure.mgmt.databoxedge.v2020_05_01_preview.aio.operations.SharesOperations>`
            * 2020-09-01: :class:`SharesOperations<azure.mgmt.databoxedge.v2020_09_01.aio.operations.SharesOperations>`
            * 2020-09-01-preview: :class:`SharesOperations<azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations.SharesOperations>`
+           * 2020-12-01: :class:`SharesOperations<azure.mgmt.databoxedge.v2020_12_01.aio.operations.SharesOperations>`
+           * 2021-02-01: :class:`SharesOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.SharesOperations>`
            * 2021-02-01-preview: :class:`SharesOperations<azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations.SharesOperations>`
+           * 2022-03-01: :class:`SharesOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.SharesOperations>`
         """
         api_version = self._get_api_version('shares')
         if api_version == '2019-03-01':
@@ -507,10 +694,17 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_09_01.aio.operations import SharesOperations as OperationClass
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview.aio.operations import SharesOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01.aio.operations import SharesOperations as OperationClass
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import SharesOperations as OperationClass
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview.aio.operations import SharesOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import SharesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'shares'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -527,6 +721,7 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_05_01_preview.aio.operations import SkusOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'skus'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -539,7 +734,10 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01-preview: :class:`StorageAccountCredentialsOperations<azure.mgmt.databoxedge.v2020_05_01_preview.aio.operations.StorageAccountCredentialsOperations>`
            * 2020-09-01: :class:`StorageAccountCredentialsOperations<azure.mgmt.databoxedge.v2020_09_01.aio.operations.StorageAccountCredentialsOperations>`
            * 2020-09-01-preview: :class:`StorageAccountCredentialsOperations<azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations.StorageAccountCredentialsOperations>`
+           * 2020-12-01: :class:`StorageAccountCredentialsOperations<azure.mgmt.databoxedge.v2020_12_01.aio.operations.StorageAccountCredentialsOperations>`
+           * 2021-02-01: :class:`StorageAccountCredentialsOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.StorageAccountCredentialsOperations>`
            * 2021-02-01-preview: :class:`StorageAccountCredentialsOperations<azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations.StorageAccountCredentialsOperations>`
+           * 2022-03-01: :class:`StorageAccountCredentialsOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.StorageAccountCredentialsOperations>`
         """
         api_version = self._get_api_version('storage_account_credentials')
         if api_version == '2019-03-01':
@@ -554,10 +752,17 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_09_01.aio.operations import StorageAccountCredentialsOperations as OperationClass
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview.aio.operations import StorageAccountCredentialsOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01.aio.operations import StorageAccountCredentialsOperations as OperationClass
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import StorageAccountCredentialsOperations as OperationClass
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview.aio.operations import StorageAccountCredentialsOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import StorageAccountCredentialsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'storage_account_credentials'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -568,7 +773,10 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01-preview: :class:`StorageAccountsOperations<azure.mgmt.databoxedge.v2020_05_01_preview.aio.operations.StorageAccountsOperations>`
            * 2020-09-01: :class:`StorageAccountsOperations<azure.mgmt.databoxedge.v2020_09_01.aio.operations.StorageAccountsOperations>`
            * 2020-09-01-preview: :class:`StorageAccountsOperations<azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations.StorageAccountsOperations>`
+           * 2020-12-01: :class:`StorageAccountsOperations<azure.mgmt.databoxedge.v2020_12_01.aio.operations.StorageAccountsOperations>`
+           * 2021-02-01: :class:`StorageAccountsOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.StorageAccountsOperations>`
            * 2021-02-01-preview: :class:`StorageAccountsOperations<azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations.StorageAccountsOperations>`
+           * 2022-03-01: :class:`StorageAccountsOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.StorageAccountsOperations>`
         """
         api_version = self._get_api_version('storage_accounts')
         if api_version == '2019-08-01':
@@ -579,10 +787,34 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_09_01.aio.operations import StorageAccountsOperations as OperationClass
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview.aio.operations import StorageAccountsOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01.aio.operations import StorageAccountsOperations as OperationClass
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import StorageAccountsOperations as OperationClass
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview.aio.operations import StorageAccountsOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import StorageAccountsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'storage_accounts'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def support_packages(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01: :class:`SupportPackagesOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.SupportPackagesOperations>`
+           * 2022-03-01: :class:`SupportPackagesOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.SupportPackagesOperations>`
+        """
+        api_version = self._get_api_version('support_packages')
+        if api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import SupportPackagesOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import SupportPackagesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'support_packages'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -595,7 +827,10 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01-preview: :class:`TriggersOperations<azure.mgmt.databoxedge.v2020_05_01_preview.aio.operations.TriggersOperations>`
            * 2020-09-01: :class:`TriggersOperations<azure.mgmt.databoxedge.v2020_09_01.aio.operations.TriggersOperations>`
            * 2020-09-01-preview: :class:`TriggersOperations<azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations.TriggersOperations>`
+           * 2020-12-01: :class:`TriggersOperations<azure.mgmt.databoxedge.v2020_12_01.aio.operations.TriggersOperations>`
+           * 2021-02-01: :class:`TriggersOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.TriggersOperations>`
            * 2021-02-01-preview: :class:`TriggersOperations<azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations.TriggersOperations>`
+           * 2022-03-01: :class:`TriggersOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.TriggersOperations>`
         """
         api_version = self._get_api_version('triggers')
         if api_version == '2019-03-01':
@@ -610,10 +845,17 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_09_01.aio.operations import TriggersOperations as OperationClass
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview.aio.operations import TriggersOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01.aio.operations import TriggersOperations as OperationClass
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import TriggersOperations as OperationClass
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview.aio.operations import TriggersOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import TriggersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'triggers'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -626,7 +868,10 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01-preview: :class:`UsersOperations<azure.mgmt.databoxedge.v2020_05_01_preview.aio.operations.UsersOperations>`
            * 2020-09-01: :class:`UsersOperations<azure.mgmt.databoxedge.v2020_09_01.aio.operations.UsersOperations>`
            * 2020-09-01-preview: :class:`UsersOperations<azure.mgmt.databoxedge.v2020_09_01_preview.aio.operations.UsersOperations>`
+           * 2020-12-01: :class:`UsersOperations<azure.mgmt.databoxedge.v2020_12_01.aio.operations.UsersOperations>`
+           * 2021-02-01: :class:`UsersOperations<azure.mgmt.databoxedge.v2021_02_01.aio.operations.UsersOperations>`
            * 2021-02-01-preview: :class:`UsersOperations<azure.mgmt.databoxedge.v2021_02_01_preview.aio.operations.UsersOperations>`
+           * 2022-03-01: :class:`UsersOperations<azure.mgmt.databoxedge.v2022_03_01.aio.operations.UsersOperations>`
         """
         api_version = self._get_api_version('users')
         if api_version == '2019-03-01':
@@ -641,10 +886,17 @@ class DataBoxEdgeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2020_09_01.aio.operations import UsersOperations as OperationClass
         elif api_version == '2020-09-01-preview':
             from ..v2020_09_01_preview.aio.operations import UsersOperations as OperationClass
+        elif api_version == '2020-12-01':
+            from ..v2020_12_01.aio.operations import UsersOperations as OperationClass
+        elif api_version == '2021-02-01':
+            from ..v2021_02_01.aio.operations import UsersOperations as OperationClass
         elif api_version == '2021-02-01-preview':
             from ..v2021_02_01_preview.aio.operations import UsersOperations as OperationClass
+        elif api_version == '2022-03-01':
+            from ..v2022_03_01.aio.operations import UsersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'users'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     async def close(self):

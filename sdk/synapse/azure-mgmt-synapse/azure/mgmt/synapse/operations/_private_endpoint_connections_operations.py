@@ -580,7 +580,7 @@ class PrivateEndpointConnectionsOperations:
     @distributed_trace
     def begin_delete(
         self, resource_group_name: str, workspace_name: str, private_endpoint_connection_name: str, **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.OperationResource]:
         """Delete a private endpoint connection.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

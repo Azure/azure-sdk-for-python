@@ -33,7 +33,7 @@ class KeyVaultClientConfiguration(Configuration):  # pylint: disable=too-many-in
 
     def __init__(self, **kwargs: Any) -> None:
         super(KeyVaultClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2016-10-01")  # type: Literal["2016-10-01"]
+        api_version: Literal["2016-10-01"] = kwargs.pop("api_version", "2016-10-01")
 
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "keyvault/{}".format(VERSION))

@@ -12,7 +12,7 @@ from typing import Any, TYPE_CHECKING
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
-from . import models
+from . import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import MonitorManagementClientConfiguration
 from .operations import (
@@ -33,20 +33,19 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
     """Monitor Management Client.
 
     :ivar activity_logs: ActivityLogsOperations operations
-    :vartype activity_logs: $(python-base-namespace).v2015_04_01.operations.ActivityLogsOperations
+    :vartype activity_logs: azure.mgmt.monitor.v2015_04_01.operations.ActivityLogsOperations
     :ivar autoscale_settings: AutoscaleSettingsOperations operations
     :vartype autoscale_settings:
-     $(python-base-namespace).v2015_04_01.operations.AutoscaleSettingsOperations
+     azure.mgmt.monitor.v2015_04_01.operations.AutoscaleSettingsOperations
     :ivar event_categories: EventCategoriesOperations operations
-    :vartype event_categories:
-     $(python-base-namespace).v2015_04_01.operations.EventCategoriesOperations
+    :vartype event_categories: azure.mgmt.monitor.v2015_04_01.operations.EventCategoriesOperations
     :ivar operations: Operations operations
-    :vartype operations: $(python-base-namespace).v2015_04_01.operations.Operations
+    :vartype operations: azure.mgmt.monitor.v2015_04_01.operations.Operations
     :ivar tenant_activity_logs: TenantActivityLogsOperations operations
     :vartype tenant_activity_logs:
-     $(python-base-namespace).v2015_04_01.operations.TenantActivityLogsOperations
+     azure.mgmt.monitor.v2015_04_01.operations.TenantActivityLogsOperations
     :ivar alert_rules: AlertRulesOperations operations
-    :vartype alert_rules: $(python-base-namespace).v2015_04_01.operations.AlertRulesOperations
+    :vartype alert_rules: azure.mgmt.monitor.v2015_04_01.operations.AlertRulesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
@@ -65,9 +64,9 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
         self._config = MonitorManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -106,15 +105,12 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> MonitorManagementClient
+    def __enter__(self) -> "MonitorManagementClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

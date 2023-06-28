@@ -49,8 +49,8 @@ def build_set_service_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-07-01"))  # type: Literal["2018-07-01"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2018-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-07-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -67,7 +67,7 @@ def build_set_service_properties_request(
         "BlobServicesName": _SERIALIZER.url("blob_services_name", blob_services_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -90,7 +90,7 @@ def build_get_service_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-07-01"))  # type: Literal["2018-07-01"]
+    api_version: Literal["2018-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -107,7 +107,7 @@ def build_get_service_properties_request(
         "BlobServicesName": _SERIALIZER.url("blob_services_name", blob_services_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -232,8 +232,8 @@ class BlobServicesOperations:
          Blob Service Name must be 'default'. "default" Required.
         :type blob_services_name: str or ~azure.mgmt.storage.v2018_07_01.models.Enum8
         :param parameters: The properties of a storage account’s Blob service, including properties for
-         Storage Analytics and CORS (Cross-Origin Resource Sharing) rules. Is either a model type or a
-         IO type. Required.
+         Storage Analytics and CORS (Cross-Origin Resource Sharing) rules. Is either a
+         BlobServiceProperties type or a IO type. Required.
         :type parameters: ~azure.mgmt.storage.v2018_07_01.models.BlobServiceProperties or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -254,9 +254,9 @@ class BlobServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-07-01"))  # type: Literal["2018-07-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BlobServiceProperties]
+        api_version: Literal["2018-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-07-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.BlobServiceProperties] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -280,9 +280,9 @@ class BlobServicesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -299,7 +299,9 @@ class BlobServicesOperations:
 
         return deserialized
 
-    set_service_properties.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/{BlobServicesName}"}  # type: ignore
+    set_service_properties.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/{BlobServicesName}"
+    }
 
     @distributed_trace
     def get_service_properties(
@@ -334,8 +336,8 @@ class BlobServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-07-01"))  # type: Literal["2018-07-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BlobServiceProperties]
+        api_version: Literal["2018-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-07-01"))
+        cls: ClsType[_models.BlobServiceProperties] = kwargs.pop("cls", None)
 
         request = build_get_service_properties_request(
             resource_group_name=resource_group_name,
@@ -348,9 +350,9 @@ class BlobServicesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -367,4 +369,6 @@ class BlobServicesOperations:
 
         return deserialized
 
-    get_service_properties.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/{BlobServicesName}"}  # type: ignore
+    get_service_properties.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/{BlobServicesName}"
+    }

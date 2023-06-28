@@ -30,28 +30,34 @@ from ._gateway_custom_domains_operations import GatewayCustomDomainsOperations
 from ._api_portals_operations import ApiPortalsOperations
 from ._api_portal_custom_domains_operations import ApiPortalCustomDomainsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'ServicesOperations',
-    'ConfigServersOperations',
-    'ConfigurationServicesOperations',
-    'ServiceRegistriesOperations',
-    'BuildServiceOperations',
-    'BuildpackBindingOperations',
-    'BuildServiceBuilderOperations',
-    'BuildServiceAgentPoolOperations',
-    'MonitoringSettingsOperations',
-    'AppsOperations',
-    'BindingsOperations',
-    'StoragesOperations',
-    'CertificatesOperations',
-    'CustomDomainsOperations',
-    'DeploymentsOperations',
-    'Operations',
-    'RuntimeVersionsOperations',
-    'SkusOperations',
-    'GatewaysOperations',
-    'GatewayRouteConfigsOperations',
-    'GatewayCustomDomainsOperations',
-    'ApiPortalsOperations',
-    'ApiPortalCustomDomainsOperations',
+    "ServicesOperations",
+    "ConfigServersOperations",
+    "ConfigurationServicesOperations",
+    "ServiceRegistriesOperations",
+    "BuildServiceOperations",
+    "BuildpackBindingOperations",
+    "BuildServiceBuilderOperations",
+    "BuildServiceAgentPoolOperations",
+    "MonitoringSettingsOperations",
+    "AppsOperations",
+    "BindingsOperations",
+    "StoragesOperations",
+    "CertificatesOperations",
+    "CustomDomainsOperations",
+    "DeploymentsOperations",
+    "Operations",
+    "RuntimeVersionsOperations",
+    "SkusOperations",
+    "GatewaysOperations",
+    "GatewayRouteConfigsOperations",
+    "GatewayCustomDomainsOperations",
+    "ApiPortalsOperations",
+    "ApiPortalCustomDomainsOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

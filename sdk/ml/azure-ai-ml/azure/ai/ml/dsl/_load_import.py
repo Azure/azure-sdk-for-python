@@ -13,8 +13,7 @@ from azure.ai.ml.entities._job.pipeline._component_translatable import Component
 
 # pylint: disable=unused-argument
 def to_component(*, job: ComponentTranslatableMixin, **kwargs) -> Callable[..., Command]:
-    """Translate a job object to a component function, provided job should be
-    able to translate to a component.
+    """Translate a job object to a component function, provided job should be able to translate to a component.
 
     For example:
 

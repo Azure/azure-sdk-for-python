@@ -56,9 +56,8 @@ def detected_language():
         name="English",
         iso6391_name="en",
         confidence_score=1.0,
-        script="latin"
     )
-    model_repr = "DetectedLanguage(name=English, iso6391_name=en, confidence_score=1.0, script=latin)"
+    model_repr = "DetectedLanguage(name=English, iso6391_name=en, confidence_score=1.0)"
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -393,10 +392,9 @@ class TestRepr():
             entities=[linked_entity[0]],
             warnings=[text_analytics_warning[0]],
             statistics=text_document_statistics[0],
-            detected_language=detected_language[0]
         )
-        model_repr = "RecognizeLinkedEntitiesResult(id=1, entities=[{}], warnings=[{}], statistics={}, detected_language={}, is_error=False, kind=EntityLinking)".format(
-            linked_entity[1], text_analytics_warning[1], text_document_statistics[1], detected_language[1]
+        model_repr = "RecognizeLinkedEntitiesResult(id=1, entities=[{}], warnings=[{}], statistics={}, is_error=False, kind=EntityLinking)".format(
+            linked_entity[1], text_analytics_warning[1], text_document_statistics[1],
         )
 
         assert repr(model) == model_repr
@@ -411,12 +409,11 @@ class TestRepr():
             statistics=text_document_statistics[0],
             confidence_scores=sentiment_confidence_scores[0],
             sentences=[sentence_sentiment[0]],
-            detected_language=detected_language[0],
         )
         model_repr = (
             "AnalyzeSentimentResult(id=1, sentiment=positive, warnings=[{}], statistics={}, confidence_scores={}, "
-            "sentences=[{}], detected_language={}, is_error=False, kind=SentimentAnalysis)".format(
-                text_analytics_warning[1], text_document_statistics[1], sentiment_confidence_scores[1], sentence_sentiment[1], detected_language[1]
+            "sentences=[{}], is_error=False, kind=SentimentAnalysis)".format(
+                text_analytics_warning[1], text_document_statistics[1], sentiment_confidence_scores[1], sentence_sentiment[1]
             )
         )
 
@@ -447,12 +444,10 @@ class TestRepr():
             entity_relations=[healthcare_relation[0]],
             warnings=[text_analytics_warning[0]],
             statistics=text_document_statistics[0],
-            detected_language="",
-            fhir_bundle={},
         )
 
         model_repr = (
-            "AnalyzeHealthcareEntitiesResult(id=1, entities=[{}], entity_relations=[{}], warnings=[{}], statistics={}, fhir_bundle={}, detected_language='en', is_error=False, kind=Healthcare)".format(
+            "AnalyzeHealthcareEntitiesResult(id=1, entities=[{}], entity_relations=[{}], warnings=[{}], statistics={}, is_error=False, kind=Healthcare)".format(
                 healthcare_entity[1], healthcare_relation[1], text_analytics_warning[1], text_document_statistics[1], "{}"
             )
         )

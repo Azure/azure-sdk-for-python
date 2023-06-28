@@ -166,6 +166,9 @@ class SearchField(_serialization.Model):
     :keyword fields: A list of sub-fields if this is a field of type Edm.ComplexType or
      Collection(Edm.ComplexType). Must be null or empty for simple fields.
     :paramtype fields: list[~azure.search.documents.models.SearchField]
+    :keyword int dimensions: The dimensionality of the vector field.
+    :keyword str vector_search_configuration: The name of the vector search algorithm configuration
+     that specifies the algorithm and optional parameters for searching the vector field.
     """
 
     _validation = {
@@ -188,6 +191,8 @@ class SearchField(_serialization.Model):
         "normalizer_name": {"key": "normalizerName", "type": "str"},
         "synonym_map_names": {"key": "synonymMapNames", "type": "[str]"},
         "fields": {"key": "fields", "type": "[SearchField]"},
+        "dimensions": {"key": "dimensions", "type": "int"},
+        "vector_search_configuration": {"key": "vectorSearchConfiguration", "type": "str"},
     }
 
     def __init__(self, **kwargs):
@@ -206,6 +211,9 @@ class SearchField(_serialization.Model):
         self.normalizer_name = kwargs.get("normalizer_name", None)
         self.synonym_map_names = kwargs.get("synonym_map_names", None)
         self.fields = kwargs.get("fields", None)
+        self.dimensions = kwargs.get("dimensions", None)
+        self.vector_search_configuration = kwargs.get("vector_search_configuration", None)
+
 
     def _to_generated(self):
         fields = [pack_search_field(x) for x in self.fields] if self.fields else None
@@ -225,6 +233,8 @@ class SearchField(_serialization.Model):
             normalizer=self.normalizer_name,
             synonym_maps=self.synonym_map_names,
             fields=fields,
+            dimensions=self.dimensions,
+            vector_search_configuration=self.vector_search_configuration,
         )
 
     @classmethod
@@ -261,6 +271,8 @@ class SearchField(_serialization.Model):
             normalizer_name=normalizer,
             synonym_map_names=search_field.synonym_maps,
             fields=fields,
+            dimensions=search_field.dimensions,
+            vector_search_configuration=search_field.vector_search_configuration,
         )
 
 
@@ -359,7 +371,7 @@ def SearchableField(**kw):
     :paramtype filterable: bool
     :keyword sortable: A value indicating whether to enable the field to be referenced in $orderby
      expressions. By default Azure Cognitive Search sorts results by score, but in many experiences
-     users will want to sort by fields in the documents.  The default is true False.
+     users will want to sort by fields in the documents.  The default is False.
     :paramtype sortable: bool
     :keyword facetable: A value indicating whether to enable the field to be referenced in facet
      queries. Typically used in a presentation of search results that includes hit count by category
@@ -553,6 +565,7 @@ class SearchIndex(_serialization.Model):
         },
         "similarity": {"key": "similarity", "type": "SimilarityAlgorithm"},
         "semantic_settings": {"key": "semantic", "type": "SemanticSettings"},
+        "vector_search": {"key": "vectorSearch", "type": "VectorSearch"},
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
     }
 
@@ -572,6 +585,7 @@ class SearchIndex(_serialization.Model):
         self.encryption_key = kwargs.get("encryption_key", None)
         self.similarity = kwargs.get("similarity", None)
         self.semantic_settings = kwargs.get("semantic_settings", None)
+        self.vector_search = kwargs.get("vector_search", None)
         self.e_tag = kwargs.get("e_tag", None)
 
     def _to_generated(self):
@@ -613,6 +627,7 @@ class SearchIndex(_serialization.Model):
             similarity=self.similarity,
             semantic_settings=self.semantic_settings,
             e_tag=self.e_tag,
+            vector_search=self.vector_search,
         )
 
     @classmethod
@@ -663,6 +678,7 @@ class SearchIndex(_serialization.Model):
             similarity=search_index.similarity,
             semantic_settings=search_index.semantic_settings,
             e_tag=search_index.e_tag,
+            vector_search=search_index.vector_search,
         )
 
 

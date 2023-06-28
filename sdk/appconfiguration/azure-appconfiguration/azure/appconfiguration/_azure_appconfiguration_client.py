@@ -42,20 +42,21 @@ from ._sync_token import SyncTokenPolicy
 from ._user_agent import USER_AGENT
 
 
-class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-keyword
+class AzureAppConfigurationClient:
     """Represents a client that calls restful API of Azure App Configuration service.
 
-    :param str base_url: base url of the service
+    :param str base_url: Base url of the service.
     :param credential: An object which can provide secrets for the app configuration service
     :type credential: :class:`~azure.appconfiguration.AppConfigConnectionStringCredential`
         or :class:`~azure.core.credentials.TokenCredential`
+    :keyword api_version: Api Version. Default value is "1.0". Note that overriding this default
+        value may result in unsupported behavior.
+    :paramtype api_version: str
 
     """
 
     # pylint:disable=protected-access
-    def __init__(
-        self, base_url: str, credential: Union[AppConfigConnectionStringCredential, TokenCredential], **kwargs: Any
-    ) -> None:
+    def __init__(self, base_url: str, credential: TokenCredential, **kwargs) -> None:
         try:
             if not base_url.lower().startswith("http"):
                 base_url = "https://" + base_url
@@ -67,12 +68,8 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
 
         self._credential_scopes = base_url.strip("/") + "/.default"
 
-        self._config = AzureAppConfigurationConfiguration(
-            base_url, credential_scopes=self._credential_scopes, **kwargs
-        )
-        self._config.user_agent_policy = UserAgentPolicy(
-            base_user_agent=USER_AGENT, **kwargs
-        )
+        self._config = AzureAppConfigurationConfiguration(base_url, credential_scopes=self._credential_scopes, **kwargs)
+        self._config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
         self._sync_token_policy = SyncTokenPolicy()
 
         pipeline = kwargs.get("pipeline")
@@ -83,12 +80,10 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
                 credential=credential, aad_mode=aad_mode, base_url=base_url, **kwargs
             )
 
-        self._impl = AzureAppConfiguration(
-            base_url, pipeline=pipeline, credential_scopes=self._credential_scopes
-        )
+        self._impl = AzureAppConfiguration(base_url, pipeline=pipeline, credential_scopes=self._credential_scopes)
 
     @classmethod
-    def from_connection_string(cls, connection_string: str, **kwargs: Any) -> "AzureAppConfigurationClient":
+    def from_connection_string(cls, connection_string: str, **kwargs) -> "AzureAppConfigurationClient":
         """Create AzureAppConfigurationClient from a Connection String.
 
         :param str connection_string: Connection String
@@ -107,7 +102,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
         """
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
         return cls(
-            credential=AppConfigConnectionStringCredential(connection_string),
+            credential=AppConfigConnectionStringCredential(connection_string),  # type: ignore
             base_url=base_url,
             **kwargs
         )
@@ -147,7 +142,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
 
     @distributed_trace
     def list_configuration_settings(
-        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs: Any
+        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs
     ) -> ItemPaged[ConfigurationSetting]:
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_datetime
@@ -158,7 +153,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
         :param label_filter: filter results based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
         :type label_filter: str
-        :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
+        :keyword datetime accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
@@ -170,7 +165,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
 
             from datetime import datetime, timedelta
 
-            accept_datetime = datetime.today() + timedelta(days=-1)
+            accept_datetime = datetime.utcnow() + timedelta(days=-1)
 
             all_listed = client.list_configuration_settings()
             for item in all_listed:
@@ -192,9 +187,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
                 label=label_filter,
                 key=key_filter,
                 select=select,
-                cls=lambda objs: [
-                    ConfigurationSetting._from_generated(x) for x in objs
-                ],
+                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                 error_map=error_map,
                 **kwargs
             )
@@ -211,7 +204,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
         label: Optional[str] = None,
         etag: Optional[str] = "*",
         match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
-        **kwargs: Any
+        **kwargs
     ) -> Union[None, ConfigurationSetting]:
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
@@ -223,7 +216,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
         :type etag: str or None
         :param match_condition: The match condition to use upon the etag
         :type match_condition: :class:`~azure.core.MatchConditions`
-        :keyword datetime accept_datetime: the retrieved ConfigurationSetting that created no later than this datetime
+        :keyword datetime accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :return: The matched ConfigurationSetting object
         :rtype: :class:`~azure.appconfiguration.ConfigurationSetting`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, \
@@ -266,9 +259,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
-    def add_configuration_setting(
-        self, configuration_setting: ConfigurationSetting, **kwargs: Any
-    ) -> ConfigurationSetting:
+    def add_configuration_setting(self, configuration_setting: ConfigurationSetting, **kwargs) -> ConfigurationSetting:
         """Add a ConfigurationSetting instance into the Azure App Configuration service.
 
         :param configuration_setting: the ConfigurationSetting object to be added
@@ -313,8 +304,8 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
     def set_configuration_setting(
         self,
         configuration_setting: ConfigurationSetting,
-        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
-        **kwargs: Any
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs
     ) -> ConfigurationSetting:
         """Add or update a ConfigurationSetting.
         If the configuration setting identified by key and label does not exist, this is a create.
@@ -363,9 +354,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
                 key=key_value.key,  # type: ignore
                 label=key_value.label,
                 if_match=prep_if_match(configuration_setting.etag, match_condition),
-                if_none_match=prep_if_none_match(
-                    configuration_setting.etag, match_condition
-                ),
+                if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
                 headers=custom_headers,
                 error_map=error_map,
             )
@@ -377,9 +366,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
-    def delete_configuration_setting(
-        self, key: str, label: Optional[str] = None, **kwargs: Any
-    ) -> ConfigurationSetting:
+    def delete_configuration_setting(self, key: str, label: Optional[str] = None, **kwargs) -> ConfigurationSetting:
         """Delete a ConfigurationSetting if it exists
 
         :param key: key used to identify the ConfigurationSetting
@@ -433,7 +420,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
 
     @distributed_trace
     def list_revisions(
-        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs: Any
+        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs
     ) -> ItemPaged[ConfigurationSetting]:
         """
         Find the ConfigurationSetting revision history.
@@ -444,7 +431,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
         :param label_filter: filter results based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
         :type label_filter: str
-        :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
+        :keyword datetime accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
@@ -456,7 +443,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
 
             from datetime import datetime, timedelta
 
-            accept_datetime = datetime.today() + timedelta(days=-1)
+            accept_datetime = datetime.utcnow() + timedelta(days=-1)
 
             all_revisions = client.list_revisions()
             for item in all_revisions:
@@ -478,9 +465,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
                 label=label_filter,
                 key=key_filter,
                 select=select,
-                cls=lambda objs: [
-                    ConfigurationSetting._from_generated(x) for x in objs
-                ],
+                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                 error_map=error_map,
                 **kwargs
             )
@@ -492,7 +477,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
 
     @distributed_trace
     def set_read_only(
-        self, configuration_setting: ConfigurationSetting, read_only: Optional[bool] = True, **kwargs: Any
+        self, configuration_setting: ConfigurationSetting, read_only: bool = True, **kwargs
     ) -> ConfigurationSetting:
         """Set a configuration setting read only
 
@@ -536,9 +521,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
                     key=configuration_setting.key,
                     label=configuration_setting.label,
                     if_match=prep_if_match(configuration_setting.etag, match_condition),
-                    if_none_match=prep_if_none_match(
-                        configuration_setting.etag, match_condition
-                    ),
+                    if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
                     error_map=error_map,
                     **kwargs
                 )
@@ -547,9 +530,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
                     key=configuration_setting.key,
                     label=configuration_setting.label,
                     if_match=prep_if_match(configuration_setting.etag, match_condition),
-                    if_none_match=prep_if_none_match(
-                        configuration_setting.etag, match_condition
-                    ),
+                    if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
                     error_map=error_map,
                     **kwargs
                 )

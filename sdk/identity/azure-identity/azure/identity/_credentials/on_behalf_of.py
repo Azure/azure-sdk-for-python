@@ -3,9 +3,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import TYPE_CHECKING, Any, Optional
+from typing import Any, Optional
 
-import six
+import msal
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -15,11 +15,7 @@ from .._internal.decorators import wrap_exceptions
 from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.interactive import _build_auth_record
 from .._internal.msal_credentials import MsalCredential
-
-if TYPE_CHECKING:
-    import msal
-    from .. import AuthenticationRecord
-
+from .. import AuthenticationRecord
 
 class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
     """Authenticates a service principal via the on-behalf-of flow.
@@ -47,16 +43,32 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass
         appropriately encoded bytes instead.
     :paramtype password: str or bytes
+    :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting
+        to authenticate. Setting this to true will completely disable both instance discovery and authority validation.
+        This functionality is intended for use in scenarios where the metadata endpoint cannot be reached, such as in
+        private clouds or Azure Stack. The process of instance discovery entails retrieving authority metadata from
+        https://login.microsoft.com/ to validate the authority. By setting this to **True**, the validation of the
+        authority is disabled. As a result, it is crucial to ensure that the configured authority host is valid and
+        trustworthy.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_on_behalf_of_credential]
+            :end-before: [END create_on_behalf_of_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create an OnBehalfOfCredential.
     """
 
     def __init__(
             self,
             tenant_id: str,
             client_id: str,
-            **kwargs
+            **kwargs: Any
     ) -> None:
         self._assertion = kwargs.pop("user_assertion", None)
         if not self._assertion:
@@ -76,7 +88,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                 message = (
                     '"client_certificate" is not a valid certificate in PEM or PKCS12 format'
                 )
-                six.raise_from(ValueError(message), ex)
+                raise ValueError(message) from ex
         elif client_secret:
             credential = client_secret
         else:
@@ -87,11 +99,12 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
             client_credential=credential,
             tenant_id=tenant_id,
             **kwargs)
-        self._auth_record = None  # type: Optional[AuthenticationRecord]
+        self._auth_record: Optional[AuthenticationRecord] = None
 
     @wrap_exceptions
-    def _acquire_token_silently(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> Optional[AccessToken]
+    def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Optional[AccessToken]:
         if self._auth_record:
             claims = kwargs.get("claims")
             app = self._get_app(**kwargs)
@@ -107,9 +120,8 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         return None
 
     @wrap_exceptions
-    def _request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
-        app = self._get_app(**kwargs)  # type: msal.ConfidentialClientApplication
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+        app: msal.ConfidentialClientApplication = self._get_app(**kwargs)
         request_time = int(time.time())
         result = app.acquire_token_on_behalf_of(self._assertion, list(scopes), claims_challenge=kwargs.get("claims"))
         if "access_token" not in result or "expires_in" not in result:

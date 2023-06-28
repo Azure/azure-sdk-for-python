@@ -1,6 +1,58 @@
 # Release History
 
-## 1.13.0b1 (Unreleased)
+## 1.14.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.14.0b1 (2023-06-06)
+
+### Features Added
+
+- Continue attempt next credential when finding an expired token from cached token credential in DefaultAzureCredential. ([#30441](https://github.com/Azure/azure-sdk-for-python/pull/30441))
+
+### Other Changes
+
+- VisualStudioCodeCredential prints an informative error message when used (as it is currently broken) ([#30385](https://github.com/Azure/azure-sdk-for-python/pull/30385))
+- Removed dependency on `six`. ([#30613](https://github.com/Azure/azure-sdk-for-python/pull/30613))
+
+## 1.13.0 (2023-05-11)
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 1.12.0.
+> Only code written against a beta version such as 1.13.0b4 may be affected.
+- Windows Web Account Manager (WAM) Brokered Authentication is still in preview and not available in this release. It will be available in the next beta release.
+- Additional Continuous Access Evaluation (CAE) support for service principal credentials is still in preview and not available in this release. It will be available in the next beta release.
+- Renamed keyword argument `developer_credential_timeout` to `process_timeout` in `DefaultAzureCredential` to remain consistent with the other credentials that launch a subprocess to acquire tokens.
+
+## 1.13.0b4 (2023-04-11)
+
+### Features Added
+
+- Credentials that are implemented via launching a subprocess to acquire tokens now have configurable timeouts using the `process_timeout` keyword argument. This addresses scenarios where these proceses can take longer than the current default timeout values. The affected credentials are `AzureCliCredential`, `AzureDeveloperCliCredential`, and `AzurePowerShellCredential`. (Note: For `DefaultAzureCredential`, the `developer_credential_timeout` keyword argument allows users to propagate this option to `AzureCliCredential`, `AzureDeveloperCliCredential`, and `AzurePowerShellCredential` in the authentication chain.) ([#28290](https://github.com/Azure/azure-sdk-for-python/pull/28290))
+
+## 1.13.0b3 (2023-03-07)
+
+### Features Added
+
+- Changed parameter from `instance_discovery` to `disable_instance_discovery` to make it more explicit.
+- Service principal credentials now enable support for [Continuous Access Evaluation (CAE)](https://learn.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation-workload). This indicates to Azure Active Directory that your application can handle CAE claims challenges.
+
+## 1.13.0b2 (2023-02-07)
+
+### Features Added
+
+- Added `AzureDeveloperCredential` for Azure Developer CLI. ([#27916](https://github.com/Azure/azure-sdk-for-python/pull/27916))
+- Added `WorkloadIdentityCredential` for Workload Identity Federation on Kubernetes ([#28536](https://github.com/Azure/azure-sdk-for-python/pull/28536))
+- Added support to use "TryAutoDetect" as the value for `AZURE_REGIONAL_AUTHORITY_NAME` to enable auto detecting the appropriate authority ([#526](https://github.com/AzureAD/microsoft-authentication-library-for-python/issues/526))
+
+## 1.13.0b1 (2023-01-10)
 
 ### Features Added
 
@@ -8,11 +60,13 @@
 
 ### Breaking Changes
 
+> These changes do not impact the API of stable versions such as 1.12.0.
+> Only code written against a beta version such as 1.12.0b1 may be affected.
 - Replaced `validate_authority` with `instance_discovery`. Now instead of setting validate_authority=False to disable authority validation and instance discovery, you need to use instance_discovery=False.
 
 ### Bugs Fixed
 
-### Other Changes
+- Fixed an issue where `AzureCliCredential` would return the wrong error message when the Azure CLI was not installed on non-English consoles. ([#27965](https://github.com/Azure/azure-sdk-for-python/issues/27965))
 
 ## 1.12.0 (2022-11-08)
 
@@ -23,11 +77,11 @@
 
 ### Breaking Changes
 
-- Excluded `VisualStudioCodeCredential` from `DefaultAzureCredential` token chain by default as SDK 
-  authentication via Visual Studio Code is broken due to 
-  issue [#23249](https://github.com/Azure/azure-sdk-for-python/issues/23249). The `VisualStudioCodeCredential` will be 
-  re-enabled in the `DefaultAzureCredential` flow once a fix is in place. 
-  Issue [#25713](https://github.com/Azure/azure-sdk-for-python/issues/25713) tracks this. In the meantime 
+- Excluded `VisualStudioCodeCredential` from `DefaultAzureCredential` token chain by default as SDK
+  authentication via Visual Studio Code is broken due to
+  issue [#23249](https://github.com/Azure/azure-sdk-for-python/issues/23249). The `VisualStudioCodeCredential` will be
+  re-enabled in the `DefaultAzureCredential` flow once a fix is in place.
+  Issue [#25713](https://github.com/Azure/azure-sdk-for-python/issues/25713) tracks this. In the meantime
   Visual Studio Code users can authenticate their development environment using the [Azure CLI](https://learn.microsoft.com/cli/azure/).
 
 ### Other Changes

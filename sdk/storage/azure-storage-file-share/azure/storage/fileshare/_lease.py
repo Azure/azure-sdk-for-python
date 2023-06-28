@@ -86,7 +86,11 @@ class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-ke
             using renew or change. Default is -1 (infinite share lease).
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :rtype: None
         """
         try:
@@ -119,7 +123,11 @@ class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-ke
         .. versionadded:: 12.6.0
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :return: None
         """
         if isinstance(self._client, FileOperations):
@@ -145,7 +153,11 @@ class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-ke
         the lease for the share or file as soon as the release is complete.
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :return: None
         """
         try:
@@ -172,7 +184,11 @@ class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-ke
             Proposed lease ID, in a GUID string format. The File or Share service will raise an error
             (Invalid request) if the proposed lease ID is not in the correct format.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :return: None
         """
         try:
@@ -215,7 +231,11 @@ class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-ke
             .. versionadded:: 12.6.0
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :return: Approximate time remaining in the lease period, in seconds.
         :rtype: int
         """

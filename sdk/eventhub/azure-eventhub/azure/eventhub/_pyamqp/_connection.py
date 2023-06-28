@@ -133,7 +133,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 transport_type=self._transport_type,
                 network_trace_params=self._network_trace_params,
                 **kwargs)
-        self._max_frame_size: int= kwargs.pop("max_frame_size", MAX_FRAME_SIZE_BYTES)
+        self._max_frame_size: int = kwargs.pop("max_frame_size", MAX_FRAME_SIZE_BYTES)
         self._remote_max_frame_size: Optional[int] = None
         self._channel_max: int = kwargs.pop("channel_max", MAX_CHANNELS)
         self._idle_timeout: Optional[int] = kwargs.pop("idle_timeout", None)
@@ -142,6 +142,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         self._offered_capabilities: Optional[str] = None
         self._desired_capabilities: Optional[str] = kwargs.pop("desired_capabilities", None)
         self._properties: Optional[Dict[str, str]] = kwargs.pop("properties", None)
+        self._remote_properties: Optional[Dict[str, str]] = None
 
         self._allow_pipelined_open: bool = kwargs.pop("allow_pipelined_open", True)
         self._remote_idle_timeout: Optional[int] = None
@@ -295,12 +296,12 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :rtype: int
         """
         if (len(self._incoming_endpoints) + len(self._outgoing_endpoints)) >= self._channel_max:
-            raise ValueError("Maximum number of channels ({}) has been reached.".format(self._channel_max))
+            raise ValueError(f"Maximum number of channels ({self._channel_max}) has been reached.")
         next_channel = next(i for i in range(1, self._channel_max) if i not in self._outgoing_endpoints)
         return next_channel
 
     def _outgoing_empty(self) -> None:
-        """Send an empty frame to prevent the connection from reaching an idle timeout."""
+        """Send an empty frame to prevent the connection from reaching an idle timeself._channel_maout."""
         if self._network_trace:
             _LOGGER.debug("-> EmptyFrame()", extra=self._network_trace_params)
         try:
@@ -421,6 +422,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             )
             return
         self._remote_max_frame_size = frame[2]
+        self._remote_properties = frame[9]
         if self.state == ConnectionState.OPEN_SENT:
             self._set_state(ConnectionState.OPENED)
         elif self.state == ConnectionState.HDR_EXCH:

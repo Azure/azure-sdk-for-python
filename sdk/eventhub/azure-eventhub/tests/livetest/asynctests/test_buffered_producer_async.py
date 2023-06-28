@@ -443,6 +443,7 @@ async def test_send_with_timing_configuration(connection_str, uamqp_transport):
         await asyncio.sleep(5)
         assert not sent_events
         await asyncio.sleep(20)
+
         assert sum([len(sent_events[pid]) for pid in partitions]) == 1
 
     assert not on_error.err

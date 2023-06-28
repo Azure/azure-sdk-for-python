@@ -3,12 +3,12 @@
 # ---------------------------------------------------------
 from marshmallow import fields
 
-from azure.ai.ml._internal._schema.node import InternalBaseNodeSchema, NodeType
-from azure.ai.ml._schema import AnonymousEnvironmentSchema, ArmVersionedStr, NestedField, RegistryStr, UnionField
-from azure.ai.ml._schema.core.fields import DumpableEnumField
-from azure.ai.ml._schema.job import ParameterizedCommandSchema, ParameterizedParallelSchema
-from azure.ai.ml._schema.job.job_limits import CommandJobLimitsSchema
-from azure.ai.ml.constants._common import AzureMLResourceType
+from ..._schema import AnonymousEnvironmentSchema, ArmVersionedStr, NestedField, RegistryStr, UnionField
+from ..._schema.core.fields import DumpableEnumField
+from ..._schema.job import ParameterizedCommandSchema, ParameterizedParallelSchema
+from ..._schema.job.job_limits import CommandJobLimitsSchema
+from ...constants._common import AzureMLResourceType
+from .._schema.node import InternalBaseNodeSchema, NodeType
 
 
 class CommandSchema(InternalBaseNodeSchema, ParameterizedCommandSchema):

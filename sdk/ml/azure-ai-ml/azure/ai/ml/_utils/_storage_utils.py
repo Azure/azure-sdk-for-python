@@ -36,14 +36,14 @@ SUPPORTED_STORAGE_TYPES = [
 
 
 class AzureMLDatastorePathUri:
-    """Parser for an azureml:// datastore path URI, e.g.:
-    azureml://datastores/mydatastore/paths/images/dogs'.
+    """Parser for an azureml:// datastore path URI, e.g.: azureml://datastores/mydatastore/paths/images/dogs'.
 
     :param uri: The AzureML datastore path URI.
     :type uri: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the AzureML datastore
         path URI is incorrectly formatted.
-    '"""
+    '
+    """
 
     def __init__(self, uri: str):
         if uri.startswith(FILE_PREFIX):
@@ -115,7 +115,6 @@ class AzureMLDatastorePathUri:
         )
 
     def get_uri_type(self) -> str:
-
         if self.uri[0:20] == "azureml://datastores":
             return "Datastore"
         if self.uri[0:14] == "azureml://jobs":
@@ -139,8 +138,7 @@ def get_storage_client(
     account_url: Optional[str] = None,
     container_name: Optional[str] = None,
 ) -> Union[BlobStorageClient, FileStorageClient, Gen2StorageClient]:
-    """Return a storage client class instance based on the storage account
-    type."""
+    """Return a storage client class instance based on the storage account type."""
     if storage_type not in SUPPORTED_STORAGE_TYPES:
         msg = (
             f"Datastore type {storage_type} is not supported. Supported storage"
@@ -188,14 +186,14 @@ def get_ds_name_and_path_prefix(asset_uri: str, registry_name: Optional[str] = N
         try:
             split_paths = re.findall(STORAGE_URI_REGEX, asset_uri)
             path_prefix = split_paths[0][3]
-        except Exception:
-            raise Exception("Registry asset URI could not be parsed.")
+        except Exception as e:
+            raise Exception("Registry asset URI could not be parsed.") from e
         ds_name = None
     else:
         try:
             ds_name = asset_uri.split("paths")[0].split("/")[-2]
             path_prefix = asset_uri.split("paths")[1][1:]
-        except Exception:
-            raise Exception("Workspace asset URI could not be parsed.")
+        except Exception as e:
+            raise Exception("Workspace asset URI could not be parsed.") from e
 
     return ds_name, path_prefix

@@ -10,7 +10,7 @@ import json
 import logging
 import time
 from typing import Any, Optional
-import six
+from urllib.parse import urlparse
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -55,7 +55,7 @@ def _build_auth_record(response):
             home_account_id = id_token["sub"]
 
         # "iss" is the URL of the issuing tenant e.g. https://authority/tenant
-        issuer = six.moves.urllib_parse.urlparse(id_token["iss"])
+        issuer = urlparse(id_token["iss"])
 
         # tenant which issued the token, not necessarily user's home tenant
         tenant_id = id_token.get("tid") or issuer.path.strip("/")
@@ -74,13 +74,18 @@ def _build_auth_record(response):
         auth_error = ClientAuthenticationError(
             message="Failed to build AuthenticationRecord from unexpected identity token"
         )
-        six.raise_from(auth_error, ex)
+        raise auth_error from ex
 
 
 class InteractiveCredential(MsalCredential, ABC):
-    def __init__(self, **kwargs):
-        self._disable_automatic_authentication = kwargs.pop("disable_automatic_authentication", False)
-        self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
+    def __init__(
+            self,
+            *,
+            authentication_record: Optional[AuthenticationRecord] = None,
+            disable_automatic_authentication: bool = False,
+            **kwargs: Any) -> None:
+        self._disable_automatic_authentication = disable_automatic_authentication
+        self._auth_record = authentication_record
         if self._auth_record:
             kwargs.pop("client_id", None)  # authentication_record overrides client_id argument
             tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
@@ -93,8 +98,7 @@ class InteractiveCredential(MsalCredential, ABC):
         else:
             super(InteractiveCredential, self).__init__(**kwargs)
 
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -157,8 +161,7 @@ class InteractiveCredential(MsalCredential, ABC):
         _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
         return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
-    def authenticate(self, **kwargs):
-        # type: (**Any) -> AuthenticationRecord
+    def authenticate(self, **kwargs: Any) -> AuthenticationRecord:
         """Interactively authenticate a user.
 
         :keyword Iterable[str] scopes: scopes to request during authentication, such as those provided by
@@ -185,8 +188,7 @@ class InteractiveCredential(MsalCredential, ABC):
         return self._auth_record  # type: ignore
 
     @wrap_exceptions
-    def _acquire_token_silent(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def _acquire_token_silent(self, *scopes: str, **kwargs: Any) -> AccessToken:
         result = None
         claims = kwargs.get("claims")
         if self._auth_record:

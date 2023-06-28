@@ -6,9 +6,9 @@
 
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ClassificationMultilabelPrimaryMetrics, JobBase, TaskType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ClassificationMultilabelPrimaryMetrics, JobBase, TaskType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     TextClassificationMultilabel as RestTextClassificationMultilabel,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
@@ -106,6 +106,7 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             resources=self.resources,
             task_details=text_classification_multilabel,
             identity=self.identity._to_job_rest_object() if self.identity else None,
+            queue_settings=self.queue_settings,
         )
 
         result = JobBase(properties=properties)
@@ -161,6 +162,7 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)
             if properties.identity
             else None,
+            queue_settings=properties.queue_settings,
         )
 
         text_classification_multilabel_job._restore_data_inputs()

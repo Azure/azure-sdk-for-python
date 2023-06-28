@@ -19,6 +19,10 @@ from azure.ai.ml.constants._common import (
     PROVIDER_RESOURCE_ID_WITH_VERSION,
     REGISTRY_URI_REGEX_FORMAT,
     REGISTRY_VERSION_PATTERN,
+    SINGULARITY_FULL_NAME_REGEX_FORMAT,
+    SINGULARITY_ID_REGEX_FORMAT,
+    SINGULARITY_SHORT_NAME_REGEX_FORMAT,
+    NAMED_RESOURCE_ID_FORMAT_WITH_PARENT,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -26,8 +30,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class AMLVersionedArmId(object):
-    """Parser for versioned arm id: e.g. /subscription/.../code/my-
-    code/versions/1.
+    """Parser for versioned arm id: e.g. /subscription/.../code/my- code/versions/1.
 
     :param arm_id: The versioned ARM id.
     :type arm_id: str
@@ -84,8 +87,7 @@ def get_datastore_arm_id(
 
 
 class AMLLabelledArmId(object):
-    """Parser for versioned arm id: e.g. /subscription/.../code/my-
-    code/labels/default.
+    """Parser for versioned arm id: e.g. /subscription/.../code/my- code/labels/default.
 
     :param arm_id: The labelled ARM id.
     :type arm_id: str
@@ -128,6 +130,7 @@ class AMLLabelledArmId(object):
 
 class AMLNamedArmId:
     """Parser for named arm id (no version): e.g.
+
     /subscription/.../compute/cpu-cluster.
 
     :param arm_id: The named ARM id.
@@ -179,7 +182,7 @@ class AMLAssetId:
     REGEX_PATTERN = ASSET_ID_URI_REGEX_FORMAT
 
     def __init__(self, asset_id: str):
-        """Parser for asset id
+        """Parser for asset id.
 
         :param asset_id: The asset id.
         :type asset_id: str
@@ -212,13 +215,23 @@ class AzureResourceId:
     """
 
     REGEX_PATTERN = "^/?subscriptions/([^/]+)/resourceGroups/([^/]+)/providers/Microsoft.([^/]+)/([^/]+)/([^/]+)"
+    RESOURCEGROUP_PATTERN = "^/?subscriptions/([^/]+)/providers/Microsoft.([^/]+)/([^/]+)/([^/]+)"
 
     def __init__(self, arm_id=None):
         if arm_id:
             match = re.match(AzureResourceId.REGEX_PATTERN, arm_id)
+            rg_match = re.match(AzureResourceId.RESOURCEGROUP_PATTERN, arm_id)
             if match:
-                self.asset_name = match.group(5)
+                self.subscription_id = match.group(1)
+                self.resource_group_name = match.group(2)
+                self.provider_namespace_with_type = match.group(3) + match.group(4)
                 self.asset_type = match.group(4)
+                self.asset_name = match.group(5)
+            elif rg_match:
+                self.subscription_id = rg_match.group(1)
+                self.resource_group_name = None
+                self.asset_name = rg_match.group(4)
+                self.asset_type = rg_match.group(3)
             else:
                 msg = "Invalid ARM Id {}"
                 raise ValidationException(
@@ -228,9 +241,6 @@ class AzureResourceId:
                     error_category=ErrorCategory.USER_ERROR,
                     target=ErrorTarget.ARM_RESOURCE,
                 )
-
-            self.subscription_id = match.group(1)
-            self.resource_group_name = match.group(2)
 
 
 def _parse_endpoint_name_from_deployment_id(deployment_id: str) -> str:
@@ -319,8 +329,40 @@ def is_ARM_id_for_resource(name: Any, resource_type: str = ".*", sub_workspace_r
     return False
 
 
+def is_ARM_id_for_parented_resource(name: str, parent_resource_type: str, child_resource_type: str) -> bool:
+    resource_regex = NAMED_RESOURCE_ID_FORMAT_WITH_PARENT.format(
+        ".*",
+        ".*",
+        AZUREML_RESOURCE_PROVIDER,
+        ".*",
+        parent_resource_type,
+        ".*",
+        child_resource_type,
+        "*",
+    )
+    return re.match(resource_regex, name, re.IGNORECASE) is not None
+
+
 def is_registry_id_for_resource(name: Any) -> bool:
     if isinstance(name, str) and re.match(REGISTRY_URI_REGEX_FORMAT, name, re.IGNORECASE):
+        return True
+    return False
+
+
+def is_singularity_id_for_resource(name: Any) -> bool:
+    if isinstance(name, str) and re.match(SINGULARITY_ID_REGEX_FORMAT, name, re.IGNORECASE):
+        return True
+    return False
+
+
+def is_singularity_full_name_for_resource(name: Any) -> bool:
+    if isinstance(name, str) and (re.match(SINGULARITY_FULL_NAME_REGEX_FORMAT, name, re.IGNORECASE)):
+        return True
+    return False
+
+
+def is_singularity_short_name_for_resource(name: Any) -> bool:
+    if isinstance(name, str) and re.match(SINGULARITY_SHORT_NAME_REGEX_FORMAT, name, re.IGNORECASE):
         return True
     return False
 
@@ -381,11 +423,9 @@ def get_resource_name_from_arm_id_safe(resource_id: str) -> Optional[str]:
 def get_arm_id_object_from_id(
     resource_id: str,
 ) -> Union[AMLVersionedArmId, AMLNamedArmId, AzureResourceId]:
-    """Attempts to create and return one of: AMLVersionedId, AMLNamedId,
-    AzureResoureId. In the case than an AzureML ARM Id is passed in, either
-    AMLVersionedId or AMLNamedId will be created depending on resource type In
-    the case that a non-AzureML ARM id is passed in, an AzureResourceId will be
-    returned.
+    """Attempts to create and return one of: AMLVersionedId, AMLNamedId, AzureResoureId. In the case than an AzureML ARM
+    Id is passed in, either AMLVersionedId or AMLNamedId will be created depending on resource type In the case that a
+    non-AzureML ARM id is passed in, an AzureResourceId will be returned.
 
     :param resource_id: the ARM Id to parse
     :type arm_id: str

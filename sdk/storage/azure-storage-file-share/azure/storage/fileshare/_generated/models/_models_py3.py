@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -35,8 +35,13 @@ class AccessPolicy(_serialization.Model):
     }
 
     def __init__(
-        self, *, start: Optional[str] = None, expiry: Optional[str] = None, permission: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        start: Optional[str] = None,
+        expiry: Optional[str] = None,
+        permission: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword start: The date-time the policy is active.
         :paramtype start: str
@@ -73,7 +78,7 @@ class ClearRange(_serialization.Model):
     }
     _xml_map = {"name": "ClearRange"}
 
-    def __init__(self, *, start: int, end: int, **kwargs):
+    def __init__(self, *, start: int, end: int, **kwargs: Any) -> None:
         """
         :keyword start: Required.
         :paramtype start: int
@@ -137,8 +142,8 @@ class CopyFileSmbInfo(_serialization.Model):
         file_permission_copy_mode: Optional[Union[str, "_models.PermissionCopyModeType"]] = None,
         ignore_read_only: Optional[bool] = None,
         set_archive_attribute: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword file_attributes: Specifies either the option to copy file attributes from a source
          file(source) to a target file or a list of attributes to set on a target file.
@@ -179,7 +184,10 @@ class CopyFileSmbInfo(_serialization.Model):
 
 
 class CorsRule(_serialization.Model):
-    """CORS is an HTTP feature that enables a web application running under one domain to access resources in another domain. Web browsers implement a security restriction known as same-origin policy that prevents a web page from calling APIs in a different domain; CORS provides a secure way to allow one domain (the origin domain) to call APIs in another domain.
+    """CORS is an HTTP feature that enables a web application running under one domain to access
+    resources in another domain. Web browsers implement a security restriction known as same-origin
+    policy that prevents a web page from calling APIs in a different domain; CORS provides a secure
+    way to allow one domain (the origin domain) to call APIs in another domain.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -227,8 +235,8 @@ class CorsRule(_serialization.Model):
         allowed_headers: str,
         exposed_headers: str,
         max_age_in_seconds: int,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword allowed_origins: The origin domains that are permitted to make a request against the
          storage service via CORS. The origin domain is the domain from which the request originates.
@@ -273,7 +281,7 @@ class DestinationLeaseAccessConditions(_serialization.Model):
         "destination_lease_id": {"key": "destinationLeaseId", "type": "str"},
     }
 
-    def __init__(self, *, destination_lease_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, destination_lease_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword destination_lease_id: Required if the destination file has an active infinite lease.
          The lease ID specified for this header must match the lease ID of the destination file. If the
@@ -325,8 +333,8 @@ class DirectoryItem(_serialization.Model):
         properties: Optional["_models.FileProperty"] = None,
         attributes: Optional[str] = None,
         permission_key: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Required.
         :paramtype name: ~azure.storage.fileshare.models.StringEncoded
@@ -384,8 +392,8 @@ class FileHTTPHeaders(_serialization.Model):
         file_cache_control: Optional[str] = None,
         file_content_md5: Optional[bytes] = None,
         file_content_disposition: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword file_content_type: Sets the MIME content type of the file. The default type is
          'application/octet-stream'.
@@ -451,8 +459,8 @@ class FileItem(_serialization.Model):
         file_id: Optional[str] = None,
         attributes: Optional[str] = None,
         permission_key: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Required.
         :paramtype name: ~azure.storage.fileshare.models.StringEncoded
@@ -521,8 +529,8 @@ class FileProperty(_serialization.Model):
         change_time: Optional[datetime.datetime] = None,
         last_modified: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword content_length: Content length of the file. This value may not be up-to-date since an
          SMB client may have modified the file locally. The value of Content-Length may not reflect that
@@ -574,7 +582,7 @@ class FileRange(_serialization.Model):
     }
     _xml_map = {"name": "Range"}
 
-    def __init__(self, *, start: int, end: int, **kwargs):
+    def __init__(self, *, start: int, end: int, **kwargs: Any) -> None:
         """
         :keyword start: Start of the range. Required.
         :paramtype start: int
@@ -609,8 +617,8 @@ class FilesAndDirectoriesListSegment(_serialization.Model):
     _xml_map = {"name": "Entries"}
 
     def __init__(
-        self, *, directory_items: List["_models.DirectoryItem"], file_items: List["_models.FileItem"], **kwargs
-    ):
+        self, *, directory_items: List["_models.DirectoryItem"], file_items: List["_models.FileItem"], **kwargs: Any
+    ) -> None:
         """
         :keyword directory_items: Required.
         :paramtype directory_items: list[~azure.storage.fileshare.models.DirectoryItem]
@@ -644,6 +652,8 @@ class HandleItem(_serialization.Model):
     :vartype open_time: ~datetime.datetime
     :ivar last_reconnect_time: Time handle was last connected to (UTC).
     :vartype last_reconnect_time: ~datetime.datetime
+    :ivar access_right_list:
+    :vartype access_right_list: list[str or ~azure.storage.fileshare.models.AccessRight]
     """
 
     _validation = {
@@ -664,6 +674,7 @@ class HandleItem(_serialization.Model):
         "client_ip": {"key": "ClientIp", "type": "str"},
         "open_time": {"key": "OpenTime", "type": "rfc-1123"},
         "last_reconnect_time": {"key": "LastReconnectTime", "type": "rfc-1123"},
+        "access_right_list": {"key": "AccessRightList", "type": "[str]", "xml": {"wrapped": True}},
     }
     _xml_map = {"name": "Handle"}
 
@@ -678,8 +689,9 @@ class HandleItem(_serialization.Model):
         open_time: datetime.datetime,
         parent_id: Optional[str] = None,
         last_reconnect_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        access_right_list: Optional[List[Union[str, "_models.AccessRight"]]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword handle_id: XSMB service handle ID. Required.
         :paramtype handle_id: str
@@ -698,6 +710,8 @@ class HandleItem(_serialization.Model):
         :paramtype open_time: ~datetime.datetime
         :keyword last_reconnect_time: Time handle was last connected to (UTC).
         :paramtype last_reconnect_time: ~datetime.datetime
+        :keyword access_right_list:
+        :paramtype access_right_list: list[str or ~azure.storage.fileshare.models.AccessRight]
         """
         super().__init__(**kwargs)
         self.handle_id = handle_id
@@ -708,6 +722,7 @@ class HandleItem(_serialization.Model):
         self.client_ip = client_ip
         self.open_time = open_time
         self.last_reconnect_time = last_reconnect_time
+        self.access_right_list = access_right_list
 
 
 class LeaseAccessConditions(_serialization.Model):
@@ -722,7 +737,7 @@ class LeaseAccessConditions(_serialization.Model):
         "lease_id": {"key": "leaseId", "type": "str"},
     }
 
-    def __init__(self, *, lease_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, lease_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID.
@@ -799,8 +814,8 @@ class ListFilesAndDirectoriesSegmentResponse(_serialization.Model):  # pylint: d
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
         directory_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_endpoint: Required.
         :paramtype service_endpoint: str
@@ -864,7 +879,9 @@ class ListHandlesResponse(_serialization.Model):
     }
     _xml_map = {"name": "EnumerationResults"}
 
-    def __init__(self, *, next_marker: str, handle_list: Optional[List["_models.HandleItem"]] = None, **kwargs):
+    def __init__(
+        self, *, next_marker: str, handle_list: Optional[List["_models.HandleItem"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword handle_list:
         :paramtype handle_list: list[~azure.storage.fileshare.models.HandleItem]
@@ -923,8 +940,8 @@ class ListSharesResponse(_serialization.Model):
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
         share_items: Optional[List["_models.ShareItemInternal"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_endpoint: Required.
         :paramtype service_endpoint: str
@@ -983,8 +1000,8 @@ class Metrics(_serialization.Model):
         enabled: bool,
         include_apis: Optional[bool] = None,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword version: The version of Storage Analytics to configure. Required.
         :paramtype version: str
@@ -1027,7 +1044,7 @@ class RetentionPolicy(_serialization.Model):
         "days": {"key": "Days", "type": "int"},
     }
 
-    def __init__(self, *, enabled: bool, days: Optional[int] = None, **kwargs):
+    def __init__(self, *, enabled: bool, days: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Indicates whether a retention policy is enabled for the File service. If
          false, metrics data is retained, and the user is responsible for deleting it. Required.
@@ -1061,8 +1078,8 @@ class ShareFileRangeList(_serialization.Model):
         *,
         ranges: Optional[List["_models.FileRange"]] = None,
         clear_ranges: Optional[List["_models.ClearRange"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword ranges:
         :paramtype ranges: list[~azure.storage.fileshare.models.FileRange]
@@ -1117,8 +1134,8 @@ class ShareItemInternal(_serialization.Model):
         deleted: Optional[bool] = None,
         version: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Required.
         :paramtype name: str
@@ -1160,7 +1177,7 @@ class SharePermission(_serialization.Model):
         "permission": {"key": "permission", "type": "str"},
     }
 
-    def __init__(self, *, permission: str, **kwargs):
+    def __init__(self, *, permission: str, **kwargs: Any) -> None:
         """
         :keyword permission: The permission in the Security Descriptor Definition Language (SDDL).
          Required.
@@ -1264,8 +1281,8 @@ class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many
         lease_duration: Optional[Union[str, "_models.LeaseDurationType"]] = None,
         enabled_protocols: Optional[str] = None,
         root_squash: Optional[Union[str, "_models.ShareRootSquash"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword last_modified: Required.
         :paramtype last_modified: ~datetime.datetime
@@ -1340,7 +1357,7 @@ class ShareProtocolSettings(_serialization.Model):
     }
     _xml_map = {"name": "ProtocolSettings"}
 
-    def __init__(self, *, smb: Optional["_models.ShareSmbSettings"] = None, **kwargs):
+    def __init__(self, *, smb: Optional["_models.ShareSmbSettings"] = None, **kwargs: Any) -> None:
         """
         :keyword smb: Settings for SMB protocol.
         :paramtype smb: ~azure.storage.fileshare.models.ShareSmbSettings
@@ -1361,7 +1378,7 @@ class ShareSmbSettings(_serialization.Model):
     }
     _xml_map = {"name": "SMB"}
 
-    def __init__(self, *, multichannel: Optional["_models.SmbMultichannel"] = None, **kwargs):
+    def __init__(self, *, multichannel: Optional["_models.SmbMultichannel"] = None, **kwargs: Any) -> None:
         """
         :keyword multichannel: Settings for SMB Multichannel.
         :paramtype multichannel: ~azure.storage.fileshare.models.SmbMultichannel
@@ -1388,7 +1405,7 @@ class ShareStats(_serialization.Model):
         "share_usage_bytes": {"key": "ShareUsageBytes", "type": "int"},
     }
 
-    def __init__(self, *, share_usage_bytes: int, **kwargs):
+    def __init__(self, *, share_usage_bytes: int, **kwargs: Any) -> None:
         """
         :keyword share_usage_bytes: The approximate size of the data stored in bytes. Note that this
          value may not include all recently created or recently resized files. Required.
@@ -1423,8 +1440,8 @@ class SignedIdentifier(_serialization.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         access_policy: Optional["_models.AccessPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: A unique id. Required.
         :paramtype id: str
@@ -1448,7 +1465,7 @@ class SmbMultichannel(_serialization.Model):
     }
     _xml_map = {"name": "Multichannel"}
 
-    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: If SMB multichannel is enabled.
         :paramtype enabled: bool
@@ -1468,7 +1485,7 @@ class SourceLeaseAccessConditions(_serialization.Model):
         "source_lease_id": {"key": "sourceLeaseId", "type": "str"},
     }
 
-    def __init__(self, *, source_lease_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, source_lease_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword source_lease_id: Required if the source file has an active infinite lease.
         :paramtype source_lease_id: str
@@ -1498,8 +1515,8 @@ class SourceModifiedAccessConditions(_serialization.Model):
         *,
         source_if_match_crc64: Optional[bytes] = None,
         source_if_none_match_crc64: Optional[bytes] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_if_match_crc64: Specify the crc64 value to operate only on range with a
          matching crc64 checksum.
@@ -1524,7 +1541,7 @@ class StorageError(_serialization.Model):
         "message": {"key": "Message", "type": "str"},
     }
 
-    def __init__(self, *, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword message:
         :paramtype message: str
@@ -1562,8 +1579,8 @@ class StorageServiceProperties(_serialization.Model):
         minute_metrics: Optional["_models.Metrics"] = None,
         cors: Optional[List["_models.CorsRule"]] = None,
         protocol: Optional["_models.ShareProtocolSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword hour_metrics: A summary of request statistics grouped by API in hourly aggregates for
          files.
@@ -1597,7 +1614,7 @@ class StringEncoded(_serialization.Model):
         "content": {"key": "content", "type": "str", "xml": {"text": True}},
     }
 
-    def __init__(self, *, encoded: Optional[bool] = None, content: Optional[str] = None, **kwargs):
+    def __init__(self, *, encoded: Optional[bool] = None, content: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword encoded:
         :paramtype encoded: bool

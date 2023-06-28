@@ -128,7 +128,7 @@ async def download_blob_from_url(
             await _download_to_stream(client, output, **kwargs)
         else:
             if not overwrite and os.path.isfile(output):
-                raise ValueError("The file '{}' already exists.".format(output))
+                raise ValueError(f"The file '{output}' already exists.")
             with open(output, 'wb') as file_handle:
                 await _download_to_stream(client, file_handle, **kwargs)
 

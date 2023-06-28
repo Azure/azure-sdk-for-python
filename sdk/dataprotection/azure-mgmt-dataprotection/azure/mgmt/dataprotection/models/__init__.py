@@ -34,6 +34,7 @@ from ._models_py3 import AzureMonitorAlertSettings
 from ._models_py3 import AzureOperationalStoreParameters
 from ._models_py3 import AzureRetentionRule
 from ._models_py3 import BackupCriteria
+from ._models_py3 import BackupDatasourceParameters
 from ._models_py3 import BackupInstance
 from ._models_py3 import BackupInstanceResource
 from ._models_py3 import BackupInstanceResourceList
@@ -47,6 +48,7 @@ from ._models_py3 import BaseBackupPolicy
 from ._models_py3 import BaseBackupPolicyResource
 from ._models_py3 import BaseBackupPolicyResourceList
 from ._models_py3 import BasePolicyRule
+from ._models_py3 import BlobBackupDatasourceParameters
 from ._models_py3 import CheckNameAvailabilityRequest
 from ._models_py3 import CheckNameAvailabilityResult
 from ._models_py3 import ClientDiscoveryDisplay
@@ -92,8 +94,11 @@ from ._models_py3 import ImmutabilitySettings
 from ._models_py3 import InnerError
 from ._models_py3 import ItemLevelRestoreCriteria
 from ._models_py3 import ItemLevelRestoreTargetInfo
+from ._models_py3 import ItemPathBasedRestoreCriteria
 from ._models_py3 import JobExtendedInfo
 from ._models_py3 import JobSubTask
+from ._models_py3 import KubernetesClusterBackupDatasourceParameters
+from ._models_py3 import KubernetesClusterRestoreCriteria
 from ._models_py3 import KubernetesPVRestoreCriteria
 from ._models_py3 import KubernetesStorageClassRestoreCriteria
 from ._models_py3 import MonitoringSettings
@@ -111,6 +116,10 @@ from ._models_py3 import RecoveryPointDataStoreDetails
 from ._models_py3 import RecoveryPointsFilters
 from ._models_py3 import ResourceGuard
 from ._models_py3 import ResourceGuardOperation
+from ._models_py3 import ResourceGuardOperationDetail
+from ._models_py3 import ResourceGuardProxyBase
+from ._models_py3 import ResourceGuardProxyBaseResource
+from ._models_py3 import ResourceGuardProxyBaseResourceList
 from ._models_py3 import ResourceGuardResource
 from ._models_py3 import ResourceGuardResourceList
 from ._models_py3 import ResourceMoveDetails
@@ -136,37 +145,41 @@ from ._models_py3 import TargetCopySetting
 from ._models_py3 import TargetDetails
 from ._models_py3 import TriggerBackupRequest
 from ._models_py3 import TriggerContext
+from ._models_py3 import UnlockDeleteRequest
+from ._models_py3 import UnlockDeleteResponse
 from ._models_py3 import UserFacingError
 from ._models_py3 import ValidateForBackupRequest
 from ._models_py3 import ValidateRestoreRequestObject
 
-from ._data_protection_client_enums import AbsoluteMarker
-from ._data_protection_client_enums import AlertsState
-from ._data_protection_client_enums import CreatedByType
-from ._data_protection_client_enums import CrossSubscriptionRestoreState
-from ._data_protection_client_enums import CurrentProtectionState
-from ._data_protection_client_enums import DataStoreTypes
-from ._data_protection_client_enums import DayOfWeek
-from ._data_protection_client_enums import FeatureSupportStatus
-from ._data_protection_client_enums import FeatureType
-from ._data_protection_client_enums import ImmutabilityState
-from ._data_protection_client_enums import Month
-from ._data_protection_client_enums import ProvisioningState
-from ._data_protection_client_enums import RecoveryOption
-from ._data_protection_client_enums import RehydrationPriority
-from ._data_protection_client_enums import RehydrationStatus
-from ._data_protection_client_enums import ResourceMoveState
-from ._data_protection_client_enums import RestoreSourceDataStoreType
-from ._data_protection_client_enums import RestoreTargetLocationType
-from ._data_protection_client_enums import SecretStoreType
-from ._data_protection_client_enums import SoftDeleteState
-from ._data_protection_client_enums import SourceDataStoreType
-from ._data_protection_client_enums import Status
-from ._data_protection_client_enums import StorageSettingStoreTypes
-from ._data_protection_client_enums import StorageSettingTypes
-from ._data_protection_client_enums import SyncType
-from ._data_protection_client_enums import ValidationType
-from ._data_protection_client_enums import WeekNumber
+from ._data_protection_mgmt_client_enums import AbsoluteMarker
+from ._data_protection_mgmt_client_enums import AlertsState
+from ._data_protection_mgmt_client_enums import CreatedByType
+from ._data_protection_mgmt_client_enums import CrossSubscriptionRestoreState
+from ._data_protection_mgmt_client_enums import CurrentProtectionState
+from ._data_protection_mgmt_client_enums import DataStoreTypes
+from ._data_protection_mgmt_client_enums import DayOfWeek
+from ._data_protection_mgmt_client_enums import ExistingResourcePolicy
+from ._data_protection_mgmt_client_enums import FeatureSupportStatus
+from ._data_protection_mgmt_client_enums import FeatureType
+from ._data_protection_mgmt_client_enums import ImmutabilityState
+from ._data_protection_mgmt_client_enums import Month
+from ._data_protection_mgmt_client_enums import PersistentVolumeRestoreMode
+from ._data_protection_mgmt_client_enums import ProvisioningState
+from ._data_protection_mgmt_client_enums import RecoveryOption
+from ._data_protection_mgmt_client_enums import RehydrationPriority
+from ._data_protection_mgmt_client_enums import RehydrationStatus
+from ._data_protection_mgmt_client_enums import ResourceMoveState
+from ._data_protection_mgmt_client_enums import RestoreSourceDataStoreType
+from ._data_protection_mgmt_client_enums import RestoreTargetLocationType
+from ._data_protection_mgmt_client_enums import SecretStoreType
+from ._data_protection_mgmt_client_enums import SoftDeleteState
+from ._data_protection_mgmt_client_enums import SourceDataStoreType
+from ._data_protection_mgmt_client_enums import Status
+from ._data_protection_mgmt_client_enums import StorageSettingStoreTypes
+from ._data_protection_mgmt_client_enums import StorageSettingTypes
+from ._data_protection_mgmt_client_enums import SyncType
+from ._data_protection_mgmt_client_enums import ValidationType
+from ._data_protection_mgmt_client_enums import WeekNumber
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -200,6 +213,7 @@ __all__ = [
     "AzureOperationalStoreParameters",
     "AzureRetentionRule",
     "BackupCriteria",
+    "BackupDatasourceParameters",
     "BackupInstance",
     "BackupInstanceResource",
     "BackupInstanceResourceList",
@@ -213,6 +227,7 @@ __all__ = [
     "BaseBackupPolicyResource",
     "BaseBackupPolicyResourceList",
     "BasePolicyRule",
+    "BlobBackupDatasourceParameters",
     "CheckNameAvailabilityRequest",
     "CheckNameAvailabilityResult",
     "ClientDiscoveryDisplay",
@@ -258,8 +273,11 @@ __all__ = [
     "InnerError",
     "ItemLevelRestoreCriteria",
     "ItemLevelRestoreTargetInfo",
+    "ItemPathBasedRestoreCriteria",
     "JobExtendedInfo",
     "JobSubTask",
+    "KubernetesClusterBackupDatasourceParameters",
+    "KubernetesClusterRestoreCriteria",
     "KubernetesPVRestoreCriteria",
     "KubernetesStorageClassRestoreCriteria",
     "MonitoringSettings",
@@ -277,6 +295,10 @@ __all__ = [
     "RecoveryPointsFilters",
     "ResourceGuard",
     "ResourceGuardOperation",
+    "ResourceGuardOperationDetail",
+    "ResourceGuardProxyBase",
+    "ResourceGuardProxyBaseResource",
+    "ResourceGuardProxyBaseResourceList",
     "ResourceGuardResource",
     "ResourceGuardResourceList",
     "ResourceMoveDetails",
@@ -302,6 +324,8 @@ __all__ = [
     "TargetDetails",
     "TriggerBackupRequest",
     "TriggerContext",
+    "UnlockDeleteRequest",
+    "UnlockDeleteResponse",
     "UserFacingError",
     "ValidateForBackupRequest",
     "ValidateRestoreRequestObject",
@@ -312,10 +336,12 @@ __all__ = [
     "CurrentProtectionState",
     "DataStoreTypes",
     "DayOfWeek",
+    "ExistingResourcePolicy",
     "FeatureSupportStatus",
     "FeatureType",
     "ImmutabilityState",
     "Month",
+    "PersistentVolumeRestoreMode",
     "ProvisioningState",
     "RecoveryOption",
     "RehydrationPriority",

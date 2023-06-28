@@ -114,7 +114,7 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=
         complete_annotation = anno
         if _is_dsl_type_cls(anno):
             complete_annotation = anno()
-        complete_annotation.name = name
+        complete_annotation._port_name = name
         if default is Input._EMPTY:
             return complete_annotation
         if isinstance(complete_annotation, Input):
@@ -128,7 +128,8 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=
             complete_annotation._update_default(default)
         if isinstance(complete_annotation, Output) and default is not None:
             msg = (
-                f"Default value of Output {complete_annotation.name!r} cannot be set: " f"Output has no default value."
+                f"Default value of Output {complete_annotation._port_name!r} cannot be set:"
+                f"Output has no default value."
             )
             raise UserErrorException(msg)
         return complete_annotation
@@ -255,7 +256,7 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
 
     def _is_primitive_type(io: type):
         """Return true if type is subclass of mldesigner._input_output._Param"""
-        return any([io.__module__.startswith(mldesigner_pkg) and item.__name__ == param_name for item in getmro(io)])
+        return any(io.__module__.startswith(mldesigner_pkg) and item.__name__ == param_name for item in getmro(io))
 
     def _is_input_or_output_type(io: type, type_str: str):
         """Return true if type name contains type_str"""

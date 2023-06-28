@@ -12,13 +12,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -53,8 +54,8 @@ class ApiError(_serialization.Model):
         code: Optional[str] = None,
         target: Optional[str] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword details: The Api error details.
         :paramtype details: list[~azure.mgmt.compute.v2022_04_04.models.ApiErrorBase]
@@ -93,8 +94,8 @@ class ApiErrorBase(_serialization.Model):
     }
 
     def __init__(
-        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs
-    ):
+        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword code: The error code.
         :paramtype code: str
@@ -156,8 +157,8 @@ class CloudService(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         properties: Optional["_models.CloudServiceProperties"] = None,
         system_data: Optional["_models.SystemData"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -189,7 +190,7 @@ class CloudServiceExtensionProfile(_serialization.Model):
         "extensions": {"key": "extensions", "type": "[Extension]"},
     }
 
-    def __init__(self, *, extensions: Optional[List["_models.Extension"]] = None, **kwargs):
+    def __init__(self, *, extensions: Optional[List["_models.Extension"]] = None, **kwargs: Any) -> None:
         """
         :keyword extensions: List of extensions for the cloud service.
         :paramtype extensions: list[~azure.mgmt.compute.v2022_04_04.models.Extension]
@@ -277,8 +278,8 @@ class CloudServiceExtensionProperties(_serialization.Model):
         protected_settings_from_key_vault: Optional["_models.CloudServiceVaultAndSecretReference"] = None,
         force_update_tag: Optional[str] = None,
         roles_applied_to: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword publisher: The name of the extension handler publisher.
         :paramtype publisher: str
@@ -363,7 +364,7 @@ class CloudServiceInstanceView(_serialization.Model):
         "statuses": {"key": "statuses", "type": "[ResourceInstanceViewStatus]"},
     }
 
-    def __init__(self, *, role_instance: Optional["_models.InstanceViewStatusesSummary"] = None, **kwargs):
+    def __init__(self, *, role_instance: Optional["_models.InstanceViewStatusesSummary"] = None, **kwargs: Any) -> None:
         """
         :keyword role_instance: Instance view statuses.
         :paramtype role_instance: ~azure.mgmt.compute.v2022_04_04.models.InstanceViewStatusesSummary
@@ -396,7 +397,7 @@ class CloudServiceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.CloudService"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.CloudService"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of resources. Required.
         :paramtype value: list[~azure.mgmt.compute.v2022_04_04.models.CloudService]
@@ -442,8 +443,8 @@ class CloudServiceNetworkProfile(_serialization.Model):
         load_balancer_configurations: Optional[List["_models.LoadBalancerConfiguration"]] = None,
         slot_type: Optional[Union[str, "_models.CloudServiceSlotType"]] = None,
         swappable_cloud_service: Optional["_models.SubResource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword load_balancer_configurations: List of Load balancer configurations. Cloud service can
          have up to two load balancer configurations, corresponding to a Public Load Balancer and an
@@ -479,7 +480,9 @@ class CloudServiceOsProfile(_serialization.Model):
         "secrets": {"key": "secrets", "type": "[CloudServiceVaultSecretGroup]"},
     }
 
-    def __init__(self, *, secrets: Optional[List["_models.CloudServiceVaultSecretGroup"]] = None, **kwargs):
+    def __init__(
+        self, *, secrets: Optional[List["_models.CloudServiceVaultSecretGroup"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword secrets: Specifies set of certificates that should be installed onto the role
          instances.
@@ -573,8 +576,8 @@ class CloudServiceProperties(_serialization.Model):  # pylint: disable=too-many-
         os_profile: Optional["_models.CloudServiceOsProfile"] = None,
         network_profile: Optional["_models.CloudServiceNetworkProfile"] = None,
         extension_profile: Optional["_models.CloudServiceExtensionProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword package_url: Specifies a URL that refers to the location of the service package in the
          Blob service. The service package URL can be Shared Access Signature (SAS) URI from any storage
@@ -673,8 +676,8 @@ class CloudServiceRole(_serialization.Model):
         *,
         sku: Optional["_models.CloudServiceRoleSku"] = None,
         properties: Optional["_models.CloudServiceRoleProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: Describes the cloud service role sku.
         :paramtype sku: ~azure.mgmt.compute.v2022_04_04.models.CloudServiceRoleSku
@@ -711,7 +714,9 @@ class CloudServiceRoleListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.CloudServiceRole"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.CloudServiceRole"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of resources. Required.
         :paramtype value: list[~azure.mgmt.compute.v2022_04_04.models.CloudServiceRole]
@@ -735,7 +740,9 @@ class CloudServiceRoleProfile(_serialization.Model):
         "roles": {"key": "roles", "type": "[CloudServiceRoleProfileProperties]"},
     }
 
-    def __init__(self, *, roles: Optional[List["_models.CloudServiceRoleProfileProperties"]] = None, **kwargs):
+    def __init__(
+        self, *, roles: Optional[List["_models.CloudServiceRoleProfileProperties"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword roles: List of roles for the cloud service.
         :paramtype roles:
@@ -759,7 +766,9 @@ class CloudServiceRoleProfileProperties(_serialization.Model):
         "sku": {"key": "sku", "type": "CloudServiceRoleSku"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, sku: Optional["_models.CloudServiceRoleSku"] = None, **kwargs):
+    def __init__(
+        self, *, name: Optional[str] = None, sku: Optional["_models.CloudServiceRoleSku"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Resource name.
         :paramtype name: str
@@ -788,7 +797,7 @@ class CloudServiceRoleProperties(_serialization.Model):
         "unique_id": {"key": "uniqueId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.unique_id = None
@@ -815,8 +824,8 @@ class CloudServiceRoleSku(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Optional[str] = None, tier: Optional[str] = None, capacity: Optional[int] = None, **kwargs
-    ):
+        self, *, name: Optional[str] = None, tier: Optional[str] = None, capacity: Optional[int] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The sku name. NOTE: If the new SKU is not supported on the hardware the cloud
          service is currently on, you need to delete and recreate the cloud service or move back to the
@@ -845,7 +854,7 @@ class CloudServiceUpdate(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -855,7 +864,8 @@ class CloudServiceUpdate(_serialization.Model):
 
 
 class CloudServiceVaultAndSecretReference(_serialization.Model):
-    """Protected settings for the extension, referenced using KeyVault which are encrypted before sent to the role instance.
+    """Protected settings for the extension, referenced using KeyVault which are encrypted before sent
+    to the role instance.
 
     :ivar source_vault: The ARM Resource ID of the Key Vault.
     :vartype source_vault: ~azure.mgmt.compute.v2022_04_04.models.SubResource
@@ -869,8 +879,8 @@ class CloudServiceVaultAndSecretReference(_serialization.Model):
     }
 
     def __init__(
-        self, *, source_vault: Optional["_models.SubResource"] = None, secret_url: Optional[str] = None, **kwargs
-    ):
+        self, *, source_vault: Optional["_models.SubResource"] = None, secret_url: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword source_vault: The ARM Resource ID of the Key Vault.
         :paramtype source_vault: ~azure.mgmt.compute.v2022_04_04.models.SubResource
@@ -883,7 +893,8 @@ class CloudServiceVaultAndSecretReference(_serialization.Model):
 
 
 class CloudServiceVaultCertificate(_serialization.Model):
-    """Describes a single certificate reference in a Key Vault, and where the certificate should reside on the role instance.
+    """Describes a single certificate reference in a Key Vault, and where the certificate should
+    reside on the role instance.
 
     :ivar certificate_url: This is the URL of a certificate that has been uploaded to Key Vault as
      a secret.
@@ -894,7 +905,7 @@ class CloudServiceVaultCertificate(_serialization.Model):
         "certificate_url": {"key": "certificateUrl", "type": "str"},
     }
 
-    def __init__(self, *, certificate_url: Optional[str] = None, **kwargs):
+    def __init__(self, *, certificate_url: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword certificate_url: This is the URL of a certificate that has been uploaded to Key Vault
          as a secret.
@@ -926,8 +937,8 @@ class CloudServiceVaultSecretGroup(_serialization.Model):
         *,
         source_vault: Optional["_models.SubResource"] = None,
         vault_certificates: Optional[List["_models.CloudServiceVaultCertificate"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_vault: The relative URL of the Key Vault containing all of the certificates in
          VaultCertificates.
@@ -961,8 +972,8 @@ class ExtendedLocation(_serialization.Model):
         *,
         name: Optional[str] = None,
         type: Optional[Union[str, "_models.ExtendedLocationTypes"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the extended location.
         :paramtype name: str
@@ -993,8 +1004,8 @@ class Extension(_serialization.Model):
         *,
         name: Optional[str] = None,
         properties: Optional["_models.CloudServiceExtensionProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the extension.
         :paramtype name: str
@@ -1020,7 +1031,9 @@ class InnerError(_serialization.Model):
         "errordetail": {"key": "errordetail", "type": "str"},
     }
 
-    def __init__(self, *, exceptiontype: Optional[str] = None, errordetail: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, exceptiontype: Optional[str] = None, errordetail: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword exceptiontype: The exception type.
         :paramtype exceptiontype: str
@@ -1053,7 +1066,7 @@ class InstanceSku(_serialization.Model):
         "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -1077,7 +1090,7 @@ class InstanceViewStatusesSummary(_serialization.Model):
         "statuses_summary": {"key": "statusesSummary", "type": "[StatusCodeCount]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.statuses_summary = None
@@ -1113,8 +1126,8 @@ class LoadBalancerConfiguration(_serialization.Model):
         name: str,
         properties: "_models.LoadBalancerConfigurationProperties",
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Id.
         :paramtype id: str
@@ -1153,7 +1166,9 @@ class LoadBalancerConfigurationProperties(_serialization.Model):
         },
     }
 
-    def __init__(self, *, frontend_ip_configurations: List["_models.LoadBalancerFrontendIPConfiguration"], **kwargs):
+    def __init__(
+        self, *, frontend_ip_configurations: List["_models.LoadBalancerFrontendIPConfiguration"], **kwargs: Any
+    ) -> None:
         """
         :keyword frontend_ip_configurations: Specifies the frontend IP to be used for the load
          balancer. Only IPv4 frontend IP address is supported. Each load balancer configuration must
@@ -1166,7 +1181,8 @@ class LoadBalancerConfigurationProperties(_serialization.Model):
 
 
 class LoadBalancerFrontendIPConfiguration(_serialization.Model):
-    """Specifies the frontend IP to be used for the load balancer. Only IPv4 frontend IP address is supported. Each load balancer configuration must have exactly one frontend IP configuration.
+    """Specifies the frontend IP to be used for the load balancer. Only IPv4 frontend IP address is
+    supported. Each load balancer configuration must have exactly one frontend IP configuration.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1189,7 +1205,9 @@ class LoadBalancerFrontendIPConfiguration(_serialization.Model):
         "properties": {"key": "properties", "type": "LoadBalancerFrontendIPConfigurationProperties"},
     }
 
-    def __init__(self, *, name: str, properties: "_models.LoadBalancerFrontendIPConfigurationProperties", **kwargs):
+    def __init__(
+        self, *, name: str, properties: "_models.LoadBalancerFrontendIPConfigurationProperties", **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the resource that is unique within the set of frontend IP
          configurations used by the load balancer. This name can be used to access the resource.
@@ -1227,8 +1245,8 @@ class LoadBalancerFrontendIPConfigurationProperties(_serialization.Model):
         public_ip_address: Optional["_models.SubResource"] = None,
         subnet: Optional["_models.SubResource"] = None,
         private_ip_address: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword public_ip_address: The reference to the public ip address resource.
         :paramtype public_ip_address: ~azure.mgmt.compute.v2022_04_04.models.SubResource
@@ -1275,7 +1293,7 @@ class OSFamily(_serialization.Model):
         "properties": {"key": "properties", "type": "OSFamilyProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.OSFamilyProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.OSFamilyProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: OS family properties.
         :paramtype properties: ~azure.mgmt.compute.v2022_04_04.models.OSFamilyProperties
@@ -1309,7 +1327,7 @@ class OSFamilyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.OSFamily"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.OSFamily"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of resources. Required.
         :paramtype value: list[~azure.mgmt.compute.v2022_04_04.models.OSFamily]
@@ -1347,7 +1365,7 @@ class OSFamilyProperties(_serialization.Model):
         "versions": {"key": "versions", "type": "[OSVersionPropertiesBase]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -1387,7 +1405,7 @@ class OSVersion(_serialization.Model):
         "properties": {"key": "properties", "type": "OSVersionProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.OSVersionProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.OSVersionProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: OS version properties.
         :paramtype properties: ~azure.mgmt.compute.v2022_04_04.models.OSVersionProperties
@@ -1421,7 +1439,7 @@ class OSVersionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.OSVersion"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.OSVersion"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of resources. Required.
         :paramtype value: list[~azure.mgmt.compute.v2022_04_04.models.OSVersion]
@@ -1471,7 +1489,7 @@ class OSVersionProperties(_serialization.Model):
         "is_active": {"key": "isActive", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.family = None
@@ -1511,7 +1529,7 @@ class OSVersionPropertiesBase(_serialization.Model):
         "is_active": {"key": "isActive", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.version = None
@@ -1554,7 +1572,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -1601,7 +1619,7 @@ class ResourceInstanceViewStatus(_serialization.Model):
         "level": {"key": "level", "type": "str"},
     }
 
-    def __init__(self, *, level: Optional[Union[str, "_models.StatusLevelTypes"]] = None, **kwargs):
+    def __init__(self, *, level: Optional[Union[str, "_models.StatusLevelTypes"]] = None, **kwargs: Any) -> None:
         """
         :keyword level: The level code. Known values are: "Info", "Warning", and "Error".
         :paramtype level: str or ~azure.mgmt.compute.v2022_04_04.models.StatusLevelTypes
@@ -1645,7 +1663,7 @@ class ResourceWithOptionalLocation(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -1704,8 +1722,8 @@ class RoleInstance(_serialization.Model):
         *,
         sku: Optional["_models.InstanceSku"] = None,
         properties: Optional["_models.RoleInstanceProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: The role instance SKU.
         :paramtype sku: ~azure.mgmt.compute.v2022_04_04.models.InstanceSku
@@ -1743,7 +1761,7 @@ class RoleInstanceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.RoleInstance"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.RoleInstance"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of resources. Required.
         :paramtype value: list[~azure.mgmt.compute.v2022_04_04.models.RoleInstance]
@@ -1774,7 +1792,7 @@ class RoleInstanceNetworkProfile(_serialization.Model):
         "network_interfaces": {"key": "networkInterfaces", "type": "[SubResource]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.network_interfaces = None
@@ -1799,8 +1817,8 @@ class RoleInstanceProperties(_serialization.Model):
         *,
         network_profile: Optional["_models.RoleInstanceNetworkProfile"] = None,
         instance_view: Optional["_models.RoleInstanceView"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword network_profile: Describes the network profile for the role instance.
         :paramtype network_profile: ~azure.mgmt.compute.v2022_04_04.models.RoleInstanceNetworkProfile
@@ -1830,7 +1848,7 @@ class RoleInstances(_serialization.Model):
         "role_instances": {"key": "roleInstances", "type": "[str]"},
     }
 
-    def __init__(self, *, role_instances: List[str], **kwargs):
+    def __init__(self, *, role_instances: List[str], **kwargs: Any) -> None:
         """
         :keyword role_instances: List of cloud service role instance names. Value of '*' will signify
          all role instances of the cloud service. Required.
@@ -1871,7 +1889,7 @@ class RoleInstanceView(_serialization.Model):
         "statuses": {"key": "statuses", "type": "[ResourceInstanceViewStatus]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.platform_update_domain = None
@@ -1901,7 +1919,7 @@ class StatusCodeCount(_serialization.Model):
         "count": {"key": "count", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -1919,7 +1937,7 @@ class SubResource(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource Id.
         :paramtype id: str
@@ -1945,7 +1963,7 @@ class SubResourceReadOnly(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -1974,7 +1992,7 @@ class SystemData(_serialization.Model):
         "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.created_at = None
@@ -2002,7 +2020,7 @@ class UpdateDomain(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -2030,7 +2048,7 @@ class UpdateDomainListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.UpdateDomain"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.UpdateDomain"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of resources. Required.
         :paramtype value: list[~azure.mgmt.compute.v2022_04_04.models.UpdateDomain]
@@ -2064,7 +2082,7 @@ class UserAssignedIdentitiesValue(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None

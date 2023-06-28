@@ -1,0 +1,336 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.9.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1753",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 21 Feb 2023 06:06:44 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14649.20 - WUS2 ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+        "tenant_region_scope": "NA",
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Cookie": "cookie;",
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.9.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "945",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-wlMB-BtL5l-pR76D1sSI1w\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027 \u0027report-sample\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 21 Feb 2023 06:06:44 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14649.20 - KRSLR1 ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+        "api-version": "1.1",
+        "metadata": [
+          {
+            "preferred_network": "login.microsoftonline.com",
+            "preferred_cache": "login.windows.net",
+            "aliases": [
+              "login.microsoftonline.com",
+              "login.windows.net",
+              "login.microsoft.com",
+              "sts.windows.net"
+            ]
+          },
+          {
+            "preferred_network": "login.partner.microsoftonline.cn",
+            "preferred_cache": "login.partner.microsoftonline.cn",
+            "aliases": [
+              "login.partner.microsoftonline.cn",
+              "login.chinacloudapi.cn"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.de",
+            "preferred_cache": "login.microsoftonline.de",
+            "aliases": [
+              "login.microsoftonline.de"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.us",
+            "preferred_cache": "login.microsoftonline.us",
+            "aliases": [
+              "login.microsoftonline.us",
+              "login.usgovcloudapi.net"
+            ]
+          },
+          {
+            "preferred_network": "login-us.microsoftonline.com",
+            "preferred_cache": "login-us.microsoftonline.com",
+            "aliases": [
+              "login-us.microsoftonline.com"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "1417628a-b3ce-4dd4-b1a6-6197057f6f7d",
+        "Connection": "keep-alive",
+        "Content-Length": "285",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Cookie": "cookie;",
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
+        "x-client-cpu": "x64",
+        "x-client-current-telemetry": "4|730,0|",
+        "x-client-last-telemetry": "4|0|||",
+        "x-client-os": "win32",
+        "x-client-sku": "MSAL.Python",
+        "x-client-ver": "1.21.0",
+        "x-ms-lib-capability": "retry-after, h429"
+      },
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fpurview.azure.net%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "client-request-id": "1417628a-b3ce-4dd4-b1a6-6197057f6f7d",
+        "Content-Length": "93",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 21 Feb 2023 06:06:44 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-clitelem": "1,0,0,,",
+        "x-ms-ests-server": "2.1.14649.20 - NCUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 3599,
+        "ext_expires_in": 3599,
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://test-create-account.purview.azure.com/workflow/workflows?api-version=2022-05-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-purview-workflow/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "2610",
+        "Content-Type": "application/json",
+        "Date": "Tue, 21 Feb 2023 06:06:46 GMT",
+        "Server": "MicrosoftPurview",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-ms-correlation-request-id": "86ae0023-f3c9-4598-af44-43e8652cbabb"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "47de85f0-b835-415b-8db2-280aed78965e",
+            "triggers": [
+              {
+                "type": "when_term_creation_is_requested",
+                "underGlossaryHierarchy": "/glossaries/d167f7c5-cfa9-4e1a-b511-a0ff148226e1"
+              }
+            ],
+            "createdTime": "2022-11-30T08:42:49.447391319Z",
+            "createdBy": "242ee032-7ed5-46d7-93c4-26feb17ee419",
+            "lastUpdateTime": "2022-12-01T04:30:35.440865856Z",
+            "updatedBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
+            "name": "CreateTerm16424820221130",
+            "isEnabled": false,
+            "description": ""
+          },
+          {
+            "id": "8f8a7faa-71f2-4d7c-bbca-1d83ec61f0f8",
+            "triggers": [
+              {
+                "type": "when_term_creation_is_requested",
+                "underGlossaryHierarchy": "/glossaries/d167f7c5-cfa9-4e1a-b511-a0ff148226e1"
+              }
+            ],
+            "createdTime": "2022-12-05T02:38:29.316491561Z",
+            "createdBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
+            "lastUpdateTime": "2022-12-19T07:54:30.579892807Z",
+            "updatedBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
+            "name": "CreateTerm10382820221205",
+            "isEnabled": false,
+            "description": ""
+          },
+          {
+            "id": "d8b7594f-ffa3-468e-8574-8bbb75ba2ac1",
+            "triggers": [
+              {
+                "type": "when_term_creation_is_requested"
+              }
+            ],
+            "createdTime": "2022-12-05T02:41:56.260246220Z",
+            "createdBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
+            "lastUpdateTime": "2023-02-13T02:33:50.827001441Z",
+            "updatedBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
+            "name": "CreateTerm10415520221205",
+            "isEnabled": false,
+            "description": ""
+          },
+          {
+            "id": "771bb3e3-240f-4c9e-b9e4-dc00177eb931",
+            "triggers": [
+              {
+                "type": "when_term_creation_is_requested",
+                "underGlossaryHierarchy": "/glossaries/5dae5e5b-5aa6-48f1-9e46-26fe7328de71"
+              }
+            ],
+            "createdTime": "2023-02-13T03:49:44.982674759Z",
+            "createdBy": "ebd5d73f-ebd1-40bc-8f63-6d3724957d15",
+            "lastUpdateTime": "2023-02-13T03:53:45.454402683Z",
+            "updatedBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
+            "name": "CreateTerm11494320230213",
+            "isEnabled": false,
+            "description": ""
+          },
+          {
+            "id": "f916492c-7823-4a1a-a58e-acae52622850",
+            "triggers": [
+              {
+                "type": "when_term_creation_is_requested",
+                "underGlossaryHierarchy": "/glossaries/5dae5e5b-5aa6-48f1-9e46-26fe7328de71"
+              }
+            ],
+            "createdTime": "2023-02-13T07:10:13.610267872Z",
+            "createdBy": "ebd5d73f-ebd1-40bc-8f63-6d3724957d15",
+            "lastUpdateTime": "2023-02-15T08:29:12.856011329Z",
+            "updatedBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
+            "name": "CreateTerm15101320230213",
+            "isEnabled": false,
+            "description": ""
+          },
+          {
+            "id": "333faa86-3552-49cf-a042-eb7c988cc519",
+            "triggers": [
+              {
+                "type": "when_term_creation_is_requested",
+                "underGlossaryHierarchy": "/glossaries/5dae5e5b-5aa6-48f1-9e46-26fe7328de71"
+              }
+            ],
+            "createdTime": "2023-02-16T09:23:52.909386052Z",
+            "createdBy": "ebd5d73f-ebd1-40bc-8f63-6d3724957d15",
+            "lastUpdateTime": "2023-02-16T09:23:52.909386052Z",
+            "updatedBy": "ebd5d73f-ebd1-40bc-8f63-6d3724957d15",
+            "name": "CreateTerm17235220230216",
+            "isEnabled": true,
+            "description": ""
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}
