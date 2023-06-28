@@ -218,6 +218,7 @@ class EventData(object):
         :param bytes content: The content value to be set as the body of the message.
         :param str content_type: The content type to be set on the message.
         :rtype: ~azure.eventhub.EventData
+        :return: An EventData object.
         """
         event_data = cls(content)
         event_data.content_type = content_type
@@ -236,7 +237,9 @@ class EventData(object):
 
         :param ~uamqp.Message message: A received uamqp message.
         :param ~azure.eventhub.amqp.AmqpAnnotatedMessage message: An amqp annotated message.
+        :param ~azure.eventhub.amqp.AmqpAnnotatedMessage raw_amqp_message: An amqp annotated message.
         :rtype: ~azure.eventhub.EventData
+        :return: An EventData object.
         """
         event_data = cls(body="")
         # pylint: disable=protected-access
@@ -281,6 +284,8 @@ class EventData(object):
     def message(self, value: "Message") -> None:
         """DEPRECATED: Set the underlying Message.
         This is deprecated and will be removed in a later release.
+
+        :param Message value: The message object.
         """
         warnings.warn(
             "The `message` property is deprecated and will be removed in future versions.",
@@ -290,7 +295,10 @@ class EventData(object):
 
     @property
     def raw_amqp_message(self) -> AmqpAnnotatedMessage:
-        """Advanced usage only. The internal AMQP message payload that is sent or received."""
+        """Advanced usage only. The internal AMQP message payload that is sent or received.
+
+        :rtype: ~azure.eventhub.amqp.AmqpAnnotatedMessage
+        """
         return self._raw_amqp_message
 
     @property
@@ -400,7 +408,7 @@ class EventData(object):
         """
         try:
             return self._raw_amqp_message.body
-        except:
+        except: # pylint: disable=raise-missing-from
             raise ValueError("Event content empty.")
 
     @property
@@ -414,9 +422,10 @@ class EventData(object):
     def body_as_str(self, encoding: str = "UTF-8") -> str:
         """The content of the event as a string, if the data is of a compatible type.
 
-        :param encoding: The encoding to use for decoding event data.
+        :param str encoding: The encoding to use for decoding event data.
          Default is 'UTF-8'
         :rtype: str
+        :return: The content of the event as a string.
         """
         data = self.body
         try:
@@ -424,28 +433,29 @@ class EventData(object):
                 return self._decode_non_data_body_as_str(encoding=encoding)
             return "".join(b.decode(encoding) for b in cast(Iterable[bytes], data))
         except UnicodeDecodeError as e:
-            raise TypeError(f"Message data is not compatible with string type: {e}")
-        except TypeError as e:
+            raise TypeError(f"Message data is not compatible with string type: {e}") from e
+        except TypeError:
             return str(data)
         except Exception:  # pylint: disable=broad-except
             pass
         try:
             return cast(bytes, data).decode(encoding)
         except Exception as e:
-            raise TypeError(f"Message data is not compatible with string type: {e}")
+            raise TypeError(f"Message data is not compatible with string type: {e}") from e
 
     def body_as_json(self, encoding: str = "UTF-8") -> Dict[str, Any]:
         """The content of the event loaded as a JSON object, if the data is compatible.
 
-        :param encoding: The encoding to use for decoding event data.
+        :param str encoding: The encoding to use for decoding event data.
          Default is 'UTF-8'
         :rtype: Dict[str, Any]
+        :return: A JSON object.
         """
         data_str = self.body_as_str(encoding=encoding)
         try:
             return json.loads(data_str)
         except Exception as e:
-            raise TypeError(f"Event data is not compatible with JSON type: {e}")
+            raise TypeError(f"Event data is not compatible with JSON type: {e}") from e
 
     @property
     def content_type(self) -> Optional[str]:
@@ -612,12 +622,12 @@ class EventDataBatch(object):
         for event_data in events:
             try:
                 self.add(event_data)
-            except ValueError:
+            except ValueError as exc:
                 raise ValueError(
                     "The combined size of EventData or AmqpAnnotatedMessage collection exceeds "
                     "the Event Hub frame size limit. Please send a smaller collection of EventData "
                     "or use EventDataBatch, which is guaranteed to be under the frame size limit"
-                )
+                ) from exc
 
     @property
     def message(self) -> Union["BatchMessage", LegacyBatchMessage]:
@@ -642,6 +652,8 @@ class EventDataBatch(object):
     def message(self, value: "BatchMessage") -> None:
         """DEPRECATED: Set the underlying BatchMessage.
         This is deprecated and will be removed in a later release.
+
+        :param BatchMessage value: The BatchMessage to set as the underlying uamqp.BatchMessage or LegacyBatchMessage.
         """
         warnings.warn(
             "The `message` property is deprecated and will be removed in future versions.",

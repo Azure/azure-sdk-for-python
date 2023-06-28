@@ -164,7 +164,7 @@ class EventHubProducer(
 
         :param outcome: The outcome of the message delivery - success or failure.
         :type outcome: ~uamqp.constants.MessageSendResult
-        :param condition: Detail information of the outcome.
+        :param Exception condition: Detail information of the outcome.
 
         """
         self._outcome = outcome

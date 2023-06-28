@@ -134,6 +134,12 @@ def trace_message(
     """Add tracing information to the message and return the updated message.
 
     Will open and close an message span, and add trace context to the app properties of the message.
+
+    :param uamqp_Message or Message message: The message to trace.
+    :param AmqpTransport amqp_transport: The transport to use for tracing.
+    :param dict additional_attributes: Additional attributes to add to the span.
+    :rtype: uamqp.Message or Message
+    :return: The message with tracing information added.
     """
     try:
         span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
@@ -180,6 +186,10 @@ def get_span_links_from_received_events(events: Union[EventData, Iterable[EventD
 
     This will extract the traceparent and tracestate from the event properties and create span links
     based on these values. The time the event was enqueued is also added as a link attribute.
+
+    :param EventData or iterable[EventData] events: The received events.
+    :rtype: list[Link]
+    :return: A list of span links.
     """
     # pylint:disable=isinstance-second-argument-not-valid-type
     trace_events = events if isinstance(events, Iterable) else (events,)
@@ -210,7 +220,12 @@ def get_span_links_from_received_events(events: Union[EventData, Iterable[EventD
 
 
 def get_span_links_from_batch(batch: EventDataBatch) -> List[Link]:
-    """Create span links from a batch of events."""
+    """Create span links from a batch of events.
+
+    :param EventDataBatch batch: The batch of events to extract the span links from.
+    :rtype: list[~azure.core.tracing.Link]
+    :return: A list of span links.
+    """
     links = []
     try:
         for event in batch._internal_events:  # pylint: disable=protected-access
@@ -229,6 +244,10 @@ def get_span_link_from_message(message: Union[AmqpAnnotatedMessage, Message]) ->
 
     This will extract the traceparent and tracestate from the message application properties and create span links
     based on these values.
+
+    :param AmqpAnnotatedMessage or Message message: The message to extract the traceparent and tracestate from.
+    :rtype: ~azure.core.tracing.Link
+    :return: A span link.
     """
     headers = {}
     try:
@@ -256,7 +275,13 @@ def add_span_attributes(
         client: Optional[ClientBase],
         message_count: int = 0
 ) -> None:
-    """Add attributes to span based on the operation type."""
+    """Add attributes to span based on the operation type.
+
+    :param AbstractSpan span: The span to add attributes to.
+    :param TraceOperationTypes operation_type: The type of operation to add attributes for.
+    :param ClientBase client: The client that is performing the operation.
+    :param int message_count: The number of messages being processed.
+    """
 
     span.add_attribute(TraceAttributes.TRACE_NAMESPACE_ATTRIBUTE, TraceAttributes.TRACE_NAMESPACE)
     span.add_attribute(TraceAttributes.TRACE_MESSAGING_SYSTEM_ATTRIBUTE, TraceAttributes.TRACE_MESSAGING_SYSTEM)

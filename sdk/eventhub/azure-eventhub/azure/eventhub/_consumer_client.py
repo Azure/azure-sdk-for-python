@@ -34,6 +34,8 @@ _LOGGER = logging.getLogger(__name__)
 class EventHubConsumerClient(
     ClientBase
 ):  # pylint: disable=client-accepts-api-version-keyword
+
+    # pylint: disable=client-method-missing-tracing-decorator
     """The EventHubConsumerClient class defines a high level interface for
     receiving events from the Azure Event Hubs service.
 
@@ -549,6 +551,7 @@ class EventHubConsumerClient(
             - `partition_ids` (list[str])
 
         :rtype: Dict[str, Any]
+        :return: A dictionary containing information about the Event Hub.
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return super(EventHubConsumerClient, self)._get_eventhub_properties()
@@ -558,6 +561,7 @@ class EventHubConsumerClient(
         """Get partition IDs of the Event Hub.
 
         :rtype: list[str]
+        :return: A list of partition IDs.
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return super(EventHubConsumerClient, self)._get_partition_ids()
@@ -579,6 +583,7 @@ class EventHubConsumerClient(
         :param partition_id: The target partition ID.
         :type partition_id: str
         :rtype: Dict[str, Any]
+        :return: A dictionary containing partition properties.
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return super(EventHubConsumerClient, self)._get_partition_properties(

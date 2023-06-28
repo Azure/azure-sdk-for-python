@@ -148,7 +148,12 @@ def _parse_conn_str(conn_str, **kwargs):
 def _generate_sas_token(uri, policy, key, expiry=None):
     # type: (str, str, str, Optional[timedelta]) -> AccessToken
     """Create a shared access signature token as a string literal.
-    :returns: SAS token as string literal.
+
+    :param str uri: The resource URI.
+    :param str policy: The name of the shared access policy.
+    :param str key: The shared access key.
+    :param timedelta expiry: The time period that the signature is valid for. Default is 1 hour.
+    :return: SAS token as string literal.
     :rtype: str
     """
     if not expiry:
@@ -239,6 +244,10 @@ class EventHubSASTokenCredential(object):
         # type: (str, Any) -> AccessToken
         """
         This method is automatically called when token is about to expire.
+
+        :param str scopes: The list of scopes for which the token has access.
+        :rtype: ~azure.core.credentials.AccessToken
+        :return: The access token.
         """
         return AccessToken(self.token, self.expiry)
 
@@ -266,6 +275,10 @@ class EventhubAzureSasTokenCredential(object):
         # type: (str, Any) -> AccessToken
         """
         This method is automatically called when token is about to expire.
+
+        :param str scopes: The scopes for the token request.
+        :rtype: ~azure.core.credentials.AccessToken
+        :return: The access token.
         """
         signature, expiry = parse_sas_credential(self._credential)
         return AccessToken(signature, expiry)
@@ -341,6 +354,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         """
         Create an ~uamqp.authentication.SASTokenAuth instance
          to authenticate the session.
+
+        :rtype: JWTTokenAuth
+        :return: The auth for the session.
         """
         try:
             # ignore mypy's warning because token_type is Optional
@@ -451,7 +467,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     _LOGGER.info(
                         "%r returns an exception %r", self._container_id, last_exception
                     )
-                    raise last_exception
+                    raise last_exception # pylint: disable=raise-missing-from
             finally:
                 mgmt_client.close()
 
@@ -598,7 +614,7 @@ class ConsumerProducerMixin(object):
                         self._name,
                         last_exception,
                     )
-                    raise last_exception
+                    raise last_exception # pylint:disable=raise-missing-from
 
     def close(self):
         # type:() -> None

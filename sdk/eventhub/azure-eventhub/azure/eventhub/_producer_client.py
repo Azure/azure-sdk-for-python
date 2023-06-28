@@ -41,6 +41,7 @@ class EventHubProducerClient(
     ClientBase
 ):  # pylint: disable=client-accepts-api-version-keyword
     # pylint: disable=too-many-instance-attributes
+    # pylint: disable=client-method-missing-tracing-decorator
     """The EventHubProducerClient class defines a high level interface for
     sending events to the Azure Event Hubs service.
 
@@ -724,6 +725,7 @@ class EventHubProducerClient(
         :keyword int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold. By
          default, the value is determined by your Event Hubs tier.
         :rtype: ~azure.eventhub.EventDataBatch
+        :return: An EventDataBatch object instance
 
         .. admonition:: Example:
 
@@ -771,6 +773,7 @@ class EventHubProducerClient(
             - `partition_ids` (list[str])
 
         :rtype: Dict[str, Any]
+        :return: A dictionary containing eventhub properties.
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return super(EventHubProducerClient, self)._get_eventhub_properties()
@@ -780,6 +783,7 @@ class EventHubProducerClient(
         """Get partition IDs of the Event Hub.
 
         :rtype: list[str]
+        :return: A list of partition IDs.
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return super(EventHubProducerClient, self)._get_partition_ids()
@@ -801,6 +805,7 @@ class EventHubProducerClient(
         :param partition_id: The target partition ID.
         :type partition_id: str
         :rtype: Dict[str, Any]
+        :return: A dictionary of partition properties.
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return super(EventHubProducerClient, self)._get_partition_properties(
@@ -853,7 +858,7 @@ class EventHubProducerClient(
                 )
                 self._buffered_producer_dispatcher = None
 
-            for pid in self._producers:
+            for pid in self._producers: # pylint: disable=consider-using-dict-items
                 if self._producers[pid]:
                     self._producers[pid].close()  # type: ignore
                 self._producers[pid] = None

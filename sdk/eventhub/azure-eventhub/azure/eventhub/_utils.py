@@ -58,14 +58,17 @@ class UTC(datetime.tzinfo):
     """Time Zone info for handling UTC"""
 
     def utcoffset(self, dt):
+        # pylint: disable=docstring-missing-rtype,docstring-missing-return,docstring-missing-param
         """UTF offset for UTC is 0."""
         return datetime.timedelta(0)
 
     def tzname(self, dt):
+        # pylint: disable=docstring-missing-rtype,docstring-missing-return,docstring-missing-param
         """Timestamp representation."""
         return "Z"
 
     def dst(self, dt):
+        # pylint: disable=docstring-missing-rtype,docstring-missing-return,docstring-missing-param
         """No daylight saving for UTC."""
         return datetime.timedelta(hours=1)
 
@@ -89,7 +92,10 @@ def create_properties(
     Format the properties with which to instantiate the connection.
     This acts like a user agent over HTTP.
 
+    :param str user_agent: The user agent string.
+    :keyword ~azure.eventhub.AmqpTransport amqp_transport: The AMQP transport.
     :rtype: dict
+    :return: The properties.
     """
     properties: Dict[Any, str] = {}
     properties[amqp_transport.PRODUCT_SYMBOL] = USER_AGENT_PREFIX
@@ -139,7 +145,13 @@ def set_event_partition_key(
 
 def event_position_selector(value, inclusive=False):
     # type: (Union[int, str, datetime.datetime], bool) -> bytes
-    """Creates a selector expression of the offset."""
+    """Creates a selector expression of the offset.
+
+    :param int value: The offset value to use for the offset.
+    :param bool inclusive: Whether to include the value in the range.
+    :rtype: bytes
+    :return: The selector filter expression.
+    """
     operator = ">=" if inclusive else ">"
     if isinstance(value, datetime.datetime):  # pylint:disable=no-else-return
         timestamp = (calendar.timegm(value.utctimetuple()) * 1000) + (
@@ -161,7 +173,9 @@ def get_last_enqueued_event_properties(event_data):
     # type: (EventData) -> Optional[Dict[str, Any]]
     """Extracts the last enqueued event in from the received event delivery annotations.
 
+    :param ~azure.eventhub.EventData event_data: An EventData instance.
     :rtype: Dict[str, Any]
+    :return: The enqueued event properties dictionary.
     """
     # pylint: disable=protected-access
     if event_data._last_enqueued_event_properties:
@@ -219,7 +233,9 @@ def transform_outbound_single_message(message, message_type, to_outgoing_amqp_me
         or AmqpAnnotatedMessage.
     :type message: ~azure.eventhub.common.EventData, ~azure.eventhub.amqp.AmqpAnnotatedMessage
     :param Type[EventData] message_type: The class type to return the messages as.
+    :param callable to_outgoing_amqp_message: A function to transform the message
     :rtype: EventData
+    :return: The transformed message.
     """
     try:
         # pylint: disable=protected-access
@@ -246,9 +262,10 @@ def decode_with_recurse(data, encoding="UTF-8"):
     If data is of a compatible type, iterates through nested structure and decodes all binary
         strings with provided encoding.
     :param Any data: The data object which, if compatible, will be iterated through to decode binary string.
-    :param encoding: The encoding to use for decoding data.
+    :param str encoding: The encoding to use for decoding data.
         Default is 'UTF-8'
     :rtype: Any
+    :return: The decoded data object.
     """
 
     if isinstance(data, str):

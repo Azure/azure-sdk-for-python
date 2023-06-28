@@ -190,7 +190,11 @@ class EventHubConsumer(
         return event_data
 
     def _open(self) -> bool:
-        """Open the EventHubConsumer/EventHubProducer using the supplied connection."""
+        """Open the EventHubConsumer/EventHubProducer using the supplied connection.
+
+        :rtype: bool
+        :return: Whether the ReceiveClient is open
+        """
         # pylint: disable=protected-access
         if not self.running:
             if self._handler:
@@ -246,7 +250,7 @@ class EventHubConsumer(
                             self._name,
                             last_exception,
                         )
-                        raise last_exception
+                        raise last_exception # pylint:disable=raise-missing-from
         if (
             len(self._message_buffer) >= max_batch_size
             or (self._message_buffer and not max_wait_time)
