@@ -13,7 +13,6 @@ try:
 except ImportError:
     from urllib2 import quote  # type: ignore
 
-from azure.core.exceptions import raise_with_traceback
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
@@ -38,6 +37,7 @@ def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
     :keyword str api_version: The API Version to include in the signature.
      If not provided, the default API version will be used.
     :rtype: str
+    :return: A shared access signature string.
 
     .. admonition:: Example:
 
@@ -93,7 +93,7 @@ def _get_authentication_policy(credential, bearer_token_policy=BearerTokenCreden
 def _is_cloud_event(event):
     # type: (Any) -> bool
     required = ("id", "source", "specversion", "type")
-    try:
+    try: # pylint: disable=use-a-generator
         return all([_ in event for _ in required]) and event["specversion"] == "1.0"
     except TypeError:
         return False
@@ -101,7 +101,7 @@ def _is_cloud_event(event):
 def _is_eventgrid_event(event):
     # type: (Any) -> bool
     required = ("subject", "eventType", "data", "dataVersion", "id", "eventTime")
-    try:
+    try: # pylint: disable=use-a-generator
         return all([prop in event for prop in required])
     except TypeError:
         return False
@@ -141,9 +141,14 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
         **kwargs
     )
 
-def _from_cncf_events(event):
+def _from_cncf_events(event): # pylint: disable=inconsistent-return-statements
     """This takes in a CNCF cloudevent and returns a dictionary.
     If cloud events library is not installed, the event is returned back.
+
+    :param event: The event to be serialized
+    :type event: cloudevents.CloudEvent
+    :return: The serialized event
+    :rtype: Any
     """
     try:
         from cloudevents.http import to_json
@@ -154,7 +159,7 @@ def _from_cncf_events(event):
     except Exception as err: # pylint: disable=broad-except
         msg = """Failed to serialize the event. Please ensure your
         CloudEvents is correctly formatted (https://pypi.org/project/cloudevents/)"""
-        raise_with_traceback(ValueError, msg, err)
+        raise ValueError(msg) from err
 
 
 def _build_request(endpoint, content_type, events, *, channel_name=None):
