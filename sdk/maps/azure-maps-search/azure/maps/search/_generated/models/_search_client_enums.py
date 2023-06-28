@@ -9,7 +9,6 @@
 from enum import Enum, EnumMeta
 from six import with_metaclass
 
-
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(self, name):
         return super().__getitem__(name.upper())
@@ -28,8 +27,9 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
 
 
 class ElectricVehicleConnector(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
     STANDARD_HOUSEHOLD_COUNTRY_SPECIFIC = "StandardHouseholdCountrySpecific"  #: These are the standard household connectors for a certain region. They are all AC single phase and the standard Voltage and standard Amperage.
-    # See also: `Plug & socket types - World Standards <https://www.worldstandards.eu/electricity/plugs-and-sockets>`_.
+    #See also: `Plug & socket types - World Standards <https://www.worldstandards.eu/electricity/plugs-and-sockets>`_.
     IEC62196_TYPE1 = "IEC62196Type1"  #: Type 1 connector as defined in the IEC 62196-2 standard. Also called Yazaki after the original manufacturer or SAE J1772 after the standard that first published it. Mostly used in combination with 120V single phase or up to 240V single phase infrastructure.
     IEC62196_TYPE1_CCS = "IEC62196Type1CCS"  #: Type 1 based combo connector as defined in the IEC 62196-3 standard. The connector is based on the Type 1 connector – as defined in the IEC 62196-2 standard – with two additional direct current (DC) contacts to allow DC fast charging.
     IEC62196_TYPE2_CABLE_ATTACHED = "IEC62196Type2CableAttached"  #: Type 2 connector as defined in the IEC 62196-2 standard. Provided as a cable and plug attached to the charging point.
@@ -41,14 +41,12 @@ class ElectricVehicleConnector(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     IEC60309_DC_WHITE = "IEC60309DCWhite"  #: Industrial White connector is a DC connector defined in the IEC 60309 standard.
     TESLA = "Tesla"  #: The Tesla connector is the regionally specific Tesla Supercharger connector. I.e. it refers to either Tesla's proprietary connector, sometimes referred to as Tesla Port mostly limited to North America or the modified Type 2 (DC over Type 2) in Europe.
 
-
 class EntryPointType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of entry point. Value can be either *main* or *minor*.
     """
 
     MAIN = "main"
     MINOR = "minor"
-
 
 class GeographicEntityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     COUNTRY = "Country"
@@ -59,7 +57,6 @@ class GeographicEntityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MUNICIPALITY_SUBDIVISION = "MunicipalitySubdivision"
     NEIGHBOURHOOD = "Neighbourhood"
     POSTAL_CODE_AREA = "PostalCodeArea"
-
 
 class GeoJsonObjectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types - Point,
@@ -77,10 +74,8 @@ class GeoJsonObjectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     GEO_JSON_FEATURE = "Feature"  #: ``GeoJSON Feature`` object.
     GEO_JSON_FEATURE_COLLECTION = "FeatureCollection"  #: ``GeoJSON FeatureCollection`` object.
 
-
 class JsonFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     JSON = "json"  #: `The JavaScript Object Notation Data Interchange Format <https://tools.ietf.org/html/rfc8259>`_.
-
 
 class LocalizedMapView(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AE = "AE"  #: United Arab Emirates (Arabic View).
@@ -102,7 +97,6 @@ class LocalizedMapView(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AUTO = "Auto"  #: Return the map data based on the IP address of the request.
     UNIFIED = "Unified"  #: Unified View (Others).
 
-
 class MatchType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Types of match for a reverse address search operation.
     """
@@ -111,15 +105,12 @@ class MatchType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     HOUSE_NUMBER_RANGE = "HouseNumberRange"
     STREET = "Street"
 
-
 class OperatingHoursRange(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NEXT_SEVEN_DAYS = "nextSevenDays"  #: Shows the hours of operation for the next week, starting with the current day in the local time of the POI.
-
 
 class PointOfInterestExtendedPostalCodes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     POI = "POI"
     NONE = "None"
-
 
 class QueryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of query being returned: NEARBY or NON_NEAR.
@@ -128,11 +119,9 @@ class QueryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NEARBY = "NEARBY"  #: Search was performed around a certain latitude and longitude with a defined radius.
     GLOBAL_ENUM = "NON_NEAR"  #: Search was performed globally, without biasing to a certain latitude and longitude, and no defined radius.
 
-
 class ResponseFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     JSON = "json"  #: `The JavaScript Object Notation Data Interchange Format <https://tools.ietf.org/html/rfc8259>`_.
     XML = "xml"  #: `The Extensible Markup Language <https://www.w3.org/TR/xml/>`_.
-
 
 class RoadUseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes the possible uses of a road.
@@ -145,11 +134,8 @@ class RoadUseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ROTARY = "Rotary"
     LOCAL_STREET = "LocalStreet"
 
-
 class SearchAddressResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """One of:
-
-
     * POI
     * Street
     * Geography
@@ -164,7 +150,6 @@ class SearchAddressResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     POINT_ADDRESS = "Point Address"
     ADDRESS_RANGE = "Address Range"
     CROSS_STREET = "Cross Street"
-
 
 class SearchIndexes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ADDRESS = "Addr"  #: Address range interpolation.
