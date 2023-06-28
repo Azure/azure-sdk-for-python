@@ -486,6 +486,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
     @distributed_trace
     def get_skillsets(self, *, select: Optional[List[str]] = None, **kwargs: Any) -> List[SearchIndexerSkillset]:
+        # pylint:disable=protected-access
         """List the SearchIndexerSkillsets in an Azure Search service.
 
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
@@ -512,7 +513,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         result = self._client.skillsets.list(**kwargs)
         return [
             SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets
-        ]  # pylint:disable=protected-access
+        ]
 
     @distributed_trace
     def get_skillset_names(self, **kwargs: Any) -> List[str]:
@@ -589,6 +590,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
     @distributed_trace
     def create_skillset(self, skillset: SearchIndexerSkillset, **kwargs: Any) -> SearchIndexerSkillset:
+        # pylint:disable=protected-access
         """Create a new SearchIndexerSkillset in an Azure Search service
 
         :param skillset: The SearchIndexerSkillset object to create
@@ -610,7 +612,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         _validate_skillset(skillset)
         skillset = (
             skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
-        )  # pylint:disable=protected-access
+        )
 
         result = self._client.skillsets.create(skillset, **kwargs)
         return SearchIndexerSkillset._from_generated(result)  # pylint:disable=protected-access
@@ -623,6 +625,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any
     ) -> SearchIndexerSkillset:
+        # pylint:disable=protected-access
         """Create a new SearchIndexerSkillset in an Azure Search service, or update an
         existing one.
 
@@ -645,7 +648,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         _validate_skillset(skillset)
         skillset = (
             skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
-        )  # pylint:disable=protected-access
+        )
 
         result = self._client.skillsets.create_or_update(
             skillset_name=skillset.name,
