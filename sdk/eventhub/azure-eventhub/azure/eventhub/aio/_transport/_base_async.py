@@ -38,7 +38,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def build_message(**kwargs):
         """
         Creates a uamqp.Message or pyamqp.Message with given arguments.
-        :rtype: uamqp.Message or pyamqp.Message
+        :rtype: ~uamqp.Message or ~pyamqp.message.Message
         """
 
     @staticmethod
@@ -46,7 +46,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def build_batch_message(**kwargs):
         """
         Creates a uamqp.BatchMessage or pyamqp.BatchMessage with given arguments.
-        :rtype: uamqp.BatchMessage or pyamqp.BatchMessage
+        :rtype: ~uamqp.BatchMessage or ~pyamqp.message.BatchMessage
         """
 
     @staticmethod
@@ -54,8 +54,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def to_outgoing_amqp_message(annotated_message):
         """
         Converts an AmqpAnnotatedMessage into an Amqp Message.
-        :param AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
-        :rtype: uamqp.Message or pyamqp.Message
+        :param ~azure.eventhub.amqp.AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
+        :rtype: ~uamqp.Message or ~pyamqp.message.Message
         """
 
     @staticmethod
@@ -63,7 +63,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def get_batch_message_encoded_size(message):
         """
         Gets the batch message encoded size given an underlying Message.
-        :param uamqp.BatchMessage message: Message to get encoded size of.
+        :param ~uamqp.BatchMessage or ~pyamqp.message.Message message: Message to get encoded size of.
         :rtype: int
         """
 
@@ -72,7 +72,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def get_remote_max_message_size(handler):
         """
         Returns max peer message size.
-        :param AMQPClient handler: Client to get remote max message size on link from.
+        :param ~uamqp.AMQPClient or ~pyamqp.AMQPClient handler: Client to get remote max message size on link from.
         :rtype: int
         """
 
@@ -105,7 +105,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         :keyword int max_frame_size: Required.
         :keyword int channel_max: Required.
         :keyword int idle_timeout: Required.
-        :keyword Dict properties: Required.
+        :keyword dict properties: Required.
         :keyword int remote_idle_timeout_empty_frame_send_ratio: Required.
         :keyword error_policy: Required.
         :keyword bool debug: Required.
@@ -117,7 +117,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     async def close_connection_async(connection):
         """
         Closes existing connection.
-        :param Connection connection: uamqp or pyamqp Connection.
+        :param ~uamqp.aio.Connection or ~pyamqp.aio.Connection connection: uamqp or pyamqp Connection.
         """
 
     @staticmethod
@@ -125,7 +125,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def get_connection_state(connection):
         """
         Gets connection state.
-        :param Connection connection: uamqp or pyamqp Connection.
+        :param ~uamqp.aio.Connection or ~pyamqp.aio.Connection connection: uamqp or pyamqp Connection.
         """
 
     @staticmethod
@@ -162,7 +162,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def set_message_partition_key(message, partition_key, **kwargs):
         """Set the partition key as an annotation on a uamqp message.
 
-        :param uamqp.Message or pyamqp.Message.message message: The message to update.
+        :param ~uamqp.Message or ~pyamqp.message.Message message: The message to update.
         :param str partition_key: The partition key value.
         :rtype: None
         """
@@ -185,7 +185,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         Creates and returns the receive client.
         :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
-        :keyword Source source: Required. The source.
+        :keyword ~uamqp.Source or ~pyamqp.endpoints.Source source: Required. The source.
         :keyword JWTTokenAuth auth: Required.
         :keyword int idle_timeout: Required.
         :keyword network_trace: Required.
@@ -206,10 +206,10 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     async def receive_messages_async(consumer, batch, max_batch_size, max_wait_time):
         """
         Receives messages, creates events, and returns them by calling the on received callback.
-        :param ~azure.eventhub.aio.EventHubConsumer consumer: The EventHubConsumer.
+        :param ~azure.eventhub.aio._consumer_async.EventHubConsumer consumer: The EventHubConsumer.
         :param bool batch: If receive batch or single event.
         :param int max_batch_size: Max batch size.
-        :param int or None max_wait_time: Max wait time.
+        :param int max_wait_time: Max wait time.
         """
 
     @staticmethod
@@ -250,7 +250,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     async def mgmt_client_request_async(mgmt_client, mgmt_msg, **kwargs):
         """
         Send mgmt request.
-        :param AMQP Client mgmt_client: Client to send request with.
+        :param ~uamqp.AMQPClient or ~pyamqp.AMQPClient mgmt_client: Client to send request with.
         :param str mgmt_msg: Message.
         :keyword bytes operation: Operation.
         :keyword operation_type: Op type.
@@ -272,6 +272,6 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def check_timeout_exception(base, exception):
         """
         Checks if timeout exception.
-        :param ClientBase base: ClientBase.
+        :param ~azure.eventhub._client_base.ClientBase base: ClientBase.
         :param Exception exception: Exception to check.
         """

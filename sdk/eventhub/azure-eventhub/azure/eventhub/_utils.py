@@ -60,7 +60,7 @@ class UTC(datetime.tzinfo):
     def utcoffset(self, dt):
         """
             UTF offset for UTC is 0.
-            :param dt: Ignored.
+            :param any dt: Ignored.
             :return: Datetime offset.
             :rtype: datetime.timedelta
         """
@@ -69,7 +69,7 @@ class UTC(datetime.tzinfo):
     def tzname(self, dt):
         """
             Timestamp representation.
-            :param dt: Ignored.
+            :param any dt: Ignored.
             :return: Timestamp representation.
             :rtype: str
         """
@@ -78,7 +78,7 @@ class UTC(datetime.tzinfo):
     def dst(self, dt):
         """
             No daylight saving for UTC.
-            :param dt: Ignored.
+            :param any dt: Ignored.
             :return: Offset for daylight savings time.
             :rtype: datetime.timedelta
         """

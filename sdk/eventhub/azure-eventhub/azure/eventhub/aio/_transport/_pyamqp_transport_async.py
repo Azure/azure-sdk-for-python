@@ -52,7 +52,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword bool debug: Required.
         :keyword str encoding: Required.
 
-        :rtype: ~azure.eventhub._pyamqp.aio.ConnectionAsync
+        :rtype: ~pyamqp.aio.Connection
         :return: The created ConnectionAsync.
         """
         endpoint = kwargs.pop("endpoint")
@@ -65,7 +65,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     async def close_connection_async(connection):
         """
         Closes existing connection.
-        :param Connection connection: pyamqp Connection.
+        :param ~pyamqp.aio.Connection connection: pyamqp Connection.
         """
         await connection.close()
 
@@ -85,7 +85,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword dict link_properties: Required.
         :keyword properties: Required.
 
-        :rtype: ~azure.eventhub._pyamqp.aio.SendClientAsync
+        :rtype: ~pyamqp.aio.SendClient
         :return: The created SendClientAsync.
         """
         target = kwargs.pop("target")
@@ -107,7 +107,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     async def send_messages_async(producer, timeout_time, last_exception, logger):
         """
         Handles sending of event data messages.
-        :param ~azure.eventhub._producer.EventHubProducer producer: The producer with handler to send messages.
+        :param producer: The producer with handler to send messages.
+        :type producer: ~azure.eventhub.aio._producer_async.EventHubProducer
         :param int timeout_time: Timeout time.
         :param Exception last_exception: Exception to raise if message timed out. Only used by pyamqp transport.
         :param any logger: Logger.
@@ -144,7 +145,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword message_received_callback: Required.
         :keyword timeout: Required.
 
-        :rtype: ~azure.eventhub._pyamqp.aio._client_async.ReceiveClientAsync
+        :rtype: ~pyamqp.aio.ReceiveClient
         :return: The created ReceiveClientAsync.
         """
 
@@ -228,10 +229,10 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     async def receive_messages_async(consumer, batch, max_batch_size, max_wait_time):
         """
         Receives messages, creates events, and returns them by calling the on received callback.
-        :param ~azure.eventhub.aio.EventHubConsumer consumer: The EventHubConsumer.
+        :param ~azure.eventhub.aio._consumer_async.EventHubConsumer consumer: The EventHubConsumer.
         :param bool batch: If receive batch or single event.
         :param int max_batch_size: Max batch size.
-        :param int or None max_wait_time: Max wait time.
+        :param int max_wait_time: Max wait time.
         """
         # pylint:disable=protected-access
         consumer._callback_task_run = True
@@ -264,7 +265,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword bool update_token: Required. Whether to update token. If not updating token,
         then pass 300 to refresh_window.
 
-        :rtype: ~azure.eventhub._pyamqp.aio._authentication_async.JWTTokenAuthAsync
+        :rtype: ~pyamqp.aio._authentication_async.JWTTokenAuthAsync
         :return: The JWTTokenAuth.
         """
         # TODO: figure out why we're passing all these args to pyamqp JWTTokenAuth, which aren't being used
@@ -294,7 +295,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :param JWTTokenAuth mgmt_auth: Auth for client.
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
 
-        :rtype: ~azure.eventhub._pyamqp.aio.AMQPClientAsync
+        :rtype: ~pyamqp.aio.AMQPClient
         :return: The created AMQPClientAsync.
         """
 
@@ -323,14 +324,14 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     async def mgmt_client_request_async(mgmt_client, mgmt_msg, **kwargs):
         """
         Send mgmt request.
-        :param AMQPClientAsync mgmt_client: Client to send request with.
+        :param ~pyamqp.aio.AMQPClient mgmt_client: Client to send request with.
         :param str mgmt_msg: Message.
         :keyword bytes operation: Operation.
-        :keyword operation_type: Op type.
-        :keyword status_code_field: mgmt status code.
-        :keyword description_fields: mgmt status desc.
+        :keyword bytes operation_type: Op type.
+        :keyword int status_code_field: mgmt status code.
+        :keyword any description_fields: mgmt status desc.
 
-        :rtype: ~azure.eventhub._pyamqp.aio._client_async.AMQPClientAsync
+        :rtype: ~pyamqp.aio.AMQPClient
         :return: The mgmt client.
         """
         operation_type = kwargs.pop("operation_type")

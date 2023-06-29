@@ -23,7 +23,7 @@ class PartitionResolver:
         """
         round-robin partition assignment
 
-        :return: next partition id
+        :return: The next partition id.
         :rtype: str
         """
         async with self._lock:

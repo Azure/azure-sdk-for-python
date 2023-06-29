@@ -703,17 +703,17 @@ class EventHubProducerClient(
 
         The max_size_in_bytes should be no greater than the max allowed message size defined by the service.
 
-        :keyword str partition_id: The specific partition ID to send to. Default is None, in which case the service
-         will assign to all partitions using round-robin.
-        :keyword str partition_key: With the given partition_key, event data will be sent to
+        :keyword str or None partition_id: The specific partition ID to send to.
+         Default is None, in which case the service will assign to all partitions using round-robin.
+        :keyword str or None partition_key: With the given partition_key, event data will be sent to
          a particular partition of the Event Hub decided by the service.
          If both partition_id and partition_key are provided, the partition_id will take precedence.
          **WARNING: Setting partition_key of non-string value on the events to be sent is discouraged
          as the partition_key will be ignored by the Event Hub service and events will be assigned
          to all partitions using round-robin. Furthermore, there are SDKs for consuming events which expect
          partition_key to only be string type, they might fail to parse the non-string value.**
-        :keyword int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold. By
-         default, the value is determined by your Event Hubs tier.
+        :keyword int or None max_size_in_bytes: The maximum size of bytes data that an EventDataBatch
+         object can hold. By default, the value is determined by your Event Hubs tier.
         :rtype: ~azure.eventhub.EventDataBatch
         :return: An EventDataBatch object
 
@@ -757,7 +757,7 @@ class EventHubProducerClient(
             - `created_at` (UTC datetime.datetime)
             - `partition_ids` (list[str])
 
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, any]
         :return: A dictionary containing information about the Event Hub.
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
@@ -789,7 +789,7 @@ class EventHubProducerClient(
 
         :param partition_id: The target partition ID.
         :type partition_id: str
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, any]
         :return: A dict of partition properties.
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
@@ -802,7 +802,7 @@ class EventHubProducerClient(
         Buffered mode only.
         Flush events in the buffer to be sent immediately if the client is working in buffered mode.
 
-        :keyword Optional[float] timeout: Timeout to flush the buffered events, default is None which means no timeout.
+        :keyword float or None timeout: Timeout to flush the buffered events, default is None which means no timeout.
         :rtype: None
         :raises EventDataSendError: If the producer fails to flush the buffer within the given timeout
          in buffered mode.
@@ -820,7 +820,7 @@ class EventHubProducerClient(
 
         :keyword bool flush: Buffered mode only. If set to True, events in the buffer will be sent
          immediately. Default is True.
-        :keyword Optional[float] timeout: Buffered mode only. Timeout to close the producer.
+        :keyword float or None timeout: Buffered mode only. Timeout to close the producer.
          Default is None which means no timeout.
         :rtype: None
         :raises EventHubError: If an error occurred when flushing the buffer if `flush` is set to True or closing the
