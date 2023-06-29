@@ -29,8 +29,8 @@ class _QueryBase:
     def request(self) -> Union[Type[AutocompleteRequest], Type[SearchRequest], Type[SuggestRequest]]:
         """The service request for this operation.
 
-        :rtype: AutocompleteRequest or SearchRequest or SuggestRequest
         :return: The service request for this operation.
+        :rtype: AutocompleteRequest or SearchRequest or SuggestRequest
         """
         return self._request
 
