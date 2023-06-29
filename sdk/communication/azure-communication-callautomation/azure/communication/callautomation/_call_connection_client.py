@@ -64,8 +64,8 @@ if TYPE_CHECKING:
     from azure.core.exceptions import HttpResponseError
 
 class CallConnectionClient(object): # pylint: disable=client-accepts-api-version-keyword
-    """A client to interact with ongoing call. This client can be used to do mid-call actions,
-    such as Transfer and Play Media. Call must be estbalished to perform these actions.
+    """A client to interact with an ongoing call. This client can be used to do mid-call actions,
+    such as Transfer and Play Media. Call must be established to perform these actions.
 
     :param endpoint: The endpoint of the Azure Communication resource.
     :type endpoint: str
