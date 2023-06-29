@@ -304,7 +304,7 @@ class AMQPClient(
 
         :param connection: An existing Connection that may be shared between
          multiple clients.
-        :type connection: ~pyamqp.Connection
+        :type connection: ~pyamqp._connection.Connection
         """
         # pylint: disable=protected-access
         if self._session:
