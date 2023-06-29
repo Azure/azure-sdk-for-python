@@ -46,7 +46,7 @@ def _is_tag(tag_or_digest: str) -> bool:
     tag = tag_or_digest.split(":")
     return not (len(tag) == 2 and tag[0].startswith("sha"))
 
-def _clean(matches: List[str]) -> None:
+def _clean(matches: List[str]) -> None: # pylint:disable=docstring-missing-param
     """This method removes empty strings and commas from the regex matching of the Challenge header"""
     while True:
         try:
@@ -61,6 +61,7 @@ def _clean(matches: List[str]) -> None:
             return
 
 def _parse_challenge(header: str) -> Dict[str, str]:
+    # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     """Parse challenge header into service and scope"""
     ret: Dict[str, str] = {}
     if header.startswith(BEARER):
@@ -73,7 +74,7 @@ def _parse_challenge(header: str) -> Dict[str, str]:
 
     return ret
 
-def _parse_next_link(link_string: str) -> Optional[str]:
+def _parse_next_link(link_string: str) -> Optional[str]: # pylint:disable=docstring-missing-param
     """Parses the next link in the list operations response URL
 
     Per the Docker v2 HTTP API spec, the Link header is an RFC5988
@@ -89,7 +90,7 @@ def _parse_next_link(link_string: str) -> Optional[str]:
         return None
     return link_string[1 : link_string.find(">")]
 
-def _enforce_https(request: PipelineRequest) -> None:
+def _enforce_https(request: PipelineRequest) -> None: # pylint:disable=docstring-missing-param
     """Raise ServiceRequestError if the request URL is non-HTTPS and the sender did not specify enforce_https=False"""
 
     # move 'enforce_https' from options to context so it persists

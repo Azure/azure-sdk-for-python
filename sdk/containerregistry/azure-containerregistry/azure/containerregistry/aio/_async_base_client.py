@@ -60,7 +60,7 @@ class ContainerRegistryBaseClient(object):
         """
         await self._client.close()
 
-    def _is_tag(self, tag_or_digest: str) -> bool:  # pylint: disable=no-self-use
+    def _is_tag(self, tag_or_digest: str) -> bool:
         tag = tag_or_digest.split(":")
         return not (len(tag) == 2 and tag[0].startswith("sha"))
 

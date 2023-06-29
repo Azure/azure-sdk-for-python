@@ -4,7 +4,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import Optional, Union
+
 from azure.core.credentials import TokenCredential, AccessToken
+from azure.core.tracing.decorator import distributed_trace
+
 from ._exchange_client import ExchangeClientAuthenticationPolicy
 from ._generated import ContainerRegistry
 from ._generated.models import TokenGrantType
@@ -41,6 +44,7 @@ class AnonymousACRExchangeClient(object):
             **kwargs
         )
 
+    @distributed_trace
     def get_acr_access_token(self, challenge: str, **kwargs) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
         return self.exchange_refresh_token_for_access_token(
@@ -51,6 +55,7 @@ class AnonymousACRExchangeClient(object):
             **kwargs
         )
 
+    @distributed_trace
     def exchange_refresh_token_for_access_token(
         self, refresh_token: str, service: str, scope: str, grant_type: Union[str, TokenGrantType], **kwargs
     ) -> Optional[str]:

@@ -9,6 +9,7 @@ from typing import Optional
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio import ContainerRegistry
 from .._generated.models import PostContentSchemaGrantType
@@ -56,6 +57,7 @@ class ACRExchangeClient(object):
         self._refresh_token = None # type: Optional[str]
         self._expiration_time = 0 # type: float
 
+    @distributed_trace_async
     async def get_acr_access_token(self, challenge: str, **kwargs) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
         refresh_token = await self.get_refresh_token(parsed_challenge["service"], **kwargs)
@@ -63,12 +65,14 @@ class ACRExchangeClient(object):
             refresh_token, service=parsed_challenge["service"], scope=parsed_challenge["scope"], **kwargs
         )
 
+    @distributed_trace_async
     async def get_refresh_token(self, service: str, **kwargs) -> str:
         if not self._refresh_token or self._expiration_time - time.time() > 300:
             self._refresh_token = await self.exchange_aad_token_for_refresh_token(service, **kwargs)
             self._expiration_time = _parse_exp_time(self._refresh_token)
         return self._refresh_token
 
+    @distributed_trace_async
     async def exchange_aad_token_for_refresh_token(self, service: str, **kwargs) -> str:
         token = await self._credential.get_token(*self.credential_scopes)
         refresh_token = await self._client.authentication.exchange_aad_access_token_for_acr_refresh_token( # type: ignore # pylint: disable=line-too-long
@@ -76,6 +80,7 @@ class ACRExchangeClient(object):
         )
         return refresh_token.refresh_token if refresh_token.refresh_token is not None else ""
 
+    @distributed_trace_async
     async def exchange_refresh_token_for_access_token(
         self, refresh_token: str, service: str, scope: str, **kwargs
     ) -> Optional[str]:
