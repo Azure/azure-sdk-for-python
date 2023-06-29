@@ -44,7 +44,7 @@ if __name__ == "__main__":
     package_name = os.path.basename(os.path.abspath(args.target_package))
 
     if not args.next and in_ci():
-        if (not is_check_enabled(args.target_package, "pyright")) or is_typing_ignored(package_name):
+        if not is_check_enabled(args.target_package, "pyright") or is_typing_ignored(package_name):
             logging.info(
                 f"Package {package_name} opts-out of pyright check. See https://aka.ms/python/typing-guide for information."
             )
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     ]
 
     if not args.next and in_ci():
-        if not is_check_enabled(args.target_package, "type_check_samples"):
+        if not is_check_enabled(args.target_package, "type_check_samples") or is_typing_ignored(package_name):
             logging.info(
                 f"Package {package_name} opts-out of pyright check on samples."
             )
