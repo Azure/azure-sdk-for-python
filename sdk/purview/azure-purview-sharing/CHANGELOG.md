@@ -1,13 +1,11 @@
 # Release History
 
-## 1.0.0b2 (2023-06-05)
+## 1.0.0b2 (2023-06-29)
 
 ### Features Added
 
 - Added the new share resources capability that allows listing resources associated with sent and received shares.
 - Added missing test cases to test_sent_shares and test_received_shares
-
-### Breaking Changes
 
 ### Bugs Fixed
 
@@ -16,16 +14,6 @@
 ### Other Changes
 
 - Updated and fixed README
-
-## 1.0.0b2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0b1 (2023-03-30)
 
