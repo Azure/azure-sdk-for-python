@@ -117,7 +117,7 @@ def parse_token(output) -> Optional[AccessToken]:
 
     :param str output: Output of 'az' command.
     :return: An AccessToken or None if the output isn't valid.
-    :rtype: :class:`azure.core.credentials.AccessToken`
+    :rtype: :class:`azure.core.credentials.AccessToken` or None
     """
     try:
         token = json.loads(output)

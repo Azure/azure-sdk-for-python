@@ -140,7 +140,7 @@ def parse_token(output: str) -> Optional[AccessToken]:
     datetime.fromtimestamp.
 
     :param str output: The output of the Azure Developer CLI command.
-    :return: An AccessToken.
+    :return: An AccessToken or None if the output isn't valid.
     :rtype: :class:`azure.core.credentials.AccessToken` or None
     """
     try:

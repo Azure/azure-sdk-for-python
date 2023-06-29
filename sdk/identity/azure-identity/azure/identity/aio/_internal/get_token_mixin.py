@@ -31,8 +31,8 @@ class GetTokenMixin(abc.ABC):
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
 
-        :return: An access token with the desired scopes.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :return: An access token with the desired scopes if successful; otherwise, None.
+        :rtype: :class:`azure.core.credentials.AccessToken` or None
         """
 
     @abc.abstractmethod
