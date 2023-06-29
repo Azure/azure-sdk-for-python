@@ -17,16 +17,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1599",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 23 May 2023 17:13:16 GMT",
+        "Date": "Tue, 27 Jun 2023 23:25:03 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Amxse179kG9Akh-y9LEhupji05sNAwAAACzr_tsOAAAA; expires=Thu, 22-Jun-2023 17:13:17 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "esctx=PAQABAAEAAAD--DLA3VO7QrddgJg7Wevr1gZlcxtZIDssEkV1jV-VV4BpWru_jPD7mNREs1k7lbkYpJA_vbii0NazlNsiYR6rIQ2IZMtSagqEZ4DBM0UIwQ48PQzoyhAJSzG-ZSDZcvllh0gc6mlI7rEXKduSZksGK1S9yGvPi-zB1htQmec8m8uj0eiI9NuB9-5-o5pp1MogAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AmsfYK9ORNdLhwk-Bt48OB7i05sNAwAAAM1mLdwOAAAA; expires=Thu, 27-Jul-2023 23:25:04 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "esctx=PAQABAAEAAAD--DLA3VO7QrddgJg7Wevrr2NEdJz6oxspmRE5M-U7Xzyj0cylUF4Ht5NiOuJE_givSJb2nlrDcZDC27fMQHqNe0nFgHhVfAE1OMVgoVhbTIkINXqWHsGRn8aSdWNrLk3LVeXta6AJZeKaMPTIr71VhhvIaiLssiuN-FCtcBAJVXq6Ewdk7Vjl1u_rf4kQBgQgAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15427.11 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.15723.3 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -104,7 +104,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=Amxse179kG9Akh-y9LEhupji05sNAwAAACzr_tsOAAAA; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AmsfYK9ORNdLhwk-Bt48OB7i05sNAwAAAM1mLdwOAAAA; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -115,15 +115,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 23 May 2023 17:13:16 GMT",
+        "Date": "Tue, 27 Jun 2023 23:25:03 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Amxse179kG9Akh-y9LEhupji05sNAwAAACzr_tsOAAAA; expires=Thu, 22-Jun-2023 17:13:17 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AmsfYK9ORNdLhwk-Bt48OB7i05sNAwAAAM1mLdwOAAAA; expires=Thu, 27-Jul-2023 23:25:04 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15427.11 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15723.3 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -191,12 +191,12 @@
         "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate, Operation-Location, Retry-After",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kvset\u002Bjson; charset=utf-8",
-        "Date": "Tue, 23 May 2023 17:13:17 GMT",
+        "Date": "Tue, 27 Jun 2023 23:25:04 GMT",
         "Server": "openresty/1.21.4.1",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=NzoxNyMyMjYxMjQ0OQ==;sn=22612449",
+        "Sync-Token": "zAJw6V16=NzoxNyMyMjkyMjI2OA==;sn=22922268",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "cd659d0d-be38-46dd-8d2c-171bf2e431a1"
+        "x-ms-correlation-request-id": "2fb1d0a1-3173-4192-85ab-7e759a3c977b"
       },
       "ResponseBody": {
         "items": [
@@ -211,14 +211,14 @@
             "last_modified": "2023-01-30T20:25:07\u002B00:00"
           },
           {
-            "etag": "Wfq_mEPSSfl9m4evo5sZDiZMkpn_6kH5xtJVH_D7OQY",
+            "etag": "uOKsqJe97xmSxeDluuKbYr1cBINZ5sqw4IaOYiLjtlI",
             "key": "message",
             "label": null,
             "content_type": "",
             "value": "hi",
             "tags": {},
             "locked": false,
-            "last_modified": "2023-01-25T00:21:41\u002B00:00"
+            "last_modified": "2023-06-08T17:14:33\u002B00:00"
           },
           {
             "etag": "lO0_bzj8OQZOAMw2U2Ydzd4NJtYpXyQ5CbXktXLRhMs",
@@ -239,6 +239,36 @@
             "tags": {},
             "locked": false,
             "last_modified": "2022-09-27T20:35:17\u002B00:00"
+          },
+          {
+            "etag": "ADymchgVHMJEBEwB6lwYKkeTFLnxbdrteJrij7v9UNA",
+            "key": "non_refreshed_message",
+            "label": null,
+            "content_type": "",
+            "value": "Static",
+            "tags": {},
+            "locked": false,
+            "last_modified": "2023-06-27T22:08:34\u002B00:00"
+          },
+          {
+            "etag": "8JLWVGRGjgJNYYCaCRMTDn1gGsatOK4SFceHGt8GwnQ",
+            "key": "refresh_all_message",
+            "label": null,
+            "content_type": "",
+            "value": "original value",
+            "tags": {},
+            "locked": false,
+            "last_modified": "2023-06-27T22:08:29\u002B00:00"
+          },
+          {
+            "etag": "_aQjxaYDlqW81aYj9lLGlj_QtO2mSEOgMgBnf7N3omY",
+            "key": "refresh_message",
+            "label": null,
+            "content_type": "",
+            "value": "original value",
+            "tags": {},
+            "locked": false,
+            "last_modified": "2023-06-27T22:08:34\u002B00:00"
           },
           {
             "etag": "7vw5ma2Cc0-eE1cnRaaCv2_VtAS8BQ5jbHP9eNS_MFA",
