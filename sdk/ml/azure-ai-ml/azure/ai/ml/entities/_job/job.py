@@ -128,7 +128,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             * Completed - The run has completed successfully. This includes both the user code execution and run
                 post-processing stages.
             * Failed - The run failed. Usually the Error property on a run will provide details as to why.
-            * Cancelled - Follows a cancellation request and indicates that the run is now successfully cancelled.
+            * Canceled - Follows a cancellation request and indicates that the run is now successfully cancelled.
             * NotResponding - For runs that have Heartbeats enabled, no heartbeat has been recently sent.
 
         :return: Status of the job.

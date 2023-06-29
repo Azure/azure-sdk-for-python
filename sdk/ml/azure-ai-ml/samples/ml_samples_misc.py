@@ -232,7 +232,7 @@ class MiscConfigurationOptions(object):
             name="non-mlflow-deployment",
             description="this is a sample non-mlflow deployment",
             endpoint_name="my-batch-endpoint",
-            model="model",
+            model=load_model("./configs/model/model_minimal.yml"),
             code_configuration=CodeConfiguration(
                 code="configs/deployments/model-2/onlinescoring", scoring_script="score1.py"
             ),
@@ -297,6 +297,36 @@ class MiscConfigurationOptions(object):
             time_zone=TimeZone.PACIFIC_STANDARD_TIME,
         )
         # [END cron_trigger_configuration]
+
+        # [START resource_requirements_configuration]
+        from azure.ai.ml.entities import (
+            CodeConfiguration,
+            KubernetesOnlineDeployment,
+            ResourceRequirementsSettings,
+            ResourceSettings,
+        )
+
+        blue_deployment = KubernetesOnlineDeployment(
+            name="kubernetes_deployment",
+            endpoint_name="online_endpoint_name",
+            model=load_model("./configs/model/model_minimal.yml"),
+            environment="azureml:AzureML-Minimal:1",
+            code_configuration=CodeConfiguration(
+                code="endpoints/online/model-1/onlinescoring", scoring_script="score.py"
+            ),
+            instance_count=1,
+            resources=ResourceRequirementsSettings(
+                requests=ResourceSettings(
+                    cpu="500m",
+                    memory="0.5Gi",
+                ),
+                limits=ResourceSettings(
+                    cpu="1",
+                    memory="1Gi",
+                ),
+            ),
+        )
+        # [END resource_requirements_configuration]
 
 
 if __name__ == "__main__":
