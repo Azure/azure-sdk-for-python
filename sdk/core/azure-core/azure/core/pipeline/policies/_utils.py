@@ -29,7 +29,12 @@ from ...utils._utils import _FixedOffset, case_insensitive_dict
 
 
 def _parse_http_date(text):
-    """Parse a HTTP date format into datetime."""
+    """Parse a HTTP date format into datetime.
+
+    :param str text: Text containing a date in HTTP format
+    :rtype: datetime.datetime
+    :return: The parsed datetime
+    """
     parsed_date = email.utils.parsedate_tz(text)
     return datetime.datetime(*parsed_date[:6], tzinfo=_FixedOffset(parsed_date[9] / 60))
 
@@ -38,7 +43,8 @@ def parse_retry_after(retry_after):
     """Helper to parse Retry-After and get value in seconds.
 
     :param str retry_after: Retry-After header
-    :rtype: int
+    :rtype: float
+    :return: Value of Retry-After in seconds.
     """
     try:
         delay = int(retry_after)
