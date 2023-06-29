@@ -618,6 +618,7 @@ class Serializer(object):
                         keys, orig_attr = key_transformer(attr, attr_desc.copy(), orig_attr)
                         keys = keys if isinstance(keys, list) else [keys]
 
+                    # cspell:disable-next-line
                     kwargs["serialization_ctxt"] = attr_desc
                     new_attr = self.serialize_data(orig_attr, attr_desc["type"], **kwargs)
 
@@ -881,7 +882,9 @@ class Serializer(object):
         """Serialize iterable.
 
         Supported kwargs:
+        # cspell:disable-next-line
         - serialization_ctxt dict : The current entry of _attribute_map, or same format.
+        # cspell:disable-next-line
           serialization_ctxt['type'] should be same as data_type.
         - is_xml bool : If set, serialize as XML
 
@@ -896,6 +899,7 @@ class Serializer(object):
         if isinstance(data, str):
             raise SerializationError("Refuse str type as a valid iter type.")
 
+        # cspell:disable-next-line
         serialization_ctxt = kwargs.get("serialization_ctxt", {})
         is_xml = kwargs.get("is_xml", False)
 
@@ -910,11 +914,14 @@ class Serializer(object):
             serialized = ["" if s is None else str(s) for s in serialized]
             serialized = div.join(serialized)
 
+        # cspell:disable-next-line
         if "xml" in serialization_ctxt or is_xml:
             # XML serialization is more complicated
+            # cspell:disable-next-line
             xml_desc = serialization_ctxt.get("xml", {})
             xml_name = xml_desc.get("name")
             if not xml_name:
+                # cspell:disable-next-line
                 xml_name = serialization_ctxt["key"]
 
             # Create a wrap node if necessary (use the fact that Element and list have "append")
@@ -945,6 +952,7 @@ class Serializer(object):
          not be None or empty.
         :rtype: dict
         """
+        # cspell:disable-next-line
         serialization_ctxt = kwargs.get("serialization_ctxt", {})
         serialized = {}
         for key, value in attr.items():
@@ -953,8 +961,10 @@ class Serializer(object):
             except ValueError:
                 serialized[self.serialize_unicode(key)] = None
 
+        # cspell:disable-next-line
         if "xml" in serialization_ctxt:
             # XML serialization is more complicated
+            # cspell:disable-next-line
             xml_desc = serialization_ctxt["xml"]
             xml_name = xml_desc["name"]
 
