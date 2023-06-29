@@ -44,12 +44,12 @@ class AsyncTablesBaseClient(AccountHostsMixin):
     :param str endpoint: A URL to an Azure Tables account.
     :keyword credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
-        AzureSasCredential (azure-core), or AsyncTokenCredential from azure-identity.
+        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential,
+        AzureSasCredential, or AsyncTokenCredential from azure-core.
     :paramtype credential:
-        :class:`~azure.core.credentials.AzureNamedKeyCredential` or
-        :class:`~azure.core.credentials.AzureSasCredential` or
-        :class:`~azure.core.credentials.AsyncTokenCredential`
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials_async.AsyncTokenCredential or None
     :keyword api_version: Specifies the version of the operation to use for this request. Default value
         is "2019-02-02". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -102,16 +102,24 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         ]
 
     async def _batch_send(self, table_name: str, *reqs: HttpRequest, **kwargs) -> List[Mapping[str, Any]]:
-        """Given a series of request, do a Storage batch call."""
+        """Given a series of request, do a Storage batch call.
+
+        :param table_name: The table name.
+        :type table_name: str
+        :keyword reqs: The HTTP request.
+        :paramtype reqs: ~azure.core.pipeline.transport.HttpRequest
+        :return: A list of batch part metadata in response.
+        :rtype: list[Mapping[str, Any]]
+        """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]
 
         changeset = HttpRequest("POST", None)  # type: ignore
         changeset.set_multipart_mixed(
-            *reqs, policies=policies, boundary="changeset_{}".format(uuid4())
+            *reqs, policies=policies, boundary=f"changeset_{uuid4()}"
         )
         request = self._client._client.post(  # pylint: disable=protected-access
-            url="{}://{}/$batch".format(self.scheme, self._primary_hostname),
+            url=f"{self.scheme}://{self._primary_hostname}/$batch",
             headers={
                 "x-ms-version": self.api_version,
                 "DataServiceVersion": "3.0",
@@ -124,7 +132,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             changeset,
             policies=policies,
             enforce_https=False,
-            boundary="batch_{}".format(uuid4()),
+            boundary=f"batch_{uuid4()}",
         )
 
         pipeline_response = await self._client._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
@@ -164,6 +172,9 @@ class AsyncTransportWrapper(AsyncHttpTransport):
     """Wrapper class that ensures that an inner client created
     by a `get_client` method does not close the outer transport for the parent
     when used in a context manager.
+
+    :param async_transport: The async Http Transport instance.
+    :type async_transport: ~azure.core.pipeline.transport.AsyncHttpTransport
     """
     def __init__(self, async_transport):
         self._transport = async_transport

@@ -26,14 +26,19 @@ class SharedAccessSignature(object):
     signature tokens with an account name and account key. Users can either
     use the factory or can construct the appropriate service and use the
     generate_*_shared_access_signature method directly.
+
+    :param credential: The credential used for authenticating requests
+    :type credential: ~azure.core.credentials.AzureNamedKeyCredential
+    :param x_ms_version: The service version used to generate the shared access signatures.
+    :type x_ms_version: str
     """
 
     def __init__(self, credential, x_ms_version=DEFAULT_X_MS_VERSION):
         """
         :param credential: The credential used for authenticating requests
-        :type credential: :class:`~azure.core.credentials.NamedKeyCredential`
-        :param str x_ms_version:
-            The service version used to generate the shared access signatures.
+        :type credential: ~azure.core.credentials.AzureNamedKeyCredential
+        :param x_ms_version: The service version used to generate the shared access signatures.
+        :type x_ms_version: str
         """
         self.account_name = credential.named_key.name
         self.account_key = credential.named_key.key
@@ -89,9 +94,12 @@ class SharedAccessSignature(object):
             or address range specified on the SAS token, the request is not authenticated.
             For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
             restricts the request to those IP addresses.
-        :param Union[str, SASProtocol] protocol:
+        :param protocol:
             Specifies the protocol permitted for a request made. The default value
             is https,http. See :class:`~azure.cosmosdb.table.common.models.Protocol` for possible values.
+        :type protocol: str or ~azure.cosmosdb.table.common.models.Protocol
+        :return: A shared access signature for the account.
+        :rtype: str
         """
         sas = _SharedAccessHelper()
         sas.add_base(
@@ -268,7 +276,7 @@ class _SharedAccessHelper(object):
     def get_token(self) -> str:
         return "&".join(
             [
-                "{0}={1}".format(n, url_quote(v))
+                f"{n}={url_quote(v)}"
                 for n, v in self.query_dict.items()
                 if v is not None
             ]

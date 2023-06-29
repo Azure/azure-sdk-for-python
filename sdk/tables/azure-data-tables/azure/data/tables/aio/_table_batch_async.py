@@ -31,6 +31,18 @@ class TableBatchOperations(object):
     supported within a single transaction. The batch can include at most 100
     entities, and its total payload may be no more than 4 MB in size.
 
+    :param client: An AzureTable object.
+    :type client: ~azure.data.tables._generated.aio.AzureTable
+    :param serializer: A Serializer object for request serialization.
+    :type serializer: ~azure.data.tables._generated._serialization.Serializer
+    :param deserializer: A Deserializer object for request deserialization.
+    :type deserializer: ~azure.data.tables._generated._serialization.Deserializer
+    :param config: An AzureTableConfiguration object.
+    :type config: ~azure.data.tables._generated.aio._configuration.AzureTableConfiguration
+    :param table_name: The name of the Table to perform operations on.
+    :type table_name: str
+    :param is_cosmos_endpoint: True if the client endpoint is for Tables Cosmos. False if not. Default is False.
+    :type is_cosmos_endpoint: bool
     """
 
     def __init__(
@@ -43,6 +55,22 @@ class TableBatchOperations(object):
         is_cosmos_endpoint: bool = False,
         **kwargs
     ) -> None:
+        """Create TableClient from a Credential.
+
+        :param client: An AzureTable object.
+        :type client: ~azure.data.tables._generated.aio.AzureTable
+        :param serializer: A Serializer object for request serialization.
+        :type serializer: ~azure.data.tables._generated._serialization.Serializer
+        :param deserializer: A Deserializer object for request deserialization.
+        :type deserializer: ~azure.data.tables._generated._serialization.Deserializer
+        :param config: An AzureTableConfiguration object.
+        :type config: ~azure.data.tables._generated.aio._configuration.AzureTableConfiguration
+        :param table_name: The name of the Table to perform operations on.
+        :type table_name: str
+        :param is_cosmos_endpoint: True if the client endpoint is for Tables Cosmos. False if not. Default is False.
+        :type is_cosmos_endpoint: bool
+        :return: None
+        """
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
@@ -65,15 +93,23 @@ class TableBatchOperations(object):
             raise ValueError("Partition Keys must all be the same")
 
     def add_operation(self, operation: TransactionOperationType) -> None:
-        """Add a single operation to a batch."""
+        """Add a single operation to a batch.
+
+        :param operation: An operation include operation type and entity, may with kwargs.
+        :type operation: A tuple of ~azure.data.tables.TransactionOperation or str, and
+            ~azure.data.tables.TableEntity or Mapping[str, Any]. Or a tuple of
+            ~azure.data.tables.TransactionOperation or str, and
+            ~azure.data.tables.TableEntity or Mapping[str, Any], and Mapping[str, Any]
+        :return: None
+        """
         try:
             operation_type, entity, kwargs = operation  # type: ignore
         except ValueError:
             operation_type, entity, kwargs = *operation, {}  # type: ignore
         try:
             getattr(self, operation_type.lower())(entity, **kwargs)
-        except AttributeError:
-            raise ValueError("Unrecognized operation: {}".format(operation))
+        except AttributeError as exc:
+            raise ValueError(f"Unrecognized operation: {operation}") from exc
 
     def create(
         self,
@@ -85,7 +121,6 @@ class TableBatchOperations(object):
         :param entity: The properties for the table entity.
         :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
         :return: None
-        :rtype: None
         :raises ValueError:
 
         .. admonition:: Example:
@@ -141,6 +176,7 @@ class TableBatchOperations(object):
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
         :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :return: None
         """
         data_service_version = "3.0"
         content_type = kwargs.pop("content_type", "application/json;odata=nometadata")
@@ -219,7 +255,6 @@ class TableBatchOperations(object):
         :keyword match_condition: MatchCondition
         :paramtype match_condition: ~azure.core.MatchCondition
         :return: None
-        :rtype: None
         :raises ValueError:
 
         .. admonition:: Example:
@@ -268,7 +303,7 @@ class TableBatchOperations(object):
                 **kwargs
             )
         else:
-            raise ValueError("Mode type '{}' is not supported.".format(mode))
+            raise ValueError(f"Mode type '{mode}' is not supported.")
 
     def _batch_update_entity(
         self,
@@ -306,6 +341,7 @@ class TableBatchOperations(object):
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
         :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :return: None
         """
         data_service_version = "3.0"
         content_type = kwargs.pop("content_type", "application/json")
@@ -408,6 +444,7 @@ class TableBatchOperations(object):
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
         :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :return: None
         """
         data_service_version = "3.0"
         content_type = kwargs.pop("content_type", "application/json")
@@ -483,13 +520,12 @@ class TableBatchOperations(object):
     ) -> None:
         """Deletes the specified entity in a table.
 
-        :param partition_key: The partition key of the entity.
-        :type partition_key: str
-        :param row_key: The row key of the entity.
-        :type row_key: str
+        :param entity: The properties for the table entity.
+        :type entity: :class:`~azure.data.tables.TableEntity` or dict[str, Any]
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
         :paramtype match_condition: ~azure.core.MatchCondition
+        :return: None
 
         .. admonition:: Example:
 
@@ -533,7 +569,7 @@ class TableBatchOperations(object):
         if_match: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
+        format: Optional[Union[str, models.OdataMetadataFormat]] = None,
     ) -> None:
         """Deletes the specified entity in a table.
 
@@ -556,6 +592,7 @@ class TableBatchOperations(object):
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
         :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :return: None
         """
         data_service_version = "3.0"
         accept = "application/json;odata=minimalmetadata"
@@ -660,4 +697,4 @@ class TableBatchOperations(object):
                 **kwargs
             )
         else:
-            raise ValueError("Mode type '{}' is not supported.".format(mode))
+            raise ValueError(f"Mode type '{mode}' is not supported.")

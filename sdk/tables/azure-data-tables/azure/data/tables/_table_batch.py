@@ -40,6 +40,18 @@ class TableBatchOperations(object):
     supported within a single transaction. The batch can include at most 100
     entities, and its total payload may be no more than 4 MB in size.
 
+    :param client: An AzureTable object.
+    :type client: ~azure.data.tables._generated.AzureTable
+    :param serializer: A Serializer object for request serialization.
+    :type serializer: ~azure.data.tables._generated._serialization.Serializer
+    :param deserializer: A Deserializer object for request deserialization.
+    :type deserializer: ~azure.data.tables._generated._serialization.Deserializer
+    :param config: An AzureTableConfiguration object.
+    :type config: ~azure.data.tables._generated._configuration.AzureTableConfiguration
+    :param table_name: The name of the Table to perform operations on.
+    :type table_name: str
+    :param is_cosmos_endpoint: True if the client endpoint is for Tables Cosmos. False if not. Default is False.
+    :type is_cosmos_endpoint: bool
     """
 
     def __init__(
@@ -51,21 +63,21 @@ class TableBatchOperations(object):
         table_name: str,
         is_cosmos_endpoint: bool = False,
         **kwargs
-    ):
+    ) -> None:
         """Create TableClient from a Credential.
 
-        :param client: an AzureTable object
-        :type client: AzureTable
-        :param serializer: serializer object for request serialization
+        :param client: An AzureTable object.
+        :type client: ~azure.data.tables._generated.AzureTable
+        :param serializer: A Serializer object for request serialization.
         :type serializer: ~azure.data.tables._generated._serialization.Serializer
-        :param deserializer: deserializer object for request serialization
+        :param deserializer: A Deserializer object for request deserialization.
         :type deserializer: ~azure.data.tables._generated._serialization.Deserializer
-        :param config: Azure Table Configuration object
-        :type config: AzureTableConfiguration
-        :param table_name: name of the Table to perform operations on
+        :param config: An AzureTableConfiguration object.
+        :type config: ~azure.data.tables._generated._configuration.AzureTableConfiguration
+        :param table_name: The name of the Table to perform operations on.
         :type table_name: str
-        :param table_client: TableClient object to perform operations on
-        :type table_client: TableClient
+        :param is_cosmos_endpoint: True if the client endpoint is for Tables Cosmos. False if not. Default is False.
+        :type is_cosmos_endpoint: bool
 
         :returns: None
         """
@@ -89,15 +101,23 @@ class TableBatchOperations(object):
             raise ValueError("Partition Keys must all be the same")
 
     def add_operation(self, operation: TransactionOperationType) -> None:
-        """Add a single operation to a batch."""
+        """Add a single operation to a batch.
+
+        :param operation: An operation include operation type and entity, may with kwargs.
+        :type operation: A tuple of ~azure.data.tables.TransactionOperation or str, and
+            ~azure.data.tables.TableEntity or Mapping[str, Any]. Or a tuple of
+            ~azure.data.tables.TransactionOperation or str, and
+            ~azure.data.tables.TableEntity or Mapping[str, Any], and Mapping[str, Any]
+        :return: None
+        """
         try:
             operation_type, entity, kwargs = operation  # type: ignore
         except ValueError:
             operation_type, entity, kwargs = operation[0], operation[1], {}  # type: ignore
         try:
             getattr(self, operation_type.lower())(entity, **kwargs)
-        except AttributeError:
-            raise ValueError("Unrecognized operation: {}".format(operation))
+        except AttributeError as exc:
+            raise ValueError(f"Unrecognized operation: {operation}") from exc
 
     def create(self, entity: EntityType, **kwargs) -> None:
         """Adds an insert operation to the current batch.
@@ -161,6 +181,7 @@ class TableBatchOperations(object):
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
         :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :return: None
         """
         data_service_version = "3.0"
         content_type = kwargs.pop("content_type", "application/json;odata=nometadata")
@@ -284,7 +305,7 @@ class TableBatchOperations(object):
                 **kwargs
             )
         else:
-            raise ValueError("Mode type '{}' is not supported.".format(mode))
+            raise ValueError(f"Mode type '{mode}' is not supported.")
 
     def _batch_update_entity(
         self,
@@ -498,14 +519,13 @@ class TableBatchOperations(object):
     def delete(self, entity: EntityType, **kwargs) -> None:
         """Adds a delete operation to the current branch.
 
-        :param partition_key: The partition key of the entity.
-        :type partition_key: str
-        :param row_key: The row key of the entity.
-        :type row_key: str
+        param entity: The properties for the table entity.
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
         :paramtype match_condition: ~azure.core.MatchCondition
-        :raises ValueError:
+        :return: None
+        :raises: ValueError
 
         .. admonition:: Example:
 
@@ -636,7 +656,8 @@ class TableBatchOperations(object):
         :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
         :param mode: Merge or Replace entity
         :type mode: :class:`~azure.data.tables.UpdateMode`
-        :raises ValueError:
+        :return: None
+        :raises: ValueError
 
         .. admonition:: Example:
 
@@ -671,4 +692,4 @@ class TableBatchOperations(object):
                 **kwargs
             )
         else:
-            raise ValueError("Mode type '{}' is not supported.".format(mode))
+            raise ValueError(f"Mode type '{mode}' is not supported.")

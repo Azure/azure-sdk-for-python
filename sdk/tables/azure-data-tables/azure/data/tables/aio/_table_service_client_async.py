@@ -39,12 +39,12 @@ class TableServiceClient(AsyncTablesBaseClient):
         authenticated with a SAS token.
     :keyword credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
-        AzureSasCredential (azure-core), or AsyncTokenCredential from azure-identity.
+        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential,
+        AzureSasCredential, or AsyncTokenCredential from azure-core.
     :paramtype credential:
-        :class:`~azure.core.credentials.AzureNamedKeyCredential` or
-        :class:`~azure.core.credentials.AzureSasCredential` or
-        :class:`~azure.core.credentials.AsyncTokenCredential`
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials_async.AsyncTokenCredential or None
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-02-02'.
         Setting to an older version may result in reduced feature compatibility.
@@ -69,8 +69,12 @@ class TableServiceClient(AsyncTablesBaseClient):
     def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to the current location
         mode hostname.
+
+        :param str hostname: The current location mode hostname.
+        :returns: The full URL to the Tables account.
+        :rtype: str
         """
-        return "{}://{}{}".format(self.scheme, hostname, self._query_str)
+        return f"{self.scheme}://{hostname}{self._query_str}"
 
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs) -> 'TableServiceClient':
@@ -180,7 +184,6 @@ class TableServiceClient(AsyncTablesBaseClient):
     async def create_table(self, table_name: str, **kwargs) -> TableClient:
         """Creates a new table under the given account.
 
-        :param headers:
         :param str table_name: The Table name.
         :return: TableClient, or the result of cls(response)
         :rtype: :class:`~azure.data.tables.aio.TableClient`

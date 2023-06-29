@@ -64,9 +64,7 @@ def get_api_version(kwargs: Dict[str, Any], default: str) -> str:
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = "\n".join(_SUPPORTED_API_VERSIONS)
         raise ValueError(
-            "Unsupported API version '{}'. Please select from:\n{}".format(
-                api_version, versions
-            )
+            f"Unsupported API version '{api_version}'. Please select from:\n{versions}"
         )
     return api_version or default
 
@@ -81,11 +79,11 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         try:
             if not account_url.lower().startswith("http"):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Account URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip("/"))
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+            raise ValueError(f"Invalid URL: {account_url}")
 
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
@@ -118,10 +116,8 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
             raise ValueError("Token credential is only supported with HTTPS.")
         if hasattr(self.credential, "named_key"):
             self.account_name = self.credential.named_key.name # type: ignore
-            secondary_hostname = "{}-secondary.table.{}".format(
-                self.credential.named_key.name, # type: ignore
-                os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
-            )
+            endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
+            secondary_hostname = f"{self.account_name}-secondary.table.{endpoint_suffix}"
 
         if not self._hosts:
             if len(account) > 1:
@@ -148,6 +144,8 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
 
         This could be either the primary endpoint,
         or the secondary endpoint depending on the current :func:`location_mode`.
+
+        :type: str
         """
         return self._format_url(self._hosts[self._location_mode])
 
@@ -259,16 +257,24 @@ class TablesBaseClient(AccountHostsMixin):
         ]
 
     def _batch_send(self, table_name: str, *reqs: HttpRequest, **kwargs) -> List[Mapping[str, Any]]:
-        """Given a series of request, do a Storage batch call."""
+        """Given a series of request, do a Storage batch call.
+
+        :param table_name: The table name.
+        :type table_name: str
+        :keyword reqs: The HTTP request.
+        :paramtype reqs: ~azure.core.pipeline.transport.HttpRequest
+        :return: A list of batch part metadata in response.
+        :rtype: list[Mapping[str, Any]]
+        """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]
 
         changeset = HttpRequest("POST", None)  # type: ignore
         changeset.set_multipart_mixed(
-            *reqs, policies=policies, boundary="changeset_{}".format(uuid4())  # type: ignore
+            *reqs, policies=policies, boundary=f"changeset_{uuid4()}"  # type: ignore
         )
         request = self._client._client.post(  # pylint: disable=protected-access
-            url="{}://{}/$batch".format(self.scheme, self._primary_hostname),
+            url=f"{self.scheme}://{self._primary_hostname}/$batch",
             headers={
                 "x-ms-version": self.api_version,
                 "DataServiceVersion": "3.0",
@@ -281,7 +287,7 @@ class TablesBaseClient(AccountHostsMixin):
             changeset,
             policies=policies,
             enforce_https=False,
-            boundary="batch_{}".format(uuid4()),
+            boundary=f"batch_{uuid4()}",
         )
         pipeline_response = self._client._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
@@ -322,6 +328,9 @@ class TransportWrapper(HttpTransport):
     """Wrapper class that ensures that an inner client created
     by a `get_client` method does not close the outer transport for the parent
     when used in a context manager.
+
+    :param transport: The Http Transport instance
+    :type transport: ~azure.core.pipeline.transport.HttpTransport
     """
     def __init__(self, transport):
         self._transport = transport
@@ -352,10 +361,10 @@ def parse_connection_str(conn_str, credential, keyword_args):
     if not credential:
         try:
             credential = AzureNamedKeyCredential(name=conn_settings["accountname"], key=conn_settings["accountkey"])
-        except KeyError:
+        except KeyError as exc:
             credential = conn_settings.get("sharedaccesssignature", None)
             if not credential:
-                raise ValueError("Connection string missing required connection details.")
+                raise ValueError("Connection string missing required connection details.") from exc
             credential = AzureSasCredential(credential)
     primary = conn_settings.get("tableendpoint")
     secondary = conn_settings.get("tablesecondaryendpoint")
@@ -363,14 +372,8 @@ def parse_connection_str(conn_str, credential, keyword_args):
         if secondary:
             raise ValueError("Connection string specifies only secondary endpoint.")
         try:
-            primary = "{}://{}.table.{}".format(
-                conn_settings["defaultendpointsprotocol"],
-                conn_settings["accountname"],
-                conn_settings["endpointsuffix"],
-            )
-            secondary = "{}-secondary.table.{}".format(
-                conn_settings["accountname"], conn_settings["endpointsuffix"]
-            )
+            primary = f"{conn_settings['defaultendpointsprotocol']}://{conn_settings['accountname']}.table.{conn_settings['endpointsuffix']}"  # pylint: disable=line-too-long
+            secondary = f"{conn_settings['accountname']}-secondary.table.{conn_settings['endpointsuffix']}"
         except KeyError:
             pass
 
@@ -380,12 +383,9 @@ def parse_connection_str(conn_str, credential, keyword_args):
         else:
             endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
         try:
-            primary = "https://{}.table.{}".format(
-                conn_settings["accountname"],
-                conn_settings.get("endpointsuffix", endpoint_suffix),
-            )
-        except KeyError:
-            raise ValueError("Connection string missing required connection details.")
+            primary = f"https://{conn_settings['accountname']}.table.{conn_settings.get('endpointsuffix', endpoint_suffix)}"  # pylint: disable=line-too-long
+        except KeyError as exc:
+            raise ValueError("Connection string missing required connection details.") from exc
 
     if "secondary_hostname" not in keyword_args:
         keyword_args["secondary_hostname"] = secondary
@@ -416,7 +416,7 @@ def parse_query(query_str):
     sas_values = QueryStringConstants.to_list()
     parsed_query = {k: v[0] for k, v in parse_qs(query_str).items()}
     sas_params = [
-        "{}={}".format(k, quote(v, safe=""))
+        f"{k}={quote(v, safe='')}"
         for k, v in parsed_query.items()
         if k in sas_values
     ]

@@ -156,12 +156,15 @@ class TableSharedAccessSignature(SharedAccessSignature):
     signature tokens with a common account name and account key.  Users can either
     use the factory or can construct the appropriate service and use the
     generate_*_shared_access_signature method directly.
+
+    :param credential: The credential used for authenticating requests.
+    :type credential: ~azure.core.credentials.AzureNamedKeyCredential
     """
 
     def __init__(self, credential):
         """
-        :param credential: The credential used for authenticating requests
-        :type credential: :class:`~azure.core.credentials.NamedKeyCredential`
+        :param credential: The credential used for authenticating requests.
+        :type credential: ~azure.core.credentials.AzureNamedKeyCredential
         """
         super(TableSharedAccessSignature, self).__init__(
             credential, x_ms_version=X_MS_VERSION
@@ -181,7 +184,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
         end_pk=None,
         end_rk=None,
         **kwargs  # pylint: disable=unused-argument
-    ):
+    ) -> str:
         """
         Generates a shared access signature for the table.
         Use the returned signature with the sas_token parameter of TableService.
@@ -241,6 +244,8 @@ class TableSharedAccessSignature(SharedAccessSignature):
             The maximum row key accessible with this shared access signature.
             end_pk must accompany end_rk. Key values are inclusive. If omitted,
             there is no upper bound on the table entities that can be accessed.
+        :return: A shared access signature for the table.
+        :rtype: str
         """
         sas = _TableSharedAccessHelper()
         sas.add_base(

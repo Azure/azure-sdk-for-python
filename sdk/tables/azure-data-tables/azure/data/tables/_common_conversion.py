@@ -15,14 +15,17 @@ class UTC(datetime.tzinfo):
     """Time Zone info for handling UTC"""
 
     def utcoffset(self, dt):
+        # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         """UTF offset for UTC is 0."""
         return datetime.timedelta(0)
 
     def tzname(self, dt):
+        # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         """Timestamp representation."""
         return "Z"
 
     def dst(self, dt):
+        # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         """No daylight saving for UTC."""
         return datetime.timedelta(hours=1)
 

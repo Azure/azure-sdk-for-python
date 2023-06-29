@@ -45,9 +45,19 @@ from ._table_batch_async import TableBatchOperations
 class TableClient(AsyncTablesBaseClient):
     """A client to interact with a specific Table in an Azure Tables account.
 
-    :ivar str account_name: The name of the Tables account.
-    :ivar str table_name: The name of the table.
-    :ivar str url: The full URL to the Tables account.
+    :param str endpoint: A URL to an Azure Tables account.
+    :param str table_name: The name of the table.
+    :keyword credential:
+        The credential with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential,
+        AzureSasCredential, or AsyncTokenCredential from azure-core.
+    :paramtype credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials_async.AsyncTokenCredential or None
+    :keyword api_version: Specifies the version of the operation to use for this request. Default value
+        is "2019-02-02". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__( # pylint: disable=missing-client-constructor-parameter-credential
@@ -64,16 +74,15 @@ class TableClient(AsyncTablesBaseClient):
         :param str table_name: The table name.
         :keyword credential:
             The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
-            AzureSasCredential (azure-core), or AsyncTokenCredential from azure-identity.
+            account URL already has a SAS token. The value can be one of AzureNamedKeyCredential,
+            AzureSasCredential, or AsyncTokenCredential from azure-core.
         :paramtype credential:
-            :class:`~azure.core.credentials.AzureNamedKeyCredential` or
-            :class:`~azure.core.credentials.AzureSasCredential` or
-            :class:`~azure.core.credentials.AsyncTokenCredential`
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials_async.AsyncTokenCredential or None
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02". Note that overriding this default value may result in unsupported behavior.
         :paramtype api_version: str
-
         :returns: None
         """
         if not table_name:
@@ -84,8 +93,12 @@ class TableClient(AsyncTablesBaseClient):
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
         mode hostname.
+
+        :param str hostname: The current location mode hostname.
+        :returns: The full URL to the Tables account.
+        :rtype: str
         """
-        return "{}://{}{}".format(self.scheme, hostname, self._query_str)
+        return f"{self.scheme}://{hostname}{self._query_str}"
 
     @classmethod
     def from_connection_string(
@@ -126,34 +139,28 @@ class TableClient(AsyncTablesBaseClient):
         :param str table_url: The full URI to the table, including SAS token if used.
         :keyword credential:
             The credentials with which to authenticate. This is optional if the
-            table URL already has a SAS token. The value can be one of AzureNamedKeyCredential
-            or AzureSasCredential from azure-core.
+            table URL already has a SAS token.
         :paramtype credential:
-            :class:`~azure.core.credentials.AzureNamedKeyCredential` or
-            :class:`~azure.core.credentials.AzureSasCredential`
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or None
         :returns: A table client.
-        :rtype: :class:`~azure.data.tables.TableClient`
+        :rtype: ~azure.data.tables.TableClient
         """
         try:
             if not table_url.lower().startswith("http"):
                 table_url = "https://" + table_url
-        except AttributeError:
-            raise ValueError("Table URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Table URL must be a string.") from exc
         parsed_url = urlparse(table_url.rstrip("/"))
 
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(table_url))
+            raise ValueError(f"Invalid URL: {table_url}")
 
         table_path = parsed_url.path.lstrip("/").split("/")
         account_path = ""
         if len(table_path) > 1:
             account_path = "/" + "/".join(table_path[:-1])
-        endpoint = "{}://{}{}?{}".format(
-            parsed_url.scheme,
-            parsed_url.netloc.rstrip("/"),
-            account_path,
-            parsed_url.query,
-        )
+        endpoint = f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}{account_path}?{parsed_url.query}"
         table_name = unquote(table_path[-1])
         if table_name.lower().startswith("tables('"):
             table_name = table_name[8:-2]
@@ -397,9 +404,9 @@ class TableClient(AsyncTablesBaseClient):
             decoded = _decode_error(error.response, error.message)
             if decoded.error_code == "PropertiesNeedValue":
                 if entity.get("PartitionKey") is None:
-                    raise ValueError("PartitionKey must be present in an entity")
+                    raise ValueError("PartitionKey must be present in an entity") from error
                 if entity.get("RowKey") is None:
-                    raise ValueError("RowKey must be present in an entity")
+                    raise ValueError("RowKey must be present in an entity") from error
             _validate_tablename_error(decoded, self.table_name)
             _reraise_error(error)
         return _trim_service_metadata(metadata, content=content)  # type: ignore
@@ -475,7 +482,7 @@ class TableClient(AsyncTablesBaseClient):
                     **kwargs
                 )
             else:
-                raise ValueError("Mode type '{}' is not supported.".format(mode))
+                raise ValueError(f"Mode type '{mode}' is not supported.")
         except HttpResponseError as error:
             _process_table_error(error, table_name=self.table_name)
         return _trim_service_metadata(metadata, content=content)  # type: ignore
@@ -659,10 +666,7 @@ class TableClient(AsyncTablesBaseClient):
                 )
             else:
                 raise ValueError(
-                    """Update mode {} is not supported.
-                    For a list of supported modes see the UpdateMode enum""".format(
-                        mode
-                    )
+                    f"Update mode {mode} is not supported. For a list of supported modes see the UpdateMode enum."
                 )
         except HttpResponseError as error:
             _process_table_error(error, table_name=self.table_name)
@@ -718,10 +722,10 @@ class TableClient(AsyncTablesBaseClient):
             try:
                 async for operation in operations:  # type: ignore
                     batched_requests.add_operation(operation)
-            except TypeError:
+            except TypeError as exc:
                 raise TypeError(
                   "The value of 'operations' must be an iterator or async iterator "
                   "of Tuples. Please check documentation for correct Tuple format."
-                )
+                ) from exc
 
         return await self._batch_send(self.table_name, *batched_requests.requests, **kwargs)

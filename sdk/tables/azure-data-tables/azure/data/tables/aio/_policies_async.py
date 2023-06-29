@@ -61,6 +61,13 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy):
         respect the Retry-After header, whether this header is present, and
         whether the returned status code is on the list of status codes to
         be retried upon on the presence of the aforementioned header)
+
+        :param settings: The retry settings.
+        :type settings: dict[str, Any]
+        :param response: The PipelineResponse object
+        :type response: ~azure.core.pipeline.PipelineResponse
+        :return: True if method/status code is retryable. False if not retryable.
+        :rtype: bool
         """
         should_retry = super(AsyncTablesRetryPolicy, self).is_retry(settings, response)
         status = response.http_response.status_code
@@ -73,6 +80,7 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy):
         """Configures the retry settings.
 
         :param options: keyword arguments from context.
+        :type options: dict[str, Any]
         :return: A dict containing settings and history for retries.
         :rtype: Dict
         """
@@ -93,11 +101,13 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy):
         super(AsyncTablesRetryPolicy, self).update_context(context, retry_settings)
         context['location_mode'] = retry_settings['mode']
 
-    def update_request(self, request, retry_settings):  # pylint: disable=no-self-use
+    def update_request(self, request, retry_settings):
         """Updates the pipeline request before attempting to retry.
 
-        :param PipelineRequest request: The outgoing request.
-        :param Dict(str, Any) retry_settings: The current retry context settings.
+        :param request: The outgoing request.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param retry_settings: The current retry context settings.
+        :type retry_settings: dict[str, Any]
         """
         set_next_host_location(retry_settings, request)
 
@@ -118,8 +128,8 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy):
         is_response_error = True
 
         while retry_active:
+            start_time = time.time()
             try:
-                start_time = time.time()
                 self._configure_timeout(request, absolute_timeout, is_response_error)
                 response = await self.next.send(request)
                 if self.is_retry(retry_settings, response):

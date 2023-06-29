@@ -69,7 +69,7 @@ def _from_entity_datetime(value):
         dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(
             tzinfo=TZ_UTC
         )
-    dt_obj._service_value = value  # pylint:disable=protected-access
+    dt_obj._service_value = value  # pylint:disable=protected-access,assigning-non-slot
     return dt_obj
 
 
@@ -143,6 +143,11 @@ def _convert_to_entity(entry_element):
        "PartitionKey":"my_partition_key",
        "RowKey":"my_row_key"
     }
+
+    :param entry_element: The entity in response.
+    :type entry_element: Mapping[str, Any]
+    :return: An entity dict with additional metadata.
+    :rtype: dict[str, Any]
     """
     entity = TableEntity()
 
@@ -215,7 +220,13 @@ def _convert_to_entity(entry_element):
 
 
 def _extract_etag(response):
-    """ Extracts the etag from the response headers. """
+    """ Extracts the etag from the response headers.
+
+    :param response: The PipelineResponse object.
+    :type response: ~azure.core.pipeline.PipelineResponse
+    :return: The etag from the response headers
+    :rtype: str or None
+    """
     if response and response.headers:
         return response.headers.get("etag")
 
@@ -233,8 +244,8 @@ def _extract_continuation_token(continuation_token):
         return None, None
     try:
         return continuation_token.get("PartitionKey"), continuation_token.get("RowKey")
-    except AttributeError:
-        raise ValueError("Invalid continuation token format.")
+    except AttributeError as exc:
+        raise ValueError("Invalid continuation token format.") from exc
 
 
 def _normalize_headers(headers):

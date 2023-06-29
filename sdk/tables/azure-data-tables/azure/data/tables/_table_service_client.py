@@ -41,38 +41,42 @@ class TableServiceClient(TablesBaseClient):
         authenticated with a SAS token.
     :keyword credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
-        AzureSasCredential (azure-core), or TokenCredentials from azure-identity.
+        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential,
+        AzureSasCredential, or TokenCredential from azure-core.
     :paramtype credential:
-        :class:`~azure.core.credentials.AzureNamedKeyCredential` or
-        :class:`~azure.core.credentials.AzureSasCredential` or
-        :class:`~azure.core.credentials.TokenCredential`
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or None
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-02-02'.
         Setting to an older version may result in reduced feature compatibility.
 
-        .. admonition:: Example:
+    .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_authentication.py
-                :start-after: [START auth_from_sas]
-                :end-before: [END auth_from_sas]
-                :language: python
-                :dedent: 8
-                :caption: Authenticating a TableServiceClient from a Shared Access Key
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START auth_from_sas]
+            :end-before: [END auth_from_sas]
+            :language: python
+            :dedent: 8
+            :caption: Authenticating a TableServiceClient from a Shared Access Key
 
-            .. literalinclude:: ../samples/sample_authentication.py
-                :start-after: [START auth_from_shared_key]
-                :end-before: [END auth_from_shared_key]
-                :language: python
-                :dedent: 8
-                :caption: Authenticating a TableServiceClient from a Shared Account Key
-        """
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START auth_from_shared_key]
+            :end-before: [END auth_from_shared_key]
+            :language: python
+            :dedent: 8
+            :caption: Authenticating a TableServiceClient from a Shared Account Key
+    """
 
     def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to the current location
         mode hostname.
+
+        :param str hostname: The current location mode hostname.
+        :returns: The full URL to the Tables account.
+        :rtype: str
         """
-        return "{}://{}{}".format(self.scheme, hostname, self._query_str)
+        return f"{self.scheme}://{hostname}{self._query_str}"
 
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs) -> 'TableServiceClient':

@@ -27,6 +27,12 @@ from ._models import LocationMode
 def set_next_host_location(settings: Dict[str, Any], request: PipelineRequest) -> None:
     """
     A function which sets the next host location on the request, if applicable.
+
+    :param settings: The current retry context settings.
+    :type settings: dict[str, Any]
+    :param request: The outgoing request.
+    :type request: ~azure.core.pipeline.PipelineRequest
+    :return: None
     """
     if request.http_request.method not in ['GET', 'HEAD']:
         return
@@ -77,7 +83,7 @@ class StorageHosts(SansIOHTTPPolicy):
             request.context.options["retry_to_secondary"] = False
             if use_location not in self.hosts:
                 raise ValueError(
-                    "Attempting to use undefined host location {}".format(use_location)
+                    f"Attempting to use undefined host location {use_location}"
                 )
             if use_location != location_mode:
                 # Update request URL to use the specified location
@@ -133,6 +139,12 @@ class TablesRetryPolicy(RetryPolicy):
         respect the Retry-After header, whether this header is present, and
         whether the returned status code is on the list of status codes to
         be retried upon on the presence of the aforementioned header)
+
+        :param dict settings: The retry settings.
+        :param response: The PipelineResponse object
+        :type response: ~azure.core.pipeline.PipelineResponse
+        :return: True if method/status code is retryable. False if not retryable.
+        :rtype: bool
         """
         should_retry = super(TablesRetryPolicy, self).is_retry(settings, response)
         status = response.http_response.status_code
@@ -145,8 +157,9 @@ class TablesRetryPolicy(RetryPolicy):
         """Configures the retry settings.
 
         :param options: keyword arguments from context.
+        :type options: dict
         :return: A dict containing settings and history for retries.
-        :rtype: Dict
+        :rtype: dict
         """
         config = super(TablesRetryPolicy, self).configure_retries(options)
         config["retry_secondary"] = options.pop("retry_to_secondary", self.retry_to_secondary)
@@ -165,11 +178,14 @@ class TablesRetryPolicy(RetryPolicy):
         super(TablesRetryPolicy, self).update_context(context, retry_settings)
         context['location_mode'] = retry_settings['mode']
 
-    def update_request(self, request, retry_settings):  # pylint:disable=no-self-use
+    def update_request(self, request, retry_settings):
         """Updates the pipeline request before attempting to retry.
 
-        :param PipelineRequest request: The outgoing request.
-        :param Dict(str, Any) retry_settings: The current retry context settings.
+        :param request: The outgoing request.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param retry_settings: The current retry context settings.
+        :type retry_settings: dict[str, Any]
+        :return: None
         """
         set_next_host_location(retry_settings, request)
 
@@ -190,8 +206,8 @@ class TablesRetryPolicy(RetryPolicy):
         is_response_error = True
 
         while retry_active:
+            start_time = time.time()
             try:
-                start_time = time.time()
                 self._configure_timeout(request, absolute_timeout, is_response_error)
                 response = self.next.send(request)
                 if self.is_retry(retry_settings, response):
