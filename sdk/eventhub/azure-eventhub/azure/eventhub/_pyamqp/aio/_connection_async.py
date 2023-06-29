@@ -274,6 +274,11 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :return: Whether the connection is in a state where it is legal to write outgoing frames.
         :rtype: bool
         """
+        return self.state not in _CLOSING_STATES
+
+    async def _send_frame(self, channel, frame, timeout=None, **kwargs):
+        # type: (int, NamedTuple, Optional[int], Any) -> None
+        """Send a frame over the connection.
 
         :param int channel: The outgoing channel number.
         :param NamedTuple frame: The outgoing frame.
