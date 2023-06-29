@@ -268,7 +268,11 @@ class Point(namedtuple("Point", "x y")):
         return super().__new__(cls, x, y)
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of Point."""
+        """Returns a dict representation of Point.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {"x": self.x, "y": self.y}
 
     @classmethod
@@ -311,7 +315,11 @@ class TextAppearance:
         return f"TextAppearance(style_name={self.style_name}, style_confidence={self.style_confidence})"
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of TextAppearance."""
+        """Returns a dict representation of TextAppearance.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "style_name": self.style_name,
             "style_confidence": self.style_confidence,
@@ -350,7 +358,11 @@ class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_num
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of FormPageRange."""
+        """Returns a dict representation of FormPageRange.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "first_page_number": self.first_page_number,
             "last_page_number": self.last_page_number,
@@ -398,7 +410,11 @@ class FormElement:
         self.kind = kwargs.get("kind", None)
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of FormElement."""
+        """Returns a dict representation of FormElement.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "text": self.text,
             "bounding_box": [f.to_dict() for f in self.bounding_box]
@@ -467,7 +483,11 @@ class FormWord(FormElement):
         )[:1024]
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of FormWord."""
+        """Returns a dict representation of FormWord.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "text": self.text,
             "bounding_box": [f.to_dict() for f in self.bounding_box]
@@ -540,7 +560,11 @@ class FormSelectionMark(FormElement):
         )[:1024]
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of FormSelectionMark."""
+        """Returns a dict representation of FormSelectionMark.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "text": self.text,
             "bounding_box": [f.to_dict() for f in self.bounding_box]
@@ -623,7 +647,11 @@ class FormLine(FormElement):
         )[:1024]
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of FormLine."""
+        """Returns a dict representation of FormLine.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "text": self.text,
             "bounding_box": [f.to_dict() for f in self.bounding_box]
@@ -736,7 +764,11 @@ class FormTableCell:  # pylint:disable=too-many-instance-attributes
         )[:1024]
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of FormTableCell."""
+        """Returns a dict representation of FormTableCell.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "text": self.text,
             "row_index": self.row_index,
@@ -825,7 +857,11 @@ class FormTable:
         )[:1024]
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of FormTable."""
+        """Returns a dict representation of FormTable.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "page_number": self.page_number,
             "row_count": self.row_count,
@@ -910,7 +946,11 @@ class FormPage:
         )[:1024]
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of FormPage."""
+        """Returns a dict representation of FormPage.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "page_number": self.page_number,
             "text_angle": self.text_angle,
@@ -1021,7 +1061,11 @@ class FieldData:
         )[:1024]
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of FieldData."""
+        """Returns a dict representation of FieldData.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "text": self.text,
             "bounding_box": [f.to_dict() for f in self.bounding_box]
@@ -1132,7 +1176,11 @@ class FormField:
             )[:1024]
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of FormField."""
+        """Returns a dict representation of FormField.
+
+        :return: Dict
+        :rtype: Dict
+        """
         value = self.value
         if isinstance(self.value, dict):
             value = {k: v.to_dict() for k, v in self.value.items()}  # type: ignore
@@ -1220,7 +1268,11 @@ class RecognizedForm:
             )[:1024]
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of RecognizedForm."""
+        """Returns a dict representation of RecognizedForm.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "fields": {k: v.to_dict() for k, v in self.fields.items()}
             if self.fields
@@ -1283,7 +1335,11 @@ class FormRecognizerError:
         return f"FormRecognizerError(code={self.code}, message={self.message})"[:1024]
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of FormRecognizerError."""
+        """Returns a dict representation of FormRecognizerError.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {"code": self.code, "message": self.message}
 
     @classmethod
@@ -1336,7 +1392,11 @@ class CustomFormModelField:
         return f"CustomFormModelField(label={self.label}, name={self.name}, accuracy={self.accuracy})"[:1024]
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of CustomFormModelField."""
+        """Returns a dict representation of CustomFormModelField.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {"label": self.label, "accuracy": self.accuracy, "name": self.name}
 
     @classmethod
@@ -1423,7 +1483,11 @@ class TrainingDocumentInfo:
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of TrainingDocumentInfo."""
+        """Returns a dict representation of TrainingDocumentInfo.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "name": self.name,
             "status": self.status,
@@ -1480,7 +1544,11 @@ class AccountProperties:
         )[:1024]
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of AccountProperties."""
+        """Returns a dict representation of AccountProperties.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "custom_model_count": self.custom_model_count,
             "custom_model_limit": self.custom_model_limit,
@@ -1522,7 +1590,11 @@ class CustomFormModelProperties:
         return f"CustomFormModelProperties(is_composed_model={self.is_composed_model})"
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of CustomFormModelProperties."""
+        """Returns a dict representation of CustomFormModelProperties.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {"is_composed_model": self.is_composed_model}
 
     @classmethod
@@ -1597,7 +1669,11 @@ class CustomFormModelInfo:
         )[:1024]
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of CustomFormModelInfo."""
+        """Returns a dict representation of CustomFormModelInfo.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "model_id": self.model_id,
             "status": self.status,
@@ -1719,7 +1795,11 @@ class CustomFormSubmodel:
         )[:1024]
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of CustomFormSubmodel."""
+        """Returns a dict representation of CustomFormSubmodel.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "model_id": self.model_id,
             "accuracy": self.accuracy,
@@ -1841,7 +1921,11 @@ class CustomFormModel:
         )[:1024]
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of CustomFormModel."""
+        """Returns a dict representation of CustomFormModel.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "model_id": self.model_id,
             "status": self.status,
@@ -1914,7 +1998,11 @@ class DocumentSpan:
         return f"DocumentSpan(offset={self.offset}, length={self.length})"
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of DocumentSpan."""
+        """Returns a dict representation of DocumentSpan.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "offset": self.offset,
             "length": self.length,
@@ -1961,7 +2049,11 @@ class BoundingRegion:
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of BoundingRegion."""
+        """Returns a dict representation of BoundingRegion.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "page_number": self.page_number,
             "polygon": [f.to_dict() for f in self.polygon]
@@ -2075,7 +2167,11 @@ class AddressValue:  # pylint: disable=too-many-instance-attributes
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of AddressValue."""
+        """Returns a dict representation of AddressValue.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "house_number": self.house_number,
             "po_box": self.po_box,
@@ -2156,7 +2252,11 @@ class CurrencyValue:
         return f"CurrencyValue(amount={self.amount}, symbol={self.symbol}, code={self.code})"
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of CurrencyValue."""
+        """Returns a dict representation of CurrencyValue.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "amount": self.amount,
             "symbol": self.symbol,
@@ -2207,7 +2307,11 @@ class DocumentLanguage:
         return f"DocumentLanguage(locale={self.locale}, spans={repr(self.spans)}, confidence={self.confidence})"
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of DocumentLanguage."""
+        """Returns a dict representation of DocumentLanguage.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "locale": self.locale,
             "spans": [f.to_dict() for f in self.spans]
@@ -2303,7 +2407,12 @@ class DocumentField:
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of DocumentField."""
+        """Returns a dict representation of DocumentField.
+
+        :return: Dict
+        :rtype: Dict
+        """
+
         value = self.value
         # CurrencyValue objects are interpreted as dict, therefore need to be processed first
         # to call the proper to_dict() method.
@@ -2412,7 +2521,11 @@ class AnalyzedDocument:
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of AnalyzedDocument."""
+        """Returns a dict representation of AnalyzedDocument.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "doc_type": self.doc_type,
             "bounding_regions": [f.to_dict() for f in self.bounding_regions]
@@ -2488,7 +2601,11 @@ class DocumentKeyValueElement:
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of DocumentKeyValueElement."""
+        """Returns a dict representation of DocumentKeyValueElement.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "content": self.content,
             "bounding_regions": [f.to_dict() for f in self.bounding_regions]
@@ -2561,7 +2678,11 @@ class DocumentKeyValuePair:
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of DocumentKeyValuePair."""
+        """Returns a dict representation of DocumentKeyValuePair.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "key": self.key.to_dict() if self.key else None,
             "value": self.value.to_dict() if self.value else None,
@@ -2626,7 +2747,11 @@ class DocumentWord:
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of DocumentWord."""
+        """Returns a dict representation of DocumentWord.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "content": self.content,
             "polygon": [f.to_dict() for f in self.polygon]
@@ -2692,7 +2817,11 @@ class DocumentSelectionMark:
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of DocumentSelectionMark."""
+        """Returns a dict representation of DocumentSelectionMark.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "state": self.state,
             "polygon": [f.to_dict() for f in self.polygon]
@@ -2749,7 +2878,11 @@ class DocumentLine:
         return f"DocumentLine(content={self.content}, polygon={self.polygon}, spans={repr(self.spans)})"
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of DocumentLine."""
+        """Returns a dict representation of DocumentLine.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "content": self.content,
             "polygon": [f.to_dict() for f in self.polygon]
@@ -2835,7 +2968,11 @@ class DocumentParagraph:
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of DocumentParagraph."""
+        """Returns a dict representation of DocumentParagraph.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "role": self.role,
             "content": self.content,
@@ -2901,7 +3038,11 @@ class DocumentAnnotation:
         )
 
     def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of DocumentAnnotation."""
+        """Returns a dict representation of DocumentAnnotation.
+
+        :return: Dict[str, Any]
+        :rtype: Dict[str, Any]
+        """
         return {
             "kind": self.kind,
             "polygon": [f.to_dict() for f in self.polygon]
@@ -2972,7 +3113,11 @@ class DocumentBarcode:
         )
 
     def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of DocumentBarcode."""
+        """Returns a dict representation of DocumentBarcode.
+
+        :return: Dict[str, Any]
+        :rtype: Dict[str, Any]
+        """
         return {
             "kind": self.kind,
             "polygon": [f.to_dict() for f in self.polygon]
@@ -3045,7 +3190,11 @@ class DocumentFormula:
         )
 
     def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of DocumentFormula."""
+        """Returns a dict representation of DocumentFormula.
+
+        :return: Dict[str, Any]
+        :rtype: Dict[str, Any]
+        """
         return {
             "kind": self.kind,
             "polygon": [f.to_dict() for f in self.polygon]
@@ -3114,7 +3263,11 @@ class DocumentImage:
         )
 
     def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of DocumentImage."""
+        """Returns a dict representation of DocumentImage.
+
+        :return: Dict[str, Any]
+        :rtype: Dict[str, Any]
+        """
         return {
             "page_number": self.page_number,
             "polygon": [f.to_dict() for f in self.polygon]
@@ -3264,7 +3417,11 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of DocumentPage."""
+        """Returns a dict representation of DocumentPage.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "page_number": self.page_number,
             "angle": self.angle,
@@ -3407,7 +3564,11 @@ class DocumentStyle:
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of DocumentStyle."""
+        """Returns a dict representation of DocumentStyle.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "is_handwritten": self.is_handwritten,
             "similar_font_family": self.similar_font_family,
@@ -3503,7 +3664,11 @@ class DocumentTableCell:
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of DocumentTableCell."""
+        """Returns a dict representation of DocumentTableCell.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "kind": self.kind,
             "row_index": self.row_index,
@@ -3584,7 +3749,11 @@ class DocumentTable:
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of DocumentTable."""
+        """Returns a dict representation of DocumentTable.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "row_count": self.row_count,
             "column_count": self.column_count,
@@ -3663,7 +3832,11 @@ class DocumentTypeDetails:
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of DocumentTypeDetails."""
+        """Returns a dict representation of DocumentTypeDetails.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "description": self.description,
             "build_mode": self.build_mode,
@@ -3738,7 +3911,11 @@ class DocumentModelSummary:
         )
 
     def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of DocumentModelSummary."""
+        """Returns a dict representation of DocumentModelSummary.
+
+        :return: Dict[str, Any]
+        :rtype: Dict[str, Any]
+        """
         return {
             "model_id": self.model_id,
             "description": self.description,
@@ -3813,7 +3990,11 @@ class DocumentClassifierDetails:
         )
 
     def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of DocumentClassifierDetails."""
+        """Returns a dict representation of DocumentClassifierDetails.
+
+        :return: Dict[str, Any]
+        :rtype: Dict[str, Any]
+        """
         return {
             "classifier_id": self.classifier_id,
             "description": self.description,
@@ -3895,7 +4076,11 @@ class DocumentModelDetails(DocumentModelSummary):
         )
 
     def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of DocumentModelDetails."""
+        """Returns a dict representation of DocumentModelDetails.
+
+        :return: Dict[str, Any]
+        :rtype: Dict[str, Any]
+        """
         return {
             "model_id": self.model_id,
             "description": self.description,
@@ -3960,7 +4145,11 @@ class DocumentAnalysisInnerError:
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of DocumentAnalysisInnerError."""
+        """Returns a dict representation of DocumentAnalysisInnerError.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "code": self.code,
             "message": self.message,
@@ -4024,7 +4213,11 @@ class DocumentAnalysisError:
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of DocumentAnalysisError."""
+        """Returns a dict representation of DocumentAnalysisError.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "code": self.code,
             "message": self.message,
@@ -4105,7 +4298,11 @@ class OperationSummary:
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of OperationSummary."""
+        """Returns a dict representation of OperationSummary.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "operation_id": self.operation_id,
             "status": self.status,
@@ -4206,7 +4403,11 @@ class OperationDetails(OperationSummary):
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of OperationDetails."""
+        """Returns a dict representation of OperationDetails.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "operation_id": self.operation_id,
             "status": self.status,
@@ -4358,7 +4559,11 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of AnalyzeResult."""
+        """Returns a dict representation of AnalyzeResult.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "api_version": self.api_version,
             "model_id": self.model_id,
@@ -4449,7 +4654,11 @@ class CustomDocumentModelsDetails:
 
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of CustomDocumentModelsDetails."""
+        """Returns a dict representation of CustomDocumentModelsDetails.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
             "count": self.count,
             "limit": self.limit,
@@ -4499,7 +4708,11 @@ class QuotaDetails:
         )
 
     def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of QuotaDetails."""
+        """Returns a dict representation of QuotaDetails.
+
+        :return: Dict[str, Any]
+        :rtype: Dict[str, Any]
+        """
         return {
                 "used": self.used,
                 "quota": self.quota,
@@ -4555,7 +4768,11 @@ class ResourceDetails:
         )
 
     def to_dict(self) -> Dict:
-        """Returns a dict representation of ResourceDetails."""
+        """Returns a dict representation of ResourceDetails.
+
+        :return: Dict
+        :rtype: Dict
+        """
         return {
                 "custom_document_models": self.custom_document_models.to_dict()
                 if self.custom_document_models
