@@ -63,8 +63,6 @@ if __name__ == "__main__":
                 sys.executable,
                 "-m",
                 "pylint",
-                "--python-version",
-                "3.7",
                 "--rcfile={}".format(rcFileLocation),
                 "--output-format=parseable",
                 os.path.join(args.target_package, top_level_module),
