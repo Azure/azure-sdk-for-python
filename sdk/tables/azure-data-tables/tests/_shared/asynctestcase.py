@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 from __future__ import division
 from datetime import datetime
-from datetime import timezone
+from datetime import datetime, timezone
 import uuid
 
 from azure.core.credentials import AccessToken
