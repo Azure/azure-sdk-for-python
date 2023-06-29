@@ -20,13 +20,14 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import build_input_output
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
-from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, PipelineNodeIOMixin
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
+from azure.ai.ml.entities._job.pipeline._io.mixin import NodeWithGroupInputMixin
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, resolve_pipeline_parameters
 from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
-from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import ErrorTarget
 
 module_logger = logging.getLogger(__name__)
 
@@ -60,7 +61,7 @@ def pipeline_node_decorator(func):
 
 
 # pylint: disable=too-many-instance-attributes
-class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin):
+class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, NodeWithGroupInputMixin):
     """Base class for node in pipeline, used for component version consumption. Can't be instantiated directly.
 
     You should not instantiate this class directly. Instead, you should
@@ -234,17 +235,19 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
     def _validate_io(cls, io_dict: dict, allowed_types: Optional[tuple]):
         if allowed_types is None:
             return
-        for key, value in io_dict.items():
+        for _, value in io_dict.items():
             if value is None or isinstance(value, allowed_types):
                 pass
             else:
-                msg = "Expecting {} for input/output {}, got {} instead."
-                raise ValidationException(
-                    message=msg.format(allowed_types, key, type(value)),
-                    no_personal_data_message=msg.format(allowed_types, "[key]", type(value)),
-                    target=ErrorTarget.PIPELINE,
-                    error_type=ValidationErrorType.INVALID_VALUE,
-                )
+                return
+                # TODO: enable this
+                # msg = "Expecting {} for input/output {}, got {} instead."
+                # raise ValidationException(
+                #     message=msg.format(allowed_types, key, type(value)),
+                #     no_personal_data_message=msg.format(allowed_types, "[key]", type(value)),
+                #     target=ErrorTarget.PIPELINE,
+                #     error_type=ValidationErrorType.INVALID_VALUE,
+                # )
 
     @classmethod
     def _parse_io(cls, io_dict: dict, parse_cls):

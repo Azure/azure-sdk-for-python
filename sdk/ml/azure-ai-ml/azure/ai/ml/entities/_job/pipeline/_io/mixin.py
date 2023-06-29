@@ -255,8 +255,8 @@ class NodeIOMixin:
                     rest_output["job_output_type"] = "uri_file"
 
 
-class PipelineNodeIOMixin(NodeIOMixin):
-    """This class provide build_inputs_dict for Pipeline and PipelineJob to support ParameterGroup."""
+class NodeWithGroupInputMixin(NodeIOMixin):
+    """This class provide build_inputs_dict for a node to use ParameterGroup as an input."""
 
     def _validate_group_input_type(  # pylint: disable=no-self-use
         self,
@@ -322,8 +322,8 @@ class PipelineNodeIOMixin(NodeIOMixin):
         return InputsAttrDict(GroupInput.restore_flattened_inputs(inputs))
 
 
-class PipelineIOMixin(PipelineNodeIOMixin):
-    """Provides ability to wrap pipeline inputs/outputs and build data bindings
+class PipelineJobIOMixin(NodeWithGroupInputMixin):
+    """Provides ability to wrap pipeline job inputs/outputs and build data bindings
     dynamically."""
 
     def _build_input(self, name, meta: Input, data) -> "PipelineInput":
