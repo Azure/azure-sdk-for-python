@@ -377,13 +377,13 @@ class OperationResourcePolling(LongRunningOperation[HttpRequestTypeVar, HttpResp
         return status
 
 
-class LocationPolling(LongRunningOperation):
+class LocationPolling(LongRunningOperation[HttpRequestTypeVar, HttpResponseTypeVar]):
     """Implements a Location polling."""
 
     _location_url: str
     """Location header"""
 
-    def can_poll(self, pipeline_response: PipelineResponseType) -> bool:
+    def can_poll(self, pipeline_response: PipelineResponseTypeVar) -> bool:
         """True if contains a Location header
 
         :param pipeline_response: Initial REST call response.
@@ -402,7 +402,7 @@ class LocationPolling(LongRunningOperation):
         """
         return self._location_url
 
-    def get_final_get_url(self, pipeline_response: PipelineResponseType) -> Optional[str]:
+    def get_final_get_url(self, pipeline_response: PipelineResponseTypeVar) -> Optional[str]:
         """If a final GET is needed, returns the URL.
 
         Always return None for a Location polling.
@@ -414,7 +414,7 @@ class LocationPolling(LongRunningOperation):
         """
         return None
 
-    def set_initial_status(self, pipeline_response: PipelineResponseType) -> str:
+    def set_initial_status(self, pipeline_response: PipelineResponseTypeVar) -> str:
         """Process first response after initiating long running operation.
 
         :param pipeline_response: Initial REST call response.
@@ -430,7 +430,7 @@ class LocationPolling(LongRunningOperation):
             return "InProgress"
         raise OperationFailed("Operation failed or canceled")
 
-    def get_status(self, pipeline_response: PipelineResponseType) -> str:
+    def get_status(self, pipeline_response: PipelineResponseTypeVar) -> str:
         """Return the status string extracted from this response.
 
         For Location polling, it means the status monitor returns 202.
@@ -447,12 +447,12 @@ class LocationPolling(LongRunningOperation):
         return "InProgress" if response.status_code == 202 else "Succeeded"
 
 
-class StatusCheckPolling(LongRunningOperation):
+class StatusCheckPolling(LongRunningOperation[HttpRequestTypeVar, HttpResponseTypeVar]):
     """Should be the fallback polling, that don't poll but exit successfully
     if not other polling are detected and status code is 2xx.
     """
 
-    def can_poll(self, pipeline_response: PipelineResponseType) -> bool:
+    def can_poll(self, pipeline_response: PipelineResponseTypeVar) -> bool:
         """Answer if this polling method could be used.
 
         For this implementation, always True.
@@ -474,7 +474,7 @@ class StatusCheckPolling(LongRunningOperation):
         """
         raise ValueError("This polling doesn't support polling url")
 
-    def set_initial_status(self, pipeline_response: PipelineResponseType) -> str:
+    def set_initial_status(self, pipeline_response: PipelineResponseTypeVar) -> str:
         """Process first response after initiating long running operation.
 
         Will succeed immediately.
@@ -486,7 +486,7 @@ class StatusCheckPolling(LongRunningOperation):
         """
         return "Succeeded"
 
-    def get_status(self, pipeline_response: PipelineResponseType) -> str:
+    def get_status(self, pipeline_response: PipelineResponseTypeVar) -> str:
         """Return the status string extracted from this response.
 
         Only possible status is success.
@@ -498,7 +498,7 @@ class StatusCheckPolling(LongRunningOperation):
         """
         return "Succeeded"
 
-    def get_final_get_url(self, pipeline_response: PipelineResponseType) -> Optional[str]:
+    def get_final_get_url(self, pipeline_response: PipelineResponseTypeVar) -> Optional[str]:
         """If a final GET is needed, returns the URL.
 
         :param pipeline_response: Success REST call response.
