@@ -28,7 +28,6 @@ else:
     from typing import MutableMapping
 
 __all__ = ["NULL", "AzureJSONEncoder", "Model", "rest_field", "rest_discriminator"]
-TZ_UTC = timezone.utc
 
 
 class _Null:
