@@ -118,11 +118,11 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         """Balances and claims ownership of partitions for this EventProcessor.
 
         :param ownership_list: The list of current ownership.
-        :type ownership_list: iterable
+        :type ownership_list: iterable[dict[str,any]]
         :param all_partition_ids: The list of all partition ids of the event hub that the EventProcessor is working on.
         :type all_partition_ids: list[str]
-        :rtype: list[dict[str, Any]]
-        :return: The list of ownership that the EventProcessor claimed.
+        :rtype: list[dict[str, any]]
+        :return: The balanced list of ownership that the EventProcessor claimed.
 
         """
         now = time.time()
