@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.sql import SqlManagementClient
+from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-sql
+    pip install azure-mgmt-managednetworkfabric
 # USAGE
-    python database_metrics_list_with_filter.py
+    python internal_networks_update_administrative_state_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -24,21 +24,24 @@ from azure.mgmt.sql import SqlManagementClient
 
 
 def main():
-    client = SqlManagementClient(
+    client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-1111-2222-3333-444444444444",
+        subscription_id="subscriptionId",
     )
 
-    response = client.databases.list_metrics(
-        resource_group_name="sqlcrudtest-6730",
-        server_name="sqlcrudtest-9007",
-        database_name="3481",
-        filter="name/value eq 'cpu_percent' and timeGrain eq '00:10:00' and startTime eq '2017-06-02T18:35:00Z' and endTime eq '2017-06-02T18:55:00Z'",
-    )
-    for item in response:
-        print(item)
+    client.internal_networks.begin_update_administrative_state(
+        resource_group_name="resourceGroupName",
+        l3_isolation_domain_name="example-l3domain",
+        internal_network_name="example-internalnetwork",
+        body={
+            "resourceIds": [
+                "/subscriptions/xxxxxx/resourceGroups/resourcegroupname/providers/Microsoft.ManagedNetworkFabric/example-l3domain/internalNetworks/example-internalnetwork"
+            ],
+            "state": "Enable",
+        },
+    ).result()
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/stable/2014-04-01/examples/DatabaseMetricsListWithFilter.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/InternalNetworks_updateAdministrativeState_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

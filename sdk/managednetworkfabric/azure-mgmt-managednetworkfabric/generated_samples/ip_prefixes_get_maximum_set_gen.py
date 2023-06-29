@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.sql import SqlManagementClient
+from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-sql
+    pip install azure-mgmt-managednetworkfabric
 # USAGE
-    python elastic_pool_metrics_list_with_filter.py
+    python ip_prefixes_get_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -24,21 +24,18 @@ from azure.mgmt.sql import SqlManagementClient
 
 
 def main():
-    client = SqlManagementClient(
+    client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-1111-2222-3333-444444444444",
+        subscription_id="xxxxxx",
     )
 
-    response = client.elastic_pools.list_metrics(
-        resource_group_name="sqlcrudtest-6730",
-        server_name="sqlcrudtest-9007",
-        elastic_pool_name="3481",
-        filter="name/value eq 'cpu_percent' and timeGrain eq '00:10:00' and startTime eq '2017-06-02T18:35:00Z' and endTime eq '2017-06-02T18:55:00Z'",
+    response = client.ip_prefixes.get(
+        resource_group_name="resourcegroupname",
+        ip_prefix_name="example-ipPrefix",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/stable/2014-04-01/examples/ElasticPoolMetricsListWithFilter.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/IpPrefixes_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
