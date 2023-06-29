@@ -39,7 +39,7 @@ class Output(_InputOutputBase):
     :type version: str
     """
 
-    IO_KEYS = ["name", "version", "path", "type", "mode", "description", "is_control", "early_available"]
+    _IO_KEYS = ["name", "version", "path", "type", "mode", "description", "is_control", "early_available"]
 
     @overload
     def __init__(self, type: Literal["uri_folder"] = "uri_folder", path=None, mode=None, description=None):
@@ -98,7 +98,7 @@ class Output(_InputOutputBase):
         self.path = path
         self.mode = mode
         # use this field to determine the Output is control or not, currently hide in kwargs
-        self.is_control = self._is_primitive_type if self._is_primitive_type else kwargs.pop("is_control", None)
+        self.is_control = kwargs.pop("is_control", None)
         # use this field to mark Output for early node orchestrate, currently hide in kwargs
         self.early_available = kwargs.pop("early_available", None)
         self._intellectual_property = None
@@ -119,7 +119,7 @@ class Output(_InputOutputBase):
 
     def _to_dict(self):
         """Convert the Output object to a dict."""
-        keys = self.IO_KEYS
+        keys = self._IO_KEYS
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
 
@@ -177,7 +177,7 @@ class OutputMetadata(object):
 
     def _to_io_entity_args_dict(self):
         """Convert the object to a kwargs dict for azure.ai.ml.entity.Output."""
-        keys = Output.IO_KEYS
+        keys = Output._IO_KEYS
         result = {key: getattr(self, key, None) for key in keys}
         result.update(self._kwargs)
         if IOConstants.PRIMITIVE_TYPE_2_STR.get(self.type) is not None:

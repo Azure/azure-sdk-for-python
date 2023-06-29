@@ -211,7 +211,7 @@ class InputOutputBase(ABC):
         return self.type in IOConstants.PRIMITIVE_STR_2_TYPE
 
     @property
-    def is_control_or_primitive_type(self):
+    def _is_control_or_primitive_type(self):
         return getattr(self, "is_control", None) or getattr(self, "_is_primitive_type", None)
 
 

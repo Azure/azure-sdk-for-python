@@ -290,7 +290,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :return: The parsed value.
         """
         if self.type == "integer":
-            return int(float(val))
+            return int(float(val))  # backend returns 10.0，for integer， parse it to float before int
         if self.type == "number":
             return float(val)
         if self.type == "boolean":
