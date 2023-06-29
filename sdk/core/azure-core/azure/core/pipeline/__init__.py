@@ -40,8 +40,7 @@ class PipelineContext(Dict[str, Any]):
 
     :param transport: The HTTP transport type.
     :type transport: ~azure.core.pipeline.transport.HttpTransport
-    :keyword kwargs: Developer-defined keyword arguments.
-    :paramtype kwargs: any
+    :param any kwargs: Developer-defined keyword arguments.
     """
 
     _PICKLE_CONTEXT = {"deserialized_data"}
