@@ -305,7 +305,7 @@ class EventData(object):
     def sequence_number(self) -> Optional[int]:
         """The sequence number of the event.
 
-        :rtype: int
+        :rtype: int or None
         """
         return self._raw_amqp_message.annotations.get(PROP_SEQ_NUMBER, None)
 
@@ -313,7 +313,7 @@ class EventData(object):
     def offset(self) -> Optional[str]:
         """The offset of the event.
 
-        :rtype: str
+        :rtype: str or None
         """
         try:
             return self._raw_amqp_message.annotations[PROP_OFFSET].decode("UTF-8")
@@ -324,7 +324,7 @@ class EventData(object):
     def enqueued_time(self) -> Optional[datetime.datetime]:
         """The enqueued timestamp of the event.
 
-        :rtype: datetime.datetime
+        :rtype: datetime.datetime or None
         """
         timestamp = self._raw_amqp_message.annotations.get(PROP_TIMESTAMP, None)
         if timestamp:
@@ -335,7 +335,7 @@ class EventData(object):
     def partition_key(self) -> Optional[bytes]:
         """The partition key of the event.
 
-        :rtype: bytes
+        :rtype: bytes or None
         """
         return self._raw_amqp_message.annotations.get(PROP_PARTITION_KEY, None)
 
@@ -343,7 +343,7 @@ class EventData(object):
     def properties(self) -> Dict[Union[str, bytes], Any]:
         """Application-defined properties on the event.
 
-        :rtype: dict
+        :rtype: dict[str, any] or dict[bytes, any]
         """
         return self._raw_amqp_message.application_properties
 
@@ -351,7 +351,7 @@ class EventData(object):
     def properties(self, value: Dict[Union[str, bytes], Any]):
         """Application-defined properties on the event.
 
-        :param dict value: The application properties for the EventData.
+        :param dict[str, any] or dict[bytes, any] value: The application properties for the EventData.
         """
         properties = None if value is None else dict(value)
         self._raw_amqp_message.application_properties = properties
@@ -381,7 +381,7 @@ class EventData(object):
             - b"group-sequence" (bytes)
             - b"reply-to-group-id" (bytes)
 
-        :rtype: dict
+        :rtype: dict[bytes, any]
         """
 
         if self._sys_properties is None:
@@ -448,7 +448,7 @@ class EventData(object):
 
         :param str encoding: The encoding to use for decoding event data.
          Default is 'UTF-8'
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, any]
         :return: A JSON object.
         """
         data_str = self.body_as_str(encoding=encoding)
@@ -462,7 +462,7 @@ class EventData(object):
         """The content type descriptor.
         Optionally describes the payload of the message, with a descriptor following the format of RFC2045, Section 5,
         for example "application/json".
-        :rtype: str
+        :rtype: str or None
         """
         if not self._raw_amqp_message.properties:
             return None
@@ -482,7 +482,7 @@ class EventData(object):
         """The correlation identifier.
         Allows an application to specify a context for the message for the purposes of correlation, for example
         reflecting the MessageId of a message that is being replied to.
-        :rtype: str
+        :rtype: str or None
         """
         if not self._raw_amqp_message.properties:
             return None
@@ -504,7 +504,7 @@ class EventData(object):
         The identifier is a free-form string and can reflect a GUID or an identifier derived from the
         application context.  If enabled, the duplicate detection feature identifies and removes second and
         further submissions of messages with the same message id.
-        :rtype: str
+        :rtype: str or None
         """
         if not self._raw_amqp_message.properties:
             return None

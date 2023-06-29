@@ -152,7 +152,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     :param str uri: The resource URI.
     :param str policy: The name of the shared access policy.
     :param str key: The shared access key.
-    :param timedelta expiry: The time period that the signature is valid for. Default is 1 hour.
+    :param timedelta or None expiry: The time period that the signature is valid for. Default is 1 hour.
     :return: SAS token as string literal.
     :rtype: str
     """
@@ -355,7 +355,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         Create an ~uamqp.authentication.SASTokenAuth instance
          to authenticate the session.
 
-        :rtype: JWTTokenAuth
+        :rtype: JWTTokenAuth or uamqp_JWTTokenAuth
         :return: The auth for the session.
         """
         try:
