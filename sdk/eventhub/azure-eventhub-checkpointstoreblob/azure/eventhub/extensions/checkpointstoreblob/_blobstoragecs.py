@@ -50,7 +50,7 @@ class BlobCheckpointStore(CheckpointStore):
     :param container_name:
         The name of the container for the blob.
     :type container_name: str
-    :param credential:
+    :param any credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
@@ -191,7 +191,7 @@ class BlobCheckpointStore(CheckpointStore):
         :param str eventhub_name: The name of the specific Event Hub the partition ownerships are associated with,
          relative to the Event Hubs namespace that contains it.
         :param str consumer_group: The name of the consumer group the ownerships are associated with.
-        :rtype: Iterable[Dict[str, Any]]
+        :rtype: iterable[dict[str, any]]
         :return: Iterable of dictionaries containing partition ownership information:
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
@@ -241,8 +241,8 @@ class BlobCheckpointStore(CheckpointStore):
         # type: (Iterable[Dict[str, Any]], Any) -> Iterable[Dict[str, Any]]
         """Tries to claim ownership for a list of specified partitions.
 
-        :param Iterable[Dict[str,Any]] ownership_list: Iterable of dictionaries containing all the ownerships to claim.
-        :rtype: Iterable[Dict[str,Any]]
+        :param iterable[dict[str, any]] ownership_list: Iterable of dictionaries containing all the ownerships to claim.
+        :rtype: iterable[dict[str, any]]
         :return: Iterable of dictionaries containing partition ownership information:
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
@@ -272,7 +272,7 @@ class BlobCheckpointStore(CheckpointStore):
         Note: If you plan to implement a custom checkpoint store with the intention of running between
         cross-language EventHubs SDKs, it is recommended to persist the offset value as an integer.
 
-        :param Dict[str,Any] checkpoint: A dict containing checkpoint information:
+        :param dict[str,any] checkpoint: A dict containing checkpoint information:
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
                   The format is like "<namespace>.servicebus.windows.net".
@@ -318,7 +318,7 @@ class BlobCheckpointStore(CheckpointStore):
         :param str eventhub_name: The name of the specific Event Hub the checkpoints are associated with, relative to
          the Event Hubs namespace that contains it.
         :param str consumer_group: The name of the consumer group the checkpoints are associated with.
-        :rtype: Iterable[Dict[str,Any]]
+        :rtype: iterable[dict[str,any]]
         :return: Iterable of dictionaries containing partition checkpoint information:
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
