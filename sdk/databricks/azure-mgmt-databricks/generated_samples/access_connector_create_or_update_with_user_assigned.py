@@ -14,7 +14,7 @@ from azure.mgmt.databricks import AzureDatabricksManagementClient
     pip install azure-identity
     pip install azure-mgmt-databricks
 # USAGE
-    python access_connectors_list_by_resource_group.py
+    python access_connector_create_or_update_with_user_assigned.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,14 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.access_connectors.list_by_resource_group(
+    response = client.access_connectors.begin_create_or_update(
         resource_group_name="rg",
-    )
-    for item in response:
-        print(item)
+        connector_name="myAccessConnector",
+        parameters={"location": "westus"},
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/databricks/resource-manager/Microsoft.Databricks/stable/2023-05-01/examples/AccessConnectorsListByResourceGroup.json
+# x-ms-original-file: specification/databricks/resource-manager/Microsoft.Databricks/stable/2023-05-01/examples/AccessConnectorCreateOrUpdateWithUserAssigned.json
 if __name__ == "__main__":
     main()
