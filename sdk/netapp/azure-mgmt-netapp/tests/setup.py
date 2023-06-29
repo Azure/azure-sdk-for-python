@@ -3,7 +3,6 @@
 #  - actual subsid to be used
 #  - rg must exist
 #  - vnet must exist
-
 LOCATION = 'westus2'
 REMOTE_LOCATION = 'eastus2'
 TEST_RG = 'sdk-python-tests-rg-tmp'
@@ -21,15 +20,15 @@ TEST_SUBVOLUME_2 = 'sdk-py-tests-subvolume-2'
 TEST_SNAPSHOT_1 = 'sdk-py-tests-snapshot-1'
 TEST_SNAPSHOT_2 = 'sdk-py-tests-snapshot-2'
 SERVICE_LEVEL = 'Premium'
-VNET = 'sdk-python-tests-vnet-westus2'
-REMOTE_VNET = 'sdk-python-tests-vnet-R'
+REMOTE_VNET = 'sdk-python-tests-VNET-R'
 PERMA_ACCOUNT = 'sdk-python-perma-account'
 PERMA_REMOTE_ACCOUNT = 'sdk-python-perma-remote-account'
 PERMA_POOL = "sdk-python-perma-pool"
 PERMA_REMOTE_POOL = 'sdk-python-perma-remote-pool'
 PERMA_VOLUME = "sdk-python-perma-volume"
 PERMA_REMOTE_VOLUME= 'sdk-python-perma-remote-volume'
-PERMA_VNET = 'sdk-python-tests-perma-vnet'
-PERMA_REMOTE_VNET = 'sdk-python-tests-remote-perma-vnet'
+PERMA_VNET = 'sdk-python-tests-perma-VNET'
+PERMA_REMOTE_VNET = 'sdk-python-tests-remote-perma-VNET'
 PERMA_SUBNET = 'sdk-python-tests-subnet'
 PERMA_REMOTE_SUBNET = 'sdk-python-tests-remote-subnet'
+LIVE = False

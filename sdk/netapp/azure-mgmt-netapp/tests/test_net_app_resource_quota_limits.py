@@ -1,5 +1,5 @@
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
-from setup import *
+import setup
 import azure.mgmt.netapp.models
 
 
@@ -12,7 +12,7 @@ class TestNetAppResourceQuota(AzureMgmtRecordedTestCase):
     # Note that when tests are run in live mode it is best to run one test at a time.
     @recorded_by_proxy
     def test_list_resource_quota_limit(self):
-        limits = self.client.net_app_resource_quota_limits.list(LOCATION)
+        limits = self.client.net_app_resource_quota_limits.list(setup.LOCATION)
 
         assert limits is not None
         assert len(list(limits)) > 0
