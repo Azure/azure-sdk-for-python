@@ -58,7 +58,7 @@ def wrap_exceptions(fn):
     :param fn: The function to wrap.
     :type fn: ~typing.Callable
     :return: The wrapped function.
-    :rtype: ~typing.Callable
+    :rtype: callable
     """
 
     @functools.wraps(fn)

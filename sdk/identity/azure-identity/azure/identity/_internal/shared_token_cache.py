@@ -62,7 +62,7 @@ def _filtered_accounts(
     :param str username: an account's username
     :param str tenant_id: an account's tenant ID
     :return: accounts matching username and/or tenant_id
-    :rtype: List[CacheItem]
+    :rtype: list[CacheItem]
     """
 
     filtered_accounts = []
@@ -137,7 +137,7 @@ class SharedTokenCacheBase(ABC):
         :param credential_type: the type of credential to look for in the cache
         :type credential_type: msal.TokenCache.CredentialType
         :return: a list of cache items
-        :rtype: List[CacheItem]
+        :rtype: list[CacheItem]
         """
 
         items = []

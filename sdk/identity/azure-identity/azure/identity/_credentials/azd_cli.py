@@ -141,7 +141,7 @@ def parse_token(output: str) -> Optional[AccessToken]:
 
     :param str output: The output of the Azure Developer CLI command.
     :return: An AccessToken.
-    :rtype: :class:`azure.core.credentials.AccessToken`
+    :rtype: :class:`azure.core.credentials.AccessToken` or None
     """
     try:
         token = json.loads(output)
@@ -153,11 +153,12 @@ def parse_token(output: str) -> Optional[AccessToken]:
         return None
 
 
-def get_safe_working_dir():
+def get_safe_working_dir() -> str:
     """Invoke 'azd' from a directory controlled by the OS, not the executing program's directory.
 
     :return: The path to the directory.
     :rtype: str
+    :raises ~azure.identity.CredentialUnavailableError: the SYSTEMROOT environment variable is not set.
     """
 
     if sys.platform.startswith("win"):

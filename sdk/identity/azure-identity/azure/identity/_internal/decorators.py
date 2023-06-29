@@ -21,7 +21,7 @@ def log_get_token(class_name):
     :param str class_name: required for the sake of Python 2.7, which lacks an easy way to get the credential's class
         name from the decorated function
     :return: decorator function
-    :rtype: ~typing.Callable
+    :rtype: callable
     """
 
     def decorator(fn):
@@ -72,7 +72,7 @@ def wrap_exceptions(fn):
     :param fn: The function to wrap.
     :type fn: ~typing.Callable
     :return: The wrapped function.
-    :rtype: ~typing.Callable
+    :rtype: callable
     """
 
     @functools.wraps(fn)

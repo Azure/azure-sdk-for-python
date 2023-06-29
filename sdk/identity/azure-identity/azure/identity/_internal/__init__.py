@@ -16,7 +16,7 @@ from .utils import (
 )
 
 
-def _scopes_to_resource(*scopes):
+def _scopes_to_resource(*scopes) -> str:
     """Convert a AADv2 scope to an AADv1 resource.
 
     :param str scopes: scope to convert

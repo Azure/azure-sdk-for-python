@@ -49,6 +49,6 @@ class AuthenticationRequiredError(CredentialUnavailableError):
     def claims(self) -> Optional[str]:
         """Additional claims required in the next authentication.
 
-        :rtype: ~typing.Optional[str]
+        :rtype: str or None
         """
         return self._claims
