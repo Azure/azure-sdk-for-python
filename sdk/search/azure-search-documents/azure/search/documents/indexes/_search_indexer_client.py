@@ -674,9 +674,12 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return self._client.skillsets.reset_skills(skillset_name=name, skill_names=names, **kwargs)
 
 
-def _validate_skillset(skillset):
+def _validate_skillset(skillset: SearchIndexerSkillset):
     """Validates any multi-version skills in the skillset to verify that unsupported
-    parameters are not supplied by the user.
+       parameters are not supplied by the user.
+
+    :param skillset: The skillset to validate
+    :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
     """
     skills = getattr(skillset, "skills", None)
     if not skills:

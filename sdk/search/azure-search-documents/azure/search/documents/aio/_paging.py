@@ -41,13 +41,19 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         return self._first_page_iterator_instance
 
     async def get_facets(self) -> Optional[Dict]:
-        """Return any facet results if faceting was requested."""
+        """Return any facet results if faceting was requested.
+
+        :return: Facet results.
+        :rtype: dict
+        """
         return await self._first_iterator_instance().get_facets()
 
     async def get_coverage(self) -> float:
         """Return the coverage percentage, if `minimum_coverage` was
         specificied for the query.
 
+        :return: Coverage percentage.
+        :rtype: float
         """
         return await self._first_iterator_instance().get_coverage()
 
@@ -55,11 +61,17 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         """Return the count of results if `include_total_count` was
         set for the query.
 
+        :return: Count of results.
+        :rtype: int
         """
         return await self._first_iterator_instance().get_count()
 
     async def get_answers(self) -> Optional[List[AnswerResult]]:
-        """Return answers."""
+        """Return answers.
+
+        :return: Answers.
+        :rtype: list[~azure.search.documents.AnswerResult]
+        """
         return await self._first_iterator_instance().get_answers()
 
 
@@ -97,7 +109,7 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
 
         return await self._client.documents.search_post(search_request=next_page_request, **self._kwargs)
 
-    async def _extract_data_cb(self, response):  # pylint:disable=no-self-use
+    async def _extract_data_cb(self, response):
         continuation_token = pack_continuation_token(response, api_version=self._api_version)
         results = [convert_search_result(r) for r in response.results]
         return continuation_token, results
