@@ -75,6 +75,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         :param index_name: The name of the Search Index
         :type index_name: str
+        :return: SearchClient object
         :rtype: ~azure.search.documents.SearchClient
 
         """
@@ -87,7 +88,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
          list of JSON property names, or '*' for all properties. The default is all
          properties.
-        :paramtype select: List[str]
+        :paramtype select: list[str]
         :return: List of indexes
         :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models.SearchIndex]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -298,9 +299,9 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
          list of JSON property names, or '*' for all properties. The default is all
          properties.
-        :paramtype select: List[str]
+        :paramtype select: list[str]
         :return: List of synonym maps
-        :rtype: List[~azure.search.documents.indexes.models.SynonymMap]
+        :rtype: list[~azure.search.documents.indexes.models.SynonymMap]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -325,7 +326,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """List the Synonym Map names in an Azure Search service.
 
         :return: List of synonym maps
-        :rtype: List[str]
+        :rtype: list[str]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -453,7 +454,11 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
     @distributed_trace
     def get_service_statistics(self, **kwargs: Any) -> Dict:
-        """Get service level statistics for a search service."""
+        """Get service level statistics for a search service.
+
+        :return: Service statistics result.
+        :rtype: dict
+        """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.get_service_statistics(**kwargs)
         return result.as_dict()
@@ -465,11 +470,10 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
          list of JSON property names, or '*' for all properties. The default is all
          properties.
-        :paramtype select: List[str]
+        :paramtype select: list[str]
         :return: List of Aliases
         :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models.SearchAlias]
         :raises: ~azure.core.exceptions.HttpResponseError
-
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         if select:
