@@ -455,6 +455,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
     @distributed_trace
     def get_service_statistics(self, **kwargs: Any) -> Dict:
         """Get service level statistics for a search service.
+
         :return: Service statistics result.
         :rtype: dict
         """
@@ -473,7 +474,6 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :return: List of Aliases
         :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models.SearchAlias]
         :raises: ~azure.core.exceptions.HttpResponseError
-
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         if select:

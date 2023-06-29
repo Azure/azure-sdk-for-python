@@ -69,6 +69,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
     async def close(self) -> None:
         """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexClient` session.
+
         :return: None
         :rtype: None
         """
@@ -95,7 +96,6 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :return: List of indexes
         :rtype: ~azure.core.async_paging.AsyncItemPaged[:class:`~azure.search.documents.indexes.models.SearchIndex`]
         :raises: ~azure.core.exceptions.HttpResponseError
-
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         if select:
@@ -110,7 +110,6 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :return: List of index names
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
-
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
@@ -149,7 +148,6 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :return: Statistics for the given index, including a document count and storage usage.
         :rtype: Dict
         :raises: ~azure.core.exceptions.HttpResponseError
-
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexes.get_statistics(index_name, **kwargs)
@@ -437,7 +435,6 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: The created or updated Synonym Map
         :rtype: :class:`~azure.search.documents.indexes.models.SynonymMap`
-
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(synonym_map, match_condition)
@@ -455,6 +452,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
     @distributed_trace_async
     async def get_service_statistics(self, **kwargs) -> Dict:
         """Get service level statistics for a search service.
+
         :return: Service statistics result
         :rtype: dict
         """
@@ -473,7 +471,6 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :return: List of Aliases
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchAlias]
         :raises: ~azure.core.exceptions.HttpResponseError
-
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         if select:

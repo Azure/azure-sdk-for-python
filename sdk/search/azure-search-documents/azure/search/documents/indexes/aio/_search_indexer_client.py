@@ -68,6 +68,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
     async def close(self) -> None:
         """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexerClient` session.
+
         :return: None
         :rtype: None
         """
@@ -177,8 +178,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """Lists all indexer names available for a search service.
 
         :return: List of all the SearchIndexer names.
-        :rtype: `List[str]`
-
+        :rtype: list[str]
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexers.list(**kwargs)
