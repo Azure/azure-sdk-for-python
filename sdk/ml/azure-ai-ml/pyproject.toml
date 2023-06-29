@@ -9,7 +9,7 @@ fail-under = 35
 verbose = 2
 ignore-module = true
 exclude = ["setup.py", "tests", "azure/ai/ml/_restclient", "scripts", "samples"]
-ignore-init-method = true
+ignore-init-method = true  # constructor docstrings are placed in the class docstring, not the init docstring 
 ignore-private = true
 ignore-semiprivate = true
 
