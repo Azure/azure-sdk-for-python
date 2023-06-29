@@ -111,7 +111,7 @@ class InferencingServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM = "Custom"
 
 
-class InputDataDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class InputDataDeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the input data delivery mode."""
 
     READ_ONLY_MOUNT = "ReadOnlyMount"
@@ -127,7 +127,7 @@ class InputPathType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PATH_VERSION = "PathVersion"
 
 
-class JobInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class JobInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the Job Input Type."""
 
     DATASET = "Dataset"
