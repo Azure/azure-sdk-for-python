@@ -195,7 +195,7 @@ class ODataV4Format:
         return "({}) {}\n{}".format(self.code, self.message, self.message_details())
 
     def message_details(self) -> str:
-        """Return a detailled string of the error.
+        """Return a detailed string of the error.
 
         :return: A string with the details of the error.
         :rtype: str
