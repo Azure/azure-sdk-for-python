@@ -26,6 +26,7 @@ from ._generated.models import (
 
 if TYPE_CHECKING:
     from datetime import datetime
+    from cloudevents import CloudEvent
 
 def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
     # type: (str, str, datetime, Any) -> str
@@ -36,8 +37,9 @@ def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
     :param datetime.datetime expiration_date_utc: The expiration datetime in UTC for the signature.
     :keyword str api_version: The API Version to include in the signature.
      If not provided, the default API version will be used.
-    :rtype: str
     :return: A shared access signature string.
+    :rtype: str
+
 
     .. admonition:: Example:
 
@@ -93,16 +95,16 @@ def _get_authentication_policy(credential, bearer_token_policy=BearerTokenCreden
 def _is_cloud_event(event):
     # type: (Any) -> bool
     required = ("id", "source", "specversion", "type")
-    try: # pylint: disable=use-a-generator
-        return all([_ in event for _ in required]) and event["specversion"] == "1.0"
+    try:
+        return all((_ in event for _ in required)) and event["specversion"] == "1.0"
     except TypeError:
         return False
 
 def _is_eventgrid_event(event):
     # type: (Any) -> bool
     required = ("subject", "eventType", "data", "dataVersion", "id", "eventTime")
-    try: # pylint: disable=use-a-generator
-        return all([prop in event for prop in required])
+    try:
+        return all((prop in event for prop in required))
     except TypeError:
         return False
 
@@ -141,7 +143,7 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
         **kwargs
     )
 
-def _from_cncf_events(event): # pylint: disable=inconsistent-return-statements
+def _from_cncf_events(event: CloudEvent): # pylint: disable=inconsistent-return-statements
     """This takes in a CNCF cloudevent and returns a dictionary.
     If cloud events library is not installed, the event is returned back.
 

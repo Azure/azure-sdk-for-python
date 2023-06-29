@@ -19,9 +19,10 @@ def _get_json_content(obj): # pylint: disable=inconsistent-return-statements
     like CloudEvent, EventGridEvent etc.
 
     :param obj: The object to get the JSON content from.
-    :type obj: Any
-    :rtype: Any
+    :type obj: any
     :return: The JSON content from the object.
+    :rtype: any
+    :raises: ValueError if the JSON content cannot be loaded from the object.
     """
     msg = "Failed to load JSON content from the object."
     try:
