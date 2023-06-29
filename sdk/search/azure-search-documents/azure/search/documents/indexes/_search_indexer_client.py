@@ -676,7 +676,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
 def _validate_skillset(skillset: SearchIndexerSkillset):
     """Validates any multi-version skills in the skillset to verify that unsupported
-    parameters are not supplied by the user.
+       parameters are not supplied by the user.
+
     :param skillset: The skillset to validate
     :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
     """
