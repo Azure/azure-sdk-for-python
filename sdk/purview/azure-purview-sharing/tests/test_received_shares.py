@@ -26,8 +26,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_all_detached_shares(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "44a61a1f-c550-4c85-b8e3-f6f83fee489d" # uuid4()
-        sent_share_invitation_id = "a713dfaf-70ac-4c48-80dd-33916a342d64" # uuid4()
+        sent_share_id = "4556ccb7-5d6a-45d4-8568-e1faa236e037" # uuid4()
+        sent_share_invitation_id = "554696cf-ddc7-46c0-b915-45face229cd3" # uuid4()
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -84,8 +84,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_received_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "87bf306d-db22-4f57-a6e5-084245e386fd" # uuid4()
-        sent_share_invitation_id = "40de4e40-fd85-4024-99b3-c09cead6896a" # uuid4()
+        sent_share_id = "34ede054-d6fc-49a1-a4e2-996433ed4b53" #uuid4()
+        sent_share_invitation_id = "b8307b9f-db8d-4023-b406-2e7f9f6d88c5" #uuid4()
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -147,8 +147,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_delete_received_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "50c5e9f2-8fc0-484b-96ab-1011401ec0b5" # uuid4()
-        sent_share_invitation_id = "c3c31c43-95b9-406e-a9b7-cf21c41d80bb" # uuid4()
+        sent_share_id = "2a7268a0-85d9-4c13-ba7b-a25ebba5faf3" #uuid4()
+        sent_share_invitation_id = "9a672068-d620-4492-9e20-3f686f768f29" #uuid4()
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -211,12 +211,12 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_attach_received_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "0ea7e339-3790-47d5-8dbb-8c9415676f87" # uuid4()
-        sent_share_invitation_id = "752d25fc-bad1-4e36-b28a-bcd6ddb02ee9" # uuid4()
+        sent_share_id = "b9d374c2-30d7-4e91-a750-a53238002652" # uuid4()
+        sent_share_invitation_id = "242f81b5-fe36-402b-9a27-5d2af7f33308" #uuid4()
         sent_share = self.prepare_sent_share()
 
         # cspell:disable-next-line
-        consumer_storage_account_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount"
+        consumer_storage_account_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccountR"
 
         request = build_sent_shares_create_or_replace_request(
             sent_share_id,
@@ -306,12 +306,12 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_all_attached_shares(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "d92b66fd-5458-4db3-878d-c3b79c3ed8ca" # uuid4()
-        sent_share_invitation_id = "9898c18c-7848-4747-93de-9ffa1f4a79bf" # uuid4()
+        sent_share_id = "6143851f-930b-4050-a437-00b6bfbf2b4e" #uuid4()
+        sent_share_invitation_id = "4430cf68-61db-4e05-af7b-297bad6d362b" #uuid4()
         sent_share = self.prepare_sent_share()
 
         # cspell:disable-next-line
-        consumer_storage_account_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccount"
+        consumer_storage_account_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccountR"
 
         request = build_sent_shares_create_or_replace_request(
             sent_share_id,
