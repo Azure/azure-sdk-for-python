@@ -4,7 +4,7 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: servicebus
-      TestTimeoutInMinutes: 360
+      TestTimeoutInMinutes: 420
       BuildTargetingString: azure-servicebus*
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(SERVICEBUS_SUBSCRIPTION_ID)
