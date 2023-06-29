@@ -8,35 +8,45 @@ from typing import Dict, List, Union
 
 from typing_extensions import Literal
 
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AllFeatures as RestAllFeatures
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CustomMonitoringSignal as RestCustomMonitoringSignal
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    MonitoringSignalBase as RestMonitoringSignalBase,
     DataDriftMonitoringSignal as RestMonitoringDataDriftSignal,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     DataQualityMonitoringSignal as RestMonitoringDataQualitySignal,
-    PredictionDriftMonitoringSignal as RestPredictionDriftMonitoringSignal,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     FeatureAttributionDriftMonitoringSignal as RestFeatureAttributionDriftMonitoringSignal,
-    ModelPerformanceSignalBase as RestModelPerformanceSignal,
-    CustomMonitoringSignal as RestCustomMonitoringSignal,
-    MonitoringDataSegment as RestMonitoringDataSegment,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import FeatureSubset as RestFeatureSubset
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ModelPerformanceSignalBase as RestModelPerformanceSignal
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MonitoringDataSegment as RestMonitoringDataSegment
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     MonitoringFeatureFilterBase as RestMonitoringFeatureFilterBase,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MonitoringNotificationMode
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MonitoringSignalBase as RestMonitoringSignalBase
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MonitoringSignalType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    PredictionDriftMonitoringSignal as RestPredictionDriftMonitoringSignal,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     TopNFeaturesByAttribution as RestTopNFeaturesByAttribution,
-    AllFeatures as RestAllFeatures,
-    FeatureSubset as RestFeatureSubset,
-    MonitoringNotificationMode,
-    MonitoringSignalType,
 )
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._utils.utils import to_iso_duration_format_days, from_iso_duration_format_days
-from azure.ai.ml.constants._monitoring import MonitorSignalType, ALL_FEATURES, MonitorModelType
+from azure.ai.ml._utils.utils import from_iso_duration_format_days, to_iso_duration_format_days
+from azure.ai.ml.constants._monitoring import ALL_FEATURES, MonitorModelType, MonitorSignalType
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._monitoring.input_data import MonitorInputData
 from azure.ai.ml.entities._monitoring.thresholds import (
-    MetricThreshold,
+    CustomMonitoringMetricThreshold,
     DataDriftMetricThreshold,
     DataQualityMetricThreshold,
-    PredictionDriftMetricThreshold,
     FeatureAttributionDriftMetricThreshold,
+    MetricThreshold,
     ModelPerformanceMetricThreshold,
-    CustomMonitoringMetricThreshold,
+    PredictionDriftMetricThreshold,
 )
 
 
@@ -253,18 +263,15 @@ class DataDriftSignal(DataSignal):
 
 @experimental
 class PredictionDriftSignal(MonitoringSignal):
-    """Prediction drift signal
+    """Prediction drift signal.
 
-    :ivar type: The type of the signal
-    :vartype type: str
-    :param target_dataset: The data for which drift will be calculated
-    :type target_dataset: ~azure.ai.ml.entities.TargetDataset
-    :param baseline_dataset: The data to calculate drift against
+    :param baseline_dataset: The dataset to calculate drift against.
     :type baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
-    :param metric_thresholds :A list of metrics to calculate and their
-        associated thresholds
-    :type metric_thresholds: List[~azure.ai.ml.entities.PredictionDriftMetricThreshold]
-    :param alert_enabled: The current notification mode for this signal
+    :param target_dataset: The dataset for which drift will be calculated.
+    :type target_dataset: ~azure.ai.ml.entities.TargetDataset
+    :param metric_thresholds :A list of metrics to calculate and their associated thresholds
+    :type metric_thresholds: list[~azure.ai.ml.entities.PredictionDriftMetricThreshold]
+    :param alert_enabled: The current notification mode for this signal.
     :type alert_enabled: bool
     """
 
@@ -275,7 +282,7 @@ class PredictionDriftSignal(MonitoringSignal):
         target_dataset: TargetDataset = None,
         metric_thresholds: List[PredictionDriftMetricThreshold],
         alert_enabled: bool = True,
-    ):
+    ) -> None:
         super().__init__(
             target_dataset=target_dataset,
             baseline_dataset=baseline_dataset,

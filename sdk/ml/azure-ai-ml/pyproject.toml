@@ -8,7 +8,10 @@ verifytypes = false
 fail-under = 35
 verbose = 2
 ignore-module = true
-exclude = ["setup.py", "tests", "azure/ai/ml/_restclient", "scripts"]
+exclude = ["setup.py", "tests", "azure/ai/ml/_restclient", "scripts", "samples"]
+ignore-init-method = true
+ignore-private = true
+ignore-semiprivate = true
 
 [tool.isort]
 profile = "black"

@@ -42,16 +42,16 @@ from azure.ai.ml._restclient.v2022_10_01.models import (
 from azure.ai.ml._restclient.v2022_10_01.models import (
     ServicePrincipalDatastoreSecrets as RestServicePrincipalDatastoreSecrets,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ConnectionAuthType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
-)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken as RestAmlToken
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ConnectionAuthType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
 from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfigurationType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedIdentity as RestJobManagedIdentity
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
 from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
+)
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
 from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin
@@ -128,8 +128,16 @@ class SasTokenConfiguration(RestTranslatableMixin, DictMixin):
 class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
     """Personal access token credentials.
 
-    :param pat: personal access token
+    :param pat: Personal access token.
     :type pat: str
+
+    .. admonition:: Example:
+        .. literalinclude:: ../samples/ml_samples_misc.py
+            :start-after: [START personal_access_token_configuration]
+            :end-before: [END personal_access_token_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a personal access token configuration for a WorkspaceConnection.
     """
 
     def __init__(self, *, pat: str):
@@ -541,19 +549,17 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
 
 # This class will be used to represent Identity property on compute, endpoint, and registry
 class IdentityConfiguration(RestTranslatableMixin):
-    """Managed identity specification."""
+    """Identity configuration used to represent identity property on compute, endpoint, and registry resources.
+
+    :param type: The type of managed identity.
+    :type type: str
+    :param user_assigned_identities: A list of ManagedIdentityConfiguration objects.
+    :type user_assigned_identities: list[~azure.ai.ml.entities.ManagedIdentityConfiguration]
+    """
 
     def __init__(
         self, *, type: str, user_assigned_identities: Optional[List[ManagedIdentityConfiguration]] = None, **kwargs
-    ):
-        """Managed identity specification.
-
-        :param type: Managed identity type, defaults to None
-        :type type: str, optional
-        :param user_assigned_identities: List of UserAssignedIdentity objects.
-        :type user_assigned_identities: list, optional
-        """
-
+    ) -> None:
         self.type = type
         self.user_assigned_identities = user_assigned_identities
         self.principal_id = kwargs.pop("principal_id", None)

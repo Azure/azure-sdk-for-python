@@ -247,6 +247,59 @@ class MiscConfigurationOptions(object):
         )
         # [END code_configuration]
 
+        # [START intellectual_property_configuration]
+        from azure.ai.ml.constants import IPProtectionLevel
+        from azure.ai.ml.entities import CommandComponent, IntellectualProperty
+
+        component = CommandComponent(
+            name="random_name",
+            version="1",
+            environment="azureml:AzureML-Minimal:1",
+            command="echo hello",
+            intellectual_property=IntellectualProperty(publisher="contoso", protection_level=IPProtectionLevel.ALL),
+        )
+        # [END intellectual_property_configuration]
+
+        # [START personal_access_token_configuration]
+        from azure.ai.ml.entities import PatTokenConfiguration, WorkspaceConnection
+
+        ws_connection = WorkspaceConnection(
+            target="my_target",
+            type="python_feed",
+            credentials=PatTokenConfiguration(pat="abcdefghijklmnopqrstuvwxyz"),
+            name="my_connection",
+            metadata=None,
+        )
+        # [END personal_access_token_configuration]
+
+        # [START job_schedule_configuration]
+        from azure.ai.ml import load_job
+        from azure.ai.ml.entities import JobSchedule, RecurrencePattern, RecurrenceTrigger
+
+        pipeline_job = load_job("configs/command_job/local_job.yaml")
+        trigger = RecurrenceTrigger(
+            frequency="week",
+            interval=4,
+            schedule=RecurrencePattern(hours=10, minutes=15, week_days=["Monday", "Tuesday"]),
+            start_time="2023-03-10",
+        )
+        job_schedule = JobSchedule(name="simple_sdk_create_schedule", trigger=trigger, create_job=pipeline_job)
+        # [END job_schedule_configuration]
+
+        # [START cron_trigger_configuration]
+        from datetime import datetime
+
+        from azure.ai.ml.constants import TimeZone
+        from azure.ai.ml.entities import CronTrigger
+
+        trigger = CronTrigger(
+            expression="15 10 * * 1",
+            start_time=datetime(year=2022, month=3, day=10, hour=10, minute=15),
+            end_time=datetime(year=2022, month=6, day=10, hour=10, minute=15),
+            time_zone=TimeZone.PACIFIC_STANDARD_TIME,
+        )
+        # [END cron_trigger_configuration]
+
 
 if __name__ == "__main__":
     sample = MiscConfigurationOptions()
