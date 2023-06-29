@@ -58,18 +58,30 @@ class UTC(datetime.tzinfo):
     """Time Zone info for handling UTC"""
 
     def utcoffset(self, dt):
-        # pylint: disable=docstring-missing-rtype,docstring-missing-return,docstring-missing-param
-        """UTF offset for UTC is 0."""
+        """
+            UTF offset for UTC is 0.
+            :param dt: Ignored.
+            :return: Datetime offset.
+            :rtype: datetime.timedelta
+        """
         return datetime.timedelta(0)
 
     def tzname(self, dt):
-        # pylint: disable=docstring-missing-rtype,docstring-missing-return,docstring-missing-param
-        """Timestamp representation."""
+        """
+            Timestamp representation.
+            :param dt: Ignored.
+            :return: Timestamp representation.
+            :rtype: str
+        """
         return "Z"
 
     def dst(self, dt):
-        # pylint: disable=docstring-missing-rtype,docstring-missing-return,docstring-missing-param
-        """No daylight saving for UTC."""
+        """
+            No daylight saving for UTC.
+            :param dt: Ignored.
+            :return: Offset for daylight savings time.
+            :rtype: datetime.timedelta
+        """
         return datetime.timedelta(hours=1)
 
 
@@ -92,8 +104,8 @@ def create_properties(
     Format the properties with which to instantiate the connection.
     This acts like a user agent over HTTP.
 
-    :param str user_agent: The user agent string.
-    :keyword ~azure.eventhub.AmqpTransport amqp_transport: The AMQP transport.
+    :param str or None user_agent: The user agent string.
+    :keyword ~azure.eventhub._transport._base.AmqpTransport amqp_transport: The AMQP transport.
     :rtype: dict
     :return: The properties.
     """
@@ -147,7 +159,7 @@ def event_position_selector(value, inclusive=False):
     # type: (Union[int, str, datetime.datetime], bool) -> bytes
     """Creates a selector expression of the offset.
 
-    :param int value: The offset value to use for the offset.
+    :param int or str or datetime.datetime value: The offset value to use for the offset.
     :param bool inclusive: Whether to include the value in the range.
     :rtype: bytes
     :return: The selector filter expression.
@@ -173,8 +185,8 @@ def get_last_enqueued_event_properties(event_data):
     # type: (EventData) -> Optional[Dict[str, Any]]
     """Extracts the last enqueued event in from the received event delivery annotations.
 
-    :param ~azure.eventhub.EventData event_data: An EventData instance.
-    :rtype: Dict[str, Any]
+    :param ~azure.eventhub.EventData event_data: The received Event Data.
+    :rtype: dict[str, any] or None
     :return: The enqueued event properties dictionary.
     """
     # pylint: disable=protected-access
@@ -231,10 +243,10 @@ def transform_outbound_single_message(message, message_type, to_outgoing_amqp_me
     2. transform the AmqpAnnotatedMessage to be EventData
     :param message: A single instance of message of type EventData
         or AmqpAnnotatedMessage.
-    :type message: ~azure.eventhub.common.EventData, ~azure.eventhub.amqp.AmqpAnnotatedMessage
-    :param Type[EventData] message_type: The class type to return the messages as.
+    :type message: ~azure.eventhub.EventData or ~azure.eventhub.amqp.AmqpAnnotatedMessage
+    :param ~azure.eventhub.EventData message_type: The class type to return the messages as.
     :param callable to_outgoing_amqp_message: A function to transform the message
-    :rtype: EventData
+    :rtype:  ~azure.eventhub.EventData
     :return: The transformed message.
     """
     try:
@@ -261,10 +273,10 @@ def decode_with_recurse(data, encoding="UTF-8"):
     """
     If data is of a compatible type, iterates through nested structure and decodes all binary
         strings with provided encoding.
-    :param Any data: The data object which, if compatible, will be iterated through to decode binary string.
+    :param any data: The data object which, if compatible, will be iterated through to decode binary string.
     :param str encoding: The encoding to use for decoding data.
         Default is 'UTF-8'
-    :rtype: Any
+    :rtype: any
     :return: The decoded data object.
     """
 
