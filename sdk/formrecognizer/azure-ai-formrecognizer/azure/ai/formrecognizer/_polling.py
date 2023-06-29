@@ -94,7 +94,7 @@ class DocumentModelAdministrationClientLROPoller(LROPoller[PollingReturnType_co]
     def details(self) -> Mapping[str, Any]:
         """Returns metadata associated with the long-running operation.
 
-        :return: Mapping[str, Any]
+        :return: Returns metadata associated with the long-running operation.
         :rtype: Mapping[str, Any]
         """
         created_on = self._current_body.get("createdDateTime", None)
