@@ -251,11 +251,11 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
     ) -> bool:
         """Read an incoming frame from the transport.
 
-        :param Union[bool, float] wait: Whether to block on the socket while waiting for an incoming frame.
+        :param bool or float wait: Whether to block on the socket while waiting for an incoming frame.
          The default value is `False`, where the frame will block for the configured timeout only (0.1 seconds).
          If set to `True`, socket will block indefinitely. If set to a timeout value in seconds, the socket will
          block for at most that value.
-        :rtype: Tuple[int, Optional[Tuple[int, NamedTuple]]]
+        :rtype: tuple[int, tuple[int, NamedTuple] or None]
         :returns: A tuple with the incoming channel number, and the frame in the form or a tuple of performative
          descriptor and field values.
         """
@@ -404,7 +404,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
         :param int channel: The incoming channel number.
         :param frame: The incoming Open frame.
-        :type frame: Tuple[Any, ...]
+        :type frame: tuple
         :rtype: None
         """
         # TODO: Add type hints for full frame tuple contents.
@@ -535,7 +535,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
         :param int channel: The incoming channel number.
         :param frame: The incoming Begin frame.
-        :type frame: Tuple[Any, ...]
+        :type frame: tuple
         :rtype: None
         """
         try:
@@ -559,7 +559,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
         :param int channel: The incoming channel number.
         :param frame: The incoming End frame.
-        :type frame: Tuple[Any, ...]
+        :type frame: tuple
         :rtype: None
         """
         try:
@@ -713,7 +713,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :param wait: Whether to wait for an incoming frame to be processed. Can be set to `True` to wait
          indefinitely, or an int to wait for a specified amount of time (in seconds). To not wait, set to `False`.
         :type wait: bool or float
-        :param ConnectionState end_state: The desired end state to wait until.
+        :param ._pyamqp.constants.ConnectionState end_state: The desired end state to wait until.
         :rtype: None
         """
         if wait is True:
@@ -863,7 +863,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
         Alternatively this method will be called on exiting a Connection context manager.
 
-        :param ~uamqp.AMQPError error: Optional error information to include in the close request.
+        :param ~_pyamqp.error.AMQPError error: Optional error information to include in the close request.
         :param bool wait: Whether to wait for a service Close response. Default is `False`.
         :rtype: None
         """
