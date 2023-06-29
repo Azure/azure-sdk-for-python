@@ -772,7 +772,7 @@ class EventHubProducerClient(
             - `created_at` (UTC datetime.datetime)
             - `partition_ids` (list[str])
 
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, any]
         :return: A dictionary containing eventhub properties.
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
@@ -804,7 +804,7 @@ class EventHubProducerClient(
 
         :param partition_id: The target partition ID.
         :type partition_id: str
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, any]
         :return: A dictionary of partition properties.
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
@@ -833,7 +833,7 @@ class EventHubProducerClient(
 
         :keyword bool flush: Buffered mode only. If set to True, events in the buffer will be sent
          immediately. Default is True.
-        :keyword Optional[float] timeout: Buffered mode only. Timeout to close the producer.
+        :keyword float or None timeout: Buffered mode only. Timeout to close the producer.
          Default is None which means no timeout.
         :rtype: None
         :raises EventHubError: If an error occurred when flushing the buffer if `flush` is set to True or closing the

@@ -33,7 +33,7 @@ class DictMixin(object):
         # type: (Any) -> bool
         """Compare objects by comparing all attributes.
 
-        :param Any other: Any object
+        :param any other: Any object
         :rtype: bool
         :return: True if objects are equal, False otherwise.
         """
@@ -45,7 +45,7 @@ class DictMixin(object):
         # type: (Any) -> bool
         """Compare objects by comparing all attributes.
 
-        :param Any other: Any object
+        :param any other: Any object
         :rtype: bool
         :return: True if objects are not equal, False otherwise.
         """
