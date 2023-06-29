@@ -972,6 +972,7 @@ class ReplicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ASYNC = "Async"
     SYNC = "Sync"
+    ASYNC_ENUM = "Async"
 
 
 class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1266,12 +1267,6 @@ class SqlAgentConfigurationPropertiesState(str, Enum, metaclass=CaseInsensitiveE
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
-
-
-class SQLVulnerabilityAssessmentName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SQLVulnerabilityAssessmentName."""
-
-    DEFAULT = "default"
 
 
 class SqlVulnerabilityAssessmentName(str, Enum, metaclass=CaseInsensitiveEnumMeta):

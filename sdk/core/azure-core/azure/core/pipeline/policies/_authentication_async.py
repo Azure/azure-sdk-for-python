@@ -70,6 +70,8 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
 
         :param request: The pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The pipeline response object
+        :rtype: ~azure.core.pipeline.PipelineResponse
         """
         await await_result(self.on_request, request)
         try:
@@ -103,8 +105,9 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
         :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
         :returns: a bool indicating whether the policy should send the request
+        :rtype: bool
         """
-        # pylint:disable=unused-argument,no-self-use
+        # pylint:disable=unused-argument
         return False
 
     def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> Optional[Awaitable[None]]:
@@ -124,7 +127,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         :param request: The Pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        # pylint: disable=no-self-use,unused-argument
+        # pylint: disable=unused-argument
         return
 
     def _need_new_token(self) -> bool:

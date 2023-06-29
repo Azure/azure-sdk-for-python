@@ -8,27 +8,29 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "subscription-key": "AzureMapsSubscriptionKey",
-        "User-Agent": "azsdk-python-maps-render/unknown Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-maps-render/unknown Python/3.10.5 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "max-age=86400",
-        "Content-Length": "912858",
+        "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 06 Oct 2022 06:50:56 GMT",
-        "ETag": "W/\u00225f623b123f86e7eaac582e7d4b3dbda4\u0022",
+        "Date": "Tue, 27 Jun 2023 13:49:21 GMT",
+        "ETag": "W/\u0022e76d615e7f790a941b65186c8771b2aa\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
         "x-ms-azuremaps-region": "West US 2",
-        "X-MSEdge-Ref": "Ref A: 10C26161FC2646749D6D118F20EAC882 Ref B: TPE30EDGE0920 Ref C: 2022-10-06T06:50:56Z"
+        "X-MSEdge-Ref": "Ref A: BAF207D400A946999DF40C6096D0FAD3 Ref B: TPE30EDGE0613 Ref C: 2023-06-27T13:49:21Z"
       },
       "ResponseBody": {
         "formatVersion": "0.0.1",
         "generalCopyrights": [
-          "\u00A9 1992 - 2022 TomTom. All rights reserved. This material is proprietary and the subject of copyright protection, database right protection and other intellectual property rights owned by TomTom or its suppliers. The use of this material is subject to the terms of a license agreement. Any unauthorized copying or disclosure of this material will lead to criminal and civil liabilities.",
-          "Data Source \u00A9 2022 TomTom",
+          "\u00A9 1992 - 2023 TomTom. All rights reserved. This material is proprietary and the subject of copyright protection, database right protection and other intellectual property rights owned by TomTom or its suppliers. The use of this material is subject to the terms of a license agreement. Any unauthorized copying or disclosure of this material will lead to criminal and civil liabilities.",
+          "Data Source \u00A9 2023 TomTom",
           "based on"
         ],
         "regions": [
@@ -1633,7 +1635,7 @@
           {
             "country": {
               "ISO3": "JPN",
-              "label": ""
+              "label": "Japan"
             },
             "copyrights": [
               "You agree to include as soon as practically possible, but no later than the first new release of the Authorized Application following Your receipt of any 3D Landmarks, any copyright notices related to the display of such landmarks on every Authorized Application and in the \u201Cabout box\u201D of the Authorized Application.  Notwithstanding the aforementioned, TomTom has the right to decide, at its sole discretion, to remove specific 3D Landmarks in subsequent releases of the Licensed Products. In such case, You will remove those 3D Landmarks from the Authorized Application as soon as practically possible, but not later than the first new release of the Authorized Application following Your receipt of the Update to the Licensed Product. TomTom shall not be held responsible for any possible damages, costs or expenses incurred by You related to such removal of a 3D Landmark by TomTom from the Licensed Product or failure to remove a 3D Landmark by You from the Authorized Application.",
@@ -1879,7 +1881,7 @@
           {
             "country": {
               "ISO3": "MAC",
-              "label": "Macao"
+              "label": "Macao SAR"
             },
             "copyrights": [
               "You agree to include as soon as practically possible, but no later than the first new release of the Authorized Application following Your receipt of any 3D Landmarks, any copyright notices related to the display of such landmarks on every Authorized Application and in the \u201Cabout box\u201D of the Authorized Application.  Notwithstanding the aforementioned, TomTom has the right to decide, at its sole discretion, to remove specific 3D Landmarks in subsequent releases of the Licensed Products. In such case, You will remove those 3D Landmarks from the Authorized Application as soon as practically possible, but not later than the first new release of the Authorized Application following Your receipt of the Update to the Licensed Product. TomTom shall not be held responsible for any possible damages, costs or expenses incurred by You related to such removal of a 3D Landmark by TomTom from the Licensed Product or failure to remove a 3D Landmark by You from the Authorized Application.",

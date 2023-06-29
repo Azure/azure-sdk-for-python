@@ -4,7 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
-import six
 from azure.containerregistry import (
     RepositoryProperties,
     ArtifactManifestProperties,
@@ -38,7 +37,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             prev = None
             async for repo in repositories:
                 count += 1
-                assert isinstance(repo, six.string_types)
+                assert isinstance(repo, str)
                 assert prev != repo
                 prev = repo
 
@@ -62,7 +61,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             async for page in repository_pages.by_page():
                 page_count = 0
                 async for repo in page:
-                    assert isinstance(repo, six.string_types)
+                    assert isinstance(repo, str)
                     assert prev != repo
                     prev = repo
                     page_count += 1

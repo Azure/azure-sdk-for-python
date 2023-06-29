@@ -79,13 +79,13 @@ Alternatively, you can also use Active Directory authentication using DefaultAzu
 
 ```python
 from azure.communication.jobrouter import (
-    RouterClient,
-    RouterAdministrationClient
+    JobRouterClient,
+    JobRouterAdministrationClient
 )
 
 connection_string = "endpoint=ENDPOINT;accessKey=KEY"
-router_client = RouterClient.from_connection_string(conn_str = connection_string)
-router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+router_client = JobRouterClient.from_connection_string(conn_str = connection_string)
+router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
 ```
 
 ### Distribution Policy

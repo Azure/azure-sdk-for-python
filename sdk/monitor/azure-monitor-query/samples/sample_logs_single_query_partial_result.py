@@ -11,31 +11,32 @@ USAGE:
     1) LOGS_WORKSPACE_ID - The first (primary) workspace ID.
 
 This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
-For more information on DefaultAzureCredential, see https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
+For more information on DefaultAzureCredential, see https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 
 **Note** - Although this example uses pandas to print the response, it's optional and
 isn't a required package for querying. Alternatively, native Python can be used as well.
 """
-import os
-import pandas as pd
 from datetime import timedelta
-from azure.monitor.query import LogsQueryClient, LogsQueryStatus
+import os
+
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
+from azure.monitor.query import LogsQueryClient, LogsQueryStatus
+import pandas as pd
+
 
 credential = DefaultAzureCredential()
-
 client = LogsQueryClient(credential)
 
-query= """let Weight = 92233720368547758;
+query = """let Weight = 92233720368547758;
             range x from 1 to 3 step 1
             | summarize percentilesw(x, Weight * 100, 50)"""
 
 
-# this block of code is exactly the same whether the expected result is a success, a failure or a
+# This block of code is exactly the same whether the expected result is a success, a failure, or a
 # partial success
 try:
-    response = client.query_workspace(os.environ['LOGS_WORKSPACE_ID'], query, timespan=timedelta(days=1))
+    response = client.query_workspace(os.environ["LOGS_WORKSPACE_ID"], query, timespan=timedelta(days=1))
     if response.status == LogsQueryStatus.PARTIAL:
         # handle error here
         error = response.partial_error
@@ -49,7 +50,7 @@ try:
         print(df)
 except HttpResponseError as err:
     print("something fatal happened")
-    print (err)
+    print(err)
 
 """
     TimeGenerated                                        _ResourceId          avgRequestDuration

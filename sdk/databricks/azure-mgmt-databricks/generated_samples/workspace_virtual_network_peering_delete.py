@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.vnet_peering.begin_delete(
+    client.vnet_peering.begin_delete(
         resource_group_name="rg",
         workspace_name="myWorkspace",
         peering_name="vNetPeering",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/databricks/resource-manager/Microsoft.Databricks/preview/2022-04-01-preview/examples/WorkspaceVirtualNetworkPeeringDelete.json
+# x-ms-original-file: specification/databricks/resource-manager/Microsoft.Databricks/stable/2023-02-01/examples/WorkspaceVirtualNetworkPeeringDelete.json
 if __name__ == "__main__":
     main()
