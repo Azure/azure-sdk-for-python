@@ -26,10 +26,10 @@ from azure.mgmt.networkcloud import NetworkCloudMgmtClient
 def main():
     client = NetworkCloudMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="123e4567-e89b-12d3-a456-426655440000",
     )
 
-    response = client.bare_metal_machines.begin_run_command(
+    client.bare_metal_machines.begin_run_command(
         resource_group_name="resourceGroupName",
         bare_metal_machine_name="bareMetalMachineName",
         bare_metal_machine_run_command_parameters={
@@ -38,9 +38,8 @@ def main():
             "script": "cHdkCg==",
         },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2022-12-12-preview/examples/BareMetalMachines_RunCommand.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2023-05-01-preview/examples/BareMetalMachines_RunCommand.json
 if __name__ == "__main__":
     main()

@@ -16,6 +16,7 @@ from . import models as _models
 from ._configuration import NetworkCloudMgmtClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
+    AgentPoolsOperations,
     BareMetalMachineKeySetsOperations,
     BareMetalMachinesOperations,
     BmcKeySetsOperations,
@@ -23,8 +24,7 @@ from .operations import (
     ClusterManagersOperations,
     ClustersOperations,
     ConsolesOperations,
-    DefaultCniNetworksOperations,
-    HybridAksClustersOperations,
+    KubernetesClustersOperations,
     L2NetworksOperations,
     L3NetworksOperations,
     MetricsConfigurationsOperations,
@@ -57,10 +57,8 @@ class NetworkCloudMgmtClient:  # pylint: disable=client-accepts-api-version-keyw
     :vartype cluster_managers: azure.mgmt.networkcloud.operations.ClusterManagersOperations
     :ivar clusters: ClustersOperations operations
     :vartype clusters: azure.mgmt.networkcloud.operations.ClustersOperations
-    :ivar default_cni_networks: DefaultCniNetworksOperations operations
-    :vartype default_cni_networks: azure.mgmt.networkcloud.operations.DefaultCniNetworksOperations
-    :ivar hybrid_aks_clusters: HybridAksClustersOperations operations
-    :vartype hybrid_aks_clusters: azure.mgmt.networkcloud.operations.HybridAksClustersOperations
+    :ivar kubernetes_clusters: KubernetesClustersOperations operations
+    :vartype kubernetes_clusters: azure.mgmt.networkcloud.operations.KubernetesClustersOperations
     :ivar l2_networks: L2NetworksOperations operations
     :vartype l2_networks: azure.mgmt.networkcloud.operations.L2NetworksOperations
     :ivar l3_networks: L3NetworksOperations operations
@@ -85,15 +83,17 @@ class NetworkCloudMgmtClient:  # pylint: disable=client-accepts-api-version-keyw
     :ivar metrics_configurations: MetricsConfigurationsOperations operations
     :vartype metrics_configurations:
      azure.mgmt.networkcloud.operations.MetricsConfigurationsOperations
+    :ivar agent_pools: AgentPoolsOperations operations
+    :vartype agent_pools: azure.mgmt.networkcloud.operations.AgentPoolsOperations
     :ivar consoles: ConsolesOperations operations
     :vartype consoles: azure.mgmt.networkcloud.operations.ConsolesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-12-12-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-05-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -127,10 +127,7 @@ class NetworkCloudMgmtClient:  # pylint: disable=client-accepts-api-version-keyw
             self._client, self._config, self._serialize, self._deserialize
         )
         self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.default_cni_networks = DefaultCniNetworksOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.hybrid_aks_clusters = HybridAksClustersOperations(
+        self.kubernetes_clusters = KubernetesClustersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.l2_networks = L2NetworksOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -154,6 +151,7 @@ class NetworkCloudMgmtClient:  # pylint: disable=client-accepts-api-version-keyw
         self.metrics_configurations = MetricsConfigurationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.agent_pools = AgentPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.consoles = ConsolesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:

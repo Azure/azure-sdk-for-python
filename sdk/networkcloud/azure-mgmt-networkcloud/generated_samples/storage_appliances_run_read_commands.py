@@ -26,17 +26,16 @@ from azure.mgmt.networkcloud import NetworkCloudMgmtClient
 def main():
     client = NetworkCloudMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="123e4567-e89b-12d3-a456-426655440000",
     )
 
-    response = client.storage_appliances.begin_run_read_commands(
+    client.storage_appliances.begin_run_read_commands(
         resource_group_name="resourceGroupName",
         storage_appliance_name="storageApplianceName",
         storage_appliance_run_read_commands_parameters={"commands": [{"command": "AlertList"}], "limitTimeSeconds": 60},
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2022-12-12-preview/examples/StorageAppliances_RunReadCommands.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2023-05-01-preview/examples/StorageAppliances_RunReadCommands.json
 if __name__ == "__main__":
     main()

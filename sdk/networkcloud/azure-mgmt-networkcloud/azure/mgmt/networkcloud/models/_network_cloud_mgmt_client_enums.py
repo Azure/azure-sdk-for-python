@@ -16,6 +16,54 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNAL = "Internal"
 
 
+class AdvertiseToFabric(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The indicator of if this advertisement is also made to the network fabric associated with the
+    Network Cloud Cluster. This field is ignored if fabricPeeringEnabled is set to False.
+    """
+
+    TRUE = "True"
+    FALSE = "False"
+
+
+class AgentPoolDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current status of the agent pool."""
+
+    AVAILABLE = "Available"
+    ERROR = "Error"
+    PROVISIONING = "Provisioning"
+
+
+class AgentPoolMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The selection of how this agent pool is utilized, either as a system pool or a user pool.
+    System pools run the features and critical services for the Kubernetes Cluster, while user
+    pools are dedicated to user workloads. Every Kubernetes cluster must contain at least one
+    system node pool with at least one node.
+    """
+
+    SYSTEM = "System"
+    USER = "User"
+    NOT_APPLICABLE = "NotApplicable"
+
+
+class AgentPoolProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the agent pool."""
+
+    ACCEPTED = "Accepted"
+    CANCELED = "Canceled"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+    IN_PROGRESS = "InProgress"
+    SUCCEEDED = "Succeeded"
+    UPDATING = "Updating"
+
+
+class AvailabilityLifecycle(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The version lifecycle indicator."""
+
+    PREVIEW = "Preview"
+    GENERALLY_AVAILABLE = "GenerallyAvailable"
+
+
 class BareMetalMachineCordonStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The cordon status of the bare metal machine."""
 
@@ -116,6 +164,20 @@ class BareMetalMachineSkipShutdown(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """The indicator of whether to skip the graceful OS shutdown and power off the bare metal machine
     immediately.
     """
+
+    TRUE = "True"
+    FALSE = "False"
+
+
+class BfdEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The indicator to determine if automatic allocation from the pool should occur."""
+
+    TRUE = "True"
+    FALSE = "False"
+
+
+class BgpMultiHop(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The indicator to enable multi-hop peering support."""
 
     TRUE = "True"
     FALSE = "False"
@@ -304,24 +366,6 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
-class DefaultCniNetworkDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The more detailed status of the default CNI network."""
-
-    ERROR = "Error"
-    AVAILABLE = "Available"
-    PROVISIONING = "Provisioning"
-
-
-class DefaultCniNetworkProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state of the default CNI network."""
-
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-    PROVISIONING = "Provisioning"
-    ACCEPTED = "Accepted"
-
-
 class DefaultGateway(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The indicator of whether this is the default gateway.
     Only one of the attached networks (including the CloudServicesNetwork attachment) for a single
@@ -345,32 +389,32 @@ class DiskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SSD = "SSD"
 
 
-class HybridAksClusterDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The more detailed status of this Hybrid AKS cluster."""
+class FabricPeeringEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The indicator to specify if the load balancer peers with the network fabric."""
 
-    ERROR = "Error"
-    AVAILABLE = "Available"
-    PROVISIONING = "Provisioning"
-
-
-class HybridAksClusterMachinePowerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The power state (On | Off) of the node."""
-
-    ON = "On"
-    OFF = "Off"
+    TRUE = "True"
+    FALSE = "False"
 
 
-class HybridAksClusterProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state of the Hybrid AKS cluster resource."""
+class FeatureDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status representing the state of this feature."""
 
-    SUCCEEDED = "Succeeded"
+    RUNNING = "Running"
     FAILED = "Failed"
-    CANCELED = "Canceled"
+    UNKNOWN = "Unknown"
+
+
+class HugepagesSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The size of the hugepages to allocate."""
+
+    TWO_M = "2M"
+    ONE_G = "1G"
 
 
 class HybridAksIpamEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The indicator of whether or not to disable IPAM allocation on the network attachment definition
-    injected into the Hybrid AKS Cluster.
+    """Field Deprecated. The field was previously optional, now it will have no defined behavior and
+    will be ignored. The indicator of whether or not to disable IPAM allocation on the network
+    attachment definition injected into the Hybrid AKS Cluster.
     """
 
     TRUE = "True"
@@ -378,7 +422,9 @@ class HybridAksIpamEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class HybridAksPluginType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The network plugin type for Hybrid AKS."""
+    """Field Deprecated. The field was previously optional, now it will have no defined behavior and
+    will be ignored. The network plugin type for Hybrid AKS.
+    """
 
     DPDK = "DPDK"
     SRIOV = "SRIOV"
@@ -386,11 +432,70 @@ class HybridAksPluginType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class IpAllocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the IP address allocation."""
+    """The type of the IP address allocation, defaulted to "DualStack"."""
 
     IPV4 = "IPV4"
     IPV6 = "IPV6"
     DUAL_STACK = "DualStack"
+
+
+class KubernetesClusterDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current status of the Kubernetes cluster."""
+
+    AVAILABLE = "Available"
+    ERROR = "Error"
+    PROVISIONING = "Provisioning"
+
+
+class KubernetesClusterNodeDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The detailed state of this node."""
+
+    AVAILABLE = "Available"
+    ERROR = "Error"
+    PROVISIONING = "Provisioning"
+    RUNNING = "Running"
+    SCHEDULING = "Scheduling"
+    STOPPED = "Stopped"
+    TERMINATING = "Terminating"
+    UNKNOWN = "Unknown"
+
+
+class KubernetesClusterProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the Kubernetes cluster resource."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    ACCEPTED = "Accepted"
+    IN_PROGRESS = "InProgress"
+    CREATED = "Created"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+
+
+class KubernetesNodePowerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The power state of this node."""
+
+    ON = "On"
+    OFF = "Off"
+    UNKNOWN = "Unknown"
+
+
+class KubernetesNodeRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The role of this node in the cluster."""
+
+    CONTROL_PLANE = "ControlPlane"
+    WORKER = "Worker"
+
+
+class KubernetesPluginType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The indicator of how this network will be utilized by the Kubernetes cluster."""
+
+    DPDK = "DPDK"
+    SRIOV = "SRIOV"
+    OS_DEVICE = "OSDevice"
+    MACVLAN = "MACVLAN"
+    IPVLAN = "IPVLAN"
 
 
 class L2NetworkDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -409,6 +514,15 @@ class L2NetworkProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     PROVISIONING = "Provisioning"
     ACCEPTED = "Accepted"
+
+
+class L3NetworkConfigurationIpamEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The indication of whether this network will or will not perform IP address management and
+    allocate IP addresses when attached.
+    """
+
+    TRUE = "True"
+    FALSE = "False"
 
 
 class L3NetworkDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -526,12 +640,6 @@ class StorageApplianceDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMet
     PROVISIONING = "Provisioning"
 
 
-class StorageApplianceHardwareValidationCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The category of hardware validation to perform."""
-
-    BASIC_VALIDATION = "BasicValidation"
-
-
 class StorageApplianceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state of the storage appliance."""
 
@@ -584,9 +692,14 @@ class VirtualMachineBootMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class VirtualMachineDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The more detailed status of the virtual machine."""
 
-    ERROR = "Error"
     AVAILABLE = "Available"
+    ERROR = "Error"
     PROVISIONING = "Provisioning"
+    RUNNING = "Running"
+    SCHEDULING = "Scheduling"
+    STOPPED = "Stopped"
+    TERMINATING = "Terminating"
+    UNKNOWN = "Unknown"
 
 
 class VirtualMachineDeviceModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -639,6 +752,7 @@ class VirtualMachinePowerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ON = "On"
     OFF = "Off"
+    UNKNOWN = "Unknown"
 
 
 class VirtualMachineProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

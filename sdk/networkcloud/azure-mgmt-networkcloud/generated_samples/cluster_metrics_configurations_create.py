@@ -14,7 +14,7 @@ from azure.mgmt.networkcloud import NetworkCloudMgmtClient
     pip install azure-identity
     pip install azure-mgmt-networkcloud
 # USAGE
-    python hybrid_aks_clusters_create.py
+    python cluster_metrics_configurations_create.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,32 +26,26 @@ from azure.mgmt.networkcloud import NetworkCloudMgmtClient
 def main():
     client = NetworkCloudMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="123e4567-e89b-12d3-a456-426655440000",
     )
 
-    response = client.hybrid_aks_clusters.begin_create_or_update(
+    response = client.metrics_configurations.begin_create_or_update(
         resource_group_name="resourceGroupName",
-        hybrid_aks_cluster_name="hybridAksClusterName",
-        hybrid_aks_cluster_parameters={
+        cluster_name="clusterName",
+        metrics_configuration_name="default",
+        metrics_configuration_parameters={
             "extendedLocation": {
-                "name": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.ExtendedLocation/customLocations/clusterExtendedLocationName",
+                "name": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ExtendedLocation/customLocations/clusterExtendedLocationName",
                 "type": "CustomLocation",
             },
             "location": "location",
-            "properties": {
-                "associatedNetworkIds": [
-                    "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.NetworkCloud/l3Networks/l3NetworkName"
-                ],
-                "controlPlaneCount": 4,
-                "hybridAksProvisionedClusterId": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.HybridContainerService/provisionedClusters/hybridAksClusterName",
-                "workerCount": 8,
-            },
+            "properties": {"collectionInterval": 15, "enabledMetrics": ["metric1", "metric2"]},
             "tags": {"key1": "myvalue1", "key2": "myvalue2"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2022-12-12-preview/examples/HybridAksClusters_Create.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2023-05-01-preview/examples/ClusterMetricsConfigurations_Create.json
 if __name__ == "__main__":
     main()
