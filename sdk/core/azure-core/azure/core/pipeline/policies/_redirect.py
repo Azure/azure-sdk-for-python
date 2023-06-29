@@ -26,6 +26,7 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
+from typing import Optional
 import logging
 from urllib.parse import urlparse
 
@@ -39,7 +40,7 @@ from ._utils import get_domain
 _LOGGER = logging.getLogger(__name__)
 
 
-def domain_changed(original_domain: str, url: str) -> bool:
+def domain_changed(original_domain: Optional[str], url: str) -> bool:
     """Checks if the domain has changed.
     :param str original_domain: The original domain.
     :param str url: The new url.
