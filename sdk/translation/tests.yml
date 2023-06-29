@@ -10,8 +10,6 @@ stages:
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           Location: 'westus3'
-          MatrixReplace:
-            - TestSamples=.*/true
         Int:
           # We run tests in Dogfood for the service team. This cloud config is just used to validate the service deployment
           # so we don't need to run on every version of Python.

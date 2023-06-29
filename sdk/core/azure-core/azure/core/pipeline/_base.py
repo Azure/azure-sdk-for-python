@@ -82,6 +82,7 @@ class _TransportRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     Uses specified HTTP transport type to send request and returns response.
 
     :param sender: The Http Transport instance.
+    :type sender: ~azure.core.pipeline.transport.HttpTransport
     """
 
     def __init__(self, sender: HttpTransport[HTTPRequestType, HTTPResponseType]) -> None:
@@ -116,6 +117,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     of the HTTP sender. The transport is the last node in the pipeline.
 
     :param transport: The Http Transport instance
+    :type transport: ~azure.core.pipeline.transport.HttpTransport
     :param list policies: List of configured policies.
 
     .. admonition:: Example:
@@ -158,6 +160,9 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         """Will execute the multipart policies.
 
         Does nothing if "set_multipart_mixed" was never called.
+
+        :param request: The request object.
+        :type request: ~azure.core.rest.HttpRequest
         """
         multipart_mixed_info = request.multipart_mixed_info  # type: ignore
         if not multipart_mixed_info:

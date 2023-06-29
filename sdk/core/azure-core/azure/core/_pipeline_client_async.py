@@ -104,6 +104,7 @@ class _Coroutine(Awaitable[AsyncHTTPResponseType]):
     ```
 
     :param wrapped: Must be an awaitable the returns an async context manager that supports async "close()"
+    :type wrapped: awaitable[AsyncHTTPResponseType]
     """
 
     def __init__(self, wrapped: Awaitable[AsyncHTTPResponseType]) -> None:
@@ -183,7 +184,7 @@ class AsyncPipelineClient(
     async def close(self):
         await self._pipeline.__aexit__()
 
-    def _build_pipeline(  # pylint: disable=no-self-use
+    def _build_pipeline(
         self, config: Configuration, *, policies=None, per_call_policies=None, per_retry_policies=None, **kwargs
     ) -> AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]:
         transport = kwargs.get("transport")
@@ -251,7 +252,7 @@ class AsyncPipelineClient(
                 policies = policies_1
 
         if not transport:
-            from .pipeline.transport import AioHttpTransport
+            from .pipeline.transport import AioHttpTransport  # pylint: disable=no-name-in-module
 
             transport = AioHttpTransport(**kwargs)
 

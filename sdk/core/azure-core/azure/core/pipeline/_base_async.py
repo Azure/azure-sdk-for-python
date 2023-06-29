@@ -81,6 +81,7 @@ class _AsyncTransportRunner(
     Uses specified HTTP transport type to send request and returns response.
 
     :param sender: The async Http Transport instance.
+    :type sender: ~azure.core.pipeline.transport.AsyncHttpTransport
     """
 
     def __init__(self, sender: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]) -> None:
@@ -117,6 +118,7 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
     of the HTTP sender.
 
     :param transport: The async Http Transport instance.
+    :type transport: ~azure.core.pipeline.transport.AsyncHttpTransport
     :param list policies: List of configured policies.
 
     .. admonition:: Example:
@@ -158,6 +160,9 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         """Will execute the multipart policies.
 
         Does nothing if "set_multipart_mixed" was never called.
+
+        :param request: The HTTP request object.
+        :type request: ~azure.core.rest.HttpRequest
         """
         multipart_mixed_info = request.multipart_mixed_info  # type: ignore
         if not multipart_mixed_info:

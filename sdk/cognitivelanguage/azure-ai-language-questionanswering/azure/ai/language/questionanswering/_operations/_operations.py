@@ -38,7 +38,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_question_answering_get_answers_request(
+def build_question_answering_get_answers_request(  # pylint: disable=name-too-long
     *, project_name: str, deployment_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -64,7 +64,7 @@ def build_question_answering_get_answers_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_question_answering_get_answers_from_text_request(**kwargs: Any) -> HttpRequest:
+def build_question_answering_get_answers_from_text_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 

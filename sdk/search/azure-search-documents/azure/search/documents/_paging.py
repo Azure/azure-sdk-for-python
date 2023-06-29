@@ -59,13 +59,19 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         return self._first_page_iterator_instance
 
     def get_facets(self) -> Optional[Dict]:
-        """Return any facet results if faceting was requested."""
+        """Return any facet results if faceting was requested.
+
+        :return: facet results
+        :rtype: dict or None
+        """
         return self._first_iterator_instance().get_facets()
 
     def get_coverage(self) -> float:
         """Return the coverage percentage, if `minimum_coverage` was
         specificied for the query.
 
+        :return: coverage percentage
+        :rtype: float
         """
         return self._first_iterator_instance().get_coverage()
 
@@ -73,11 +79,17 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         """Return the count of results if `include_total_count` was
         set for the query.
 
+        :return: count of results
+        :rtype: int
         """
         return self._first_iterator_instance().get_count()
 
     def get_answers(self) -> Optional[List[AnswerResult]]:
-        """Return answers."""
+        """Return answers.
+
+        :return: answers
+        :rtype: list[~azure.search.documents.models.AnswerResult] or None
+        """
         return self._first_iterator_instance().get_answers()
 
 
@@ -88,9 +100,7 @@ def _ensure_response(f):
     def wrapper(self, *args, **kw):
         if self._current_page is None:
             self._response = self._get_next(self.continuation_token)
-            self.continuation_token, self._current_page = self._extract_data(
-                self._response
-            )
+            self.continuation_token, self._current_page = self._extract_data(self._response)
         return f(self, *args, **kw)
 
     return wrapper
@@ -111,20 +121,14 @@ class SearchPageIterator(PageIterator):
 
     def _get_next_cb(self, continuation_token):
         if continuation_token is None:
-            return self._client.documents.search_post(
-                search_request=self._initial_query.request, **self._kwargs
-            )
+            return self._client.documents.search_post(search_request=self._initial_query.request, **self._kwargs)
 
         _next_link, next_page_request = unpack_continuation_token(continuation_token)
 
-        return self._client.documents.search_post(
-            search_request=next_page_request, **self._kwargs
-        )
+        return self._client.documents.search_post(search_request=next_page_request, **self._kwargs)
 
     def _extract_data_cb(self, response):
-        continuation_token = pack_continuation_token(
-            response, api_version=self._api_version
-        )
+        continuation_token = pack_continuation_token(response, api_version=self._api_version)
         results = [convert_search_result(r) for r in response.results]
         return continuation_token, results
 
