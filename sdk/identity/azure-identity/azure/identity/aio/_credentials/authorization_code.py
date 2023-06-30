@@ -83,7 +83,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
           attribute gives a reason. Any error response from Azure Active Directory is available as the error's
           ``response`` attribute.

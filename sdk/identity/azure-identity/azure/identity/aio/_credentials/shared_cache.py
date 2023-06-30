@@ -55,7 +55,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
             information
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``

@@ -116,7 +116,7 @@ class ManagedIdentityCredential:
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
 
         :return: An access token with the desired scopes.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: managed identity isn't available in the hosting environment
         """
 
