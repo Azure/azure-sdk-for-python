@@ -31,7 +31,7 @@ from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolic
 from .._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from .._generated.aio import AzureAppConfiguration
 from .._generated.models import SnapshotStatus, SnapshotUpdateParameters
-from .._models import ConfigurationSetting, Snapshot
+from .._models import ConfigurationSetting, ConfigurationSettingFilter, Snapshot
 from .._user_agent import USER_AGENT
 from .._utils import (
     get_endpoint_from_connection_string,
@@ -567,7 +567,7 @@ class AzureAppConfigurationClient:
     async def begin_create_snapshot(
         self,
         name: str,
-        filters: List[Dict[str, str]],
+        filters: List[ConfigurationSettingFilter],
         *,
         composition_type: Optional[Literal["key", "key_label"]] = None,
         retention_period: Optional[int] = None,
@@ -579,9 +579,8 @@ class AzureAppConfigurationClient:
         :param name: The name of the snapshot to create.
         :type name: str
         :param filters: A list of filters used to filter the configuration settings by key field and label field
-            included in the snapshot. Each filter should be in format {"key": <value>, "label": <value>},
-            and key field value is required.
-        :type filters: list[dict[str, str]]
+            included in the snapshot.
+        :type filters: list[~azure.appconfiguration.ConfigurationSettingFilter]
         :keyword str composition_type: The composition type describes how the key-values
             within the snapshot are composed. Known values are: "key" and "key_label". The "key" composition type
             ensures there are no two key-values containing the same key. The 'key_label' composition type ensures
@@ -600,7 +599,7 @@ class AzureAppConfigurationClient:
         )
         try:
             return await self._impl.begin_create_snapshot(
-                name=name, entity=snapshot._to_generated(), cls=Snapshot._from_generated, **kwargs
+                name=name, entity=snapshot._to_generated(), cls=Snapshot._from_deserialized, **kwargs
             )
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
@@ -626,14 +625,14 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.appconfiguration.Snapshot
         """
         try:
-            return await self._impl.update_snapshot(
+            generated_snapshot = await self._impl.update_snapshot(
                 name=name,
                 entity=SnapshotUpdateParameters(status=SnapshotStatus.ARCHIVED),
                 if_match=prep_if_match(etag, match_condition),
                 if_none_match=prep_if_none_match(etag, match_condition),
-                cls=Snapshot._from_generated,
                 **kwargs
             )
+            return Snapshot._from_generated(generated_snapshot)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -657,14 +656,14 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.appconfiguration.Snapshot
         """
         try:
-            return await self._impl.update_snapshot(
+            generated_snapshot = await self._impl.update_snapshot(
                 name=name,
                 entity=SnapshotUpdateParameters(status=SnapshotStatus.READY),
                 if_match=prep_if_match(etag, match_condition),
                 if_none_match=prep_if_none_match(etag, match_condition),
-                cls=Snapshot._from_generated,
                 **kwargs
             )
+            return Snapshot._from_generated(generated_snapshot)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -679,9 +678,10 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.appconfiguration.Snapshot
         """
         try:
-            return await self._impl.get_snapshot(
-                name=name, if_match=None, if_none_match=None, select=fields, cls=Snapshot._from_generated, **kwargs
+            generated_snapshot = await self._impl.get_snapshot(
+                name=name, if_match=None, if_none_match=None, select=fields, **kwargs
             )
+            return Snapshot._from_generated(generated_snapshot)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -708,7 +708,7 @@ class AzureAppConfigurationClient:
                 name=name,
                 select=fields,
                 status=status,
-                cls=lambda objs: [Snapshot._from_generated(None, x, None) for x in objs],
+                cls=lambda objs: [Snapshot._from_generated(x) for x in objs],
                 **kwargs
             )
         except binascii.Error:

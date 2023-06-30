@@ -8,7 +8,11 @@ from typing import Any, Dict, List, Optional, Union
 
 from azure.core.rest import HttpResponse
 from ._generated._serialization import Model
-from ._generated.models import KeyValue, Snapshot as GeneratedSnapshot, ConfigurationSettingFilter
+from ._generated.models import (
+    KeyValue,
+    Snapshot as GeneratedSnapshot,
+    ConfigurationSettingFilter as GeneratedConfigurationSettingFilter
+)
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
@@ -359,6 +363,27 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         )
 
 
+class ConfigurationSettingFilter:
+    """Enables filtering of key-values.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar key: Filters key-values by their key field. Required.
+    :vartype key: str
+    :ivar label: Filters key-values by their label field.
+    :vartype label: str
+    """
+    def __init__(self, *, key: str, label: Optional[str] = None) -> None:
+        """
+        :keyword key: Filters key-values by their key field. Required.
+        :paramtype key: str
+        :keyword label: Filters key-values by their label field.
+        :paramtype label: str
+        """
+        self.key = key
+        self.label = label
+
+
 class Snapshot:
     """Snapshot.
 
@@ -373,7 +398,7 @@ class Snapshot:
     :vartype status: str
     :ivar filters: A list of filters used to filter the key-values included in the snapshot.
      Required.
-    :vartype filters: list[dict[str, str]]
+    :vartype filters: list[~azure.appconfiguration.ConfigurationSettingFilter]
     :ivar composition_type: The composition type describes how the key-values within the snapshot
      are composed. The 'key' composition type ensures there are no two key-values containing the
      same key. The 'key_label' composition type ensures there are no two key-values containing the
@@ -399,17 +424,16 @@ class Snapshot:
     
     def __init__(
         self,
+        filters: List[ConfigurationSettingFilter],
         *,
-        filters: List[Dict[str, str]],
         composition_type: Optional[Literal["key", "key_label"]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
     ):
         """
-        :keyword filters: A list of filters used to filter the key-values included in the snapshot.
+        :param filters: A list of filters used to filter the key-values included in the snapshot.
          Required.
-        :paramtype filters: list[dict[str, str]]
+        :type filters: list[~azure.appconfiguration.ConfigurationSettingFilter]
         :keyword composition_type: The composition type describes how the key-values within the
          snapshot are composed. The 'key' composition type ensures there are no two key-values
          containing the same key. The 'key_label' composition type ensures there are no two key-values
@@ -435,17 +459,15 @@ class Snapshot:
         self.etag = None
 
     @classmethod
-    def _from_generated(
-        cls, response: HttpResponse, generated: GeneratedSnapshot, response_headers: Dict
-    ) -> "Snapshot":
+    def _from_generated(cls, generated: GeneratedSnapshot) -> "Snapshot":
         if generated is None:
             return generated
 
-        filters_dict = []
+        filters = []
         for config_setting_filter in generated.filters:
-            filters_dict.append({"key": config_setting_filter.key, "label": config_setting_filter.label})
+            filters.append(ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label))
         snapshot = cls(
-            filters=filters_dict,
+            filters=filters,
             composition_type=generated.composition_type,
             retention_period=generated.retention_period,
             tags=generated.tags
@@ -460,13 +482,38 @@ class Snapshot:
 
         return snapshot
     
+    @classmethod
+    def _from_deserialized(
+        cls, response: HttpResponse, deserialized: GeneratedSnapshot, response_headers: Dict # pylint:disable=unused-argument
+    ) -> "Snapshot":
+        if deserialized is None:
+            return deserialized
+        filters = []
+        for config_setting_filter in deserialized.filters:
+            filters.append(ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label))
+        snapshot = cls(
+            filters=filters,
+            composition_type=deserialized.composition_type,
+            retention_period=deserialized.retention_period,
+            tags=deserialized.tags
+        )
+        snapshot.name = deserialized.name
+        snapshot.status = deserialized.status
+        snapshot.created = deserialized.created
+        snapshot.expires = deserialized.expires
+        snapshot.size = deserialized.size
+        snapshot.items_count = deserialized.items_count
+        snapshot.etag = deserialized.etag
+
+        return snapshot
+    
     def _to_generated(self) -> GeneratedSnapshot:
         config_setting_filters = []
         for kv_filter in self.filters:
-            config_setting_filters.append(ConfigurationSettingFilter(key=kv_filter["key"], label=kv_filter["label"]))
+            config_setting_filters.append(GeneratedConfigurationSettingFilter(key=kv_filter.key, label=kv_filter.label))
         return GeneratedSnapshot(
             filters=config_setting_filters,
             composition_type=self.composition_type,
             retention_period=self.retention_period,
-            tags=self.tags,
+            tags=self.tags
         )
