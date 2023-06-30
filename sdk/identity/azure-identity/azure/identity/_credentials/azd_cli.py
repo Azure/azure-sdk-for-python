@@ -101,7 +101,7 @@ class AzureDeveloperCliCredential:
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :rtype: ~azure.core.credentials.AccessToken
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke
           the Azure Developer CLI.
@@ -141,7 +141,7 @@ def parse_token(output: str) -> Optional[AccessToken]:
 
     :param str output: The output of the Azure Developer CLI command.
     :return: An AccessToken or None if the output isn't valid.
-    :rtype: :class:`azure.core.credentials.AccessToken` or None
+    :rtype: azure.core.credentials.AccessToken or None
     """
     try:
         token = json.loads(output)

@@ -149,7 +149,7 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
 
         :return: An access token with the desired scopes.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: the credential cannot retrieve user details from Visual
           Studio Code
         """
