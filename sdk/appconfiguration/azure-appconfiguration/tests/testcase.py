@@ -24,14 +24,10 @@ from consts import (
 class AppConfigTestCase(AzureRecordedTestCase):
     def create_aad_client(self, appconfiguration_endpoint_string):
         cred = self.get_credential(AzureAppConfigurationClient)
-        # TODO: use default api version
-        # The current default api version "2022-11-01-preview" is not supported in public cloud
-        return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, api_version="1.0")
+        return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
 
     def create_client(self, appconfiguration_connection_string):
-        # TODO: use default api version
-        # The current default api version "2022-11-01-preview" is not supported in public cloud
-        return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string, api_version="1.0")
+        return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
 
     def create_config_setting(self):
         return ConfigurationSetting(
