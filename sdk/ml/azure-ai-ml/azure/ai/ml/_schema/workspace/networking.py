@@ -29,13 +29,7 @@ class ManagedNetworkStatusSchema(metaclass=PatchedSchemaMeta):
 @experimental
 class FqdnOutboundRuleSchema(metaclass=PatchedSchemaMeta):
     name = fields.Str(required=True)
-    type = StringTransformedEnum(
-        allowed_values=[
-            OutboundRuleType.FQDN,  # use allowed values to differentiate for unionfield ordering
-        ],
-        casing_transform=camel_to_snake,
-        metadata={"description": "outbound rule type."},
-    )
+    type = fields.Constant("fqdn")
     destination = fields.Str(required=True)
     category = StringTransformedEnum(
         allowed_values=[
@@ -45,6 +39,7 @@ class FqdnOutboundRuleSchema(metaclass=PatchedSchemaMeta):
         ],
         casing_transform=camel_to_snake,
         metadata={"description": "outbound rule category."},
+        dump_only=True,
     )
     status = fields.Str(dump_only=True)
 
@@ -67,13 +62,7 @@ class ServiceTagDestinationSchema(metaclass=PatchedSchemaMeta):
 @experimental
 class ServiceTagOutboundRuleSchema(metaclass=PatchedSchemaMeta):
     name = fields.Str(required=True)
-    type = StringTransformedEnum(
-        allowed_values=[
-            OutboundRuleType.SERVICE_TAG,  # use allowed values to differentiate for unionfield ordering
-        ],
-        casing_transform=camel_to_snake,
-        metadata={"description": "outbound rule type."},
-    )
+    type = fields.Constant("service_tag")
     destination = NestedField(ServiceTagDestinationSchema, required=True)
     category = StringTransformedEnum(
         allowed_values=[
@@ -83,6 +72,7 @@ class ServiceTagOutboundRuleSchema(metaclass=PatchedSchemaMeta):
         ],
         casing_transform=camel_to_snake,
         metadata={"description": "outbound rule category."},
+        dump_only=True,
     )
     status = fields.Str(dump_only=True)
 
@@ -124,13 +114,7 @@ class PrivateEndpointDestinationSchema(metaclass=PatchedSchemaMeta):
 @experimental
 class PrivateEndpointOutboundRuleSchema(metaclass=PatchedSchemaMeta):
     name = fields.Str(required=True)
-    type = StringTransformedEnum(
-        allowed_values=[
-            OutboundRuleType.PRIVATE_ENDPOINT,  # use allowed values to differentiate for unionfield ordering
-        ],
-        casing_transform=camel_to_snake,
-        metadata={"description": "outbound rule type."},
-    )
+    type = fields.Constant("private_endpoint")
     destination = NestedField(PrivateEndpointDestinationSchema, required=True)
     category = StringTransformedEnum(
         allowed_values=[
@@ -140,6 +124,7 @@ class PrivateEndpointOutboundRuleSchema(metaclass=PatchedSchemaMeta):
         ],
         casing_transform=camel_to_snake,
         metadata={"description": "outbound rule category."},
+        dump_only=True,
     )
     status = fields.Str(dump_only=True)
 
@@ -185,11 +170,14 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
     outbound_rules = fields.List(
         UnionField(
             [
-                NestedField(FqdnOutboundRuleSchema, allow_none=False, unknown=EXCLUDE),
-                NestedField(ServiceTagOutboundRuleSchema, allow_none=False, unknown=EXCLUDE),
                 NestedField(PrivateEndpointOutboundRuleSchema, allow_none=False, unknown=EXCLUDE),
+                NestedField(ServiceTagOutboundRuleSchema, allow_none=False, unknown=EXCLUDE),
+                NestedField(
+                    FqdnOutboundRuleSchema, allow_none=False, unknown=EXCLUDE
+                ),  # this needs to be last since otherwise union field with match destination as a string
             ],
             allow_none=False,
+            is_strict=True,
         ),
         allow_none=True,
     )
