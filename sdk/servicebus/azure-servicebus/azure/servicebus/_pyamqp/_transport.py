@@ -79,7 +79,7 @@ def set_cloexec(fd, cloexec):  # noqa # pylint: disable=inconsistent-return-stat
         return
     try:
         FD_CLOEXEC = fcntl.FD_CLOEXEC
-    except AttributeError:
+    except AttributeError as exc:
         raise NotImplementedError(
             "close-on-exec flag not supported on this platform",
         ) from None
@@ -285,7 +285,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                     # if getaddrinfo succeeded before for another address
                     # family, reraise the previous socket.error since it's more
                     # relevant to users
-                    raise e if e is not None else socket.error(
+                    raise e if e is not None else socket.error( # pylint: disable=raise-missing-from
                         "failed to resolve broker hostname"
                     ) from exc
                 continue  # pragma: no cover
@@ -734,7 +734,7 @@ class WebSocketTransport(_AbstractTransport):
                 WebSocketTimeoutException,
                 WebSocketConnectionClosedException
             )
-        except ImportError:
+        except ImportError as exc:
             raise ImportError(
                 "Please install websocket-client library to use sync websocket transport."
             ) from None

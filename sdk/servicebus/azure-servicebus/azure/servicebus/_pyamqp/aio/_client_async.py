@@ -606,7 +606,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         ):
             try:
                 raise message_delivery.error  # pylint: disable=raising-bad-type
-            except TypeError:
+            except TypeError as exc:
                 # This is a default handler
                 raise MessageException(condition=ErrorCondition.UnknownError, description="Send failed.") from None
 
