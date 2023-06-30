@@ -13,7 +13,7 @@ import pytest
     (LinkState.ATTACHED, LinkState.DETACH_SENT), 
     (LinkState.ATTACH_SENT, LinkState.DETACHED),
     (LinkState.ATTACH_RCVD, LinkState.DETACHED),
-    (LinkState.ERROR,LinkState.DETACH_SENT),
+    (LinkState.ERROR,LinkState.DETACHED),
     ], 
     ids=["link attached", "link attach sent", "link attach rcvd", "link error"]
 )

@@ -244,12 +244,14 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
         if self.state in (LinkState.DETACHED, LinkState.DETACH_SENT):
             return
         try:
-            if self.state in [LinkState.ATTACH_SENT, LinkState.ATTACH_RCVD]:
-                self._outgoing_detach(close=close, error=error)
-                self._set_state(LinkState.DETACHED)
-            elif self.state in [LinkState.ATTACHED, LinkState.ERROR]:
+            if self.state in [LinkState.ATTACH_SENT,
+                              LinkState.ATTACH_RCVD,
+                              LinkState.ERROR,]:
                 # If the link is in an error state the endpoint should be destroyed
                 # http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#section-links
+                self._outgoing_detach(close=close, error=error)
+                self._set_state(LinkState.DETACHED)
+            elif self.state in [LinkState.ATTACHED, ]:
                 self._outgoing_detach(close=close, error=error)
                 self._set_state(LinkState.DETACH_SENT)
         except Exception as exc:  # pylint: disable=broad-except
