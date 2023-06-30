@@ -26,6 +26,7 @@ service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
 index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
 key = os.getenv("AZURE_SEARCH_API_KEY")
 
+
 def get_document():
     # [START get_document]
     from azure.core.credentials import AzureKeyCredential
@@ -41,5 +42,6 @@ def get_document():
     print("    Category: {}".format(result["Category"]))
     # [END get_document]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     get_document()

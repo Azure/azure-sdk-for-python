@@ -1147,7 +1147,7 @@ class BlobProperties(DictMixin):
     """Datetime value that uniquely identifies the blob snapshot."""
     blob_type: "BlobType"
     """String indicating this blob's type."""
-    metadata: Optional[Dict[str, str]]
+    metadata: Dict[str, str]
     """Name-value pairs associated with the blob as metadata."""
     last_modified: "datetime"
     """A datetime object representing the last time the blob was modified."""
