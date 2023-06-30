@@ -29,7 +29,7 @@ from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 
-class SyncToken(object):
+class SyncToken:
     """The sync token structure
     :param str token_id: The id of sync token.
     :param str value: The value of sync token.

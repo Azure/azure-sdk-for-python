@@ -134,8 +134,8 @@ class AzureAppConfigurationClient:
         :param label_filter: filter results based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
         :type label_filter: str
-        :keyword datetime accept_datetime: retrieve ConfigurationSetting existed at this datetime
-        :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
+        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
@@ -198,7 +198,7 @@ class AzureAppConfigurationClient:
         :type etag: str or None
         :param match_condition: The match condition to use upon the etag
         :type match_condition: :class:`~azure.core.MatchConditions`
-        :keyword datetime accept_datetime: retrieve ConfigurationSetting existed at this datetime
+        :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :return: The matched ConfigurationSetting object
         :rtype: :class:`~azure.appconfiguration.ConfigurationSetting`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, \
@@ -427,8 +427,8 @@ class AzureAppConfigurationClient:
         :param label_filter: filter results based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
         :type label_filter: str
-        :keyword datetime accept_datetime: retrieve ConfigurationSetting existed at this datetime
-        :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
+        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`

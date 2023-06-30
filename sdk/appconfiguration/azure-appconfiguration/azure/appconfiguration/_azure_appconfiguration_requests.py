@@ -16,6 +16,7 @@ from ._utils import get_current_utc_time
 
 class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
     """Implementation of request-oauthlib except and retry logic.
+
     :param credentials: An object which can provide secrets for the app configuration service
     :type credentials: ~azure.appconfiguration.AppConfigConnectionStringCredential
     """

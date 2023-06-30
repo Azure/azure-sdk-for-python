@@ -33,7 +33,7 @@ class ConfigurationSetting(Model):
     :ivar read_only:
     :vartype read_only: bool
     :ivar tags:
-    :vartype tags: Dict[str, str]
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -116,13 +116,13 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     :ivar etag: Entity tag (etag) of the object
     :vartype etag: str
     :param feature_id:
-    :paramtype feature_id: str
+    :type feature_id: str
     :ivar value: The value of the configuration setting
     :vartype value: str
     :keyword enabled:
     :paramtype enabled: bool
     :keyword filters:
-    :paramtype filters: List[Dict[str, Any]]
+    :paramtype filters: list[dict[str, Any]]
     :ivar label:
     :vartype label: str
     :ivar display_name:
@@ -136,7 +136,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     :ivar read_only:
     :vartype read_only: bool
     :ivar tags:
-    :vartype tags: Dict[str, str]
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -262,13 +262,13 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     :ivar content_type:
     :type content_type: str
     :ivar value: The value of the configuration setting
-    :vartype value: Dict[str, Any]
+    :vartype value: dict[str, Any]
     :ivar last_modified:
     :vartype last_modified: datetime
     :ivar read_only:
     :vartype read_only: bool
     :ivar tags:
-    :type tags: Dict[str, str]
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
