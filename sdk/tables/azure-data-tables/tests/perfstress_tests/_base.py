@@ -5,14 +5,12 @@
 
 import os
 import uuid
-from datetime import timezone
-from datetime import datetime
+from datetime import timezone, datetime
 import string
 import random
 
 from azure_devtools.perfstress_tests import PerfStressTest
 
-from azure.core.exceptions import ResourceNotFoundError
 from azure.data.tables import EdmType, EntityProperty
 from azure.data.tables import TableServiceClient as SyncTableServiceClient
 from azure.data.tables.aio import TableServiceClient as AsyncTableServiceClient
