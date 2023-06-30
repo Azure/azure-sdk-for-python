@@ -404,7 +404,7 @@ class Snapshot:
         composition_type: Optional[Literal["key", "key_label"]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
-        ** kwargs
+        **kwargs
     ):
         """
         :keyword filters: A list of filters used to filter the key-values included in the snapshot.
@@ -422,41 +422,43 @@ class Snapshot:
         :keyword tags: The tags of the snapshot.
         :paramtype tags: dict[str, str]
         """
-        self.name = kwargs.get("name", None)
-        self.status = kwargs.get("status", None)
+        self.name = None
+        self.status = None
         self.filters = filters
         self.composition_type = composition_type
-        self.created = kwargs.get("created", None)
-        self.expires = kwargs.get("expires", None)
+        self.created = None
+        self.expires = None
         self.retention_period = retention_period
-        self.size = kwargs.get("size", None)
-        self.items_count = kwargs.get("items_count", None)
+        self.size = None
+        self.items_count = None
         self.tags = tags
-        self.etag = kwargs.get("etag", None)
+        self.etag = None
 
     @classmethod
     def _from_generated(
-        cls, response: HttpResponse, snapshot: GeneratedSnapshot, response_headers: Dict
+        cls, response: HttpResponse, generated: GeneratedSnapshot, response_headers: Dict
     ) -> "Snapshot":
-        if snapshot is None:
-            return snapshot
+        if generated is None:
+            return generated
 
         filters_dict = []
-        for config_setting_filter in snapshot.filters:
+        for config_setting_filter in generated.filters:
             filters_dict.append({"key": config_setting_filter.key, "label": config_setting_filter.label})
-        return cls(
-            name=snapshot.name,
-            status=snapshot.status,
+        snapshot = cls(
             filters=filters_dict,
-            composition_type=snapshot.composition_type,
-            created=snapshot.created,
-            expires=snapshot.expires,
-            retention_period=snapshot.retention_period,
-            size=snapshot.size,
-            items_count=snapshot.items_count,
-            tags=snapshot.tags,
-            etag=snapshot.etag,
+            composition_type=generated.composition_type,
+            retention_period=generated.retention_period,
+            tags=generated.tags
         )
+        snapshot.name = generated.name
+        snapshot.status = generated.status
+        snapshot.created = generated.created
+        snapshot.expires = generated.expires
+        snapshot.size = generated.size
+        snapshot.items_count = generated.items_count
+        snapshot.etag = generated.etag
+
+        return snapshot
     
     def _to_generated(self) -> GeneratedSnapshot:
         config_setting_filters = []
