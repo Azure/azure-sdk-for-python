@@ -165,7 +165,7 @@ class AzureAppConfigurationClient:
         :param label_filter: filter results based on their label. '*' can be
             used as wildcard in the beginning or end of the filter
         :type label_filter: str
-        :keyword datetime accept_datetime: retrieve ConfigurationSetting existed at this datetime
+        :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
@@ -228,7 +228,7 @@ class AzureAppConfigurationClient:
         :type etag: str or None
         :param match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
-        :keyword datetime accept_datetime: retrieve ConfigurationSetting existed at this datetime
+        :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :return: The matched ConfigurationSetting object
         :rtype: ~azure.appconfiguration.ConfigurationSetting
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
@@ -456,7 +456,7 @@ class AzureAppConfigurationClient:
         :param label_filter: filter results based on their label. '*' can be
             used as wildcard in the beginning or end of the filter
         :type label_filter: str
-        :keyword datetime accept_datetime: retrieve ConfigurationSetting existed at this datetime
+        :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
@@ -701,7 +701,7 @@ class AzureAppConfigurationClient:
         **kwargs
     ) -> ItemPaged[Snapshot]:
         """List the configuration setting snapshots stored in the configuration service, optionally filtered by
-        snapshot name and status.
+        snapshot name, snapshot status and fields to present in return.
 
         :keyword str name: Filter results based on snapshot name.
         :keyword list[str] fields: Specify which fields to include in the results. Leave None to include all fields.
@@ -721,24 +721,31 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
-    def list_snapshot_configuration_settings(self, name: str, **kwargs) -> ItemPaged[ConfigurationSetting]:
+    def list_snapshot_configuration_settings(
+        self,
+        name: str,
+        *,
+        accept_datetime: Optional[str] = None,
+        fields: Optional[List[str]] = None,
+        **kwargs
+    ) -> ItemPaged[ConfigurationSetting]:
         """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by
-        accept_datetime.
+        accept_datetime and fields to present in return.
 
         :param str name: The snapshot name.
-        :keyword datetime accept_datetime: Filter out ConfigurationSetting created after this datetime
+        :keyword str accept_datetime: Filter out ConfigurationSetting created after this datetime
         :keyword list[str] fields: Specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
         """
-        select = kwargs.pop("fields", None)
-        if select:
-            select = ["locked" if x == "read_only" else x for x in select]
+        if fields:
+            fields = ["locked" if x == "read_only" else x for x in fields]
 
         try:
             return self._impl.get_key_values(  # type: ignore
-                select=select,
+                select=fields,
                 snapshot=name,
+                accept_datetime=accept_datetime,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                 **kwargs
             )
