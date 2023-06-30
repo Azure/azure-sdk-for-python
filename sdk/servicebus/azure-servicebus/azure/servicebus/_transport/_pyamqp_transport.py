@@ -619,7 +619,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
         and per-iter argument passing that requires the former.
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
-        :param int or None max_wait_time: The maximum wait time in seconds for which 
+        :param int or None max_wait_time: The maximum wait time in seconds for which
         the iterator will attempt to receive.
         :return: The iterator for the next received message.
         :rtype: iterator[~azure.servicebus.ServiceBusReceivedMessage]
