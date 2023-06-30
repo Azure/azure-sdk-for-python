@@ -262,7 +262,7 @@ class RetryPolicyBase:
 
         else:
             # Incrementing because of a server error like a 500 in
-            # status_forcelist and a the given method is in the allowlist
+            # status_forcelist and the given method is in the allowlist
             if response:
                 settings["status"] -= 1
                 if hasattr(response, "http_request") and hasattr(response, "http_response"):
