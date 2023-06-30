@@ -812,7 +812,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
          Default value is that configured for the connection.
         :keyword bool network_trace: Whether to log the network traffic of this session. If enabled, frames
          will be logged at the logging.INFO level. Default value is that configured for the connection.
-
         :return: A new Session.
         :rtype: ~pyamqp._session.Session
         """
