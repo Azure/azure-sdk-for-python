@@ -14,7 +14,7 @@ from azure.ai.ml.entities._workspace.networking import (
     ServiceTagDestination,
     PrivateEndpointDestination,
 )
-from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
+from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.ai.ml._utils.utils import camel_to_snake, _snake_to_camel
 
 from azure.ai.ml._utils._experimental import experimental
