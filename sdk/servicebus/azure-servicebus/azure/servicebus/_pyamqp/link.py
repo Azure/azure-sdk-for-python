@@ -240,10 +240,9 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
         self._set_state(LinkState.ATTACH_SENT)
 
     def detach(self, close=False, error=None):
-        if self.state in (LinkState.DETACHED, LinkState.ERROR):
+        if self.state in (LinkState.DETACHED, LinkState.DETACH_SENT, LinkState.ERROR):
             return
         try:
-            self._check_if_closed()
             if self.state in [LinkState.ATTACH_SENT, LinkState.ATTACH_RCVD]:
                 self._outgoing_detach(close=close, error=error)
                 self._set_state(LinkState.DETACHED)
