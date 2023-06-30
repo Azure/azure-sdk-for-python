@@ -177,7 +177,7 @@ class OutputMetadata(object):
 
     def _to_io_entity_args_dict(self):
         """Convert the object to a kwargs dict for azure.ai.ml.entity.Output."""
-        keys = Output._IO_KEYS
+        keys = Output._IO_KEYS  # pylint: disable=protected-access
         result = {key: getattr(self, key, None) for key in keys}
         result.update(self._kwargs)
         if IOConstants.PRIMITIVE_TYPE_2_STR.get(self.type) is not None:

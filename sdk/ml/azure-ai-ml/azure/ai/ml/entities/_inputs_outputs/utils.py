@@ -301,7 +301,7 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
                 raise UserErrorException(f"Failed to parse {io} to azure-ai-ml Input/Output: {str(e)}") from e
                 # Handle Annotated annotation
         elif isinstance(io, _AnnotatedAlias):
-            hint_type, arg, *hint_args = get_args(io)
+            hint_type, arg, *hint_args = get_args(io)  # pylint: disable=unused-variable
             if hint_type in SUPPORTED_RETURN_TYPES_PRIMITIVE:
                 if not _is_input_or_output_type(type(arg), "OutputMetadata") and not isinstance(arg, OutputMetadata):
                     raise UserErrorException(
