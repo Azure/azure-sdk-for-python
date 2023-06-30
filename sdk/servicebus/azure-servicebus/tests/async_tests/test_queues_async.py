@@ -1093,7 +1093,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     await receiver.complete_message(messages[0])
                     await receiver.complete_message(messages[1])
                     sleep_until_expired(messages[2])
-                    with pytest.raises(ServiceBusError):
+                    with pytest.raises(MessageLockLostError):
                         await receiver.complete_message(messages[2])
 
     
@@ -1137,14 +1137,14 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                         assert message._lock_expired
                         try:
                             await receiver.complete_message(message)
-                            raise AssertionError("Didn't raise ServiceBusError")
-                        except ServiceBusError as e:
+                            raise AssertionError("Didn't raise MessageLockLostError")
+                        except MessageLockLostError as e:
                             assert isinstance(e.inner_exception, AutoLockRenewTimeout)
                     else:
                         if message._lock_expired:
                             print("Remaining messages", message.locked_until_utc, utc_now())
                             assert message._lock_expired
-                            with pytest.raises(ServiceBusError):
+                            with pytest.raises(MessageLockLostError):
                                 await receiver.complete_message(message)
                         else:
                             assert message.delivery_count >= 1
@@ -1194,14 +1194,14 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                         assert message._lock_expired
                         try:
                             await receiver.complete_message(message)
-                            raise AssertionError("Didn't raise ServiceBusError")
-                        except ServiceBusError as e:
+                            raise AssertionError("Didn't raise MessageLockLostError")
+                        except MessageLockLostError as e:
                             assert isinstance(e.inner_exception, AutoLockRenewTimeout)
                     else:
                         if message._lock_expired:
                             print("Remaining messages", message.locked_until_utc, utc_now())
                             assert message._lock_expired
-                            with pytest.raises(ServiceBusError):
+                            with pytest.raises(MessageLockLostError):
                                 await receiver.complete_message(message)
                         else:
                             assert message.delivery_count >= 1
@@ -1345,7 +1345,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 assert len(messages) == 1
                 time.sleep(60)
                 assert messages[0]._lock_expired
-                with pytest.raises(ServiceBusError):
+                with pytest.raises(MessageLockLostError):
                     await receiver.complete_message(messages[0])
                 with pytest.raises(MessageLockLostError):
                     await receiver.renew_message_lock(messages[0])
