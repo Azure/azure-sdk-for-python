@@ -5,14 +5,39 @@
 # -------------------------------------------------------------------------
 import os
 import json
-from typing import Any, Dict, Iterable, Mapping, Optional, overload, List, Tuple, TYPE_CHECKING, Union
+import random
+import time
+from threading import Lock
+import logging
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    Mapping,
+    Optional,
+    overload,
+    List,
+    Tuple,
+    TYPE_CHECKING,
+    Union,
+)
 from azure.appconfiguration import (
     AzureAppConfigurationClient,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
 )
+from azure.core import MatchConditions
+from azure.core.exceptions import (
+    HttpResponseError,
+    ServiceRequestError,
+    ServiceResponseError
+)
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
-from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
+from ._models import (
+    AzureAppConfigurationKeyVaultOptions,
+    SettingSelector
+)
 from ._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_PREFIX,
@@ -32,6 +57,8 @@ if TYPE_CHECKING:
 
 JSON = Union[str, Mapping[str, Any]]  # pylint: disable=unsubscriptable-object
 
+logger = logging.getLogger(__name__)
+
 
 @overload
 def load(
@@ -41,6 +68,9 @@ def load(
     selects: Optional[List[SettingSelector]] = None,
     trim_prefixes: Optional[List[str]] = None,
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
+    refresh_all: Optional[List[Tuple[str, str]]] = None,
+    refresh_only: Optional[List[Tuple[str, str]]] = None,
+    refresh_interval: int = 30,
     **kwargs
 ) -> "AzureAppConfigurationProvider":
     """
@@ -55,6 +85,14 @@ def load(
     :paramtype trim_prefixes: Optional[List[str]]
     :keyword key_vault_options: Options for resolving Key Vault references
     :paramtype key_vault_options: ~azure.appconfiguration.provider.AzureAppConfigurationKeyVaultOptions
+    :keyword refresh_all: One or more settings whos modification will trigger a full refresh after a fixed interval.
+     This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
+    :paramtype refresh_all: List[Tuple[str, str]]
+    :keyword refresh_only: One or more specific settings that will be refreshed after a fixed interval.
+     This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
+    :paramtype refresh_only: List[Tuple[str, str]]
+    :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
+     service call to update the settings. Default value is 30 seconds.
     """
     ...
 
@@ -66,6 +104,9 @@ def load(
     selects: Optional[List[SettingSelector]] = None,
     trim_prefixes: Optional[List[str]] = None,
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
+    refresh_all: Optional[List[Tuple[str, str]]] = None,
+    refresh_only: Optional[List[Tuple[str, str]]] = None,
+    refresh_interval: int = 30,
     **kwargs
 ) -> "AzureAppConfigurationProvider":
     """
@@ -78,6 +119,14 @@ def load(
     :paramtype trim_prefixes: Optional[List[str]]
     :keyword key_vault_options: Options for resolving Key Vault references
     :paramtype key_vault_options: ~azure.appconfiguration.provider.AzureAppConfigurationKeyVaultOptions
+    :keyword refresh_all: One or more settings whos modification will trigger a full refresh after a fixed interval.
+     This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
+    :paramtype refresh_all: List[Tuple[str, str]]
+    :keyword refresh_only: One or more specific settings that will be refreshed after a fixed interval.
+     This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
+    :paramtype refresh_only: List[Tuple[str, str]]
+    :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
+     service call to update the settings. Default value is 30 seconds.
     """
     ...
 
@@ -89,9 +138,6 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     endpoint: Optional[str] = kwargs.pop("endpoint", None)
     credential: Optional["TokenCredential"] = kwargs.pop("credential", None)
     connection_string: Optional[str] = kwargs.pop("connection_string", None)
-    key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
-    selects: List[SettingSelector] = kwargs.pop("selects", [SettingSelector(key_filter="*", label_filter=EMPTY_LABEL)])
-    trim_prefixes: List[str] = kwargs.pop("trim_prefixes", [])
 
     # Update endpoint and credential if specified positionally.
     if len(args) > 2:
@@ -110,41 +156,14 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     if (endpoint or credential) and connection_string:
         raise ValueError("Please pass either endpoint and credential, or a connection string.")
 
-    provider = _buildprovider(connection_string, endpoint, credential, key_vault_options, **kwargs)
-    provider._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
+    provider = _buildprovider(connection_string, endpoint, credential, **kwargs)
+    provider._load_all()
 
-    for select in selects:
-        configurations = provider._client.list_configuration_settings(
-            key_filter=select.key_filter, label_filter=select.label_filter
-        )
-        for config in configurations:
-            trimmed_key = config.key
-            # Trim the key if it starts with one of the prefixes provided
-            for trim in provider._trim_prefixes:
-                if config.key.startswith(trim):
-                    trimmed_key = config.key[len(trim) :]
-                    break
-
-            if isinstance(config, SecretReferenceConfigurationSetting):
-                secret = _resolve_keyvault_reference(config, key_vault_options, provider)
-                provider._dict[trimmed_key] = secret
-            elif isinstance(config, FeatureFlagConfigurationSetting):
-                feature_management = provider._dict.get(FEATURE_MANAGEMENT_KEY, {})
-                if trimmed_key.startswith(FEATURE_FLAG_PREFIX):
-                    feature_management[trimmed_key[len(FEATURE_FLAG_PREFIX) :]] = config.value
-                else:
-                    feature_management[trimmed_key] = config.value
-                if FEATURE_MANAGEMENT_KEY not in provider.keys():
-                    provider._dict[FEATURE_MANAGEMENT_KEY] = feature_management
-            elif _is_json_content_type(config.content_type):
-                try:
-                    j_object = json.loads(config.value)
-                    provider._dict[trimmed_key] = j_object
-                except json.JSONDecodeError:
-                    # If the value is not a valid JSON, treat it like regular string value
-                    provider._dict[trimmed_key] = config.value
-            else:
-                provider._dict[trimmed_key] = config.value
+    # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the provider.
+    for (key, label), etag in provider._refresh_all.items():
+        if not etag:
+            sentinel = provider._client.get_configuration_setting(key, label)
+            provider._refresh_all[(key, label)] = sentinel.etag
     return provider
 
 
@@ -174,16 +193,11 @@ def _get_headers(key_vault_options: Optional[AzureAppConfigurationKeyVaultOption
 
 
 def _buildprovider(
-    connection_string: Optional[str],
-    endpoint: Optional[str],
-    credential: Optional["TokenCredential"],
-    key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions],
-    **kwargs
+    connection_string: Optional[str], endpoint: Optional[str], credential: Optional["TokenCredential"], **kwargs
 ) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
-    provider = AzureAppConfigurationProvider()
-    headers = _get_headers(key_vault_options, **kwargs)
-
+    provider = AzureAppConfigurationProvider(**kwargs)
+    headers = _get_headers(provider._key_vault_options, **kwargs)
     retry_total = kwargs.pop("retry_total", 2)
     retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
 
@@ -209,10 +223,9 @@ def _buildprovider(
     return provider
 
 
-def _resolve_keyvault_reference(
-    config, key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions], provider: "AzureAppConfigurationProvider"
-) -> str:
-    if key_vault_options is None:
+def _resolve_keyvault_reference(config, provider: "AzureAppConfigurationProvider") -> str:
+    # pylint:disable=protected-access
+    if provider._key_vault_options is None:
         raise ValueError("Key Vault options must be set to resolve Key Vault references.")
 
     if config.secret_id is None:
@@ -225,8 +238,8 @@ def _resolve_keyvault_reference(
     # pylint:disable=protected-access
     referenced_client = provider._secret_clients.get(vault_url, None)
 
-    vault_config = key_vault_options.client_configs.get(vault_url, {})
-    credential = vault_config.pop("credential", key_vault_options.credential)
+    vault_config = provider._key_vault_options.client_configs.get(vault_url, {})
+    credential = vault_config.pop("credential", provider._key_vault_options.credential)
 
     if referenced_client is None and credential is not None:
         referenced_client = SecretClient(vault_url=vault_url, credential=credential, **vault_config)
@@ -235,8 +248,8 @@ def _resolve_keyvault_reference(
     if referenced_client:
         return referenced_client.get_secret(key_vault_identifier.name, version=key_vault_identifier.version).value
 
-    if key_vault_options.secret_resolver is not None:
-        return key_vault_options.secret_resolver(config.secret_id)
+    if provider._key_vault_options.secret_resolver is not None:
+        return provider._key_vault_options.secret_resolver(config.secret_id)
 
     raise ValueError("No Secret Client found for Key Vault reference %s" % (vault_url))
 
@@ -263,6 +276,63 @@ def _is_json_content_type(content_type: str) -> bool:
     return False
 
 
+def _build_sentinel(setting: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
+    try:
+        key, label = setting
+    except IndexError:
+        key = setting
+        label = EMPTY_LABEL
+    if "*" in key or "*" in label:
+        raise ValueError("Wildcard key or label filters are not supported for refresh.")
+    return key, label
+
+
+def _is_retryable_error(error: HttpResponseError) -> bool:
+    """Determine whether the service error should be silently retried after a backoff period, or raised.
+    Don't know what errors this applies to yet, so just always raising for now.
+    """
+    return False
+
+
+class _RefreshTimer:
+    def __init__(self, refresh_interval: int, **kwargs):
+        self._interval = refresh_interval
+        self._next_refresh_time: float = time.time() + self._interval
+        self._attempts = 1
+        self._min_backoff: int = kwargs.pop("min_backoff", 30)
+        self._max_backoff: int = kwargs.pop("max_backoff", 600)
+
+    def reset(self) -> None:
+        self._next_refresh_time = time.time() + self._interval
+        self._attempts = 1
+
+    def retry(self) -> None:
+        self._next_refresh_time = time.time() + self._calculate_backoff()/1000
+        self._attempts += 1
+
+    def needs_refresh(self) -> bool:
+        return time.time() >= self._next_refresh_time
+
+    def _calculate_backoff(self) -> float:
+        max_attempts = 30
+        millisecond = 1000  # 1 Second in milliseconds
+
+        min_backoff_milliseconds = self._min_backoff * millisecond
+        max_backoff_milliseconds = self._max_backoff * millisecond
+
+        if self._attempts <= 1 or self._max_backoff <= self._min_backoff:
+            return min_backoff_milliseconds
+
+        calculated_milliseconds = max(1, min_backoff_milliseconds) * (1 << min(self._attempts, max_attempts))
+
+        if calculated_milliseconds > max_backoff_milliseconds or calculated_milliseconds <= 0:
+            calculated_milliseconds = max_backoff_milliseconds
+
+        return min_backoff_milliseconds + (
+            random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)
+        )
+
+
 class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
     """
     Provides a dictionary-like interface to Azure App Configuration settings. Enables loading of sets of configuration
@@ -270,11 +340,149 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
     keys. Enables resolution of Key Vault references in configuration settings.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, **kwargs) -> None:
         self._dict: Dict[str, str] = {}
         self._trim_prefixes: List[str] = []
         self._client: Optional[AzureAppConfigurationClient] = None
         self._secret_clients: Dict[str, SecretClient] = {}
+        self._key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
+        self._selects: List[SettingSelector] = kwargs.pop(
+            "selects", [SettingSelector(key_filter="*", label_filter=EMPTY_LABEL)]
+        )
+
+        trim_prefixes: List[str] = kwargs.pop("trim_prefixes", [])
+        self._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
+
+        refresh_all: List[Tuple[str, str]] = kwargs.pop("refresh_all", None) or []
+        refresh_only: List[Tuple[str, str]] = kwargs.pop("refresh_only", None) or []
+        self._refresh_all: Mapping[Tuple[str, str]: Optional[str]] = {_build_sentinel(s): None for s in refresh_all}
+        self._refresh_only: Mapping[Tuple[str, str]: Optional[str]] = {_build_sentinel(s): None for s in refresh_only}
+        self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
+        self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
+        self._update_lock = Lock()
+
+    def refresh(self, **kwargs) -> None:
+        if not self._refresh_all or not self._refresh_only:
+            logging.debug("Refresh called but no refresh options set.")
+            return
+
+        if not self._refresh_timer.needs_refresh():
+            logging.debug("Refresh called but refresh interval not elapsed.")
+            return
+        
+        try:
+            with self._update_lock:
+                for (key, label), etag in self._refresh_all.items():
+                    updated_sentinel = self._client.get_configuration_setting(
+                        key=key,
+                        label=label,
+                        etag=etag,
+                        match_condition=MatchConditions.IfModified,
+                        **kwargs
+                    )
+                    if updated_sentinel is not None:
+                        logging.debug(
+                            "Refresh all triggered by key: %s label %s.",
+                            key,
+                            label,
+                        )
+                        self._load_all(**kwargs)
+                        self._refresh_all[(key, label)] = updated_sentinel.etag
+                        self._refresh_timer.reset()
+                        return
+
+                for (key, label), etag in self._refresh_only.items():
+                    updated_sentinel = self._client.get_configuration_setting(
+                        key=key,
+                        label=label,
+                        etag=etag,
+                        match_condition=MatchConditions.IfModified,
+                        **kwargs
+                    )
+                    if updated_sentinel is not None:
+                        logging.debug(
+                            "Refresh triggered for key: %s label: %s",
+                            key,
+                            label,
+                        )
+                        # TODO: Do we need to process key name on constructor for sentinel?
+                        self._dict[self._proccess_key_name(updated_sentinel)] = self._proccess_key_value(
+                                updated_sentinel
+                            )
+                        self._refresh_only[(key, label)] = updated_sentinel.etag
+                        self._refresh_timer.reset()
+        except (ServiceRequestError, ServiceResponseError) as e:
+            logging.debug("Failed to refresh, retrying: %r", e)
+            self._refresh_timer.retry()
+        except HttpResponseError as e:
+            # There might be specific status codes that we want to silently backoff and retry.
+            # Need more service specific details here, raising for now.
+            if _is_retryable_error(e):
+                self._refresh_timer.retry()
+            if self._on_refresh_error:
+                self._on_refresh_error(e)
+                return
+            raise
+        except Exception as e:
+            if self._on_refresh_error:
+                self._on_refresh_error(e)
+                return
+            raise
+
+    def _load_all(self, **kwargs):
+        configuration_settings = {}
+        for select in self._selects:
+            configurations = self._client.list_configuration_settings(
+                key_filter=select.key_filter, label_filter=select.label_filter, **kwargs
+            )
+            for config in configurations:
+                key = self._proccess_key_name(config)
+                value = self._proccess_key_value(config)
+
+                if isinstance(config, FeatureFlagConfigurationSetting):
+                    feature_management = self._dict.get(FEATURE_MANAGEMENT_KEY, {})
+                    feature_management[key] = value
+                    if FEATURE_MANAGEMENT_KEY not in self.keys():
+                        configuration_settings[FEATURE_MANAGEMENT_KEY] = feature_management
+                else:
+                    configuration_settings[key] = value
+                # Every time we run load_all, we should update the etag of our refresh sentinels
+                # so they stay up-to-date.
+                if (key, config.label) in self._refresh_only:
+                    self._refresh_only[(key, config.label)] = config.etag
+
+        # Let's check whether any of the settings configured for refresh don't actually exist
+        # This should only happen during the initial `load_all`, not subsequent refreshes.
+        no_etag = [(key, label) for (key, label), etag in self._refresh_only.items() if etag is None]
+        if Any(no_etag):
+            raise ValueError(
+                "The following key,label pairs are not found in the AppConfig, and cannot be refreshed: %r",
+                no_etag
+            )
+        self._dict = configuration_settings
+
+    def _proccess_key_name(self, config):
+        trimmed_key = config.key
+        # Trim the key if it starts with one of the prefixes provided
+        for trim in self._trim_prefixes:
+            if config.key.startswith(trim):
+                trimmed_key = config.key[len(trim) :]
+                break
+        if isinstance(config, FeatureFlagConfigurationSetting) and trimmed_key.startswith(FEATURE_FLAG_PREFIX):
+            return trimmed_key[len(FEATURE_FLAG_PREFIX) :]
+        return trimmed_key
+
+    def _proccess_key_value(self, config):
+        if isinstance(config, SecretReferenceConfigurationSetting):
+            return _resolve_keyvault_reference(config, self)
+        if _is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
+            # Feature flags are of type json, but don't treat them as such
+            try:
+                return json.loads(config.value)
+            except json.JSONDecodeError:
+                # If the value is not a valid JSON, treat it like regular string value
+                return config.value
+        return config.value
 
     def __getitem__(self, key: str) -> str:
         """
@@ -298,27 +506,31 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         """
         Returns a list of keys loaded from Azure App Configuration.
         """
-        return self._dict.keys()
+        with self._update_lock:
+            return self._dict.keys()
 
     def items(self) -> Iterable[Tuple[str, str]]:
         """
         Returns a list of key-value pairs loaded from Azure App Configuration. Any values that are Key Vault references
         will be resolved.
         """
-        return self._dict.items()
+        with self._update_lock:
+            return self._dict.items()
 
     def values(self) -> Iterable[str]:
         """
         Returns a list of values loaded from Azure App Configuration. Any values that are Key Vault references will be
         resolved.
         """
-        return self._dict.values()
+        with self._update_lock:
+            return self._dict.values()
 
     def get(self, key: str, default: Optional[str] = None) -> str:
         """
         Returns the value of the specified key. If the key does not exist, returns the default value.
         """
-        return self._dict.get(key, default)
+        with self._update_lock:
+            return self._dict.get(key, default)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, AzureAppConfigurationProvider):
