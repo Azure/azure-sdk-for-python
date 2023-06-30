@@ -6,7 +6,10 @@
 import json
 from typing import Any, Dict, Iterable, Mapping, Optional, overload, List, Tuple, TYPE_CHECKING, Union
 
-from azure.appconfiguration import FeatureFlagConfigurationSetting, SecretReferenceConfigurationSetting # pylint:disable=no-name-in-module
+from azure.appconfiguration import (
+    FeatureFlagConfigurationSetting,
+    SecretReferenceConfigurationSetting,
+)  # pylint:disable=no-name-in-module
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from azure.keyvault.secrets.aio import SecretClient
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
