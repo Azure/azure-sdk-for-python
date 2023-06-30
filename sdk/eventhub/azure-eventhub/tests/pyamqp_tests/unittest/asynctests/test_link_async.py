@@ -1,0 +1,57 @@
+import asyncio
+import sys
+
+if sys.version_info >= (3, 8, 0):
+    from unittest.mock import AsyncMock
+from azure.eventhub._pyamqp.aio import Link
+from azure.eventhub._pyamqp.constants import LinkState
+import pytest
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("state", [LinkState.ATTACHED, LinkState.ERROR], ids=["link attached", "link error"])
+async def test_link_should_detach(state):
+    session = AsyncMock()
+    link = Link(
+        session,
+        3,
+        name="test_link",
+        role=True,
+        source_address="test_source",
+        target_address="test_target",
+        network_trace=False,
+        network_trace_params={},
+    )
+    assert link.state == LinkState.DETACHED
+
+    # lets pretend the link gets attached
+    await link._set_state(state)
+    link._outgoing_detach = AsyncMock(return_value=None)
+    await link.detach()
+
+    assert link.state == LinkState.DETACH_SENT
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "state", [LinkState.DETACHED, LinkState.DETACH_SENT], ids=["link detached", "link detach sent"]
+)
+async def test_link_should_not_detach(state):
+    session = None
+    link = Link(
+        session,
+        3,
+        name="test_link",
+        role=True,
+        source_address="test_source",
+        target_address="test_target",
+        network_trace=False,
+        network_trace_params={},
+    )
+    assert link.state == LinkState.DETACHED
+
+    # lets pretend the link gets in to an error state
+    await link._set_state(state)
+    link._outgoing_detach = AsyncMock(return_value=None)
+    await link.detach()
+    link._outgoing_detach.assert_not_called()
