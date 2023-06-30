@@ -1812,7 +1812,7 @@ def test_deserialization_is():
 
 class ModelWithReadonly(Model):
     normal_property: str = rest_field(name="normalProperty")
-    readonly_property: str = rest_field(name="readonlyProperty", readonly=True)
+    readonly_property: str = rest_field(name="readonlyProperty", visibility=["read"])
 
     @overload
     def __init__(self, *, normal_property: str):
@@ -2903,13 +2903,21 @@ def test_complex_boolean_wrapper():
 
 def test_complex_byte_wrapper():
     class ByteWrapper(Model):
-        field: Optional[bytes] = rest_field(default=None)
+        default: Optional[bytes] = rest_field(default=None)
+        base64: Optional[bytes] = rest_field(default=None, format="base64")
+        base64url: Optional[bytes] = rest_field(default=None, format="base64url")
+        list_base64: Optional[List[bytes]] = rest_field(default=None, format="base64")
+        map_base64url: Optional[Dict[str, bytes]] = rest_field(default=None, format="base64url")
 
         @overload
         def __init__(
             self,
             *,
-            field: Optional[bytes] = None,
+            default: Optional[bytes] = None,
+            base64: Optional[bytes] = None,
+            base64url: Optional[bytes] = None,
+            list_base64: Optional[List[bytes]] = None,
+            map_base64url: Optional[Dict[str, bytes]] = None,
         ):
             ...
 
@@ -2920,31 +2928,67 @@ def test_complex_byte_wrapper():
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
 
-    byte_string = b'\xff\xfe\xfd\xfc\x00\xfa\xf9\xf8\xf7\xf6'
-    mod = ByteWrapper(field=byte_string)
-    decoded = base64.b64encode(byte_string).decode()
+    byte_string = bytes("test", "utf-8")
+    mod = ByteWrapper(
+        default=byte_string,
+        base64=byte_string,
+        base64url=byte_string,
+        list_base64=[byte_string, byte_string],
+        map_base64url={"key1": byte_string, "key2": byte_string},
+    )
+    decoded = "dGVzdA=="
+    decoded_urlsafe = "dGVzdA"
 
     def _tests(mod: ByteWrapper):
-        assert mod == {"field": decoded}
-        assert mod.field == mod["field"] == decoded
+        assert mod == {
+            "default": decoded,
+            "base64": decoded,
+            "base64url": decoded_urlsafe,
+            "list_base64": [decoded, decoded],
+            "map_base64url": {"key1": decoded_urlsafe, "key2": decoded_urlsafe},
+        }
+        assert mod.default == byte_string
+        assert mod.base64 == byte_string
+        assert mod.base64url == byte_string
+        assert mod.list_base64 == [byte_string, byte_string]
+        assert mod.map_base64url == {"key1": byte_string, "key2": byte_string}
+        assert mod["default"] == decoded
+        assert mod["base64"] == decoded
+        assert mod["base64url"] == decoded_urlsafe
+        assert mod["list_base64"] == [decoded, decoded]
+        assert mod["map_base64url"] == {"key1": decoded_urlsafe, "key2": decoded_urlsafe}
 
     _tests(mod)
-    mod.field = byte_string
-    _tests(mod)  # test after setting to byte string
-
-    mod["field"] = byte_string
-    assert mod["field"] == byte_string
-    assert mod.field == decoded
+    mod.default = byte_string
+    mod.base64 = byte_string
+    mod.base64url = byte_string
+    mod.list_base64 = [byte_string, byte_string]
+    mod.map_base64url = {"key1": byte_string, "key2": byte_string}
+    _tests(mod)
+    mod["default"] = decoded
+    mod["base64"] = decoded
+    mod["base64url"] = decoded_urlsafe
+    mod["list_base64"] = [decoded, decoded]
+    mod["map_base64url"] = {"key1": decoded_urlsafe, "key2": decoded_urlsafe}
+    _tests(mod)
 
 def test_complex_byte_array_wrapper():
     class ByteArrayWrapper(Model):
-        field: Optional[bytearray] = rest_field(default=None)
+        default: Optional[bytearray] = rest_field(default=None)
+        base64: Optional[bytearray] = rest_field(default=None, format="base64")
+        base64url: Optional[bytearray] = rest_field(default=None, format="base64url")
+        list_base64: Optional[List[bytearray]] = rest_field(default=None, format="base64")
+        map_base64url: Optional[Dict[str, bytearray]] = rest_field(default=None, format="base64url")
 
         @overload
         def __init__(
             self,
             *,
-            field: Optional[bytearray] = None,
+            default: Optional[bytearray] = None,
+            base64: Optional[bytearray] = None,
+            base64url: Optional[bytearray] = None,
+            list_base64: Optional[List[bytearray]] = None,
+            map_base64url: Optional[Dict[str, bytearray]] = None,
         ):
             ...
 
@@ -2955,65 +2999,63 @@ def test_complex_byte_array_wrapper():
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
 
-    byte_array = bytearray([0x0FF, 0x0FE, 0x0FD, 0x0FC, 0x000, 0x0FA, 0x0F9, 0x0F8, 0x0F7, 0x0F6])
-    decoded = base64.b64encode(byte_array).decode()
+    byte_array = bytearray("test".encode("utf-8"))
+    decoded = "dGVzdA=="
+    decoded_urlsafe = "dGVzdA"
+
     def _tests(model: ByteArrayWrapper):
-        assert model == {"field": decoded}
-        assert model.field == model["field"] == decoded
-    _tests(ByteArrayWrapper(field=byte_array))
-    _tests(ByteArrayWrapper({"field": decoded}))
-
-def test_complex_datetimerfc1123_wrapper():
-    class Datetimerfc1123Wrapper(Model):
-        field: Optional[datetime.datetime] = rest_field(default=None)
-        now: Optional[datetime.datetime] = rest_field(default=None)
-
-        @overload
-        def __init__(
-            self,
-            *,
-            field: Optional[datetime.datetime] = None,
-            now: Optional[datetime.datetime] = None,
-        ):
-            ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any], /):
-            ...
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-
-    field = "0001-01-01T00:00:00Z"
-    now = "2015-05-18T11:38:00Z"
-
-    def _tests(model: Datetimerfc1123Wrapper):
-        assert model == {"field": field, "now": now}
-
-        assert model.field == isodate.parse_datetime(field)
-        assert model.now == isodate.parse_datetime(now)
-
-        model["field"] = isodate.parse_datetime(field)
-        model["now"] = isodate.parse_datetime(now)
-
-        assert model["field"] == isodate.parse_datetime(field)
-        assert model["now"] == isodate.parse_datetime(now)
-
-    _tests(Datetimerfc1123Wrapper(field=isodate.parse_datetime(field), now=isodate.parse_datetime(now)))
-    _tests(Datetimerfc1123Wrapper({"field": field, "now": now}))
+        assert model == {
+            "default": decoded,
+            "base64": decoded,
+            "base64url": decoded_urlsafe,
+            "list_base64": [decoded, decoded],
+            "map_base64url": {"key1": decoded_urlsafe, "key2": decoded_urlsafe},
+        }
+        assert model.default == byte_array
+        assert model.base64 == byte_array
+        assert model.base64url == byte_array
+        assert model.list_base64 == [byte_array, byte_array]
+        assert model.map_base64url == {"key1": byte_array, "key2": byte_array}
+        assert model["default"] == decoded
+        assert model["base64"] == decoded
+        assert model["base64url"] == decoded_urlsafe
+        assert model["list_base64"] == [decoded, decoded]
+        assert model["map_base64url"] == {"key1": decoded_urlsafe, "key2": decoded_urlsafe}
+    _tests(ByteArrayWrapper(
+        default=byte_array,
+        base64=byte_array,
+        base64url=byte_array,
+        list_base64=[byte_array, byte_array],
+        map_base64url={"key1": byte_array, "key2": byte_array}
+    ))
+    _tests(ByteArrayWrapper({
+        "default": decoded,
+        "base64": decoded,
+        "base64url": decoded_urlsafe,
+        "list_base64": [decoded, decoded],
+        "map_base64url": {"key1": decoded_urlsafe, "key2": decoded_urlsafe}
+    }))
 
 
 def test_complex_datetime_wrapper():
     class DatetimeWrapper(Model):
-        field: datetime.datetime = rest_field(default=None)
-        now: datetime.datetime = rest_field(default=None)
+        default: datetime.datetime = rest_field(default=None)
+        rfc3339: datetime.datetime = rest_field(default=None, format="rfc3339")
+        rfc7231: datetime.datetime = rest_field(default=None, format="rfc7231")
+        unix: datetime.datetime = rest_field(default=None, format="unix-timestamp")
+        list_rfc3339: List[datetime.datetime] = rest_field(default=None, format="rfc3339")
+        dict_rfc7231: Dict[str, datetime.datetime] = rest_field(default=None, format="rfc7231")
 
         @overload
         def __init__(
             self,
             *,
-            field: Optional[datetime.datetime] = None,
-            now: Optional[datetime.datetime] = None,
+            default: Optional[datetime.datetime] = None,
+            rfc3339: Optional[datetime.datetime] = None,
+            rfc7231: Optional[datetime.datetime] = None,
+            unix: Optional[datetime.datetime] = None,
+            list_rfc3339: Optional[List[datetime.datetime]] = None,
+            dict_rfc7231: Optional[Dict[str, datetime.datetime]] = None,
         ):
             ...
 
@@ -3024,15 +3066,37 @@ def test_complex_datetime_wrapper():
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
 
-    field = "0001-01-01T00:00:00Z"
-    now = "2015-05-18T18:38:00Z"
+    rfc3339 = "2023-06-27T06:11:09Z"
+    rfc7231 = "Tue, 27 Jun 2023 06:11:09 GMT"
+    unix = 1687846269
+    dt = datetime.datetime(2023, 6, 27, 6, 11, 9, tzinfo=datetime.timezone.utc)
+
     def _tests(model: DatetimeWrapper):
-        assert model["field"] == field
-        assert model["now"] == now
-        assert model.field == isodate.parse_datetime(field)
-        assert model.now == isodate.parse_datetime(now)
-    _tests(DatetimeWrapper(field=isodate.parse_datetime(field), now=isodate.parse_datetime(now)))
-    _tests(DatetimeWrapper({"field": field, "now": now}))
+        assert model["default"] == rfc3339
+        assert model["rfc3339"] == rfc3339
+        assert model["rfc7231"] == rfc7231
+        assert model["unix"] == unix
+        assert model["list_rfc3339"] == [rfc3339, rfc3339]
+        assert model["dict_rfc7231"] == {"key1": rfc7231, "key2": rfc7231}
+        assert model.default == model.rfc3339 == model.rfc7231 == model.unix == dt
+        assert model.list_rfc3339 == [dt, dt]
+        assert model.dict_rfc7231 == {"key1": dt, "key2": dt}
+    _tests(DatetimeWrapper(
+        default=dt,
+        rfc3339=dt,
+        rfc7231=dt,
+        unix=dt,
+        list_rfc3339=[dt, dt],
+        dict_rfc7231={"key1": dt, "key2": dt}
+    ))
+    _tests(DatetimeWrapper({
+        "default": rfc3339,
+        "rfc3339": rfc3339,
+        "rfc7231": rfc7231,
+        "unix": unix,
+        "list_rfc3339": [rfc3339, rfc3339],
+        "dict_rfc7231": {"key1": rfc7231, "key2": rfc7231}
+    }))
 
 
 def test_complex_date_wrapper():
