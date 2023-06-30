@@ -14,7 +14,7 @@ import warnings
 from enum import Enum
 from typing import Any, List, Optional, AsyncIterator, Union, TYPE_CHECKING, cast
 
-from ..exceptions import ServiceBusError
+from ..exceptions import MessageLockLostError
 from ._servicebus_session_async import ServiceBusSession
 from ._base_handler_async import BaseHandler
 from .._common.message import ServiceBusReceivedMessage
@@ -452,7 +452,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         # subclasses in the future after we add the missing feature support in uamqp.
         # see issue: https://github.com/Azure/azure-uamqp-c/issues/274
         if not self._session and message._lock_expired:
-            raise ServiceBusError(
+            raise MessageLockLostError(
                 message="The lock on the message lock has expired.",
                 error=message.auto_renew_error,
             )
