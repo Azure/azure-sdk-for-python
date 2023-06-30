@@ -587,4 +587,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
-[samples]: https://github.com/hopewelchmicrosoft/azure-sdk-for-python/blob/hope-new-branch/sdk/purview/azure-purview-sharing/samples/README.md
+[samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/purview/azure-purview-sharing/samples
