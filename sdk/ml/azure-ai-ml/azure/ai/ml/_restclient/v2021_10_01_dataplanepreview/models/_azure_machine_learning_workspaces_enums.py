@@ -206,21 +206,21 @@ class PackageBuildState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "Failed"
 
 
-class PackageInputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PackageInputDeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Mounting type of the model or the inputs"""
 
     COPY = "Copy"
     DOWNLOAD = "Download"
 
 
-class PackageInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PackageInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of the inputs."""
 
     URI_FILE = "UriFile"
     URI_FOLDER = "UriFolder"
 
 
-class ProtectionLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Protection level associated with the Intellectual Property."""
 
     ALL = "All"
