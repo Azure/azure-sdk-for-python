@@ -9,13 +9,14 @@ import pytest
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("start_state,expected_state", [
-    (LinkState.ATTACHED, LinkState.DETACH_SENT), 
-    (LinkState.ATTACH_SENT, LinkState.DETACHED),
-    (LinkState.ATTACH_RCVD, LinkState.DETACHED),
-    (LinkState.ERROR,LinkState.DETACHED),
-    ], 
-    ids=["link attached", "link attach sent", "link attach rcvd", "link error"]
+@pytest.mark.parametrize(
+    "start_state,expected_state",
+    [
+        (LinkState.ATTACHED, LinkState.DETACH_SENT),
+        (LinkState.ATTACH_SENT, LinkState.DETACHED),
+        (LinkState.ATTACH_RCVD, LinkState.DETACHED),
+    ],
+    ids=["link attached", "link attach sent", "link attach rcvd"],
 )
 async def test_link_should_detach(start_state, expected_state):
     if sys.version_info < (3, 8, 0):
@@ -42,7 +43,9 @@ async def test_link_should_detach(start_state, expected_state):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "state", [LinkState.DETACHED, LinkState.DETACH_SENT], ids=["link detached", "link detach sent"]
+    "state",
+    [LinkState.DETACHED, LinkState.DETACH_SENT, LinkState.ERROR],
+    ids=["link detached", "link detach sent", "link error"],
 )
 async def test_link_should_not_detach(state):
     if sys.version_info < (3, 8, 0):
