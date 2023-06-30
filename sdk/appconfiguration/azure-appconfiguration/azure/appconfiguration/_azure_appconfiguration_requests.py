@@ -7,27 +7,12 @@
 import hashlib
 import base64
 import hmac
-
-try:
-    from yarl import URL
-except ImportError:
-    pass
-
-try:
-    from azure.core.pipeline.transport import AioHttpTransport # pylint:disable=non-abstract-transport-import,no-name-in-module
-except ImportError:
-    AioHttpTransport = None
-
 from azure.core.pipeline.policies import HTTPPolicy
-
 from ._utils import get_current_utc_time
 
-class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
-    """Implementation of request-oauthlib except and retry logic.
 
-    :param credentials: An object which can provide secrets for the app configuration service
-    :type credentials: ~azure.appconfiguration.AppConfigConnectionStringCredential
-    """
+class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
+    """Implementation of request-oauthlib except and retry logic."""
 
     def __init__(self, credentials):
         super(AppConfigRequestsCredentialsPolicy, self).__init__()
@@ -41,6 +26,9 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
         # Need URL() to get a correct encoded key value, from "%2A" to "*", when transport is in type AioHttpTransport.
         # There's a similar scenario in azure-storage-blob, the check logic is from there.
         try:
+            from yarl import URL
+            from azure.core.pipeline.transport import AioHttpTransport  # pylint:disable=non-abstract-transport-import,no-name-in-module
+
             if (
                 isinstance(request.context.transport, AioHttpTransport)
                 or isinstance(getattr(request.context.transport, "_transport", None), AioHttpTransport)
@@ -50,7 +38,7 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
                 )
             ):
                 query_url = str(URL(query_url))
-        except TypeError:
+        except (ImportError, TypeError):
             pass
         signed_headers = "x-ms-date;host;x-ms-content-sha256"
 
