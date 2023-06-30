@@ -23,7 +23,7 @@ logger = logging.getLogger()
 def load_registry():
     if not is_live():
         return
-    logger.warning("loading registry")
+    logger.info("loading registry")
     endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
     endpoint_anon = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")
     repo = HELLO_WORLD

@@ -125,11 +125,11 @@ def import_image(endpoint, repository, tags):
         # Upload a layer
         layer = BytesIO(b"Sample layer")
         layer_digest, layer_size = client.upload_blob(repository, layer)
-        logger.warning(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
+        logger.info(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
         # Upload a config
         config = BytesIO(json.dumps({"sample config": "content"}).encode())
         config_digest, config_size = client.upload_blob(repository, config)
-        logger.warning(f"Uploaded config: digest - {config_digest}, size - {config_size}")
+        logger.info(f"Uploaded config: digest - {config_digest}, size - {config_size}")
         # Upload images
         oci_manifest = {
             "config": {
@@ -151,4 +151,4 @@ def import_image(endpoint, repository, tags):
         }
         for tag in tags:
             manifest_digest = client.set_manifest(repository, oci_manifest, tag=tag)
-            logger.warning(f"Uploaded manifest: digest - {manifest_digest}")
+            logger.info(f"Uploaded manifest: digest - {manifest_digest}")
