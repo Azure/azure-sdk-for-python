@@ -809,7 +809,7 @@ def encode_value(
         encode_unknown(output, value, **kwargs)
 
 
-def describe_performative(performative: Performative) -> Dict[str, Sequence[Collection[str]]]:
+def describe_performative(performative: "Performative") -> Dict[str, Sequence[Collection[str]]]:
     body: List[Dict[str, Any]] = []
     for index, value in enumerate(performative):
         # TODO: fix mypy
@@ -968,7 +968,7 @@ def encode_payload(output: bytearray, payload: Message) -> bytes:
 
 
 def encode_frame(
-    frame: Optional[Performative],
+    frame: Optional["Performative"],
     frame_type: bytes= _FRAME_TYPE
 ) -> Tuple[bytes, Optional[bytes]]:
     # TODO: allow passing type specific bytes manually, e.g. Empty Frame needs padding
