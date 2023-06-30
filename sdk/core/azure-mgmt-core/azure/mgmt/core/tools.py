@@ -34,7 +34,10 @@ _ARMID_RE = re.compile(
     "(/providers/(?P<namespace>[^/]+)/(?P<type>[^/]*)/(?P<name>[^/]+)(?P<children>.*))?"
 )
 
-_CHILDREN_RE = re.compile("(?i)(/providers/(?P<child_namespace>[^/]+))?/" "(?P<child_type>[^/]*)/(?P<child_name>[^/]+)")
+_CHILDREN_RE = re.compile(
+    "(?i)(/providers/(?P<child_namespace>[^/]+))?/"
+    "(?P<child_type>[^/]*)/(?P<child_name>[^/]+)"
+)
 
 _ARMNAME_RE = re.compile("^[^<>%&:\\?/]{1,260}$")
 
@@ -93,6 +96,11 @@ def parse_resource_id(rid):
 def _populate_alternate_kwargs(kwargs):
     """Translates the parsed arguments into a format used by generic ARM commands
     such as the resource and lock commands.
+
+    :param: kwargs: The parsed arguments
+    :type: dict[str,Any]
+    :returns: The translated arguments
+    :rtype: dict[str,Any]
     """
 
     resource_namespace = kwargs["namespace"]
@@ -107,7 +115,13 @@ def _populate_alternate_kwargs(kwargs):
 
 
 def _get_parents_from_parts(kwargs):
-    """Get the parents given all the children parameters."""
+    """Get the parents given all the children parameters.
+
+    :param: kwargs: The children parameters
+    :type: dict[str,Any]
+    :returns: The parents parameters
+    :rtype: dict[str,Any]
+    """
     parent_builder = []
     if kwargs["last_child_num"] is not None:
         parent_builder.append("{type}/{name}/".format(**kwargs))
@@ -131,18 +145,14 @@ def resource_id(**kwargs):
     This method builds the resource id from the left until the next required id parameter
     to be appended is not found. It then returns the built up id.
 
-    :param dict kwargs: The keyword arguments that will make up the id.
-
-        The method accepts the following keyword arguments:
-            - subscription (required): Subscription id
-            - resource_group:          Name of resource group
-            - namespace:               Namespace for the resource provider (i.e. Microsoft.Compute)
-            - type:                    Type of the resource (i.e. virtualMachines)
-            - name:                    Name of the resource (or parent if child_name is also \
-            specified)
-            - child_namespace_{level}: Namespace for the child resource of that level (optional)
-            - child_type_{level}:      Type of the child resource of that level
-            - child_name_{level}:      Name of the child resource of that level
+    :keyword str subscription: (required) Subscription id
+    :keyword str resource_group: Name of resource group
+    :keyword str namespace: Namespace for the resource provider (i.e. Microsoft.Compute)
+    :keyword str type: Type of the resource (i.e. virtualMachines)
+    :keyword str name: Name of the resource (or parent if child_name is also specified)
+    :keyword str child_namespace_{level}: Namespace for the child resource of that level (optional)
+    :keyword str child_type_{level}: Type of the child resource of that level
+    :keyword str child_name_{level}: Name of the child resource of that level
 
     :returns: A resource id built from the given arguments.
     :rtype: str

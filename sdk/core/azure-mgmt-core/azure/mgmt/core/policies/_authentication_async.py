@@ -40,7 +40,15 @@ AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 
 
 async def await_result(func, *args, **kwargs):
-    """If func returns an awaitable, await it."""
+    """If func returns an awaitable, await it.
+
+    :param func: The function to call
+    :type func: callable
+    :param args: The positional arguments to pass to the function
+    :type args: list
+    :return: The result of the function call
+    :rtype: Any
+    """
     result = func(*args, **kwargs)
     if inspect.isawaitable(result):
         return await result
@@ -68,6 +76,7 @@ class AsyncARMChallengeAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
         :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
         :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
         :returns: a bool indicating whether the policy should send the request
+        :rtype: bool
         """
 
         challenge = response.http_response.headers.get("WWW-Authenticate")
@@ -123,7 +132,7 @@ class AsyncAuxiliaryAuthenticationPolicy(
         :param request: The Pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        # pylint: disable=no-self-use,unused-argument
+        # pylint: disable=unused-argument
         return
 
     async def send(
@@ -133,12 +142,14 @@ class AsyncAuxiliaryAuthenticationPolicy(
 
         :param request: The pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The pipeline response object
+        :rtype: ~azure.core.pipeline.PipelineResponse
         """
         await await_result(self.on_request, request)
         try:
             response = await self.next.send(request)
             await await_result(self.on_response, request, response)
-        except Exception:  # pylint:disable=broad-except
+        except Exception:  # pylint: disable=broad-except
             handled = await await_result(self.on_exception, request)
             if not handled:
                 raise

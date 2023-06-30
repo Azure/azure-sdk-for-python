@@ -44,8 +44,12 @@ class TypedErrorInfo:
         self.type = type
         self.info = info
 
-    def __str__(self):
-        """Cloud error message."""
+    def __str__(self) -> str:
+        """Cloud error message.
+
+        :return: The complete error message.
+        :rtype: str
+        """
         error_str = "Type: {}".format(self.type)
         error_str += "\nInfo: {}".format(json.dumps(self.info, indent=4))
         return error_str
