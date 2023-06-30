@@ -9,8 +9,15 @@ import pytest
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("state", [LinkState.ATTACHED, LinkState.ERROR], ids=["link attached", "link error"])
-async def test_link_should_detach(state):
+@pytest.mark.parametrize("start_state,expected_state", [
+    (LinkState.ATTACHED, LinkState.DETACH_SENT), 
+    (LinkState.ATTACH_SENT, LinkState.DETACHED),
+    (LinkState.ATTACH_RCVD, LinkState.DETACHED),
+    (LinkState.ERROR,LinkState.DETACH_SENT),
+    ], 
+    ids=["link attached", "link attach sent", "link attach rcvd", "link error"]
+)
+async def test_link_should_detach(start_state, expected_state):
     if sys.version_info < (3, 8, 0):
         pytest.skip("AsyncMock is not available in Python 3.7")
     session = AsyncMock()
@@ -26,12 +33,11 @@ async def test_link_should_detach(state):
     )
     assert link.state == LinkState.DETACHED
 
-    # lets pretend the link gets attached
-    await link._set_state(state)
+    await link._set_state(start_state)
     link._outgoing_detach = AsyncMock(return_value=None)
     await link.detach()
 
-    assert link.state == LinkState.DETACH_SENT
+    assert link.state == expected_state
 
 
 @pytest.mark.asyncio
@@ -54,7 +60,6 @@ async def test_link_should_not_detach(state):
     )
     assert link.state == LinkState.DETACHED
 
-    # lets pretend the link gets in to an error state
     await link._set_state(state)
     link._outgoing_detach = AsyncMock(return_value=None)
     await link.detach()

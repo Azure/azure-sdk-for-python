@@ -4,8 +4,14 @@ from azure.eventhub._pyamqp.constants import LinkState
 import pytest
 
 
-@pytest.mark.parametrize("state", [LinkState.ATTACHED, LinkState.ERROR], ids=["link attached", "link error"])
-def test_link_should_detach(state):
+@pytest.mark.parametrize("start_state,expected_state", [
+    (LinkState.ATTACHED, LinkState.DETACH_SENT), 
+    (LinkState.ATTACH_SENT, LinkState.DETACHED),
+    (LinkState.ATTACH_RCVD, LinkState.DETACHED),
+    (LinkState.ERROR,LinkState.DETACH_SENT),
+    ], 
+    ids=["link attached", "link attach sent", "link attach rcvd", "link error"])
+def test_link_should_detach(start_state, expected_state):
     session = Mock()
     link = Link(
         session, 
@@ -18,12 +24,11 @@ def test_link_should_detach(state):
         network_trace_params={})
     assert link.state == LinkState.DETACHED
     
-    # lets pretend the link gets attached
-    link._set_state(state)
+    link._set_state(start_state)
     link._outgoing_detach = Mock(return_value=None)
     link.detach()
 
-    assert link.state == LinkState.DETACH_SENT
+    assert link.state == expected_state
 
 
 @pytest.mark.parametrize("state", [LinkState.DETACHED, LinkState.DETACH_SENT], ids=["link detached", "link detach sent"])
@@ -40,7 +45,6 @@ def test_link_should_not_detach(state):
         network_trace_params={})
     assert link.state == LinkState.DETACHED
     
-    # lets pretend the link gets in to an error state
     link._set_state(state)
     link._outgoing_detach = Mock(return_value=None)
     link.detach()
