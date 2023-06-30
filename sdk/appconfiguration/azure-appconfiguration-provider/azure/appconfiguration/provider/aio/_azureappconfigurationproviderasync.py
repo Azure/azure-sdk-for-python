@@ -6,7 +6,7 @@
 import json
 from typing import Any, Dict, Iterable, Mapping, Optional, overload, List, Tuple, TYPE_CHECKING, Union
 
-from azure.appconfiguration import FeatureFlagConfigurationSetting, SecretReferenceConfigurationSetting
+from azure.appconfiguration import FeatureFlagConfigurationSetting, SecretReferenceConfigurationSetting # pylint:disable=no-name-in-module
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from azure.keyvault.secrets.aio import SecretClient
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
@@ -49,7 +49,6 @@ async def load(
     :keyword key_vault_options: Options for resolving Key Vault references
     :paramtype key_vault_options: ~azure.appconfiguration.provider.AzureAppConfigurationKeyVaultOptions
     """
-    ...
 
 
 @overload
@@ -72,7 +71,6 @@ async def load(
     :keyword key_vault_options: Options for resolving Key Vault references
     :paramtype key_vault_options: ~azure.appconfiguration.provider.AzureAppConfigurationKeyVaultOptions
     """
-    ...
 
 
 async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":

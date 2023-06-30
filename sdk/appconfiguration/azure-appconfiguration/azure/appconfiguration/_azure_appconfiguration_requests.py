@@ -7,10 +7,18 @@
 import hashlib
 import base64
 import hmac
-from yarl import URL
+
+try:
+    from yarl import URL
+except ImportError:
+    pass
+
+try:
+    from azure.core.pipeline.transport import AioHttpTransport # pylint:disable=non-abstract-transport-import,no-name-in-module
+except ImportError:
+    AioHttpTransport = None
 
 from azure.core.pipeline.policies import HTTPPolicy
-from azure.core.pipeline.transport import AioHttpTransport  # pylint:disable=non-abstract-transport-import,no-name-in-module
 
 from ._utils import get_current_utc_time
 
@@ -42,7 +50,7 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
                 )
             ):
                 query_url = str(URL(query_url))
-        except (ImportError, TypeError):
+        except TypeError:
             pass
         signed_headers = "x-ms-date;host;x-ms-content-sha256"
 
