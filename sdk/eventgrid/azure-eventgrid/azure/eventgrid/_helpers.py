@@ -26,7 +26,6 @@ from ._generated.models import (
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from cloudevents import CloudEvent
 
 def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
     # type: (str, str, datetime, Any) -> str
@@ -143,7 +142,7 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
         **kwargs
     )
 
-def _from_cncf_events(event: "CloudEvent"): # pylint: disable=inconsistent-return-statements
+def _from_cncf_events(event): # pylint: disable=inconsistent-return-statements
     """This takes in a CNCF cloudevent and returns a dictionary.
     If cloud events library is not installed, the event is returned back.
 
