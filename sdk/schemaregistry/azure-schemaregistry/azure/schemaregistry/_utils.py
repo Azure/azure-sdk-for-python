@@ -89,11 +89,11 @@ def build_get_schema_request(args: Iterable, kwargs: Any) -> HttpRequest:
             group_name = kwargs.pop("group_name")
             name = kwargs.pop("name")
             version = kwargs.pop("version")
-        except KeyError:
+        except KeyError as exc:
             raise TypeError(
                 """Missing required argument(s). Specify either `schema_id` """
                 """or `group_name`, `name`, `version."""
-            )
+            ) from exc
         return schema_rest.build_get_schema_version_request(
             group_name=group_name,
             schema_name=name,
