@@ -254,13 +254,13 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     :ivar etag: Entity tag (etag) of the object
     :vartype etag: str
     :param key:
-    :paramtype key: str
+    :type key: str
     :param secret_id:
-    :paramtype secret_id: str
+    :type secret_id: str
     :ivar label:
-    :type label: str
+    :vartype label: str
     :ivar content_type:
-    :type content_type: str
+    :vartype content_type: str
     :ivar value: The value of the configuration setting
     :vartype value: dict[str, Any]
     :ivar last_modified:
@@ -268,7 +268,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     :ivar read_only:
     :vartype read_only: bool
     :ivar tags:
-    :type tags: dict[str, str]
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
