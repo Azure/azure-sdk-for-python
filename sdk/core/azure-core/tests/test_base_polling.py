@@ -310,7 +310,7 @@ def test_post_direct_success(pipeline_client_builder, deserialization_cb, http_r
 
     # ResourceLocation
 
-    # The initial response contains both Location and Operation-Location, a 202 and no Body
+    # The initial response contains both Location and Operation-Location, a 202 and a success body
     initial_response = TestBasePolling.mock_send(
         http_request,
         http_response,
