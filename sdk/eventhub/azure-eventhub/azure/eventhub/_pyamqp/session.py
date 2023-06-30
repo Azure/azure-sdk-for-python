@@ -461,7 +461,6 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             if self.state not in [SessionState.UNMAPPED, SessionState.DISCARDING]:
                 self._outgoing_end(error=error)
             for _, link in self.links.items():
-                if link.is_detaching() is False:
                     link.detach()
             new_state = SessionState.DISCARDING if error else SessionState.END_SENT
             self._set_state(new_state)
