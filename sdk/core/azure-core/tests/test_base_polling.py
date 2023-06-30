@@ -305,6 +305,35 @@ def test_post_resource_location(pipeline_client_builder, deserialization_cb, htt
     assert result["location_result"] == True
 
 
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(REQUESTS_TRANSPORT_RESPONSES))
+def test_post_direct_success(pipeline_client_builder, deserialization_cb, http_request, http_response):
+
+    # ResourceLocation
+
+    # The initial response contains both Location and Operation-Location, a 202 and no Body
+    initial_response = TestBasePolling.mock_send(
+        http_request,
+        http_response,
+        "POST",
+        202,
+        {
+            "operation-location": "http://example.org/async_monitor",
+        },
+        {
+            "status": "succeeded"
+        },
+    )
+
+    def send(request, **kwargs):
+        pytest.fail("No requests allowed")
+
+    client = pipeline_client_builder(send)
+
+    poll = LROPoller(client, initial_response, deserialization_cb, LROBasePolling(0))
+    result = poll.result()
+    assert result["status"] == "succeeded"
+
+
 class TestBasePolling(object):
 
     convert = re.compile("([a-z0-9])([A-Z])")
