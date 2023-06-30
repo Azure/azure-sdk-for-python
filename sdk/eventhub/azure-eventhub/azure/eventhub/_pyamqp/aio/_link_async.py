@@ -242,14 +242,15 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
         await self._set_state(LinkState.ATTACH_SENT)
 
     async def detach(self, close=False, error=None):
-        if self.state in (LinkState.DETACHED, LinkState.ERROR):
+        if self.state in (LinkState.DETACHED, LinkState.DETACH_SENT):
             return
         try:
-            self._check_if_closed()
             if self.state in [LinkState.ATTACH_SENT, LinkState.ATTACH_RCVD]:
                 await self._outgoing_detach(close=close, error=error)
                 await self._set_state(LinkState.DETACHED)
-            elif self.state == LinkState.ATTACHED:
+            elif self.state in [LinkState.ATTACHED, LinkState.ERROR]:
+                # If the link is in an error state the endpoint should be destroyed
+                # http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#section-links
                 await self._outgoing_detach(close=close, error=error)
                 await self._set_state(LinkState.DETACH_SENT)
         except Exception as exc:  # pylint: disable=broad-except
@@ -259,6 +260,3 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
     async def flow(self, *, link_credit: Optional[int] = None, **kwargs) -> None:
         self.current_link_credit = link_credit if link_credit is not None else self.link_credit
         await self._outgoing_flow(**kwargs)
-    
-    def is_detaching(self) -> bool:
-        return self.state in [LinkState.DETACH_SENT, LinkState.DETACHED]
