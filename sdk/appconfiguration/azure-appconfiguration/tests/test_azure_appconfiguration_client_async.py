@@ -18,6 +18,7 @@ from azure.core.exceptions import (
 from azure.appconfiguration import (
     ResourceReadOnlyError,
     ConfigurationSetting,
+    ConfigurationSettingFilter,
     SecretReferenceConfigurationSetting,
     FeatureFlagConfigurationSetting,
     FILTER_PERCENTAGE,
@@ -908,14 +909,14 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     async def test_create_snapshot(self, appconfiguration_connection_string):
         await self.set_up(appconfiguration_connection_string)
         snapshot_name = self.get_resource_name("snapshot")
-        filters = [{"key": KEY, "label": LABEL}]
+        filters = [ConfigurationSettingFilter(key=KEY, label=LABEL)]
         response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
         created_snapshot = await response.result()
         assert created_snapshot.name == snapshot_name
         assert created_snapshot.status == "ready"
         assert len(created_snapshot.filters) == 1
-        assert created_snapshot.filters[0]["key"] == KEY
-        assert created_snapshot.filters[0]["label"] == LABEL
+        assert created_snapshot.filters[0].key == KEY
+        assert created_snapshot.filters[0].label == LABEL
 
         received_snapshot = await self.client.get_snapshot(name=snapshot_name)
         self._assert_snapshots(received_snapshot, created_snapshot)
@@ -927,7 +928,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     async def test_update_snapshot_status(self, appconfiguration_connection_string):
         await self.set_up(appconfiguration_connection_string)
         snapshot_name = self.get_resource_name("snapshot")
-        filters = [{"key": KEY, "label": LABEL}]
+        filters = [ConfigurationSettingFilter(key=KEY, label=LABEL)]
         response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
         created_snapshot = await response.result()
         assert created_snapshot.status == "ready"
@@ -950,11 +951,11 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
 
         snapshot_name1 = self.get_resource_name("snapshot1")
         snapshot_name2 = self.get_resource_name("snapshot2")
-        filters1 = [{"key": KEY, "label": None}]
+        filters1 = [ConfigurationSettingFilter(key=KEY)]
         response1 = await self.client.begin_create_snapshot(name=snapshot_name1, filters=filters1)
         created_snapshot1 = await response1.result()
         assert created_snapshot1.status == "ready"
-        filters2 = [{"key": KEY, "label": LABEL}]
+        filters2 = [ConfigurationSettingFilter(key=KEY, label=LABEL)]
         response2 = await self.client.begin_create_snapshot(name=snapshot_name2, filters=filters2)
         created_snapshot2 = await response2.result()
         assert created_snapshot2.status == "ready"
@@ -969,7 +970,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     async def test_list_snapshot_configuration_settings(self, appconfiguration_connection_string):
         await self.set_up(appconfiguration_connection_string)
         snapshot_name = self.get_resource_name("snapshot")
-        filters = [{"key": KEY, "label": LABEL}]
+        filters = [ConfigurationSettingFilter(key=KEY, label=LABEL)]
         response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
         created_snapshot = await response.result()
         assert created_snapshot.status == "ready"
