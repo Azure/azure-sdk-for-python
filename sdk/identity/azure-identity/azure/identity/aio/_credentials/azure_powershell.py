@@ -56,7 +56,7 @@ class AzurePowerShellCredential(AsyncContextManager):
     @log_get_token_async
     async def get_token(
         self, *scopes: str, **kwargs: Any
-    ) -> AccessToken:  # pylint:disable=no-self-use,unused-argument
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -66,6 +66,8 @@ class AzurePowerShellCredential(AsyncContextManager):
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
+
+        :return: An access token with the desired scopes.
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke Azure PowerShell, or
           no account is authenticated

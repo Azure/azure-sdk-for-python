@@ -26,8 +26,12 @@ class _QueryBase:
         self._request.filter = expression
 
     @property
-    def request(self):
-        """The service request for this operation."""
+    def request(self) -> Union[Type[AutocompleteRequest], Type[SearchRequest], Type[SuggestRequest]]:
+        """The service request for this operation.
+
+        :return: The service request for this operation.
+        :rtype: AutocompleteRequest or SearchRequest or SuggestRequest
+        """
         return self._request
 
 
