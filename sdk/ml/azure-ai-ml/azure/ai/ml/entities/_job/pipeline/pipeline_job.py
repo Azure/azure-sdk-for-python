@@ -10,8 +10,8 @@ from functools import partial
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_02_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_04_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
@@ -538,13 +538,13 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             component = properties.component_id
         else:
             component = PipelineComponent._load_from_rest_pipeline_job(
-                dict(
-                    inputs=from_rest_inputs,
-                    outputs=from_rest_outputs,
-                    display_name=properties.display_name,
-                    description=properties.description,
-                    jobs=sub_nodes,
-                )
+                {
+                    "inputs": from_rest_inputs,
+                    "outputs": from_rest_outputs,
+                    "display_name": properties.display_name,
+                    "description": properties.description,
+                    "jobs": sub_nodes,
+                }
             )
 
         job = PipelineJob(

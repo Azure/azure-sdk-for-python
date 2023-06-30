@@ -39,7 +39,27 @@ class InteractiveBrowserCredential(InteractiveCredential):
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
+    :keyword bool allow_broker: Brokers provide single sign-on, device identification, and application identification
+        verification. If this parameter is set to True, the broker will be used when possible. Defaults to False.
+        Check https://learn.microsoft.com/azure/active-directory/develop/scenario-desktop-acquire-token-wam
+        for more WAM information.
+    :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting
+        to authenticate. Setting this to true will completely disable both instance discovery and authority validation.
+        This functionality is intended for use in scenarios where the metadata endpoint cannot be reached, such as in
+        private clouds or Azure Stack. The process of instance discovery entails retrieving authority metadata from
+        https://login.microsoft.com/ to validate the authority. By setting this to **True**, the validation of the
+        authority is disabled. As a result, it is crucial to ensure that the configured authority host is valid and
+        trustworthy.
     :raises ValueError: invalid **redirect_uri**
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_interactive_browser_credential]
+            :end-before: [END create_interactive_browser_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create an InteractiveBrowserCredential.
     """
 
     def __init__(self, **kwargs: Any) -> None:
@@ -72,8 +92,8 @@ class InteractiveBrowserCredential(InteractiveCredential):
                 prompt="select_account",
                 port=port
             )
-        except socket.error:
-            raise CredentialUnavailableError(message="Couldn't start an HTTP server.")
+        except socket.error as ex:
+            raise CredentialUnavailableError(message="Couldn't start an HTTP server.") from ex
         if "access_token" not in result and "error_description" in result:
             raise ClientAuthenticationError(message=result.get("error_description"))
         if "access_token" not in result:

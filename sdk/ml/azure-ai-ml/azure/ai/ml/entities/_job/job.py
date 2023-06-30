@@ -7,15 +7,15 @@
 import json
 import logging
 import traceback
-from abc import abstractclassmethod, abstractmethod
+from abc import abstractmethod
 from collections import OrderedDict
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Type, Union
 
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase, JobService
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, JobService
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
@@ -318,7 +318,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                 message=str(ex),
                 no_personal_data_message=f"Unable to parse a job resource of type:{type(obj).__name__}",
                 error_category=ErrorCategory.SYSTEM_ERROR,
-            )
+            ) from ex
         else:
             msg = f"Unsupported job type {obj.properties.job_type}"
             raise JobException(
@@ -332,6 +332,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         telemetry_values = {"type": self.type}
         return telemetry_values
 
-    @abstractclassmethod
+    @classmethod
+    @abstractmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Job":
         pass

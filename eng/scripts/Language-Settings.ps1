@@ -291,6 +291,8 @@ $PackageExclusions = @{
   'azure-mgmt-signalr' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18085';
   'azure-mgmt-mixedreality' = 'Missing version info https://github.com/Azure/azure-sdk-for-python/issues/18457';
   'azure-mgmt-network' = 'Manual process used to build';
+  'azureml-fsspec' = 'Build issues related to Python requirements: https://github.com/Azure/azure-sdk-for-python/issues/30565';
+  'mltable' = 'Build issues related to Python requirements: https://github.com/Azure/azure-sdk-for-python/issues/30565';
 
   'azure-mgmt-compute' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
   'azure-mgmt-consumption' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
@@ -300,6 +302,7 @@ $PackageExclusions = @{
   'azure-mgmt-netapp' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
   'azure-synapse-artifacts' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
   'azure-mgmt-streamanalytics' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-ai-ml' = 'Docs CI build issues https://github.com/Azure/azure-sdk-for-python/issues/30774';
 
   'azure-keyvault' = 'Metapackages should not be documented';
 }
@@ -343,6 +346,11 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSour
     if ($package.package_info.install_type -ne 'pypi') {
       Write-Host "Keeping package with install_type not 'pypi': $($package.package_info.name)"
       $outputPackages += $package
+      continue
+    }
+
+    if ($package.package_info.name.EndsWith("-nspkg")) {
+      Write-Host "Skipping $($package.package_info.name) because it's a namespace package."
       continue
     }
 
@@ -430,11 +438,15 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSour
   $remainingPackages = @()
   if ($Mode -eq 'preview') {
     $remainingPackages = $DocsMetadata.Where({
-      $_.VersionPreview.Trim() -and !$outputPackagesHash.ContainsKey($_.Package)
+      $_.VersionPreview.Trim() `
+      -and !$outputPackagesHash.ContainsKey($_.Package) `
+      -and !$_.Package.EndsWith("-nspkg")
     })
   } else {
     $remainingPackages = $DocsMetadata.Where({
-      $_.VersionGA.Trim() -and !$outputPackagesHash.ContainsKey($_.Package)
+      $_.VersionGA.Trim() `
+      -and !$outputPackagesHash.ContainsKey($_.Package) `
+      -and !$_.Package.EndsWith("-nspkg")
     })
   }
 

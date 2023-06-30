@@ -63,7 +63,7 @@ class DockerClient(object):
                 self._lazy_client = docker.from_env()
             except docker.errors.DockerException as e:
                 if "Error while fetching server API version" in str(e):
-                    raise DockerEngineNotAvailableError()
+                    raise DockerEngineNotAvailableError() from e
                 raise
         return self._lazy_client
 
@@ -111,6 +111,7 @@ class DockerClient(object):
         azureml_port: int,
         local_endpoint_mode: LocalEndpointMode,
         prebuilt_image_name: Optional[str] = None,
+        local_enable_gpu: Optional[bool] = False,
     ) -> None:
         """Builds and runs an image from provided image context.
 
@@ -140,6 +141,8 @@ class DockerClient(object):
         :type local_endpoint_mode: LocalEndpointMode
         :param prebuilt_image_name: Name of pre-built image from customer if using BYOC flow.
         :type prebuilt_image_name: str
+        :param local_enable_gpu: enable local container to access gpu
+        :type local_enable_gpu: bool
         """
         # Prepare image
         if prebuilt_image_name is None:
@@ -163,7 +166,7 @@ class DockerClient(object):
                 module_logger.info("\nDid not find image '%s' locally. Pulling from registry.\n", image_name)
                 try:
                     self._client.images.pull(image_name)
-                except docker.errors.NotFound:
+                except docker.errors.NotFound as e:
                     raise InvalidLocalEndpointError(
                         message=(
                             f"Could not find image '{image_name}' locally or in registry. "
@@ -172,7 +175,7 @@ class DockerClient(object):
                         no_personal_data_message=(
                             "Could not find image locally or in registry. Please check your image name."
                         ),
-                    )
+                    ) from e
 
         module_logger.info("\nStarting up endpoint")
         # Delete container if exists
@@ -189,6 +192,7 @@ class DockerClient(object):
         module_logger.debug("Mounting volumes: '%s'\n", volumes)
         module_logger.debug("Setting environment variables: '%s'\n", environment)
         container_name = _get_container_name(endpoint_name, deployment_name)
+        device_requests = [docker.types.DeviceRequest(count=-1, capabilities=[["gpu"]])] if local_enable_gpu else None
         container = self._client.containers.create(
             image_name,
             name=container_name,
@@ -198,6 +202,7 @@ class DockerClient(object):
             detach=True,
             tty=True,
             publish_all_ports=True,
+            device_requests=device_requests,
         )
         if local_endpoint_mode == LocalEndpointMode.VSCodeDevContainer:
             try:
@@ -386,7 +391,6 @@ class DockerClient(object):
         conda_source_path: str,  # pylint: disable=unused-argument
         conda_yaml_contents: str,  # pylint: disable=unused-argument
     ) -> None:
-
         try:
             module_logger.info("\nBuilding Docker image from Dockerfile")
             first_line = True
@@ -410,11 +414,11 @@ class DockerClient(object):
                     module_logger.info(status["error"])
                     raise LocalEndpointImageBuildError(status["error"])
         except docker.errors.APIError as e:
-            raise LocalEndpointImageBuildError(e)
+            raise LocalEndpointImageBuildError(e) from e
         except Exception as e:
             if isinstance(e, LocalEndpointImageBuildError):
                 raise
-            raise LocalEndpointImageBuildError(e)
+            raise LocalEndpointImageBuildError(e) from e
 
     def _reformat_volumes(self, volumes_dict: dict) -> list:  # pylint: disable=no-self-use
         """Returns a list of volumes to pass to docker.

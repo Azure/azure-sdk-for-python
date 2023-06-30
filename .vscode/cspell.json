@@ -105,6 +105,8 @@
     "tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
     "tools/azure-sdk-tools/packaging_tools/**",
     "tools/azure-sdk-tools/setup.py",
+    "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_serialization.py",
+    "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_model_base.py",
     "tools/azure-sdk-tools/tests/test_servicemetadata.py"
   ],
   "words": [
@@ -174,6 +176,7 @@
     "dont",
     "dotenv",
     "dowhile",
+    "DPAPI",
     "dpkg",
     "dtlk",
     "dtlksd",
@@ -241,6 +244,8 @@
     "livekvtestgetkeyperfkey",
     "livekvtestsignperfkey",
     "livekvtestunwrapperfkey",
+    "lrobasepollingasynclrobasepolling",
+    "lropollerasynclropoller",
     "lmazuel",
     "logz",
     "LPCWSTR",
@@ -261,6 +266,7 @@
     "mydirectory",
     "myfile",
     "myvault",
+    "mytable",
     "nazsdk",
     "nbytes",
     "nbsp",
@@ -402,9 +408,21 @@
   ],
   "overrides": [
     {
+      "filename": "doc/sphinx/generate_doc.py",
+      "words": [
+        "undoc"
+      ]
+    },
+    {
       "filename": "doc/dev/test_proxy_migration_guide.md",
       "words": [
         "pytestmarkparametrize"
+      ]
+    },
+    {
+      "filename": "doc/dev/pylint_checking.md",
+      "words": [
+        "pylintrc"
       ]
     },
     {
@@ -604,7 +622,10 @@
     {
       "filename": "sdk/containerregistry/azure-containerregistry/**",
       "words": [
-        "udpated"
+        "udpated",
+        "cncf",
+        "oras",
+        "rootfs"
       ]
     },
     {
@@ -652,7 +673,9 @@
         "mymodel",
         "heif",
         "racwd",
-        "rrggbb"
+        "rrggbb",
+        "UPCA",
+        "UPCE"
       ]
     },
     {
@@ -763,7 +786,7 @@
         "xoperex",
         "Zocor"
       ]
-    },    
+    },
     {
       "filename": "sdk/keyvault/**",
       "words": [
@@ -914,7 +937,9 @@
         "thead",
         "tbody",
         "racwdlmeop",
-        "newfs"
+        "newfs",
+        "adlsstorage",
+        "adlskey"
       ]
     },
     {
@@ -1069,7 +1094,10 @@
         "pycache",
         "ruamel",
         "reprcrash",
-        "etests"
+        "etests",
+        "RMSE",
+        "azmonitoring",
+        "smirnov"
       ]
     },
     {
@@ -1448,6 +1476,28 @@
         "unflattened",
         "wday",
         "deseralize"
+      ]
+    },
+    {
+      "filename": "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_client.py",
+      "words": [
+        "awps"
+      ]
+    },
+    {
+      "filename": "sdk/contentsafety/azure-ai-contentsafety/azure/ai/contentsafety/*.py",
+      "words": [
+        "mros",
+        "deserializers",
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
+      "filename": "sdk/iothub/azure-iot-deviceprovisioning/azure/iot/deviceprovisioning/_serialization.py",
+      "words": [
+        "ctxt",
+        "wday"
       ]
     }
   ],

@@ -24,7 +24,7 @@ class CertificateOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2022-10-01.16.0".
+    :ivar api_version: The API version to use for the request. Constant value: "2023-05-01.17.0".
     """
 
     models = models
@@ -34,13 +34,18 @@ class CertificateOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2022-10-01.16.0"
+        self.api_version = "2023-05-01.17.0"
 
         self.config = config
 
     def add(
             self, certificate, certificate_add_options=None, custom_headers=None, raw=False, **operation_config):
         """Adds a Certificate to the specified Account.
+
+        Warning: This operation is deprecated and will be removed after
+        February, 2024. Please use the [Azure KeyVault
+        Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+        instead.
 
         :param certificate: The Certificate to be added.
         :type certificate: ~azure.batch.models.CertificateAddParameter
@@ -126,6 +131,11 @@ class CertificateOperations(object):
             self, certificate_list_options=None, custom_headers=None, raw=False, **operation_config):
         """Lists all of the Certificates that have been added to the specified
         Account.
+
+        Warning: This operation is deprecated and will be removed after
+        February, 2024. Please use the [Azure KeyVault
+        Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+        instead.
 
         :param certificate_list_options: Additional parameters for the
          operation
@@ -240,6 +250,10 @@ class CertificateOperations(object):
         operation after the deletion failed. You must make sure that the
         Certificate is not being used by any resources, and then you can try
         again to delete the Certificate.
+        Warning: This operation is deprecated and will be removed after
+        February, 2024. Please use the [Azure KeyVault
+        Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+        instead.
 
         :param thumbprint_algorithm: The algorithm used to derive the
          thumbprint parameter. This must be sha1.
@@ -336,6 +350,10 @@ class CertificateOperations(object):
         deletion fails. The Certificate status changes to deleteFailed. You can
         use Cancel Delete Certificate to set the status back to active if you
         decide that you want to continue using the Certificate.
+        Warning: This operation is deprecated and will be removed after
+        February, 2024. Please use the [Azure KeyVault
+        Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+        instead.
 
         :param thumbprint_algorithm: The algorithm used to derive the
          thumbprint parameter. This must be sha1.
@@ -420,6 +438,11 @@ class CertificateOperations(object):
     def get(
             self, thumbprint_algorithm, thumbprint, certificate_get_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets information about the specified Certificate.
+
+        Warning: This operation is deprecated and will be removed after
+        February, 2024. Please use the [Azure KeyVault
+        Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+        instead.
 
         :param thumbprint_algorithm: The algorithm used to derive the
          thumbprint parameter. This must be sha1.

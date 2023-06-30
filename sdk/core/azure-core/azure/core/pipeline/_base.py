@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 import logging
-from typing import Generic, TypeVar, Union, Any, List, Dict, Optional
+from typing import Generic, TypeVar, Union, Any, List, Dict, Optional, Iterable
 from contextlib import AbstractContextManager
 from azure.core.pipeline import (
     PipelineRequest,
@@ -41,7 +41,7 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 
 
 _LOGGER = logging.getLogger(__name__)
-PoliciesType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
+PoliciesType = Iterable[Union[HTTPPolicy, SansIOHTTPPolicy]]
 
 
 class _SansIOHTTPPolicyRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
@@ -82,6 +82,7 @@ class _TransportRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     Uses specified HTTP transport type to send request and returns response.
 
     :param sender: The Http Transport instance.
+    :type sender: ~azure.core.pipeline.transport.HttpTransport
     """
 
     def __init__(self, sender: HttpTransport[HTTPRequestType, HTTPResponseType]) -> None:
@@ -96,6 +97,12 @@ class _TransportRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
+        # "insecure_domain_change" is used to indicate that a redirect
+        # has occurred to a different domain. This tells the SensitiveHeaderCleanupPolicy
+        # to clean up sensitive headers. We need to remove it before sending the request
+        # to the transport layer. This code is needed to handle the case that the
+        # SensitiveHeaderCleanupPolicy is not added into the pipeline and "insecure_domain_change" is not popped.
+        request.context.options.pop("insecure_domain_change", False)
         return PipelineResponse(
             request.http_request,
             self._sender.send(request.http_request, **request.context.options),
@@ -110,6 +117,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     of the HTTP sender. The transport is the last node in the pipeline.
 
     :param transport: The Http Transport instance
+    :type transport: ~azure.core.pipeline.transport.HttpTransport
     :param list policies: List of configured policies.
 
     .. admonition:: Example:
@@ -152,6 +160,9 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         """Will execute the multipart policies.
 
         Does nothing if "set_multipart_mixed" was never called.
+
+        :param request: The request object.
+        :type request: ~azure.core.rest.HttpRequest
         """
         multipart_mixed_info = request.multipart_mixed_info  # type: ignore
         if not multipart_mixed_info:

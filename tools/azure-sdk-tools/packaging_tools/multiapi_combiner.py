@@ -38,6 +38,11 @@ def strip_version_from_docs(input: str) -> str:
     return re.sub(r".v20[^.]*", "", input)
 
 
+def remove_file(file_path: str) -> None:
+    if (Path(file_path)).exists():
+        os.remove(file_path)
+
+
 class VersionedObject:
     """An object that can be added / removed in an api version"""
 
@@ -180,9 +185,9 @@ class Operation(VersionedObject):
         # all of the api versions of the operation group
         # because the operation group handles first round of validation
         if self._need_method_api_version_check:
-            retval.append(f"        api_versions={self.api_versions},")
+            retval.append(f"       method_valid_on={self.api_versions},")
         if self._need_params_api_version_check:
-            retval.append("        params={")
+            retval.append("        params_valid_on={")
             retval.extend([f'            "{p.name}": {p.api_versions},' for p in self.parameters if p.need_decorator])
             retval.append("        }")
         retval.append("    )")
@@ -254,7 +259,7 @@ class OperationGroup(VersionedObject):
 
     @property
     def decorator(self) -> str:
-        return "\n".join(["@api_version_validation(", f"    api_versions={self.api_versions}", ")"])
+        return "\n".join(["@api_version_validation(", f"    method_valid_on={self.api_versions}", ")"])
 
     def combine_operations(self) -> None:
         api_versions = [v for v in self.code_model.sorted_api_versions if v in self.api_versions]
@@ -266,12 +271,12 @@ class OperationGroup(VersionedObject):
         def _get_operation(code_model: "CodeModel", name: str) -> Operation:
             return Operation(code_model, name, operation_group=self)
 
-        self.operations = _combine_helper(
+        self.operations = [o for o in _combine_helper(
             code_model=self.code_model,
             sorted_api_versions=api_versions,
             get_cls=_get_operation,
             get_names_by_api_version=_get_names_by_api_version,
-        )
+        ) if o.name != "_api_version"]
 
     def doc(self, async_mode: bool) -> str:
         return strip_version_from_docs(self.generated_class(async_mode).__doc__)
@@ -528,7 +533,7 @@ class Serializer:
         validation_relative = "..." if async_mode else ".."
         imports += f"\nfrom {validation_relative}_validation import api_version_validation\n"
         Path(operations_folder).mkdir(parents=True, exist_ok=True)
-        with open(f"{operations_folder}/_operations.py", "w") as fd:
+        with open(f"{operations_folder}/_operations.py", "w", encoding="utf-8") as fd:
             fd.write(template.render(code_model=self.code_model, imports=imports, async_mode=async_mode))
         with open(f"{operations_folder}/__init__.py", "w") as fd:
             fd.write(self.env.get_template("operations_init.py.jinja2").render(code_model=self.code_model))
@@ -564,6 +569,12 @@ class Serializer:
         client_initialization = strip_version_from_docs(
             re.search(r"([\s\S]*?)    @classmethod", main_client_source).group(1)
         )
+        if any(og.is_mixin for og in self.code_model.operation_groups):
+            client_initialization = client_initialization + "".join([
+                "        self._serialize = Serializer(self._models_dict())\n",
+                "        self._deserialize = Deserializer(self._models_dict())\n",
+                "        self._serialize.client_side_validation = False\n",
+            ])
 
         # TODO: switch to current file path
         with open(f"{self.code_model.get_root_of_code(async_mode)}/_client.py", "w") as fd:
@@ -622,7 +633,7 @@ class Serializer:
         default_models_module = importlib.import_module(f"{default_models_folder_name}._models_py3")
         imports = inspect.getsource(default_models_module).split("class")[0]
         imports = modify_relative_imports(r"from (.*) import _serialization", imports)
-        with open(f"{models_folder}/_models.py", "w") as fd:
+        with open(f"{models_folder}/_models.py", "w", encoding="utf-8") as fd:
             fd.write(self.env.get_template("models.py.jinja2").render(code_model=self.code_model, imports=imports))
 
         # serialize enums file
@@ -631,7 +642,7 @@ class Serializer:
         )
         imports = inspect.getsource(default_enums_module).split("class")[0]
         if self.code_model.enums:
-            with open(f"{models_folder}/_enums.py", "w") as fd:
+            with open(f"{models_folder}/_enums.py", "w", encoding="utf-8") as fd:
                 fd.write(self.env.get_template("enums.py.jinja2").render(code_model=self.code_model, imports=imports))
 
         # serialize patch file
@@ -643,21 +654,7 @@ class Serializer:
         root_of_code = self.code_model.get_root_of_code(False)
         for api_version_folder_stem in self.code_model.api_version_to_folder_api_version.values():
             api_version_folder = root_of_code / api_version_folder_stem
-            shutil.rmtree(api_version_folder / Path("operations"), ignore_errors=True)
-            shutil.rmtree(api_version_folder / Path("aio"), ignore_errors=True)
-            shutil.rmtree(api_version_folder / Path("models"), ignore_errors=True)
-            files_to_remove = [
-                "__init__.py",
-                "_configuration.py",
-                "_metadata.json",
-                "_patch.py",
-                "_vendor.py",
-                "_version.py",
-                "py.typed",
-                f"{self.code_model.client.generated_filename}.py",
-            ]
-            for file in files_to_remove:
-                os.remove(f"{api_version_folder}/{file}")
+            shutil.rmtree(api_version_folder, ignore_errors=True)
 
     def remove_top_level_files(self, async_mode: bool):
         top_level_files = [
@@ -667,7 +664,7 @@ class Serializer:
         if not async_mode:
             top_level_files.append("models")
         for file in top_level_files:
-            os.remove(f"{self.code_model.get_root_of_code(async_mode)}/{file}.py")
+            remove_file(f"{self.code_model.get_root_of_code(async_mode)}/{file}.py")
 
     def remove_old_code(self):
         self.remove_versioned_files()

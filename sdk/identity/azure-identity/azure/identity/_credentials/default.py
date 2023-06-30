@@ -37,12 +37,12 @@ class DefaultAzureCredential(ChainedTokenCredential):
     2. WorkloadIdentityCredential if environment variable configuration is set by the Azure workload
        identity webhook.
     3. An Azure managed identity. See :class:`~azure.identity.ManagedIdentityCredential` for more details.
-    4. The identity currently logged in to the Azure Developer CLI.
-    5. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
+    4. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
        identities are in the cache, then the value of  the environment variable ``AZURE_USERNAME`` is used to select
        which identity to use. See :class:`~azure.identity.SharedTokenCacheCredential` for more details.
-    6. The identity currently logged in to the Azure CLI.
-    7. The identity currently logged in to Azure PowerShell.
+    5. The identity currently logged in to the Azure CLI.
+    6. The identity currently logged in to Azure PowerShell.
+    7. The identity currently logged in to the Azure Developer CLI.
 
     This default behavior is configurable with keyword arguments.
 
@@ -51,7 +51,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
     :keyword bool exclude_workload_identity_credential: Whether to exclude the workload identity from the credential.
         Defaults to **False**.
-    :keyword bool exclude_azd_cli_credential: Whether to exclude the Azure Developer CLI
+    :keyword bool exclude_developer_cli_credential: Whether to exclude the Azure Developer CLI
         from the credential. Defaults to **False**.
     :keyword bool exclude_cli_credential: Whether to exclude the Azure CLI from the credential. Defaults to **False**.
     :keyword bool exclude_environment_credential: Whether to exclude a service principal configured by environment
@@ -72,6 +72,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
     :keyword str workload_identity_client_id: The client ID of an identity assigned to the pod. Defaults to the value
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, the pod's default identity will be used.
+    :keyword str workload_identity_tenant_id: Preferred tenant for :class:`~azure.identity.WorkloadIdentityCredential`.
+        Defaults to the value of environment variable AZURE_TENANT_ID, if any.
     :keyword str interactive_browser_client_id: The client ID to be used in interactive browser credential. If not
         specified, users will authenticate to an Azure development application.
     :keyword str shared_cache_username: Preferred username for :class:`~azure.identity.SharedTokenCacheCredential`.
@@ -82,11 +84,20 @@ class DefaultAzureCredential(ChainedTokenCredential):
         :class:`~azure.identity.VisualStudioCodeCredential`. Defaults to the "Azure: Tenant" setting in VS Code's user
         settings or, when that setting has no value, the "organizations" tenant, which supports only Azure Active
         Directory work or school accounts.
-    :keyword int developer_credential_timeout: The timeout in seconds to use for developer credentials that run
+    :keyword int process_timeout: The timeout in seconds to use for developer credentials that run
         subprocesses (e.g. AzureCliCredential, AzurePowerShellCredential). Defaults to **10** seconds.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_default_credential]
+            :end-before: [END create_default_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create a DefaultAzureCredential.
     """
 
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-statements
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-statements, too-many-locals
         if "tenant_id" in kwargs:
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
@@ -113,6 +124,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         workload_identity_client_id = kwargs.pop(
             "workload_identity_client_id", managed_identity_client_id
         )
+        workload_identity_tenant_id = kwargs.pop(
+            "workload_identity_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
+        )
         interactive_browser_client_id = kwargs.pop("interactive_browser_client_id", None)
 
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
@@ -120,14 +134,14 @@ class DefaultAzureCredential(ChainedTokenCredential):
             "shared_cache_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
 
-        developer_credential_timeout = kwargs.pop("developer_credential_timeout", 10)
+        process_timeout = kwargs.pop("process_timeout", 10)
 
         exclude_workload_identity_credential = kwargs.pop("exclude_workload_identity_credential", False)
         exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
         exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
         exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", True)
-        exclude_azd_cli_credential = kwargs.pop("exclude_azd_cli_credential", False)
+        exclude_developer_cli_credential = kwargs.pop("exclude_developer_cli_credential", False)
         exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
         exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
@@ -140,7 +154,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 client_id = workload_identity_client_id
                 credentials.append(WorkloadIdentityCredential(
                     client_id=cast(str, client_id),
-                    tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
+                    tenant_id=workload_identity_tenant_id,
                     file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
                     **kwargs))
         if not exclude_managed_identity_credential:
@@ -151,8 +165,6 @@ class DefaultAzureCredential(ChainedTokenCredential):
                     **kwargs
                 )
             )
-        if not exclude_azd_cli_credential:
-            credentials.append(AzureDeveloperCliCredential(process_timeout=developer_credential_timeout))
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
             try:
                 # username and/or tenant_id are only required when the cache contains tokens for multiple identities
@@ -165,9 +177,11 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_visual_studio_code_credential:
             credentials.append(VisualStudioCodeCredential(**vscode_args))
         if not exclude_cli_credential:
-            credentials.append(AzureCliCredential(process_timeout=developer_credential_timeout))
+            credentials.append(AzureCliCredential(process_timeout=process_timeout))
         if not exclude_powershell_credential:
-            credentials.append(AzurePowerShellCredential(process_timeout=developer_credential_timeout))
+            credentials.append(AzurePowerShellCredential(process_timeout=process_timeout))
+        if not exclude_developer_cli_credential:
+            credentials.append(AzureDeveloperCliCredential(process_timeout=process_timeout))
         if not exclude_interactive_browser_credential:
             if interactive_browser_client_id:
                 credentials.append(
@@ -190,7 +204,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
 
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
 
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
           `message` attribute listing each authentication attempt and its error message.

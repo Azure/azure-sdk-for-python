@@ -4000,7 +4000,7 @@ class DistributedAvailabilityGroup(ProxyResource):  # pylint: disable=too-many-i
     :ivar secondary_availability_group_name: The secondary availability group name.
     :vartype secondary_availability_group_name: str
     :ivar replication_mode: The replication mode of a distributed availability group. Parameter
-     will be ignored during link creation. Known values are: "Async" and "Sync".
+     will be ignored during link creation. Known values are: "Async", "Sync", and "Async".
     :vartype replication_mode: str or ~azure.mgmt.sql.models.ReplicationMode
     :ivar distributed_availability_group_id: The distributed availability group id.
     :vartype distributed_availability_group_id: str
@@ -4061,7 +4061,7 @@ class DistributedAvailabilityGroup(ProxyResource):  # pylint: disable=too-many-i
         :keyword secondary_availability_group_name: The secondary availability group name.
         :paramtype secondary_availability_group_name: str
         :keyword replication_mode: The replication mode of a distributed availability group. Parameter
-         will be ignored during link creation. Known values are: "Async" and "Sync".
+         will be ignored during link creation. Known values are: "Async", "Sync", and "Async".
         :paramtype replication_mode: str or ~azure.mgmt.sql.models.ReplicationMode
         """
         super().__init__(**kwargs)
@@ -7526,7 +7526,7 @@ class IPv6FirewallRule(ProxyResourceWithWritableName):
     :ivar start_i_pv6_address: The start IP address of the firewall rule. Must be IPv6 format.
     :vartype start_i_pv6_address: str
     :ivar end_i_pv6_address: The end IP address of the firewall rule. Must be IPv6 format. Must be
-     greater than or equal to startIpAddress.
+     greater than or equal to startIpv6Address.
     :vartype end_i_pv6_address: str
     """
 
@@ -7557,7 +7557,7 @@ class IPv6FirewallRule(ProxyResourceWithWritableName):
         :keyword start_i_pv6_address: The start IP address of the firewall rule. Must be IPv6 format.
         :paramtype start_i_pv6_address: str
         :keyword end_i_pv6_address: The end IP address of the firewall rule. Must be IPv6 format. Must
-         be greater than or equal to startIpAddress.
+         be greater than or equal to startIpv6Address.
         :paramtype end_i_pv6_address: str
         """
         super().__init__(name=name, **kwargs)
@@ -9533,6 +9533,10 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
     :ivar cross_subscription_target_managed_instance_id: Target managed instance id used in
      cross-subscription restore.
     :vartype cross_subscription_target_managed_instance_id: str
+    :ivar is_ledger_on: Whether or not this database is a ledger database, which means all tables
+     in the database are ledger tables. Note: the value of this property cannot be changed after the
+     database has been created.
+    :vartype is_ledger_on: bool
     """
 
     _validation = {
@@ -9583,6 +9587,7 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
             "key": "properties.crossSubscriptionTargetManagedInstanceId",
             "type": "str",
         },
+        "is_ledger_on": {"key": "properties.isLedgerOn", "type": "bool"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -9606,6 +9611,7 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         auto_complete_restore: Optional[bool] = None,
         last_backup_name: Optional[str] = None,
         cross_subscription_target_managed_instance_id: Optional[str] = None,
+        is_ledger_on: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9671,6 +9677,10 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         :keyword cross_subscription_target_managed_instance_id: Target managed instance id used in
          cross-subscription restore.
         :paramtype cross_subscription_target_managed_instance_id: str
+        :keyword is_ledger_on: Whether or not this database is a ledger database, which means all
+         tables in the database are ledger tables. Note: the value of this property cannot be changed
+         after the database has been created.
+        :paramtype is_ledger_on: bool
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.collation = collation
@@ -9694,6 +9704,7 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         self.auto_complete_restore = auto_complete_restore
         self.last_backup_name = last_backup_name
         self.cross_subscription_target_managed_instance_id = cross_subscription_target_managed_instance_id
+        self.is_ledger_on = is_ledger_on
 
 
 class ManagedDatabaseAdvancedThreatProtection(ProxyResource):
@@ -10444,6 +10455,10 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
     :ivar cross_subscription_target_managed_instance_id: Target managed instance id used in
      cross-subscription restore.
     :vartype cross_subscription_target_managed_instance_id: str
+    :ivar is_ledger_on: Whether or not this database is a ledger database, which means all tables
+     in the database are ledger tables. Note: the value of this property cannot be changed after the
+     database has been created.
+    :vartype is_ledger_on: bool
     """
 
     _validation = {
@@ -10486,6 +10501,7 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
             "key": "properties.crossSubscriptionTargetManagedInstanceId",
             "type": "str",
         },
+        "is_ledger_on": {"key": "properties.isLedgerOn", "type": "bool"},
     }
 
     def __init__(
@@ -10508,6 +10524,7 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         auto_complete_restore: Optional[bool] = None,
         last_backup_name: Optional[str] = None,
         cross_subscription_target_managed_instance_id: Optional[str] = None,
+        is_ledger_on: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10571,6 +10588,10 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         :keyword cross_subscription_target_managed_instance_id: Target managed instance id used in
          cross-subscription restore.
         :paramtype cross_subscription_target_managed_instance_id: str
+        :keyword is_ledger_on: Whether or not this database is a ledger database, which means all
+         tables in the database are ledger tables. Note: the value of this property cannot be changed
+         after the database has been created.
+        :paramtype is_ledger_on: bool
         """
         super().__init__(**kwargs)
         self.tags = tags
@@ -10595,6 +10616,7 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         self.auto_complete_restore = auto_complete_restore
         self.last_backup_name = last_backup_name
         self.cross_subscription_target_managed_instance_id = cross_subscription_target_managed_instance_id
+        self.is_ledger_on = is_ledger_on
 
 
 class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-attributes
@@ -19466,6 +19488,8 @@ class SqlVulnerabilityAssessmentScanRecord(ProxyResource):  # pylint: disable=to
     :vartype total_rules_count: int
     :ivar is_baseline_applied: Baseline created for this database, and has one or more rules.
     :vartype is_baseline_applied: bool
+    :ivar last_scan_time: The last scan time.
+    :vartype last_scan_time: ~datetime.datetime
     """
 
     _validation = {
@@ -19489,6 +19513,7 @@ class SqlVulnerabilityAssessmentScanRecord(ProxyResource):  # pylint: disable=to
         "total_failed_rules_count": {"readonly": True},
         "total_rules_count": {"readonly": True},
         "is_baseline_applied": {"readonly": True},
+        "last_scan_time": {"readonly": True},
     }
 
     _attribute_map = {
@@ -19512,6 +19537,7 @@ class SqlVulnerabilityAssessmentScanRecord(ProxyResource):  # pylint: disable=to
         "total_failed_rules_count": {"key": "properties.totalFailedRulesCount", "type": "int"},
         "total_rules_count": {"key": "properties.totalRulesCount", "type": "int"},
         "is_baseline_applied": {"key": "properties.isBaselineApplied", "type": "bool"},
+        "last_scan_time": {"key": "properties.lastScanTime", "type": "iso-8601"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -19534,6 +19560,7 @@ class SqlVulnerabilityAssessmentScanRecord(ProxyResource):  # pylint: disable=to
         self.total_failed_rules_count = None
         self.total_rules_count = None
         self.is_baseline_applied = None
+        self.last_scan_time = None
 
 
 class SqlVulnerabilityAssessmentScanRecordListResult(_serialization.Model):

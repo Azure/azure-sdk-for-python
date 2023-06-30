@@ -42,6 +42,10 @@ azure-cognitiveservices-nspkg
 azure-mgmt-nspkg
 azure-mixedreality-authentication
 azure-schemaregistry
+websocket-client
 avro
 uamqp
 yarl
+importlib-metadata
+azure-identity
+openai

@@ -99,6 +99,7 @@ class HttpHeaders(object):
     # Our custom DocDB headers
     Continuation = "x-ms-continuation"
     PageSize = "x-ms-max-item-count"
+    ResponseContinuationTokenLimitInKb = "x-ms-documentdb-responsecontinuationtokenlimitinkb"  # cspell:disable-line
 
     # Request sender generated. Simply echoed by backend.
     ActivityId = "x-ms-activity-id"
@@ -437,6 +438,7 @@ class ResourceType(object):
     Offer = "offers"
     Topology = "topology"
     DatabaseAccount = "databaseaccount"
+    PartitionKey = "partitionkey"
 
     @staticmethod
     def IsCollectionChild(resourceType):
@@ -448,4 +450,5 @@ class ResourceType(object):
             ResourceType.UserDefinedFunction,
             ResourceType.Trigger,
             ResourceType.StoredProcedure,
+            ResourceType.PartitionKey,
         )

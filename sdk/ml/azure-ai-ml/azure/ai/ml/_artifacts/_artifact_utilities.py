@@ -11,6 +11,9 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, Optional, Tuple, TypeVar, Union
 
+from azure.storage.blob import BlobSasPermissions, generate_blob_sas
+from azure.storage.filedatalake import FileSasPermissions, generate_file_sas
+
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
@@ -27,6 +30,7 @@ from azure.ai.ml._utils._asset_utils import (
     IgnoreFile,
     _build_metadata_dict,
     _validate_path,
+    get_content_hash,
     get_ignore_file,
     get_object_hash,
 )
@@ -43,8 +47,6 @@ from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.exceptions import ErrorTarget, ValidationException
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
-from azure.storage.blob import BlobSasPermissions, generate_blob_sas
-from azure.storage.filedatalake import FileSasPermissions, generate_file_sas
 
 module_logger = logging.getLogger(__name__)
 
@@ -287,7 +289,8 @@ def _upload_to_datastore(
     asset_version: Optional[str] = None,
     asset_hash: Optional[str] = None,
     ignore_file: Optional[IgnoreFile] = None,
-    sas_uri: Optional[str] = None,  # contains regstry sas url
+    sas_uri: Optional[str] = None,
+    blob_uri: Optional[str] = None,
 ) -> ArtifactStorageInfo:
     _validate_path(path, _type=artifact_type)
     if not ignore_file:
@@ -306,6 +309,9 @@ def _upload_to_datastore(
         ignore_file=ignore_file,
         sas_uri=sas_uri,
     )
+    if blob_uri:
+        artifact.storage_account_url = blob_uri
+
     return artifact
 
 
@@ -317,7 +323,6 @@ def _upload_and_generate_remote_uri(
     datastore_name: str = WORKSPACE_BLOB_STORE,
     show_progress: bool = True,
 ) -> str:
-
     # Asset name is required for uploading to a datastore
     asset_name = str(uuid.uuid4())
     artifact_info = _upload_to_datastore(
@@ -362,11 +367,12 @@ T = TypeVar("T", bound=Artifact)
 
 def _check_and_upload_path(
     artifact: T,
-    asset_operations: Union["DataOperations", "ModelOperations", "CodeOperations", "_FeatureSetOperations"],
+    asset_operations: Union["DataOperations", "ModelOperations", "CodeOperations", "FeatureSetOperations"],
     artifact_type: str,
     datastore_name: Optional[str] = None,
     sas_uri: Optional[str] = None,
     show_progress: bool = True,
+    blob_uri: Optional[str] = None,
 ) -> Tuple[T, str]:
     """Checks whether `artifact` is a path or a uri and uploads it to the datastore if necessary.
 
@@ -402,11 +408,12 @@ def _check_and_upload_path(
             datastore_name=datastore_name,
             asset_name=artifact.name,
             asset_version=str(artifact.version),
-            asset_hash=artifact._upload_hash if hasattr(artifact, "_upload_hash") else None,
+            asset_hash=getattr(artifact, "_upload_hash", None),
             sas_uri=sas_uri,
             artifact_type=artifact_type,
             show_progress=show_progress,
             ignore_file=getattr(artifact, "_ignore_file", None),
+            blob_uri=blob_uri,
         )
         indicator_file = uploaded_artifact.indicator_file  # reference to storage contents
         if artifact._is_anonymous:
@@ -441,3 +448,43 @@ def _check_and_upload_env_build_context(
         # TODO: Depending on decision trailing "/" needs to stay or not. EMS requires it to be present
         environment.build.path = uploaded_artifact.full_storage_path + "/"
     return environment
+
+
+def _get_snapshot_path_info(artifact) -> Tuple[Path, IgnoreFile, str]:
+    """
+    Validate an Artifact's local path and get its resolved path, ignore file, and hash. If no local path, return None.
+    :param artifact: Artifact object
+    :type artifact: azure.ai.ml.entities._assets._artifacts.artifact.Artifact
+    :return: Artifact's path, ignorefile, and hash
+    :rtype: Tuple[os.PathLike, IgnoreFile, str]
+    """
+    if (
+        hasattr(artifact, "local_path")
+        and artifact.local_path is not None
+        or (
+            hasattr(artifact, "path")
+            and artifact.path is not None
+            and not (is_url(artifact.path) or is_mlflow_uri(artifact.path))
+        )
+    ):
+        path = (
+            Path(artifact.path)
+            if hasattr(artifact, "path") and artifact.path is not None
+            else Path(artifact.local_path)
+        )
+        if not path.is_absolute():
+            path = Path(artifact.base_path, path).resolve()
+    else:
+        return None
+
+    _validate_path(path, _type=ErrorTarget.CODE)
+
+    # to align with _check_and_upload_path, we need to try getting the ignore file from the artifact first
+    ignore_file = getattr(artifact, "_ignore_file", get_ignore_file(path))
+    # Note that we haven't used getattr(artifact, "_upload_hash", get_content_hash(path, ignore_file)) here, which
+    # is aligned with _check_and_upload_path. Current guess is that content_hash is what we used in blob, so we must
+    # use it to retrieve the artifact.
+    # TODO: Core SDK team to provide more information on this
+    asset_hash = get_content_hash(path, ignore_file)
+
+    return path, ignore_file, asset_hash

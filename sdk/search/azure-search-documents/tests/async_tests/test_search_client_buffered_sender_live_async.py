@@ -17,7 +17,6 @@ TIME_TO_SLEEP = 3
 
 
 class TestSearchIndexingBufferedSenderAsync(AzureRecordedTestCase):
-
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async

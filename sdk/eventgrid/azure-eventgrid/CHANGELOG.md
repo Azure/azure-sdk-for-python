@@ -1,5 +1,34 @@
 # Release History
 
+## 4.13.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 4.13.0 (2023-06-08)
+
+### Features Added
+
+- Added new enum values to `SystemEventNames` related to Azure Container Services.
+
+## 4.12.0b1 (2023-05-22)
+
+### Features Added
+
+- Added a new EventGridClient that supports `publish_cloud_events`, `receive_cloud_events`, `acknowledge_cloud_events` , `release_cloud_events`, and `reject_cloud_events` operations.
+- Added new models to support these new operations on EventGridClient.
+
+## 4.11.0 (2023-05-09)
+
+### Features Added
+
+- Added new enum values to `SystemEventNames` related to Storage Tasks, Azure Communication Services and Azure HealthcareApis.
+
 ## 4.10.0 (2023-04-11)
 
 ### Features Added

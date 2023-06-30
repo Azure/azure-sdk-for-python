@@ -293,7 +293,7 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
         # a conscious decision was made to exclude the timestamp in the generated token
         # this is to avoid having two snapshot ids in the query parameters when the user appends the snapshot timestamp
         exclude = [BlobQueryStringConstants.SIGNED_TIMESTAMP]
-        return '&'.join(['{0}={1}'.format(n, url_quote(v))
+        return '&'.join([f'{n}={url_quote(v)}'
                          for n, v in self.query_dict.items() if v is not None and n not in exclude])
 
 
@@ -561,7 +561,10 @@ def generate_blob_sas(
         For example, specifying ip=168.1.5.65 or ip=168.1.5.60-168.1.5.70 on the SAS
         restricts the request to those IP addresses.
     :keyword str version_id:
-        An optional blob version ID. This parameter is only for versioning enabled account
+        An optional blob version ID. This parameter is only applicable for versioning-enabled
+        Storage accounts. Note that the 'versionid' query parameter is not included in the output
+        SAS. Therefore, please provide the 'version_id' parameter to any APIs when using the output
+        SAS to operate on a specific version.
 
         .. versionadded:: 12.4.0
             This keyword argument was introduced in API version '2019-12-12'.

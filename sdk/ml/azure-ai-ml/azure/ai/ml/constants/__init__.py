@@ -5,6 +5,7 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
+from ._assets import IPProtectionLevel
 from ._common import AssetTypes, InputOutputModes, ModelType, Scope, TimeZone
 from ._component import ParallelTaskType
 from ._deployment import BatchDeploymentOutputAction
@@ -21,6 +22,13 @@ from ._job import (
 )
 from ._registry import AcrAccountSku, StorageAccountType
 from ._workspace import ManagedServiceIdentityType
+from ._monitoring import (
+    MonitorSignalType,
+    MonitorMetricName,
+    MonitorModelType,
+    MonitorFeatureType,
+    MonitorDatasetContext,
+)
 
 TabularTrainingMode.__module__ = __name__
 
@@ -44,4 +52,10 @@ __all__ = [
     "NlpLearningRateScheduler",
     "Scope",
     "TabularTrainingMode",
+    "MonitorSignalType",
+    "MonitorMetricName",
+    "MonitorModelType",
+    "MonitorFeatureType",
+    "MonitorDatasetContext",
+    "IPProtectionLevel",
 ]

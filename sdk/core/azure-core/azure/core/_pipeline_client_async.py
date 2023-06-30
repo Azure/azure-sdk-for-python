@@ -47,6 +47,7 @@ from .pipeline.policies import (
     HttpLoggingPolicy,
     RequestIdPolicy,
     AsyncRetryPolicy,
+    SensitiveHeaderCleanupPolicy,
 )
 
 
@@ -103,6 +104,7 @@ class _Coroutine(Awaitable[AsyncHTTPResponseType]):
     ```
 
     :param wrapped: Must be an awaitable the returns an async context manager that supports async "close()"
+    :type wrapped: awaitable[AsyncHTTPResponseType]
     """
 
     def __init__(self, wrapped: Awaitable[AsyncHTTPResponseType]) -> None:
@@ -182,7 +184,7 @@ class AsyncPipelineClient(
     async def close(self):
         await self._pipeline.__aexit__()
 
-    def _build_pipeline(  # pylint: disable=no-self-use
+    def _build_pipeline(
         self, config: Configuration, *, policies=None, per_call_policies=None, per_retry_policies=None, **kwargs
     ) -> AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]:
         transport = kwargs.get("transport")
@@ -191,7 +193,7 @@ class AsyncPipelineClient(
 
         if policies is None:  # [] is a valid policy list
             policies = [
-                RequestIdPolicy(**kwargs),
+                config.request_id_policy or RequestIdPolicy(**kwargs),
                 config.headers_policy,
                 config.user_agent_policy,
                 config.proxy_policy,
@@ -219,6 +221,7 @@ class AsyncPipelineClient(
                 [
                     config.logging_policy,
                     DistributedTracingPolicy(**kwargs),
+                    SensitiveHeaderCleanupPolicy(**kwargs) if config.redirect_policy else None,
                     config.http_logging_policy or HttpLoggingPolicy(**kwargs),
                 ]
             )
@@ -249,7 +252,7 @@ class AsyncPipelineClient(
                 policies = policies_1
 
         if not transport:
-            from .pipeline.transport import AioHttpTransport
+            from .pipeline.transport import AioHttpTransport  # pylint: disable=no-name-in-module
 
             transport = AioHttpTransport(**kwargs)
 

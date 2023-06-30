@@ -105,6 +105,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
             token_intent: Optional[Literal['backup']] = None,
             **kwargs: Any
         ) -> None:
+        if hasattr(credential, 'get_token') and not token_intent:
+            raise ValueError("'token_intent' keyword is required when 'credential' is an TokenCredential.")
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -112,7 +114,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             raise ValueError("Account URL must be a string.")
         parsed_url = urlparse(account_url.rstrip('/'))
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+            raise ValueError(f"Invalid URL: {account_url}")
 
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
@@ -133,7 +135,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         """Format the endpoint URL according to the current location
         mode hostname.
         """
-        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
+        return f"{self.scheme}://{hostname}/{self._query_str}"
 
     @classmethod
     def from_connection_string(

@@ -31,7 +31,7 @@ from devtools_testutils import (
 from devtools_testutils.fake_credentials import BATCH_TEST_PASSWORD
 
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = 'eastasia'
 BATCH_ENVIRONMENT = None  # Set this to None if testing against prod
 BATCH_RESOURCE = 'https://batch.core.windows.net/'
 DEFAULT_VM_SIZE = 'standard_d2_v2'
@@ -294,6 +294,30 @@ class BatchTest(AzureMgmtTestCase):
         self.assertEqual(ade_pool.virtual_machine_configuration.disk_encryption_configuration.targets,
                          [models.DiskEncryptionTarget.temporary_disk])
 
+        # Test Create Pool with Virtual Machine Configuration With Extensions
+        test_vmextension_pool = models.PoolAddParameter(
+            id=self.get_resource_name('batch_vmextension_'),
+            vm_size=DEFAULT_VM_SIZE,
+            virtual_machine_configuration=models.VirtualMachineConfiguration(
+                image_reference=models.ImageReference(
+                    publisher='microsoftwindowsserver',
+                    offer='windowsserver',
+                    sku='2022-datacenter'
+                ),
+                extensions=[models.VMExtension(
+                    name="CustomExtension",
+                    publisher="Microsoft.Azure.Geneva",
+                    type="GenevaMonitoring",
+                    type_handler_version="2.0",
+                    auto_upgrade_minor_version=True,
+                    enable_automatic_upgrade=True)],
+                node_agent_sku_id='batch.node.windows amd64')
+        )
+        response = client.pool.add(test_vmextension_pool)
+        self.assertIsNone(response)
+        vmextension_pool = client.pool.get(test_vmextension_pool.id)
+        self.assertTrue(vmextension_pool.virtual_machine_configuration.extensions[0].enable_automatic_upgrade)
+
         # Test List Pools without Filters
         pools = list(client.pool.list())
         self.assertTrue(len(pools) > 1)
@@ -460,14 +484,6 @@ class BatchTest(AzureMgmtTestCase):
             time.sleep(5)
             pool = client.pool.get(batch_pool.name)
 
-        # Test Get All Pools Lifetime Statistics
-        stats = client.pool.get_all_lifetime_statistics()
-        self.assertIsInstance(stats, models.PoolStatistics)
-        self.assertIsNotNone(stats.resource_stats.avg_cpu_percentage)
-        self.assertIsNotNone(stats.resource_stats.network_read_gi_b)
-        self.assertIsNotNone(stats.resource_stats.disk_write_gi_b)
-        self.assertIsNotNone(stats.resource_stats.peak_disk_gi_b)
-
         # Test Get Pool Usage Info
         info = list(client.pool.list_usage_metrics())
         self.assertEqual(info, [])
@@ -601,6 +617,36 @@ class BatchTest(AzureMgmtTestCase):
         self.assertEqual(len(nodes[0].endpoint_configuration.inbound_endpoints), 2)
         self.assertEqual(nodes[0].endpoint_configuration.inbound_endpoints[0].name, 'TestEndpointConfig.0')
         self.assertEqual(nodes[0].endpoint_configuration.inbound_endpoints[0].protocol.value, 'udp')
+
+    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
+    def test_batch_network_configuration_acceleratednetworking(self, **kwargs):
+        client = self.create_sharedkey_client(**kwargs)     
+        # Test Network enableAcceleratedNetworking configuration
+        network_config = models.NetworkConfiguration(enable_accelerated_networking=True)
+        virtual_machine_config = models.VirtualMachineConfiguration(
+            node_agent_sku_id="batch.node.windows amd64",
+            image_reference=models.ImageReference(
+                publisher="MicrosoftWindowsServer",
+                offer="WindowsServer",
+                sku="2016-datacenter-smalldisk",
+                version="latest")
+        )
+        pool = models.PoolAddParameter(
+            id=self.get_resource_name('batch_network_acceleratednetworking_'),
+            target_dedicated_nodes=2,
+            vm_size=DEFAULT_VM_SIZE,
+            virtual_machine_configuration=virtual_machine_config,
+            network_configuration=network_config
+        )
+
+        client.pool.add(pool)
+        network_pool = client.pool.get(pool.id)
+        while self.is_live and network_pool.allocation_state != models.AllocationState.steady:
+            time.sleep(10)
+            network_pool = client.pool.get(pool.id)
+
+        self.assertTrue(network_pool.network_configuration.enable_accelerated_networking)
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -1055,9 +1101,3 @@ class BatchTest(AzureMgmtTestCase):
         # Test Delete Job
         response = client.job.delete(job_auto_param.id)
         self.assertIsNone(response)
-
-        # Test Job Lifetime Statistics
-        stats = client.job.get_all_lifetime_statistics()
-        self.assertIsInstance(stats, models.JobStatistics)
-        self.assertEqual(stats.num_succeeded_tasks, 0)
-        self.assertEqual(stats.num_failed_tasks, 0)

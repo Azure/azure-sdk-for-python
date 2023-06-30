@@ -23,10 +23,16 @@ from .operations import (
     ConfigurationsOperations,
     DatabasesOperations,
     FirewallRulesOperations,
+    FlexibleServerOperations,
     GetPrivateDnsZoneSuffixOperations,
     LocationBasedCapabilitiesOperations,
+    LogFilesOperations,
+    LtrBackupOperationsOperations,
+    MigrationsOperations,
     Operations,
+    PostgreSQLManagementClientOperationsMixin,
     ReplicasOperations,
+    ServerCapabilitiesOperations,
     ServersOperations,
     VirtualNetworkSubnetUsageOperations,
 )
@@ -36,7 +42,9 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class PostgreSQLManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class PostgreSQLManagementClient(
+    PostgreSQLManagementClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """The Microsoft Azure management API provides create, read, update, and delete functionality for
     Azure PostgreSQL resources including servers, databases, firewall rules, VNET rules, security
     alert policies, log files and configurations with new business model.
@@ -49,6 +57,9 @@ class PostgreSQLManagementClient:  # pylint: disable=client-accepts-api-version-
     :ivar location_based_capabilities: LocationBasedCapabilitiesOperations operations
     :vartype location_based_capabilities:
      azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.LocationBasedCapabilitiesOperations
+    :ivar server_capabilities: ServerCapabilitiesOperations operations
+    :vartype server_capabilities:
+     azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.ServerCapabilitiesOperations
     :ivar check_name_availability: CheckNameAvailabilityOperations operations
     :vartype check_name_availability:
      azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.CheckNameAvailabilityOperations
@@ -67,6 +78,9 @@ class PostgreSQLManagementClient:  # pylint: disable=client-accepts-api-version-
      azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.FirewallRulesOperations
     :ivar servers: ServersOperations operations
     :vartype servers: azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.ServersOperations
+    :ivar migrations: MigrationsOperations operations
+    :vartype migrations:
+     azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.MigrationsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.Operations
     :ivar get_private_dns_zone_suffix: GetPrivateDnsZoneSuffixOperations operations
@@ -75,17 +89,26 @@ class PostgreSQLManagementClient:  # pylint: disable=client-accepts-api-version-
     :ivar replicas: ReplicasOperations operations
     :vartype replicas:
      azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.ReplicasOperations
+    :ivar log_files: LogFilesOperations operations
+    :vartype log_files:
+     azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.LogFilesOperations
     :ivar virtual_network_subnet_usage: VirtualNetworkSubnetUsageOperations operations
     :vartype virtual_network_subnet_usage:
      azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.VirtualNetworkSubnetUsageOperations
+    :ivar flexible_server: FlexibleServerOperations operations
+    :vartype flexible_server:
+     azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.FlexibleServerOperations
+    :ivar ltr_backup_operations: LtrBackupOperationsOperations operations
+    :vartype ltr_backup_operations:
+     azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.LtrBackupOperationsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-12-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-03-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -101,7 +124,7 @@ class PostgreSQLManagementClient:  # pylint: disable=client-accepts-api-version-
         self._config = PostgreSQLManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -110,6 +133,9 @@ class PostgreSQLManagementClient:  # pylint: disable=client-accepts-api-version-
         self.administrators = AdministratorsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.backups = BackupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.location_based_capabilities = LocationBasedCapabilitiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.server_capabilities = ServerCapabilitiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.check_name_availability = CheckNameAvailabilityOperations(
@@ -122,12 +148,18 @@ class PostgreSQLManagementClient:  # pylint: disable=client-accepts-api-version-
         self.databases = DatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.migrations = MigrationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.get_private_dns_zone_suffix = GetPrivateDnsZoneSuffixOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.log_files = LogFilesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.virtual_network_subnet_usage = VirtualNetworkSubnetUsageOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.flexible_server = FlexibleServerOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.ltr_backup_operations = LtrBackupOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
@@ -160,5 +192,5 @@ class PostgreSQLManagementClient:  # pylint: disable=client-accepts-api-version-
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

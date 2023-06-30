@@ -4,13 +4,14 @@
 
 from typing import Any, Dict, Optional, List
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ManagedNetworkSettings as RestManagedNetwork,
     FqdnOutboundRule as RestFqdnOutboundRule,
     PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
     PrivateEndpointDestination as RestPrivateEndpointOutboundRuleDestination,
     ServiceTagOutboundRule as RestServiceTagOutboundRule,
     ServiceTagDestination as RestServiceTagOutboundRuleDestination,
+    ManagedNetworkProvisionStatus as RestManagedNetworkProvisionStatus,
 )
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 
@@ -25,6 +26,8 @@ class OutboundRule:
     :type name: str
     :param type: Type of the outbound rule. Supported types are "FQDN", "PrivateEndpoint", "ServiceTag"
     :type type: str
+    :ivar type: Type of the outbound rule. Supported types are "FQDN", "PrivateEndpoint", "ServiceTag"
+    :vartype type: str
     """
 
     def __init__(
@@ -36,12 +39,14 @@ class OutboundRule:
         self.name = name
         self.type = kwargs.pop("type", None)
         self.category = kwargs.pop("category", OutboundRuleCategory.USER_DEFINED)
+        self.status = kwargs.pop("status", None)
 
     @classmethod
     def _from_rest_object(cls, rest_obj: Any, name: str) -> "OutboundRule":
         if isinstance(rest_obj, RestFqdnOutboundRule):
             rule = FqdnDestination(destination=rest_obj.destination, name=name)
             rule.category = rest_obj.category
+            rule.status = rest_obj.status
             return rule
         if isinstance(rest_obj, RestPrivateEndpointOutboundRule):
             rule = PrivateEndpointDestination(
@@ -51,6 +56,7 @@ class OutboundRule:
                 name=name,
             )
             rule.category = rest_obj.category
+            rule.status = rest_obj.status
             return rule
         if isinstance(rest_obj, RestServiceTagOutboundRule):
             rule = ServiceTagDestination(
@@ -60,6 +66,7 @@ class OutboundRule:
                 name=name,
             )
             rule.category = rest_obj.category
+            rule.status = rest_obj.status
             return rule
 
 
@@ -67,8 +74,7 @@ class OutboundRule:
 class FqdnDestination(OutboundRule):
     def __init__(self, *, name: str, destination: str, **kwargs) -> None:
         self.destination = destination
-        category = kwargs.pop("category", OutboundRuleCategory.USER_DEFINED)
-        OutboundRule.__init__(self, type=OutboundRuleType.FQDN, category=category, name=name)
+        OutboundRule.__init__(self, type=OutboundRuleType.FQDN, name=name, **kwargs)
 
     def _to_rest_object(self) -> RestFqdnOutboundRule:
         return RestFqdnOutboundRule(type=self.type, category=self.category, destination=self.destination)
@@ -79,6 +85,7 @@ class FqdnDestination(OutboundRule):
             "type": OutboundRuleType.FQDN,
             "category": self.category,
             "destination": self.destination,
+            "status": self.status,
         }
 
 
@@ -96,8 +103,7 @@ class PrivateEndpointDestination(OutboundRule):
         self.service_resource_id = service_resource_id
         self.subresource_target = subresource_target
         self.spark_enabled = spark_enabled
-        category = kwargs.pop("category", OutboundRuleCategory.USER_DEFINED)
-        OutboundRule.__init__(self, type=OutboundRuleType.PRIVATE_ENDPOINT, category=category, name=name)
+        OutboundRule.__init__(self, type=OutboundRuleType.PRIVATE_ENDPOINT, name=name, **kwargs)
 
     def _to_rest_object(self) -> RestPrivateEndpointOutboundRule:
         return RestPrivateEndpointOutboundRule(
@@ -120,6 +126,7 @@ class PrivateEndpointDestination(OutboundRule):
                 "subresource_target": self.subresource_target,
                 "spark_enabled": self.spark_enabled,
             },
+            "status": self.status,
         }
 
 
@@ -137,8 +144,7 @@ class ServiceTagDestination(OutboundRule):
         self.service_tag = service_tag
         self.protocol = protocol
         self.port_ranges = port_ranges
-        category = kwargs.pop("category", OutboundRuleCategory.USER_DEFINED)
-        OutboundRule.__init__(self, type=OutboundRuleType.SERVICE_TAG, category=category, name=name)
+        OutboundRule.__init__(self, type=OutboundRuleType.SERVICE_TAG, name=name, **kwargs)
 
     def _to_rest_object(self) -> RestServiceTagOutboundRule:
         return RestServiceTagOutboundRule(
@@ -159,6 +165,7 @@ class ServiceTagDestination(OutboundRule):
                 "protocol": self.protocol,
                 "port_ranges": self.port_ranges,
             },
+            "status": self.status,
         }
 
 
@@ -169,10 +176,12 @@ class ManagedNetwork:
         isolation_mode: str = IsolationMode.DISABLED,
         outbound_rules: Optional[List[OutboundRule]] = None,
         network_id: Optional[str] = None,
+        **kwargs,
     ) -> None:
         self.isolation_mode = isolation_mode
         self.network_id = network_id
         self.outbound_rules = outbound_rules
+        self.status = kwargs.pop("status", None)
 
     def _to_rest_object(self) -> RestManagedNetwork:
         rest_outbound_rules = (
@@ -196,5 +205,35 @@ class ManagedNetwork:
             else {}
         )
         return ManagedNetwork(
-            isolation_mode=obj.isolation_mode, outbound_rules=from_rest_outbound_rules, network_id=obj.network_id
+            isolation_mode=obj.isolation_mode,
+            outbound_rules=from_rest_outbound_rules,
+            network_id=obj.network_id,
+            status=obj.status,
+        )
+
+
+@experimental
+class ManagedNetworkProvisionStatus:
+    """ManagedNetworkProvisionStatus.
+
+    :param status: Status for managed network provision.
+    :type status: str
+    :param spark_ready: Bool value indicating if managed network is spark ready
+    :type spark_ready: bool
+    """
+
+    def __init__(
+        self,
+        *,
+        status: Optional[str] = None,
+        spark_ready: Optional[bool] = None,
+    ):
+        self.status = status
+        self.spark_ready = spark_ready
+
+    @classmethod
+    def _from_rest_object(cls, rest_obj: RestManagedNetworkProvisionStatus) -> "ManagedNetworkProvisionStatus":
+        return cls(
+            status=rest_obj.status,
+            spark_ready=rest_obj.spark_ready,
         )

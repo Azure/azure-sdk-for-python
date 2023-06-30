@@ -16,11 +16,25 @@ from typing import List, Optional
 from marshmallow import RAISE, fields
 from marshmallow.exceptions import ValidationError
 from marshmallow.fields import _T, Field, Nested
-from marshmallow.utils import FieldInstanceResolutionError, from_iso_datetime, resolve_field_instance
+from marshmallow.utils import (
+    FieldInstanceResolutionError,
+    from_iso_datetime,
+    resolve_field_instance,
+)
 
-from ..._utils._arm_id_utils import AMLVersionedArmId, is_ARM_id_for_resource, parse_name_label, parse_name_version
+from ..._utils._arm_id_utils import (
+    AMLVersionedArmId,
+    is_ARM_id_for_resource,
+    parse_name_label,
+    parse_name_version,
+)
 from ..._utils._experimental import _is_warning_cached
-from ..._utils.utils import is_data_binding_expression, is_valid_node_name, load_file, load_yaml
+from ..._utils.utils import (
+    is_data_binding_expression,
+    is_valid_node_name,
+    load_file,
+    load_yaml,
+)
 from ...constants._common import (
     ARM_ID_PREFIX,
     AZUREML_RESOURCE_PROVIDER,
@@ -35,10 +49,11 @@ from ...constants._common import (
     LOCAL_PATH,
     REGISTRY_URI_FORMAT,
     RESOURCE_ID_FORMAT,
-    SERVERLESS_COMPUTE,
     AzureMLResourceType,
 )
-from ...entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
+from ...entities._job.pipeline._attr_dict import (
+    try_get_non_arbitrary_attr_for_potential_attr_dict,
+)
 from ...exceptions import ValidationException
 from ..core.schema import PathAwareSchema
 
@@ -127,8 +142,8 @@ class LocalPathField(fields.Str):
             result = result.resolve()
             if (self._allow_dir and result.is_dir()) or (self._allow_file and result.is_file()):
                 return result
-        except OSError:
-            raise self.make_error("invalid_path")
+        except OSError as e:
+            raise self.make_error("invalid_path") from e
         raise self.make_error("path_not_exist", path=result.as_posix(), allow_type=self.allowed_path_type)
 
     @property
@@ -242,8 +257,8 @@ class DateTimeStr(fields.Str):
     def _validate(self, value):
         try:
             from_iso_datetime(value)
-        except Exception:
-            raise ValidationError(f"Not a valid ISO8601-formatted datetime string: {value}")
+        except Exception as e:
+            raise ValidationError(f"Not a valid ISO8601-formatted datetime string: {value}") from e
 
 
 class ArmStr(Field):
@@ -320,7 +335,7 @@ class ArmVersionedStr(ArmStr):
         except ValidationException as e:
             # Schema will try to deserialize the value with all possible Schema & catch ValidationError
             # So raise ValidationError instead of ValidationException
-            raise ValidationError(e.message)
+            raise ValidationError(e.message) from e
 
         version = None
         if not label:
@@ -425,7 +440,7 @@ class UnionField(fields.Field):
             self.is_strict = is_strict  # S\When True, combine fields with oneOf instead of anyOf at schema generation
         except FieldInstanceResolutionError as error:
             raise ValueError(
-                'Elements of "union_fields" must be subclasses or ' "instances of marshmallow.base.FieldABC."
+                'Elements of "union_fields" must be subclasses or instances of marshmallow.base.FieldABC.'
             ) from error
 
     @property
@@ -632,7 +647,7 @@ def ComputeField(**kwargs):
     """
     return UnionField(
         [
-            StringTransformedEnum(allowed_values=[LOCAL_COMPUTE_TARGET, SERVERLESS_COMPUTE]),
+            StringTransformedEnum(allowed_values=[LOCAL_COMPUTE_TARGET]),
             ArmStr(azureml_type=AzureMLResourceType.COMPUTE),
             # Case for virtual clusters
             fields.Str(),
@@ -667,6 +682,7 @@ def DistributionField(**kwargs):
         MPIDistributionSchema,
         PyTorchDistributionSchema,
         TensorFlowDistributionSchema,
+        RayDistributionSchema,
     )
 
     return UnionField(
@@ -674,6 +690,7 @@ def DistributionField(**kwargs):
             NestedField(PyTorchDistributionSchema, **kwargs),
             NestedField(TensorFlowDistributionSchema, **kwargs),
             NestedField(MPIDistributionSchema, **kwargs),
+            ExperimentalField(NestedField(RayDistributionSchema, **kwargs)),
         ]
     )
 
@@ -764,7 +781,7 @@ class ExperimentalField(fields.Field):
             self.required = experimental_field.required
         except FieldInstanceResolutionError as error:
             raise ValueError(
-                '"experimental_field" must be subclasses or ' "instances of marshmallow.base.FieldABC."
+                '"experimental_field" must be subclasses or instances of marshmallow.base.FieldABC.'
             ) from error
 
     @property
@@ -848,7 +865,7 @@ class PythonFuncNameStr(fields.Str):
             raise ValidationError(
                 f"{self._get_field_name()} name should only contain "
                 "lower letter, number, underscore and start with a lower letter. "
-                "Currently got {name}."
+                f"Currently got {name}."
             )
         return name
 

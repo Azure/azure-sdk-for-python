@@ -4,7 +4,6 @@
 # ------------------------------------
 import threading
 from typing import Any, Dict, Optional, Union
-import six
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy
@@ -17,7 +16,11 @@ _POST = ["POST"]
 
 
 class MsalResponse:
-    """Wraps HttpResponse according to msal.oauth2cli.http"""
+    """Wraps HttpResponse according to msal.oauth2cli.http.
+
+    :param response: The response to wrap.
+    :type response: ~azure.core.pipeline.transport.HttpResponse
+    """
 
     def __init__(self, response: PipelineResponse) -> None:
         self._response = response
@@ -84,8 +87,8 @@ class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
             if isinstance(data, dict):
                 request.headers["Content-Type"] = "application/x-www-form-urlencoded"
                 request.set_formdata_body(data)
-            elif isinstance(data, six.text_type):
-                body_bytes = six.ensure_binary(data)
+            elif isinstance(data, str):
+                body_bytes = data.encode("utf-8")
                 request.set_bytes_body(body_bytes)
             else:
                 raise ValueError('expected "data" to be text or a dict')
@@ -110,7 +113,13 @@ class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
         return MsalResponse(response)
 
     def get_error_response(self, msal_result: Dict) -> Optional[HttpResponse]:
-        """Get the HTTP response associated with an MSAL error"""
+        """Get the HTTP response associated with an MSAL error.
+
+        :param msal_result: The result of an MSAL request.
+        :type msal_result: dict
+        :return: The HTTP response associated with the error, if any.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse or None
+        """
         error_code, response = getattr(self._local, "error", (None, None))
         if response and error_code == msal_result.get("error"):
             return response

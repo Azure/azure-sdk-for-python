@@ -1,14 +1,36 @@
 # Release History
 
-## 1.26.5 (Unreleased)
+## 1.28.0 (Unreleased)
 
 ### Features Added
+
+- Added header name parameter to `RequestIdPolicy`. #30772
+- Added `SensitiveHeaderCleanupPolicy` that cleans up sensitive headers if a redirect happens and the new destination is in another domain. #28349
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- Catch aiohttp errors and translate them into azure-core errors.
+
+## 1.27.1 (2023-06-13)
+
+### Bugs Fixed
+
+- Fix url building for some complex query parameters scenarios  #30707
+
+## 1.27.0 (2023-06-01)
+
+### Features Added
+
+- Added support to use sync credentials in `AsyncBearerTokenCredentialPolicy`. #30381
+- Added "prefix" parameter to AzureKeyCredentialPolicy #29901
+
+### Bugs Fixed
+
+- Improve error message when providing the wrong credential type for AzureKeyCredential  #30380
 
 ## 1.26.4 (2023-04-06)
 

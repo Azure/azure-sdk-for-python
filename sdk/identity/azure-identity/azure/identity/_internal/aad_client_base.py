@@ -5,11 +5,11 @@
 import abc
 import base64
 import json
+import os
 import time
 from uuid import uuid4
 from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union, Dict
 
-import six
 from msal import TokenCache
 
 from azure.core.pipeline import PipelineResponse
@@ -17,6 +17,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
+from .._constants import EnvironmentVariables
 from .utils import get_default_authority, normalize_authority, resolve_tenant
 from .aadclient_certificate import AadClientCertificate
 
@@ -52,7 +53,7 @@ class AadClientBase(abc.ABC):
 
         self._cache = cache or TokenCache()
         self._client_id = client_id
-        self._capabilities = None
+        self._capabilities = None if EnvironmentVariables.AZURE_IDENTITY_DISABLE_CP1 in os.environ else ["CP1"]
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._pipeline = self._build_pipeline(**kwargs)
 
@@ -74,7 +75,7 @@ class AadClientBase(abc.ABC):
         return None
 
     def get_cached_refresh_tokens(self, scopes: Iterable[str]) -> List[Dict]:
-        """Assumes all cached refresh tokens belong to the same user"""
+        # Assumes all cached refresh tokens belong to the same user.
         return self._cache.find(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes))
 
     @abc.abstractmethod
@@ -206,22 +207,15 @@ class AadClientBase(abc.ABC):
 
     def _get_client_certificate_assertion(self, certificate: AadClientCertificate, **kwargs: Any) -> str:
         now = int(time.time())
-        header = six.ensure_binary(
-            json.dumps({"typ": "JWT", "alg": "RS256", "x5t": certificate.thumbprint}), encoding="utf-8"
-        )
-        payload = six.ensure_binary(
-            json.dumps(
-                {
-                    "jti": str(uuid4()),
-                    "aud": self._get_token_url(**kwargs),
-                    "iss": self._client_id,
-                    "sub": self._client_id,
-                    "nbf": now,
-                    "exp": now + (60 * 30),
-                }
-            ),
-            encoding="utf-8",
-        )
+        header = json.dumps({"typ": "JWT", "alg": "RS256", "x5t": certificate.thumbprint}).encode("utf-8")
+        payload = json.dumps({
+            "jti": str(uuid4()),
+            "aud": self._get_token_url(**kwargs),
+            "iss": self._client_id,
+            "sub": self._client_id,
+            "nbf": now,
+            "exp": now + (60 * 30),
+        }).encode("utf-8")
         jws = base64.urlsafe_b64encode(header) + b"." + base64.urlsafe_b64encode(payload)
         signature = certificate.sign(jws)
         jwt_bytes = jws + b"." + base64.urlsafe_b64encode(signature)

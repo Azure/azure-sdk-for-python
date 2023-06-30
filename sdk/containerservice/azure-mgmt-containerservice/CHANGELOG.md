@@ -1,5 +1,33 @@
 # Release History
 
+## 24.0.0 (2023-06-21)
+
+### Features Added
+
+  - Model ContainerServiceNetworkProfile has a new parameter monitoring
+  - Model OrchestratorProfile has a new parameter is_preview
+
+### Breaking Changes
+
+  - Removed operation ContainerServicesOperations.begin_create_or_update
+  - Removed operation ContainerServicesOperations.begin_delete
+  - Removed operation ContainerServicesOperations.get
+  - Removed operation ContainerServicesOperations.list
+  - Removed operation ContainerServicesOperations.list_by_resource_group
+
+## 23.0.0 (2023-05-16)
+
+### Breaking Changes
+
+  - Model ContainerServiceNetworkProfile no longer has parameter docker_bridge_cidr
+
+## 22.1.0 (2023-04-19)
+
+### Features Added
+
+  - Added operation ManagedClustersOperations.list_kubernetes_versions
+  - Model ManagedCluster has a new parameter support_plan
+
 ## 22.0.0 (2023-03-23)
 
 ### Features Added

@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Union, Generic, TypeVar, List, Dict, Optional
+from typing import Any, Union, Generic, TypeVar, List, Dict, Optional, Iterable
 from contextlib import AbstractAsyncContextManager
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
@@ -33,10 +33,7 @@ from .transport import AsyncHttpTransport
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-ImplPoliciesType = List[
-    AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]  # pylint: disable=unsubscriptable-object
-]
-AsyncPoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
+AsyncPoliciesType = Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 
 class _SansIOAsyncHTTPPolicyRunner(
@@ -84,6 +81,7 @@ class _AsyncTransportRunner(
     Uses specified HTTP transport type to send request and returns response.
 
     :param sender: The async Http Transport instance.
+    :type sender: ~azure.core.pipeline.transport.AsyncHttpTransport
     """
 
     def __init__(self, sender: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]) -> None:
@@ -100,6 +98,12 @@ class _AsyncTransportRunner(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
+        # "insecure_domain_change" is used to indicate that a redirect
+        # has occurred to a different domain. This tells the SensitiveHeaderCleanupPolicy
+        # to clean up sensitive headers. We need to remove it before sending the request
+        # to the transport layer. This code is needed to handle the case that the
+        # SensitiveHeaderCleanupPolicy is not added into the pipeline and "insecure_domain_change" is not popped.
+        request.context.options.pop("insecure_domain_change", False)
         return PipelineResponse(
             request.http_request,
             await self._sender.send(request.http_request, **request.context.options),
@@ -114,6 +118,7 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
     of the HTTP sender.
 
     :param transport: The async Http Transport instance.
+    :type transport: ~azure.core.pipeline.transport.AsyncHttpTransport
     :param list policies: List of configured policies.
 
     .. admonition:: Example:
@@ -155,6 +160,9 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         """Will execute the multipart policies.
 
         Does nothing if "set_multipart_mixed" was never called.
+
+        :param request: The HTTP request object.
+        :type request: ~azure.core.rest.HttpRequest
         """
         multipart_mixed_info = request.multipart_mixed_info  # type: ignore
         if not multipart_mixed_info:

@@ -111,49 +111,53 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
         self._config = ComputeManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.availability_sets = AvailabilitySetsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-03-30"
         )
         self.virtual_machine_extension_images = VirtualMachineExtensionImagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-03-30"
         )
         self.virtual_machine_extensions = VirtualMachineExtensionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-03-30"
         )
         self.virtual_machines = VirtualMachinesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-03-30"
         )
         self.virtual_machine_images = VirtualMachineImagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-03-30"
         )
-        self.usage = UsageOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.usage = UsageOperations(self._client, self._config, self._serialize, self._deserialize, "2017-03-30")
         self.virtual_machine_sizes = VirtualMachineSizesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-03-30"
         )
-        self.images = ImagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resource_skus = ResourceSkusOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.images = ImagesOperations(self._client, self._config, self._serialize, self._deserialize, "2017-03-30")
+        self.resource_skus = ResourceSkusOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2017-03-30"
+        )
         self.virtual_machine_scale_sets = VirtualMachineScaleSetsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-03-30"
         )
         self.virtual_machine_scale_set_extensions = VirtualMachineScaleSetExtensionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-03-30"
         )
         self.virtual_machine_scale_set_rolling_upgrades = VirtualMachineScaleSetRollingUpgradesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-03-30"
         )
         self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-03-30"
         )
-        self.disks = DisksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.snapshots = SnapshotsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.disks = DisksOperations(self._client, self._config, self._serialize, self._deserialize, "2017-03-30")
+        self.snapshots = SnapshotsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2017-03-30"
+        )
         self.virtual_machine_run_commands = VirtualMachineRunCommandsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-03-30"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:

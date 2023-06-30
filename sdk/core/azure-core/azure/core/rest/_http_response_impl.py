@@ -86,6 +86,9 @@ class _HttpResponseBackcompatMixinBase:
         """DEPRECATED: Get the response body.
         This is deprecated and will be removed in a later release.
         You should get it through the `content` property instead
+
+        :return: The response body.
+        :rtype: bytes
         """
         self.read()
         return self.content  # pylint: disable=no-member
@@ -94,6 +97,15 @@ class _HttpResponseBackcompatMixinBase:
         """Helper for _decode_parts.
 
         Rebuild an HTTP response from pure string.
+
+        :param message: The body as an email.Message type
+        :type message: ~email.message.Message
+        :param http_response_type: The type of response to build
+        :type http_response_type: type
+        :param requests: A list of requests to process
+        :type requests: list[~azure.core.rest.HttpRequest]
+        :return: A list of responses
+        :rtype: list[~azure.core.rest.HttpResponse]
         """
 
         def _deserialize_response(http_response_as_bytes, http_request, http_response_type):
@@ -117,6 +129,11 @@ class _HttpResponseBackcompatMixinBase:
 
         If parts are application/http use http_response_type or HttpClientTransportResponse
         as envelope.
+
+        :param http_response_type: The type of response to build
+        :type http_response_type: type
+        :return: An iterator of responses
+        :rtype: Iterator[~azure.core.rest.HttpResponse]
         """
         return _get_raw_parts_helper(self, http_response_type or RestHttpClientTransportResponse)
 
@@ -124,6 +141,10 @@ class _HttpResponseBackcompatMixinBase:
         """DEPRECATED: Generator for streaming request body data.
         This is deprecated and will be removed in a later release.
         You should use `iter_bytes` or `iter_raw` instead.
+
+        :param pipeline: The pipeline object
+        :type pipeline: ~azure.core.pipeline.Pipeline
+        :return: An iterator for streaming request body data.
         :rtype: iterator[bytes]
         """
         return self._stream_download_generator(pipeline, self, **kwargs)
@@ -140,7 +161,9 @@ class HttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
     def parts(self):
         """DEPRECATED: Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
         This is deprecated and will be removed in a later release.
+
         :rtype: Iterator
+        :return: The parts of the response
         :raises ValueError: If the content is not multipart/mixed
         """
         return _parts_helper(self)
@@ -188,6 +211,7 @@ class _HttpResponseBaseImpl(
         """The request that resulted in this response.
 
         :rtype: ~azure.core.rest.HttpRequest
+        :return: The request that resulted in this response.
         """
         return self._request
 
@@ -196,6 +220,7 @@ class _HttpResponseBaseImpl(
         """The URL that resulted in this response.
 
         :rtype: str
+        :return: The URL that resulted in this response.
         """
         return self.request.url
 
@@ -204,12 +229,17 @@ class _HttpResponseBaseImpl(
         """Whether the network connection has been closed yet.
 
         :rtype: bool
+        :return: Whether the network connection has been closed yet.
         """
         return self._is_closed
 
     @property
     def is_stream_consumed(self) -> bool:
-        """Whether the stream has been consumed"""
+        """Whether the stream has been consumed.
+
+        :rtype: bool
+        :return: Whether the stream has been consumed.
+        """
         return self._is_stream_consumed
 
     @property
@@ -217,6 +247,7 @@ class _HttpResponseBaseImpl(
         """The status code of this response.
 
         :rtype: int
+        :return: The status code of this response.
         """
         return self._status_code
 
@@ -225,6 +256,7 @@ class _HttpResponseBaseImpl(
         """The response headers.
 
         :rtype: MutableMapping[str, str]
+        :return: The response headers.
         """
         return self._headers
 
@@ -233,6 +265,7 @@ class _HttpResponseBaseImpl(
         """The content type of the response.
 
         :rtype: optional[str]
+        :return: The content type of the response.
         """
         return self._content_type
 
@@ -241,6 +274,7 @@ class _HttpResponseBaseImpl(
         """The reason phrase for this response.
 
         :rtype: str
+        :return: The reason phrase for this response.
         """
         return self._reason
 
@@ -261,7 +295,10 @@ class _HttpResponseBaseImpl(
 
     @encoding.setter
     def encoding(self, value: str) -> None:
-        """Sets the response encoding"""
+        """Sets the response encoding.
+
+        :param str value: Sets the response encoding.
+        """
         self._encoding = value
         self._text = None  # clear text cache
         self._json = None  # clear json cache as well
@@ -272,6 +309,7 @@ class _HttpResponseBaseImpl(
         :param optional[str] encoding: The encoding you want to decode the text with. Can
          also be set independently through our encoding property
         :return: The response's content decoded as a string.
+        :rtype: str
         """
         if encoding:
             return decode_to_text(encoding, self.content)
@@ -311,7 +349,11 @@ class _HttpResponseBaseImpl(
 
     @property
     def content(self) -> bytes:
-        """Return the response's content in bytes."""
+        """Return the response's content in bytes.
+
+        :return: The response's content in bytes.
+        :rtype: bytes
+        """
         if self._content is None:
             raise ResponseNotReadError(self)
         return self._content
@@ -356,9 +398,10 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse, HttpResponseBackcom
         self.close()
 
     def read(self) -> bytes:
-        """
-        Read the response's bytes.
+        """Read the response's bytes.
 
+        :return: The response's bytes
+        :rtype: bytes
         """
         if self._content is None:
             self._content = b"".join(self.iter_bytes())
