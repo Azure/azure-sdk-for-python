@@ -69,6 +69,7 @@ class AzureKeyCredential:
         """The value of the configured key.
 
         :rtype: str
+        :return: The value of the configured key.
         """
         return self._key
 
@@ -106,6 +107,7 @@ class AzureSasCredential:
         """The value of the configured shared access signature.
 
         :rtype: str
+        :return: The value of the configured shared access signature.
         """
         return self._signature
 
@@ -144,6 +146,7 @@ class AzureNamedKeyCredential:
         """The value of the configured name.
 
         :rtype: AzureNamedKey
+        :return: The value of the configured name.
         """
         return self._credential
 
