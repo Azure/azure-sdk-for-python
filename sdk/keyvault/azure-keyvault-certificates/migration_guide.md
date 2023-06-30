@@ -1,13 +1,13 @@
 # Guide for migrating to azure-keyvault-certificates from azure-keyvault
 
-This guide is intended to assist in the migration to `azure-keyvault-certificates` from `azure-keyvault`. It will focus on side-by-side comparisons for similar operations between the two packages.
+This guide is intended to assist in the migration to `azure-keyvault-certificates` from the [deprecated] `azure-keyvault` library. It will focus on side-by-side comparisons for similar operations between the two packages.
 
 Familiarity with the `azure-keyvault` package is assumed. For those new to the Key Vault client library for Python, please refer to the [README for `azure-keyvault-certificates`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/README.md) rather than this guide.
 
 ## Table of contents
 
-* [Migration benefits](#migration-benefits)
-* [Important changes](#important-changes)
+- [Migration benefits](#migration-benefits)
+- [Important changes](#important-changes)
     - [Separate packages and clients](#separate-packages-and-clients)
     - [Client constructors](#client-constructors)
     - [Async operations](#async-operations)
@@ -15,15 +15,18 @@ Familiarity with the `azure-keyvault` package is assumed. For those new to the K
     - [Retrieve a certificate](#retrieve-a-certificate)
     - [List properties of certificates](#list-properties-of-certificates)
     - [Delete a certificate](#delete-a-certificate)
-* [Additional samples](#additional-samples)
+- [Additional samples](#additional-samples)
+- [Support](#support)
 
 ## Migration benefits
+
+> Note: `azure-keyvault` has been [deprecated]. Please upgrade to `azure-keyvault-certificates` for continued support.
 
 A natural question to ask when considering whether or not to adopt a new version or library is what the benefits of doing so would be. As Azure has matured and been embraced by a more diverse group of developers, we have been focused on learning the patterns and practices to best support developer productivity and to understand the gaps that the Python client libraries have.
 
 There were several areas of consistent feedback expressed across the Azure client library ecosystem. One of the most important is that the client libraries for different Azure services have not had a consistent approach to organization, naming, and API structure. Additionally, many developers have felt that the learning curve was difficult, and the APIs did not offer a good, approachable, and consistent onboarding story for those learning Azure or exploring a specific Azure service.
 
-To try and improve the development experience across Azure services, a set of uniform [design guidelines](https://azure.github.io/azure-sdk/python/guidelines/index.html) was created for all languages to drive a consistent experience with established API patterns for all services. A set of [Python-specific guidelines](https://azure.github.io/azure-sdk/python_design.html) was also introduced to ensure that Python clients have a natural and idiomatic feel with respect to the Python ecosystem. Further details are available in the guidelines for those interested.
+To try and improve the development experience across Azure services, a set of uniform [design guidelines](https://azure.github.io/azure-sdk/general_introduction.html) was created for all languages to drive a consistent experience with established API patterns for all services. A set of [Python-specific guidelines](https://azure.github.io/azure-sdk/python_design.html) was also introduced to ensure that Python clients have a natural and idiomatic feel with respect to the Python ecosystem. Further details are available in the guidelines for those interested.
 
 ### Cross Service SDK improvements
 
@@ -213,3 +216,12 @@ certificate_client.purge_deleted_certificate(certificate_name="cert-name")
 
 * [Key Vault certificates samples for Python](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates/samples)
 * [General Key Vault samples for Python](https://docs.microsoft.com/samples/browse/?products=azure-key-vault&languages=python)
+
+## Support
+
+If you have migrated your code base and are experiencing errors, see our [troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/TROUBLESHOOTING.md).
+For additional support, please search our [existing issues](https://github.com/Azure/azure-sdk-for-python/issues) or [open a new issue](https://github.com/Azure/azure-sdk-for-python/issues/new/choose).
+You may also find existing answers on community sites like [Stack Overflow](https://stackoverflow.com/questions/tagged/azure-keyvault+python).
+
+
+[deprecated]: https://aka.ms/azsdk/deprecated

@@ -22,7 +22,12 @@ from .. import AuthenticationRecord
 
 
 class SilentAuthenticationCredential:
-    """Internal class for authenticating from the default shared cache given an AuthenticationRecord"""
+    """Internal class for authenticating from the default shared cache given an AuthenticationRecord.
+
+    :param authentication_record: an AuthenticationRecord from which to authenticate
+    :type authentication_record: ~azure.identity.AuthenticationRecord
+    :keyword str tenant_id: tenant ID of the application the credential is authenticating for. Defaults to the tenant
+    """
 
     def __init__(
             self,
@@ -97,7 +102,12 @@ class SilentAuthenticationCredential:
 
     @wrap_exceptions
     def _acquire_token_silent(self, *scopes: str, **kwargs: Any) -> AccessToken:
-        """Silently acquire a token from MSAL."""
+        """Silently acquire a token from MSAL.
+
+        :param str scopes: desired scopes for the access token
+        :return: an access token
+        :rtype: ~azure.core.credentials.AccessToken
+        """
 
         result = None
 

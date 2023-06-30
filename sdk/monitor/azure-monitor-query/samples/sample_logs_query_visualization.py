@@ -22,14 +22,13 @@ USAGE:
 This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
 For more information on DefaultAzureCredential, see https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 """
-import os
 from datetime import timedelta
+import os
 
-import plotly.express as px
-
-from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
+from azure.monitor.query import LogsQueryClient, LogsQueryStatus
+import plotly.express as px
 
 
 credential = DefaultAzureCredential()
@@ -45,10 +44,7 @@ query = (
 
 try:
     response = client.query_workspace(
-        os.environ['LOGS_WORKSPACE_ID'],
-        query,
-        timespan=timedelta(days=1),
-        include_visualization=True
+        os.environ["LOGS_WORKSPACE_ID"], query, timespan=timedelta(days=1), include_visualization=True
     )
     if response.status == LogsQueryStatus.PARTIAL:
         error = response.partial_error
@@ -72,14 +68,11 @@ try:
                 x=0,
                 y=1,
                 title=viz["title"],
-                labels={
-                    "0": viz["xTitle"],
-                    "1": viz["yTitle"]
-                },
-                range_y=[0, viz["yMax"]]
+                labels={"0": viz["xTitle"], "1": viz["yTitle"]},
+                range_y=[0, viz["yMax"]],
             )
             # Output visualization to a file.
-            fig.write_html('query-visualization.html')
+            fig.write_html("query-visualization.html")
             # To open in a browser, use:
             # fig.show()
 
