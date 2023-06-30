@@ -41,6 +41,7 @@ from .pipeline.policies import (
     HttpLoggingPolicy,
     RequestIdPolicy,
     RetryPolicy,
+    SensitiveHeaderCleanupPolicy,
 )
 
 HTTPResponseType = TypeVar("HTTPResponseType")
@@ -100,7 +101,7 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
     def close(self):
         self.__exit__()
 
-    def _build_pipeline(  # pylint: disable=no-self-use
+    def _build_pipeline(
         self,
         config: Configuration,
         *,
@@ -143,6 +144,7 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
                 [
                     config.logging_policy,
                     DistributedTracingPolicy(**kwargs),
+                    SensitiveHeaderCleanupPolicy(**kwargs) if config.redirect_policy else None,
                     config.http_logging_policy or HttpLoggingPolicy(**kwargs),
                 ]
             )
@@ -174,7 +176,7 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
                 policies = policies_1
 
         if transport is None:
-            from .pipeline.transport import RequestsTransport
+            from .pipeline.transport import RequestsTransport  # pylint: disable=no-name-in-module
 
             transport = RequestsTransport(**kwargs)
 

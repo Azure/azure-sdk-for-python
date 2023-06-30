@@ -14,7 +14,12 @@ from .._persistent_cache import _load_persistent_cache
 
 
 class MsalCredential:   # pylint: disable=too-many-instance-attributes
-    """Base class for credentials wrapping MSAL applications"""
+    """Base class for credentials wrapping MSAL applications.
+
+    :param str client_id: the principal's client ID
+    :param client_credential: client credential data for the application
+    :type client_credential: dict
+    """
 
     def __init__(
             self,

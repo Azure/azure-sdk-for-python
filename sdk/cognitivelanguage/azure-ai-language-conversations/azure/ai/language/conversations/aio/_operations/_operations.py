@@ -41,7 +41,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinABC):
+class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinABC):  # pylint: disable=name-too-long
     @overload
     async def analyze_conversation(self, task: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         """Analyzes the input conversation utterance.

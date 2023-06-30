@@ -10,6 +10,7 @@ from azure.search.documents.aio._search_client_async import AsyncSearchPageItera
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
+
 class TestSearchClientAsync:
     @mock.patch(
         "azure.search.documents._generated.aio.operations._documents_operations.DocumentsOperations.search_post"
