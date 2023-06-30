@@ -88,15 +88,16 @@ def adjust_confidence(score: Optional[float]) -> float:
     return score
 
 
-def adjust_text_angle(text_angle: Optional[float]) -> float:
+def adjust_text_angle(text_angle: Optional[float]) -> Optional[float]:
     """Adjust to (-180, 180]
 
     :param Optional[float] text_angle: The text angle to be adjusted.
     :return: The adjusted text angle.
     :rtype: float
     """
-    if text_angle > 180:
-        text_angle -= 360
+    if text_angle is not None:
+        if text_angle > 180.0:
+            text_angle -= 360.0
     return text_angle
 
 
