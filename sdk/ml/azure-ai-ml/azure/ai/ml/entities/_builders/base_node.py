@@ -147,10 +147,6 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         # initialize io
         inputs = resolve_pipeline_parameters(inputs)
         inputs, outputs = inputs or {}, outputs or {}
-        self._parse_io(inputs, Input)
-        self._validate_io(inputs, self._get_supported_inputs_types())
-        self._parse_io(outputs, Output)
-        self._validate_io(outputs, self._get_supported_outputs_types())
         # parse empty dict to None so we won't pass default mode, type to backend
         # add `isinstance` to avoid converting to expression
         for k, v in inputs.items():
@@ -161,13 +157,13 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         self._job_inputs, self._job_outputs = inputs, outputs
         if isinstance(component, Component):
             # Build the inputs from component input definition and given inputs, unfilled inputs will be None
-            self._inputs = self._build_inputs_dict(component.inputs, inputs or {})
+            self._inputs = self._build_inputs_dict(inputs or {}, input_definition_dict=component.inputs)
             # Build the outputs from component output definition and given outputs, unfilled outputs will be None
-            self._outputs = self._build_outputs_dict(component.outputs, outputs or {})
+            self._outputs = self._build_outputs_dict(outputs or {}, output_definition_dict=component.outputs)
         else:
             # Build inputs/outputs dict without meta when definition not available
-            self._inputs = self._build_inputs_dict_without_meta(inputs or {})
-            self._outputs = self._build_outputs_dict_without_meta(outputs or {})
+            self._inputs = self._build_inputs_dict(inputs or {})
+            self._outputs = self._build_outputs_dict(outputs or {})
 
         self._component = component
         self._referenced_control_flow_node_instance_id = None
@@ -222,48 +218,9 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
             PipelineExpression,
         )
 
-    @classmethod
-    def _get_supported_outputs_types(cls):
-        # supported output types for node input
-        return None
-
     @property
     def _skip_required_compute_missing_validation(self):
         return False
-
-    @classmethod
-    def _validate_io(cls, io_dict: dict, allowed_types: Optional[tuple]):
-        if allowed_types is None:
-            return
-        for _, value in io_dict.items():
-            if value is None or isinstance(value, allowed_types):
-                pass
-            else:
-                return
-                # TODO: enable this
-                # msg = "Expecting {} for input/output {}, got {} instead."
-                # raise ValidationException(
-                #     message=msg.format(allowed_types, key, type(value)),
-                #     no_personal_data_message=msg.format(allowed_types, "[key]", type(value)),
-                #     target=ErrorTarget.PIPELINE,
-                #     error_type=ValidationErrorType.INVALID_VALUE,
-                # )
-
-    @classmethod
-    def _parse_io(cls, io_dict: dict, parse_cls):
-        for key, value in io_dict.items():
-            # output mode of last node should not affect input mode of next node
-            if isinstance(value, NodeOutput):
-                # value = copy.deepcopy(value)
-                value = value._deepcopy()  # Decoupled input and output
-                io_dict[key] = value
-                value.mode = None
-            elif type(value) == dict:  # pylint: disable=unidiomatic-typecheck
-                # Use type comparison instead of is_instance to skip _GroupAttrDict
-                # when loading from yaml io will be a dict,
-                # like {'job_data_path': '${{parent.inputs.pipeline_job_data_path}}'}
-                # parse dict to allowed type
-                io_dict[key] = parse_cls(**value)
 
     def _initializing(self) -> bool:
         # use this to indicate ongoing init process so all attributes set during init process won't be set as

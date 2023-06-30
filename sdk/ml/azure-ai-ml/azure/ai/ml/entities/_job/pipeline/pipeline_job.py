@@ -125,13 +125,13 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
             ComponentSource.DSL,
             ComponentSource.YAML_COMPONENT,
         ]:
-            self._inputs = self._build_inputs_dict(component.inputs, inputs)
+            self._inputs = self._build_inputs_dict(inputs, input_definition_dict=component.inputs)
             # for pipeline component created pipeline jobs,
             # it's output should have same value with the component outputs
             self._outputs = self._build_pipeline_outputs_dict(component.outputs)
         else:
             # Build inputs/outputs dict without meta when definition not available
-            self._inputs = self._build_inputs_dict_without_meta(inputs)
+            self._inputs = self._build_inputs_dict(inputs)
             # for node created pipeline jobs,
             # it's output should have same value with the given outputs
             self._outputs = self._build_pipeline_outputs_dict(outputs=outputs)

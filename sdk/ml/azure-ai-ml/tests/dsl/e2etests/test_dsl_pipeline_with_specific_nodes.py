@@ -321,28 +321,57 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
         assert omit_with_wildcard(base._to_dict(), *omit_fields) == omit_with_wildcard(treat._to_dict(), *omit_fields)
 
     @pytest.mark.parametrize(
-        "group_param_input",
+        "group_param_input, use_remote_component",
         [
             pytest.param(
                 Group(
                     number=1.0,
                     sub1=SubGroup(integer=1),
                 ),
+                False,
                 id="strong-typed-group",
             ),
-            # TODO: we'd better support this:
-            # pytest.param(
-            #     {
-            #         "number": 1.0,
-            #         "sub1": {"integer": 1},
-            #     },
-            #     id="dict-group",
-            # ),
+            pytest.param(
+                {
+                    "number": 1.0,
+                    "sub1": {"integer": 1},
+                },
+                False,
+                id="dict-group",
+            ),
+            pytest.param(
+                Group(
+                    number=1.0,
+                    sub1=SubGroup(integer=1),
+                ),
+                True,
+                id="strong-typed-group-remote",
+            ),
+            pytest.param(
+                {
+                    "number": 1.0,
+                    "sub1": {"integer": 1},
+                },
+                True,
+                id="dict-group-remote",
+            ),
         ],
     )
-    def test_dsl_pipeline_with_param_group_in_command_component(self, client, group_param_input):
+    def test_dsl_pipeline_with_param_group_in_command_component(
+        self,
+        client,
+        group_param_input,
+        use_remote_component: bool,
+        randstr: Callable[[str], str],
+    ):
         command_func = load_component("./tests/test_configs/components/helloworld_component_with_parameter_group.yml")
         input_data_path = "./tests/test_configs/data/"
+
+        if use_remote_component:
+            command_func.name = randstr("component_name")
+            command_func = client.components.create_or_update(
+                command_func,
+            )
 
         @dsl.pipeline
         def pipeline_with_command(input_data):
