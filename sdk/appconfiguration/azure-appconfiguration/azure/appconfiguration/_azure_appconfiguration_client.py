@@ -135,6 +135,7 @@ class AzureAppConfigurationClient:
             else:
                 credential_policy = AppConfigRequestsCredentialsPolicy(credential)
             policies = [
+                RequestIdPolicy(**kwargs),
                 self._config.headers_policy,
                 self._config.user_agent_policy,
                 self._config.retry_policy,
@@ -144,7 +145,6 @@ class AzureAppConfigurationClient:
                 DistributedTracingPolicy(**kwargs),
                 HttpLoggingPolicy(**kwargs),
                 ContentDecodePolicy(**kwargs),
-                RequestIdPolicy(**kwargs),
             ]
 
         if not transport:
