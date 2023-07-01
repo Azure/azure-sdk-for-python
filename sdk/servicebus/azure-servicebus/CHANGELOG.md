@@ -1,6 +1,5 @@
 # Release History
 
-
 ## 7.11.1 (Unreleased)
 
 ### Features Added
@@ -11,8 +10,9 @@
 
 ### Other Changes
 
-## 7.11.0 (2023-06-12)
+- The error raised when attempting to complete a message with an expired lock received from a non-sessionful entity has been updated to the more fine-grained `MessageLockLostError` from the superclass `ServiceBusError`.
 
+## 7.11.0 (2023-06-12)
 
 ### Features Added
 

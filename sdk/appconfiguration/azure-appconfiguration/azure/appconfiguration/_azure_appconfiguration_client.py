@@ -10,6 +10,9 @@ from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline import Pipeline
+from azure.core.pipeline.transport import (
+    RequestsTransport,
+)  # pylint:disable=non-abstract-transport-import,no-name-in-module
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
     DistributedTracingPolicy,
@@ -69,8 +72,8 @@ class AzureAppConfigurationClient:
         try:
             if not base_url.lower().startswith("http"):
                 base_url = "https://" + base_url
-        except AttributeError:
-            raise ValueError("Base URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Base URL must be a string.") from exc
 
         if not credential:
             raise ValueError("Missing credential")
@@ -166,7 +169,7 @@ class AzureAppConfigurationClient:
             used as wildcard in the beginning or end of the filter
         :type label_filter: str
         :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
-        :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
@@ -185,7 +188,7 @@ class AzureAppConfigurationClient:
                 pass  # do something
 
             filtered_listed = client.list_configuration_settings(
-                label_filter="Labe*", key_filter="Ke*", accept_datetime=accept_datetime
+                label_filter="Labe*", key_filter="Ke*", accept_datetime=str(accept_datetime)
             )
             for item in filtered_listed:
                 pass  # do something
@@ -206,9 +209,9 @@ class AzureAppConfigurationClient:
             )
         except HttpResponseError as error:
             e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
-        except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise e(message=error.message, response=error.response) from error
+        except binascii.Error as exc:
+            raise binascii.Error("Connection string secret has incorrect padding") from exc
 
     @distributed_trace
     def get_configuration_setting(
@@ -270,9 +273,9 @@ class AzureAppConfigurationClient:
             return None
         except HttpResponseError as error:
             e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
-        except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise e(message=error.message, response=error.response) from error
+        except binascii.Error as exc:
+            raise binascii.Error("Connection string secret has incorrect padding") from exc
 
     @distributed_trace
     def add_configuration_setting(self, configuration_setting: ConfigurationSetting, **kwargs) -> ConfigurationSetting:
@@ -314,9 +317,9 @@ class AzureAppConfigurationClient:
             return ConfigurationSetting._from_generated(key_value_added)
         except HttpResponseError as error:
             e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
-        except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise e(message=error.message, response=error.response) from error
+        except binascii.Error as exc:
+            raise binascii.Error("Connection string secret has incorrect padding") from exc
 
     @distributed_trace
     def set_configuration_setting(
@@ -383,12 +386,14 @@ class AzureAppConfigurationClient:
             return ConfigurationSetting._from_generated(key_value_set)
         except HttpResponseError as error:
             e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
-        except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise e(message=error.message, response=error.response) from error
+        except binascii.Error as exc:
+            raise binascii.Error("Connection string secret has incorrect padding") from exc
 
     @distributed_trace
-    def delete_configuration_setting(self, key: str, label: Optional[str] = None, **kwargs) -> ConfigurationSetting:
+    def delete_configuration_setting(
+        self, key: str, label: Optional[str] = None, **kwargs
+    ) -> ConfigurationSetting:  # pylint:disable=delete-operation-wrong-return-type
         """Delete a ConfigurationSetting if it exists
 
         :param key: key used to identify the ConfigurationSetting
@@ -440,9 +445,9 @@ class AzureAppConfigurationClient:
             return ConfigurationSetting._from_generated(key_value_deleted)  # type: ignore
         except HttpResponseError as error:
             e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
-        except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise e(message=error.message, response=error.response) from error
+        except binascii.Error as exc:
+            raise binascii.Error("Connection string secret has incorrect padding") from exc
 
     @distributed_trace
     def list_revisions(
@@ -458,7 +463,7 @@ class AzureAppConfigurationClient:
             used as wildcard in the beginning or end of the filter
         :type label_filter: str
         :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
-        :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
@@ -477,7 +482,7 @@ class AzureAppConfigurationClient:
                 pass  # do something
 
             filtered_revisions = client.list_revisions(
-                label_filter="Labe*", key_filter="Ke*", accept_datetime=accept_datetime
+                label_filter="Labe*", key_filter="Ke*", accept_datetime=str(accept_datetime)
             )
             for item in filtered_revisions:
                 pass  # do something
@@ -498,9 +503,9 @@ class AzureAppConfigurationClient:
             )
         except HttpResponseError as error:
             e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
-        except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise e(message=error.message, response=error.response) from error
+        except binascii.Error as exc:
+            raise binascii.Error("Connection string secret has incorrect padding") from exc
 
     @distributed_trace
     def set_read_only(
@@ -566,9 +571,9 @@ class AzureAppConfigurationClient:
             return ConfigurationSetting._from_generated(key_value)
         except HttpResponseError as error:
             e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
-        except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise e(message=error.message, response=error.response) from error
+        except binascii.Error as exc:
+            raise binascii.Error("Connection string secret has incorrect padding") from exc
 
     @distributed_trace
     def begin_create_snapshot(
