@@ -22,18 +22,18 @@ class ConfigurationSetting(Model):
     :vartype value: str
     :ivar etag: Entity tag (etag) of the object
     :vartype etag: str
-    :param key:
-    :type key: str
-    :param label:
-    :type label: str
-    :param content_type:
-    :type content_type: str
+    :ivar key:
+    :vartype key: str
+    :ivar label:
+    :vartype label: str
+    :ivar content_type:
+    :vartype content_type: str
     :ivar last_modified:
     :vartype last_modified: datetime
     :ivar read_only:
     :vartype read_only: bool
-    :param tags:
-    :type tags: Dict[str, str]
+    :ivar tags:
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -115,28 +115,28 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
 
     :ivar etag: Entity tag (etag) of the object
     :vartype etag: str
-    :ivar feature_id:
-    :vartype feature_id: str
+    :param feature_id:
+    :type feature_id: str
     :ivar value: The value of the configuration setting
     :vartype value: str
     :keyword enabled:
     :paramtype enabled: bool
     :keyword filters:
-    :paramtype filters: List[Dict[str, Any]]
-    :param label:
-    :type label: str
-    :param display_name:
-    :type display_name: str
-    :param description:
-    :type description: str
-    :param content_type:
-    :type content_type: str
+    :paramtype filters: list[dict[str, Any]]
+    :ivar label:
+    :vartype label: str
+    :ivar display_name:
+    :vartype display_name: str
+    :ivar description:
+    :vartype description: str
+    :ivar content_type:
+    :vartype content_type: str
     :ivar last_modified:
     :vartype last_modified: datetime
     :ivar read_only:
     :vartype read_only: bool
-    :param tags:
-    :type tags: Dict[str, str]
+    :ivar tags:
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -161,7 +161,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
         filters: Optional[List[Dict[str, Any]]] = None,
         **kwargs
     ) -> None:
-        if "key" in kwargs.keys() or "value" in kwargs.keys():
+        if "key" in kwargs or "value" in kwargs:
             raise TypeError("Unexpected keyword argument, do not provide 'key' or 'value' as a keyword-arg")
         self.feature_id = feature_id
         self.key = self._key_prefix + self.feature_id
@@ -253,22 +253,22 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
 
     :ivar etag: Entity tag (etag) of the object
     :vartype etag: str
-    :ivar key:
-    :vartype key: str
-    :ivar secret_id:
-    :vartype secret_id: str
-    :param label:
-    :type label: str
-    :param content_type:
-    :type content_type: str
+    :param key:
+    :type key: str
+    :param secret_id:
+    :type secret_id: str
+    :ivar label:
+    :vartype label: str
+    :ivar content_type:
+    :vartype content_type: str
     :ivar value: The value of the configuration setting
-    :vartype value: Dict[str, Any]
+    :vartype value: dict[str, Any]
     :ivar last_modified:
     :vartype last_modified: datetime
     :ivar read_only:
     :vartype read_only: bool
-    :param tags:
-    :type tags: Dict[str, str]
+    :ivar tags:
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -285,7 +285,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     kind = "SecretReference"
 
     def __init__(self, key: str, secret_id: str, **kwargs) -> None:  # pylint: disable=super-init-not-called
-        if "value" in kwargs.keys():
+        if "value" in kwargs:
             raise TypeError("Unexpected keyword argument, do not provide 'value' as a keyword-arg")
         self.key = key
         self.label = kwargs.pop("label", None)
