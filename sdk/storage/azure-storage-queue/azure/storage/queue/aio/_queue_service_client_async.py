@@ -409,7 +409,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
                 :caption: Get the queue client.
         """
         if isinstance(queue, QueueProperties):
-            queue_name = queue.name
+            if queue.name is not None:
+                queue_name = queue.name
         else:
             queue_name = queue
 

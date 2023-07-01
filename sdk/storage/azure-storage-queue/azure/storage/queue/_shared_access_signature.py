@@ -41,25 +41,26 @@ class QueueSharedAccessSignature(SharedAccessSignature):
 
     def generate_queue(
         self, queue_name: str,
-        permission: "QueueSasPermissions" = None,
-        expiry: Union["datetime", str] = None,
-        start: Union["datetime", str] = None,
-        policy_id: str = None,
-        ip: str = None,
-        protocol: str = None
+        permission: Optional[Union["QueueSasPermissions", str]] = None,
+        expiry: Optional[Union["datetime", str]] = None,
+        start: Optional[Union["datetime", str]] = None,
+        policy_id: Optional[str] = None,
+        ip: Optional[str] = None,
+        protocol: Optional[str] = None
     ) -> str:
         '''
         Generates a shared access signature for the queue.
         Use the returned signature with the sas_token parameter of QueueService.
         :param str queue_name:
             Name of queue.
-        :param QueueSasPermissions permission:
+        :param permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Permissions must be ordered read, add, update, process.
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
+        :type permission: ~azure.storage.queue.QueueSasPermissions or str
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -98,7 +99,7 @@ class QueueSharedAccessSignature(SharedAccessSignature):
 
 class _QueueSharedAccessHelper(_SharedAccessHelper):
 
-    def add_resource_signature(self, account_name: str, account_key: str, path: str) -> str:  # pylint: disable=arguments-differ
+    def add_resource_signature(self, account_name: str, account_key: str, path: str):  # pylint: disable=arguments-differ
         def get_value_to_append(query):
             return_value = self.query_dict.get(query) or ''
             return return_value + '\n'
@@ -148,9 +149,10 @@ def generate_account_sas(
         The account key, also called shared key or access key, to generate the shared access signature.
     :param ~azure.storage.queue.ResourceTypes resource_types:
         Specifies the resource types that are accessible with the account SAS.
-    :param ~azure.storage.queue.AccountSasPermissions permission:
+    :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
+    :type permission: ~azure.storage.queue.AccountSasPermissions or str
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -210,12 +212,13 @@ def generate_queue_sas(
         The name of the queue.
     :param str account_key:
         The account key, also called shared key or access key, to generate the shared access signature.
-    :param ~azure.storage.queue.QueueSasPermissions permission:
+    :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
         Required unless a policy_id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
+    :type permission: ~azure.storage.queue.QueueSasPermissions or str
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless a policy_id is given referencing a stored access policy

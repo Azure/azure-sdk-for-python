@@ -6,7 +6,7 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called
 
-from typing import Any, Callable, List, Optional, Tuple
+from typing import Any, AsyncIterator, Callable, List, Optional, Tuple
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
 from .._shared.response_handlers import (
@@ -19,24 +19,24 @@ class MessagesPaged(AsyncPageIterator):
     """An iterable of Queue Messages.
 
     :param Callable command: Function to retrieve the next page of items.
-    :param int results_per_page: The maximum number of messages to retrieve per
+    :param Optional[int] results_per_page: The maximum number of messages to retrieve per
         call.
-    :param int max_messages: The maximum number of messages to retrieve from
+    :param Optional[int] max_messages: The maximum number of messages to retrieve from
         the queue.
     """
 
     command: Callable
     """Function to retrieve the next page of items."""
-    results_per_page: int = None
+    results_per_page: Optional[int] = None
     """A UTC date value representing the time the message expires."""
-    max_messages: int = None
+    max_messages: Optional[int] = None
     """The maximum number of messages to retrieve from the queue."""
 
     def __init__(
         self, command: Callable,
-        results_per_page: int = None,
-        continuation_token: str = None,
-        max_messages: int = None
+        results_per_page: Optional[int] = None,
+        continuation_token: Optional[str] = None,
+        max_messages: Optional[int] = None
     ) -> None:
         if continuation_token is not None:
             raise ValueError("This operation does not support continuation token")
@@ -49,7 +49,7 @@ class MessagesPaged(AsyncPageIterator):
         self.results_per_page = results_per_page
         self._max_messages = max_messages
 
-    async def _get_next_cb(self, continuation_token: str) -> Any:
+    async def _get_next_cb(self, continuation_token: Optional[str]) -> Any:
         try:
             if self._max_messages is not None:
                 if self.results_per_page is None:
@@ -61,7 +61,7 @@ class MessagesPaged(AsyncPageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    async def _extract_data_cb(self, messages: QueueMessage) -> Tuple[str, List[QueueMessage]]:
+    async def _extract_data_cb(self, messages: Any) -> Tuple[str, AsyncIterator[List[QueueMessage]]]:
         # There is no concept of continuation token, so raising on my own condition
         if not messages:
             raise StopAsyncIteration("End of paging")
@@ -76,38 +76,31 @@ class QueuePropertiesPaged(AsyncPageIterator):
     :param Callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only queues whose names
         begin with the specified prefix.
-    :param int results_per_page: The maximum number of queue names to retrieve per
+    :param Optional[int] results_per_page: The maximum number of queue names to retrieve per
         call.
     :param str continuation_token: An opaque continuation token.
     """
 
-    service_endpoint: str
+    service_endpoint: Optional[str]
     """The service URL."""
-    prefix: str
+    prefix: Optional[str]
     """A queue name prefix being used to filter the list."""
-    marker: str
+    marker: Optional[str]
     """The continuation token of the current page of results."""
-    results_per_page: int = None
+    results_per_page: Optional[int] = None
     """The maximum number of results retrieved per API call."""
     next_marker: str
     """The continuation token to retrieve the next page of results."""
-    location_mode: str
+    location_mode: Optional[str]
     """The location mode being used to list results. The available options include "primary" and "secondary"."""
     command: Callable
     """Function to retrieve the next page of items."""
-    prefix: str = None
-    """Filters the results to return only queues whose names begin with the specified prefix."""
-    results_per_page: int
-    """The maximum number of queue names to retrieve per
-        call."""
-    continuation_token: str = None
-    """An opaque continuation token."""
 
     def __init__(
         self, command: Callable,
-        prefix: str = None,
-        results_per_page: int = None,
-        continuation_token: str = None
+        prefix: Optional[str] = None,
+        results_per_page: Optional[int] = None,
+        continuation_token: Optional[str] = None
     ) -> None:
         super(QueuePropertiesPaged, self).__init__(
             self._get_next_cb,
@@ -131,11 +124,19 @@ class QueuePropertiesPaged(AsyncPageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    async def _extract_data_cb(self, get_next_return: str) -> Tuple[Optional[str], List[QueueProperties]]:
+    async def _extract_data_cb(self, get_next_return: Tuple[str, Any]) -> Tuple[Optional[str], List[QueueProperties]]:
         self.location_mode, self._response = get_next_return
-        self.service_endpoint = self._response.service_endpoint
-        self.prefix = self._response.prefix
-        self.marker = self._response.marker
-        self.results_per_page = self._response.max_results
-        props_list = [QueueProperties._from_generated(q) for q in self._response.queue_items] # pylint: disable=protected-access
-        return self._response.next_marker or None, props_list
+        if self._response is not None:
+            if hasattr(self._response, 'service_endpoint'):
+                self.service_endpoint = self._response.service_endpoint
+            if hasattr(self._response, 'prefix'):
+                self.prefix = self._response.prefix
+            if hasattr(self._response, 'marker'):
+                self.marker = self._response.marker
+            if hasattr(self._response, 'max_results'):
+                self.results_per_page = self._response.max_results
+            if hasattr(self._response, 'queue_items'):
+                props_list = [QueueProperties._from_generated(q) for q in self._response.queue_items] # pylint: disable=protected-access
+            if hasattr(self._response, 'next_marker'):
+                next_marker = self._response.next_marker
+        return next_marker or None, props_list

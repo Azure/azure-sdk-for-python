@@ -42,10 +42,10 @@ class RetentionPolicy(GeneratedRetentionPolicy):
 
     enabled: bool = False
     """Indicates whether a retention policy is enabled for the storage service."""
-    days: int = None
+    days: Optional[int] = None
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained."""
 
-    def __init__(self, enabled: bool = False, days: int = None) -> None:
+    def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
         self.enabled = enabled
         self.days = days
         if self.enabled and (self.days is None):
@@ -120,7 +120,7 @@ class Metrics(GeneratedMetrics):
     """The version of Storage Analytics to configure."""
     enabled: bool = False
     """Indicates whether metrics are enabled for the service."""
-    include_apis: bool
+    include_apis: Optional[bool]
     """Indicates whether metrics should generate summary statistics for called API operations."""
     retention_policy: RetentionPolicy = RetentionPolicy()
     """The retention policy for the metrics."""
@@ -248,18 +248,18 @@ class AccessPolicy(GenAccessPolicy):
     :type start: ~datetime.datetime or str
     """
 
-    permission: str = None
+    permission: Optional[str] = None
     """The permissions associated with the shared access signature. The user is restricted to
         operations allowed by the permissions."""
-    expiry: Union["datetime", str] = None
+    expiry: Optional[Union["datetime", str]] = None  # type: ignore
     """The time at which the shared access signature becomes invalid."""
-    start: Union["datetime", str] = None
+    start: Optional[Union["datetime", str]] = None  # type: ignore
     """The time at which the shared access signature becomes valid."""
 
     def __init__(
-        self, permission: str = None,
-        expiry: Union["datetime", str] = None,
-        start: Union["datetime", str] = None
+        self, permission: Optional[str] = None,
+        expiry: Optional[Union["datetime", str]] = None,
+        start: Optional[Union["datetime", str]] = None
     ) -> None:
         self.start = start
         self.expiry = expiry
@@ -269,7 +269,7 @@ class AccessPolicy(GenAccessPolicy):
 class QueueMessage(DictMixin):
     """Represents a queue message."""
 
-    id: str
+    id: Optional[str]
     """A GUID value assigned to the message by the Queue service that
         identifies the message in the queue. This value may be used together
         with the value of pop_receipt to delete a message from the queue after
@@ -284,12 +284,12 @@ class QueueMessage(DictMixin):
     content: Any = None
     """The message content. Type is determined by the decode_function set on
         the service. Default is str."""
-    pop_receipt: str
+    pop_receipt: Optional[str]
     """A receipt str which can be used together with the message_id element to
         delete a message from the queue after it has been retrieved with the receive
         messages operation. Only returned by receive messages operations. Set to
         None for peek messages."""
-    next_visible_on: "datetime"
+    next_visible_on: Optional["datetime"]
     """A UTC date value representing the time the message will next be visible.
         Only returned by receive messages operations. Set to None for peek messages."""
 
@@ -319,24 +319,24 @@ class MessagesPaged(PageIterator):
     """An iterable of Queue Messages.
 
     :param Callable command: Function to retrieve the next page of items.
-    :param int results_per_page: The maximum number of messages to retrieve per
+    :param Optional[int] results_per_page: The maximum number of messages to retrieve per
         call.
-    :param int max_messages: The maximum number of messages to retrieve from
+    :param Optional[int] max_messages: The maximum number of messages to retrieve from
         the queue.
     """
 
     command: Callable
     """Function to retrieve the next page of items."""
-    results_per_page: int = None
-    """A UTC date value representing the time the message expires."""
-    max_messages: int = None
+    results_per_page: Optional[int] = None
+    """The maximum number of messages to retrieve per call."""
+    max_messages: Optional[int] = None
     """The maximum number of messages to retrieve from the queue."""
 
     def __init__(
         self, command: Callable,
-        results_per_page: int = None,
-        continuation_token: str = None,
-        max_messages: int = None
+        results_per_page: Optional[int] = None,
+        continuation_token: Optional[str] = None,
+        max_messages: Optional[int] = None
     ) -> None:
         if continuation_token is not None:
             raise ValueError("This operation does not support continuation token")
@@ -349,7 +349,7 @@ class MessagesPaged(PageIterator):
         self.results_per_page = results_per_page
         self._max_messages = max_messages
 
-    def _get_next_cb(self, continuation_token: str) -> Any:
+    def _get_next_cb(self, continuation_token: Optional[str]) -> Any:
         try:
             if self._max_messages is not None:
                 if self.results_per_page is None:
@@ -373,15 +373,17 @@ class MessagesPaged(PageIterator):
 class QueueProperties(DictMixin):
     """Queue Properties.
 
-    :keyword Dict[str, str] metadata:
+    :keyword Optional[str] name:
+        The name of the queue.
+    :keyword Optional[Dict[str, str]] metadata:
         A dict containing name-value pairs associated with the queue as metadata.
         This var is set to None unless the include=metadata param was included
         for the list queues operation.
     """
 
-    name: str
+    name: Optional[str]
     """The name of the queue."""
-    metadata: Dict[str, str]
+    metadata: Optional[Dict[str, str]]
     """A dict containing name-value pairs associated with the queue as metadata."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -401,36 +403,34 @@ class QueuePropertiesPaged(PageIterator):
     """An iterable of Queue properties.
 
     :param Callable command: Function to retrieve the next page of items.
-    :param str prefix: Filters the results to return only queues whose names
+    :param Optional[str] prefix: Filters the results to return only queues whose names
         begin with the specified prefix.
-    :param int results_per_page: The maximum number of queue names to retrieve per
+    :param Optional[int] results_per_page: The maximum number of queue names to retrieve per
         call.
     :param str continuation_token: An opaque continuation token.
     """
 
-    service_endpoint: str
+    service_endpoint: Optional[str]
     """The service URL."""
-    prefix: str
+    prefix: Optional[str]
     """A queue name prefix being used to filter the list."""
-    marker: str
+    marker: Optional[str]
     """The continuation token of the current page of results."""
-    results_per_page: int = None
+    results_per_page: Optional[int] = None
     """The maximum number of results retrieved per API call."""
     next_marker: str
     """The continuation token to retrieve the next page of results."""
-    location_mode: str
+    location_mode: Optional[str]
     """The location mode being used to list results. The available options include "primary" and "secondary"."""
     command: Callable
     """Function to retrieve the next page of items."""
-    prefix: str = None
-    """Filters the results to return only queues whose names begin with the specified prefix."""
-    results_per_page: int
-    """The maximum number of queue names to retrieve per
-        call."""
-    continuation_token: str = None
-    """An opaque continuation token."""
 
-    def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
+    def __init__(
+        self, command: Callable,
+        prefix: Optional[str] = None,
+        results_per_page: Optional[int] = None,
+        continuation_token: Optional[str] = None
+    ) -> None:
         super(QueuePropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
@@ -453,14 +453,22 @@ class QueuePropertiesPaged(PageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _extract_data_cb(self, get_next_return: str) -> Tuple[Optional[str], List[QueueProperties]]:
+    def _extract_data_cb(self, get_next_return: Tuple[str, Any]) -> Tuple[Optional[str], List[QueueProperties]]:
         self.location_mode, self._response = get_next_return
-        self.service_endpoint = self._response.service_endpoint
-        self.prefix = self._response.prefix
-        self.marker = self._response.marker
-        self.results_per_page = self._response.max_results
-        props_list = [QueueProperties._from_generated(q) for q in self._response.queue_items] # pylint: disable=protected-access
-        return self._response.next_marker or None, props_list
+        if self._response is not None:
+            if hasattr(self._response, 'service_endpoint'):
+                self.service_endpoint = self._response.service_endpoint
+            if hasattr(self._response, 'prefix'):
+                self.prefix = self._response.prefix
+            if hasattr(self._response, 'marker'):
+                self.marker = self._response.marker
+            if hasattr(self._response, 'max_results'):
+                self.results_per_page = self._response.max_results
+            if hasattr(self._response, 'queue_items'):
+                props_list = [QueueProperties._from_generated(q) for q in self._response.queue_items] # pylint: disable=protected-access
+            if hasattr(self._response, 'next_marker'):
+                next_marker = self._response.next_marker
+        return next_marker or None, props_list
 
 
 class QueueSasPermissions(object):

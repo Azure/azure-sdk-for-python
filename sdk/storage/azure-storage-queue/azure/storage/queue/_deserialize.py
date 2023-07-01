@@ -35,7 +35,7 @@ def deserialize_queue_creation(
     headers: Dict[str, Any]
 ) -> Dict[str, Any]:
     response = response.http_response
-    if response.status_code == 204:
+    if response.status_code == 204:  # type: ignore
         error_code = StorageErrorCode.queue_already_exists
         error = ResourceExistsError(
             message=(
@@ -44,7 +44,7 @@ def deserialize_queue_creation(
                 f"Time:{headers['Date']}\n"
                 f"ErrorCode:{error_code}"),
             response=response)
-        error.error_code = error_code
-        error.additional_info = {}
+        error.error_code = error_code  # type: ignore
+        error.additional_info = {}  # type: ignore
         raise error
     return headers

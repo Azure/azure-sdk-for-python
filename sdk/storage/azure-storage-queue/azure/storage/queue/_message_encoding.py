@@ -6,7 +6,7 @@
 # pylint: disable=unused-argument
 
 from base64 import b64encode, b64decode
-from typing import Any, Callable, Dict, TYPE_CHECKING
+from typing import Any, Callable, Dict, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import DecodeError
 
@@ -18,6 +18,15 @@ if TYPE_CHECKING:
 
 class MessageEncodePolicy(object):
 
+    require_encryption: Optional[bool] = None
+    """Indicates whether a retention policy is enabled for the storage service."""
+    encryption_version: Optional[str] = None
+    """Indicates whether a retention policy is enabled for the storage service."""
+    key_encryption_key: Optional[object] = None
+    """Indicates whether a retention policy is enabled for the storage service."""
+    resolver: Optional[Callable[[str], bytes]] = None
+    """Indicates whether a retention policy is enabled for the storage service."""
+
     def __init__(self) -> None:
         self.require_encryption = False
         self.encryption_version = None
@@ -27,7 +36,7 @@ class MessageEncodePolicy(object):
     def __call__(self, content: Any) -> str:
         if content:
             content = self.encode(content)
-            if self.key_encryption_key is not None:
+            if self.key_encryption_key is not None and isinstance(self.encryption_version, str):
                 content = encrypt_queue_message(content, self.key_encryption_key, self.encryption_version)
         return content
 
@@ -56,17 +65,18 @@ class MessageDecodePolicy(object):
         self.resolver = None
 
     def __call__(self, response: "PipelineResponse", obj: object, headers: Dict[str, Any]) -> object:
-        for message in obj:
-            if message.message_text in [None, "", b""]:
-                continue
-            content = message.message_text
-            if (self.key_encryption_key is not None) or (self.resolver is not None):
-                content = decrypt_queue_message(
-                    content, response,
-                    self.require_encryption,
-                    self.key_encryption_key,
-                    self.resolver)
-            message.message_text = self.decode(content, response)
+        if hasattr(obj, '__iter__'):
+            for message in obj:
+                if message.message_text in [None, "", b""]:
+                    continue
+                content = message.message_text
+                if (self.key_encryption_key is not None) or (self.resolver is not None):
+                    content = decrypt_queue_message(
+                        content, response,
+                        self.require_encryption,
+                        self.key_encryption_key,
+                        self.resolver)
+                message.message_text = self.decode(content, response)
         return obj
 
     def configure(self, require_encryption: bool, key_encryption_key: object, resolver: Callable[[str], bytes]) -> None:
@@ -74,7 +84,7 @@ class MessageDecodePolicy(object):
         self.key_encryption_key = key_encryption_key
         self.resolver = resolver
 
-    def decode(self, content: Any, response: "PipelineResponse") -> str:
+    def decode(self, content: Any, response: "PipelineResponse") -> Union[bytes, str]:
         raise NotImplementedError("Must be implemented by child class.")
 
 
@@ -99,7 +109,7 @@ class TextBase64DecodePolicy(MessageDecodePolicy):
     support UTF-8.
     """
 
-    def decode(self, content: str, response: "PipelineResponse") -> bytes:
+    def decode(self, content: str, response: "PipelineResponse") -> str:
         try:
             return b64decode(content.encode('utf-8')).decode('utf-8')
         except (ValueError, TypeError) as error:
