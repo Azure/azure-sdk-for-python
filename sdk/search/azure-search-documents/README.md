@@ -207,18 +207,18 @@ fields = [
     SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
     SimpleField(name="baseRate", type=SearchFieldDataType.Double),
     SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
-    ComplexField(name="address", fields=[
-        SimpleField(name="streetAddress", type=SearchFieldDataType.String),
-        SimpleField(name="city", type=SearchFieldDataType.String),
-    ], collection=True)
+    ComplexField(
+        name="address",
+        fields=[
+            SimpleField(name="streetAddress", type=SearchFieldDataType.String),
+            SimpleField(name="city", type=SearchFieldDataType.String),
+        ],
+        collection=True,
+    ),
 ]
 cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
 scoring_profiles = []
-index = SearchIndex(
-    name=name,
-    fields=fields,
-    scoring_profiles=scoring_profiles,
-    cors_options=cors_options)
+index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
 
 result = client.create_index(index)
 ```
@@ -236,11 +236,11 @@ to be aware of.
 
 ```python
 DOCUMENT = {
-    'Category': 'Hotel',
-    'HotelId': '1000',
-    'Rating': 4.0,
-    'Rooms': [],
-    'HotelName': 'Azure Inn',
+    "Category": "Hotel",
+    "HotelId": "1000",
+    "Rating": 4.0,
+    "Rooms": [],
+    "HotelName": "Azure Inn",
 }
 
 result = search_client.upload_documents(documents=[DOCUMENT])

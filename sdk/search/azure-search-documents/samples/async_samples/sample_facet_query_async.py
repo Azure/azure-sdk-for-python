@@ -28,6 +28,7 @@ service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
 index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
 key = os.getenv("AZURE_SEARCH_API_KEY")
 
+
 async def filter_query():
     # [START facet_query_async]
     from azure.core.credentials import AzureKeyCredential
@@ -45,5 +46,6 @@ async def filter_query():
             print("    {}".format(facet))
     # [END facet_query_async]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(filter_query())

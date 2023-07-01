@@ -22,3 +22,15 @@ version-tolerant: true
 python3-only: true
 black: true
 ```
+
+## Customizations
+
+### Make generated operation methods/overloads internal
+
+```yaml
+directive:
+  - from: swagger-document
+    where: '$["paths"]["/dataCollectionRules/{ruleId}/streams/{stream}"]["post"]'
+    transform: >
+      $["x-ms-internal"] = true;
+```

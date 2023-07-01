@@ -112,7 +112,15 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         response: Optional["HttpResponseType"] = None,
         exc_info: Optional[Tuple] = None,
     ) -> None:
-        """Ends the span that is tracing the network and updates its status."""
+        """Ends the span that is tracing the network and updates its status.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: The PipelineResponse object
+        :type response: ~azure.core.pipeline.PipelineResponse
+        :param exc_info: The exception information
+        :type exc_info: tuple
+        """
         if self.TRACING_CONTEXT not in request.context:
             return
 

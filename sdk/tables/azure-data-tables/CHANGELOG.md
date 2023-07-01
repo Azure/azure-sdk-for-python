@@ -10,7 +10,7 @@
 ### Bugs Fixed
 
 ### Other Changes
-* Fixed a bug when creating `TableClient` from url with sas token in `azure-core`, so we bumped minimum dependency on `azure-core` to `>=1.27.1`. ([#28918](https://github.com/Azure/azure-sdk-for-python/issues/28918))
+* Bumped minimum dependency on `azure-core` to `>=1.27.1`. ([#28918](https://github.com/Azure/azure-sdk-for-python/issues/28918))
 
 ## 12.4.3 (2023-06-13)
 

@@ -37,21 +37,37 @@
         },
         "hsmLocation": {
             "type": "string",
-            "defaultValue": "westus3",
+            "defaultValue": "brazilsouth",
             "allowedValues": [
                 "australiacentral",
+                "australiaeast",
+                "brazilsouth",
                 "canadacentral",
+                "canadaeast",
+                "centralindia",
                 "centralus",
                 "eastasia",
                 "eastus",
                 "eastus2",
+                "francecentral",
+                "germanywestcentral",
+                "japaneast",
+                "japanwest",
                 "koreacentral",
                 "northcentralus",
                 "northeurope",
+                "norwayeast",
+                "norwaywest",
+                "polandcentral",
+                "qatarcentral",
                 "southafricanorth",
                 "southcentralus",
+                "southindia",
                 "southeastasia",
+                "swedencentral",
                 "switzerlandnorth",
+                "switzerlandwest",
+                "uaenorth",
                 "uksouth",
                 "westcentralus",
                 "westeurope",
@@ -60,7 +76,7 @@
                 "westus3"
             ],
             "metadata": {
-                "description": "The location of the Managed HSM. By default, this is 'westus3'."
+                "description": "The location of the Managed HSM. By default, this is 'brazilsouth'."
             }
         },
         "enableHsm": {

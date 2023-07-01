@@ -38,3 +38,18 @@ class TestMgmtNetworkApiVersion(AzureMgmtRecordedTestCase):
 
         # check whether api version is passed to request for mixin operation group
         self.mgmt_client.check_dns_name_availability(location="eastus", domain_name_label="mydomain", raw_request_hook=raw_requst_check)
+
+    def fake_client(self, api_version):
+        return NetworkManagementClient(credential="", subscription_id="", api_version=api_version)
+    
+    def test_invalid_api_version(self):
+        client = self.fake_client(api_version="1000-01-01")
+        # normal operation group
+        with pytest.raises(ValueError):
+            list(client.public_ip_addresses.list("resource_group_name"))
+
+        # mixin operation group
+        with pytest.raises(ValueError):
+            client.check_dns_name_availability(location="eastus", domain_name_label="mydomain")
+
+            

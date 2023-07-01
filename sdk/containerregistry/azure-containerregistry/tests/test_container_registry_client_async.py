@@ -5,7 +5,6 @@
 # ------------------------------------
 import os
 import pytest
-import six
 import hashlib
 import json
 from datetime import datetime
@@ -33,6 +32,7 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline import PipelineRequest
 from azure.identity import AzureAuthorityHosts
 from asynctestcase import AsyncContainerRegistryTestClass, get_authority, get_audience
+from testcase import is_public_endpoint
 from constants import HELLO_WORLD, DOES_NOT_EXIST
 from preparer import acr_preparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -50,7 +50,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             prev = None
             async for repo in repositories:
                 count += 1
-                assert isinstance(repo, six.string_types)
+                assert isinstance(repo, str)
                 assert prev != repo
                 prev = repo
 
@@ -69,7 +69,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             async for page in repository_pages.by_page():
                 page_count = 0
                 async for repo in page:
-                    assert isinstance(repo, six.string_types)
+                    assert isinstance(repo, str)
                     assert prev != repo
                     prev = repo
                     page_count += 1
@@ -82,11 +82,12 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_delete_repository(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [repo])
+        self.import_image(containerregistry_endpoint, repo, ["test"])
+        self.sleep(5)
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await client.delete_repository(repo)
 
-            self.sleep(10)
+            self.sleep(5)
             with pytest.raises(ResourceNotFoundError):
                 await client.get_repository_properties(repo)
 
@@ -108,8 +109,8 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_update_repository_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:test"])
-
+        self.import_image(containerregistry_endpoint, repo, ["test"])
+        self.sleep(5)
         async with self.create_registry_client(containerregistry_endpoint) as client:
             properties = self.set_all_properties(RepositoryProperties(), False)
             received = await client.update_repository_properties(repo, properties)
@@ -126,8 +127,8 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_update_repository_properties_kwargs(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:test"])
-
+        self.import_image(containerregistry_endpoint, repo, ["test"])
+        self.sleep(5)
         async with self.create_registry_client(containerregistry_endpoint) as client:
             received = await client.update_repository_properties(
                 repo, can_delete=False, can_read=False, can_write=False, can_list=False
@@ -236,9 +237,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_update_manifest_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = "test"
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
-
-        async with self.create_registry_client(containerregistry_endpoint) as client:
+        self.import_image(containerregistry_endpoint, repo, [tag])
+        self.sleep(5)
+        async with self.create_registry_client(containerregistry_endpoint) as client: 
             properties = self.set_all_properties(ArtifactManifestProperties(), False)
             received = await client.update_manifest_properties(repo, tag, properties)
             self.assert_all_properties(received, False)
@@ -255,8 +256,8 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_update_manifest_properties_kwargs(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = "test"
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
-
+        self.import_image(containerregistry_endpoint, repo, [tag])
+        self.sleep(5)
         async with self.create_registry_client(containerregistry_endpoint) as client:
             received = await client.update_manifest_properties(
                 repo, tag, can_delete=False, can_read=False, can_write=False, can_list=False
@@ -293,8 +294,8 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_update_tag_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = "test"
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
-
+        self.import_image(containerregistry_endpoint, repo, [tag])
+        self.sleep(5)
         async with self.create_registry_client(containerregistry_endpoint) as client:
             properties = self.set_all_properties(ArtifactTagProperties(), False)
             received = await client.update_tag_properties(repo, tag, properties)
@@ -312,8 +313,8 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_update_tag_properties_kwargs(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = "test"
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
-
+        self.import_image(containerregistry_endpoint, repo, [tag])
+        self.sleep(5)
         async with self.create_registry_client(containerregistry_endpoint) as client:
             received = await client.update_tag_properties(
                 repo, tag, can_delete=False, can_read=False, can_write=False, can_list=False
@@ -374,8 +375,8 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_delete_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = "test"
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
-
+        self.import_image(containerregistry_endpoint, repo, [tag])
+        self.sleep(5)
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await client.delete_tag(repo, tag)
 
@@ -398,8 +399,8 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_delete_manifest(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = "test"
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
-
+        self.import_image(containerregistry_endpoint, repo, [tag])
+        self.sleep(5)
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await client.delete_manifest(repo, tag)
 
@@ -513,9 +514,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_set_oci_manifest_without_spaces(self, containerregistry_endpoint):
-        if self.is_china_endpoint(containerregistry_endpoint):
-            pytest.skip("Running in china cloud may cause all tests finishing longer than the max time of 120 mins.")
-
+        if not is_public_endpoint(containerregistry_endpoint):
+            pytest.skip("This test is for testing test_set_docker_manifest in playback.")
+        
         repo = self.get_resource_name("repo")
         path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest_without_spaces.json")
         async with self.create_registry_client(containerregistry_endpoint) as client:
@@ -586,9 +587,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_set_docker_manifest_without_spaces(self, containerregistry_endpoint):
-        if self.is_china_endpoint(containerregistry_endpoint):
-            pytest.skip("Running in china cloud may cause all tests finishing longer than the max time of 120 mins.")
-
+        if not is_public_endpoint(containerregistry_endpoint):
+            pytest.skip("This test is for testing test_set_docker_manifest in playback.")
+        
         repo = self.get_resource_name("repo")
         path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest_without_spaces.json")
         async with self.create_registry_client(containerregistry_endpoint) as client:
@@ -637,11 +638,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     async def test_upload_large_blob_in_chunk(self, **kwargs):
         containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
-        if not self.is_public_endpoint(containerregistry_endpoint):
-            pytest.skip(
-                "Running in non-public cloud may cause all tests finishing longer than the max time of 120 mins."
-            )
-
+        if not is_public_endpoint(containerregistry_endpoint):
+            pytest.skip("Running on non-public cloud may cause all tests finishing longer than the max time of 120 mins.")
+        
         repo = self.get_resource_name("repo")
         async with self.create_registry_client(containerregistry_endpoint) as client:
             # Test blob upload and download in equal size chunks
@@ -744,7 +743,8 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_list_in_empty_repo(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [repo])
+        self.import_image(containerregistry_endpoint, repo, ["test"])
+        self.sleep(5)
         async with self.create_registry_client(containerregistry_endpoint) as client:
             # cleanup tags in repo
             async for tag in client.list_tag_properties(repo):

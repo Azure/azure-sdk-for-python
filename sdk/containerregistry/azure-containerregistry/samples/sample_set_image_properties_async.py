@@ -26,8 +26,6 @@ USAGE:
     2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
-    5) CONTAINERREGISTRY_RESOURCE_GROUP - The resource group name
-    6) CONTAINERREGISTRY_REGISTRY_NAME - The registry name
 """
 import asyncio
 import os
@@ -44,7 +42,7 @@ class SetImagePropertiesAsync(object):
         self.credential = get_credential(self.authority, is_async=True)
 
     async def set_image_properties(self):
-        load_registry()
+        load_registry(self.endpoint)
         # Instantiate an instance of ContainerRegistryClient
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Set permissions on image "library/hello-world:v1"

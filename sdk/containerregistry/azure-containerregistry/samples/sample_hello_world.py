@@ -25,8 +25,6 @@ USAGE:
     2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
-    5) CONTAINERREGISTRY_RESOURCE_GROUP - The resource group name
-    6) CONTAINERREGISTRY_REGISTRY_NAME - The registry name
 """
 import os
 from dotenv import find_dotenv, load_dotenv
@@ -42,7 +40,7 @@ class HelloWorld(object):
         self.credential = get_credential(self.authority)
 
     def basic_sample(self):
-        load_registry()
+        load_registry(self.endpoint)
         # Instantiate an instance of ContainerRegistryClient
         # [START create_registry_client]
         with ContainerRegistryClient(self.endpoint, self.credential) as client:
