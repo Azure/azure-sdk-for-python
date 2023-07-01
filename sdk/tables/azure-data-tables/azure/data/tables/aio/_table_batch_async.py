@@ -569,7 +569,7 @@ class TableBatchOperations(object):
         if_match: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        format: Optional[Union[str, models.OdataMetadataFormat]] = None,
+        format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
     ) -> None:
         """Deletes the specified entity in a table.
 
