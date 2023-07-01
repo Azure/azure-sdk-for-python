@@ -10,6 +10,7 @@
 - Fixed async `update_sync_token` to use async/await keywords
 
 ### Other Changes
+- Bumped minimum dependency on `azure-core` to `>=1.25.0`
 
 ## 1.4.0 (2022-02-13)
 
