@@ -21,7 +21,6 @@ from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     RequestIdPolicy,
 )
-from azure.core.pipeline.transport import RequestsTransport
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import (

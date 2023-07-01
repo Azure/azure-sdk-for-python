@@ -484,11 +484,11 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
         return snapshot
 
     @classmethod
-    def _from_deserialized(
+    def _from_deserialized(  # pylint:disable=unused-argument
         cls,
         response: HttpResponse,
         deserialized: GeneratedSnapshot,
-        response_headers: Dict,  # pylint:disable=unused-argument
+        response_headers: Dict,
     ) -> "Snapshot":
         if deserialized is None:
             return deserialized
