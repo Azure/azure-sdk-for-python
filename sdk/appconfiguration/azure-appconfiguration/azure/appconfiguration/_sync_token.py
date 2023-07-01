@@ -31,6 +31,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 class SyncToken:
     """The sync token structure
+
     :param str token_id: The id of sync token.
     :param str value: The value of sync token.
     :param int sequence_number: The sequence number of sync token.
@@ -59,8 +60,8 @@ class SyncToken:
 
 
 class SyncTokenPolicy(SansIOHTTPPolicy):
-    """A simple policy that enable the given callback
-    with the response.
+    """A simple policy that enable the given callback with the response.
+
     :keyword callback raw_response_hook: Callback function. Will be invoked on response.
     """
 
@@ -81,6 +82,7 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
 
     def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:  # type: ignore # pylint: disable=arguments-differ
         """This is executed after the request comes back from the policy.
+
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
         :param response: The PipelineResponse object.
