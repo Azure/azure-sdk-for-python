@@ -68,7 +68,7 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
         client.upload_blob(repo, open(os.path.join(base_path, config), "rb"))
         # upload layers
         client.upload_blob(repo, open(os.path.join(base_path, layer), "rb"))
-
+    
     def upload_docker_manifest_prerequisites(self, repo, client):
         layer = "2db29710123e3e53a794f2694094b9b4338aa9ee5c40b930cb8063a1be392c54"
         config = "config.json"
@@ -96,7 +96,6 @@ def get_authority(endpoint: str) -> str:
         logger.warning("US Gov Authority")
         return AzureAuthorityHosts.AZURE_GOVERNMENT
     raise ValueError(f"Endpoint ({endpoint}) could not be understood")
-
 
 def get_audience(authority: str) -> str:
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:

@@ -39,7 +39,7 @@ def _import_images(endpoint, repository, tags):
         tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
         client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
         client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
-        authority=authority,
+        authority=authority
     )
     with ContainerRegistryClient(endpoint, credential) as client:
         # Upload a layer
@@ -68,7 +68,6 @@ def _import_images(endpoint, repository, tags):
             client.set_manifest(repository, docker_manifest, tag=tag, media_type="application/vnd.docker.distribution.manifest.v2+json")
 
 
-
 def get_authority(endpoint):
     if ".azurecr.io" in endpoint:
         return AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
@@ -78,7 +77,6 @@ def get_authority(endpoint):
         return AzureAuthorityHosts.AZURE_GOVERNMENT
     raise ValueError(f"Endpoint ({endpoint}) could not be understood")
 
-
 def get_audience(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
         return "https://management.azure.com"
@@ -87,7 +85,6 @@ def get_audience(authority):
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
         return "https://management.usgovcloudapi.net"
 
-
 def get_credential(authority, **kwargs):
     is_async = kwargs.pop("is_async", False)
     if is_async:
@@ -95,11 +92,11 @@ def get_credential(authority, **kwargs):
             tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
             client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
             client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
-            authority=authority,
+            authority=authority
         )
     return ClientSecretCredential(
         tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
         client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
         client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
-        authority=authority,
+        authority=authority
     )

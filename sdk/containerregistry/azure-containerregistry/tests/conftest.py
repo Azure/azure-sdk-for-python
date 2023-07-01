@@ -19,7 +19,6 @@ from constants import HELLO_WORLD
 
 logger = logging.getLogger()
 
-
 @pytest.fixture(scope="session", autouse=True)
 def load_registry():
     if not is_live():
@@ -36,7 +35,6 @@ def load_registry():
     except Exception as e:
         logger.exception(e)
         raise
-
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):

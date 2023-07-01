@@ -38,13 +38,10 @@ class SetGetImageAsync(object):
     async def set_get_oci_image(self):
         repository_name = "sample-oci-image-async"
         layer = BytesIO(b"Sample layer")
-        config = BytesIO(
-            json.dumps(
-                {
-                    "sample config": "content",
-                }
-            ).encode()
-        )
+        config = BytesIO(json.dumps(
+            {
+                "sample config": "content",
+            }).encode())
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Upload a layer
             layer_digest, layer_size = await client.upload_blob(repository_name, layer)
@@ -113,7 +110,7 @@ class SetGetImageAsync(object):
                 await client.delete_blob(repository_name, layer["digest"])
             # Delete the config
             await client.delete_blob(repository_name, received_manifest["config"]["digest"])
-
+            
             # Delete the image
             await client.delete_manifest(repository_name, get_manifest_result.digest)
 
