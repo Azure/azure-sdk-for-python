@@ -11,7 +11,7 @@ from ._generated._serialization import Model
 from ._generated.models import (
     KeyValue,
     Snapshot as GeneratedSnapshot,
-    ConfigurationSettingFilter as GeneratedConfigurationSettingFilter
+    ConfigurationSettingFilter as GeneratedConfigurationSettingFilter,
 )
 
 if sys.version_info >= (3, 8):
@@ -169,7 +169,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
         *,
         enabled: Optional[bool] = None,
         filters: Optional[List[Dict[str, Any]]] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         if "key" in kwargs or "value" in kwargs:
             raise TypeError("Unexpected keyword argument, do not provide 'key' or 'value' as a keyword-arg")
@@ -373,6 +373,7 @@ class ConfigurationSettingFilter:
     :ivar label: Filters key-values by their label field.
     :vartype label: str
     """
+
     def __init__(self, *, key: str, label: Optional[str] = None) -> None:
         """
         :keyword key: Filters key-values by their key field. Required.
@@ -465,14 +466,12 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
 
         filters = []
         for config_setting_filter in generated.filters:
-            filters.append(
-                ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label)
-            )
+            filters.append(ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label))
         snapshot = cls(
             filters=filters,
             composition_type=cast(Optional[Literal["key", "key_label"]], generated.composition_type),
             retention_period=generated.retention_period,
-            tags=generated.tags
+            tags=generated.tags,
         )
         snapshot.name = generated.name
         snapshot.status = generated.status
@@ -486,20 +485,21 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
 
     @classmethod
     def _from_deserialized(
-        cls, response: HttpResponse, deserialized: GeneratedSnapshot, response_headers: Dict # pylint:disable=unused-argument
+        cls,
+        response: HttpResponse,
+        deserialized: GeneratedSnapshot,
+        response_headers: Dict,  # pylint:disable=unused-argument
     ) -> "Snapshot":
         if deserialized is None:
             return deserialized
         filters = []
         for config_setting_filter in deserialized.filters:
-            filters.append(
-                ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label)
-            )
+            filters.append(ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label))
         snapshot = cls(
             filters=filters,
             composition_type=cast(Optional[Literal["key", "key_label"]], deserialized.composition_type),
             retention_period=deserialized.retention_period,
-            tags=deserialized.tags
+            tags=deserialized.tags,
         )
         snapshot.name = deserialized.name
         snapshot.status = deserialized.status
@@ -519,5 +519,5 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
             filters=config_setting_filters,
             composition_type=self.composition_type,
             retention_period=self.retention_period,
-            tags=self.tags
+            tags=self.tags,
         )

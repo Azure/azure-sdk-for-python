@@ -610,9 +610,12 @@ class AzureAppConfigurationClient:
             filters=filters, composition_type=composition_type, retention_period=retention_period, tags=tags
         )
         try:
-            return cast(LROPoller[Snapshot], self._impl.begin_create_snapshot(
-                name=name, entity=snapshot._to_generated(), cls=Snapshot._from_deserialized, **kwargs
-            ))
+            return cast(
+                LROPoller[Snapshot],
+                self._impl.begin_create_snapshot(
+                    name=name, entity=snapshot._to_generated(), cls=Snapshot._from_deserialized, **kwargs
+                ),
+            )
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
@@ -728,12 +731,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_snapshot_configuration_settings(
-        self,
-        name: str,
-        *,
-        accept_datetime: Optional[str] = None,
-        fields: Optional[List[str]] = None,
-        **kwargs
+        self, name: str, *, accept_datetime: Optional[str] = None, fields: Optional[List[str]] = None, **kwargs
     ) -> ItemPaged[ConfigurationSetting]:
         """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by
         accept_datetime and fields to present in return.
