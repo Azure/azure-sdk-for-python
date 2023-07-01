@@ -20,7 +20,7 @@ import isodate
 from azure.core.exceptions import DeserializationError
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline import PipelineResponse
-from azure.core.serialization import NULL as AzureCoreNull
+from azure.core.serialization import _Null  # pylint: disable=protected-access
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -29,23 +29,8 @@ else:
 
 _LOGGER = logging.getLogger(__name__)
 
-__all__ = ["NULL", "AzureJSONEncoder", "Model", "rest_field", "rest_discriminator"]
+__all__ = ["AzureJSONEncoder", "Model", "rest_field", "rest_discriminator"]
 
-
-class _Null(object):
-    """To create a Falsy object"""
-
-    def __bool__(self):
-        return False
-
-    __nonzero__ = __bool__  # Python2 compatibility
-
-
-NULL = _Null()
-"""
-A falsy sentinel object which is supposed to be used to specify attributes
-with no data. This gets serialized to `null` on the wire.
-"""
 
 TZ_UTC = timezone.utc
 
@@ -74,32 +59,35 @@ def _timedelta_as_isostr(td: timedelta) -> str:
     if days:
         date_str = "%sD" % days
 
-    # Build time
-    time_str = "T"
+    if hours or minutes or seconds:
+        # Build time
+        time_str = "T"
 
-    # Hours
-    bigger_exists = date_str or hours
-    if bigger_exists:
-        time_str += "{:02}H".format(hours)
+        # Hours
+        bigger_exists = date_str or hours
+        if bigger_exists:
+            time_str += "{:02}H".format(hours)
 
-    # Minutes
-    bigger_exists = bigger_exists or minutes
-    if bigger_exists:
-        time_str += "{:02}M".format(minutes)
+        # Minutes
+        bigger_exists = bigger_exists or minutes
+        if bigger_exists:
+            time_str += "{:02}M".format(minutes)
 
-    # Seconds
-    try:
-        if seconds.is_integer():
-            seconds_string = "{:02}".format(int(seconds))
-        else:
-            # 9 chars long w/ leading 0, 6 digits after decimal
-            seconds_string = "%09.6f" % seconds
-            # Remove trailing zeros
-            seconds_string = seconds_string.rstrip("0")
-    except AttributeError:  # int.is_integer() raises
-        seconds_string = "{:02}".format(seconds)
+        # Seconds
+        try:
+            if seconds.is_integer():
+                seconds_string = "{:02}".format(int(seconds))
+            else:
+                # 9 chars long w/ leading 0, 6 digits after decimal
+                seconds_string = "%09.6f" % seconds
+                # Remove trailing zeros
+                seconds_string = seconds_string.rstrip("0")
+        except AttributeError:  # int.is_integer() raises
+            seconds_string = "{:02}".format(seconds)
 
-    time_str += "{}S".format(seconds_string)
+        time_str += "{}S".format(seconds_string)
+    else:
+        time_str = ""
 
     return "P" + date_str + time_str
 
@@ -150,7 +138,7 @@ def _serialize_datetime(o):
 
 def _is_readonly(p):
     try:
-        return p._readonly  # pylint: disable=protected-access
+        return p._visibility == ["read"]  # pylint: disable=protected-access
     except AttributeError:
         return False
 
@@ -166,7 +154,7 @@ class AzureJSONEncoder(JSONEncoder):
             return {k: v for k, v in o.items() if k not in readonly_props}
         if isinstance(o, (bytes, bytearray)):
             return base64.b64encode(o).decode()
-        if o is AzureCoreNull:
+        if isinstance(o, _Null):
             return None
         try:
             return super(AzureJSONEncoder, self).default(o)
@@ -425,7 +413,9 @@ class Model(_MyMutableMapping):
             if non_attr_kwargs:
                 # actual type errors only throw the first wrong keyword arg they see, so following that.
                 raise TypeError(f"{class_name}.__init__() got an unexpected keyword argument '{non_attr_kwargs[0]}'")
-            dict_to_pass.update({self._attr_to_rest_field[k]._rest_name: _serialize(v) for k, v in kwargs.items()})
+            dict_to_pass.update(
+                {self._attr_to_rest_field[k]._rest_name: _serialize(v) for k, v in kwargs.items() if v is not None}
+            )
         super().__init__(dict_to_pass)
 
     def copy(self) -> "Model":
@@ -635,7 +625,7 @@ def _deserialize_with_callable(
                 # for unknown value, return raw value
                 return value
         if isinstance(deserializer, type) and issubclass(deserializer, Model):
-            return deserializer._deserialize(value)  # type: ignore
+            return deserializer._deserialize(value)
         return typing.cast(typing.Callable[[typing.Any], typing.Any], deserializer)(value)
     except Exception as e:
         raise DeserializationError() from e
@@ -655,14 +645,14 @@ class _RestField:
         name: typing.Optional[str] = None,
         type: typing.Optional[typing.Callable] = None,  # pylint: disable=redefined-builtin
         is_discriminator: bool = False,
-        readonly: bool = False,
+        visibility: typing.Optional[typing.List[str]] = None,
         default: typing.Any = _UNSET,
     ):
         self._type = type
         self._rest_name_input = name
         self._module: typing.Optional[str] = None
         self._is_discriminator = is_discriminator
-        self._readonly = readonly
+        self._visibility = visibility
         self._is_model = False
         self._default = default
 
@@ -692,7 +682,7 @@ class _RestField:
             obj.__setitem__(self._rest_name, _deserialize(self._type, value))
         obj.__setitem__(self._rest_name, _serialize(value))
 
-    def _get_deserialize_callable_from_annotation(  # pylint: disable=redefined-builtin
+    def _get_deserialize_callable_from_annotation(
         self, annotation: typing.Any
     ) -> typing.Optional[typing.Callable[[typing.Any], typing.Any]]:
         return _get_deserialize_callable_from_annotation(annotation, self._module, self)
@@ -702,13 +692,15 @@ def rest_field(
     *,
     name: typing.Optional[str] = None,
     type: typing.Optional[typing.Callable] = None,  # pylint: disable=redefined-builtin
-    readonly: bool = False,
+    visibility: typing.Optional[typing.List[str]] = None,
     default: typing.Any = _UNSET,
 ) -> typing.Any:
-    return _RestField(name=name, type=type, readonly=readonly, default=default)
+    return _RestField(name=name, type=type, visibility=visibility, default=default)
 
 
 def rest_discriminator(
-    *, name: typing.Optional[str] = None, type: typing.Optional[typing.Callable] = None  # pylint: disable=redefined-builtin
+    *,
+    name: typing.Optional[str] = None,
+    type: typing.Optional[typing.Callable] = None,  # pylint: disable=redefined-builtin
 ) -> typing.Any:
     return _RestField(name=name, type=type, is_discriminator=True)

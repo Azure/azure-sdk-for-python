@@ -34,13 +34,13 @@ class ClinicalCodedElement(_model_base.Model):
     """
 
     system: str = rest_field()
-    """The clinical coding system, e.g. ICD-10, SNOMED-CT, UMLS. Required. """
+    """The clinical coding system, e.g. ICD-10, SNOMED-CT, UMLS. Required."""
     code: str = rest_field()
-    """The code within the given clinical coding system. Required. """
+    """The code within the given clinical coding system. Required."""
     name: Optional[str] = rest_field()
-    """The name of this coded concept in the coding system. """
+    """The name of this coded concept in the coding system."""
     value: Optional[str] = rest_field()
-    """A value associated with the code within the given clinical coding system. """
+    """A value associated with the code within the given clinical coding system."""
 
     @overload
     def __init__(
@@ -80,13 +80,13 @@ class ClinicalNoteEvidence(_model_base.Model):
     """
 
     id: str = rest_field()
-    """The identifier of the document containing the evidence. Required. """
+    """The identifier of the document containing the evidence. Required."""
     text: Optional[str] = rest_field()
-    """The actual text span which is evidence for the inference. """
+    """The actual text span which is evidence for the inference."""
     offset: int = rest_field()
-    """The start index of the evidence text span in the document (0 based). Required. """
+    """The start index of the evidence text span in the document (0 based). Required."""
     length: int = rest_field()
-    """The length of the evidence text span. Required. """
+    """The length of the evidence text span. Required."""
 
     @overload
     def __init__(
@@ -127,11 +127,13 @@ class DocumentContent(_model_base.Model):
     """
 
     source_type: Union[str, "_models.DocumentContentSourceType"] = rest_field(name="sourceType")
-    """The type of the content's source. In case the source type is 'inline', the content is given as a string (for
-    instance, text). In case the source type is 'reference', the content is given as a URI. Required. Known values
-    are: \"inline\" and \"reference\". """
+    """The type of the content's source.
+     In case the source type is 'inline', the content is given as a string (for instance, text).
+     In case the source type is 'reference', the content is given as a URI. Required. Known values
+     are: \"inline\" and \"reference\"."""
     value: str = rest_field()
-    """The content of the document, given either inline (as a string) or as a reference (URI). Required. """
+    """The content of the document, given either inline (as a string) or as a reference (URI).
+     Required."""
 
     @overload
     def __init__(
@@ -165,7 +167,6 @@ class Error(_model_base.Model):
     :ivar target: The target of the error.
     :vartype target: str
     :ivar details: An array of details about specific errors that led to this reported error.
-     Required.
     :vartype details: list[~azure.healthinsights.cancerprofiling.models.Error]
     :ivar innererror: An object containing more specific information than the current object about
      the error.
@@ -173,15 +174,15 @@ class Error(_model_base.Model):
     """
 
     code: str = rest_field()
-    """One of a server-defined set of error codes. Required. """
+    """One of a server-defined set of error codes. Required."""
     message: str = rest_field()
-    """A human-readable representation of the error. Required. """
+    """A human-readable representation of the error. Required."""
     target: Optional[str] = rest_field()
-    """The target of the error. """
-    details: List["_models.Error"] = rest_field()
-    """An array of details about specific errors that led to this reported error. Required. """
+    """The target of the error."""
+    details: Optional[List["_models.Error"]] = rest_field()
+    """An array of details about specific errors that led to this reported error."""
     innererror: Optional["_models.InnerError"] = rest_field()
-    """An object containing more specific information than the current object about the error. """
+    """An object containing more specific information than the current object about the error."""
 
     @overload
     def __init__(
@@ -189,8 +190,8 @@ class Error(_model_base.Model):
         *,
         code: str,
         message: str,
-        details: List["_models.Error"],
         target: Optional[str] = None,
+        details: Optional[List["_models.Error"]] = None,
         innererror: Optional["_models.InnerError"] = None,
     ):
         ...
@@ -222,12 +223,12 @@ class InferenceEvidence(_model_base.Model):
     """
 
     patient_data_evidence: Optional["_models.ClinicalNoteEvidence"] = rest_field(name="patientDataEvidence")
-    """A piece of evidence from a clinical note (text document). """
+    """A piece of evidence from a clinical note (text document)."""
     patient_info_evidence: Optional["_models.ClinicalCodedElement"] = rest_field(name="patientInfoEvidence")
     """A piece of clinical information, expressed as a code in a clinical coding
-system. """
+     system."""
     importance: Optional[float] = rest_field()
-    """A value indicating how important this piece of evidence is for the inference. """
+    """A value indicating how important this piece of evidence is for the inference."""
 
     @overload
     def __init__(
@@ -255,24 +256,22 @@ class InnerError(_model_base.Model):
     guidelines -
     https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar code: One of a server-defined set of error codes. Required.
+    :ivar code: One of a server-defined set of error codes.
     :vartype code: str
     :ivar innererror: Inner error.
     :vartype innererror: ~azure.healthinsights.cancerprofiling.models.InnerError
     """
 
-    code: str = rest_field()
-    """One of a server-defined set of error codes. Required. """
+    code: Optional[str] = rest_field()
+    """One of a server-defined set of error codes."""
     innererror: Optional["_models.InnerError"] = rest_field()
-    """Inner error. """
+    """Inner error."""
 
     @overload
     def __init__(
         self,
         *,
-        code: str,
+        code: Optional[str] = None,
         innererror: Optional["_models.InnerError"] = None,
     ):
         ...
@@ -289,7 +288,7 @@ class InnerError(_model_base.Model):
 
 
 class OncoPhenotypeData(_model_base.Model):
-    """OncoPhenotypeData.
+    """The body of the Onco Phenotype request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -301,9 +300,9 @@ class OncoPhenotypeData(_model_base.Model):
     """
 
     patients: List["_models.PatientRecord"] = rest_field()
-    """The list of patients, including their clinical information and data. Required. """
+    """The list of patients, including their clinical information and data. Required."""
     configuration: Optional["_models.OncoPhenotypeModelConfiguration"] = rest_field()
-    """Configuration affecting the Onco Phenotype model's inference. """
+    """Configuration affecting the Onco Phenotype model's inference."""
 
     @overload
     def __init__(
@@ -347,26 +346,27 @@ class OncoPhenotypeInference(_model_base.Model):
     :vartype case_id: str
     """
 
-    type: Union[str, "_models.OncoPhenotypeInferenceType"] = rest_field() # pylint: disable=redefined-builtin
-    """The type of the Onco Phenotype inference. Required. Known values are: \"tumorSite\", \"histology\",
-    \"clinicalStageT\", \"clinicalStageN\", \"clinicalStageM\", \"pathologicStageT\", \"pathologicStageN\",
-    and \"pathologicStageM\". """
+    type: Union[str, "_models.OncoPhenotypeInferenceType"] = rest_field()
+    """The type of the Onco Phenotype inference. Required. Known values are: \"tumorSite\",
+     \"histology\", \"clinicalStageT\", \"clinicalStageN\", \"clinicalStageM\",
+     \"pathologicStageT\", \"pathologicStageN\", and \"pathologicStageM\"."""
     value: str = rest_field()
-    """The value of the inference, as relevant for the given inference type. Required. """
+    """The value of the inference, as relevant for the given inference type. Required."""
     description: Optional[str] = rest_field()
-    """The description corresponding to the inference value. """
+    """The description corresponding to the inference value."""
     confidence_score: Optional[float] = rest_field(name="confidenceScore")
-    """Confidence score for this inference. """
+    """Confidence score for this inference."""
     evidence: Optional[List["_models.InferenceEvidence"]] = rest_field()
-    """The evidence corresponding to the inference value. """
+    """The evidence corresponding to the inference value."""
     case_id: Optional[str] = rest_field(name="caseId")
-    """An identifier for a clinical case, if there are multiple clinical cases regarding the same patient. """
+    """An identifier for a clinical case, if there are multiple clinical cases regarding the same
+     patient."""
 
     @overload
     def __init__(
         self,
         *,
-        type: Union[str, "_models.OncoPhenotypeInferenceType"], # pylint: disable=redefined-builtin
+        type: Union[str, "_models.OncoPhenotypeInferenceType"],
         value: str,
         description: Optional[str] = None,
         confidence_score: Optional[float] = None,
@@ -404,28 +404,28 @@ class OncoPhenotypeModelConfiguration(_model_base.Model):
     :vartype check_for_cancer_case: bool
     """
 
-    verbose: bool = rest_field(default=False)
-    """An indication whether the model should produce verbose output. """
-    include_evidence: bool = rest_field(name="includeEvidence", default=True)
-    """An indication whether the model's output should include evidence for the inferences. """
+    verbose: Optional[bool] = rest_field()
+    """An indication whether the model should produce verbose output."""
+    include_evidence: Optional[bool] = rest_field(name="includeEvidence")
+    """An indication whether the model's output should include evidence for the inferences."""
     inference_types: Optional[List[Union[str, "_models.OncoPhenotypeInferenceType"]]] = rest_field(
         name="inferenceTypes"
     )
     """A list of inference types to be inferred for the current request.
-This could be used if only part of the Onco Phenotype inferences are required.
-If this list is omitted or empty, the model will return all the inference types. """
-    check_for_cancer_case: bool = rest_field(name="checkForCancerCase", default=False)
-    """An indication whether to perform a preliminary step on the patient's documents to determine whether they
-    relate to a Cancer case. """
+     This could be used if only part of the Onco Phenotype inferences are required.
+     If this list is omitted or empty, the model will return all the inference types."""
+    check_for_cancer_case: Optional[bool] = rest_field(name="checkForCancerCase")
+    """An indication whether to perform a preliminary step on the patient's documents to determine
+     whether they relate to a Cancer case."""
 
     @overload
     def __init__(
         self,
         *,
-        verbose: bool = False,
-        include_evidence: bool = True,
+        verbose: Optional[bool] = None,
+        include_evidence: Optional[bool] = None,
         inference_types: Optional[List[Union[str, "_models.OncoPhenotypeInferenceType"]]] = None,
-        check_for_cancer_case: bool = False,
+        check_for_cancer_case: Optional[bool] = None,
     ):
         ...
 
@@ -452,9 +452,9 @@ class OncoPhenotypePatientResult(_model_base.Model):
     """
 
     id: str = rest_field()
-    """The identifier given for the patient in the request. Required. """
+    """The identifier given for the patient in the request. Required."""
     inferences: List["_models.OncoPhenotypeInference"] = rest_field()
-    """The model's inferences for the given patient. Required. """
+    """The model's inferences for the given patient. Required."""
 
     @overload
     def __init__(
@@ -494,7 +494,7 @@ class OncoPhenotypeResult(_model_base.Model):
      Required.
     :vartype last_update_date_time: ~datetime.datetime
     :ivar status: The status of the processing job. Required. Known values are: "notStarted",
-     "running", "succeeded", "failed", and "partiallyCompleted".
+     "running", "succeeded", "failed", "partiallyCompleted", and "canceled".
     :vartype status: str or ~azure.healthinsights.cancerprofiling.models.JobStatus
     :ivar errors: An array of errors, if any errors occurred during the processing job.
     :vartype errors: list[~azure.healthinsights.cancerprofiling.models.Error]
@@ -502,21 +502,21 @@ class OncoPhenotypeResult(_model_base.Model):
     :vartype results: ~azure.healthinsights.cancerprofiling.models.OncoPhenotypeResults
     """
 
-    job_id: str = rest_field(name="jobId", readonly=True)
-    """A processing job identifier. Required. """
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", readonly=True)
-    """The date and time when the processing job was created. Required. """
-    expiration_date_time: datetime.datetime = rest_field(name="expirationDateTime", readonly=True)
-    """The date and time when the processing job is set to expire. Required. """
-    last_update_date_time: datetime.datetime = rest_field(name="lastUpdateDateTime", readonly=True)
-    """The date and time when the processing job was last updated. Required. """
-    status: Union[str, "_models.JobStatus"] = rest_field(readonly=True)
-    """The status of the processing job. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-    \"failed\", and \"partiallyCompleted\". """
-    errors: Optional[List["_models.Error"]] = rest_field(readonly=True)
-    """An array of errors, if any errors occurred during the processing job. """
-    results: Optional["_models.OncoPhenotypeResults"] = rest_field(readonly=True)
-    """The inference results for the Onco Phenotype request. """
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """A processing job identifier. Required."""
+    created_date_time: datetime.datetime = rest_field(name="createdDateTime", visibility=["read"])
+    """The date and time when the processing job was created. Required."""
+    expiration_date_time: datetime.datetime = rest_field(name="expirationDateTime", visibility=["read"])
+    """The date and time when the processing job is set to expire. Required."""
+    last_update_date_time: datetime.datetime = rest_field(name="lastUpdateDateTime", visibility=["read"])
+    """The date and time when the processing job was last updated. Required."""
+    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
+    """The status of the processing job. Required. Known values are: \"notStarted\", \"running\",
+     \"succeeded\", \"failed\", \"partiallyCompleted\", and \"canceled\"."""
+    errors: Optional[List["_models.Error"]] = rest_field(visibility=["read"])
+    """An array of errors, if any errors occurred during the processing job."""
+    results: Optional["_models.OncoPhenotypeResults"] = rest_field(visibility=["read"])
+    """The inference results for the Onco Phenotype request."""
 
 
 class OncoPhenotypeResults(_model_base.Model):
@@ -533,9 +533,9 @@ class OncoPhenotypeResults(_model_base.Model):
     """
 
     patients: List["_models.OncoPhenotypePatientResult"] = rest_field()
-    """Results for the patients given in the request. Required. """
+    """Results for the patients given in the request. Required."""
     model_version: str = rest_field(name="modelVersion")
-    """The version of the model used for inference, expressed as the model date. Required. """
+    """The version of the model used for inference, expressed as the model date. Required."""
 
     @overload
     def __init__(
@@ -583,26 +583,29 @@ class PatientDocument(_model_base.Model):
     :vartype content: ~azure.healthinsights.cancerprofiling.models.DocumentContent
     """
 
-    type: Union[str, "_models.DocumentType"] = rest_field() # pylint: disable=redefined-builtin
-    """The type of the patient document, such as 'note' (text document) or 'fhirBundle' (FHIR JSON document).
-    Required. Known values are: \"note\", \"fhirBundle\", \"dicom\", and \"genomicSequencing\". """
+    type: Union[str, "_models.DocumentType"] = rest_field()
+    """The type of the patient document, such as 'note' (text document) or 'fhirBundle' (FHIR JSON
+     document). Required. Known values are: \"note\", \"fhirBundle\", \"dicom\", and
+     \"genomicSequencing\"."""
     clinical_type: Optional[Union[str, "_models.ClinicalDocumentType"]] = rest_field(name="clinicalType")
     """The type of the clinical document. Known values are: \"consultation\", \"dischargeSummary\",
-    \"historyAndPhysical\", \"procedure\", \"progress\", \"imaging\", \"laboratory\", and \"pathology\". """
+     \"historyAndPhysical\", \"procedure\", \"progress\", \"imaging\", \"laboratory\", and
+     \"pathology\"."""
     id: str = rest_field()
-    """A given identifier for the document. Has to be unique across all documents for a single patient. Required. """
+    """A given identifier for the document. Has to be unique across all documents for a single
+     patient. Required."""
     language: Optional[str] = rest_field()
-    """A 2 letter ISO 639-1 representation of the language of the document. """
+    """A 2 letter ISO 639-1 representation of the language of the document."""
     created_date_time: Optional[datetime.datetime] = rest_field(name="createdDateTime")
-    """The date and time when the document was created. """
+    """The date and time when the document was created."""
     content: "_models.DocumentContent" = rest_field()
-    """The content of the patient document. Required. """
+    """The content of the patient document. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        type: Union[str, "_models.DocumentType"], # pylint: disable=redefined-builtin
+        type: Union[str, "_models.DocumentType"],
         id: str,  # pylint: disable=redefined-builtin
         content: "_models.DocumentContent",
         clinical_type: Optional[Union[str, "_models.ClinicalDocumentType"]] = None,
@@ -637,9 +640,9 @@ class PatientInfo(_model_base.Model):
     sex: Optional[Union[str, "_models.PatientInfoSex"]] = rest_field()
     """The patient's sex. Known values are: \"female\", \"male\", and \"unspecified\"."""
     birth_date: Optional[datetime.date] = rest_field(name="birthDate")
-    """The patient's date of birth. """
+    """The patient's date of birth."""
     clinical_info: Optional[List["_models.ClinicalCodedElement"]] = rest_field(name="clinicalInfo")
-    """Known clinical information for the patient, structured. """
+    """Known clinical information for the patient, structured."""
 
     @overload
     def __init__(
@@ -678,11 +681,13 @@ class PatientRecord(_model_base.Model):
     """
 
     id: str = rest_field()
-    """A given identifier for the patient. Has to be unique across all patients in a single request. Required. """
+    """A given identifier for the patient. Has to be unique across all patients in a single request.
+     Required."""
     info: Optional["_models.PatientInfo"] = rest_field()
-    """Patient structured information, including demographics and known structured clinical information. """
+    """Patient structured information, including demographics and known structured clinical
+     information."""
     data: Optional[List["_models.PatientDocument"]] = rest_field()
-    """Patient unstructured clinical data, given as documents. """
+    """Patient unstructured clinical data, given as documents."""
 
     @overload
     def __init__(

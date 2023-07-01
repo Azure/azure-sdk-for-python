@@ -52,6 +52,7 @@ class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUCCEEDED = "succeeded"
     FAILED = "failed"
     PARTIALLY_COMPLETED = "partiallyCompleted"
+    CANCELED = "canceled"
 
 
 class OncoPhenotypeInferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

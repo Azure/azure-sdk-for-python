@@ -7,9 +7,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+from io import IOBase
 import json
 import sys
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+import uuid
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -20,10 +22,9 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
@@ -36,10 +37,6 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -48,21 +45,12 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_cancer_profiling_infer_cancer_profile_request(
-    *,
-    repeatability_request_id: Optional[str] = None,
-    repeatability_first_sent: Optional[datetime.datetime] = None,
-    **kwargs: Any
-) -> HttpRequest:
+def build_cancer_profiling_infer_cancer_profile_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: Literal["2023-03-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-03-01-preview")
-    )
-    accept = _headers.pop("Accept", "application/json")
-
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-01-preview"))
     # Construct URL
     _url = "/oncophenotype/jobs"
 
@@ -70,15 +58,10 @@ def build_cancer_profiling_infer_cancer_profile_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if repeatability_request_id is not None:
-        _headers["Repeatability-Request-ID"] = _SERIALIZER.header(
-            "repeatability_request_id", repeatability_request_id, "str"
-        )
-    if repeatability_first_sent is not None:
-        _headers["Repeatability-First-Sent"] = _SERIALIZER.header(
-            "repeatability_first_sent", repeatability_first_sent, "iso-8601"
-        )
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if "Repeatability-Request-ID" not in _headers:
+        _headers["Repeatability-Request-ID"] = str(uuid.uuid4())
+    if "Repeatability-First-Sent" not in _headers:
+        _headers["Repeatability-First-Sent"] = _SERIALIZER.serialize_data(datetime.datetime.now(), "rfc-1123")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
@@ -86,14 +69,9 @@ def build_cancer_profiling_infer_cancer_profile_request(
 
 
 class CancerProfilingClientOperationsMixin(CancerProfilingClientMixinABC):
-    def _infer_cancer_profile_initial(
-        self,
-        body: Union[_models.OncoPhenotypeData, JSON, IO],
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[datetime.datetime] = None,
-        **kwargs: Any
-    ) -> Optional[_models.OncoPhenotypeResult]:
+    def _infer_cancer_profile_initial(  # pylint: disable=inconsistent-return-statements
+        self, body: Union[_models.OncoPhenotypeData, JSON, IO], **kwargs: Any
+    ) -> None:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -106,18 +84,16 @@ class CancerProfilingClientOperationsMixin(CancerProfilingClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.OncoPhenotypeResult]] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IO, bytes)):
+        if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
             _content = json.dumps(body, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_cancer_profiling_infer_cancer_profile_request(
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -136,38 +112,23 @@ class CancerProfilingClientOperationsMixin(CancerProfilingClientMixinABC):
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
         response_headers = {}
-        if response.status_code == 200:
-            deserialized = _deserialize(_models.OncoPhenotypeResult, response.json())
-
-        if response.status_code == 202:
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-            response_headers["Repeatability-Result"] = self._deserialize(
-                "str", response.headers.get("Repeatability-Result")
-            )
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+        response_headers["Repeatability-Result"] = self._deserialize(
+            "str", response.headers.get("Repeatability-Result")
+        )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
-
-        return deserialized
+            return cls(pipeline_response, None, response_headers)
 
     @overload
     def begin_infer_cancer_profile(
-        self,
-        body: _models.OncoPhenotypeData,
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[datetime.datetime] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.OncoPhenotypeData, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.OncoPhenotypeResult]:
         """Create Onco Phenotype job.
 
@@ -175,12 +136,6 @@ class CancerProfilingClientOperationsMixin(CancerProfilingClientMixinABC):
 
         :param body: Required.
         :type body: ~azure.healthinsights.cancerprofiling.models.OncoPhenotypeData
-        :keyword repeatability_request_id: An opaque, globally-unique, client-generated string
-         identifier for the request. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: Specifies the date and time at which the request was first
-         created. Default value is None.
-        :paramtype repeatability_first_sent: ~datetime.datetime
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -200,13 +155,7 @@ class CancerProfilingClientOperationsMixin(CancerProfilingClientMixinABC):
 
     @overload
     def begin_infer_cancer_profile(
-        self,
-        body: JSON,
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[datetime.datetime] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.OncoPhenotypeResult]:
         """Create Onco Phenotype job.
 
@@ -214,12 +163,6 @@ class CancerProfilingClientOperationsMixin(CancerProfilingClientMixinABC):
 
         :param body: Required.
         :type body: JSON
-        :keyword repeatability_request_id: An opaque, globally-unique, client-generated string
-         identifier for the request. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: Specifies the date and time at which the request was first
-         created. Default value is None.
-        :paramtype repeatability_first_sent: ~datetime.datetime
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -239,13 +182,7 @@ class CancerProfilingClientOperationsMixin(CancerProfilingClientMixinABC):
 
     @overload
     def begin_infer_cancer_profile(
-        self,
-        body: IO,
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[datetime.datetime] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.OncoPhenotypeResult]:
         """Create Onco Phenotype job.
 
@@ -253,12 +190,6 @@ class CancerProfilingClientOperationsMixin(CancerProfilingClientMixinABC):
 
         :param body: Required.
         :type body: IO
-        :keyword repeatability_request_id: An opaque, globally-unique, client-generated string
-         identifier for the request. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: Specifies the date and time at which the request was first
-         created. Default value is None.
-        :paramtype repeatability_first_sent: ~datetime.datetime
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -278,12 +209,7 @@ class CancerProfilingClientOperationsMixin(CancerProfilingClientMixinABC):
 
     @distributed_trace
     def begin_infer_cancer_profile(
-        self,
-        body: Union[_models.OncoPhenotypeData, JSON, IO],
-        *,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[datetime.datetime] = None,
-        **kwargs: Any
+        self, body: Union[_models.OncoPhenotypeData, JSON, IO], **kwargs: Any
     ) -> LROPoller[_models.OncoPhenotypeResult]:
         """Create Onco Phenotype job.
 
@@ -291,12 +217,6 @@ class CancerProfilingClientOperationsMixin(CancerProfilingClientMixinABC):
 
         :param body: Is one of the following types: OncoPhenotypeData, JSON, IO Required.
         :type body: ~azure.healthinsights.cancerprofiling.models.OncoPhenotypeData or JSON or IO
-        :keyword repeatability_request_id: An opaque, globally-unique, client-generated string
-         identifier for the request. Default value is None.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: Specifies the date and time at which the request was first
-         created. Default value is None.
-        :paramtype repeatability_first_sent: ~datetime.datetime
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -323,22 +243,24 @@ class CancerProfilingClientOperationsMixin(CancerProfilingClientMixinABC):
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._infer_cancer_profile_initial(
-                body=body,
-                repeatability_request_id=repeatability_request_id,
-                repeatability_first_sent=repeatability_first_sent,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
+            response_headers = {}
             response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Repeatability-Result"] = self._deserialize(
+                "str", response.headers.get("Repeatability-Result")
+            )
+
             deserialized = _deserialize(_models.OncoPhenotypeResult, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         path_format_arguments = {
