@@ -45,7 +45,7 @@ class TableClient(TablesBaseClient):
         ~azure.core.credentials.AzureSasCredential or
         ~azure.core.credentials.TokenCredential or None
     :keyword api_version: Specifies the version of the operation to use for this request. Default value
-        is "2019-02-02". Note that overriding this default value may result in unsupported behavior.
+        is "2019-02-02".
     :paramtype api_version: str
     """
 
@@ -70,7 +70,7 @@ class TableClient(TablesBaseClient):
             ~azure.core.credentials.AzureSasCredential or
             ~azure.core.credentials.TokenCredential or None
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
-            is "2019-02-02". Note that overriding this default value may result in unsupported behavior.
+            is "2019-02-02".
         :paramtype api_version: str
 
         :returns: None

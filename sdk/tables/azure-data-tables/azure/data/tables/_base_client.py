@@ -212,7 +212,7 @@ class TablesBaseClient(AccountHostsMixin):
         :class:`~azure.core.credentials.AzureSasCredential` or
         :class:`~azure.core.credentials.TokenCredential`
     :keyword api_version: Specifies the version of the operation to use for this request. Default value
-        is "2019-02-02". Note that overriding this default value may result in unsupported behavior.
+        is "2019-02-02".
     :paramtype api_version: str
     """
 
@@ -257,12 +257,13 @@ class TablesBaseClient(AccountHostsMixin):
         ]
 
     def _batch_send(self, table_name: str, *reqs: HttpRequest, **kwargs) -> List[Mapping[str, Any]]:
+        # pylint:disable=docstring-should-be-keyword
         """Given a series of request, do a Storage batch call.
 
         :param table_name: The table name.
         :type table_name: str
-        :keyword reqs: The HTTP request.
-        :paramtype reqs: ~azure.core.pipeline.transport.HttpRequest
+        :param reqs: The HTTP request.
+        :type reqs: ~azure.core.pipeline.transport.HttpRequest
         :return: A list of batch part metadata in response.
         :rtype: list[Mapping[str, Any]]
         """

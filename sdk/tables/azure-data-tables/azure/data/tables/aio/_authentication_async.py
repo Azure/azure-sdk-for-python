@@ -15,6 +15,7 @@ from .._authentication import _HttpChallenge, AzureSasCredentialPolicy, SharedKe
 
 
 class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
+    # pylint:disable=docstring-should-be-keyword
     """Adds a bearer token Authorization header to requests, for the tenant provided in authentication challenges.
 
     See https://docs.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on AAD
@@ -22,9 +23,9 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
 
     :param credential: The credential.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword str scopes: Lets you specify the type of access needed.
-    :keyword bool discover_tenant: Determines if tenant discovery should be enabled. Defaults to True.
-    :keyword bool discover_scopes: Determines if scopes from authentication challenges should be provided to token
+    :param str scopes: Lets you specify the type of access needed.
+    :param bool discover_tenant: Determines if tenant discovery should be enabled. Defaults to True.
+    :param bool discover_scopes: Determines if scopes from authentication challenges should be provided to token
         requests, instead of the scopes given to the policy's constructor, if any are present. Defaults to True.
     """
 

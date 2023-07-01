@@ -102,12 +102,13 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         ]
 
     async def _batch_send(self, table_name: str, *reqs: HttpRequest, **kwargs) -> List[Mapping[str, Any]]:
+        # pylint:disable=docstring-should-be-keyword
         """Given a series of request, do a Storage batch call.
 
         :param table_name: The table name.
         :type table_name: str
-        :keyword reqs: The HTTP request.
-        :paramtype reqs: ~azure.core.pipeline.transport.HttpRequest
+        :param reqs: The HTTP request.
+        :type reqs: ~azure.core.pipeline.transport.HttpRequest
         :return: A list of batch part metadata in response.
         :rtype: list[Mapping[str, Any]]
         """

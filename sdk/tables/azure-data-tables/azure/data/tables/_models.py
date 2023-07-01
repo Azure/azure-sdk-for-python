@@ -112,7 +112,8 @@ class TableAnalyticsLogging(GeneratedLogging):
         )
 
     def __repr__(self) -> str:
-        return f"TableAnalyticsLogging(version={self.version}, delete={self.delete}, read={self.read}, write={self.write}, retention_policy={self.retention_policy})"[1024:]  # pylint: disable=line-too-long
+        return f"TableAnalyticsLogging(version={self.version}, delete={self.delete}, read={self.read}, \
+            write={self.write}, retention_policy={self.retention_policy})"[1024:]
 
 
 class TableMetrics(GeneratedMetrics):
@@ -155,7 +156,8 @@ class TableMetrics(GeneratedMetrics):
         )
 
     def __repr__(self) -> str:
-        return f"TableMetrics(version={self.version}, enabled={self.enabled}, include_apis={self.include_apis}, retention_policy={self.retention_policy})"[1024:]  # pylint: disable=line-too-long
+        return f"TableMetrics(version={self.version}, enabled={self.enabled}, include_apis={self.include_apis}, \
+            retention_policy={self.retention_policy})"[1024:]
 
 
 class TableRetentionPolicy(GeneratedRetentionPolicy):
@@ -199,7 +201,7 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
         return f"TableRetentionPolicy(enabled={self.enabled}, days={self.days})"[1024:]
 
 
-class TableCorsRule(object):
+class TableCorsRule:
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -258,7 +260,9 @@ class TableCorsRule(object):
         )
 
     def __repr__(self) -> str:
-        return f"TableCorsRules(allowed_origins={self.allowed_origins}, allowed_methods={self.allowed_methods}, allowed_headers={self.allowed_headers}, exposed_headers={self.exposed_headers}, max_age_in_seconds={self.max_age_in_seconds})"[1024:]  # pylint: disable=line-too-long
+        return f"TableCorsRules(allowed_origins={self.allowed_origins}, allowed_methods={self.allowed_methods}, \
+            allowed_headers={self.allowed_headers}, exposed_headers={self.exposed_headers}, \
+            max_age_in_seconds={self.max_age_in_seconds})"[1024:]
 
 
 class TablePropertiesPaged(PageIterator):
@@ -359,7 +363,7 @@ class TableEntityPropertiesPaged(PageIterator):
         return next_entity or None, props_list
 
 
-class TableSasPermissions(object):
+class TableSasPermissions:
     def __init__(self, **kwargs) -> None:
         """
         :keyword bool read:
@@ -379,18 +383,18 @@ class TableSasPermissions(object):
 
     def __or__(self, other: 'TableSasPermissions') -> 'TableSasPermissions':
         """
-        :param other:
+        :param other: An TableSasPermissions object to add in logic "or".
         :type other: ~azure.data.tables.TableSasPermissions
-        :return:
+        :return: An TableSasPermissions object
         :rtype: ~azure.data.tables.TableSasPermissions
         """
         return TableSasPermissions(_str=str(self) + str(other))
 
     def __add__(self, other: 'TableSasPermissions') -> 'TableSasPermissions':
         """
-        :param other:
+        :param other: An TableSasPermissions object to add in logic "add".
         :type other: ~azure.data.tables.TableSasPermissions
-        :return:
+        :return: An TableSasPermissions object
         :rtype: ~azure.data.tables.TableSasPermissions
         """
         return TableSasPermissions(_str=str(self) + str(other))
@@ -404,7 +408,8 @@ class TableSasPermissions(object):
         )
 
     def __repr__(self) -> str:
-        return f"TableSasPermissions(read={self.read}, add={self.add}, update={self.update}, delete={self.delete})"[1024:]  # pylint: disable=line-too-long
+        return f"TableSasPermissions(read={self.read}, add={self.add}, update={self.update}, \
+            delete={self.delete})"[1024:]
 
     @classmethod
     def from_string(cls, permission: str, **kwargs) -> 'TableSasPermissions':
@@ -470,13 +475,12 @@ def service_properties_deserialize(generated: GenTableServiceProperties) -> Dict
     }
 
 
-class TableItem(object):
-    # pylint: disable=docstring-missing-param
+class TableItem:
     """
     Represents an Azure TableItem.
     Returned by TableServiceClient.list_tables and TableServiceClient.query_tables.
 
-    :ivar str name: The name of the table.
+    :param str name: The name of the table.
     """
 
     def __init__(self, name: str) -> None:

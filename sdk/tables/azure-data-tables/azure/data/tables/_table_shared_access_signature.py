@@ -162,10 +162,6 @@ class TableSharedAccessSignature(SharedAccessSignature):
     """
 
     def __init__(self, credential):
-        """
-        :param credential: The credential used for authenticating requests.
-        :type credential: ~azure.core.credentials.AzureNamedKeyCredential
-        """
         super(TableSharedAccessSignature, self).__init__(
             credential, x_ms_version=X_MS_VERSION
         )
