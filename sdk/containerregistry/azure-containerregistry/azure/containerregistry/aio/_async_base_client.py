@@ -29,9 +29,8 @@ class ContainerRegistryBaseClient(object):
     :param credential: Token credential for authenticating requests with Azure, or None in anonymous access
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or None
     :keyword credential_scopes: URL for credential authentication if different from the default
-    :paramtype credential_scopes: List[str]
-    :keyword api_version: Api Version. Default value is "2021-07-01". Note that overriding this
-        default value may result in unsupported behavior.
+    :paramtype credential_scopes: list[str]
+    :keyword api_version: Api Version. Default value is "2021-07-01".
     :paramtype api_version: str
     """
 

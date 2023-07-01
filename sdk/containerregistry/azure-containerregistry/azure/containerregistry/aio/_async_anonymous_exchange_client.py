@@ -7,7 +7,6 @@ from typing import Optional, Union
 
 from azure.core.credentials import AccessToken
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_exchange_client import ExchangeClientAuthenticationPolicy
 from .._generated.aio import ContainerRegistry
@@ -37,8 +36,7 @@ class AnonymousACRExchangeClient(object):
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2021-07-01". Note that overriding this
-        default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2021-07-01".
     :paramtype api_version: str
     """
 
@@ -54,7 +52,7 @@ class AnonymousACRExchangeClient(object):
             **kwargs
         )
 
-    async def get_acr_access_token(self, challenge: str, **kwargs) -> Optional[str]: # pylint:disable=client-method-missing-tracing-decorator
+    async def get_acr_access_token(self, challenge: str, **kwargs) -> Optional[str]: # pylint:disable=client-method-missing-tracing-decorator-async
         parsed_challenge = _parse_challenge(challenge)
         return await self.exchange_refresh_token_for_access_token(
             "",
@@ -64,7 +62,7 @@ class AnonymousACRExchangeClient(object):
             **kwargs
         )
 
-    async def exchange_refresh_token_for_access_token( # pylint:disable=client-method-missing-tracing-decorator
+    async def exchange_refresh_token_for_access_token( # pylint:disable=client-method-missing-tracing-decorator-async
         self, refresh_token: str, service: str, scope: str, grant_type: Union[str, TokenGrantType], **kwargs
     ) -> Optional[str]:
         access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token( # type: ignore

@@ -6,7 +6,6 @@
 from typing import Optional, Union
 
 from azure.core.credentials import TokenCredential, AccessToken
-from azure.core.tracing.decorator import distributed_trace
 
 from ._exchange_client import ExchangeClientAuthenticationPolicy
 from ._generated import ContainerRegistry
@@ -27,8 +26,7 @@ class AnonymousACRExchangeClient(object):
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
-    :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
-        may result in unsupported behavior.
+    :keyword api_version: API Version. The default value is "2021-07-01".
     :paramtype api_version: str
     """
 
