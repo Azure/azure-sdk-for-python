@@ -153,7 +153,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
 
     @property
     def fully_qualified_reference(self) -> str:
-        return f"{_host_only(self._registry)}/{self._repository_name}{':' if _is_tag(self._digest) else '@'}{_strip_alg(self._digest)}" # pylint: disable=line-too-long
+        return f"{_host_only(self._registry)}/{self._repository_name}{':' if _is_tag(self._digest) else '@'}{_strip_alg(self._digest)}"  # pylint: disable=line-too-long
 
 
 class RepositoryProperties(object):
@@ -208,10 +208,11 @@ class RepositoryProperties(object):
     def __getattr__(self, name):
         if name == "last_udpated_on":
             warnings.warn(
-                "The property name with a typo called 'last_udpated_on' has been deprecated and will be retired in future versions", # pylint: disable=line-too-long
-                DeprecationWarning)
+                "The property name with a typo called 'last_udpated_on' has been deprecated and will be retired in future versions",  # pylint: disable=line-too-long
+                DeprecationWarning,
+            )
             return self.last_updated_on
-        return super().__getattr__(self, name) # pylint: disable=no-member
+        return super().__getattr__(self, name)  # pylint: disable=no-member
 
     @property
     def created_on(self) -> datetime:

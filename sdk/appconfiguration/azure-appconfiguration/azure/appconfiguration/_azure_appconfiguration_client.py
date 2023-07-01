@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import binascii
 import sys
-from typing import Any, Dict, List, Mapping, Optional, Union
+from typing import Any, Dict, List, Mapping, Optional, Union, cast
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential
@@ -169,7 +169,8 @@ class AzureAppConfigurationClient:
         :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`, :class:`~azure.core.exceptions.ClientAuthenticationError`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
+            :class:`~azure.core.exceptions.ClientAuthenticationError`
 
         Example
 
@@ -604,9 +605,9 @@ class AzureAppConfigurationClient:
             filters=filters, composition_type=composition_type, retention_period=retention_period, tags=tags
         )
         try:
-            return self._impl.begin_create_snapshot(
+            return cast(LROPoller[Snapshot], self._impl.begin_create_snapshot(
                 name=name, entity=snapshot._to_generated(), cls=Snapshot._from_deserialized, **kwargs
-            )
+            ))
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 

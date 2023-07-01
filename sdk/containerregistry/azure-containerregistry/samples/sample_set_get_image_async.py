@@ -47,10 +47,13 @@ class SetGetImageAsync(object):
     async def set_get_oci_image(self):
         repository_name = "sample-oci-image-async"
         layer = BytesIO(b"Sample layer")
-        config = BytesIO(json.dumps(
-            {
-                "sample config": "content",
-            }).encode())
+        config = BytesIO(
+            json.dumps(
+                {
+                    "sample config": "content",
+                }
+            ).encode()
+        )
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Upload a layer
             layer_digest, layer_size = await client.upload_blob(repository_name, layer)
@@ -119,7 +122,7 @@ class SetGetImageAsync(object):
                 await client.delete_blob(repository_name, layer["digest"])
             # Delete the config
             await client.delete_blob(repository_name, received_manifest["config"]["digest"])
-            
+
             # Delete the image
             await client.delete_manifest(repository_name, get_manifest_result.digest)
 
@@ -134,17 +137,16 @@ class SetGetImageAsync(object):
                 {
                     "digest": "sha256:7e9b6e7ba2842c91cf49f3e214d04a7a496f8214356f41d81a6e6dcad11f11e3",
                     "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
-                    "platform": {
-                        "architecture": ArtifactArchitecture.AMD64,
-                        "os": ArtifactOperatingSystem.LINUX
-                    },
-                    "size": 525
+                    "platform": {"architecture": ArtifactArchitecture.AMD64, "os": ArtifactOperatingSystem.LINUX},
+                    "size": 525,
                 }
-            ]
+            ],
         }
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Set the image with one custom media type
-            await client.set_manifest(repository_name, manifest_list, tag="sample", media_type=manifest_list["mediaType"])
+            await client.set_manifest(
+                repository_name, manifest_list, tag="sample", media_type=manifest_list["mediaType"]
+            )
 
             # Get the image
             get_manifest_result = await client.get_manifest(repository_name, "sample")

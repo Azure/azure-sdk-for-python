@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import binascii
 import sys
-from typing import Any, Dict, List, Mapping, Optional, Union
+from typing import Any, Dict, List, Mapping, Optional, Union, cast
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials_async import AsyncTokenCredential
@@ -598,9 +598,9 @@ class AzureAppConfigurationClient:
             filters=filters, composition_type=composition_type, retention_period=retention_period, tags=tags
         )
         try:
-            return await self._impl.begin_create_snapshot(
+            return cast(AsyncLROPoller[Snapshot], await self._impl.begin_create_snapshot(
                 name=name, entity=snapshot._to_generated(), cls=Snapshot._from_deserialized, **kwargs
-            )
+            ))
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 

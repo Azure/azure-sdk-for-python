@@ -15,6 +15,7 @@ from devtools_testutils import (
 )
 from testcase import get_authority, import_image
 
+
 @pytest.fixture(scope="session", autouse=True)
 def load_registry():
     if not is_live():
@@ -22,15 +23,13 @@ def load_registry():
     authority = get_authority(os.environ.get("CONTAINERREGISTRY_ENDPOINT"))
     authority_anon = get_authority(os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT"))
     repo = "library/hello-world"
-    tags = [
-        "library/hello-world:latest",
-        "library/hello-world:v1"
-    ]
+    tags = ["library/hello-world:latest", "library/hello-world:v1"]
     try:
         import_image(authority, repo, tags)
         import_image(authority_anon, repo, tags, is_anonymous=True)
     except Exception as e:
         print(e)
+
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):

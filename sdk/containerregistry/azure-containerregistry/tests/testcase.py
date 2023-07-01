@@ -35,7 +35,7 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
                     tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
                     client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
                     client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
-                    authority=authority
+                    authority=authority,
                 )
             return DefaultAzureCredential(**kwargs)
         return FakeTokenCredential()
@@ -72,10 +72,10 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
 
     def is_public_endpoint(self, endpoint):
         return ".azurecr.io" in endpoint
-    
+
     def is_china_endpoint(self, endpoint):
         return ".azurecr.cn" in endpoint
-    
+
     def upload_oci_manifest_prerequisites(self, repo, client):
         layer = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
         config = "config.json"
@@ -84,7 +84,7 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
         client.upload_blob(repo, open(os.path.join(base_path, config), "rb"))
         # upload layers
         client.upload_blob(repo, open(os.path.join(base_path, layer), "rb"))
-    
+
     def upload_docker_manifest_prerequisites(self, repo, client):
         layer = "2db29710123e3e53a794f2694094b9b4338aa9ee5c40b930cb8063a1be392c54"
         config = "config.json"
@@ -110,6 +110,7 @@ def get_authority(endpoint: str) -> str:
         return AzureAuthorityHosts.AZURE_GOVERNMENT
     raise ValueError(f"Endpoint ({endpoint}) could not be understood")
 
+
 def get_audience(authority: str) -> str:
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
         logger.warning("Public cloud auth audience")
@@ -121,6 +122,7 @@ def get_audience(authority: str) -> str:
         logger.warning("US Gov cloud auth audience")
         return "https://management.usgovcloudapi.net"
 
+
 def import_image(authority, repository, tags, is_anonymous=False):
     logger.warning(f"Import image authority: {authority}")
     if is_anonymous:
@@ -128,9 +130,9 @@ def import_image(authority, repository, tags, is_anonymous=False):
     else:
         registry_name = os.environ.get("CONTAINERREGISTRY_REGISTRY_NAME")
     sub_id = os.environ.get("CONTAINERREGISTRY_SUBSCRIPTION_ID")
-    tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID")
-    client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID")
-    client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET")
+    tenant_id = os.environ.get("CONTAINERREGISTRY_TENANT_ID")
+    client_id = os.environ.get("CONTAINERREGISTRY_CLIENT_ID")
+    client_secret = os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET")
     credential = ClientSecretCredential(
         tenant_id=tenant_id, client_id=client_id, client_secret=client_secret, authority=authority
     )

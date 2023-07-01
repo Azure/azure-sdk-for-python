@@ -51,10 +51,13 @@ class SetGetImage(object):
         # [START upload_blob_and_manifest]
         self.repository_name = "sample-oci-image"
         layer = BytesIO(b"Sample layer")
-        config = BytesIO(json.dumps(
-            {
-                "sample config": "content",
-            }).encode())
+        config = BytesIO(
+            json.dumps(
+                {
+                    "sample config": "content",
+                }
+            ).encode()
+        )
         with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Upload a layer
             layer_digest, layer_size = client.upload_blob(self.repository_name, layer)
@@ -85,7 +88,7 @@ class SetGetImage(object):
             manifest_digest = client.set_manifest(self.repository_name, oci_manifest, tag="latest")
             print(f"Uploaded manifest: digest - {manifest_digest}")
         # [END upload_blob_and_manifest]
-    
+
     def get_oci_image(self):
         # [START download_blob_and_manifest]
         with ContainerRegistryClient(self.endpoint, self.credential) as client:
@@ -93,7 +96,7 @@ class SetGetImage(object):
             get_manifest_result = client.get_manifest(self.repository_name, "latest")
             received_manifest = get_manifest_result.manifest
             print(f"Got manifest:\n{received_manifest}")
-            
+
             # Download and write out the layers
             for layer in received_manifest["layers"]:
                 # Remove the "sha256:" prefix from digest
@@ -119,8 +122,8 @@ class SetGetImage(object):
                 os.remove(config_file_name)
             print(f"Got config: {config_file_name}")
         # [END download_blob_and_manifest]
-        
-    def delete_blob(self):    
+
+    def delete_blob(self):
         # [START delete_blob]
         with ContainerRegistryClient(self.endpoint, self.credential) as client:
             get_manifest_result = client.get_manifest(self.repository_name, "latest")
@@ -131,8 +134,8 @@ class SetGetImage(object):
             # Delete the config
             client.delete_blob(self.repository_name, received_manifest["config"]["digest"])
         # [END delete_blob]
-        
-    def delete_oci_image(self):    
+
+    def delete_oci_image(self):
         # [START delete_manifest]
         with ContainerRegistryClient(self.endpoint, self.credential) as client:
             get_manifest_result = client.get_manifest(self.repository_name, "latest")
@@ -145,7 +148,7 @@ class SetGetImage(object):
         self.get_oci_image()
         self.delete_blob()
         self.delete_oci_image()
-    
+
     def set_get_docker_image(self):
         load_registry()
         repository_name = "library/hello-world"
@@ -157,13 +160,10 @@ class SetGetImage(object):
                 {
                     "digest": "sha256:7e9b6e7ba2842c91cf49f3e214d04a7a496f8214356f41d81a6e6dcad11f11e3",
                     "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
-                    "platform": {
-                        "architecture": ArtifactArchitecture.AMD64,
-                        "os": ArtifactOperatingSystem.LINUX
-                    },
-                    "size": 525
+                    "platform": {"architecture": ArtifactArchitecture.AMD64, "os": ArtifactOperatingSystem.LINUX},
+                    "size": 525,
                 }
-            ]
+            ],
         }
         with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Set the image with one custom media type

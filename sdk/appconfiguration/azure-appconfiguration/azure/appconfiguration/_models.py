@@ -4,7 +4,7 @@
 # ------------------------------------
 import json
 import sys
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 from azure.core.rest import HttpResponse
 from ._generated._serialization import Model
@@ -384,7 +384,7 @@ class ConfigurationSettingFilter:
         self.label = label
 
 
-class Snapshot:
+class Snapshot:  # pylint: disable=too-many-instance-attributes
     """Snapshot.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -394,23 +394,23 @@ class Snapshot:
     :ivar name: The name of the snapshot.
     :vartype name: str
     :ivar status: The current status of the snapshot. Known values are: "provisioning", "ready",
-     "archived", and "failed".
+        "archived", and "failed".
     :vartype status: str
-    :ivar filters: A list of filters used to filter the key-values included in the snapshot.
-     Required.
-    :vartype filters: list[~azure.appconfiguration.ConfigurationSettingFilter]
+    :param filters: A list of filters used to filter the key-values included in the snapshot.
+        Required.
+    :type filters: list[~azure.appconfiguration.ConfigurationSettingFilter]
     :ivar composition_type: The composition type describes how the key-values within the snapshot
-     are composed. The 'key' composition type ensures there are no two key-values containing the
-     same key. The 'key_label' composition type ensures there are no two key-values containing the
-     same key and label. Known values are: "key" and "key_label".
+        are composed. The 'key' composition type ensures there are no two key-values containing the
+        same key. The 'key_label' composition type ensures there are no two key-values containing the
+        same key and label. Known values are: "key" and "key_label".
     :vartype composition_type: str
     :ivar created: The time that the snapshot was created.
     :vartype created: ~datetime.datetime
     :ivar expires: The time that the snapshot will expire.
     :vartype expires: ~datetime.datetime
     :ivar retention_period: The amount of time, in seconds, that a snapshot will remain in the
-     archived state before expiring. This property is only writable during the creation of a
-     snapshot. If not specified, the default lifetime of key-value revisions will be used.
+        archived state before expiring. This property is only writable during the creation of a
+        snapshot. If not specified, the default lifetime of key-value revisions will be used.
     :vartype retention_period: int
     :ivar size: The size in bytes of the snapshot.
     :vartype size: int
@@ -421,7 +421,7 @@ class Snapshot:
     :ivar etag: A value representing the current state of the snapshot.
     :vartype etag: str
     """
-    
+
     def __init__(
         self,
         filters: List[ConfigurationSettingFilter],
@@ -432,16 +432,16 @@ class Snapshot:
     ):
         """
         :param filters: A list of filters used to filter the key-values included in the snapshot.
-         Required.
+            Required.
         :type filters: list[~azure.appconfiguration.ConfigurationSettingFilter]
         :keyword composition_type: The composition type describes how the key-values within the
-         snapshot are composed. The 'key' composition type ensures there are no two key-values
-         containing the same key. The 'key_label' composition type ensures there are no two key-values
-         containing the same key and label. Known values are: "key" and "key_label".
+            snapshot are composed. The 'key' composition type ensures there are no two key-values
+            containing the same key. The 'key_label' composition type ensures there are no two key-values
+            containing the same key and label. Known values are: "key" and "key_label".
         :paramtype composition_type: str
         :keyword retention_period: The amount of time, in seconds, that a snapshot will remain in the
-         archived state before expiring. This property is only writable during the creation of a
-         snapshot. If not specified, the default lifetime of key-value revisions will be used.
+            archived state before expiring. This property is only writable during the creation of a
+            snapshot. If not specified, the default lifetime of key-value revisions will be used.
         :paramtype retention_period: int
         :keyword tags: The tags of the snapshot.
         :paramtype tags: dict[str, str]
@@ -465,10 +465,12 @@ class Snapshot:
 
         filters = []
         for config_setting_filter in generated.filters:
-            filters.append(ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label))
+            filters.append(
+                ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label)
+            )
         snapshot = cls(
             filters=filters,
-            composition_type=generated.composition_type,
+            composition_type=cast(Optional[Literal["key", "key_label"]], generated.composition_type),
             retention_period=generated.retention_period,
             tags=generated.tags
         )
@@ -481,7 +483,7 @@ class Snapshot:
         snapshot.etag = generated.etag
 
         return snapshot
-    
+
     @classmethod
     def _from_deserialized(
         cls, response: HttpResponse, deserialized: GeneratedSnapshot, response_headers: Dict # pylint:disable=unused-argument
@@ -490,10 +492,12 @@ class Snapshot:
             return deserialized
         filters = []
         for config_setting_filter in deserialized.filters:
-            filters.append(ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label))
+            filters.append(
+                ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label)
+            )
         snapshot = cls(
             filters=filters,
-            composition_type=deserialized.composition_type,
+            composition_type=cast(Optional[Literal["key", "key_label"]], deserialized.composition_type),
             retention_period=deserialized.retention_period,
             tags=deserialized.tags
         )
@@ -506,7 +510,7 @@ class Snapshot:
         snapshot.etag = deserialized.etag
 
         return snapshot
-    
+
     def _to_generated(self) -> GeneratedSnapshot:
         config_setting_filters = []
         for kv_filter in self.filters:

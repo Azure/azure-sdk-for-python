@@ -53,8 +53,8 @@ class ACRExchangeClient(object):
             **kwargs
         )
         self._credential = credential
-        self._refresh_token = None # type: Optional[str]
-        self._expiration_time = 0 # type: float
+        self._refresh_token = None  # type: Optional[str]
+        self._expiration_time = 0  # type: float
 
     async def get_acr_access_token(self, challenge: str, **kwargs) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
@@ -71,7 +71,7 @@ class ACRExchangeClient(object):
 
     async def exchange_aad_token_for_refresh_token(self, service: str, **kwargs) -> str:
         token = await self._credential.get_token(*self.credential_scopes)
-        refresh_token = await self._client.authentication.exchange_aad_access_token_for_acr_refresh_token( # type: ignore # pylint: disable=line-too-long
+        refresh_token = await self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(  # type: ignore # pylint: disable=line-too-long
             grant_type=PostContentSchemaGrantType.ACCESS_TOKEN, service=service, access_token=token.token, **kwargs
         )
         return refresh_token.refresh_token if refresh_token.refresh_token is not None else ""
@@ -79,7 +79,7 @@ class ACRExchangeClient(object):
     async def exchange_refresh_token_for_access_token(
         self, refresh_token: str, service: str, scope: str, **kwargs
     ) -> Optional[str]:
-        access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(# type: ignore
+        access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(  # type: ignore
             service, scope, refresh_token, **kwargs
         )
         return access_token.access_token
