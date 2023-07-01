@@ -174,3 +174,25 @@ class TestCallConnectionClient(unittest.TestCase):
 
         self.assertFalse(raised, 'Expected is no exception raised')
         self.assertEqual(self.operation_context, response.operation_context)
+
+    def test_mute_participants(self):
+        raised = False
+
+        def mock_send(*_, **__):
+            return mock_response(status_code=202, json_payload={
+                "operationContext": self.operation_context})
+
+        call_connection = CallConnectionClient(
+            endpoint="https://endpoint",
+            credential=AzureKeyCredential("fakeCredential=="),
+            call_connection_id=self.call_connection_id,
+            transport=Mock(send=mock_send))
+        user = CommunicationUserIdentifier(self.communication_user_id)
+        try:
+            response = call_connection.mute_participants(user)
+        except:
+            raised = True
+            raise
+
+        self.assertFalse(raised, 'Expected is no exception raised')
+        self.assertEqual(self.operation_context, response.operation_context)

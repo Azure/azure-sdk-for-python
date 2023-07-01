@@ -33,6 +33,11 @@ def _timedelta_as_isostr(td: timedelta) -> str:
     """Converts a datetime.timedelta object into an ISO 8601 formatted string, e.g. 'P4DT12H30M05S'
 
     Function adapted from the Tin Can Python project: https://github.com/RusticiSoftware/TinCanPython
+
+    :param td: The timedelta object to convert
+    :type td: datetime.timedelta
+    :return: An ISO 8601 formatted string representing the timedelta object
+    :rtype: str
     """
 
     # Split seconds to larger units
@@ -80,7 +85,13 @@ def _timedelta_as_isostr(td: timedelta) -> str:
 
 
 def _datetime_as_isostr(dt: Union[datetime, date, time, timedelta]) -> str:
-    """Converts a datetime.(datetime|date|time|timedelta) object into an ISO 8601 formatted string"""
+    """Converts a datetime.(datetime|date|time|timedelta) object into an ISO 8601 formatted string.
+
+    :param dt: The datetime object to convert
+    :type dt: datetime.datetime or datetime.date or datetime.time or datetime.timedelta
+    :return: An ISO 8601 formatted string representing the datetime object
+    :rtype: str
+    """
     # First try datetime.datetime
     if hasattr(dt, "year") and hasattr(dt, "hour"):
         dt = cast(datetime, dt)

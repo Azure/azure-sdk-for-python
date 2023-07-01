@@ -4,7 +4,11 @@
 
 ### Features Added
 
+- Added `VectorSearch` support.
+
 ### Breaking Changes
+
+- Deprecated `SentimentSkillV1` and `EntityRecognitionSkillV1`.
 
 ### Bugs Fixed
 

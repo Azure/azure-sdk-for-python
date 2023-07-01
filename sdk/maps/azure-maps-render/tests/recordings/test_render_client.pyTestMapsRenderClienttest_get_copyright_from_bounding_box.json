@@ -8,27 +8,29 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "subscription-key": "AzureMapsSubscriptionKey",
-        "User-Agent": "azsdk-python-maps-render/unknown Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-maps-render/unknown Python/3.10.5 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "max-age=86400",
-        "Content-Length": "152659",
+        "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 06 Oct 2022 06:50:54 GMT",
-        "ETag": "W/\u002213fc5384a26881239fe43e68c5ff6981\u0022",
+        "Date": "Tue, 27 Jun 2023 13:49:20 GMT",
+        "ETag": "W/\u0022c167ace2572a74d6518d4668398c009b\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
         "x-ms-azuremaps-region": "West US 2",
-        "X-MSEdge-Ref": "Ref A: 24D3E8573A8F44A49229229EDD031555 Ref B: TPE30EDGE0920 Ref C: 2022-10-06T06:50:55Z"
+        "X-MSEdge-Ref": "Ref A: 0A97A0F038EA4E31AB0921D2C7E7BE1E Ref B: TPE30EDGE0613 Ref C: 2023-06-27T13:49:20Z"
       },
       "ResponseBody": {
         "formatVersion": "0.0.1",
         "generalCopyrights": [
-          "\u00A9 1992 - 2022 TomTom. All rights reserved. This material is proprietary and the subject of copyright protection, database right protection and other intellectual property rights owned by TomTom or its suppliers. The use of this material is subject to the terms of a license agreement. Any unauthorized copying or disclosure of this material will lead to criminal and civil liabilities.",
-          "Data Source \u00A9 2022 TomTom",
+          "\u00A9 1992 - 2023 TomTom. All rights reserved. This material is proprietary and the subject of copyright protection, database right protection and other intellectual property rights owned by TomTom or its suppliers. The use of this material is subject to the terms of a license agreement. Any unauthorized copying or disclosure of this material will lead to criminal and civil liabilities.",
+          "Data Source \u00A9 2023 TomTom",
           "based on"
         ],
         "regions": [

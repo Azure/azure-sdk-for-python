@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.access_connectors.begin_delete(
+    client.access_connectors.begin_delete(
         resource_group_name="rg",
         connector_name="myAccessConnector",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/databricks/resource-manager/Microsoft.Databricks/preview/2022-04-01-preview/examples/AccessConnectorDelete.json
+# x-ms-original-file: specification/databricks/resource-manager/Microsoft.Databricks/stable/2023-05-01/examples/AccessConnectorDelete.json
 if __name__ == "__main__":
     main()
