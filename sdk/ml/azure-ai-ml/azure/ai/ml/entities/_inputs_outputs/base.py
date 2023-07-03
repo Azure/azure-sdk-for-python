@@ -1,12 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Optional, Union
-
-from azure.ai.ml import Input, Output
 from azure.ai.ml._schema.component.input_output import SUPPORTED_PARAM_TYPES
-from azure.ai.ml.constants._component import IOConstants
-from azure.ai.ml.entities._inputs_outputs.utils import _remove_empty_values
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 
 
