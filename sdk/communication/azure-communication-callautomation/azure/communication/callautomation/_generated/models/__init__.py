@@ -61,6 +61,7 @@ from ._models import ResultInformation
 from ._models import SendDtmfCompleted
 from ._models import SendDtmfFailed
 from ._models import SendDtmfRequest
+from ._models import SendDtmfResponse
 from ._models import SpeechOptions
 from ._models import SpeechResult
 from ._models import SsmlSource
@@ -144,6 +145,7 @@ __all__ = [
     "SendDtmfCompleted",
     "SendDtmfFailed",
     "SendDtmfRequest",
+    "SendDtmfResponse",
     "SpeechOptions",
     "SpeechResult",
     "SsmlSource",

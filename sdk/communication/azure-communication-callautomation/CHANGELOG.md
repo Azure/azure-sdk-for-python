@@ -1,5 +1,15 @@
 # Release History
 
+## 1.1.0-beta.1 (Unreleased)
+
+### Features Added
+- Play and recognize supports TTS and SSML source prompts.
+- Recognize supports choices and freeform speech.
+- Start/Stop continuous DTMF recognition by subscribing/unsubscribing to tones.
+- Send DTMF tones to a participant in the call.
+- Mute participants in the call.
+
+
 ## 1.0.0 (2023-06-14)
 Call Automation enables developers to build call workflows. Personalise customer interactions by listening to call events and take actions based on your business logic. For more information, please see the [README][read_me]. 
 
