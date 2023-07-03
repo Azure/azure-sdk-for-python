@@ -4,5 +4,4 @@
 # license information.
 # -------------------------------------------------------------------------
 
-FEATURE_MANAGEMENT_KEY = "FeatureManagementFeatureFlags"
-FEATURE_FLAG_PREFIX = ".appconfig.featureflag/"
+FEATURE_MANAGEMENT_KEY = "FeatureManagement"

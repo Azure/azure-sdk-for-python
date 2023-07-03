@@ -6,14 +6,15 @@
 from ._featuremanager import FeatureManager
 from ._featurefilters import FeatureFilter
 from ._randomfilter import RandomFilter
-from ._models import FeatureFlag
+from ._defaultfilters import TimeWindowFilter, TargetingFilter
 
 from ._version import VERSION
 
 __version__ = VERSION
 __all__ = [
     'FeatureManager',
-    'FeatureFlag',
+    'TimeWindowFilter',
+    'TargetingFilter',
     'FeatureFilter',
     'RandomFilter'
 ]

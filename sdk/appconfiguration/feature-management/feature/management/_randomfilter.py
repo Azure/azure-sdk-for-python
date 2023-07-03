@@ -11,7 +11,7 @@ class RandomFilter(FeatureFilter):
 
     def evaluate(self, context, **kwargs):
         """Determain if the feature flag is enabled for the given context"""
-        if context.parameters.get('Value', 0) < random.randint(0, 100):
+        if context.get('Value', 0) < random.randint(0, 100):
             return True
         else:
             return False
