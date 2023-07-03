@@ -620,7 +620,13 @@ def build_call_media_stop_continuous_dtmf_recognition_request(  # pylint: disabl
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_call_media_send_dtmf_request(call_connection_id: str, **kwargs: Any) -> HttpRequest:
+def build_call_media_send_dtmf_request(
+    call_connection_id: str,
+    *,
+    repeatability_request_id: Optional[str] = None,
+    repeatability_first_sent: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -640,6 +646,14 @@ def build_call_media_send_dtmf_request(call_connection_id: str, **kwargs: Any) -
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if repeatability_request_id is not None:
+        _headers["Repeatability-Request-ID"] = _SERIALIZER.header(
+            "repeatability_request_id", repeatability_request_id, "str"
+        )
+    if repeatability_first_sent is not None:
+        _headers["Repeatability-First-Sent"] = _SERIALIZER.header(
+            "repeatability_first_sent", repeatability_first_sent, "rfc-1123"
+        )
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -3042,14 +3056,16 @@ class CallMediaOperations:
             return cls(pipeline_response, None, {})
 
     @overload
-    def send_dtmf(  # pylint: disable=inconsistent-return-statements
+    def send_dtmf(
         self,
         call_connection_id: str,
         send_dtmf_request: _models.SendDtmfRequest,
         *,
+        repeatability_request_id: Optional[str] = None,
+        repeatability_first_sent: Optional[datetime.datetime] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
+    ) -> _models.SendDtmfResponse:
         """Send dtmf tones.
 
         Send dtmf tones.
@@ -3058,18 +3074,37 @@ class CallMediaOperations:
         :type call_connection_id: str
         :param send_dtmf_request: The send dtmf request. Required.
         :type send_dtmf_request: ~azure.communication.callautomation.models.SendDtmfRequest
+        :keyword repeatability_request_id: If specified, the client directs that the request is
+         repeatable; that is, that the client can make the request multiple times with the same
+         Repeatability-Request-Id and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-Id is an opaque string
+         representing a client-generated unique identifier for the request. It is a version 4 (random)
+         UUID. Default value is None.
+        :paramtype repeatability_request_id: str
+        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
+         Repeatability-First-Sent header must also be specified. The value should be the date and time
+         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
+         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
+        :paramtype repeatability_first_sent: ~datetime.datetime
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
+        :return: SendDtmfResponse
+        :rtype: ~azure.communication.callautomation.models.SendDtmfResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def send_dtmf(  # pylint: disable=inconsistent-return-statements
-        self, call_connection_id: str, send_dtmf_request: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    def send_dtmf(
+        self,
+        call_connection_id: str,
+        send_dtmf_request: IO,
+        *,
+        repeatability_request_id: Optional[str] = None,
+        repeatability_first_sent: Optional[datetime.datetime] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SendDtmfResponse:
         """Send dtmf tones.
 
         Send dtmf tones.
@@ -3078,18 +3113,36 @@ class CallMediaOperations:
         :type call_connection_id: str
         :param send_dtmf_request: The send dtmf request. Required.
         :type send_dtmf_request: IO
+        :keyword repeatability_request_id: If specified, the client directs that the request is
+         repeatable; that is, that the client can make the request multiple times with the same
+         Repeatability-Request-Id and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-Id is an opaque string
+         representing a client-generated unique identifier for the request. It is a version 4 (random)
+         UUID. Default value is None.
+        :paramtype repeatability_request_id: str
+        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
+         Repeatability-First-Sent header must also be specified. The value should be the date and time
+         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
+         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
+        :paramtype repeatability_first_sent: ~datetime.datetime
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
+        :return: SendDtmfResponse
+        :rtype: ~azure.communication.callautomation.models.SendDtmfResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def send_dtmf(  # pylint: disable=inconsistent-return-statements
-        self, call_connection_id: str, send_dtmf_request: Union[_models.SendDtmfRequest, IO], **kwargs: Any
-    ) -> None:
+    def send_dtmf(
+        self,
+        call_connection_id: str,
+        send_dtmf_request: Union[_models.SendDtmfRequest, IO],
+        *,
+        repeatability_request_id: Optional[str] = None,
+        repeatability_first_sent: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> _models.SendDtmfResponse:
         """Send dtmf tones.
 
         Send dtmf tones.
@@ -3099,11 +3152,23 @@ class CallMediaOperations:
         :param send_dtmf_request: The send dtmf request. Is either a SendDtmfRequest type or a IO type.
          Required.
         :type send_dtmf_request: ~azure.communication.callautomation.models.SendDtmfRequest or IO
+        :keyword repeatability_request_id: If specified, the client directs that the request is
+         repeatable; that is, that the client can make the request multiple times with the same
+         Repeatability-Request-Id and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-Id is an opaque string
+         representing a client-generated unique identifier for the request. It is a version 4 (random)
+         UUID. Default value is None.
+        :paramtype repeatability_request_id: str
+        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
+         Repeatability-First-Sent header must also be specified. The value should be the date and time
+         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
+         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
+        :paramtype repeatability_first_sent: ~datetime.datetime
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :return: None
-        :rtype: None
+        :return: SendDtmfResponse
+        :rtype: ~azure.communication.callautomation.models.SendDtmfResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -3118,7 +3183,7 @@ class CallMediaOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SendDtmfResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -3130,6 +3195,8 @@ class CallMediaOperations:
 
         request = build_call_media_send_dtmf_request(
             call_connection_id=call_connection_id,
+            repeatability_request_id=repeatability_request_id,
+            repeatability_first_sent=repeatability_first_sent,
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -3154,8 +3221,12 @@ class CallMediaOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
+        deserialized = self._deserialize("SendDtmfResponse", pipeline_response)
+
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
 
 
 class CallRecordingOperations:
