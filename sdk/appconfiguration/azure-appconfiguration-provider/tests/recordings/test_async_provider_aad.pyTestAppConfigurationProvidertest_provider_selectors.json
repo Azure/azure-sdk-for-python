@@ -17,12 +17,12 @@
         "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate, Operation-Location, Retry-After",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kvset\u002Bjson; charset=utf-8",
-        "Date": "Mon, 03 Jul 2023 18:47:20 GMT",
+        "Date": "Mon, 03 Jul 2023 19:20:25 GMT",
         "Server": "openresty/1.21.4.1",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=NzoxNyMyMjk1ODc5NA==;sn=22958794",
+        "Sync-Token": "zAJw6V16=NzoxNyMyMjk1ODk5MA==;sn=22958990",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "4b051969-7adc-4075-a9b0-c23754fe1d70"
+        "x-ms-correlation-request-id": "43b57275-1918-4c71-9dac-365ed8e99dcf"
       },
       "ResponseBody": {
         "items": [

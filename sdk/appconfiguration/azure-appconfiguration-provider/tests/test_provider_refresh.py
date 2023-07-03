@@ -39,44 +39,44 @@ class TestAppConfigurationProvider(AzureRecordedTestCase, unittest.TestCase):
         cred = self.get_credential(AzureAppConfigurationClient)
         return load(credential=cred, endpoint=endpoint, trim_prefixes=trim_prefixes, selects=selects)
 
-    # # method: refresh
-    # @recorded_by_proxy
-    # @app_config_decorator_aad
-    # def test_refresh(self, appconfiguration_endpoint_string):
-    #     client = self.build_provider_aad(
-    #         appconfiguration_endpoint_string, refresh_only=[RefreshItem("refresh_message", "\0")]
-    #     )
-    #     assert client["refresh_message"] == "original value"
-    #     assert client["non_refreshed_message"] == "Static"
-    #     assert client["my_json"]["key"] == "value"
-    #     assert (
-    #         client["FeatureManagementFeatureFlags"]["Alpha"]
-    #         == '{"enabled": false, "conditions": {"client_filters": []}}'
-    #     )
-    #     setting = client._client.get_configuration_setting(key="refresh_message")
-    #     setting.value = "updated value"
-    #     client._client.set_configuration_setting(setting)
-    #     static_setting = client._client.get_configuration_setting(key="non_refreshed_message")
-    #     static_setting.value = "updated static"
-    #     client._client.set_configuration_setting(static_setting)
-    #     # Waiting for the refresh interval to pass
-    #     time.sleep(2)
+    # method: refresh
+    @recorded_by_proxy
+    @app_config_decorator_aad
+    def test_refresh(self, appconfiguration_endpoint_string):
+        client = self.build_provider_aad(
+            appconfiguration_endpoint_string, refresh_only=[RefreshItem("refresh_message", "\0")]
+        )
+        assert client["refresh_message"] == "original value"
+        assert client["non_refreshed_message"] == "Static"
+        assert client["my_json"]["key"] == "value"
+        assert (
+            client["FeatureManagementFeatureFlags"]["Alpha"]
+            == '{"enabled": false, "conditions": {"client_filters": []}}'
+        )
+        setting = client._client.get_configuration_setting(key="refresh_message")
+        setting.value = "updated value"
+        client._client.set_configuration_setting(setting)
+        static_setting = client._client.get_configuration_setting(key="non_refreshed_message")
+        static_setting.value = "updated static"
+        client._client.set_configuration_setting(static_setting)
+        # Waiting for the refresh interval to pass
+        time.sleep(2)
 
-    #     client.refresh()
-    #     assert client["refresh_message"] == "updated value"
-    #     assert client["non_refreshed_message"] == "Static"
+        client.refresh()
+        assert client["refresh_message"] == "updated value"
+        assert client["non_refreshed_message"] == "Static"
 
-    #     setting.value = "original value"
-    #     client._client.set_configuration_setting(setting)
-    #     static_setting.value = "Static"
-    #     client._client.set_configuration_setting(static_setting)
+        setting.value = "original value"
+        client._client.set_configuration_setting(setting)
+        static_setting.value = "Static"
+        client._client.set_configuration_setting(static_setting)
 
-    #     # Waiting for the refresh interval to pass
-    #     time.sleep(2)
+        # Waiting for the refresh interval to pass
+        time.sleep(2)
 
-    #     client.refresh()
-    #     assert client["refresh_message"] == "original value"
-    #     assert client["non_refreshed_message"] == "Static"
+        client.refresh()
+        assert client["refresh_message"] == "original value"
+        assert client["non_refreshed_message"] == "Static"
 
     # method: refresh
     @recorded_by_proxy
@@ -121,36 +121,36 @@ class TestAppConfigurationProvider(AzureRecordedTestCase, unittest.TestCase):
         client.refresh()
         assert client["refresh_all_message"] == "original value"
 
-    # # method: refresh
-    # @recorded_by_proxy
-    # @app_config_decorator_aad
-    # def test_empty_refresh(self, appconfiguration_endpoint_string):
-    #     client = self.build_provider_aad_empty_refresh(appconfiguration_endpoint_string)
-    #     assert client["refresh_message"] == "original value"
-    #     assert client["non_refreshed_message"] == "Static"
-    #     assert client["my_json"]["key"] == "value"
-    #     assert (
-    #         client["FeatureManagementFeatureFlags"]["Alpha"]
-    #         == '{"enabled": false, "conditions": {"client_filters": []}}'
-    #     )
-    #     setting = client._client.get_configuration_setting(key="refresh_message")
-    #     setting.value = "updated value"
-    #     client._client.set_configuration_setting(setting)
-    #     static_setting = client._client.get_configuration_setting(key="non_refreshed_message")
-    #     static_setting.value = "updated static"
-    #     client._client.set_configuration_setting(static_setting)
+    # method: refresh
+    @recorded_by_proxy
+    @app_config_decorator_aad
+    def test_empty_refresh(self, appconfiguration_endpoint_string):
+        client = self.build_provider_aad_empty_refresh(appconfiguration_endpoint_string)
+        assert client["refresh_message"] == "original value"
+        assert client["non_refreshed_message"] == "Static"
+        assert client["my_json"]["key"] == "value"
+        assert (
+            client["FeatureManagementFeatureFlags"]["Alpha"]
+            == '{"enabled": false, "conditions": {"client_filters": []}}'
+        )
+        setting = client._client.get_configuration_setting(key="refresh_message")
+        setting.value = "updated value"
+        client._client.set_configuration_setting(setting)
+        static_setting = client._client.get_configuration_setting(key="non_refreshed_message")
+        static_setting.value = "updated static"
+        client._client.set_configuration_setting(static_setting)
 
-    #     # Waiting for the refresh interval to pass
-    #     time.sleep(2)
+        # Waiting for the refresh interval to pass
+        time.sleep(2)
 
-    #     client.refresh()
-    #     assert client["refresh_message"] == "original value"
-    #     assert client["non_refreshed_message"] == "Static"
+        client.refresh()
+        assert client["refresh_message"] == "original value"
+        assert client["non_refreshed_message"] == "Static"
 
-    #     setting.value = "original value"
-    #     client._client.set_configuration_setting(setting)
-    #     static_setting.value = "Static"
-    #     client._client.set_configuration_setting(static_setting)
+        setting.value = "original value"
+        client._client.set_configuration_setting(setting)
+        static_setting.value = "Static"
+        client._client.set_configuration_setting(static_setting)
 
     def my_callback(self):
         assert True

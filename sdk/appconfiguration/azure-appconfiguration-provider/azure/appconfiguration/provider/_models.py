@@ -53,36 +53,3 @@ class SettingSelector:
     def __init__(self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL):
         self.key_filter = key_filter
         self.label_filter = label_filter
-
-
-class RefreshRegistrations:
-    def __init__(self, key_filter: str, label_filter: Optional[str], refresh_all: Optional[bool]):
-        self.key_filter = key_filter
-        self.label_filter = label_filter
-        self.refresh_all = refresh_all
-        self.etag = None
-
-
-class AzureAppConfigurationRefreshOptions:
-    def __init__(self):
-        self.refresh_interval = 30
-        self._refresh_registrations = []
-        self.callback: Callable = None
-        self.on_error: Callable = None
-
-    def register(
-        self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL, refresh_all: Optional[bool] = False
-    ):
-        if "*" in key_filter:
-            raise ValueError("Wildcard key filters are not supported for refresh.")
-        if "*" in label_filter:
-            raise ValueError("Wildcard label filters are not supported for refresh.")
-        self._refresh_registrations.append(RefreshRegistrations(key_filter, label_filter, refresh_all))
-
-    def _callback(self):
-        if callable(self.callback):
-            self.callback()  # pylint:disable=not-callable
-
-    def _on_error(self):
-        if callable(self.on_error):
-            self.on_error()  # pylint:disable=not-callable

@@ -10,7 +10,7 @@
         "Correlation-Context": "RequestType=Startup",
         "User-Agent": "python-appconfiguration-provider/1.0.1 azsdk-python-appconfiguration/1.4.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "47DEQpj8HBSa\u002B/TImW\u002B5JCeuQeRkm5NMpJWZG3hSuFU=",
-        "x-ms-date": "Jul, 03 2023 18:47:23.617639 GMT"
+        "x-ms-date": "Jul, 03 2023 19:20:27.750205 GMT"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -20,12 +20,12 @@
         "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate, Operation-Location, Retry-After",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kvset\u002Bjson; charset=utf-8",
-        "Date": "Mon, 03 Jul 2023 18:47:20 GMT",
+        "Date": "Mon, 03 Jul 2023 19:20:25 GMT",
         "Server": "openresty/1.21.4.1",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=NzoxNyMyMjk1ODc5NA==;sn=22958794",
+        "Sync-Token": "zAJw6V16=NzoxNyMyMjk1ODk5MA==;sn=22958990",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "5e9005eb-13c4-49cd-96d0-b4062386916b"
+        "x-ms-correlation-request-id": "63055abf-1e04-4464-8e4e-0264b1be291e"
       },
       "ResponseBody": {
         "items": [
@@ -80,14 +80,14 @@
             "last_modified": "2023-07-03T18:22:21\u002B00:00"
           },
           {
-            "etag": "iqBkVBFBRxVxX6RaHH08FCMAr1ByQ9fYd_wppG1Prck",
+            "etag": "HY0BKqcsITrStg4QCbgjVZBvrrJyD2ZC4pzlxu4mGN4",
             "key": "refresh_all_message",
             "label": null,
             "content_type": "",
             "value": "original value",
             "tags": {},
             "locked": false,
-            "last_modified": "2023-07-03T18:35:42\u002B00:00"
+            "last_modified": "2023-07-03T19:19:18\u002B00:00"
           },
           {
             "etag": "__uAU6GpUvHi1BYimlNu4v9c3TKVI5k5Alhk47dDf-Q",
