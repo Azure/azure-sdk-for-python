@@ -10,7 +10,7 @@
         "Correlation-Context": "RequestType=Startup",
         "User-Agent": "python-appconfiguration-provider/1.0.1 azsdk-python-appconfiguration/1.4.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "47DEQpj8HBSa\u002B/TImW\u002B5JCeuQeRkm5NMpJWZG3hSuFU=",
-        "x-ms-date": "Jun, 27 2023 23:25:01.271809 GMT"
+        "x-ms-date": "Jul, 03 2023 18:47:22.243578 GMT"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -20,12 +20,12 @@
         "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate, Operation-Location, Retry-After",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kvset\u002Bjson; charset=utf-8",
-        "Date": "Tue, 27 Jun 2023 23:25:01 GMT",
+        "Date": "Mon, 03 Jul 2023 18:47:19 GMT",
         "Server": "openresty/1.21.4.1",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=NzoxNyMyMjkyMjI2OA==;sn=22922268",
+        "Sync-Token": "zAJw6V16=NzoxNyMyMjk1ODc5NA==;sn=22958794",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "b86a2de9-01fa-4304-9979-30bb894a8cf1"
+        "x-ms-correlation-request-id": "74e9d49e-da14-4d5e-a5fb-6bdd6f6cce9a"
       },
       "ResponseBody": {
         "items": [

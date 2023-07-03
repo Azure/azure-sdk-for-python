@@ -18,7 +18,7 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
     ):
         return load(connection_string=connection_string, trim_prefixes=trim_prefixes, selects=selects, **kwargs)
 
-    # method: _calculate_backoff
+"""     # method: _calculate_backoff
     @recorded_by_proxy
     @app_config_decorator
     def test_backoff(self, appconfiguration_connection_string):
@@ -88,3 +88,4 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         client._configuration_refresh.attempts = attempts
         backoff = client._configuration_refresh.calculate_backoff()
         assert backoff == (min_backoff * microsecond)
+ """

@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
-from azure.appconfiguration.provider import load, AzureAppConfigurationRefreshOptions
+from collections import namedtuple
+from azure.appconfiguration.provider import load
 from azure.appconfiguration import (
     AzureAppConfigurationClient,
     ConfigurationSetting,
@@ -13,6 +13,7 @@ import os
 import time
 
 connection_string = os.environ.get("AZURE_APPCONFIG_CONNECTION_STRING")
+print(connection_string)
 
 # Setting up a configuration setting with a known value
 client = AzureAppConfigurationClient.from_connection_string(connection_string)
@@ -31,12 +32,9 @@ def my_callback_on_fail():
 
 
 # Connecting to Azure App Configuration using connection string
-refresh_options = AzureAppConfigurationRefreshOptions()
-refresh_options.refresh_interval = 1
-refresh_options.register(key_filter="message", refresh_all=True)
-refresh_options.callback = my_callback
-refresh_options.callback_on_fail = my_callback_on_fail
-config = load(connection_string=connection_string, refresh_options=refresh_options)
+RefreshItem = namedtuple("RefreshItem", ["key", "label"], defaults=[None, "\0"])
+
+config = load(connection_string=connection_string, refresh_all=[RefreshItem("message")], refresh_interval=1)
 
 print(config["message"])
 print(config["my_json"]["key"])

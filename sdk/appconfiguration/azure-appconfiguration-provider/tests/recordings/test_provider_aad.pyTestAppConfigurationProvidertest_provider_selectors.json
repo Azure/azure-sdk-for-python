@@ -17,15 +17,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1599",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Jun 2023 23:25:04 GMT",
+        "Date": "Mon, 03 Jul 2023 18:47:22 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AmsfYK9ORNdLhwk-Bt48OB7i05sNBQAAAM1mLdwOAAAA; expires=Thu, 27-Jul-2023 23:25:05 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=At8zj0SYA2RMonJepL8Ct03i05sNBQAAALcONdwOAAAA; expires=Wed, 02-Aug-2023 18:47:22 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15723.3 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15771.3 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -103,7 +103,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AmsfYK9ORNdLhwk-Bt48OB7i05sNBQAAAM1mLdwOAAAA; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=At8zj0SYA2RMonJepL8Ct03i05sNBQAAALcONdwOAAAA; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -113,16 +113,17 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-Lry8iT4YkfN8g58QaD7m9w\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027 \u0027report-sample\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Jun 2023 23:25:04 GMT",
+        "Date": "Mon, 03 Jul 2023 18:47:22 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AmsfYK9ORNdLhwk-Bt48OB7i05sNBQAAAM1mLdwOAAAA; expires=Thu, 27-Jul-2023 23:25:05 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=At8zj0SYA2RMonJepL8Ct03i05sNBQAAALcONdwOAAAA; expires=Wed, 02-Aug-2023 18:47:22 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15723.3 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.15771.3 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -190,12 +191,12 @@
         "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate, Operation-Location, Retry-After",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kvset\u002Bjson; charset=utf-8",
-        "Date": "Tue, 27 Jun 2023 23:25:05 GMT",
+        "Date": "Mon, 03 Jul 2023 18:47:22 GMT",
         "Server": "openresty/1.21.4.1",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=NzoxNyMyMjkyMjI2OA==;sn=22922268",
+        "Sync-Token": "zAJw6V16=NzoxNyMyMjk1ODc5NA==;sn=22958794",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "4bf48f92-c210-4c79-863f-473c8ce8fd61"
+        "x-ms-correlation-request-id": "bd5f5e4d-0024-41b5-8e50-cd4f57586f69"
       },
       "ResponseBody": {
         "items": [
