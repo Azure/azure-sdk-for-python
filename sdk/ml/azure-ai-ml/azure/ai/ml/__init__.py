@@ -7,9 +7,9 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 import logging
 
 # from .entities._builders.parallel_func import parallel
-from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._inputs_outputs import Input, Meta, Output
+from azure.ai.ml.entities._inputs_outputs.base import Meta
 
-from . import Meta
 from ._ml_client import MLClient
 from ._utils._logger_utils import initialize_logger_info
 from ._version import VERSION
@@ -45,6 +45,7 @@ __all__ = [
     # "parallel",
     "Input",
     "Output",
+    "Meta",
     "MpiDistribution",
     "PyTorchDistribution",
     "TensorFlowDistribution",
