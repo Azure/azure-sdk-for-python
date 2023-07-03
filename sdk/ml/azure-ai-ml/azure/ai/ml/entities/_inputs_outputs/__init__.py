@@ -54,7 +54,6 @@ command function, or any other place that requires job inputs/outputs.
         node = my_command()
 """
 
-from .base import Meta
 from .enum_input import EnumInput
 from .external_data import Database, FileSystem
 from .group_input import GroupInput
