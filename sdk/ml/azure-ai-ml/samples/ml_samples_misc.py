@@ -328,6 +328,25 @@ class MiscConfigurationOptions(object):
         )
         # [END resource_requirements_configuration]
 
+        # [START ssh_job_service_configuration]
+        from azure.ai.ml import command
+        from azure.ai.ml.entities import JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService
+
+        node = command(
+            name="interactive-command-job",
+            description="description",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            command="ls",
+            compute="testCompute",
+            services={
+                "my_ssh": SshJobService(),
+                "my_tensorboard": TensorBoardJobService(log_dir="~/blog"),
+                "my_jupyter_lab": JupyterLabJobService(),
+                "my_vscode": VsCodeJobService(),
+            },
+        )
+        # [END ssh_job_service_configuration]
+
 
 if __name__ == "__main__":
     sample = MiscConfigurationOptions()

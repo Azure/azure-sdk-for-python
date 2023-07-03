@@ -16,16 +16,16 @@ class ScriptReference(RestTranslatableMixin):
     """Script reference.
 
     :param path: The location of scripts in workspace storage.
-    :type path: Optional[str], optional
-    :param command: Optional command line arguments passed to the script to run.
-    :type command: Optional[str], optional
-    :param timeout_minutes: Optional time period passed to timeout command.
-    :type timeout_minutes: Optional[int], optional
+    :type path: str
+    :param command: Command line arguments passed to the script to run.
+    :type command: str
+    :param timeout_minutes: Timeout, in minutes, for the script to run.
+    :type timeout_minutes: str
     """
 
     def __init__(
         self, *, path: Optional[str] = None, command: Optional[str] = None, timeout_minutes: Optional[int] = None
-    ):
+    ) -> None:
         self.path = path
         self.command = command
         self.timeout_minutes = timeout_minutes
@@ -55,15 +55,15 @@ class ScriptReference(RestTranslatableMixin):
 class SetupScripts(RestTranslatableMixin):
     """Customized setup scripts.
 
-    :param startup_script: Script that's run every time the machine starts.
-    :type startup_script: Optional[ScriptReference], optional
-    :param creation_script: Script that's run only once during provision of the compute.
-    :type creation_script: Optional[ScriptReference], optional
+    :param startup_script: The script to be run every time the compute is started.
+    :type startup_script: ~azure.ai.ml.entities.ScriptReference
+    :param creation_script: The script to be run only when the compute is created.
+    :type creation_script: ~azure.ai.ml.entities.ScriptReference
     """
 
     def __init__(
         self, *, startup_script: Optional[ScriptReference] = None, creation_script: Optional[ScriptReference] = None
-    ):
+    ) -> None:
         self.startup_script = startup_script
         self.creation_script = creation_script
 

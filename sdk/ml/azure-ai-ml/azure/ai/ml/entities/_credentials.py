@@ -214,12 +214,18 @@ class BaseTenantCredentials(RestTranslatableMixin, DictMixin, ABC):
 
 
 class ServicePrincipalConfiguration(BaseTenantCredentials):
+    """Service Principal credentials configuration.
+
+    :param client_secret: The client secret.
+    :type client_secret: str
+    """
+
     def __init__(
         self,
         *,
         client_secret: str,
         **kwargs,
-    ):
+    ) -> None:
         super().__init__(**kwargs)
         self.type = camel_to_snake(CredentialsType.SERVICE_PRINCIPAL)
         self.client_secret = client_secret
@@ -384,11 +390,11 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
 
 
 class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
-    """Managed Identity Credentials.
+    """Managed Identity credential configuration.
 
-    :param client_id: client id, should be guid
+    :param client_id: The client ID of the managed identity.
     :type client_id: str
-    :param resource_id: resource id
+    :param resource_id: The resource ID of the managed identity.
     :type resource_id: str
     """
 
@@ -399,7 +405,7 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
         resource_id: Optional[str] = None,
         object_id: Optional[str] = None,
         principal_id: Optional[str] = None,
-    ):
+    ) -> None:
         super().__init__()
         self.type = IdentityType.MANAGED_IDENTITY
         self.client_id = client_id
@@ -483,9 +489,18 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
 
 
 class UserIdentityConfiguration(_BaseIdentityConfiguration):
-    """User identity configuration."""
+    """User identity configuration.
 
-    def __init__(self):
+    .. admonition:: Example:
+        .. literalinclude:: ../samples/ml_samples_authentication.py
+            :start-after: [START user_identity_configuration]
+            :end-before: [END user_identity_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a UserIdentityConfiguration for a command().
+    """
+
+    def __init__(self) -> None:
         super().__init__()
         self.type = IdentityType.USER_IDENTITY
 
@@ -518,9 +533,18 @@ class UserIdentityConfiguration(_BaseIdentityConfiguration):
 
 
 class AmlTokenConfiguration(_BaseIdentityConfiguration):
-    """AML Token identity configuration."""
+    """AzureML Token identity configuration.
 
-    def __init__(self):
+    .. admonition:: Example:
+        .. literalinclude:: ../samples/ml_samples_authentication.py
+            :start-after: [START aml_token_configuration]
+            :end-before: [END aml_token_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring an AmlTokenConfiguration for a command().
+    """
+
+    def __init__(self) -> None:
         super().__init__()
         self.type = IdentityType.AML_TOKEN
 

@@ -93,7 +93,38 @@ class MLClientSamples(object):
         created_job = client.begin_create_or_update(endpoint)
         # [END ml_client_begin_create_or_update]
 
-        from azure.ai.ml.entities import Workspace
+        # [START user_identity_configuration]
+        from azure.ai.ml import Input, command
+        from azure.ai.ml.constants import AssetTypes
+        from azure.ai.ml.entities import UserIdentityConfiguration
+
+        job = command(
+            code="./src",
+            command="python read_data.py --input_data ${{inputs.input_data}}",
+            inputs={"input_data": Input(type=AssetTypes.MLTABLE, path="./sample_data")},
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:1",
+            compute="cpu-cluster",
+            identity=UserIdentityConfiguration(),
+        )
+        # [END user_identity_configuration]
+
+        # [START aml_token_configuration]
+        from azure.ai.ml import Input, command
+        from azure.ai.ml.constants import AssetTypes
+        from azure.ai.ml.entities import AmlTokenConfiguration
+
+        node = command(
+            description="description",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            code="./tests/test_configs/training/",
+            command="python read_data.py --input_data ${{inputs.input_data}}",
+            inputs={"input_data": Input(type=AssetTypes.MLTABLE, path="./sample_data")},
+            display_name="builder_command_job",
+            compute="testCompute",
+            experiment_name="mfe-test1-dataset",
+            identity=AmlTokenConfiguration(),
+        )
+        # [END aml_token_configuration]
 
         # Get a list of workspaces in a resource group
         for ws in ml_client.workspaces.list():
