@@ -40,6 +40,7 @@ if TYPE_CHECKING:
         TransferCallResponse as TransferParticipantResultRest,
         RecordingStateResponse as RecordingStateResultRest,
         MuteParticipantsResponse as MuteParticipantsResultRest,
+        SendDtmfResponse as SendDtmfResponseRest,
     )
 
 class CallInvite(object):
@@ -502,3 +503,21 @@ class MuteParticipantsResult(object):
     @classmethod
     def _from_generated(cls, mute_participants_result_generated: 'MuteParticipantsResultRest'):
         return cls(operation_context=mute_participants_result_generated.operation_context)
+
+class SendDtmfResult(object):
+    """The response payload for send Dtmf.
+    :ivar operation_context: The operation context provided by client.
+    :vartype operation_context: str
+    """
+    def __init__(
+        self,
+        *,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        super().__init__(**kwargs)
+        self.operation_context = operation_context
+
+    @classmethod
+    def _from_generated(cls, send_dtmf_result_generated: 'SendDtmfResponseRest'):
+        return cls(operation_context=send_dtmf_result_generated.operation_context)

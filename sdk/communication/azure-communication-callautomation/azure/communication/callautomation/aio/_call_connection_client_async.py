@@ -23,6 +23,7 @@ from .._models import (
     RemoveParticipantResult,
     TransferCallResult,
     MuteParticipantsResult,
+    SendDtmfResult,
 )
 from .._generated.aio import AzureCommunicationCallAutomationService
 from .._generated.models import (
@@ -563,7 +564,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         *,
         operation_context: Optional[str] = None,
         **kwargs
-    ) -> None:
+    ) -> SendDtmfResult:
         """Send Dtmf tones to the call.
 
         :param tones: List of tones to be sent to target participant.
@@ -572,8 +573,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
-        :return: None
-        :rtype: None
+        :return: SendDtmfResult
+        :rtype: ~azure.communication.callautomation.SendDtmfResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         send_dtmf_request = SendDtmfRequest(
@@ -581,10 +582,14 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             target_participant=serialize_identifier(target_participant),
             operation_context=operation_context)
 
-        await self._call_media_client.send_dtmf(
+        response = await self._call_media_client.send_dtmf(
             self._call_connection_id,
             send_dtmf_request,
+            repeatability_first_sent=get_repeatability_timestamp(),
+            repeatability_request_id=get_repeatability_guid(),
             **kwargs)
+
+        return SendDtmfResult._from_generated(response)  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def mute_participants(
