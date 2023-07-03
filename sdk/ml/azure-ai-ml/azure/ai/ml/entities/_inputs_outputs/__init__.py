@@ -54,17 +54,17 @@ command function, or any other place that requires job inputs/outputs.
         node = my_command()
 """
 
+from .base import Meta
 from .enum_input import EnumInput
 from .external_data import Database, FileSystem
 from .group_input import GroupInput
 from .input import Input
-from .output import Output, OutputMetadata
+from .output import Output
 from .utils import _get_param_with_standard_annotation, is_group
 
 __all__ = [
     "Input",
     "Output",
-    "OutputMetadata",
     "EnumInput",
     "GroupInput",
     "is_group",

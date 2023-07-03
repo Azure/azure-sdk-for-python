@@ -4,7 +4,7 @@
 
 # pylint: disable=redefined-builtin, too-many-instance-attributes
 import re
-from typing import Dict, Optional, Union, overload
+from typing import Dict, overload
 
 from typing_extensions import Literal
 
@@ -155,46 +155,3 @@ class Output(_InputOutputBase):
             )
         if self.version and not self.name:
             raise UserErrorException("Output name is required when output version is specified.")
-
-
-class OutputMetadata(object):
-    """This is the meta data of Inputs/Outputs."""
-
-    def __init__(
-        self,
-        type=None,
-        description=None,
-        min=None,
-        max=None,
-        **kwargs,
-    ):
-        self.type = type
-        self.description = description
-        self._min = min
-        self._max = max
-        self._default = kwargs.pop("default", None)
-        self._kwargs = kwargs
-
-    def _to_io_entity_args_dict(self):
-        """Convert the object to a kwargs dict for azure.ai.ml.entity.Output."""
-        keys = Output._IO_KEYS  # pylint: disable=protected-access
-        result = {key: getattr(self, key, None) for key in keys}
-        result.update(self._kwargs)
-        if IOConstants.PRIMITIVE_TYPE_2_STR.get(self.type) is not None:
-            result["type"] = IOConstants.PRIMITIVE_TYPE_2_STR.get(self.type)
-        return _remove_empty_values(result)
-
-    @property
-    def max(self) -> Optional[Union[int, float]]:
-        """Return the maximum value of the parameter for a numeric parameter."""
-        return self._max
-
-    @property
-    def min(self) -> Optional[Union[int, float]]:
-        """Return the minimum value of the parameter for a numeric parameter."""
-        return self._min
-
-    @property
-    def default(self):
-        """Return the default value of the parameter."""
-        return self._default
