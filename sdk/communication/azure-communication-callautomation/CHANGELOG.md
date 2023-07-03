@@ -4,6 +4,7 @@
 
 ### Features Added
 - Play and recognize supports TTS and SSML source prompts.
+- Recognize supports choices and freeform speech.
 - Start/Stop continuous DTMF recognition by subscribing/unsubscribing to tones.
 - Send DTMF tones to a participant in the call.
 - Mute participants in the call.
