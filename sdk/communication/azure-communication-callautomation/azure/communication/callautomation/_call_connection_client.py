@@ -613,6 +613,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         response = self._call_connection_client.mute(
             self._call_connection_id,
             mute_participants_request,
+            repeatability_first_sent=get_repeatability_timestamp(),
+            repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
         return MuteParticipantsResult._from_generated(response) # pylint:disable=protected-access
