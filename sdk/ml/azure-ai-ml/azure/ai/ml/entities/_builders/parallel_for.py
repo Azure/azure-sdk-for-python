@@ -5,7 +5,7 @@ import json
 import os
 from typing import Dict, Union
 
-from azure.ai.ml import Output, Input
+from azure.ai.ml import Input, Output
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.control_flow_job import ParallelForSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression
@@ -75,11 +75,11 @@ class ParallelFor(LoopNode, NodeIOMixin):
             outputs = self.body._component.outputs
             # transform body outputs to aggregate types when available
             self._outputs = self._build_outputs_dict(
-                output_definition_dict=self._convert_output_meta(outputs), outputs=actual_outputs
+                outputs=actual_outputs, output_definition_dict=self._convert_output_meta(outputs)
             )
         except AttributeError:
             # when body output not available, create default output builder without meta
-            self._outputs = self._build_outputs_dict_without_meta(outputs=actual_outputs)
+            self._outputs = self._build_outputs_dict(outputs=actual_outputs)
 
         self._items = items
 
@@ -152,7 +152,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         rest_node = super(ParallelFor, self)._to_rest_object(**kwargs)
         # convert items to rest object
         rest_items = self._to_rest_items(items=self.items)
-        rest_node.update(dict(items=rest_items, outputs=self._to_rest_outputs()))
+        rest_node.update({"items": rest_items, "outputs": self._to_rest_outputs()})
         return convert_ordered_dict_to_dict(rest_node)
 
     @classmethod

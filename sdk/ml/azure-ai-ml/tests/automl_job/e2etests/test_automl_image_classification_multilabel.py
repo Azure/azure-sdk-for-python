@@ -73,8 +73,12 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
                             # train annotation
                             train_f.write(json.dumps(json_line) + "\n")
 
+    @pytest.mark.parametrize("components", [(False), (True)])
     def test_image_classification_multilabel_run(
-        self, image_classification_multilabel_dataset: Tuple[Input, Input], client: MLClient
+        self,
+        image_classification_multilabel_dataset: Tuple[Input, Input],
+        client: MLClient,
+        components: bool,
     ) -> None:
         # Note: this test launches two jobs in order to avoid calling the dataset fixture more than once. Ideally, it
         # would have sufficed to mark the fixture with session scope, but pytest-xdist breaks this functionality:
@@ -89,6 +93,13 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
         training_data = Input(type=AssetTypes.MLTABLE, path=train_path)
         validation_data = Input(type=AssetTypes.MLTABLE, path=val_path)
 
+        properties = get_automl_job_properties()
+        if components:
+            properties["_aml_internal_automl_subgraph_orchestration"] = "true"
+            properties[
+                "_pipeline_id_override"
+            ] = "azureml://registries/azmlft-dev-registry01/components/image_classification_pipeline"
+
         # Make generic multilabel classification job
         image_classification_multilabel_job = automl.image_classification_multilabel(
             compute="gpu-cluster",
@@ -98,7 +109,7 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
             target_column_name="label",
             primary_metric="iou",
             # These are temporal properties needed in Private Preview
-            properties=get_automl_job_properties(),
+            properties=properties,
         )
 
         # Configure regular sweep job
@@ -109,7 +120,7 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
                 SearchSpace(
                     model_name=Choice(["vitb16r224"]),
                     learning_rate=Uniform(0.005, 0.05),
-                    number_of_epochs=Choice([15, 30]),
+                    number_of_epochs=Choice([1]),
                     gradient_accumulation_step=Choice([1, 2]),
                 ),
                 SearchSpace(
@@ -119,6 +130,7 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
                     validation_resize_size=Choice([288, 320, 352]),
                     validation_crop_size=Choice([224, 256]),  # model-specific
                     training_crop_size=Choice([224, 256]),  # model-specific
+                    number_of_epochs=Choice([1]),
                 ),
             ]
         )
@@ -136,9 +148,39 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
         image_classification_multilabel_job_automode.limits.max_trials = 2
         image_classification_multilabel_job_automode.limits.max_concurrent_trials = 2
 
+        # Configure Finetune Sweep Job
+        if components:
+            image_classification_multilabel_job_finetune_sweep = copy.deepcopy(image_classification_multilabel_job)
+            image_classification_multilabel_job_finetune_sweep.set_training_parameters(
+                early_stopping=True, evaluation_frequency=1
+            )
+            image_classification_multilabel_job_finetune_sweep.extend_search_space(
+                [
+                    SearchSpace(
+                        model_name=Choice(["microsoft/beit-base-patch16-224"]),
+                        learning_rate=Uniform(0.005, 0.05),
+                        number_of_epochs=Choice([1]),
+                        gradient_accumulation_step=Choice([1, 2]),
+                    ),
+                ]
+            )
+            image_classification_multilabel_job_finetune_sweep.set_limits(max_trials=1, max_concurrent_trials=1)
+            image_classification_multilabel_job_finetune_sweep.set_sweep(
+                sampling_algorithm="Random",
+                early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
+            )
+            # Trigger finetune sweep
+            submitted_finetune_sweep = client.jobs.create_or_update(image_classification_multilabel_job_finetune_sweep)
+
         # Trigger regular sweep and then AutoMode job
         submitted_job_sweep = client.jobs.create_or_update(image_classification_multilabel_job_sweep)
         submitted_job_automode = client.jobs.create_or_update(image_classification_multilabel_job_automode)
+
+        # Assert completion of finetune sweep job
+        if components:
+            assert_final_job_status(
+                submitted_finetune_sweep, client, ImageClassificationMultilabelJob, JobStatus.COMPLETED, deadline=3600
+            )
 
         # Assert completion of regular sweep job
         assert_final_job_status(

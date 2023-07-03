@@ -228,10 +228,10 @@ class Sweep(ParameterizedSweep, BaseNode):
             rest_obj["early_termination"] = self.early_termination._to_rest_object().as_dict()
 
         rest_obj.update(
-            dict(
-                type=self.type,
-                trial=self._get_trial_component_rest_obj(),
-            )
+            {
+                "type": self.type,
+                "trial": self._get_trial_component_rest_obj(),
+            }
         )
         return rest_obj
 
@@ -267,7 +267,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         if trial_component_id is None:
             return None
         if isinstance(trial_component_id, str):
-            return dict(componentId=trial_component_id)
+            return {"componentId": trial_component_id}
         if isinstance(trial_component_id, CommandComponent):
             return trial_component_id._to_rest_object()
         raise UserErrorException(f"invalid trial in sweep node {self.name}: {str(self.trial)}")

@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------
 import binascii
 from typing import Any, Optional, Mapping, Union
-from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline.policies import (
@@ -23,6 +22,7 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceNotModifiedError,
 )
+from azure.core.utils import CaseInsensitiveDict
 from .._azure_appconfiguration_error import ResourceReadOnlyError
 from .._utils import (
     get_endpoint_from_connection_string,
@@ -58,8 +58,8 @@ class AzureAppConfigurationClient:
         try:
             if not base_url.lower().startswith("http"):
                 base_url = "https://" + base_url
-        except AttributeError:
-            raise ValueError("Base URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Base URL must be a string.") from exc
 
         if not credential:
             raise ValueError("Missing credential")
@@ -134,8 +134,8 @@ class AzureAppConfigurationClient:
         :param label_filter: filter results based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
         :type label_filter: str
-        :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
-        :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
+        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
@@ -146,14 +146,14 @@ class AzureAppConfigurationClient:
 
             from datetime import datetime, timedelta
 
-            accept_datetime = datetime.today() + timedelta(days=-1)
+            accept_datetime = datetime.utcnow() + timedelta(days=-1)
 
             all_listed = async_client.list_configuration_settings()
             async for item in all_listed:
                 pass  # do something
 
             filtered_listed = async_client.list_configuration_settings(
-                label_filter="Labe*", key_filter="Ke*", accept_datetime=accept_datetime
+                label_filter="Labe*", key_filter="Ke*", accept_datetime=str(accept_datetime)
             )
             async for item in filtered_listed:
                 pass  # do something
@@ -174,9 +174,9 @@ class AzureAppConfigurationClient:
             )
         except HttpResponseError as error:
             e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
-        except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise e(message=error.message, response=error.response) from error
+        except binascii.Error as exc:
+            raise binascii.Error("Connection string secret has incorrect padding") from exc
 
     @distributed_trace_async
     async def get_configuration_setting(
@@ -198,7 +198,7 @@ class AzureAppConfigurationClient:
         :type etag: str or None
         :param match_condition: The match condition to use upon the etag
         :type match_condition: :class:`~azure.core.MatchConditions`
-        :keyword datetime accept_datetime: the retrieved ConfigurationSetting that created no later than this datetime
+        :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :return: The matched ConfigurationSetting object
         :rtype: :class:`~azure.appconfiguration.ConfigurationSetting`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, \
@@ -237,9 +237,9 @@ class AzureAppConfigurationClient:
             return None
         except HttpResponseError as error:
             e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
-        except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise e(message=error.message, response=error.response) from error
+        except binascii.Error as exc:
+            raise binascii.Error("Connection string secret has incorrect padding") from exc
 
     @distributed_trace_async
     async def add_configuration_setting(
@@ -284,9 +284,9 @@ class AzureAppConfigurationClient:
             return ConfigurationSetting._from_generated(key_value_added)
         except HttpResponseError as error:
             e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
-        except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise e(message=error.message, response=error.response) from error
+        except binascii.Error as exc:
+            raise binascii.Error("Connection string secret has incorrect padding") from exc
 
     @distributed_trace_async
     async def set_configuration_setting(
@@ -353,9 +353,9 @@ class AzureAppConfigurationClient:
             return ConfigurationSetting._from_generated(key_value_set)
         except HttpResponseError as error:
             e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
-        except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise e(message=error.message, response=error.response) from error
+        except binascii.Error as exc:
+            raise binascii.Error("Connection string secret has incorrect padding") from exc
 
     @distributed_trace_async
     async def delete_configuration_setting(
@@ -409,9 +409,9 @@ class AzureAppConfigurationClient:
             return ConfigurationSetting._from_generated(key_value_deleted)  # type: ignore
         except HttpResponseError as error:
             e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
-        except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise e(message=error.message, response=error.response) from error
+        except binascii.Error as exc:
+            raise binascii.Error("Connection string secret has incorrect padding") from exc
 
     @distributed_trace
     def list_revisions(
@@ -427,8 +427,8 @@ class AzureAppConfigurationClient:
         :param label_filter: filter results based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
         :type label_filter: str
-        :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
-        :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
+        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
@@ -440,14 +440,14 @@ class AzureAppConfigurationClient:
             # in async function
             from datetime import datetime, timedelta
 
-            accept_datetime = datetime.today() + timedelta(days=-1)
+            accept_datetime = datetime.utcnow() + timedelta(days=-1)
 
             all_revisions = async_client.list_revisions()
             async for item in all_revisions:
                 pass  # do something
 
             filtered_revisions = async_client.list_revisions(
-                label_filter="Labe*", key_filter="Ke*", accept_datetime=accept_datetime
+                label_filter="Labe*", key_filter="Ke*", accept_datetime=str(accept_datetime)
             )
             async for item in filtered_revisions:
                 pass  # do something
@@ -468,11 +468,11 @@ class AzureAppConfigurationClient:
             )
         except HttpResponseError as error:
             e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
-        except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise e(message=error.message, response=error.response) from error
+        except binascii.Error as exc:
+            raise binascii.Error("Connection string secret has incorrect padding") from exc
 
-    @distributed_trace
+    @distributed_trace_async
     async def set_read_only(
         self, configuration_setting: ConfigurationSetting, read_only: bool = True, **kwargs
     ) -> ConfigurationSetting:
@@ -535,9 +535,9 @@ class AzureAppConfigurationClient:
             return ConfigurationSetting._from_generated(key_value)
         except HttpResponseError as error:
             e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response)
-        except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise e(message=error.message, response=error.response) from error
+        except binascii.Error as exc:
+            raise binascii.Error("Connection string secret has incorrect padding") from exc
 
     async def update_sync_token(self, token: str) -> None:
 

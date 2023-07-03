@@ -48,6 +48,7 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     HTTPPolicy,
     SansIOHTTPPolicy,
+    SensitiveHeaderCleanupPolicy,
 )
 from azure.core.pipeline.transport._base import PipelineClientBase
 from azure.core.pipeline.transport import (
@@ -194,6 +195,12 @@ def test_format_url_no_base_url():
     client = PipelineClientBase(None)
     formatted = client.format_url("https://google.com/subpath/{foo}", foo="bar")
     assert formatted == "https://google.com/subpath/bar"
+
+
+def test_format_url_double_query():
+    client = PipelineClientBase("https://bing.com/path?query=testvalue&x=2ndvalue")
+    formatted = client.format_url("/subpath?a=X&c=Y")
+    assert formatted == "https://bing.com/path/subpath?query=testvalue&x=2ndvalue&a=X&c=Y"
 
 
 def test_format_incorrect_endpoint():
@@ -399,6 +406,15 @@ def test_add_custom_policy():
         client = PipelineClient(base_url="test", policies=policies, per_retry_policies=foo_policy)
     with pytest.raises(ValueError):
         client = PipelineClient(base_url="test", policies=policies, per_retry_policies=[foo_policy])
+
+
+def test_no_cleanup_policy_when_redirect_policy_is_empty():
+    config = Configuration()
+    client = PipelineClient(base_url="test", config=config)
+    policies = client._pipeline._impl_policies
+    for policy in policies:
+        if isinstance(policy, SensitiveHeaderCleanupPolicy):
+            assert False
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

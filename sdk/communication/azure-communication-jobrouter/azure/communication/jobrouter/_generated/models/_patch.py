@@ -57,8 +57,7 @@ class RouterJob(RouterJobGenerated):
         labels: Optional[Dict[str, Union[int, float, str, bool, None]]] = None,
         tags: Optional[Dict[str, Union[int, float, str, bool, None]]] = None,
         notes: Dict[Union[str, datetime], str] = None,
-        unavailable_for_matching: Optional[bool] = None,
-        scheduled_time_utc: Optional[Union[str, datetime]] = None,
+        matching_mode: Optional["_models.JobMatchingMode"] = None,
         **kwargs
     ):
         if notes:
@@ -73,8 +72,6 @@ class RouterJob(RouterJobGenerated):
                     datetime_as_str: str = _datetime_as_isostr(k)  # pylint:disable=protected-access
                     notes.pop(k)
                     notes[datetime_as_str] = v
-        if isinstance(scheduled_time_utc, str):
-            scheduled_time_utc = _convert_str_to_datetime(scheduled_time_utc)  # pylint:disable=protected-access
         super().__init__(
             channel_reference=channel_reference,
             channel_id=channel_id,
@@ -86,8 +83,7 @@ class RouterJob(RouterJobGenerated):
             notes=notes,
             labels=labels,
             tags=tags,
-            unavailable_for_matching=unavailable_for_matching,
-            scheduled_time_utc=scheduled_time_utc,
+            matching_mode=matching_mode,
             **kwargs
         )
 

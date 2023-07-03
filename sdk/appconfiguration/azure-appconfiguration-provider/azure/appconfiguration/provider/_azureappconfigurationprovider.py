@@ -22,7 +22,7 @@ from typing import (
     TYPE_CHECKING,
     Union,
 )
-from azure.appconfiguration import (
+from azure.appconfiguration import (  # pylint:disable=no-name-in-module
     AzureAppConfigurationClient,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
@@ -93,7 +93,6 @@ def load(
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
     """
-    ...
 
 
 @overload
@@ -127,7 +126,6 @@ def load(
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
     """
-    ...
 
 
 def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
@@ -485,6 +483,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         return config.value
 
     def __getitem__(self, key: str) -> str:
+        # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         """
         Returns the value of the specified key.
         """
@@ -498,6 +497,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         return len(self._dict)
 
     def __contains__(self, __x: object) -> bool:
+        # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         """
         Returns True if the configuration settings contains the specified key.
         """
@@ -506,6 +506,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
     def keys(self) -> Iterable[str]:
         """
         Returns a list of keys loaded from Azure App Configuration.
+
+        :return: A list of keys loaded from Azure App Configuration.
+        :rtype: Iterable[str]
         """
         return self._dict.keys()
 
@@ -513,6 +516,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         """
         Returns a list of key-value pairs loaded from Azure App Configuration. Any values that are Key Vault references
         will be resolved.
+
+        :return: A list of key-value pairs loaded from Azure App Configuration.
+        :rtype: Iterable[Tuple[str, str]]
         """
         with self._update_lock:
             return self._dict.items()
@@ -521,6 +527,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         """
         Returns a list of values loaded from Azure App Configuration. Any values that are Key Vault references will be
         resolved.
+
+        :return: A list of values loaded from Azure App Configuration.
+        :rtype: Iterable[str]
         """
         with self._update_lock:
             return self._dict.values()
@@ -528,6 +537,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
     def get(self, key: str, default: Optional[str] = None) -> str:
         """
         Returns the value of the specified key. If the key does not exist, returns the default value.
+
+        :param str key: The key of the value to get.
+        :param default: The default value to return.
+        :type: str or None
+        :return: The value of the specified key.
+        :rtype: str
         """
         with self._update_lock:
             return self._dict.get(key, default)

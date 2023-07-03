@@ -92,7 +92,7 @@
 /sdk/communication/azure-communication-rooms/                        @shirleyqin-msft @minnieliu @paolamvhz @alexokun @Mrayyan @shwali-msft @allchiang-msft @mikehang-msft
 
 # PRLabel: %Communication - SMS
-/sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
+/sdk/communication/azure-communication-sms/                           @DimaKolomiiets @ozgurcivi-msft @gfeitosa-msft @besh2014 @phermanov-msft @ilyapaliakou-msft
 
 # PRLabel: %Communication - Identity
 /sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
@@ -146,6 +146,9 @@
 /sdk/datafactory/                                                    @hvermis
 /sdk/datalake/                                                       @ro-joowan
 /sdk/datadatamigration/                                              @vchske
+
+# PRLabel: %Device Provisioning
+/sdk/iothub/azure-iot-deviceprovisioning                             @c-ryan-k @digimaun
 
 # PRLabel: %Device Update
 /sdk/deviceupdate/                                                   @dpokluda @sedols
@@ -259,8 +262,11 @@
 /sdk/maps/                                                           @alextts627
 
 # PRLabel: %Mixed Reality
-/sdk/mixedreality/azure-mixedreality-authentication/                 @crtreasu
-/sdk/remoterendering/                                                @rikogeln
+/sdk/mixedreality/azure-mixedreality-authentication/                 @RamonArguelles
+/sdk/remoterendering/                                                @FlorianBorn71
+
+# PRLabel: %Open AI
+/sdk/openai                                                          @kristapratico @glecaros
 
 # PRLabel: %Purview
 /sdk/purview/                                                        @iscai-msft @msyyc
@@ -290,7 +296,7 @@
 /sdk/template/                                                       @scbedd @weshaggard @benbp
 
 # PRLabel: %Cognitive - Text Analytics
-/sdk/textanalytics/                                                  @kristapratico @iscai-msft
+/sdk/textanalytics/                                                  @kristapratico @quentinRobinson @wangyuantao
 
 # PRLabel: %Cognitive - Form Recognizer
 /sdk/formrecognizer/                                                 @kristapratico @iscai-msft @catalinaperalta
@@ -302,10 +308,11 @@
 /sdk/anomalydetector/                                                @conhua @mengaims @juaduan @moreOver0
 
 # PRLabel: %Cognitive - Translator
-/sdk/translation/                                                    @kristapratico @mohamedshabanofficial
+/sdk/translation/                                                    @kristapratico
+/sdk/translation/azure-ai-translation-text/                          @MikeyMCZ
 
 # PRLabel: %Cognitive - Language
-/sdk/cognitivelanguage/                                              @kristapratico @mohamedshabanofficial
+/sdk/cognitivelanguage/                                              @kristapratico @quentinRobinson @wangyuantao
 
 # PRLabel: %Cognitive - Personalizer
 /sdk/personalizer/                                                   @sharathmalladi

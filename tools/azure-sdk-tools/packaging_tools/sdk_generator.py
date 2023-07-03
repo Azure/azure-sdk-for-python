@@ -20,7 +20,6 @@ from .generate_utils import (
     gen_dpg,
     dpg_relative_folder,
     gen_typespec,
-    update_typespec_location,
     return_origin_path,
     check_api_version_in_subfolder,
 )
@@ -121,7 +120,7 @@ def main(generate_input, generate_output):
         elif "data-plane" in input_readme:
             config = gen_dpg(input_readme, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
         else:
-            config = gen_typespec(input_readme, spec_folder)
+            config = gen_typespec(input_readme, spec_folder, data["headSha"], data["repoHttpsUrl"])
             is_typespec = True
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
@@ -162,19 +161,6 @@ def main(generate_input, generate_output):
             except Exception as e:
                 _LOGGER.info(f"fail to update meta: {str(e)}")
 
-            # update tsp-location.yaml
-            try:
-                update_typespec_location(
-                    sdk_folder,
-                    data,
-                    config,
-                    folder_name,
-                    package_name,
-                    input_readme,
-                )
-            except Exception as e:
-                _LOGGER.info(f"fail to update tsp-location: {str(e)}")
-
             # Setup package locally
             check_call(
                 f"pip install --ignore-requires-python -e {sdk_code_path}",
@@ -182,7 +168,9 @@ def main(generate_input, generate_output):
             )
 
             # check whether multiapi package has only one api-version in per subfolder
-            check_api_version_in_subfolder(sdk_code_path)
+            # skip check for network for https://github.com/Azure/azure-sdk-for-python/issues/30556#issuecomment-1571341309
+            if "azure-mgmt-network" not in sdk_code_path:
+                check_api_version_in_subfolder(sdk_code_path)
 
             # use multiapi combiner to combine multiapi package
             if package_name in ("azure-mgmt-network"):

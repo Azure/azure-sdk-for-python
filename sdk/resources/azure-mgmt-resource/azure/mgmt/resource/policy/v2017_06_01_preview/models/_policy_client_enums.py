@@ -10,14 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class PolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The policy definition mode. Possible values are NotSpecified, Indexed, and All."""
-
-    NOT_SPECIFIED = "NotSpecified"
-    INDEXED = "Indexed"
-    ALL = "All"
-
-
 class PolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of policy definition. Possible values are NotSpecified, BuiltIn, and Custom."""
 

@@ -9,7 +9,7 @@ from azure.identity import CredentialUnavailableError
 from azure.identity._credentials.application import AzureApplicationCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
-from six.moves.urllib_parse import urlparse
+from urllib.parse import urlparse
 
 try:
     from unittest.mock import Mock, patch

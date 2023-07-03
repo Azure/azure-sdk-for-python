@@ -7,7 +7,6 @@ import logging
 import subprocess
 import sys
 from typing import List, Tuple, Optional, Any
-import six
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -94,7 +93,8 @@ class AzurePowerShellCredential:
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
 
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke Azure PowerShell, or
           no account is authenticated
@@ -135,7 +135,7 @@ def run_command_line(command_line: List[str], timeout: int) -> str:
             message="Failed to invoke PowerShell.\n"
                     "To mitigate this issue, please refer to the troubleshooting guidelines here at "
                     "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.")
-        six.raise_from(error, ex)
+        raise error from ex
 
     raise_for_error(proc.returncode, stdout, stderr)
     return stdout
@@ -143,7 +143,7 @@ def run_command_line(command_line: List[str], timeout: int) -> str:
 
 def start_process(args: List[str]) -> "subprocess.Popen":
     working_directory = get_safe_working_dir()
-    proc = subprocess.Popen(
+    proc = subprocess.Popen(  # pylint:disable=consider-using-with
         args,
         cwd=working_directory,
         stdout=subprocess.PIPE,

@@ -29,7 +29,7 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.azure_firewalls.begin_packet_capture(
+    client.azure_firewalls.begin_packet_capture(
         resource_group_name="rg1",
         azure_firewall_name="azureFirewall1",
         parameters={
@@ -51,7 +51,6 @@ def main():
             }
         },
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/AzureFirewallPacketCapture.json

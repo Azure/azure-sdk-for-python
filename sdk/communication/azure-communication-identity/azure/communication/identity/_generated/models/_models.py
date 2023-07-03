@@ -109,7 +109,9 @@ class CommunicationIdentity(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+    def __init__(
+        self, *, id: str, **kwargs: Any
+    ) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Identifier of the identity. Required.
         :paramtype id: str
@@ -209,7 +211,10 @@ class CommunicationIdentityAccessTokenResult(_serialization.Model):
 
     _attribute_map = {
         "identity": {"key": "identity", "type": "CommunicationIdentity"},
-        "access_token": {"key": "accessToken", "type": "CommunicationIdentityAccessToken"},
+        "access_token": {
+            "key": "accessToken",
+            "type": "CommunicationIdentityAccessToken",
+        },
     }
 
     def __init__(
@@ -253,7 +258,9 @@ class CommunicationIdentityCreateRequest(_serialization.Model):
     def __init__(
         self,
         *,
-        create_token_with_scopes: Optional[List[Union[str, "_models.CommunicationTokenScope"]]] = None,
+        create_token_with_scopes: Optional[
+            List[Union[str, "_models.CommunicationTokenScope"]]
+        ] = None,
         expires_in_minutes: int = 1440,
         **kwargs: Any
     ) -> None:

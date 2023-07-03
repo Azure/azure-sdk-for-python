@@ -4,10 +4,7 @@ import pytest
 from pytest_mock import MockFixture
 
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.entities import (
-    FeatureStore,
-    Workspace,
-)
+from azure.ai.ml.entities import FeatureStore, Workspace
 from azure.ai.ml.operations._feature_store_operations import FeatureStoreOperations
 from azure.core.polling import LROPoller
 
@@ -52,13 +49,25 @@ class TestFeatureStoreOperation:
         mock_feature_store_operation: FeatureStoreOperations,
         mocker: MockFixture,
     ):
+        def outgoing_get_call(rg, name):
+            return Workspace(name=name, kind="featurestore")._to_rest_object()
+
         mocker.patch("azure.ai.ml.operations._feature_store_operations.FeatureStoreOperations.get", return_value=None)
         mocker.patch(
             "azure.ai.ml.operations._feature_store_operations.FeatureStoreOperations._populate_arm_paramaters",
             return_value=({}, {}, {}),
         )
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
+
+        # create
+        mock_feature_store_operation._operation.get.side_effect = Exception()
         mock_feature_store_operation.begin_create(feature_store=FeatureStore(name="name"))
+
+        # double create call
+        mock_feature_store_operation._operation.get.side_effect = outgoing_get_call
+        mock_feature_store_operation._operation.begin_update.side_effect = None
+        mock_feature_store_operation.begin_create(feature_store=FeatureStore(name="name"))
+        mock_feature_store_operation._operation.begin_update.assert_called()
 
     def test_update(self, mock_feature_store_operation: FeatureStoreOperations) -> None:
         fs = FeatureStore(

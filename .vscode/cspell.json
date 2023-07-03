@@ -244,6 +244,8 @@
     "livekvtestgetkeyperfkey",
     "livekvtestsignperfkey",
     "livekvtestunwrapperfkey",
+    "lrobasepollingasynclrobasepolling",
+    "lropollerasynclropoller",
     "lmazuel",
     "logz",
     "LPCWSTR",
@@ -264,6 +266,7 @@
     "mydirectory",
     "myfile",
     "myvault",
+    "mytable",
     "nazsdk",
     "nbytes",
     "nbsp",
@@ -1486,6 +1489,13 @@
       "words": [
         "mros",
         "deserializers",
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
+      "filename": "sdk/iothub/azure-iot-deviceprovisioning/azure/iot/deviceprovisioning/_serialization.py",
+      "words": [
         "ctxt",
         "wday"
       ]

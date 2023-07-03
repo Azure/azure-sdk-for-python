@@ -7,7 +7,6 @@ import logging
 import json
 import base64
 
-from six import raise_from
 from azure.core.exceptions import ClientAuthenticationError
 
 from .utils import within_credential_chain
@@ -21,6 +20,8 @@ def log_get_token(class_name):
 
     :param str class_name: required for the sake of Python 2.7, which lacks an easy way to get the credential's class
         name from the decorated function
+    :return: decorator function
+    :rtype: callable
     """
 
     def decorator(fn):
@@ -66,7 +67,13 @@ def log_get_token(class_name):
 
 
 def wrap_exceptions(fn):
-    """Prevents leaking exceptions defined outside azure-core by raising ClientAuthenticationError from them."""
+    """Prevents leaking exceptions defined outside azure-core by raising ClientAuthenticationError from them.
+
+    :param fn: The function to wrap.
+    :type fn: ~typing.Callable
+    :return: The wrapped function.
+    :rtype: callable
+    """
 
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
@@ -76,6 +83,6 @@ def wrap_exceptions(fn):
             raise
         except Exception as ex:  # pylint:disable=broad-except
             auth_error = ClientAuthenticationError(message="Authentication failed: {}".format(ex))
-            raise_from(auth_error, ex)
+            raise auth_error from ex
 
     return wrapper
