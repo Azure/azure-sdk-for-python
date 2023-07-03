@@ -251,7 +251,6 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
     from typing_extensions import _AnnotatedAlias, get_args
 
     from azure.ai.ml import Input, Output
-    from azure.ai.ml.entities._inputs_outputs import Meta
 
     from .enum_input import EnumInput
 
@@ -304,11 +303,10 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
         elif isinstance(io, _AnnotatedAlias):
             hint_type, arg, *hint_args = get_args(io)  # pylint: disable=unused-variable
             if hint_type in SUPPORTED_RETURN_TYPES_PRIMITIVE:
-                if not _is_input_or_output_type(type(arg), "Meta") and not isinstance(arg, Meta):
+                if not _is_input_or_output_type(type(arg), "Meta"):
                     raise UserErrorException(
                         f"Annotated Metadata class only support "
-                        f"[mldesigner._input_output.Meta, "
-                        f"azure.ai.ml.entities._inputs_outputs.Meta], "
+                        f"mldesigner._input_output.Meta, "
                         f"it is {type(arg)} now."
                     )
                 if arg.type is not None and arg.type != hint_type:
