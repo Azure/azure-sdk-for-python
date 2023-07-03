@@ -403,6 +403,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         dtmf_max_tones_to_collect: Optional[int] = None,
         dtmf_stop_tones: Optional[List[str or 'DtmfTone']] = None,
         speech_language: Optional[str] = None,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
         choices: Optional[List['Choice']] = None,
         end_silence_timeout_in_ms: Optional[int] = None,
         **kwargs
@@ -433,6 +434,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.DtmfTone]
         :keyword speech_language: Speech language to be recognized, If not set default is en-US.
         :paramtype speech_language: str
+        :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+        :paramtype speech_recognition_model_endpoint_id: str
         :keyword choices: Defines Ivr choices for recognize.
         :paramtype choices: list[~azure.communication.callautomation.models.Choice]
         :keyword end_silence_timeout_in_ms: The length of end silence when user stops speaking and cogservice
@@ -446,7 +449,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             interrupt_prompt=interrupt_prompt,
             initial_silence_timeout_in_seconds=initial_silence_timeout,
             target_participant=serialize_identifier(target_participant),
-            speech_language=speech_language
+            speech_language=speech_language,
+            speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id
         )
 
         if not isinstance(input_type, RecognizeInputType):

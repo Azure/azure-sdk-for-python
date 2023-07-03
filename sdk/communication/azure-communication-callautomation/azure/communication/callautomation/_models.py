@@ -207,6 +207,8 @@ class TextSource(object):
     :ivar voice_name: Voice name to be played. Refer to available Text-to-speech voices here:
         https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
     :vartype voice_name: str
+    :ivar custom_voice_endpoint_id: Endpoint where the custom voice was deployed.
+    :vartype custom_voice_endpoint_id: str
     :ivar play_source_cache_id: source id of the play media.
     :vartype play_source_cache_id: str
     """
@@ -218,6 +220,7 @@ class TextSource(object):
             source_locale: Optional[str] = None,
             voice_gender: Optional[Union[str, 'Gender']] = None,
             voice_name: Optional[str] = None,
+            custom_voice_endpoint_id: Optional[str] = None,
             play_source_cache_id: Optional[str] = None,
             **kwargs
     ):
@@ -233,14 +236,17 @@ class TextSource(object):
         :keyword voice_name: Voice name to be played. Refer to available Text-to-speech voices here:
             https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
         :paramtype voice_name: str
-        :ivar play_source_cache_id: source id of the play media.
-        :vartype play_source_cache_id: str
+        :keyword custom_voice_endpoint_id: Endpoint where the custom voice was deployed.
+        :paramtype custom_voice_endpoint_id: str
+        :keyword play_source_cache_id: source id of the play media.
+        :paramtype play_source_cache_id: str
         """
         super().__init__(**kwargs)
         self.text = text
         self.source_locale = source_locale
         self.voice_gender = voice_gender
         self.voice_name = voice_name
+        self.custom_voice_endpoint_id = custom_voice_endpoint_id
         self.play_source_cache_id = play_source_cache_id
 
     def _to_generated(self):
@@ -250,7 +256,9 @@ class TextSource(object):
                 text=self.text,
                 source_locale=self.source_locale,
                 voice_gender=self.voice_gender,
-                voice_name=self.voice_name),
+                voice_name=self.voice_name,
+                custom_voice_endpoint_id=self.custom_voice_endpoint_id,
+            ),
             play_source_cache_id=self.play_source_cache_id
         )
 
@@ -258,8 +266,10 @@ class TextSource(object):
 class SsmlSource(object):
     """SsmlSource to be played in actions such as Play media.
 
-    :ivar ssml_text: Ssml string for the cognitive service to be played.
+    :ivar ssml_text: Ssml string for the cognitive service to be played. Required.
     :vartype ssml_text: str
+    :ivar custom_voice_endpoint_id: Endpoint where the custom voice was deployed.
+    :vartype custom_voice_endpoint_id: str
     :ivar play_source_cache_id: source id of the play media.
     :vartype play_source_cache_id: str
     """
@@ -268,6 +278,7 @@ class SsmlSource(object):
             self,
             ssml_text: str,
             *,
+            custom_voice_endpoint_id: Optional[str] = None,
             play_source_cache_id: Optional[str] = None,
             **kwargs
     ):
@@ -275,17 +286,23 @@ class SsmlSource(object):
 
         :param ssml_text: Ssml string for the cognitive service to be played.
         :type ssml_text: str
-        :ivar play_source_cache_id: source id of the play media.
-        :vartype play_source_cache_id: str
+        :keyword custom_voice_endpoint_id: Endpoint where the custom voice was deployed.
+        :paramtype custom_voice_endpoint_id: str
+        :keyword play_source_cache_id: source id of the play media.
+        :paramtype play_source_cache_id: str
         """
         super().__init__(**kwargs)
         self.ssml_text = ssml_text
+        self.custom_voice_endpoint_id = custom_voice_endpoint_id
         self.play_source_cache_id = play_source_cache_id
 
     def _to_generated(self):
         return PlaySourceInternal(
             kind=PlaySourceType.SSML,
-            ssml_source=SsmlSourceInternal(ssml_text=self.ssml_text),
+            ssml_source=SsmlSourceInternal(
+                ssml_text=self.ssml_text,
+                custom_voice_endpoint_id=self.custom_voice_endpoint_id
+            ),
             play_source_cache_id=self.play_source_cache_id
         )
 
