@@ -4,16 +4,11 @@
 # ------------------------------------
 # pylint: skip-file
 
-import sys
 from enum import Enum
 from six import with_metaclass
 from typing import Mapping, Optional, Union, Any
 from azure.core import CaseInsensitiveEnumMeta
-
-if sys.version_info >= (3, 8):
-    from typing import TypedDict, Protocol
-else:
-    from typing_extensions import TypedDict, Protocol
+from typing_extensions import TypedDict, Protocol
 
 
 class CommunicationIdentifierKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):

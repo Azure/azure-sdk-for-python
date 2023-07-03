@@ -15,10 +15,10 @@ from .._shared.policy import HMACCredentialsPolicy
 
 
 def get_authentication_policy(
-    endpoint,  # type: str
-    credential,  # type: Union[TokenCredential, AsyncTokenCredential, AzureKeyCredential, str]
-    decode_url=False,  # type: bool
-    is_async=False,  # type: bool
+    endpoint: str,
+    credential: Union[TokenCredential, AsyncTokenCredential, AzureKeyCredential, str],
+    decode_url: bool = False,
+    is_async: bool = False,
 ):
     # type: (...) -> Union[AsyncBearerTokenCredentialPolicy, BearerTokenCredentialPolicy, HMACCredentialsPolicy]
     """Returns the correct authentication policy based on which credential is being passed.
