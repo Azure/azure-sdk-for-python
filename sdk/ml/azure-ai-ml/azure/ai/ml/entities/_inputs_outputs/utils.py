@@ -314,7 +314,11 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
                         f"Meta class type {arg.type} should be same as Annotated type: " f"{hint_type}"
                     )
                 arg.type = hint_type
-                io = Output(**arg._to_io_entity_args_dict())
+                io = (
+                    Output(**arg._to_io_entity_args_dict())
+                    if key == return_annotation_key
+                    else Input(**arg._to_io_entity_args_dict())
+                )
         result[key] = io
     return result
 
