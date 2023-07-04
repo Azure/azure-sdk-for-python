@@ -18,7 +18,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
 """Create partition keys in the Azure Cosmos DB SQL API service.
 """
 
@@ -72,12 +71,18 @@ class PartitionKey(dict):
     @property
     def path(self):
         # () -> str
-        return self["paths"][0]
+        if self.kind == "MultiHash":
+            return ''.join(self["paths"])
+        else:
+            return self["paths"][0]
 
     @path.setter
     def path(self, value):
         # (str) -> None
-        self["paths"] = [value]
+        if isinstance(value, list):
+            self["paths"] = value
+        else:
+            self["paths"] = [value]
 
     @property
     def version(self):

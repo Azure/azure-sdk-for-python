@@ -2649,31 +2649,45 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
     # Extracts the partition key from the document using the partitionKey definition
     def _ExtractPartitionKey(self, partitionKeyDefinition, document):
+        if partitionKeyDefinition["kind"] == "MultiHash":
+            ret = []
+            for partition_key_level in partitionKeyDefinition.get("paths"):
+                # Parses the paths into a list of token each representing a property
+                partition_key_parts = base.ParsePaths([partition_key_level])
+                # Check if the partitionKey is system generated or not
+                is_system_key = partitionKeyDefinition["systemKey"] if "systemKey" in partitionKeyDefinition else False
 
-        # Parses the paths into a list of token each representing a property
-        partition_key_parts = base.ParsePaths(partitionKeyDefinition.get("paths"))
-        # Check if the partitionKey is system generated or not
-        is_system_key = partitionKeyDefinition["systemKey"] if "systemKey" in partitionKeyDefinition else False
+                # Navigates the document to retrieve the partitionKey specified in the paths
+                val = self._retrieve_partition_key(partition_key_parts, document, is_system_key)
+                val = {} if val is _Undefined else val
+                ret.append(val)
+            return ret
 
-        # Navigates the document to retrieve the partitionKey specified in the paths
-        return self._retrieve_partition_key(partition_key_parts, document, is_system_key)
+        else:
+            # Parses the paths into a list of token each representing a property
+            partition_key_parts = base.ParsePaths(partitionKeyDefinition.get("paths"))
+            # Check if the partitionKey is system generated or not
+            is_system_key = partitionKeyDefinition["systemKey"] if "systemKey" in partitionKeyDefinition else False
+
+            # Navigates the document to retrieve the partitionKey specified in the paths
+
+            return self._retrieve_partition_key(partition_key_parts, document, is_system_key)
 
     # Navigates the document to retrieve the partitionKey specified in the partition key parts
     def _retrieve_partition_key(self, partition_key_parts, document, is_system_key):
         expected_matchCount = len(partition_key_parts)
         matchCount = 0
         partitionKey = document
-
         for part in partition_key_parts:
-            # At any point if we don't find the value of a sub-property in the document, we return as Undefined
-            if part not in partitionKey:
-                return self._return_undefined_or_empty_partition_key(is_system_key)
+                # At any point if we don't find the value of a sub-property in the document, we return as Undefined
+                if part not in partitionKey:
+                    return self._return_undefined_or_empty_partition_key(is_system_key)
 
-            partitionKey = partitionKey.get(part)
-            matchCount += 1
-            # Once we reach the "leaf" value(not a dict), we break from loop
-            if not isinstance(partitionKey, dict):
-                break
+                partitionKey = partitionKey.get(part)
+                matchCount += 1
+                # Once we reach the "leaf" value(not a dict), we break from loop
+                if not isinstance(partitionKey, dict):
+                    break
 
         # Match the count of hops we did to get the partitionKey with the length of
         # partition key parts and validate that it's not a dict at that level

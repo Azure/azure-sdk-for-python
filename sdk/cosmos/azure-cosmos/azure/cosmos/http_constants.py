@@ -295,7 +295,7 @@ class CookieHeaders(object):
 class Versions(object):
     """Constants of versions.
     """
-    CurrentVersion = "2018-12-31"
+    CurrentVersion = "2020-07-15"
     SDKName = "azure-cosmos"
     QueryVersion = "1.0"
 
