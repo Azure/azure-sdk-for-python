@@ -48,6 +48,7 @@ from ._models_py3 import BaseBackupPolicy
 from ._models_py3 import BaseBackupPolicyResource
 from ._models_py3 import BaseBackupPolicyResourceList
 from ._models_py3 import BasePolicyRule
+from ._models_py3 import BaseResourceProperties
 from ._models_py3 import BlobBackupDatasourceParameters
 from ._models_py3 import CheckNameAvailabilityRequest
 from ._models_py3 import CheckNameAvailabilityResult
@@ -59,6 +60,7 @@ from ._models_py3 import ClientDiscoveryResponse
 from ._models_py3 import ClientDiscoveryValueForSingleApi
 from ._models_py3 import CopyOnExpiryOption
 from ._models_py3 import CopyOption
+from ._models_py3 import CrossRegionRestoreSettings
 from ._models_py3 import CrossSubscriptionRestoreSettings
 from ._models_py3 import CustomCopyOption
 from ._models_py3 import DataStoreInfoBase
@@ -89,6 +91,7 @@ from ._models_py3 import FeatureValidationRequest
 from ._models_py3 import FeatureValidationRequestBase
 from ._models_py3 import FeatureValidationResponse
 from ._models_py3 import FeatureValidationResponseBase
+from ._models_py3 import IdentityDetails
 from ._models_py3 import ImmediateCopyOption
 from ._models_py3 import ImmutabilitySettings
 from ._models_py3 import InnerError
@@ -102,6 +105,7 @@ from ._models_py3 import KubernetesClusterRestoreCriteria
 from ._models_py3 import KubernetesPVRestoreCriteria
 from ._models_py3 import KubernetesStorageClassRestoreCriteria
 from ._models_py3 import MonitoringSettings
+from ._models_py3 import NamespacedNameResource
 from ._models_py3 import OperationExtendedInfo
 from ._models_py3 import OperationJobExtendedInfo
 from ._models_py3 import OperationResource
@@ -147,6 +151,7 @@ from ._models_py3 import TriggerBackupRequest
 from ._models_py3 import TriggerContext
 from ._models_py3 import UnlockDeleteRequest
 from ._models_py3 import UnlockDeleteResponse
+from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import UserFacingError
 from ._models_py3 import ValidateForBackupRequest
 from ._models_py3 import ValidateRestoreRequestObject
@@ -154,6 +159,7 @@ from ._models_py3 import ValidateRestoreRequestObject
 from ._data_protection_mgmt_client_enums import AbsoluteMarker
 from ._data_protection_mgmt_client_enums import AlertsState
 from ._data_protection_mgmt_client_enums import CreatedByType
+from ._data_protection_mgmt_client_enums import CrossRegionRestoreState
 from ._data_protection_mgmt_client_enums import CrossSubscriptionRestoreState
 from ._data_protection_mgmt_client_enums import CurrentProtectionState
 from ._data_protection_mgmt_client_enums import DataStoreTypes
@@ -172,6 +178,7 @@ from ._data_protection_mgmt_client_enums import ResourceMoveState
 from ._data_protection_mgmt_client_enums import RestoreSourceDataStoreType
 from ._data_protection_mgmt_client_enums import RestoreTargetLocationType
 from ._data_protection_mgmt_client_enums import SecretStoreType
+from ._data_protection_mgmt_client_enums import SecureScoreLevel
 from ._data_protection_mgmt_client_enums import SoftDeleteState
 from ._data_protection_mgmt_client_enums import SourceDataStoreType
 from ._data_protection_mgmt_client_enums import Status
@@ -227,6 +234,7 @@ __all__ = [
     "BaseBackupPolicyResource",
     "BaseBackupPolicyResourceList",
     "BasePolicyRule",
+    "BaseResourceProperties",
     "BlobBackupDatasourceParameters",
     "CheckNameAvailabilityRequest",
     "CheckNameAvailabilityResult",
@@ -238,6 +246,7 @@ __all__ = [
     "ClientDiscoveryValueForSingleApi",
     "CopyOnExpiryOption",
     "CopyOption",
+    "CrossRegionRestoreSettings",
     "CrossSubscriptionRestoreSettings",
     "CustomCopyOption",
     "DataStoreInfoBase",
@@ -268,6 +277,7 @@ __all__ = [
     "FeatureValidationRequestBase",
     "FeatureValidationResponse",
     "FeatureValidationResponseBase",
+    "IdentityDetails",
     "ImmediateCopyOption",
     "ImmutabilitySettings",
     "InnerError",
@@ -281,6 +291,7 @@ __all__ = [
     "KubernetesPVRestoreCriteria",
     "KubernetesStorageClassRestoreCriteria",
     "MonitoringSettings",
+    "NamespacedNameResource",
     "OperationExtendedInfo",
     "OperationJobExtendedInfo",
     "OperationResource",
@@ -326,12 +337,14 @@ __all__ = [
     "TriggerContext",
     "UnlockDeleteRequest",
     "UnlockDeleteResponse",
+    "UserAssignedIdentity",
     "UserFacingError",
     "ValidateForBackupRequest",
     "ValidateRestoreRequestObject",
     "AbsoluteMarker",
     "AlertsState",
     "CreatedByType",
+    "CrossRegionRestoreState",
     "CrossSubscriptionRestoreState",
     "CurrentProtectionState",
     "DataStoreTypes",
@@ -350,6 +363,7 @@ __all__ = [
     "RestoreSourceDataStoreType",
     "RestoreTargetLocationType",
     "SecretStoreType",
+    "SecureScoreLevel",
     "SoftDeleteState",
     "SourceDataStoreType",
     "Status",

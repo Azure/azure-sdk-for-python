@@ -1,5 +1,24 @@
 # Release History
 
+## 1.2.0 (2023-07-21)
+
+### Features Added
+
+  - Model AzureBackupJob has a new parameter rehydration_priority
+  - Model AzureBackupRecoveryPointBasedRestoreRequest has a new parameter identity_details
+  - Model AzureBackupRecoveryTimeBasedRestoreRequest has a new parameter identity_details
+  - Model AzureBackupRestoreRequest has a new parameter identity_details
+  - Model AzureBackupRestoreWithRehydrationRequest has a new parameter identity_details
+  - Model BackupInstance has a new parameter identity_details
+  - Model BackupVault has a new parameter secure_score
+  - Model Datasource has a new parameter resource_properties
+  - Model DatasourceSet has a new parameter resource_properties
+  - Model DeletedBackupInstance has a new parameter identity_details
+  - Model DppIdentityDetails has a new parameter user_assigned_identities
+  - Model FeatureSettings has a new parameter cross_region_restore_settings
+  - Model KubernetesClusterBackupDatasourceParameters has a new parameter backup_hook_references
+  - Model KubernetesClusterRestoreCriteria has a new parameter restore_hook_references
+
 ## 1.1.0 (2023-06-16)
 
 ### Features Added
