@@ -208,7 +208,7 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
             if put_timeout:
                 self.auth_state = CbsAuthState.TIMEOUT
 
-    def _cbs_link_ready(self):
+    def _cbs_link_ready(self): # pylint: disable=inconsistent-return-statements
         if self.state == CbsState.OPEN:
             return True
         if self.state != CbsState.OPEN:

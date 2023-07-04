@@ -260,6 +260,9 @@ class ServiceBusMessage(
     def message(self, value: "Message") -> None:
         """DEPRECATED: Set the underlying Message.
         This is deprecated and will be removed in a later release.
+
+        :param value: The uamqp.Message or LegacyMessage to use as the underlying message.
+        :type value: uamqp.Message or LegacyMessage
         """
         warnings.warn(
             "The `message` property is deprecated and will be removed in future versions.",
@@ -269,7 +272,10 @@ class ServiceBusMessage(
 
     @property
     def raw_amqp_message(self) -> AmqpAnnotatedMessage:
-        """Advanced usage only. The internal AMQP message payload that is sent or received."""
+        """Advanced usage only. The internal AMQP message payload that is sent or received.
+        :returns: The raw AMQP message.
+        :rtype: ~azure.servicebus.amqp.AmqpAnnotatedMessage
+        """
         return self._raw_amqp_message
 
     @property
@@ -680,7 +686,10 @@ class ServiceBusMessageBatch(object):
             self._add(message)
 
     def _add(self, add_message: Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage]) -> None:
-        """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
+        """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span.
+        :param add_message: The message to add.
+        :type add_message: ServiceBusMessage or Mapping[str, any] or AmqpAnnotatedMessage
+        """
         outgoing_sb_message = transform_outbound_messages(
             add_message, ServiceBusMessage, self._amqp_transport.to_outgoing_amqp_message
         )
@@ -738,6 +747,9 @@ class ServiceBusMessageBatch(object):
     def message(self, value: "BatchMessage") -> None:
         """DEPRECATED: Set the underlying BatchMessage.
         This is deprecated and will be removed in a later release.
+
+        :param value: The BatchMessage to set.
+        :type value: ~uamqp.BatchMessage
         """
         warnings.warn(
             "The `message` property is deprecated and will be removed in future versions.",
@@ -818,12 +830,12 @@ class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-i
             self._receiver: Union["ServiceBusReceiver", "AsyncServiceBusReceiver"] = kwargs.pop(
                 "receiver"
             )
-        except KeyError:
+        except KeyError as exc:
             raise TypeError(
                 "ServiceBusReceivedMessage requires a receiver to be initialized. "
                 + "This class should never be initialized by a user; "
                 + "for outgoing messages, the ServiceBusMessage class should be utilized instead."
-            )
+            ) from exc
         self._expiry: Optional[datetime.datetime] = None
 
     def __getstate__(self):

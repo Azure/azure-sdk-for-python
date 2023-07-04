@@ -51,6 +51,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def build_batch_message(data):
         """
         Creates a uamqp.BatchMessage or pyamqp.BatchMessage with given arguments.
+        :param list[~uamqp.Message or ~pyamqp.Message] data: A list of uamqp.Message or pyamqp.Message.
         :rtype: uamqp.BatchMessage or pyamqp.BatchMessage
         """
 
@@ -70,7 +71,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         Adds the given key/value to the application properties of the message.
         :param uamqp.Message or pyamqp.Message message: Message.
         :param str key: Key to set in application properties.
-        :param str Value: Value to set for key in application properties.
+        :param str value: Value to set for key in application properties.
         :rtype: uamqp.Message or pyamqp.Message
         """
 
@@ -115,7 +116,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     async def close_connection_async(connection):
         """
         Closes existing connection.
-        :param connection: uamqp or pyamqp Connection.
+        :param ConnectionAsync connection: uamqp or pyamqp Connection.
         """
 
     @staticmethod
@@ -141,10 +142,11 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     async def send_messages_async(sender, message, logger, timeout, last_exception):
         """
         Handles sending of service bus messages.
-        :param sender: The sender with handler to send messages.
+        :param SendClientAsync sender: The sender with handler to send messages.
+        :param Message message: The message to send.
         :param int timeout: Timeout time.
-        :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
-        :param logger: Logger.
+        :param Exception last_exception: Exception to raise if message timed out. Only used by uamqp transport.
+        :param any logger: Logger.
         """
 
     @staticmethod
@@ -154,7 +156,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         Creates and returns the Source.
 
         :param Source source: Required.
-        :param str or None session_id: Required.
+        :param str or None session_filter: Required.
         """
 
     @staticmethod
@@ -162,7 +164,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def create_receive_client_async(receiver, **kwargs):
         """
         Creates and returns the receive client.
-        :param Configuration config: The configuration.
+        :param ReceiveClientAsync receiver: The receiver.
 
         :keyword Source source: Required. The source.
         :keyword JWTTokenAuth auth: Required.
@@ -186,7 +188,10 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         receiver, max_wait_time=None
     ):
         """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
-        and per-iter argument passing that requires the former."""
+        and per-iter argument passing that requires the former.
+        :param ReceiveClientAsync receiver: Client with handler to iterate through messages.
+        :param int or None max_wait_time: Max wait time.
+        """
 
     @staticmethod
     @abstractmethod
@@ -195,6 +200,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     ):
         """
         Used to iterate through received messages.
+        :param ReceiveClientAsync receiver: Client with handler to iterate through messages.
+        :param int or None wait_time: Wait time.
         """
 
     @staticmethod
@@ -202,6 +209,9 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def build_received_message(receiver, message_type, received):
         """
         Build ServiceBusReceivedMessage.
+        :param ReceiveClientAsync receiver: Client with handler to build message from.
+        :param str message_type: Message type.
+        :param Message received: Received message.
         """
 
     @staticmethod
@@ -209,6 +219,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def set_handler_message_received_async(receiver):
         """
         Sets _message_received on async handler.
+        :param ReceiveClientAsync receiver: Client with handler to set _message_received on.
         """
 
     @staticmethod
@@ -216,6 +227,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def get_current_time(handler):
         """
         Gets the current time.
+        :param ReceiveClientAsync handler: Client with link to get current time from.
         """
 
     @staticmethod
@@ -241,6 +253,11 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     ) -> None:
         """
         Settles message.
+        :param ReceiveClientAsync handler: Client with link to settle message on.
+        :param Message message: The received message to settle.
+        :param str settle_operation: The settle operation.
+        :param str or None dead_letter_reason: Optional. The dead letter reason.
+        :param str or None dead_letter_error_description: Optional. The dead letter error description.
         """
 
     @staticmethod
@@ -262,13 +279,15 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
-        :param get_token: The callback function used for getting and refreshing
+        :param callable get_token: The callback function used for getting and refreshing
          tokens. It should return a valid jwt token each time it is called.
         :param bytes token_type: Token type.
         :param Configuration config: EH config.
 
         :keyword bool update_token: Whether to update token. If not updating token,
          then pass 300 to refresh_window. Only used by uamqp.
+        :returns: JWTTokenAuth.
+        :rtype: ~pyamqp.aio._authentication_async.JWTTokenAuth
         """
 
     @staticmethod

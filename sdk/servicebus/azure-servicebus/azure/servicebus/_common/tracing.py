@@ -104,8 +104,17 @@ def send_trace_context_manager(
     span_name: str = SPAN_NAME_SEND,
     links: Optional[List[Link]] = None
 ) -> Iterator[None]:
-    """Tracing for sending messages."""
-    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
+    """Tracing for sending messages.
+    :param sender: The sender that is sending the message.
+    :type sender: ~azure.servicebus.ServiceBusSender or ~azure.servicebus.aio.ServiceBusSenderAsync
+    :param span_name: The name of the tracing span.
+    :type span_name: str
+    :param links: A list of links to include in the tracing span.
+    :type links: list[Link] or None
+    :return: A context manager that will yield when the message is sent.
+    :rtype: ~azure.core.tracing.AbstractSpan or None
+    """
+    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
 
     if span_impl_type is not None:
         links = links or []
@@ -123,8 +132,19 @@ def receive_trace_context_manager(
     links: Optional[List[Link]] = None,
     start_time: Optional[int] = None
 ) -> Iterator[None]:
-    """Tracing for receiving messages."""
-    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
+    """Tracing for receiving messages.
+    :param receiver: The receiver that is receiving the message.
+    :type receiver: ~azure.servicebus.ServiceBusReceiver or ~azure.servicebus.aio.ServiceBusReceiverAsync
+    :param span_name: The name of the tracing span.
+    :type span_name: str
+    :param links: A list of links to include in the tracing span.
+    :type links: list[Link] or None
+    :param start_time: The time that the receive operation started.
+    :type start_time: int or none
+    :return: An iterator that yields the tracing span.
+    :rtype: iterator[None]
+    """
+    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
     if span_impl_type is not None:
         links = links or []
         with span_impl_type(name=span_name, kind=SpanKind.CLIENT, links=links, start_time=start_time) as span:
@@ -140,8 +160,17 @@ def settle_trace_context_manager(
     operation: str,
     links: Optional[List[Link]] = None
 ):
-    """Tracing for settling messages."""
-    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
+    """Tracing for settling messages.
+    :param receiver: The receiver that is settling the message.
+    :type receiver: ~azure.servicebus.ServiceBusReceiver or ~azure.servicebus.aio.ServiceBusReceiverAsync
+    :param operation: The operation that is being performed on the message.
+    :type operation: str
+    :param links: A list of links to include in the tracing span.
+    :type links: list[Link] or None
+    :return: An generator that yields the tracing span.
+    :rtype: None
+    """
+    span_impl_type = settings.tracing_implementation()
     if span_impl_type is not None:
         links = links or []
         with span_impl_type(name=f"ServiceBus.{operation}", kind=SpanKind.CLIENT, links=links) as span:
@@ -159,6 +188,14 @@ def trace_message(
     """Adds tracing information to the message and returns the updated message.
 
     Will open and close a message span, and add tracing context to the app properties of the message.
+    :param message: The message to trace.
+    :type message: uamqp_Message or pyamqp_Message
+    :param amqp_transport: The AMQP transport to use for tracing.
+    :type amqp_transport: AmqpTransport or AmqpTransportAsync
+    :param additional_attributes: Additional attributes to add to the message span.
+    :type additional_attributes: dict[str, str or int] or None
+    :return: The message with tracing information added.
+    :rtype: uamqp_Message or pyamqp_Message
     """
     try:
         span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
@@ -239,7 +276,11 @@ def get_receive_links(messages: Union[ReceiveMessageTypes, Iterable[ReceiveMessa
 
 
 def get_span_links_from_batch(batch: ServiceBusMessageBatch) -> List[Link]:
-    """Create span links from a batch of messages."""
+    """Create span links from a batch of messages.
+    :param ServiceBusMessageBatch batch: The batch of messages to extract the span links from.
+    :return: A list of span links created from the batch.
+    :rtype: list[Link]
+    """
     links = []
     for message in batch._messages:  # pylint: disable=protected-access
         link = get_span_link_from_message(message._message)  # pylint: disable=protected-access
@@ -253,6 +294,11 @@ def get_span_link_from_message(message: Union[uamqp_Message, pyamqp_Message, Ser
 
     This will extract the traceparent and tracestate from the message application properties and create span links
     based on these values.
+
+    :param message: The message to extract the span link from.
+    :type message: Union[uamqp_Message, pyamqp_Message, ServiceBusMessage]
+    :return: A span link created from the message.
+    :rtype: Link or None
     """
     headers = {}
     try:
@@ -280,7 +326,12 @@ def add_span_attributes(
         handler: Union[BaseHandler, BaseHandlerAsync],
         message_count: int = 0
 ) -> None:
-    """Add attributes to span based on the operation type."""
+    """Add attributes to span based on the operation type.
+    :param AbstractSpan span: The span to add attributes to.
+    :param TraceOperationTypes operation_type: The operation type.
+    :param BaseHandler handler: The handler that is performing the operation.
+    :param int message_count: The number of messages being sent or received.
+    """
 
     span.add_attribute(TraceAttributes.TRACE_NAMESPACE_ATTRIBUTE, TraceAttributes.TRACE_NAMESPACE)
     span.add_attribute(TraceAttributes.TRACE_MESSAGING_SYSTEM_ATTRIBUTE, TraceAttributes.TRACE_MESSAGING_SYSTEM)

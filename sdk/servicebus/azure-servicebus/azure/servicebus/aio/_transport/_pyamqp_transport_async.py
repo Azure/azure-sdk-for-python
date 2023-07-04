@@ -64,6 +64,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :param str host: The hostname used by pyamqp.
         :param JWTTokenAuth auth: The auth used by pyamqp.
         :param bool network_trace: Debug setting.
+        :return: An instance of an asynchronous pyamqp Connection.
+        :rtype: ~pyamqp.aio.ConnectionAsync
         """
         return ConnectionAsync(
             endpoint=host,
@@ -76,7 +78,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     async def close_connection_async(connection: "ConnectionAsync") -> None:
         """
         Closes existing connection.
-        :param connection: pyamqp Connection.
+        :param ~pyamqp.aio.ConnectionAsync connection: pyamqp Connection.
         """
         await connection.close()
 
@@ -97,6 +99,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword str client_name: Required.
         :keyword dict link_properties: Required.
         :keyword properties: Required.
+        :return: An instance of an asynchronous pyamqp SendClient.
+        :rtype: ~pyamqp.aio.SendClientAsync
         """
         target = kwargs.pop("target")
         return SendClientAsync(
@@ -122,10 +126,11 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     ) -> None:  # pylint: disable=unused-argument
         """
         Handles sending of service bus messages.
-        :param sender: The sender with handler to send messages.
+        :param ~azure.servicebus.ServiceBusSender sender: The sender with handler to send messages.
+        :param ~pyamqp.message.Message message: The message to send.
         :param int timeout: Timeout time.
-        :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
-        :param logger: Logger.
+        :param Exception last_exception: Exception to raise if message timed out. Only used by uamqp transport.
+        :param any logger: Logger.
         """
         # pylint: disable=protected-access
         await sender._open()
@@ -137,8 +142,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     message._message,
                     timeout=timeout
                 )
-        except TimeoutError:
-            raise OperationTimeoutError(message="Send operation timed out")
+
+        except TimeoutError as exc:
+            raise OperationTimeoutError(message="Send operation timed out") from exc
         except MessageException as e:
             raise PyamqpTransportAsync.create_servicebus_exception(logger, e)
 
@@ -148,7 +154,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     ) -> "ReceiveClientAsync":  # pylint:disable=unused-argument
         """
         Creates and returns the receive client.
-        :param Configuration config: The configuration.
+        :param ~azure.servicebus.aio.ServiceBusReceiver receiver: The receiver.
 
         :keyword str source: Required. The source.
         :keyword str offset: Required.
@@ -165,6 +171,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword desired_capabilities: Required.
         :keyword streaming_receive: Required.
         :keyword timeout: Required.
+
+        :returns: A ReceiveClientAsync.
+        :rtype: ~uamqp.aio.ReceiveClientAsync
         """
         config = receiver._config   # pylint: disable=protected-access
         source = kwargs.pop("source")
@@ -330,13 +339,15 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
-        :param get_token: The callback function used for getting and refreshing
+        :param callable get_token: The callback function used for getting and refreshing
         tokens. It should return a valid jwt token each time it is called.
         :param bytes token_type: Token type.
         :param Configuration config: EH config.
 
         :keyword bool update_token: Required. Whether to update token. If not updating token,
         then pass 300 to refresh_window.
+        :return: An instance of JWTTokenAuth.
+        :rtype: ~uamqp.aio.JWTTokenAuthAsync
         """
         # TODO: figure out why we're passing all these args to pyamqp JWTTokenAuth, which aren't being used
         update_token = kwargs.pop("update_token")  # pylint: disable=unused-variable
@@ -368,13 +379,15 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     ) -> "ServiceBusReceivedMessage":
         """
         Send mgmt request.
-        :param AMQPClient mgmt_client: Client to send request with.
-        :param Message mgmt_msg: Message.
+        :param ~uamqp.aio.AMQPClientAsync mgmt_client: Client to send request with.
+        :param ~uamqp.Message mgmt_msg: Message.
         :keyword bytes operation: Operation.
         :keyword bytes operation_type: Op type.
         :keyword bytes node: Mgmt target.
         :keyword int timeout: Timeout.
-        :keyword Callable callback: Callback to process request response.
+        :keyword callable callback: Callback to process request response.
+        :return: The result returned by the mgmt request.
+        :rtype: ~azure.servicebus.ServiceBusReceivedMessage
         """
         status, description, response = await mgmt_client.mgmt_request_async(
             mgmt_msg,
