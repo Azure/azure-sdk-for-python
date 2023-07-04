@@ -32,6 +32,12 @@ module_logger = logging.getLogger(__name__)
 
 
 def parse_inputs_outputs(data):
+    """Parse inputs and outputs from data. If data is a list, parse each item in the list.
+
+    :return: parsed data
+    :rtype: Dict
+    """
+
     if "inputs" in data:
         data["inputs"] = {key: build_input_output(val) for key, val in data["inputs"].items()}
     if "outputs" in data:
@@ -40,7 +46,11 @@ def parse_inputs_outputs(data):
 
 
 def pipeline_node_decorator(func):
-    """Wrap func and add it return value to current DSL pipeline."""
+    """Wrap func and add it return value to current DSL pipeline.
+
+    :return: _type_
+    :rtype: _type_
+    """
 
     @wraps(func)
     def wrapper(*args, **kwargs):
