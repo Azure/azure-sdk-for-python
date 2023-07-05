@@ -383,7 +383,7 @@ class _HiddenClassProperties(type):
         return cls.DEFAULT_HEADERS_ALLOWLIST
 
     @DEFAULT_HEADERS_WHITELIST.setter
-    def DEFAULT_HEADERS_WHITELIST(cls, value: Set[str]):
+    def DEFAULT_HEADERS_WHITELIST(cls, value: Set[str]) -> None:
         cls.DEFAULT_HEADERS_ALLOWLIST = value
 
 

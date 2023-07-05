@@ -89,7 +89,9 @@ class AzureDeveloperCliCredential(AsyncContextManager):
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure Developer CLI.
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure Developer CLI
           but didn't receive an access token.

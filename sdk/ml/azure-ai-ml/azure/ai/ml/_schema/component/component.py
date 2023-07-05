@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields, post_dump, pre_load, pre_dump
+from marshmallow import fields, post_dump, pre_dump, pre_load
 
 from azure.ai.ml._schema.component.input_output import InputPortSchema, OutputPortSchema, ParameterSchema
 from azure.ai.ml._schema.core.fields import (
@@ -13,9 +13,10 @@ from azure.ai.ml._schema.core.fields import (
     UnionField,
 )
 from azure.ai.ml._schema.core.intellectual_property import IntellectualPropertySchema
-from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml._utils.utils import is_private_preview_enabled
+from azure.ai.ml.constants._common import AzureMLResourceType
 
+from .._utils.utils import _resolve_group_inputs_for_component
 from ..assets.asset import AssetSchema
 from ..core.fields import RegistryStr
 
@@ -88,3 +89,7 @@ class ComponentSchema(AssetSchema):
                         if input_value.get(key, None) is not None:
                             input_value[key] = str(input_value[key])
         return data
+
+    @pre_dump
+    def flatten_group_inputs(self, data, **kwargs):  # pylint: disable=unused-argument, no-self-use
+        return _resolve_group_inputs_for_component(data)

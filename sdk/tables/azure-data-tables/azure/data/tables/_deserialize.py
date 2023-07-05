@@ -9,8 +9,6 @@ from uuid import UUID
 import logging
 import datetime
 
-import six
-
 from ._entity import EntityProperty, EdmType, TableEntity
 from ._common_conversion import _decode_base64_to_bytes, TZ_UTC
 
@@ -99,7 +97,7 @@ def _from_entity_guid(value):
 
 
 def _from_entity_str(value: Union[str, bytes]) -> str:
-    if isinstance(value, six.binary_type):
+    if isinstance(value, bytes):
         return value.decode('utf-8')
     return value
 

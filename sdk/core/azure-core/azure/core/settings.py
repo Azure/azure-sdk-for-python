@@ -229,7 +229,7 @@ class PrioritizedSetting:
     :param callable convert: a function to convert values before they are returned
     """
 
-    def __init__(self, name, env_var=None, system_hook=None, default=_Unset, convert=None):
+    def __init__(self, name: str, env_var: Optional[str] = None, system_hook=None, default=_Unset, convert=None):
 
         self._name = name
         self._env_var = env_var
@@ -310,7 +310,7 @@ class Settings:
 
     .. code-block:: python
 
-        from azure.common.settings import settings
+        from azure.core.settings import settings
         settings.log_level = log_level = logging.DEBUG
 
     The following methods are searched in order for a setting:

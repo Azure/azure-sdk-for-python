@@ -27,6 +27,7 @@ import datetime
 import email.utils
 from typing import Optional, cast
 
+from urllib.parse import urlparse
 from ...utils._utils import _FixedOffset, case_insensitive_dict
 
 
@@ -79,3 +80,13 @@ def get_retry_after(response) -> Optional[float]:
             parsed_retry_after = parse_retry_after(retry_after)
             return parsed_retry_after / 1000.0
     return None
+
+
+def get_domain(url: str) -> str:
+    """Get the domain of an url.
+
+    :param str url: The url.
+    :rtype: str
+    :return: The domain of the url.
+    """
+    return str(urlparse(url).netloc).lower()

@@ -53,7 +53,7 @@ class ArtifactOperatingSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WINDOWS = "windows"
 
 
-class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-attributes
+class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attributes
     """Represents properties of a registry artifact.
 
     :ivar bool can_delete: Delete Permissions for an artifact.
@@ -156,7 +156,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
         return f"{_host_only(self._registry)}/{self._repository_name}{':' if _is_tag(self._digest) else '@'}{_strip_alg(self._digest)}" # pylint: disable=line-too-long
 
 
-class RepositoryProperties(object):
+class RepositoryProperties:
     """Represents properties of a single repository.
 
     :ivar bool can_delete: Delete Permissions for a repository.
@@ -234,7 +234,7 @@ class RepositoryProperties(object):
         return self._tag_count
 
 
-class ArtifactTagProperties(object):
+class ArtifactTagProperties:
     """Represents properties of a single tag
 
     :ivar bool can_delete: Delete Permissions for a tag.
@@ -304,7 +304,7 @@ class ArtifactTagProperties(object):
         return self._repository_name
 
 
-class GetManifestResult(object):
+class GetManifestResult:
     """The get manifest result.
 
     :ivar manifest: The manifest JSON.
@@ -321,6 +321,7 @@ class GetManifestResult(object):
 
 class DigestValidationError(ValueError):
     """Thrown when a manifest digest validation fails.
+
     :param str message: Message for caller describing the reason for the failure.
     """
 
