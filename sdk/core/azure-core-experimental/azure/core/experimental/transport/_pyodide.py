@@ -87,7 +87,7 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
     async def __anext__(self) -> bytes:
         """Get the next block of bytes."""
         if self._closed:
-            raise StopAsyncIteration()
+            raise StopAsyncIteration() # pylint: disable=raise-missing-from
 
         # remember the initial stream position
         start_pos = self._stream.tell()
@@ -140,7 +140,7 @@ class PyodideTransport(AsyncioRequestsTransport):
         try:
             response = await pyfetch(endpoint, **init)
         except JsException as error:
-            raise HttpResponseError(error, error=error)
+            raise HttpResponseError(error, error=error) from error
 
         headers = CaseInsensitiveDict(response.js_response.headers)
         transport_response = PyodideTransportResponse(
