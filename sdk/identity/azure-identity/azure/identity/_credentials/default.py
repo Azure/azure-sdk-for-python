@@ -72,6 +72,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
     :keyword str workload_identity_client_id: The client ID of an identity assigned to the pod. Defaults to the value
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, the pod's default identity will be used.
+    :keyword str workload_identity_tenant_id: Preferred tenant for :class:`~azure.identity.WorkloadIdentityCredential`.
+        Defaults to the value of environment variable AZURE_TENANT_ID, if any.
     :keyword str interactive_browser_client_id: The client ID to be used in interactive browser credential. If not
         specified, users will authenticate to an Azure development application.
     :keyword str shared_cache_username: Preferred username for :class:`~azure.identity.SharedTokenCacheCredential`.
@@ -95,7 +97,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             :caption: Create a DefaultAzureCredential.
     """
 
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-statements
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-statements, too-many-locals
         if "tenant_id" in kwargs:
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
@@ -121,6 +123,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         )
         workload_identity_client_id = kwargs.pop(
             "workload_identity_client_id", managed_identity_client_id
+        )
+        workload_identity_tenant_id = kwargs.pop(
+            "workload_identity_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
         interactive_browser_client_id = kwargs.pop("interactive_browser_client_id", None)
 
@@ -149,7 +154,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 client_id = workload_identity_client_id
                 credentials.append(WorkloadIdentityCredential(
                     client_id=cast(str, client_id),
-                    tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
+                    tenant_id=workload_identity_tenant_id,
                     file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
                     **kwargs))
         if not exclude_managed_identity_credential:
@@ -199,7 +204,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
 
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
 
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
           `message` attribute listing each authentication attempt and its error message.

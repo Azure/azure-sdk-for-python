@@ -100,8 +100,9 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
                     else:
                         print("Skipping unknown file: {}".format(filename))
 
+    @pytest.mark.parametrize("components", [(False), (True)])
     def test_image_object_detection_run(
-        self, image_object_detection_dataset: Tuple[Input, Input], client: MLClient
+        self, image_object_detection_dataset: Tuple[Input, Input], client: MLClient, components: bool
     ) -> None:
         # Note: this test launches two jobs in order to avoid calling the dataset fixture more than once. Ideally, it
         # would have sufficed to mark the fixture with session scope, but pytest-xdist breaks this functionality:
@@ -116,6 +117,13 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
         training_data = Input(type=AssetTypes.MLTABLE, path=train_path)
         validation_data = Input(type=AssetTypes.MLTABLE, path=val_path)
 
+        properties = get_automl_job_properties()
+        if components:
+            properties["_aml_internal_automl_subgraph_orchestration"] = "true"
+            properties[
+                "_pipeline_id_override"
+            ] = "azureml://registries/azmlft-dev-registry01/components/image_object_detection_pipeline"
+
         # Make generic detection job
         image_object_detection_job = automl.image_object_detection(
             compute="gpu-cluster",
@@ -125,7 +133,7 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
             target_column_name="label",
             primary_metric="MeanAveragePrecision",
             # These are temporal properties needed in Private Preview
-            properties=get_automl_job_properties(),
+            properties=properties,
         )
 
         # Configure regular sweep job
@@ -137,12 +145,14 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
                     model_name=Choice(["yolov5"]),
                     learning_rate=Uniform(0.0001, 0.01),
                     model_size=Choice(["small", "medium"]),  # model-specific
+                    number_of_epochs=Choice([1]),
                 ),
                 SearchSpace(
                     model_name=Choice(["fasterrcnn_resnet50_fpn"]),
                     learning_rate=Uniform(0.0001, 0.001),
                     optimizer=Choice(["sgd", "adam", "adamw"]),
                     min_size=Choice([600, 800]),  # model-specific
+                    number_of_epochs=Choice([1]),
                 ),
             ]
         )
@@ -160,9 +170,40 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
         image_object_detection_job_automode.limits.max_trials = 2
         image_object_detection_job_automode.limits.max_concurrent_trials = 2
 
+        # Configure Finetune Sweep Job
+        if components:
+            # Configure component sweep job
+            image_object_detection_job_finetune_sweep = copy.deepcopy(image_object_detection_job)
+            image_object_detection_job_finetune_sweep.set_training_parameters(
+                early_stopping=True, evaluation_frequency=1
+            )
+            image_object_detection_job_finetune_sweep.extend_search_space(
+                [
+                    SearchSpace(
+                        model_name=Choice(["atss_r50_fpn_1x_coco"]),
+                        learning_rate=Uniform(0.0001, 0.01),
+                        number_of_epochs=Choice([1]),
+                    ),
+                ]
+            )
+            image_object_detection_job_finetune_sweep.set_limits(max_trials=1, max_concurrent_trials=1)
+            image_object_detection_job_finetune_sweep.set_sweep(
+                sampling_algorithm="Random",
+                early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
+            )
+
+            # Trigger finetune sweep
+            submitted_finetune_sweep = client.jobs.create_or_update(image_object_detection_job_finetune_sweep)
+
         # Trigger regular sweep and then AutoMode job
         submitted_job_sweep = client.jobs.create_or_update(image_object_detection_job_sweep)
         submitted_job_automode = client.jobs.create_or_update(image_object_detection_job_automode)
+
+        # Assert completion of finetune sweep job
+        if components:
+            assert_final_job_status(
+                submitted_finetune_sweep, client, ImageObjectDetectionJob, JobStatus.COMPLETED, deadline=3600
+            )
 
         # Assert completion of regular sweep job
         assert_final_job_status(

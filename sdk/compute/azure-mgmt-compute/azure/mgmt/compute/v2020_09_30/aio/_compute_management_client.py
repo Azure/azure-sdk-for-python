@@ -107,37 +107,45 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.disks = DisksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.snapshots = SnapshotsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.disks = DisksOperations(self._client, self._config, self._serialize, self._deserialize, "2020-09-30")
+        self.snapshots = SnapshotsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-30"
+        )
         self.disk_encryption_sets = DiskEncryptionSetsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-30"
         )
-        self.disk_accesses = DiskAccessesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.disk_accesses = DiskAccessesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-30"
+        )
         self.disk_restore_point = DiskRestorePointOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-30"
         )
-        self.galleries = GalleriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_images = GalleryImagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.galleries = GalleriesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-30"
+        )
+        self.gallery_images = GalleryImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-30"
+        )
         self.gallery_image_versions = GalleryImageVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-30"
         )
         self.gallery_applications = GalleryApplicationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-30"
         )
         self.gallery_application_versions = GalleryApplicationVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-30"
         )
         self.gallery_sharing_profile = GallerySharingProfileOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-30"
         )
         self.shared_galleries = SharedGalleriesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-30"
         )
         self.shared_gallery_images = SharedGalleryImagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-30"
         )
         self.shared_gallery_image_versions = SharedGalleryImageVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-09-30"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:

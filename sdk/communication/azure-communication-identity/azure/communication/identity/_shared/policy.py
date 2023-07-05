@@ -12,15 +12,16 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from .utils import get_current_utc_time
 
-class HMACCredentialsPolicy(SansIOHTTPPolicy):
-    """Implementation of HMAC authentication policy.
-    """
 
-    def __init__(self,
-            host, # type: str
-            access_key, # type: Union[str, AzureKeyCredential]
-            decode_url=False # type: bool
-        ):
+class HMACCredentialsPolicy(SansIOHTTPPolicy):
+    """Implementation of HMAC authentication policy."""
+
+    def __init__(
+        self,
+        host,  # type: str
+        access_key,  # type: Union[str, AzureKeyCredential]
+        decode_url=False,  # type: bool
+    ):
         # type: (...) -> None
         super(HMACCredentialsPolicy, self).__init__()
 
@@ -33,9 +34,9 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         self._access_key = access_key
         self._decode_url = decode_url
 
-    def _compute_hmac(self,
-            value # type: str
-        ):
+    def _compute_hmac(
+        self, value  # type: str
+    ):
         if isinstance(self._access_key, AzureKeyCredential):
             decoded_secret = base64.b64decode(self._access_key.key)
         else:
@@ -51,7 +52,7 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         verb = request.http_request.method.upper()
 
         # Get the path and query from url, which looks like https://host/path/query
-        query_url = str(request.http_request.url[len(self._host) + 8:])
+        query_url = str(request.http_request.url[len(self._host) + 8 :])
 
         if self._decode_url:
             query_url = urllib.parse.unquote(query_url)
@@ -84,8 +85,10 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
             "x-ms-date": utc_now,
             "x-ms-content-sha256": content_hash,
             "x-ms-return-client-request-id": "true",
-            "Authorization": "HMAC-SHA256 SignedHeaders=" +\
-                signed_headers + "&Signature=" + signature,
+            "Authorization": "HMAC-SHA256 SignedHeaders="
+            + signed_headers
+            + "&Signature="
+            + signature,
         }
 
         request.http_request.headers.update(signature_header)

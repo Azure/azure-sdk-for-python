@@ -16,11 +16,13 @@ from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import StorageCacheManagementClientConfiguration
 from .operations import (
+    AmlFilesystemsOperations,
     AscOperationsOperations,
     AscUsagesOperations,
     CachesOperations,
     Operations,
     SkusOperations,
+    StorageCacheManagementClientOperationsMixin,
     StorageTargetOperations,
     StorageTargetsOperations,
     UsageModelsOperations,
@@ -31,11 +33,15 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class StorageCacheManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
-    """A Storage Cache provides scalable caching service for NAS clients, serving data from either
-    NFSv3 or Blob at-rest storage (referred to as "Storage Targets"). These operations allow you to
-    manage Caches.
+class StorageCacheManagementClient(
+    StorageCacheManagementClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+    """Azure Managed Lustre provides a fully managed Lustre® file system, integrated with Blob
+    storage, for use on demand. These operations create and manage Azure Managed Lustre file
+    systems.
 
+    :ivar aml_filesystems: AmlFilesystemsOperations operations
+    :vartype aml_filesystems: azure.mgmt.storagecache.aio.operations.AmlFilesystemsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.storagecache.aio.operations.Operations
     :ivar skus: SkusOperations operations
@@ -54,12 +60,11 @@ class StorageCacheManagementClient:  # pylint: disable=client-accepts-api-versio
     :vartype storage_target: azure.mgmt.storagecache.aio.operations.StorageTargetOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure
-     subscription. The subscription ID forms part of the URI for every service call. Required.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-01-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-05-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -76,12 +81,13 @@ class StorageCacheManagementClient:  # pylint: disable=client-accepts-api-versio
         self._config = StorageCacheManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.aml_filesystems = AmlFilesystemsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
         self.usage_models = UsageModelsOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -120,5 +126,5 @@ class StorageCacheManagementClient:  # pylint: disable=client-accepts-api-versio
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

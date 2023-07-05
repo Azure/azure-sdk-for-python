@@ -95,34 +95,17 @@ class CachedNodeResolver(object):
     def __init__(
         self,
         resolver: Callable[[Union[Component, str]], str],
-        subscription_id: Optional[str],
-        resource_group_name: Optional[str],
-        workspace_name: Optional[str],
-        registry_name: Optional[str],
+        client_key: str,
     ):
         self._resolver = resolver
         self._cache: Dict[str, _CacheContent] = {}
         self._nodes_to_resolve: List[BaseNode] = []
 
-        self._client_hash = self._get_client_hash(subscription_id, resource_group_name, workspace_name, registry_name)
+        hash_obj = hashlib.sha256()
+        hash_obj.update(client_key.encode("utf-8"))
+        self._client_hash = hash_obj.hexdigest()
         # the same client share 1 lock
         self._lock = _node_resolution_lock[self._client_hash]
-
-    @staticmethod
-    def _get_client_hash(
-        subscription_id: Optional[str],
-        resource_group_name: Optional[str],
-        workspace_name: Optional[str],
-        registry_name: Optional[str],
-    ) -> str:
-        """Get a hash for used client.
-
-        Works for both workspace client and registry client.
-        """
-        object_hash = hashlib.sha256()
-        for s in [subscription_id, resource_group_name, workspace_name, registry_name]:
-            object_hash.update(str(s).encode("utf-8"))
-        return object_hash.hexdigest()
 
     @staticmethod
     def _get_component_registration_max_workers():

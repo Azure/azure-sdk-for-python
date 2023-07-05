@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint:disable=too-many-lines,too-many-public-methods
+# pylint:disable=too-many-lines,too-many-public-methods,bad-option-value,delete-operation-wrong-return-type
 import base64
 from functools import partial
 from typing import Any, List, Optional, Union
@@ -893,7 +893,7 @@ class CertificateClient(KeyVaultClientBase):
         else:
             issuer_credentials = None
         if admin_contacts:
-            admin_details = [
+            admin_details: Optional[List[Any]] = [
                 self._models.AdministratorDetails(
                     first_name=contact.first_name,
                     last_name=contact.last_name,
@@ -901,7 +901,7 @@ class CertificateClient(KeyVaultClientBase):
                     phone=contact.phone,
                 )
                 for contact in admin_contacts
-            ]  # type: Optional[List[Any]]
+            ]
         else:
             admin_details = None
         if organization_id or admin_details:
@@ -956,7 +956,7 @@ class CertificateClient(KeyVaultClientBase):
         else:
             issuer_credentials = None
         if admin_contacts:
-            admin_details = [
+            admin_details: Optional[List[Any]] = [
                 self._models.AdministratorDetails(
                     first_name=contact.first_name,
                     last_name=contact.last_name,
@@ -964,7 +964,7 @@ class CertificateClient(KeyVaultClientBase):
                     phone=contact.phone,
                 )
                 for contact in admin_contacts
-            ]  # type: Optional[List[Any]]
+            ]
         else:
             admin_details = None
         if organization_id or admin_details:

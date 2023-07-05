@@ -54,7 +54,10 @@ class CSODataV4Format(ODataV4Format):
 
 
 def process_http_response_error(error):
-    """Raise detailed error message."""
+    """Raise detailed error message.
+
+    :param HttpResponseError error: Error raised by the service
+    """
     raise_error = HttpResponseError
     if error.status_code == 401:
         raise_error = ClientAuthenticationError
@@ -66,9 +69,10 @@ def process_http_response_error(error):
 def order_results(response, combined):
     """Order results in the order the user passed them in.
 
-    :param response: Used to get the original documents in the request
-    :param combined: A combined list of the results | errors
+    :param HttpResponse response: Used to get the original documents in the request
+    :param list combined: A combined list of the results | errors
     :return: In order list of results | errors (if any)
+    :rtype: list
     """
     try:
         request = json.loads(response.http_response.request.body)["documents"]
@@ -84,9 +88,10 @@ def order_lro_results(doc_id_order, combined):
     For long running operations, we need to explicitly pass in the
     document ids since the initial request will no longer be available.
 
-    :param doc_id_order: A list of document IDs from the original request.
-    :param combined: A combined list of the results | errors
+    :param list doc_id_order: A list of document IDs from the original request.
+    :param list combined: A combined list of the results | errors
     :return: In order list of results | errors (if any)
+    :rtype: list
     """
 
     mapping = [(item.id, item) for item in combined]
@@ -341,7 +346,12 @@ def _get_deserialization_callback_from_task_type(task_type):  # pylint: disable=
 
 
 def _get_property_name_from_task_type(task_type):  # pylint: disable=too-many-return-statements
-    """v3.1 only"""
+    """v3.1 only
+
+    :param str task_type: v3.1 task type
+    :return: the corresponding property name associated with task type
+    :rtype: str
+    """
     if task_type == _AnalyzeActionsType.RECOGNIZE_ENTITIES:
         return "entity_recognition_tasks"
     if task_type == _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES:
@@ -354,7 +364,12 @@ def _get_property_name_from_task_type(task_type):  # pylint: disable=too-many-re
 
 
 def get_task_from_pointer(task_type):  # pylint: disable=too-many-return-statements
-    """v3.1 only"""
+    """v3.1 only
+
+    :param str task_type: v3.1 task type
+    :return: the corresponding property name associated with task pointer
+    :rtype: str
+    """
     if task_type == ActionPointerKind.RECOGNIZE_ENTITIES:
         return "entity_recognition_tasks"
     if task_type == ActionPointerKind.RECOGNIZE_PII_ENTITIES:
@@ -394,7 +409,7 @@ def pad_result(tasks_obj, doc_id_order):
 
 def get_ordered_errors(tasks_obj, task_name, doc_id_order):
     # throw exception if error missing a target
-    missing_target = any([error for error in tasks_obj.errors if error.target is None])
+    missing_target = any(error for error in tasks_obj.errors if error.target is None)
     if missing_target:
         message = "".join([f"({err.code}) {err.message}" for err in tasks_obj.errors])
         raise HttpResponseError(message=message)
@@ -431,8 +446,8 @@ def _get_doc_results(task, doc_id_order, returned_tasks_object):
     try:
         response_task_to_deserialize = \
             next(task for task in getattr(returned_tasks, property_name) if task.task_name == task_name)
-    except StopIteration:
-        raise ValueError("Unexpected response from service - unable to deserialize result.")
+    except StopIteration as exc:
+        raise ValueError("Unexpected response from service - unable to deserialize result.") from exc
 
     # if no results present, check for action errors
     if response_task_to_deserialize.results is None:

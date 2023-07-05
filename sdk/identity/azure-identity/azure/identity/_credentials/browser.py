@@ -92,8 +92,8 @@ class InteractiveBrowserCredential(InteractiveCredential):
                 prompt="select_account",
                 port=port
             )
-        except socket.error:
-            raise CredentialUnavailableError(message="Couldn't start an HTTP server.")
+        except socket.error as ex:
+            raise CredentialUnavailableError(message="Couldn't start an HTTP server.") from ex
         if "access_token" not in result and "error_description" in result:
             raise ClientAuthenticationError(message=result.get("error_description"))
         if "access_token" not in result:

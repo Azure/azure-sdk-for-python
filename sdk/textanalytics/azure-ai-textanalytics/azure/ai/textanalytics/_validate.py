@@ -90,7 +90,7 @@ def validate_multiapi_args(**kwargs: typing.Any) -> typing.Callable[[typing.Call
                     arg: version
                     for version, args in args_mapping.items()
                     for arg in args
-                    if arg in kwargs.keys()
+                    if arg in kwargs.keys()  # pylint: disable=consider-iterating-dictionary
                     and selected_api_version != version
                     and VERSIONS_SUPPORTED.index(selected_api_version) < VERSIONS_SUPPORTED.index(version)
                 }
