@@ -38,6 +38,7 @@ class TestTextNer(AzureRecordedTestCase):
             properties=properties,
         )
 
+        # use component specific model name so that the test fails if components are not run
         if components:
             job.set_training_parameters(model_name="microsoft/deberta-base")
 
