@@ -48,12 +48,15 @@ class HttpXTransportResponse(HttpResponseImpl):
             content_type=httpx_response.headers.get("content-type"),
             stream_download_generator=stream_contextmanager,
         )
-        
-        self._content = self._internal_response.content
 
+    def read(self) -> bytes:
+        if self._content is None:
+            self._content = self.internal_response.read()
+        return self.content
+        
     def body(self) -> bytes:
         return self.internal_response.content
-
+    
     def stream_download(self, pipeline: Pipeline, **kwargs) -> Iterator[bytes]:
         return HttpXStreamDownloadGenerator(pipeline, self, **kwargs)
 
