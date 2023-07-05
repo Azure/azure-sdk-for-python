@@ -53,7 +53,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     # pylint: disable=too-many-instance-attributes
 
     def __init__(
-            self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any
+        self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any
     ) -> None:
         super(SearchIndexingBufferedSender, self).__init__(
             endpoint=endpoint, index_name=index_name, credential=credential, **kwargs
@@ -102,7 +102,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     def actions(self) -> List[IndexAction]:
         """The list of currently index actions in queue to index.
 
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         return self._index_documents_batch.actions
 
@@ -159,11 +159,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             results = self._index_documents_actions(actions=actions, timeout=timeout)
             for result in results:
                 try:
-                    action = next(
-                        x
-                        for x in actions
-                        if x.additional_properties.get(self._index_key) == result.key
-                    )
+                    action = next(x for x in actions if x.additional_properties.get(self._index_key) == result.key)
                     if result.succeeded:
                         self._callback_succeed(action)
                     elif is_retryable_status_code(result.status_code):
@@ -211,7 +207,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         """Queue upload documents actions.
 
         :param documents: A list of documents to upload.
-        :type documents: List[Dict]
+        :type documents: list[dict]
         """
         actions = self._index_documents_batch.add_upload_actions(documents)
         self._callback_new(actions)
@@ -222,7 +218,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         """Queue delete documents actions
 
         :param documents: A list of documents to delete.
-        :type documents: List[Dict]
+        :type documents: list[dict]
         """
         actions = self._index_documents_batch.add_delete_actions(documents)
         self._callback_new(actions)
@@ -233,21 +229,19 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         """Queue merge documents actions
 
         :param documents: A list of documents to merge.
-        :type documents: List[Dict]
+        :type documents: list[dict]
         """
         actions = self._index_documents_batch.add_merge_actions(documents)
         self._callback_new(actions)
         self._process_if_needed()
 
     @distributed_trace
-    def merge_or_upload_documents(
-        self, documents: List[Dict], **kwargs
-    ) -> None:
+    def merge_or_upload_documents(self, documents: List[Dict], **kwargs) -> None:
         # pylint: disable=unused-argument
         """Queue merge documents or upload documents actions
 
         :param documents: A list of documents to merge or upload.
-        :type documents: List[Dict]
+        :type documents: list[dict]
         """
         actions = self._index_documents_batch.add_merge_or_upload_actions(documents)
         self._callback_new(actions)
@@ -259,7 +253,8 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
 
         :param batch: A batch of document operations to perform.
         :type batch: IndexDocumentsBatch
-        :rtype:  List[IndexingResult]
+        :return: Indexing result of each action in the batch.
+        :rtype:  list[IndexingResult]
         :raises :class:`~azure.search.documents.RequestEntityTooLargeError`
         """
         return self._index_documents_actions(actions=batch.actions, **kwargs)
@@ -272,11 +267,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch = IndexBatch(actions=actions)
         try:
-            batch_response = self._client.documents.index(
-                batch=batch, error_map=error_map, **kwargs
-            )
+            batch_response = self._client.documents.index(batch=batch, error_map=error_map, **kwargs)
             return cast(List[IndexingResult], batch_response.results)
-        except RequestEntityTooLargeError:
+        except RequestEntityTooLargeError as ex:
             if len(actions) == 1:
                 raise
             pos = round(len(actions) / 2)
@@ -285,36 +278,32 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             now = int(time.time())
             remaining = timeout - (now - begin_time)
             if remaining < 0:
-                raise ServiceResponseTimeoutError("Service response time out")
+                raise ServiceResponseTimeoutError("Service response time out") from ex
             batch_response_first_half = self._index_documents_actions(
                 actions=actions[:pos], error_map=error_map, timeout=remaining, **kwargs
             )
             if len(batch_response_first_half) > 0:
-                result_first_half = cast(
-                    List[IndexingResult], batch_response_first_half.results
-                )
+                result_first_half = cast(List[IndexingResult], batch_response_first_half.results)
             else:
                 result_first_half = []
             now = int(time.time())
             remaining = timeout - (now - begin_time)
             if remaining < 0:
-                raise ServiceResponseTimeoutError("Service response time out")
+                raise ServiceResponseTimeoutError("Service response time out") from ex
             batch_response_second_half = self._index_documents_actions(
                 actions=actions[pos:], error_map=error_map, timeout=remaining, **kwargs
             )
             if len(batch_response_second_half) > 0:
-                result_second_half = cast(
-                    List[IndexingResult], batch_response_second_half.results
-                )
+                result_second_half = cast(List[IndexingResult], batch_response_second_half.results)
             else:
                 result_second_half = []
             return result_first_half.extend(result_second_half)
 
-    def __enter__(self):
+    def __enter__(self) -> "SearchIndexingBufferedSender":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args) -> None:
         self.close()
         self._client.__exit__(*args)
 

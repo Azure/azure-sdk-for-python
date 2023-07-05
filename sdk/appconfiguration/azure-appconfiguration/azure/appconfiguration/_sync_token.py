@@ -29,8 +29,13 @@ from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 
-class SyncToken(object):
-    """The sync token structure"""
+class SyncToken:
+    """The sync token structure
+
+    :param str token_id: The id of sync token.
+    :param str value: The value of sync token.
+    :param int sequence_number: The sequence number of sync token.
+    """
 
     def __init__(self, token_id, value, sequence_number):
         self.token_id = token_id
@@ -38,7 +43,7 @@ class SyncToken(object):
         self.sequence_number = sequence_number
 
     def __str__(self):
-        return "{}={}".format(self.token_id, self.value)
+        return f"{self.token_id}={self.value}"
 
     @classmethod
     def from_sync_token_string(cls, sync_token):
@@ -55,8 +60,8 @@ class SyncToken(object):
 
 
 class SyncTokenPolicy(SansIOHTTPPolicy):
-    """A simple policy that enable the given callback
-    with the response.
+    """A simple policy that enable the given callback with the response.
+
     :keyword callback raw_response_hook: Callback function. Will be invoked on response.
     """
 
@@ -77,6 +82,7 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
 
     def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:  # type: ignore # pylint: disable=arguments-differ
         """This is executed after the request comes back from the policy.
+
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
         :param response: The PipelineResponse object.

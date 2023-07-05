@@ -27,8 +27,6 @@ USAGE:
     2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
-    5) CONTAINERREGISTRY_RESOURCE_GROUP - The resource group name
-    6) CONTAINERREGISTRY_REGISTRY_NAME - The registry name
 """
 import asyncio
 import os
@@ -42,15 +40,15 @@ class ListTagsAsync(object):
         load_dotenv(find_dotenv())
 
     async def list_tags(self):
-        load_registry()
-        # [START list_tags_anonymous]
         endpoint = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")
+        load_registry(endpoint)
+        # [START list_tags_anonymous]
         async with ContainerRegistryClient(endpoint) as anon_client:
             manifest = await anon_client.get_manifest_properties("library/hello-world", "latest")
             print(f"Tags of {manifest.repository_name}: ")
             # Iterate through all the tags
             for tag in manifest.tags:
-                print(f"{tag}\n")
+                print(tag)
         # [END list_tags_anonymous]
 
 
