@@ -7,6 +7,10 @@
 - Added the new share resources capability that allows listing resources associated with sent and received shares.
 - Added missing test cases to test_sent_shares and test_received_shares
 
+### Breaking Changes
+
+- In _opertions.py, under the list_attached definition, the `skip_token` parameter was removed list definitions in favor of placing it within `nextLink`. 
+
 ### Bugs Fixed
 
 - Fixed Samples and Tests
