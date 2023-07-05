@@ -146,7 +146,7 @@ class SchemaRegistryClient(object):
         ...
 
     @distributed_trace
-    def get_schema(self, *args: str, **kwargs: Any) -> Schema:  # pylint: disable=docstring-missing-param
+    def get_schema(self, *args: str, **kwargs: Any) -> Schema:  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
         """Gets a registered schema. There are two ways to call this method:
 
         1) To get a registered schema by its unique ID, pass the `schema_id` parameter and any optional
@@ -155,7 +155,7 @@ class SchemaRegistryClient(object):
         2) To get a specific version of a schema within the specified schema group, pass in the required
         keyword arguments `group_name`, `name`, and `version` and any optional keyword arguments.
 
-        :keyword str schema_id: References specific schema in registry namespace. Required if `group_name`,
+        :param str schema_id: References specific schema in registry namespace. Required if `group_name`,
          `name`, and `version` are not provided.
         :keyword str group_name: Name of schema group that contains the registered schema.
         :keyword str name: Name of schema which should be retrieved.
