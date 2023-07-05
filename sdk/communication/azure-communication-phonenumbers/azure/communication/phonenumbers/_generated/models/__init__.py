@@ -8,6 +8,10 @@
 
 from ._models import CommunicationError
 from ._models import CommunicationErrorResponse
+from ._models import OperatorDetails
+from ._models import OperatorInformation
+from ._models import OperatorInformationRequest
+from ._models import OperatorInformationResult
 from ._models import PhoneNumberAdministrativeDivision
 from ._models import PhoneNumberAreaCode
 from ._models import PhoneNumberCapabilities
@@ -23,6 +27,7 @@ from ._models import PhoneNumberSearchResult
 from ._models import PurchasedPhoneNumber
 
 from ._enums import BillingFrequency
+from ._enums import OperatorNumberType
 from ._enums import PhoneNumberAssignmentType
 from ._enums import PhoneNumberCapabilityType
 from ._enums import PhoneNumberOperationStatus
@@ -35,6 +40,10 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "CommunicationError",
     "CommunicationErrorResponse",
+    "OperatorDetails",
+    "OperatorInformation",
+    "OperatorInformationRequest",
+    "OperatorInformationResult",
     "PhoneNumberAdministrativeDivision",
     "PhoneNumberAreaCode",
     "PhoneNumberCapabilities",
@@ -49,6 +58,7 @@ __all__ = [
     "PhoneNumberSearchResult",
     "PurchasedPhoneNumber",
     "BillingFrequency",
+    "OperatorNumberType",
     "PhoneNumberAssignmentType",
     "PhoneNumberCapabilityType",
     "PhoneNumberOperationStatus",
