@@ -1,6 +1,6 @@
 # Release History
 
-## 11.4.0b4 (Unreleased)
+## 11.4.0b4 (2023-07-11)
 
 ### Features Added
 
@@ -9,10 +9,6 @@
 ### Breaking Changes
 
 - Deprecated `SentimentSkillV1` and `EntityRecognitionSkillV1`.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 11.4.0b3 (2023-02-07)
 
