@@ -53,10 +53,10 @@ class HttpXTransportResponse(HttpResponseImpl):
         if self._content is None:
             self._content = self.internal_response.read()
         return self.content
-        
+
     def body(self) -> bytes:
         return self.internal_response.content
-    
+
     def stream_download(self, pipeline: Pipeline, **kwargs) -> Iterator[bytes]:
         return HttpXStreamDownloadGenerator(pipeline, self, **kwargs)
 
