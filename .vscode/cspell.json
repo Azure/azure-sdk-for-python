@@ -110,6 +110,16 @@
     "tools/azure-sdk-tools/tests/test_servicemetadata.py"
   ],
   "words": [
+    "pyprojecttoml",
+    "tomli",
+    "sdkrel",
+    "qnamaker",
+    "mindependency",
+    "automl",
+    "pyyaml",
+    "CONLL",
+    "pyjwt",
+    "conll",
     "aad",
     "aadclient",
     "AADSTS",
@@ -119,59 +129,50 @@
     "adfs",
     "adls",
     "aiohttp",
-    "aiter",
     "amqp",
     "amqps",
     "apim",
     "Asal",
     "astimezone",
-    "asyncio",
     "AsyncIterable",
-    "automl",
+    "asyncio",
     "avroencoder",
     "azcmagent",
     "azsdk",
     "azurecr",
-    "azuremgmtcommunication",
     "azuremgmtcore",
+    "azuremgmtcommunication",
     "bdist",
     "bstr",
-    "BUILDID",
     "byref",
-    "cchardet",
     "cdll",
-    "centralus",
-    "centraluseuap",
     "certprg",
     "certver",
-    "chdir",
+    "cchardet",
     "clientid",
     "cname",
     "conda",
-    "conll",
-    "CONLL",
     "connectedvmware",
     "consts",
     "contoso",
     "contosodataset",
+    "centralus",
+    "centraluseuap",
     "creds",
     "ctoring",
     "ctypes",
     "curr",
-    "dacl",
     "dateutil",
     "ddos",
     "decryptor",
     "delenv",
     "dependened",
-    "deps",
     "deque",
     "deserialization",
     "disablecov",
     "distilbert",
     "distilroberta",
     "docfx",
-    "documentdb",
     "dont",
     "dotenv",
     "dowhile",
@@ -180,14 +181,14 @@
     "dtlk",
     "dtlksd",
     "DWORD",
-    "Easm",
     "eastus",
+    "Easm",
+    "euap",
     "eckey",
     "ekus",
     "encryptor",
     "engsys",
     "envname",
-    "euap",
     "evals",
     "fileno",
     "fqdns",
@@ -195,8 +196,8 @@
     "gbps",
     "GCCH",
     "getsizeof",
-    "gmtime",
     "graphrbac",
+    "gmtime",
     "guids",
     "hanaonazure",
     "hdinsight",
@@ -205,16 +206,16 @@
     "himds",
     "hmac",
     "hnstestscope",
-    "Hololens",
     "howto",
+    "Hololens",
     "httpx",
     "illumos",
     "imds",
     "inotify",
-    "inprogress",
     "ints",
     "iohttp",
     "IOHTTP",
+    "inprogress",
     "ipconfiguration",
     "ipconfigurations",
     "iqmp",
@@ -222,7 +223,6 @@
     "iscoroutine",
     "iscoroutinefunction",
     "iscsi",
-    "ispkg",
     "iterrows",
     "ivar",
     "ivars",
@@ -237,41 +237,39 @@
     "livekvtest",
     "livekvtestcertprg",
     "livekvtestcertrec",
-    "livekvtestdecryptperfkey",
     "livekvtestgetcertperfcert",
-    "livekvtestgetkeyperfkey",
     "livekvtestgetsecretperfsecret",
     "livekvtestlistperfsecret",
+    "livekvtestdecryptperfkey",
+    "livekvtestgetkeyperfkey",
     "livekvtestsignperfkey",
     "livekvtestunwrapperfkey",
+    "lrobasepollingasynclrobasepolling",
+    "lropollerasynclropoller",
     "lmazuel",
     "logz",
     "LPCWSTR",
-    "lrobasepollingasynclrobasepolling",
-    "lropollerasynclropoller",
     "Lucene",
     "mbps",
     "mday",
+    "mibps",
     "mgmt",
     "mhsm",
-    "mibps",
-    "mindependency",
     "mipsle",
     "mktime",
     "msal",
     "msrest",
     "msrestazure",
     "MSSQL",
-    "mtype",
     "mutex",
     "myacr",
     "mydirectory",
     "myfile",
-    "mytable",
     "myvault",
+    "mytable",
     "nazsdk",
-    "nbsp",
     "nbytes",
+    "nbsp",
     "noarch",
     "NOPERM",
     "northcentralus",
@@ -283,10 +281,8 @@
     "oidc",
     "onboarded",
     "onmicrosoft",
-    "openpyxl",
     "owasp",
     "ownerid",
-    "parameterizing",
     "PBYTE",
     "PCREDENTIAL",
     "perfmon",
@@ -301,31 +297,24 @@
     "prebuilts",
     "premf",
     "prevsnapshot",
-    "prnumber",
     "pschema",
     "PSECRET",
     "pyfetch",
     "pyfuncitem",
     "pygobject",
-    "pyjwt",
     "pyodide",
-    "pyprojecttoml",
     "pyright",
     "pyrightconfig",
+    "parameterizing",
     "pytyped",
     "pytz",
-    "pyversion",
     "pywin",
-    "pyyaml",
-    "qnamaker",
+    "pyversion",
     "RAGRS",
     "rdbms",
     "reauthenticated",
     "reimage",
-    "reqs",
     "revascularization",
-    "rgname",
-    "rgpy",
     "riscv",
     "rollup",
     "RSNULL",
@@ -333,9 +322,7 @@
     "rtype",
     "rwdlacu",
     "scbedd",
-    "SDDL",
     "sdist",
-    "sdkrel",
     "sdpath",
     "secbak",
     "SECG",
@@ -353,12 +340,10 @@
     "struct",
     "STRUCT",
     "substringof",
-    "swaggertosdk",
     "systemperf",
     "tenvparallel",
     "Teradata",
     "timegm",
-    "tomli",
     "toxenv",
     "tzname",
     "tzutc",
@@ -375,9 +360,9 @@
     "urandom",
     "urlsafeb",
     "urlunparse",
+    "usgov",
     "usdodcentral",
     "usdodeast",
-    "usgov",
     "usgovarizona",
     "usgovcloudapi",
     "usgoviowa",
@@ -387,7 +372,6 @@
     "Uvsc",
     "vcrpy",
     "vendored",
-    "venvtools",
     "verifysdist",
     "verifywhl",
     "versionid",
@@ -398,13 +382,29 @@
     "volcz",
     "vsts",
     "wchar",
-    "wday",
     "westcentralus",
     "westus",
     "wfile",
-    "whls",
+    "westus",
     "xlnet",
-    "yarl"
+    "BUILDID",
+    "documentdb",
+    "chdir",
+    "reqs",
+    "rgpy",
+    "swaggertosdk",
+    "rgname",
+    "mtype",
+    "venvtools",
+    "ispkg",
+    "openpyxl",
+    "deps",
+    "prnumber",
+    "yarl",
+    "SDDL",
+    "dacl",
+    "whls",
+    "aiter"
   ],
   "overrides": [
     {
@@ -569,71 +569,37 @@
     },
     {
       "filename": "sdk/core/azure-core-tracing-opentelemetry/**",
-      "words": [
-        "ctxt",
-        "somethingstuid"
-      ]
+      "words": ["ctxt", "somethingstuid"]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
-      "words": [
-        "conv",
-        "summ"
-      ],
+      "words": ["conv", "summ"],
       "caseSensitive": false
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/doc/*.rst",
-      "words": [
-        "undoc"
-      ]
+      "words": ["undoc"]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/azure/ai/language/conversations/**/_serialization.py",
-      "words": [
-        "ctxt",
-        "wday",
-        "mday",
-        "astimezone",
-        "unflattened",
-        "JSONify",
-        "deseralize"
-      ]
+      "words": ["ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize"]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": [
-        "qnas",
-        "qnamaker",
-        "ADTO"
-      ],
+      "words": ["qnas", "qnamaker", "ADTO"],
       "caseSensitive": false
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/tests/test_query_text*.py",
-      "words": [
-        "groovin",
-        "Olufsen"
-      ]
+      "words": ["groovin", "Olufsen"]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/**/_serialization.py",
-      "words": [
-        "ctxt",
-        "wday",
-        "mday",
-        "astimezone",
-        "unflattened",
-        "JSONify",
-        "deseralize"
-      ]
+      "words": ["ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize"]
     },
     {
       "filename": "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/tests/*.py",
-      "words": [
-        "Apim",
-        "cognituve"
-      ]
+      "words": ["Apim", "cognituve"]
     },
     {
       "filename": "sdk/communication/**",
@@ -978,7 +944,7 @@
     },
     {
       "filename": "sdk/loadtestservice/azure-developer-loadtesting/azure/developer/loadtesting/**",
-      "words": [
+      "words":[
         "vusers"
       ]
     },
@@ -1136,7 +1102,7 @@
     },
     {
       "filename": "sdk/attestation/azure-security-attestation/tests/conftest.py",
-      "words": [
+      "words":[
         "sharedwus"
       ]
     },
@@ -1164,8 +1130,8 @@
         "resouce",
         "nnumeral"
       ]
-    },
-    {
+     },
+     {
       "filename": "sdk/storage/azure-storage-file-share/**",
       "words": [
         "XSMB",
@@ -1342,7 +1308,7 @@
         "jsonify",
         "ints",
         "inirudebwoy",
-        "mghextreme"
+	"mghextreme"
       ]
     },
     {
@@ -1486,8 +1452,8 @@
         "Nify",
         "ctxt",
         "unflattened",
-        "deseralize",
-        "wday"
+	      "deseralize",
+	      "wday"
       ]
     },
     {
