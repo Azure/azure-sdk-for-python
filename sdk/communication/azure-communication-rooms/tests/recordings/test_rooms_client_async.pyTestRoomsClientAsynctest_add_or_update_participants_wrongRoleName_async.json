@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms?api-version=2023-03-31-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms?api-version=2023-06-14",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -27,7 +27,7 @@
         "api-supported-versions": "2023-03-31-preview, 2023-06-14",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
-        "Location": "99420356122414282",
+        "Location": "99464644326150728",
         "MS-CV": "sanitized",
         "Repeatability-Result": "accepted",
         "Request-Context": "appId=",
@@ -36,14 +36,14 @@
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
-        "id": "99420356122414282",
-        "createdAt": "2023-07-05T21:58:09.8149548\u002B00:00",
-        "validFrom": "2023-07-05T21:58:09.7433014\u002B00:00",
-        "validUntil": "2024-01-01T21:58:09.7433014\u002B00:00"
+        "id": "99464644326150728",
+        "createdAt": "2023-07-05T22:17:58.5631345\u002B00:00",
+        "validFrom": "2023-07-05T22:17:58.5008134\u002B00:00",
+        "validUntil": "2024-01-01T22:17:58.5008134\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99420356122414282/participants?api-version=2023-03-31-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99464644326150728/participants?api-version=2023-06-14",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -90,7 +90,7 @@
             },
             {
               "code": "BadArgument",
-              "message": "The JSON value could not be converted to Microsoft.AzureCommunicationService.Rooms.Api.Contracts.V2023_03_31_Preview.RoleDto. Path: $.participants.chris.role | LineNumber: 0 | BytePositionInLine: 43.",
+              "message": "The JSON value could not be converted to Microsoft.AzureCommunicationService.Rooms.Api.Contracts.V2023_06_14.RoleDto. Path: $.participants.chris.role | LineNumber: 0 | BytePositionInLine: 43.",
               "target": "$.participants.chris.role"
             }
           ]

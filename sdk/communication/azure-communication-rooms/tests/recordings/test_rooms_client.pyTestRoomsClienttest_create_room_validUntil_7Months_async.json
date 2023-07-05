@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms?api-version=2023-03-31-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms?api-version=2023-06-14",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -19,8 +19,8 @@
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
-        "validFrom": "2023-07-08T14:57:15.067129Z",
-        "validUntil": "2024-01-27T14:57:15.067129Z"
+        "validFrom": "2023-07-08T15:17:06.412243Z",
+        "validUntil": "2024-01-27T15:17:06.412243Z"
       },
       "StatusCode": 400,
       "ResponseHeaders": {
