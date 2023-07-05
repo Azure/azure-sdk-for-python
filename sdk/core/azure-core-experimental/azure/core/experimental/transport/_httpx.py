@@ -36,6 +36,12 @@ from azure.core.configuration import ConnectionConfiguration
 
 
 class HttpXTransportResponse(HttpResponseImpl):
+    """HttpX response implementation.
+
+    :param HttpRequest request: The request sent to the server
+    :param httpx.Response httpx_response: The response object returned from HttpX library
+    :param ContextManager stream_contextmanager: The context manager to stream response data.
+    """
     def __init__(
         self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]
     ) -> None:
@@ -66,7 +72,9 @@ class HttpXStreamDownloadGenerator:
     """Generator for streaming response data.
 
     :param pipeline: The pipeline object
+    :type pipeline: ~azure.core.pipeline.Pipeline
     :param response: The response object.
+    :type response: ~azure.core.experimental.transport.HttpResponse
     :keyword bool decompress: If True which is default, will attempt to decode the body based
         on the *content-encoding* header.
     """
@@ -112,6 +120,11 @@ class HttpXTransport(HttpTransport):
             )
 
     def close(self) -> None:
+        """Close the session.
+
+        :return: None
+        :rtype: None
+        """
         if self.client:
             self.client.close()
             self.client = None
@@ -124,6 +137,16 @@ class HttpXTransport(HttpTransport):
         self.close()
 
     def send(self, request: HttpRequest, **kwargs) -> HttpXTransportResponse:
+        """Send a request and get back a response.
+
+        :param request: The request object to be sent.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether to stream the response. Defaults to False.
+        :keyword int connection_timeout: The timeout setting for the connection.
+        :keyword bool connection_verify: Whether SSL verification is done or not.
+        :return: An HTTPResponse object.
+        :rtype: ~azure.core.experimental.transport.HttpXTransportResponse
+        """
         stream_response = kwargs.pop("stream", False)
         timeout = kwargs.pop("connection_timeout", self.connection_config.timeout)
         # not needed here as its already handled during init
@@ -153,8 +176,8 @@ class HttpXTransport(HttpTransport):
             httpx.ReadTimeout,
             httpx.ProtocolError,
         ) as err:
-            raise ServiceResponseError(err, error=err)
+            raise ServiceResponseError(err, error=err) from err
         except httpx.RequestError as err:
-            raise ServiceRequestError(err, error=err)
+            raise ServiceRequestError(err, error=err) from err
 
         return HttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)

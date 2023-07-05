@@ -141,8 +141,8 @@ class AsyncHttpXTransport(AsyncHttpTransport):
             httpx.ReadTimeout,
             httpx.ProtocolError,
         ) as err:
-            raise ServiceResponseError(err, error=err)
+            raise ServiceResponseError(err, error=err) from err
         except httpx.RequestError as err:
-            raise ServiceRequestError(err, error=err)
+            raise ServiceRequestError(err, error=err) from err
 
         return AsyncHttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)
