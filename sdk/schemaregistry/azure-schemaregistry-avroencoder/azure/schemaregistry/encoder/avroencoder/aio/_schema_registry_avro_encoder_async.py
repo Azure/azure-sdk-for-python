@@ -63,6 +63,7 @@ class AvroEncoder(object):
 
     def __init__(
         self,
+        *,
         client: "SchemaRegistryClient",
         group_name: Optional[str] = None,
         auto_register: bool = False,
