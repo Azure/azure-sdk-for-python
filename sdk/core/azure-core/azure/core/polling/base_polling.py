@@ -556,8 +556,8 @@ class _SansIOLROBasePolling(
     def initialize(
         self,
         client: PipelineClientType,
-        initial_response: Any,
-        deserialization_callback: Callable[[Any], PollingReturnType_co],
+        initial_response: PipelineResponseType,
+        deserialization_callback: Callable[[PipelineResponseType], PollingReturnType_co],
     ) -> None:
         """Set the initial status of this LRO.
 
