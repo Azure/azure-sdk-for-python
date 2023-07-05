@@ -114,9 +114,9 @@ class NoPolling(PollingMethod[PollingReturnType_co]):
         try:
             deserialization_callback = kwargs["deserialization_callback"]
         except KeyError:
-            raise ValueError(  # pylint: disable=raise-missing-from
+            raise ValueError(
                 "Need kwarg 'deserialization_callback' to be recreated from continuation_token"
-            )
+            ) from None
         import pickle
 
         initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec

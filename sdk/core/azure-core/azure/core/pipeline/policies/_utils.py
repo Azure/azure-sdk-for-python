@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import datetime
 import email.utils
-from typing import Optional
+from typing import Optional, cast
 
 from ...utils._utils import _FixedOffset, case_insensitive_dict
 
@@ -38,7 +38,10 @@ def _parse_http_date(text: str) -> datetime.datetime:
     :return: The parsed datetime
     """
     parsed_date = email.utils.parsedate_tz(text)
-    return datetime.datetime(*parsed_date[:6], tzinfo=_FixedOffset(parsed_date[9] / 60))  # type: ignore
+    if not parsed_date:
+        raise ValueError("Invalid HTTP date")
+    tz_offset = cast(int, parsed_date[9])  # Look at the code, tzoffset is always an int, at worst 0
+    return datetime.datetime(*parsed_date[:6], tzinfo=_FixedOffset(tz_offset / 60))
 
 
 def parse_retry_after(retry_after: str) -> float:
