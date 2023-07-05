@@ -244,7 +244,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
         if self.state in (LinkState.DETACHED, LinkState.DETACH_SENT, LinkState.ERROR):
             return
         try:
-            if self.state in [LinkState.ATTACH_SENT,LinkState.ATTACH_RCVD]:
+            if self.state in [LinkState.ATTACH_SENT, LinkState.ATTACH_RCVD]:
                 self._outgoing_detach(close=close, error=error)
                 self._set_state(LinkState.DETACHED)
             elif self.state == LinkState.ATTACHED:
