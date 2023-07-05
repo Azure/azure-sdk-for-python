@@ -176,8 +176,8 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
     :param credential: The credential.
     :type credential: ~azure.core.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
-    :param bool discover_tenant: Determines if tenant discovery should be enabled. Defaults to True.
-    :param bool discover_scopes: Determines if scopes from authentication challenges should be provided to token
+    :keyword bool discover_tenant: Determines if tenant discovery should be enabled. Defaults to True.
+    :keyword bool discover_scopes: Determines if scopes from authentication challenges should be provided to token
         requests, instead of the scopes given to the policy's constructor, if any are present. Defaults to True.
     :raises: :class:`~azure.core.exceptions.ServiceRequestError`
     """

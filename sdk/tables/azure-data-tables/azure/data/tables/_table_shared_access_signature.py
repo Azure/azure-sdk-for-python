@@ -220,7 +220,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
             restricts the request to those IP addresses.
         :param str protocol:
             Specifies the protocol permitted for a request made. The default value
-            is https,http. See :class:`~azure.cosmosdb.table.common.models.Protocol` for possible values.
+            is https,http. See :class:`~azure.data.tables.SASProtocol` for possible values.
         :param str start_pk:
             The minimum partition key accessible with this shared access
             signature. startpk must accompany start_rk. Key values are inclusive.

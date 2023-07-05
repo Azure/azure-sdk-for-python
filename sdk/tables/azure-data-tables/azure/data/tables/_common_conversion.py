@@ -5,34 +5,8 @@
 # --------------------------------------------------------------------------
 import base64
 import hashlib
-import datetime
 import hmac
-
-
-class UTC(datetime.tzinfo):
-    """Time Zone info for handling UTC"""
-
-    def utcoffset(self, dt):
-        # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
-        """UTF offset for UTC is 0."""
-        return datetime.timedelta(0)
-
-    def tzname(self, dt):
-        # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
-        """Timestamp representation."""
-        return "Z"
-
-    def dst(self, dt):
-        # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
-        """No daylight saving for UTC."""
-        return datetime.timedelta(hours=1)
-
-
-try:
-    from datetime import timezone
-    TZ_UTC = timezone.utc  # type: ignore
-except ImportError:
-    TZ_UTC = UTC()  # type: ignore
+from datetime import timezone
 
 
 def _to_str(value):
@@ -41,7 +15,7 @@ def _to_str(value):
 
 def _to_utc_datetime(value):
     try:
-        value = value.astimezone(TZ_UTC)
+        value = value.astimezone(timezone.utc)
     except ValueError:
         # Before Python 3.8, this raised for a naive datetime.
         pass

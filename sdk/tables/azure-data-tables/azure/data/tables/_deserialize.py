@@ -7,10 +7,10 @@ from typing import Union, Dict, Any, Optional
 
 from uuid import UUID
 import logging
-import datetime
+from datetime import datetime, timezone
 
 from ._entity import EntityProperty, EdmType, TableEntity
-from ._common_conversion import _decode_base64_to_bytes, TZ_UTC
+from ._common_conversion import _decode_base64_to_bytes
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -21,7 +21,7 @@ except ImportError:
     from urllib2 import quote  # type: ignore
 
 
-class TablesEntityDatetime(datetime.datetime):
+class TablesEntityDatetime(datetime):
 
     @property
     def tables_service_value(self):
@@ -61,11 +61,11 @@ def _from_entity_datetime(value):
     cleaned_value = clean_up_dotnet_timestamps(value)
     try:
         dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
-            tzinfo=TZ_UTC
+            tzinfo=timezone.utc
         )
     except ValueError:
         dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(
-            tzinfo=TZ_UTC
+            tzinfo=timezone.utc
         )
     dt_obj._service_value = value  # pylint:disable=protected-access,assigning-non-slot
     return dt_obj

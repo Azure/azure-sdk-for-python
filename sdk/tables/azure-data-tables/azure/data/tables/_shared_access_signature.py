@@ -96,8 +96,8 @@ class SharedAccessSignature(object):
             restricts the request to those IP addresses.
         :param protocol:
             Specifies the protocol permitted for a request made. The default value
-            is https,http. See :class:`~azure.cosmosdb.table.common.models.Protocol` for possible values.
-        :type protocol: str or ~azure.cosmosdb.table.common.models.Protocol
+            is https,http. See :class:`~azure.data.tables.SASProtocol` for possible values.
+        :type protocol: str or ~azure.data.tables.SASProtocol
         :return: A shared access signature for the account.
         :rtype: str
         """
