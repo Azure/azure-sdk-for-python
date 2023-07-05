@@ -34,7 +34,7 @@ from azure.purview.sharing import PurviewSharingClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-client = PurviewSharingClient(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
+client = PurviewSharingClient(endpoint="https://<my-account-name>.purview.azure.com/share", credential=credential)
 ```
 
 ## Key concepts
@@ -167,7 +167,7 @@ invitation_request = client.sent_shares.create_invitation(
     sent_share_invitation=invitation)
 
 invitation_response = invitation_request.result()
-created_invitation = json.loads(invitation_response)
+created_invitation = json.dumps(invitation_response)
 print(created_invitation)
 ```
 
@@ -206,7 +206,8 @@ credential = DefaultAzureCredential()
 client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 
 list_detached_response = client.received_shares.list_detached(orderby="properties/createdAt desc")
-print(list_detached_response)
+for list_response in list_detached_response:
+    print(list_response)
 ```
 
 ### Attach a received share
@@ -247,7 +248,7 @@ received_share['properties']['sink'] = sink
 update_request = client.received_shares.begin_create_or_replace(
     received_share['id'],
     content_type="application/json",
-    content=json.dumps(received_share))
+    content=json.dumps(received_share=received_share))
 
 update_response = update_request.result()
 print(update_response)
@@ -267,11 +268,10 @@ credential = DefaultAzureCredential()
 client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 
 list_detached_response = client.received_shares.list_detached(orderby="properties/createdAt desc")
-list_detached = json.loads(list_detached_response)
-received_share = list_detached[0]
+received_share = next(x for x in list_detached_response)
 
 get_share_response = client.received_shares.get(received_share_id=received_share['id'])
-retrieved_share = json.loads(get_share_response)
+retrieved_share = json.dumps(get_share_response)
 print(retrieved_share)
 ```
 
@@ -293,7 +293,8 @@ consumer_storage_account_resource_id = "/subscriptions/{subscription-id}/resourc
 list_attached_response = client.received_shares.list_attached(
     reference_name=consumer_storage_account_resource_id,
     orderby="properties/createdAt desc")
-print(list_attached_response)
+for list_response in list_attached_response:
+    print(list_response)
 ```
 
 ### Delete received share
