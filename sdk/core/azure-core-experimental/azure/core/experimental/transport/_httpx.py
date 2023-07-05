@@ -98,7 +98,7 @@ class HttpXTransport(HttpTransport):
     :keyword httpx.Client client: HTTPX client to use instead of the default one
     """
 
-    def __init__(self, *, client:Optional[httpx.Client] = None, **kwargs:Any) -> None:
+    def __init__(self, *, client: Optional[httpx.Client] = None, **kwargs: Any) -> None:
         self.client = client
         self.connection_config = ConnectionConfiguration(**kwargs)
         self._use_env_settings = kwargs.pop("use_env_settings", True)
@@ -138,7 +138,7 @@ class HttpXTransport(HttpTransport):
             **kwargs,
         }
 
-        if hasattr(request,"content"):
+        if hasattr(request, "content"):
             parameters["content"] = request.content
 
         stream_ctx: Optional[ContextManager] = None
