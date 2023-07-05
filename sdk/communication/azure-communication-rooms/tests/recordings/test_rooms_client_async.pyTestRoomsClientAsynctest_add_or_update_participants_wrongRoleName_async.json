@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms?api-version=2023-06-14",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms?api-version=2023-03-31-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -23,28 +23,27 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "api-deprecated-versions": "2021-04-07",
-        "api-supported-versions": "2022-02-01, 2023-03-31-preview, 2023-06-14",
-        "Connection": "keep-alive",
+        "api-deprecated-versions": "2021-04-07, 2022-02-01",
+        "api-supported-versions": "2023-03-31-preview, 2023-06-14",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
-        "Location": "99461869617938003",
+        "Location": "99420356122414282",
         "MS-CV": "sanitized",
         "Repeatability-Result": "accepted",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "sanitized",
+        "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
-        "id": "99461869617938003",
-        "createdAt": "2023-06-05T22:44:07.8695546\u002B00:00",
-        "validFrom": "2023-06-05T22:44:07.8138822\u002B00:00",
-        "validUntil": "2023-12-02T22:44:07.8138822\u002B00:00"
+        "id": "99420356122414282",
+        "createdAt": "2023-07-05T21:58:09.8149548\u002B00:00",
+        "validFrom": "2023-07-05T21:58:09.7433014\u002B00:00",
+        "validUntil": "2024-01-01T21:58:09.7433014\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99461869617938003/participants?api-version=2023-06-14",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99420356122414282/participants?api-version=2023-03-31-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -70,13 +69,12 @@
       },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "sanitized",
+        "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-error-code": "BadRequest"
       },
@@ -92,7 +90,7 @@
             },
             {
               "code": "BadArgument",
-              "message": "The JSON value could not be converted to Microsoft.AzureCommunicationService.Rooms.Api.Contracts.V2023_06_14.RoleDto. Path: $.participants.chris.role | LineNumber: 0 | BytePositionInLine: 43.",
+              "message": "The JSON value could not be converted to Microsoft.AzureCommunicationService.Rooms.Api.Contracts.V2023_03_31_Preview.RoleDto. Path: $.participants.chris.role | LineNumber: 0 | BytePositionInLine: 43.",
               "target": "$.participants.chris.role"
             }
           ]

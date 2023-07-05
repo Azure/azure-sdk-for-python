@@ -1,16 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms?api-version=2023-03-31-preview",
-      "RequestMethod": "POST",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/invalid_id?api-version=2023-03-31-preview",
+      "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Content-Length": "64",
-        "Content-Type": "application/json",
-        "Repeatability-First-Sent": "sanitized",
-        "Repeatability-Request-ID": "sanitized",
+        "Content-Length": "89",
+        "Content-Type": "application/merge-patch\u002Bjson",
         "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
@@ -18,11 +16,13 @@
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
-        "validFrom": "2024-01-24T14:57:52.209755Z",
-        "validUntil": null
+        "validFrom": "2023-07-08T14:58:01.469340Z",
+        "validUntil": "2023-07-12T14:58:01.469340Z"
       },
       "StatusCode": 400,
       "ResponseHeaders": {
+        "api-deprecated-versions": "2021-04-07, 2022-02-01",
+        "api-supported-versions": "2023-03-31-preview, 2023-06-14",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
@@ -35,14 +35,7 @@
       "ResponseBody": {
         "error": {
           "code": "BadRequest",
-          "message": "The request could not be understood by the server due to malformed syntax.",
-          "details": [
-            {
-              "code": "BadArgument",
-              "message": "Value is incorrect or more than 180 days in the future.",
-              "target": "ValidFrom"
-            }
-          ]
+          "message": "Invalid room ID length."
         }
       }
     }

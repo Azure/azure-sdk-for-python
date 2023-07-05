@@ -1,15 +1,17 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/78469124725336262?api-version=2023-06-14",
-      "RequestMethod": "PATCH",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms?api-version=2023-03-31-preview",
+      "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "89",
-        "Content-Type": "application/merge-patch\u002Bjson",
+        "Content-Type": "application/json",
+        "Repeatability-First-Sent": "sanitized",
+        "Repeatability-Request-ID": "sanitized",
         "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
@@ -17,27 +19,31 @@
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
-        "validFrom": "2023-06-08T15:43:46.550650Z",
-        "validUntil": "2023-06-12T15:43:46.550650Z"
+        "validFrom": "2023-07-08T14:57:15.067129Z",
+        "validUntil": "2024-01-27T14:57:15.067129Z"
       },
-      "StatusCode": 404,
+      "StatusCode": 400,
       "ResponseHeaders": {
-        "api-deprecated-versions": "2021-04-07",
-        "api-supported-versions": "2022-02-01, 2023-03-31-preview, 2023-06-14",
-        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "sanitized",
+        "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "x-ms-error-code": "NotFound"
+        "x-ms-error-code": "BadRequest"
       },
       "ResponseBody": {
         "error": {
-          "code": "NotFound",
-          "message": "The server cannot find the requested resource."
+          "code": "BadRequest",
+          "message": "The request could not be understood by the server due to malformed syntax.",
+          "details": [
+            {
+              "code": "BadArgument",
+              "message": "The time range is incorrect, or larger than 180 days.",
+              "target": "ValidUntil"
+            }
+          ]
         }
       }
     }
