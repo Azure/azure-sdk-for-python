@@ -137,7 +137,7 @@ class HttpXTransport(HttpTransport):
             "timeout": timeout if timeout else request.timeout,
             **kwargs,
         }
-        
+
         if hasattr(request,"content"):
             parameters["content"] = request.content
 
