@@ -29,13 +29,12 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.job_target_groups.delete(
+    client.job_target_groups.delete(
         resource_group_name="group1",
         server_name="server1",
         job_agent_name="agent1",
         target_group_name="targetGroup1",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/DeleteJobTargetGroup.json

@@ -6,8 +6,9 @@
 
 from datetime import timedelta
 
+
 def convert_timedelta_to_mins(
-    duration, # type: timedelta
+    duration,  # type: timedelta
 ):
     # type: (...) -> int
     """

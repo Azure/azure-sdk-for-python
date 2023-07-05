@@ -23,10 +23,12 @@ USAGE:
 import asyncio
 import os
 
+
 async def authentication_with_api_key_credential_async():
     # [START create_search_client_with_key_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.aio import SearchClient
+
     service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
     index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
     key = os.getenv("AZURE_SEARCH_API_KEY")
@@ -39,16 +41,19 @@ async def authentication_with_api_key_credential_async():
 
     print("There are {} documents in the {} search index.".format(result, repr(index_name)))
 
+
 async def authentication_service_client_with_api_key_credential_async():
     # [START create_search_service_with_key_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.indexes.aio import SearchIndexClient
+
     service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
     key = os.getenv("AZURE_SEARCH_API_KEY")
 
     client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     # [END create_search_service_with_key_async]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(authentication_with_api_key_credential_async())
     asyncio.run(authentication_service_client_with_api_key_credential_async())

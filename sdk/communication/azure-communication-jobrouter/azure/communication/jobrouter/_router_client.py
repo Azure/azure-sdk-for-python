@@ -56,7 +56,7 @@ from ._api_versions import DEFAULT_VERSION
 _SERIALIZER = Serializer()
 
 
-class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-lines
+class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-many-lines
     """A client to interact with the AzureCommunicationService JobRouter service.
 
     This client provides operations to create and update jobs, policies and workers.
@@ -110,13 +110,13 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             cls,
             conn_str: str,
             **kwargs: Any
-    ) -> "RouterClient":
-        """Create RouterClient from a Connection String.
+    ) -> "JobRouterClient":
+        """Create JobRouterClient from a Connection String.
 
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
-        :return: Instance of RouterClient.
-        :rtype: ~azure.communication.jobrouter.RouterClient
+        :return: Instance of JobRouterClient.
+        :rtype: ~azure.communication.jobrouter.JobRouterClient
 
         .. admonition:: Example:
 
@@ -125,7 +125,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END auth_from_connection_string]
                 :language: python
                 :dedent: 8
-                :caption: Authenticating a RouterClient from a connection_string
+                :caption: Authenticating a JobRouterClient from a connection_string
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
@@ -154,7 +154,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END get_queue_statistics]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to fetch queue statistics
+                :caption: Use a JobRouterClient to fetch queue statistics
         """
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
@@ -194,7 +194,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END create_worker]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to create a worker
+                :caption: Use a JobRouterClient to create a worker
         """
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
@@ -315,7 +315,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END update_worker]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to update a worker
+                :caption: Use a JobRouterClient to update a worker
 
         .. admonition:: Example:
 
@@ -324,7 +324,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END register_worker]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to register a worker
+                :caption: Use a JobRouterClient to register a worker
 
         .. admonition:: Example:
 
@@ -333,7 +333,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END deregister_worker]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to de-register a worker
+                :caption: Use a JobRouterClient to de-register a worker
         """
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
@@ -378,7 +378,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END get_worker]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to get a worker
+                :caption: Use a JobRouterClient to get a worker
         """
         if not worker_id:
             raise ValueError("identifier cannot be None.")
@@ -430,7 +430,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END list_workers]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to retrieve workers
+                :caption: Use a JobRouterClient to retrieve workers
 
         .. admonition:: Example:
 
@@ -439,7 +439,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END list_workers_batched]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to retrieve workers in batches
+                :caption: Use a JobRouterClient to retrieve workers in batches
         """
 
         params = {}
@@ -475,7 +475,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END delete_worker]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to delete an existing worker
+                :caption: Use a JobRouterClient to delete an existing worker
         """
 
         if not worker_id:
@@ -514,7 +514,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END create_job]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to create a job
+                :caption: Use a JobRouterClient to create a job
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
@@ -672,7 +672,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END update_job]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to update a job
+                :caption: Use a JobRouterClient to update a job
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
@@ -723,7 +723,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END get_job]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to get a job
+                :caption: Use a JobRouterClient to get a job
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
@@ -784,7 +784,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END list_jobs]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to retrieve jobs
+                :caption: Use a JobRouterClient to retrieve jobs
 
         .. admonition:: Example:
 
@@ -793,7 +793,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END list_jobs_batched]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to retrieve jobs in batches
+                :caption: Use a JobRouterClient to retrieve jobs in batches
 
         .. admonition:: Example:
 
@@ -802,7 +802,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END list_scheduled_jobs]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to retrieve scheduled jobs
+                :caption: Use a JobRouterClient to retrieve scheduled jobs
         """
 
         params = {}
@@ -846,7 +846,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END delete_job]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to delete a job
+                :caption: Use a JobRouterClient to delete a job
         """
 
         if not job_id:
@@ -878,7 +878,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END get_job_position]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to get a job position in queue
+                :caption: Use a JobRouterClient to get a job position in queue
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
@@ -925,7 +925,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END close_job]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to close a job
+                :caption: Use a JobRouterClient to close a job
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
@@ -980,7 +980,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END complete_job]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to complete a job
+                :caption: Use a JobRouterClient to complete a job
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
@@ -1033,7 +1033,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END cancel_job]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to cancel a job
+                :caption: Use a JobRouterClient to cancel a job
         """
 
         if not job_id:
@@ -1076,7 +1076,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END reclassify_job]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to re-classify a job
+                :caption: Use a JobRouterClient to re-classify a job
         """
         if not job_id:
             raise ValueError("identifier cannot be None.")
@@ -1111,7 +1111,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END unassign_job]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to unassign a job
+                :caption: Use a JobRouterClient to unassign a job
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
@@ -1156,7 +1156,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END accept_job_offer]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to accept a job offer
+                :caption: Use a JobRouterClient to accept a job offer
         """
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
@@ -1201,7 +1201,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END decline_job_offer]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to decline a job offer
+                :caption: Use a JobRouterClient to decline a job offer
         """
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
@@ -1227,7 +1227,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "RouterClient":
+    def __enter__(self) -> "JobRouterClient":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 

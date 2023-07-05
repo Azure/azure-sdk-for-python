@@ -16,7 +16,7 @@ from _shared.asynctestcase import AsyncCommunicationTestCase
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 
-from azure.communication.jobrouter.aio import RouterAdministrationClient
+from azure.communication.jobrouter.aio import JobRouterAdministrationClient
 from azure.communication.jobrouter import (
     BestWorkerMode,
     LongestIdleMode,
@@ -41,7 +41,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
     async def clean_up(self, **kwargs):
         # delete in live mode
         if not self.is_playback():
-            router_client: RouterAdministrationClient = self.create_admin_client()
+            router_client: JobRouterAdministrationClient = self.create_admin_client()
             async with router_client:
                 if self._testMethodName in self.distribution_policy_ids \
                         and any(self.distribution_policy_ids[self._testMethodName]):
@@ -53,7 +53,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_create_distribution_policy(self, **kwargs):
         dp_identifier = "tst_create_dp_async"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
             for mode in distribution_modes:
@@ -84,7 +84,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_update_distribution_policy(self, **kwargs):
         dp_identifier = "tst_update_dp_async"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
             for mode in distribution_modes:
@@ -136,7 +136,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_update_distribution_policy_w_kwargs(self, **kwargs):
         dp_identifier = "tst_update_dp_w_kwargs_async"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
             for mode in distribution_modes:
@@ -188,7 +188,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_get_distribution_policy(self, **kwargs):
         dp_identifier = "tst_get_dp_async"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
             for mode in distribution_modes:
@@ -229,7 +229,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_delete_distribution_policy(self, **kwargs):
         dp_identifier = "tst_delete_dp_async"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         async with router_client:
             for mode in distribution_modes:
@@ -266,7 +266,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
         dp_identifiers = ["tst_list_dp_1_async", "tst_list_dp_2_async", "tst_list_dp_3_async"]
         created_dp_response = {}
         policy_count = len(dp_identifiers)
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         self.distribution_policy_ids[self._testMethodName] = []
 
         async with router_client:
