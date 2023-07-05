@@ -1,14 +1,11 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b3 (2023-07-06)
 
-### Features Added
+### Bug Fixes
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Update httpx transport to handle timeout and connection verify kwargs from `azure.core.pipeline.transport.HttpRequest`.
+- Add a read override for `read` for clients using `azure.core.rest.HttpResponse` to get the response body.
 
 ## 1.0.0b2 (2023-04-06)
 
