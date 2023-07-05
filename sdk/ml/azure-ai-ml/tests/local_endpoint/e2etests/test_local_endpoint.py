@@ -73,7 +73,10 @@ def test_local_endpoint_mir_e2e(
 
 @pytest.mark.e2etest
 @pytest.mark.local_endpoint_local_assets
-@pytest.mark.skip()
+@pytest.mark.skipif(
+    platform.python_implementation() == "PyPy" or sys.platform.startswith("darwin"),
+    reason="Skipping for PyPy and macOS as docker installation is not supported and skipped in dev_requirement.txt",
+)
 def test_local_deployment_mir_e2e(
     deployment_create_yaml: str,
     deployment_update_file: str,
@@ -93,7 +96,10 @@ def test_local_deployment_mir_e2e(
 
 @pytest.mark.e2etest
 @pytest.mark.local_endpoint_local_assets
-@pytest.mark.skip()
+@pytest.mark.skipif(
+    platform.python_implementation() == "PyPy" or sys.platform.startswith("darwin"),
+    reason="Skipping for PyPy and macOS as docker installation is not supported and skipped in dev_requirement.txt",
+)
 def test_local_deployment_mir_model_code_overlap_e2e(
     mir_endpoint_name: str,
     request_file: str,
@@ -112,7 +118,10 @@ def test_local_deployment_mir_model_code_overlap_e2e(
 @pytest.mark.e2etest
 @pytest.mark.local_endpoint_byoc
 @pytest.mark.local_endpoint_local_assets
-@pytest.mark.skip()
+@pytest.mark.skipif(
+    platform.python_implementation() == "PyPy" or sys.platform.startswith("darwin"),
+    reason="Skipping for PyPy and macOS as docker installation is not supported and skipped in dev_requirement.txt",
+)
 def test_local_deployment_mir_e2e_byoc(
     mir_endpoint_name: str,
     client: MLClient,
@@ -286,7 +295,7 @@ def run_local_endpoint_tests_e2e_create(
         deployment = load_online_deployment(deployment_yaml)
         deployment.endpoint_name = endpoint_name
         deployment.name = deployment_name
-        client.online_deployments.begin_create_or_update(deployment=deployment, no_wait=False, local=True)
+        client.online_deployments.begin_create_or_update(deployment=deployment, local=True)
 
         get_obj = client.online_deployments.get(endpoint_name=endpoint_name, name=deployment_name, local=True)
         assert get_obj.name == deployment_name
