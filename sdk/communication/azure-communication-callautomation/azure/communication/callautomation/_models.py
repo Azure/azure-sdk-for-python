@@ -146,8 +146,7 @@ class ChannelAffinity(object):
     All required parameters must be populated in order to send to Azure.
 
     :ivar target_participant: The identifier for the participant whose bitstream will be written to the
-     channel
-     represented by the channel number. Required.
+     channel represented by the channel number. Required.
     :vartype target_participant: ~azure.communication.callautomation.CommunicationIdentifier
     :ivar channel: Channel number to which bitstream from a particular participant will be written.
     :vartype channel: int
@@ -160,13 +159,12 @@ class ChannelAffinity(object):
         **kwargs
     ):
         """
-        :keyword target_participant: The identifier for the participant whose bitstream will be written to the
-         channel
-         represented by the channel number. Required.
-        :paramtype target_participant: ~azure.communication.callautomation.CommunicationIdentifier
-        :keyword channel: Channel number to which bitstream from a particular participant will be
+        :param target_participant: The identifier for the participant whose bitstream will be written to the
+         channel represented by the channel number. Required.
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
+        :param channel: Channel number to which bitstream from a particular participant will be
          written.
-        :paramtype channel: int
+        :type channel: int
         """
         super().__init__(**kwargs)
         self.target_participant = target_participant
@@ -180,26 +178,26 @@ class FileSource(object):
 
     :ivar url: Url for the audio file to be played.
     :vartype url: str
-    :ivar play_source_id: source id of the play media.
-    :vartype play_source_id: str
+    :ivar play_source_cache_id: Cached source id of the play media, if it exists.
+    :vartype play_source_cache_id: str
     """
     def __init__(
         self,
         url: str,
         *,
-        play_source_id: Optional[str] = None,
+        play_source_cache_id: Optional[str] = None,
         **kwargs
     ):
         """Media file source of URL to be played in action such as Play media.
 
         :param url: Url for the audio file to be played.
         :type url: str
-        :keyword play_source_id: source id of the play media.
-        :paramtype play_source_id: str
+        :keyword play_source_cache_id: Cached source id of the play media, if it exists.
+        :paramtype play_source_cache_id: str
         """
         super().__init__(**kwargs)
         self.url = url
-        self.play_source_id = play_source_id
+        self.play_source_id = play_source_cache_id
 
     def _to_generated(self):
         return PlaySourceInternal(
@@ -221,8 +219,8 @@ class TextSource(object):
     :ivar voice_name: Voice name to be played. Refer to available Text-to-speech voices here:
         https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
     :vartype voice_name: str
-    :ivar play_source_id: source id of the play media.
-    :vartype play_source_id: str
+    :ivar play_source_cache_id: Cached source id of the play media, if it exists.
+    :vartype play_source_cache_id: str
     """
     def __init__(
             self,
@@ -231,7 +229,7 @@ class TextSource(object):
             source_locale: Optional[str] = None,
             voice_gender: Optional[Union[str, 'Gender']] = None,
             voice_name: Optional[str] = None,
-            play_source_id: Optional[str] = None,
+            play_source_cache_id: Optional[str] = None,
             **kwargs
     ):
         """TextSource to be played in actions such as Play media.
@@ -246,15 +244,15 @@ class TextSource(object):
         :keyword voice_name: Voice name to be played. Refer to available Text-to-speech voices here:
             https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
         :paramtype voice_name: str
-        :keyword play_source_id: source id of the play media.
-        :paramtype play_source_id: str
+        :keyword play_source_cache_id: Cached source id of the play media, if it exists.
+        :paramtype play_source_cache_id: str
         """
         super().__init__(**kwargs)
         self.text = text
         self.source_locale = source_locale
         self.voice_gender = voice_gender
         self.voice_name = voice_name
-        self.play_source_id = play_source_id
+        self.play_source_id = play_source_cache_id
 
     def _to_generated(self):
         return PlaySourceInternal(
@@ -272,26 +270,26 @@ class SsmlSource(object):
 
     :ivar ssml_text: Ssml string for the cognitive service to be played.
     :vartype ssml_text: str
-    :ivar play_source_id: source id of the play media.
-    :vartype play_source_id: str
+    :ivar play_source_cache_id: Cached source id of the play media, if it exists.
+    :vartype play_source_cache_id: str
     """
     def __init__(
             self,
             ssml_text: str,
             *,
-            play_source_id: Optional[str] = None,
+            play_source_cache_id: Optional[str] = None,
             **kwargs
     ):
         """SsmlSource to be played in actions such as Play media.
 
         :param ssml_text: Ssml string for the cognitive service to be played.
         :type ssml_text: str
-        :keyword play_source_id: source id of the play media.
-        :paramtype play_source_id: str
+        :keyword play_source_cache_id: Cached source id of the play media, if it exists.
+        :paramtype play_source_cache_id: str
         """
         super().__init__(**kwargs)
         self.ssml_text = ssml_text
-        self.play_source_id = play_source_id
+        self.play_source_id = play_source_cache_id
 
     def _to_generated(self):
         return PlaySourceInternal(
@@ -469,7 +467,7 @@ class CallParticipant(object):
         self,
         *,
         identifier: Optional[CommunicationIdentifier] = None,
-        is_muted: Optional[bool] = False,
+        is_muted: bool = False,
         **kwargs
     ):
         super().__init__(**kwargs)

@@ -138,7 +138,15 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         callautomation_client: 'CallAutomationClient',
         call_connection_id: str
     ) -> 'CallConnectionClient':
-        """Internal constructor for sharing the pipeline with CallAutomationClient."""
+        """Internal constructor for sharing the pipeline with CallAutomationClient.
+
+        :param callautomation_client: An existing callautomation client.
+        :type callautomation_client: ~azure.communication.callautomation.CallAutomationClient
+        :param call_connection_id: Call Connection Id of ongoing call.
+        :type call_connection_id: str
+        :return: CallConnectionClient
+        :rtype: ~azure.communication.callautomation.CallConnectionClient
+        """
         return cls(None, None, call_connection_id, _callautomation_client=callautomation_client)
 
     @distributed_trace
@@ -149,7 +157,6 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
         call_properties = self._call_connection_client.get_call(call_connection_id=self._call_connection_id, **kwargs)
 
         return CallConnectionProperties._from_generated(call_properties) # pylint:disable=protected-access
@@ -203,7 +210,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: ItemPaged[azure.communication.callautomation.CallParticipant]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._call_connection_client.get_participants(self._call_connection_id, **kwargs).values
+        return self._call_connection_client.get_participants(self._call_connection_id, **kwargs)
 
     @distributed_trace
     def transfer_call_to_participant(
@@ -324,7 +331,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
         play_to: List['CommunicationIdentifier'],
         *,
-        loop: Optional[bool] = False,
+        loop: bool = False,
         operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
@@ -358,7 +365,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         self,
         play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
         *,
-        loop: Optional[bool] = False,
+        loop: bool = False,
         operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
@@ -389,9 +396,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         *,
         initial_silence_timeout: Optional[int] = None,
         play_prompt: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None,
-        interrupt_call_media_operation: Optional[bool] = False,
+        interrupt_call_media_operation: bool = False,
         operation_context: Optional[str] = None,
-        interrupt_prompt: Optional[bool] = False,
+        interrupt_prompt: bool = False,
         dtmf_inter_tone_timeout: Optional[int] = None,
         dtmf_max_tones_to_collect: Optional[str] = None,
         dtmf_stop_tones: Optional[List[str or 'DtmfTone']] = None,
