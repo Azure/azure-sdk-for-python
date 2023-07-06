@@ -19,6 +19,8 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     CodeConfiguration,
 )
 
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import PackageRequest as DataPlanePackageRequest
+
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml._schema.assets.package.model_package import ModelPackageSchema
 from azure.ai.ml.entities._util import load_from_dict
@@ -204,7 +206,8 @@ class ModelPackage(Resource, PackageRequest):
     def __init__(
         self,
         *,
-        target_environment_name: str,
+        target_environment_name: str = None,
+        target_environment_id: str = None,
         inferencing_server: Union[AzureMLOnlineInferencingServer, AzureMLBatchInferencingServer],
         base_environment_source: BaseEnvironment = None,
         target_environment_version: Optional[str] = None,
@@ -213,6 +216,8 @@ class ModelPackage(Resource, PackageRequest):
         model_configuration: Optional[ModelConfiguration] = None,
         tags: Optional[Dict[str, str]] = None,
     ):
+        if target_environment_name is None:
+            target_environment_name = "dummy_name"
         super().__init__(
             name=target_environment_name,
             target_environment_name=target_environment_name,
@@ -224,6 +229,7 @@ class ModelPackage(Resource, PackageRequest):
             tags=tags,
             environment_variables=environment_variables,
         )
+        self.target_environment_id = target_environment_id
 
     @classmethod
     def _load(
@@ -281,16 +287,29 @@ class ModelPackage(Resource, PackageRequest):
             )
             self.inferencing_server.code_configuration = code
 
-        package_request = PackageRequest(
-            target_environment_name=self.name,
-            base_environment_source=self.base_environment_source._to_rest_object()
-            if self.base_environment_source
-            else None,
-            inferencing_server=self.inferencing_server._to_rest_object() if self.inferencing_server else None,
-            model_configuration=self.model_configuration._to_rest_object() if self.model_configuration else None,
-            inputs=[input._to_rest_object() for input in self.inputs] if self.inputs else None,
-            tags=self.tags,
-            environment_variables=self.environment_variables,
-        )
+        if self.target_environment_id:
+            package_request = DataPlanePackageRequest(
+                target_environment_id=self.target_environment_id,
+                base_environment_source=self.base_environment_source._to_rest_object()
+                if self.base_environment_source
+                else None,
+                inferencing_server=self.inferencing_server._to_rest_object() if self.inferencing_server else None,
+                model_configuration=self.model_configuration._to_rest_object() if self.model_configuration else None,
+                inputs=[input._to_rest_object() for input in self.inputs] if self.inputs else None,
+                tags=self.tags,
+                environment_variables=self.environment_variables,
+            )
+        else:
+            package_request = PackageRequest(
+                target_environment_name=self.name,
+                base_environment_source=self.base_environment_source._to_rest_object()
+                if self.base_environment_source
+                else None,
+                inferencing_server=self.inferencing_server._to_rest_object() if self.inferencing_server else None,
+                model_configuration=self.model_configuration._to_rest_object() if self.model_configuration else None,
+                inputs=[input._to_rest_object() for input in self.inputs] if self.inputs else None,
+                tags=self.tags,
+                environment_variables=self.environment_variables,
+            )
 
         return package_request

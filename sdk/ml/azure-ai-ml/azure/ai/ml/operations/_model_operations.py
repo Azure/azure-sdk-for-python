@@ -94,6 +94,11 @@ class ModelOperations(_ScopeDependentOperations):
         self._model_versions_operation = service_client.model_versions
         self._model_container_operation = service_client.model_containers
         self._service_client = service_client
+        # import debugpy
+        # debugpy.connect(("localhost", 5678))
+        # debugpy.breakpoint()
+
+        self._workspace_operations = kwargs["service_client_ws"].workspaces
         self._datastore_operation = datastore_operations
         self._all_operations = all_operations
 
@@ -612,17 +617,35 @@ class ModelOperations(_ScopeDependentOperations):
                     else package_request.base_environment_source.resource_id
                 )
 
+            if self._registry_name:
+                # create ARM id for the target environment
+                if package_request.target_environment_name:
+                    location = self._get_workspace_location()
+                    package_request.target_environment_id = f"azureml://locations/{location}/workspaces/b17253fa-f327-42d6-9686-f3e553e24763/environments/model-pkg-env"
+
+                    # (f"azureml://subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/amlsdkv2022307/providers/Microsoft.MachineLearningServices/workspaces/amlsdkv2022307-ws/environments/{package_request.target_environment_name}/versions/1")
+
             package_request = package_request._to_rest_object()
 
-        module_logger.info("Creating package with name: %s", package_request.target_environment_name)
+        # module_logger.info("Creating package with name: %s", package_request.target_environment_name)
 
-        package_out = self._model_versions_operation.begin_package(
-            name=name,
-            version=version,
-            workspace_name=self._workspace_name,
-            body=package_request,
-            **self._scope_kwargs,
-        ).result()
+        package_out = (
+            self._model_versions_operation.begin_package(
+                name=name,
+                version=version,
+                registry_name=self._registry_name,
+                body=package_request,
+                **self._scope_kwargs,
+            ).result()
+            if self._registry_name
+            else self._model_versions_operation.begin_package(
+                name=name,
+                version=version,
+                workspace_name=self._workspace_name,
+                body=package_request,
+                **self._scope_kwargs,
+            ).result()
+        )
 
         if package_out is not None and package_out.__class__.__name__ == "PackageResponse":
             environment_operation = self._all_operations.all_operations[AzureMLResourceType.ENVIRONMENT]
@@ -632,3 +655,7 @@ class ModelOperations(_ScopeDependentOperations):
             )
 
         return package_out
+
+    def _get_workspace_location(self) -> str:
+        workspace = self._workspace_operations.get(self._resource_group_name, self._workspace_name)
+        return workspace.location

@@ -381,6 +381,7 @@ class MLClient:
             self._datastores,
             self._operation_container,
             requests_pipeline=self._requests_pipeline,
+            service_client_ws=self._service_client_10_2022_preview,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.MODEL, self._models)
