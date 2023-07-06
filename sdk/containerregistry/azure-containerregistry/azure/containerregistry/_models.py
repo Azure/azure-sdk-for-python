@@ -22,15 +22,15 @@ from ._helpers import _host_only, _is_tag, _strip_alg
 
 class TypeInsensitiveEnumMeta(CaseInsensitiveEnumMeta):
     """Extensible enum metaclass to trick extended enums into pretending to be the same type."""
-    def __instancecheck__(self, other):
+    def __instancecheck__(cls, other):
         is_instance = super().__instancecheck__(other)
         if not is_instance:
             # Let's check if this is an instance of an extended enum. To do this we compare the enum member maps
             # excluding the current attribute, along with the class name.
             try:
                 unextended = {k: v for k, v in other._member_map_.items() if v != other.value}
-                return unextended == self._member_map_ and self.__name__ == other.__class__.__name__
-            except:
+                return unextended == cls._member_map_ and cls.__name__ == other.__class__.__name__
+            except:  # pylint:disable=bare-except
                 pass
         return is_instance
 
