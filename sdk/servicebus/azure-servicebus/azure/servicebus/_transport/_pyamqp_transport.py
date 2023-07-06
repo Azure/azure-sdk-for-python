@@ -66,6 +66,7 @@ from .._common.constants import (
     ERROR_CODE_ENTITY_ALREADY_EXISTS,
     ERROR_CODE_PRECONDITION_FAILED,
     ServiceBusReceiveMode,
+    OPERATION_TIMEOUT,
 )
 
 from ..exceptions import (
@@ -576,6 +577,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         config = receiver._config   # pylint: disable=protected-access
         source = kwargs.pop("source")
         receive_mode = kwargs.pop("receive_mode")
+        link_properties = kwargs.pop("link_properties")
+
+        # If we have specified a client-side timeout, assure that it is encoded as an uint
+        if link_properties[OPERATION_TIMEOUT]:
+            link_properties[OPERATION_TIMEOUT] = amqp_uint_value(link_properties[OPERATION_TIMEOUT])
+
+        kwargs.update(link_properties=link_properties)
+
         return ReceiveClient(
             config.hostname,
             source,

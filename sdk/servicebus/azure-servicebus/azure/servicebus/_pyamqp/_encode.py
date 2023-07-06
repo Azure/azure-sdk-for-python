@@ -614,8 +614,6 @@ def encode_fields(value):
         return {TYPE: AMQPTypes.null, VALUE: None}
     fields = {TYPE: AMQPTypes.map, VALUE: []}
     for key, data in value.items():
-        if key == b'com.microsoft:timeout':
-            data = {'TYPE': AMQPTypes.uint, 'VALUE': data}
         if isinstance(key, str):
             key = key.encode("utf-8")  # type: ignore
         cast(List, fields[VALUE]).append(({TYPE: AMQPTypes.symbol, VALUE: key}, data))
