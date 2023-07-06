@@ -67,6 +67,8 @@ FilesType = Union[Mapping[str, FileType], Sequence[Tuple[str, FileType]]]
 ContentTypeBase = Union[str, bytes, Iterable[bytes]]
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
+DataType = Optional[Union[bytes, Dict[str, Union[str, int]]]]
+
 ########################### HELPER SECTION #################################
 
 
@@ -179,7 +181,7 @@ def decode_to_text(encoding: Optional[str], content: bytes) -> str:
 
 
 class HttpRequestBackcompatMixin:
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str):
         backcompat_attrs = [
             "files",
             "data",
@@ -246,7 +248,7 @@ class HttpRequestBackcompatMixin:
         return {}
 
     @property
-    def _body(self):
+    def _body(self) -> DataType:
         """DEPRECATED: Body of the request. You should use the `content` property instead
         This is deprecated and will be removed in a later release.
 
@@ -256,7 +258,7 @@ class HttpRequestBackcompatMixin:
         return self._data
 
     @_body.setter
-    def _body(self, val):
+    def _body(self, val: DataType):
         """DEPRECATED: Set the body of the request
         This is deprecated and will be removed in a later release.
 
