@@ -18,6 +18,8 @@ from azure.containerregistry import (
     ArtifactManifestOrder,
     ArtifactTagProperties,
     ArtifactTagOrder,
+    ArtifactArchitecture,
+    ArtifactOperatingSystem,
     ContainerRegistryClient,
     DigestValidationError,
 )
@@ -884,9 +886,32 @@ class TestContainerRegistryClientUnitTests:
             for manifest in manifests:
                 assert manifest.architecture in ["amd64", "unknown"]
                 assert isinstance(manifest.architecture, str)
+                assert isinstance(manifest.architecture, ArtifactArchitecture)
                 assert manifest.architecture.name
                 assert manifest.architecture.value
                 assert manifest.operating_system in ["linux", "unknown"]
                 assert isinstance(manifest.operating_system, str)
+                assert isinstance(manifest.operating_system, ArtifactOperatingSystem)
                 assert manifest.operating_system.name
                 assert manifest.operating_system.value
+
+    def test_extended_enums(self):
+        with pytest.raises(AttributeError):
+            ArtifactArchitecture.foo
+        with pytest.raises(ValueError):
+            ArtifactArchitecture("foo")
+        foo = ArtifactArchitecture._extended("foo")
+        assert isinstance(foo, str)
+        assert isinstance(foo, ArtifactArchitecture)
+        assert not isinstance(foo, ArtifactOperatingSystem)
+        assert foo.name == "FOO"
+        assert foo.value == "foo"
+        assert foo == "foo"
+        assert str(foo) == "ArtifactArchitecture.FOO"
+        assert repr(foo) == "<ArtifactArchitecture.FOO: 'foo'>"
+
+        assert ArtifactArchitecture._extended(None) is None
+        assert ArtifactArchitecture._extended("arm") is ArtifactArchitecture.ARM
+        assert ArtifactArchitecture._extended("") is None
+        assert ArtifactArchitecture._extended("CRaZY DaTa !%$@&@34529875") == "CRaZY DaTa !%$@&@34529875"
+        assert ArtifactArchitecture._extended(42) == "42"

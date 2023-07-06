@@ -18,6 +18,8 @@ from azure.containerregistry import (
     ArtifactManifestOrder,
     ArtifactTagProperties,
     ArtifactTagOrder,
+    ArtifactArchitecture,
+    ArtifactOperatingSystem,
     DigestValidationError,
 )
 from azure.containerregistry.aio import ContainerRegistryClient
@@ -901,9 +903,11 @@ class TestContainerRegistryClientAsyncUnitTests:
             async for manifest in manifests:
                 assert manifest.architecture in ["amd64", "unknown"]
                 assert isinstance(manifest.architecture, str)
+                assert isinstance(manifest.architecture, ArtifactArchitecture)
                 assert manifest.architecture.name
                 assert manifest.architecture.value
                 assert manifest.operating_system in ["linux", "unknown"]
                 assert isinstance(manifest.operating_system, str)
+                assert isinstance(manifest.operating_system, ArtifactOperatingSystem)
                 assert manifest.operating_system.name
                 assert manifest.operating_system.value

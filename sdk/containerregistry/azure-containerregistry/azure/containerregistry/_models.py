@@ -20,9 +20,25 @@ from ._generated.models import (
 from ._helpers import _host_only, _is_tag, _strip_alg
 
 
-class EnumBase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum base"""
+class TypeInsensitiveEnumMeta(CaseInsensitiveEnumMeta):
+    """Extensible enum metaclass to trick extended enums into pretending to be the same type."""
+    def __instancecheck__(self, other):
+        is_instance = super().__instancecheck__(other)
+        if not is_instance:
+            # Let's check if this is an instance of an extended enum. To do this we compare the enum member maps
+            # excluding the current attribute, along with the class name.
+            try:
+                unextended = {k: v for k, v in other._member_map_.items() if v != other.value}
+                return unextended == self._member_map_ and self.__name__ == other.__class__.__name__
+            except:
+                pass
+        return is_instance
 
+
+class EnumBase(str, Enum, metaclass=TypeInsensitiveEnumMeta):
+    """Extensible enum base to allow for unrecognized strings to be returned in the payload without
+    breaking any existing code.
+    """
     @classmethod
     def _extended(cls, value):
         try:
