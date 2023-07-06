@@ -20,7 +20,25 @@ from ._generated.models import (
 from ._helpers import _host_only, _is_tag, _strip_alg
 
 
-class ArtifactArchitecture(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class EnumBase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Extensible enum base"""
+
+    @classmethod
+    def _extended(cls, value):
+        try:
+            return cls(value)
+        except ValueError:
+            if value in [None, ""]:
+                return None
+            value = str(value)
+            name = "".join(c for c in value.upper() if c.isalnum()).rstrip()
+            extended_values = {m.name: m.value for m in cls}
+            extended_values[name] = value
+            ExtendedEnum = EnumBase(cls.__name__, extended_values)
+            return ExtendedEnum(value)
+
+
+class ArtifactArchitecture(EnumBase):
     AMD64 = "amd64"
     ARM = "arm"
     ARM64 = "arm64"
@@ -36,7 +54,7 @@ class ArtifactArchitecture(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WASM = "wasm"
 
 
-class ArtifactOperatingSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ArtifactOperatingSystem(EnumBase):
     AIX = "aix"
     ANDROID = "android"
     DARWIN = "darwin"
@@ -77,19 +95,11 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     """
 
     def __init__(self, **kwargs):
-        self._architecture = kwargs.get("cpu_architecture", None)
-        try:
-            self._architecture = ArtifactArchitecture(self._architecture)
-        except ValueError:
-            pass
+        self._architecture = ArtifactArchitecture._extended(kwargs.get("cpu_architecture"))
         self._created_on = kwargs.get("created_on", None)
         self._digest = kwargs.get("digest", None)
         self._last_updated_on = kwargs.get("last_updated_on", None)
-        self._operating_system = kwargs.get("operating_system", None)
-        try:
-            self._operating_system = ArtifactOperatingSystem(self._operating_system)
-        except ValueError:
-            pass
+        self._operating_system = ArtifactOperatingSystem._extended(kwargs.get("operating_system"))
         self._repository_name = kwargs.get("repository_name", None)
         self._registry = kwargs.get("registry", None)
         self._size_in_bytes = kwargs.get("size_in_bytes", None)

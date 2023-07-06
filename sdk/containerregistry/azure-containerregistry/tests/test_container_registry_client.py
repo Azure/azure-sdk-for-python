@@ -18,8 +18,6 @@ from azure.containerregistry import (
     ArtifactManifestOrder,
     ArtifactTagProperties,
     ArtifactTagOrder,
-    ArtifactArchitecture,
-    ArtifactOperatingSystem,
     ContainerRegistryClient,
     DigestValidationError,
 )
@@ -884,13 +882,11 @@ class TestContainerRegistryClientUnitTests:
         ) as client:
             manifests = client.list_manifest_properties(HELLO_WORLD)
             for manifest in manifests:
-                if manifest.size_in_bytes == 2199:
-                    assert isinstance(manifest.architecture, ArtifactArchitecture)
-                    assert manifest.architecture == "amd64"
-                    assert isinstance(manifest.operating_system, ArtifactOperatingSystem)
-                    assert manifest.operating_system == "linux"
-                if manifest.size_in_bytes == 566:
-                    assert isinstance(manifest.architecture, str)
-                    assert manifest.architecture == "unknown"
-                    assert isinstance(manifest.operating_system, str)
-                    assert manifest.operating_system == "unknown"
+                assert manifest.architecture in ["amd64", "unknown"]
+                assert isinstance(manifest.architecture, str)
+                assert manifest.architecture.name
+                assert manifest.architecture.value
+                assert manifest.operating_system in ["linux", "unknown"]
+                assert isinstance(manifest.operating_system, str)
+                assert manifest.operating_system.name
+                assert manifest.operating_system.value
