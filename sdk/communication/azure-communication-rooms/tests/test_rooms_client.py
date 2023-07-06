@@ -126,9 +126,8 @@ class TestRoomsClient(ACSRoomsTestCase):
 
         with pytest.raises(HttpResponseError) as ex:
             self.rooms_client.create_room(participants=participants)
-
-        assert str(ex.value.status_code) == "400"
-        assert ex.value.message is not None
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
 
     @pytest.mark.live_test_only
     @recorded_by_proxy
@@ -175,9 +174,9 @@ class TestRoomsClient(ACSRoomsTestCase):
         with pytest.raises(HttpResponseError) as ex:
             self.rooms_client.get_room(room_id="invalid_id")
 
-        # Resource not found
-        assert str(ex.value.status_code) == "400"
-        assert ex.value.message is not None
+            # Bad request
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
 
     @pytest.mark.live_test_only
     @recorded_by_proxy
@@ -203,10 +202,9 @@ class TestRoomsClient(ACSRoomsTestCase):
             valid_from =  datetime.now() + timedelta(days=3)
             valid_until = valid_from + timedelta(days=4)
             self.rooms_client.update_room(room_id="invalid_id", valid_from=valid_from, valid_until=valid_until)
-
-        #  assert error is bad request
-        assert str(ex.value.status_code) == "400"
-        assert ex.value.message is not None
+            #  assert error is bad request
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
 
     @recorded_by_proxy
     def test_update_room_deleted_room(self):
@@ -220,9 +218,9 @@ class TestRoomsClient(ACSRoomsTestCase):
             valid_until = valid_from + timedelta(days=4)
             self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
 
-        #  assert error is Resource not found
-        assert str(ex.value.status_code) == "404"
-        assert ex.value.message is not None
+            #  assert error is Resource not found
+            assert str(ex.value.status_code) == "404"
+            assert ex.value.message is not None
 
     @recorded_by_proxy
     def test_update_room_exceed_max_timerange(self):
@@ -384,9 +382,8 @@ class TestRoomsClient(ACSRoomsTestCase):
         # update room attributes
         with pytest.raises(HttpResponseError) as ex:
             self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=participants)
-
-        assert str(ex.value.status_code) == "400"
-        assert ex.value.message is not None
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
 
@@ -404,9 +401,8 @@ class TestRoomsClient(ACSRoomsTestCase):
         # update room attributes
         with pytest.raises(HttpResponseError) as ex:
             self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=participants)
-
-        assert str(ex.value.status_code) == "400"
-        assert ex.value.message is not None
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
 

@@ -191,9 +191,9 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
         async with self.rooms_client:
             with pytest.raises(HttpResponseError) as ex:
                 await self.rooms_client.get_room(room_id="invalid_id")
-                # Resource not found
-            assert str(ex.value.status_code) == "400"
-            assert ex.value.message is not None
+                # Bad Request
+                assert str(ex.value.status_code) == "400"
+                assert ex.value.message is not None
 
     @recorded_by_proxy_async
     async def test_update_room_exceed_max_timerange_async(self):
@@ -259,9 +259,9 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
                 valid_until = valid_from + timedelta(days=4)
                 await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
 
-            #  assert error is Resource not found
-            assert str(ex.value.status_code) == "404"
-            assert ex.value.message is not None
+                #  assert error is Resource not found
+                assert str(ex.value.status_code) == "404"
+                assert ex.value.message is not None
 
     @recorded_by_proxy_async
     async def test_add_or_update_participant_async(self):
@@ -406,9 +406,8 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             # update room attributes
             with pytest.raises(HttpResponseError) as ex:
                 await self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=participants)
-
-            assert str(ex.value.status_code) == "400"
-            assert ex.value.message is not None
+                assert str(ex.value.status_code) == "400"
+                assert ex.value.message is not None
 
     @recorded_by_proxy_async
     async def test_add_or_update_participants_wrongRoleName_async(self):
@@ -426,9 +425,8 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             # update room attributes
             with pytest.raises(HttpResponseError) as ex:
                 await self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=participants)
-
-            assert str(ex.value.status_code) == "400"
-            assert ex.value.message is not None
+                assert str(ex.value.status_code) == "400"
+                assert ex.value.message is not None
 
     @recorded_by_proxy_async
     async def test_remove_participant_async(self):
@@ -507,9 +505,8 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             # update room attributes
             with pytest.raises(HttpResponseError) as ex:
                 await self.rooms_client.remove_participants(room_id=create_response.id, participants=participants)
-
-            assert str(ex.value.status_code) == "400"
-            assert ex.value.message is not None
+                assert str(ex.value.status_code) == "400"
+                assert ex.value.message is not None
 
     @recorded_by_proxy_async
     async def test_list_rooms_first_room_is_not_null_success_async(self):
