@@ -101,7 +101,7 @@ class ParameterizedSparkSchema(PathAwareSchema):
     def map_conf_field_names(self, data, **kwargs):
         """Map the field names in the conf dictionary.
         This function must be called after YamlFileSchema.load_from_file.
-        Given marshmallow executes the pre_load functions in the alphabetical order (marshmallow\schema.py:L166,
+        Given marshmallow executes the pre_load functions in the alphabetical order (marshmallow\\schema.py:L166,
         functions will be checked in alphabetical order when inject to cls._hooks), we must make sure the function
         name is alphabetically after "load_from_file".
         """
