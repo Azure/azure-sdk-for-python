@@ -31,6 +31,8 @@ from typing import TYPE_CHECKING, Optional, Tuple, TypeVar
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.rest import HttpResponse as RestHttpResponse
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind
 
@@ -45,9 +47,8 @@ if TYPE_CHECKING:
         AbstractSpan,
     )
 
-
+HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, RestHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType")
-HTTPResponseType = TypeVar("HTTPResponseType")
 
 _LOGGER = logging.getLogger(__name__)
 

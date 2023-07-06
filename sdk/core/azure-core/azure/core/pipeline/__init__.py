@@ -27,7 +27,7 @@
 from typing import TypeVar, Generic, Dict, Any
 
 HTTPResponseType = TypeVar("HTTPResponseType")
-HTTPRequestType = TypeVar("HTTPRequestType", bound="HTTPRequest")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 
 class PipelineContext(Dict[str, Any]):
