@@ -31,29 +31,23 @@ from typing import TYPE_CHECKING, Optional, Tuple, TypeVar
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpResponse as RestHttpResponse
+from azure.core.pipeline.transport import HttpResponse, HttpRequest
+from azure.core.rest import HttpResponse as RestHttpResponse, HttpRequest as RestHttpRequest
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind
 
 if TYPE_CHECKING:
-    # the HttpRequest and HttpResponse related type ignores stem from this issue: #5796
-    from azure.core.pipeline.transport import (
-        HttpRequest,
-        HttpResponse,
-        AsyncHttpResponse,
-    )
     from azure.core.tracing._abstract_span import (
         AbstractSpan,
     )
 
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, RestHttpResponse)
-HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, RestHttpRequest)
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def _default_network_span_namer(http_request: "HttpRequest") -> str:
+def _default_network_span_namer(http_request: HttpRequest) -> str:
     """Extract the path to be used as network span name.
 
     :param http_request: The HTTP request
@@ -125,7 +119,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
             return
 
         span: "AbstractSpan" = request.context[self.TRACING_CONTEXT]
-        http_request: "HttpRequest" = request.http_request
+        http_request: HttpRequest = request.http_request
         if span is not None:
             span.set_http_attributes(http_request, response=response)
             request_id = http_request.headers.get(self._REQUEST_ID)
