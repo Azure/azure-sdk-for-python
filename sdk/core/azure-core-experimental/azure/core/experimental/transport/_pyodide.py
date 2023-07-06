@@ -36,7 +36,10 @@ from azure.core.pipeline import Pipeline
 from azure.core.utils import CaseInsensitiveDict
 
 from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
-from azure.core.pipeline.transport import HttpRequest, AsyncioRequestsTransport #pylint: disable=non-abstract-transport-import, no-name-in-module
+from azure.core.pipeline.transport import (
+    HttpRequest,
+    AsyncioRequestsTransport,
+)  # pylint: disable=non-abstract-transport-import, no-name-in-module
 
 
 class PyodideTransportResponse(AsyncHttpResponseImpl):
@@ -107,7 +110,7 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
         :rtype: bytes
         """
         if self._closed:
-            raise StopAsyncIteration() # pylint: disable=raise-missing-from
+            raise StopAsyncIteration()  # pylint: disable=raise-missing-from
 
         # remember the initial stream position
         start_pos = self._stream.tell()
