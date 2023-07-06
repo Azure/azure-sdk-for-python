@@ -165,7 +165,7 @@ class HttpTransport(AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HT
 
 
 class HttpRequest:
-    """Represents a HTTP request.
+    """Represents an HTTP request.
 
     URL can be given without query parameters, to be added later using "format_parameters".
 

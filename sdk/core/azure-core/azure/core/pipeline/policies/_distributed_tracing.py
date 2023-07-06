@@ -27,7 +27,7 @@
 import logging
 import sys
 import urllib
-from typing import TYPE_CHECKING, Optional, Union, Tuple, TypeVar
+from typing import TYPE_CHECKING, Optional, Tuple, TypeVar
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
