@@ -8,6 +8,7 @@ import time
 from typing import TYPE_CHECKING, Any, Awaitable, Optional, cast, TypeVar
 
 from azure.core.credentials import AccessToken
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.policies._authentication import (
     _BearerTokenCredentialPolicyBase,
@@ -17,7 +18,6 @@ from .._tools_async import await_result
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")

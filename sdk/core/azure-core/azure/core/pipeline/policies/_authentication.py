@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import time
 from typing import TYPE_CHECKING, Dict, Optional, TypeVar
-
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
 
@@ -17,8 +17,6 @@ if TYPE_CHECKING:
         AzureKeyCredential,
         AzureSasCredential,
     )
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
-    from azure.core.pipeline.policies._universal import HTTPRequestType
 
 HTTPRequestType = TypeVar("HTTPRequestType")
 HTTPResponseType = TypeVar("HTTPResponseType")
