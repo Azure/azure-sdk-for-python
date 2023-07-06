@@ -42,6 +42,8 @@ Then for common search index operations:
 
 * Semantic search: [sample_semantic_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_semantic_search.py)
 
+* Vector search: [sample_vector_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_vector_search.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/async_samples/sample_vector_search_async.py))
+
 ## Prerequisites
 
 * Python 3.7 or later is required to use this package

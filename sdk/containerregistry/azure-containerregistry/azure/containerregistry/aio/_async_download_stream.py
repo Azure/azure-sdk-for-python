@@ -67,13 +67,13 @@ class AsyncDownloadBlobStream(
     async def __anext__(self) -> bytes:
         try:
             return await self._yield_data()
-        except StopAsyncIteration:
+        except StopAsyncIteration as exc:
             if self._downloaded >= self._blob_size:
                 computed_digest = "sha256:" + self._hasher.hexdigest()
                 if computed_digest != self._digest:
                     raise DigestValidationError(
                         "The content of retrieved blob digest does not match the requested digest."
-                    )
+                    ) from exc
                 raise
             self._response = await self._download_chunk()
             self._response_bytes = self._response.http_response.iter_bytes()
