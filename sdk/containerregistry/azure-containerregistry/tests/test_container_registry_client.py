@@ -884,88 +884,13 @@ class TestContainerRegistryClientUnitTests:
         ) as client:
             manifests = client.list_manifest_properties(HELLO_WORLD)
             for manifest in manifests:
-                assert manifest.architecture in ["amd64", "unknown"]
-                assert isinstance(manifest.architecture, str)
-                assert isinstance(manifest.architecture, ArtifactArchitecture)
-                assert manifest.architecture.name
-                assert manifest.architecture.value
-                assert manifest.operating_system in ["linux", "unknown"]
-                assert isinstance(manifest.operating_system, str)
-                assert isinstance(manifest.operating_system, ArtifactOperatingSystem)
-                assert manifest.operating_system.name
-                assert manifest.operating_system.value
-
-    def test_extended_enums(self):
-        with pytest.raises(AttributeError):
-            ArtifactArchitecture.foo
-        with pytest.raises(ValueError):
-            ArtifactArchitecture("foo")
-        foo = ArtifactArchitecture._extended("foo")
-        assert isinstance(foo, str)
-        assert isinstance(foo, ArtifactArchitecture)
-        assert not isinstance(foo, ArtifactOperatingSystem)
-        assert foo.name == "FOO"
-        assert foo.value == "foo"
-        assert foo == "foo"
-        assert str(foo) == "ArtifactArchitecture.FOO"
-        assert repr(foo) == "<ArtifactArchitecture.FOO: 'foo'>"
-
-        # Test None cases
-        assert ArtifactArchitecture._extended(None) is None
-        assert ArtifactArchitecture._extended("") is None
-        assert ArtifactArchitecture._extended("   ") is None
-
-        # Test existing member
-        x = ArtifactArchitecture._extended("arm")
-        assert x is ArtifactArchitecture.ARM
-        assert x.name == "ARM"
-        assert x.value == "arm"
-        
-        # Test symbols + whitespace
-        x = ArtifactArchitecture._extended(" CRaZY DaTa !%$@&@34529875{)<>}")
-        assert x == " CRaZY DaTa !%$@&@34529875{)<>}"
-        assert x.name == "CRAZYDATA!%$@&@34529875{)<>}"
-        assert x.value == " CRaZY DaTa !%$@&@34529875{)<>}"
-        assert repr(x) == "<ArtifactArchitecture.CRAZYDATA!%$@&@34529875{)<>}: ' CRaZY DaTa !%$@&@34529875{)<>}'>"
-
-        # Test formatting characters
-        x = ArtifactArchitecture._extended("'{}'")
-        assert x == "'{}'"
-        assert x.name == "'{}'"
-        assert x.value == "'{}'"
-        assert repr(x) == "<ArtifactArchitecture.'{}': \"'{}'\">"
-
-        # Test only symbols
-        x = ArtifactArchitecture._extended("...")
-        assert x == "..."
-        assert x.name == "..."
-        assert x.value == "..."
-        assert repr(x) == "<ArtifactArchitecture....: '...'>"
-
-        # Test invalid member name
-        x = ArtifactArchitecture._extended("mro")
-        assert x == "mro"
-        assert x.name == "MRO"
-        assert x.value == "mro"
-        assert repr(x) == "<ArtifactArchitecture.MRO: 'mro'>"
-
-        # Test non-string
-        x = ArtifactArchitecture._extended(42)
-        assert x == "42"
-        assert x.name == "42"
-        assert x.value == "42"
-        assert repr(x) == "<ArtifactArchitecture.42: '42'>"
-
-        # Test long string
-        x = ArtifactArchitecture._extended("a" * 10000)
-        assert x == "a" * 10000
-        assert x.name == "A" * 10000
-        assert x.value == "a" * 10000
-        assert repr(x) == f"<ArtifactArchitecture.{'A' * 10000}: '{'a' * 10000}'>"
-
-        # Test non-ascii
-        x = ArtifactArchitecture._extended("こんにちは")
-        assert x == "こんにちは"
-        assert x.name == "こんにちは"
-        assert x.value == "こんにちは"
-        assert repr(x) == "<ArtifactArchitecture.こんにちは: 'こんにちは'>"
+                if manifest.size_in_bytes == 2199:
+                    assert isinstance(manifest.architecture, ArtifactArchitecture)
+                    assert manifest.architecture == "amd64"
+                    assert isinstance(manifest.operating_system, ArtifactOperatingSystem)
+                    assert manifest.operating_system == "linux"
+                if manifest.size_in_bytes == 566:
+                    assert isinstance(manifest.architecture, str)
+                    assert manifest.architecture == "unknown"
+                    assert isinstance(manifest.operating_system, str)
+                    assert manifest.operating_system == "unknown"

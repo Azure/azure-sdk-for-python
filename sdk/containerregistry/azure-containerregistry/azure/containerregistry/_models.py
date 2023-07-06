@@ -20,47 +20,7 @@ from ._generated.models import (
 from ._helpers import _host_only, _is_tag, _strip_alg
 
 
-class TypeInsensitiveEnumMeta(CaseInsensitiveEnumMeta):
-    """Extensible enum metaclass to trick extended enums into pretending to be the same type."""
-    def __instancecheck__(cls, other):
-        is_instance = super().__instancecheck__(other)
-        if not is_instance:
-            # Let's check if this is an instance of an extended enum. To do this we compare the enum member maps
-            # excluding the current attribute, along with the class name.
-            try:
-                unextended = {k: v for k, v in other._member_map_.items() if v != other.value}
-                return unextended == cls._member_map_ and cls.__name__ == other.__class__.__name__
-            except:  # pylint:disable=bare-except
-                pass
-        return is_instance
-
-
-class EnumBase(str, Enum, metaclass=TypeInsensitiveEnumMeta):
-    """Extensible enum base to allow for unrecognized strings to be returned in the payload without
-    breaking any existing code.
-    """
-    @classmethod
-    def _extended(cls, value):
-        try:
-            return cls(value)
-        except ValueError:
-            str_value = str(value)
-            if value is None or str_value == "" or str_value.isspace():
-                return None
-            try:
-                enum_members = {m.name: m.value for m in cls}
-                # Enums will accept almost any name, so we'll just uppercase it and remove whitespace.
-                extended_name = "".join(str_value.upper().split())
-                enum_members[extended_name] = str_value
-                ExtendedEnum = EnumBase(cls.__name__, enum_members)
-                return ExtendedEnum(str_value)
-            except:  # pylint:disable=bare-except
-                # In the case that something went wrong, we don't want to raise in case it breaks
-                # deserialization, so just fallback to returning the initial value as a string.
-                return str_value
-
-
-class ArtifactArchitecture(EnumBase):
+class ArtifactArchitecture(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AMD64 = "amd64"
     ARM = "arm"
     ARM64 = "arm64"
@@ -76,7 +36,7 @@ class ArtifactArchitecture(EnumBase):
     WASM = "wasm"
 
 
-class ArtifactOperatingSystem(EnumBase):
+class ArtifactOperatingSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AIX = "aix"
     ANDROID = "android"
     DARWIN = "darwin"
@@ -101,6 +61,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     :ivar bool can_read: Read Permissions for an artifact.
     :ivar bool can_list: List Permissions for an artifact.
     :ivar architecture: CPU Architecture of an artifact.
+        Note: any value not listed in enum ArtifactArchitecture will be string type.
     :vartype architecture: Optional[Union[str, ~azure.containerregistry.ArtifactArchitecture]]
     :ivar created_on: Time and date an artifact was created.
     :vartype created_on: Optional[~datetime.datetime]
@@ -108,6 +69,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     :ivar last_updated_on: Time and date an artifact was last updated.
     :vartype last_updated_on: Optional[~datetime.datetime]
     :ivar operating_system: Operating system for the artifact.
+        Note: any value not listed in enum ArtifactOperatingSystem will be string type.
     :vartype operating_system: Optional[Union[str, ~azure.containerregistry.ArtifactOperatingSystem]]
     :ivar Optional[str] repository_name: Repository name the artifact belongs to.
     :ivar Optional[int] size_in_bytes: Size of the artifact.
@@ -115,11 +77,19 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     """
 
     def __init__(self, **kwargs):
-        self._architecture = ArtifactArchitecture._extended(kwargs.get("cpu_architecture"))
+        self._architecture = kwargs.get("cpu_architecture", None)
+        try:
+            self._architecture = ArtifactArchitecture(self._architecture)
+        except ValueError:
+            pass
         self._created_on = kwargs.get("created_on", None)
         self._digest = kwargs.get("digest", None)
         self._last_updated_on = kwargs.get("last_updated_on", None)
-        self._operating_system = ArtifactOperatingSystem._extended(kwargs.get("operating_system"))
+        self._operating_system = kwargs.get("operating_system", None)
+        try:
+            self._operating_system = ArtifactOperatingSystem(self._operating_system)
+        except ValueError:
+            pass
         self._repository_name = kwargs.get("repository_name", None)
         self._registry = kwargs.get("registry", None)
         self._size_in_bytes = kwargs.get("size_in_bytes", None)
