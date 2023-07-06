@@ -133,7 +133,7 @@ class AsyncLROPoller(Generic[PollingReturnType_co], Awaitable):
     def polling_method(self) -> AsyncPollingMethod[PollingReturnType_co]:
         """Return the polling method associated to this poller.
 
-        :returns: The polling method associated to this poller.
+        :return: The polling method associated to this poller.
         :rtype: ~azure.core.polling.AsyncPollingMethod
         """
         return self._polling_method
