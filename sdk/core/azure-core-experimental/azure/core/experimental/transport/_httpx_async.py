@@ -35,6 +35,12 @@ from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
 
 
 class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):
+    """Async HttpX response implementation.
+
+    :param HttpRequest request: The request sent to the server
+    :param httpx.Response httpx_response: The response object returned from HttpX library
+    :param ContextManager stream_contextmanager: The context manager to stream response data.
+    """
     def __init__(
         self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]
     ) -> None:
@@ -49,9 +55,22 @@ class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):
         )
 
     def body(self) -> bytes:
+        """Return the whole body as bytes.
+
+        :return: The whole body as bytes.
+        :rtype: bytes
+        """
         return self.internal_response.content
 
     def stream_download(self, pipeline: Pipeline, **kwargs: Any) -> AsyncIterator[bytes]:
+        """Generator for streaming response data.
+
+        :param pipeline: The pipeline object
+        :type pipeline: ~azure.core.pipeline.Pipeline
+        :keyword bool decompress: If True which is default, will attempt to decode the body based
+        :return: An iterator for streaming response data.
+        :rtype: AsyncIterator[bytes]
+        """
         return AsyncHttpXStreamDownloadGenerator(pipeline, self, **kwargs)
 
     async def load_body(self) -> None:
@@ -118,6 +137,14 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         await self.close()
 
     async def send(self, request: HttpRequest, **kwargs) -> AsyncHttpXTransportResponse:
+        """Send the request using this HTTP sender.
+
+        :param request: The request object to be sent.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether to stream the response. Defaults to False.
+        :return: The response object.
+        :rtype: ~azure.core.experimental.transport.AsyncHttpXTransportResponse
+        """
         stream_response = kwargs.pop("stream", False)
         parameters = {
             "method": request.method,

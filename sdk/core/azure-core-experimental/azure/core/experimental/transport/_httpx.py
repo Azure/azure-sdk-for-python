@@ -39,7 +39,7 @@ class HttpXTransportResponse(HttpResponseImpl):
     """HttpX response implementation.
 
     :param HttpRequest request: The request sent to the server
-    :param httpx.Response httpx_response: The response object returned from HttpX library
+    :param httpx.Response httpx_response: The response object returned from the HttpX library
     :param ContextManager stream_contextmanager: The context manager to stream response data.
     """
     def __init__(
@@ -56,14 +56,31 @@ class HttpXTransportResponse(HttpResponseImpl):
         )
 
     def read(self) -> bytes:
+        """Read the response's bytes.
+
+        :return: The response's bytes.
+        :rtype: bytes
+        """
         if self._content is None:
             self._content = self.internal_response.read()
         return self.content
 
     def body(self) -> bytes:
+        """Get the body of the response.
+
+        :return: The response's bytes.
+        :rtype: bytes
+        """
         return self.internal_response.content
 
     def stream_download(self, pipeline: Pipeline, **kwargs) -> Iterator[bytes]:
+        """Generator for streaming response data.
+
+        :param pipeline: The pipeline object
+        :type pipeline: ~azure.core.pipeline.Pipeline
+        :return: An iterator for streaming response data.
+        :rtype: Iterator[bytes]
+        """
         return HttpXStreamDownloadGenerator(pipeline, self, **kwargs)
 
 
