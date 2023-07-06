@@ -204,7 +204,7 @@ class TestRoomsClient(ACSRoomsTestCase):
             valid_until = valid_from + timedelta(days=4)
             self.rooms_client.update_room(room_id="invalid_id", valid_from=valid_from, valid_until=valid_until)
 
-        #  assert error is Resource not found
+        #  assert error is bad request
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
