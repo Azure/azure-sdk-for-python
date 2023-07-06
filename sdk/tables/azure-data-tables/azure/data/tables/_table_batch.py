@@ -123,7 +123,7 @@ class TableBatchOperations(object):
         """Adds an insert operation to the current batch.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :return: None
         :rtype: None
         :raises ValueError:
@@ -169,7 +169,7 @@ class TableBatchOperations(object):
         :param: entity:
             The entity to insert. Can be a dict or an entity object
             Must contain a PartitionKey and a RowKey.
-        :type: entity: Dict or :class:`~azure.data.tables.models.Entity`
+        :type: entity: dict[str, Any] or ~azure.data.tables.models.Entity
         :param timeout: The timeout parameter is expressed in seconds.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -248,9 +248,9 @@ class TableBatchOperations(object):
         """Adds an update operation to the current batch.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity
-        :type mode: :class:`~azure.data.tables.UpdateMode`
+        :type mode: ~azure.data.tables.UpdateMode
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
         :paramtype match_condition: ~azure.core.MatchCondition
@@ -338,7 +338,7 @@ class TableBatchOperations(object):
          is found to update and a replace will be performed if an existing entity is found.
         :type if_match: str
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: Dict[str, object]
+        :type table_entity_properties: dict[str, object]
         :param format: Specifies the media type for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
@@ -442,7 +442,7 @@ class TableBatchOperations(object):
          is found to update and a merge will be performed if an existing entity is found.
         :type if_match: str
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: Dict[str, object]
+        :type table_entity_properties: dict[str, object]
         :param format: Specifies the media type for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
@@ -653,9 +653,9 @@ class TableBatchOperations(object):
         """Adds an upsert (update/merge) operation to the batch.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity
-        :type mode: :class:`~azure.data.tables.UpdateMode`
+        :type mode: ~azure.data.tables.UpdateMode
         :return: None
         :raises: ValueError
 

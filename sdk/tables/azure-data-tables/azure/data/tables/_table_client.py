@@ -97,7 +97,7 @@ class TableClient(TablesBaseClient):
         :param str conn_str: A connection string to an Azure Tables account.
         :param str table_name: The table name.
         :returns: A table client.
-        :rtype: :class:`~azure.data.tables.TableClient`
+        :rtype: ~azure.data.tables.TableClient
 
         .. admonition:: Example:
 
@@ -127,10 +127,10 @@ class TableClient(TablesBaseClient):
             account URL already has a SAS token. The value can be one of AzureNamedKeyCredential
             or AzureSasCredential from azure-core.
         :paramtype credential:
-            :class:`~azure.core.credentials.AzureNamedKeyCredential` or
-            :class:`~azure.core.credentials.AzureSasCredential`
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or None
         :returns: A table client.
-        :rtype: :class:`~azure.data.tables.TableClient`
+        :rtype: ~azure.data.tables.TableClient
         """
         try:
             if not table_url.lower().startswith("http"):
@@ -160,7 +160,7 @@ class TableClient(TablesBaseClient):
         used with Shared Access Signatures.
 
         :return: Dictionary of SignedIdentifiers
-        :rtype: Dict[str, Optional[:class:`~azure.data.tables.TableAccessPolicy`]]
+        :rtype: dict[str, ~azure.data.tables.TableAccessPolicy] or dict[str, None]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
@@ -192,7 +192,7 @@ class TableClient(TablesBaseClient):
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
         :param signed_identifiers: Access policies to set for the table
-        :type signed_identifiers: Dict[str, Optional[:class:`~azure.data.tables.TableAccessPolicy`]]
+        :type signed_identifiers: dict[str, ~azure.data.tables.TableAccessPolicy] or dict[str, None]
         :return: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -221,7 +221,7 @@ class TableClient(TablesBaseClient):
         """Creates a new table under the current account.
 
         :return: A TableItem representing the created table.
-        :rtype: :class:`~azure.data.tables.TableItem`
+        :rtype: ~azure.data.tables.TableItem
         :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
 
         .. admonition:: Example:
@@ -348,13 +348,13 @@ class TableClient(TablesBaseClient):
             _process_table_error(error, table_name=self.table_name)
 
     @distributed_trace
-    def create_entity(self, entity: EntityType, **kwargs) -> Dict[str, str]:
+    def create_entity(self, entity: EntityType, **kwargs) -> Dict[str, Any]:
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
         :type entity: Union[TableEntity, Mapping[str, Any]]
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: Dict[str,str]
+        :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -386,20 +386,20 @@ class TableClient(TablesBaseClient):
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace
-    def update_entity(self, entity: EntityType, mode: UpdateMode = UpdateMode.MERGE, **kwargs) -> Dict[str, str]:
+    def update_entity(self, entity: EntityType, mode: UpdateMode = UpdateMode.MERGE, **kwargs) -> Dict[str, Any]:
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity
-        :type mode: :class:`~azure.data.tables.UpdateMode`
+        :type mode: ~azure.data.tables.UpdateMode
         :keyword str etag: Etag of the entity
         :keyword match_condition: The condition under which to perform the operation.
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
             The default value is Unconditionally.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: Dict[str,str]
+        :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -460,9 +460,9 @@ class TableClient(TablesBaseClient):
 
         :keyword int results_per_page: Number of entities returned per service request.
         :keyword select: Specify desired properties of an entity to return.
-        :paramtype select: str or List[str]
-        :return: ItemPaged[:class:`~azure.data.tables.TableEntity`]
-        :rtype: ~azure.core.paging.ItemPaged
+        :paramtype select: str or list[str]
+        :return: An iterator of :class:`~azure.data.tables.TableEntity`
+        :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables.TableEntity]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -497,11 +497,11 @@ class TableClient(TablesBaseClient):
          on filter formatting, see the `samples documentation <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples#writing-filters>`_.
         :keyword int results_per_page: Number of entities returned per service request.
         :keyword select: Specify desired properties of an entity to return.
-        :paramtype select: str or List[str]
+        :paramtype select: str or list[str]
         :keyword parameters: Dictionary for formatting query with additional, user defined parameters
-        :paramtype parameters: Dict[str, Any]
-        :return: ItemPaged[:class:`~azure.data.tables.TableEntity`]
-        :rtype: ~azure.core.paging.ItemPaged
+        :paramtype parameters: dict[str, Any]
+        :return: An iterator of :class:`~azure.data.tables.TableEntity`
+        :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables.TableEntity]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -539,9 +539,9 @@ class TableClient(TablesBaseClient):
         :param row_key: The row key of the entity.
         :type row_key: str
         :keyword select: Specify desired properties of an entity to return.
-        :paramtype select: str or List[str]
+        :paramtype select: str or list[str]
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: :class:`~azure.data.tables.TableEntity`
+        :rtype: ~azure.data.tables.TableEntity
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -569,15 +569,15 @@ class TableClient(TablesBaseClient):
         return _convert_to_entity(entity)
 
     @distributed_trace
-    def upsert_entity(self, entity: EntityType, mode: UpdateMode = UpdateMode.MERGE, **kwargs) -> Dict[str, str]:
+    def upsert_entity(self, entity: EntityType, mode: UpdateMode = UpdateMode.MERGE, **kwargs) -> Dict[str, Any]:
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity
-        :type mode: :class:`~azure.data.tables.UpdateMode`
+        :type mode: ~azure.data.tables.UpdateMode
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: Dict[str,str]
+        :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -638,7 +638,7 @@ class TableClient(TablesBaseClient):
 
         :type operations: Iterable[Tuple[str, TableEntity, Mapping[str, Any]]]
         :return: A list of mappings with response metadata for each operation in the transaction.
-        :rtype: List[Mapping[str, Any]]
+        :rtype: list[Mapping[str, Any]]
         :raises: :class:`~azure.data.tables.TableTransactionError`
 
         .. admonition:: Example:

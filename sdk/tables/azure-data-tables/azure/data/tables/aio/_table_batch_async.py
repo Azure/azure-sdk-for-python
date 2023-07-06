@@ -119,9 +119,9 @@ class TableBatchOperations(object):
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :return: None
-        :raises ValueError:
+        :raises ValueError: If PartitionKey and/or RowKey were not provided in entity.
 
         .. admonition:: Example:
 
@@ -164,17 +164,17 @@ class TableBatchOperations(object):
         :param: entity:
             The entity to insert. Can be a dict or an entity object
             Must contain a PartitionKey and a RowKey.
-        :type: entity: Dict or :class:`~azure.data.tables.models.Entity`
+        :type: entity: dict[str, Any] or ~azure.data.tables.models.Entity
         :param timeout: The timeout parameter is expressed in seconds.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when analytics logging is enabled.
+            limit that is recorded in the analytics logs when analytics logging is enabled.
         :type request_id_parameter: str
         :param response_preference: Specifies the return format. Default is return without content.
         :type response_preference: str or ~azure.data.tables.models.ResponseFormat
         :param format: Specifies the media type for the response. Known values are:
-         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
-         "application/json;odata=fullmetadata".
+            "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
+            "application/json;odata=fullmetadata".
         :type format: str or ~azure.data.tables.models.OdataMetadataFormat
         :return: None
         """
@@ -248,9 +248,9 @@ class TableBatchOperations(object):
         """Adds an update operation to the current batch.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity
-        :type mode: :class:`~azure.data.tables.UpdateMode`
+        :type mode: ~azure.data.tables.UpdateMode
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
         :paramtype match_condition: ~azure.core.MatchCondition
@@ -328,18 +328,18 @@ class TableBatchOperations(object):
         :param timeout: The timeout parameter is expressed in seconds.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when analytics logging is enabled.
+            limit that is recorded in the analytics logs when analytics logging is enabled.
         :type request_id_parameter: str
         :param if_match: Match condition for an entity to be updated. If specified and a matching
-         entity is not found, an error will be raised. To force an unconditional update, set to the
-         wildcard character (*). If not specified, an insert will be performed when no existing entity
-         is found to update and a replace will be performed if an existing entity is found.
+            entity is not found, an error will be raised. To force an unconditional update, set to the
+            wildcard character (*). If not specified, an insert will be performed when no existing entity
+            is found to update and a replace will be performed if an existing entity is found.
         :type if_match: str
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: Dict[str, object]
+        :type table_entity_properties: dict[str, object]
         :param format: Specifies the media type for the response. Known values are:
-         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
-         "application/json;odata=fullmetadata".
+            "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
+            "application/json;odata=fullmetadata".
         :type format: str or ~azure.data.tables.models.OdataMetadataFormat
         :return: None
         """
@@ -431,18 +431,18 @@ class TableBatchOperations(object):
         :param timeout: The timeout parameter is expressed in seconds.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when analytics logging is enabled.
+            limit that is recorded in the analytics logs when analytics logging is enabled.
         :type request_id_parameter: str
         :param if_match: Match condition for an entity to be updated. If specified and a matching
-         entity is not found, an error will be raised. To force an unconditional update, set to the
-         wildcard character (*). If not specified, an insert will be performed when no existing entity
-         is found to update and a merge will be performed if an existing entity is found.
+            entity is not found, an error will be raised. To force an unconditional update, set to the
+            wildcard character (*). If not specified, an insert will be performed when no existing entity
+            is found to update and a merge will be performed if an existing entity is found.
         :type if_match: str
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: Dict[str, object]
+        :type table_entity_properties: dict[str, object]
         :param format: Specifies the media type for the response. Known values are:
-         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
-         "application/json;odata=fullmetadata".
+            "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
+            "application/json;odata=fullmetadata".
         :type format: str or ~azure.data.tables.models.OdataMetadataFormat
         :return: None
         """
@@ -521,7 +521,7 @@ class TableBatchOperations(object):
         """Deletes the specified entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or dict[str, Any]
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
         :paramtype match_condition: ~azure.core.MatchCondition
@@ -657,12 +657,12 @@ class TableBatchOperations(object):
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity
-        :type mode: :class:`~azure.data.tables.UpdateMode`
+        :type mode: ~azure.data.tables.UpdateMode
         :return: None
         :rtype: None
-        :raises ValueError:
+        :raises ValueError: If mode type is not supported.
 
         .. admonition:: Example:
 

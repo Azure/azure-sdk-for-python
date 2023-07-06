@@ -210,22 +210,22 @@ class TableCorsRule:
 
     All required parameters must be populated in order to send to Azure.
 
-    :param List[str] allowed_origins:
+    :param list[str] allowed_origins:
         A list of origin domains that will be allowed via CORS, or "*" to allow
         all domains. The list of must contain at least one entry. Limited to 64
         origin domains. Each allowed origin can have up to 256 characters.
-    :param List[str] allowed_methods:
+    :param list[str] allowed_methods:
         A list of HTTP methods that are allowed to be executed by the origin.
         The list of must contain at least one entry. For Azure Storage,
         permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
     :keyword int max_age_in_seconds:
         The number of seconds that the client/browser should cache a
         pre-flight response.
-    :keyword List[str] exposed_headers:
+    :keyword list[str] exposed_headers:
         Defaults to an empty list. A list of response headers to expose to CORS
         clients. Limited to 64 defined headers and two prefixed headers. Each
         header can be up to 256 characters.
-    :keyword List[str] allowed_headers:
+    :keyword list[str] allowed_headers:
         Defaults to an empty list. A list of headers allowed to be part of
         the cross-origin request. Limited to 64 defined headers and 2 prefixed
         headers. Each header can be up to 256 characters.
@@ -422,7 +422,7 @@ class TableSasPermissions:
         :param str permission: Specify permissions in
             the string with the first letter of the word.
         :return: An TableSasPermissions object
-        :rtype: :class:`~azure.data.tables.TableSasPermissions`
+        :rtype: ~azure.data.tables.TableSasPermissions
         """
         p_read = "r" in permission
         p_add = "a" in permission
@@ -577,7 +577,7 @@ class ResourceTypes(object):
         :param str string: Specify service, container, or object in
             in the string with the first letter of the word.
         :return: A ResourceTypes object
-        :rtype: :class:`~azure.data.tables.ResourceTypes`
+        :rtype: ~azure.data.tables.ResourceTypes
         """
         res_service = "s" in string
         res_object = "o" in string
@@ -648,7 +648,7 @@ class AccountSasPermissions(object):
         :param permission: Specify permissions in the string with the first letter of the word.
         :type permission: str
         :return: An AccountSasPermissions object
-        :rtype: :class:`~azure.data.tables.AccountSasPermissions`
+        :rtype: ~azure.data.tables.AccountSasPermissions
         """
         p_read = "r" in permission
         p_write = "w" in permission

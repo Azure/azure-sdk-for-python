@@ -82,7 +82,7 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy):
         :param options: keyword arguments from context.
         :type options: dict[str, Any]
         :return: A dict containing settings and history for retries.
-        :rtype: Dict
+        :rtype: dict[str, Any]
         """
         config = super(AsyncTablesRetryPolicy, self).configure_retries(options)
         config["retry_secondary"] = options.pop("retry_to_secondary", self.retry_to_secondary)

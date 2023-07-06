@@ -82,7 +82,7 @@ class TableServiceClient(AsyncTablesBaseClient):
 
         :param str conn_str: A connection string to an Azure Tables account.
         :returns: A Table service client.
-        :rtype: :class:`~azure.data.tables.aio.TableServiceClient`
+        :rtype: ~azure.data.tables.aio.TableServiceClient
 
         .. admonition:: Example:
 
@@ -105,7 +105,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
         :return: Dictionary of service stats
-        :rtype: Dict[str, object]
+        :rtype: dict[str, object]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         try:
@@ -124,7 +124,7 @@ class TableServiceClient(AsyncTablesBaseClient):
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableServiceProperties, or the result of cls(response)
-        :rtype: Dict[str, object]
+        :rtype: dict[str, object]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
@@ -158,7 +158,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         :keyword minute_metrics: Minute level metrics
         :paramtype minute_metrics: ~azure.data.tables.TableMetrics
         :keyword cors: Cross-origin resource sharing rules
-        :paramtype cors: List[~azure.data.tables.TableCorsRule]
+        :paramtype cors: list[~azure.data.tables.TableCorsRule]
         :return: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -186,7 +186,7 @@ class TableServiceClient(AsyncTablesBaseClient):
 
         :param str table_name: The Table name.
         :return: TableClient, or the result of cls(response)
-        :rtype: :class:`~azure.data.tables.aio.TableClient`
+        :rtype: ~azure.data.tables.aio.TableClient
         :raises: :class:`~azure.core.exceptions.ResourceExistsError`
 
         .. admonition:: Example:
@@ -211,7 +211,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         :param table_name: The Table name.
         :type table_name: str
         :return: TableClient
-        :rtype: :class:`~azure.data.tables.aio.TableClient`
+        :rtype: ~azure.data.tables.aio.TableClient
 
         .. admonition:: Example:
 
@@ -256,8 +256,8 @@ class TableServiceClient(AsyncTablesBaseClient):
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in returned ItemPaged
-        :return: AsyncItemPaged[:class:`~azure.data.tables.TableItem`]
-        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :return: An iterator of :class:`~azure.data.tables.TableItem`
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableItem]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -285,9 +285,9 @@ class TableServiceClient(AsyncTablesBaseClient):
         :param str query_filter: Specify a filter to return certain tables.
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword parameters: Dictionary for formatting query with additional, user defined parameters
-        :paramtype parameters:  Dict[str, Any]
-        :return: AsyncItemPaged[:class:`~azure.data.tables.TableItem`]
-        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :paramtype parameters:  dict[str, Any]
+        :return: An iterator of :class:`~azure.data.tables.TableItem`
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableItem]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -319,7 +319,7 @@ class TableServiceClient(AsyncTablesBaseClient):
 
         :param str table_name: The table name
         :returns: A :class:`~azure.data.tables.aio.TableClient` object.
-        :rtype: :class:`~azure.data.tables.aio.TableClient`
+        :rtype: ~azure.data.tables.aio.TableClient
 
         """
         pipeline = AsyncPipeline(  # type: ignore

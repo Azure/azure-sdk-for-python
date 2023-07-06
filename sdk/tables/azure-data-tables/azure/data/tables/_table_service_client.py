@@ -84,7 +84,7 @@ class TableServiceClient(TablesBaseClient):
 
         :param str conn_str: A connection string to an Azure Storage or Cosmos account.
         :returns: A Table service client.
-        :rtype: :class:`~azure.data.tables.TableServiceClient`
+        :rtype: ~azure.data.tables.TableServiceClient
 
         .. admonition:: Example:
 
@@ -106,7 +106,7 @@ class TableServiceClient(TablesBaseClient):
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
         :return: Dictionary of service stats
-        :rtype: Dict[str, object]
+        :rtype: dict[str, object]
         :raises: :class:`~azure.core.exceptions.HttpResponseError:`
         """
         try:
@@ -124,7 +124,7 @@ class TableServiceClient(TablesBaseClient):
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :return: Dictionary of service properties
-        :rtype: Dict[str, object]
+        :rtype: dict[str, object]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
@@ -150,7 +150,7 @@ class TableServiceClient(TablesBaseClient):
         :keyword minute_metrics: Minute level metrics
         :paramtype minute_metrics: ~azure.data.tables.TableMetrics
         :keyword cors: Cross-origin resource sharing rules
-        :paramtype cors: List[~azure.data.tables.TableCorsRule]
+        :paramtype cors: list[~azure.data.tables.TableCorsRule]
         :return: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -180,7 +180,7 @@ class TableServiceClient(TablesBaseClient):
         :param table_name: The Table name.
         :type table_name: str
         :return: TableClient
-        :rtype: :class:`~azure.data.tables.TableClient`
+        :rtype: ~azure.data.tables.TableClient
         :raises: :class:`~azure.core.exceptions.ResourceExistsError`
 
         .. admonition:: Example:
@@ -205,7 +205,7 @@ class TableServiceClient(TablesBaseClient):
         :param table_name: The Table name.
         :type table_name: str
         :return: TableClient
-        :rtype: :class:`~azure.data.tables.TableClient`
+        :rtype: ~azure.data.tables.TableClient
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -254,9 +254,9 @@ class TableServiceClient(TablesBaseClient):
         :param str query_filter: Specify a filter to return certain tables.
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword parameters: Dictionary for formatting query with additional, user defined parameters
-        :paramtype parameters:  Dict[str, Any]
-        :return: ItemPaged[:class:`~azure.data.tables.TableItem`]
-        :rtype: ~azure.core.paging.ItemPaged
+        :paramtype parameters:  dict[str, Any]
+        :return: An iterator of :class:`~azure.data.tables.TableItem`
+        :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables.TableItem]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -287,8 +287,8 @@ class TableServiceClient(TablesBaseClient):
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in returned ItemPaged
-        :return: ItemPaged[:class:`~azure.data.tables.TableItem`]
-        :rtype: ~azure.core.paging.ItemPaged
+        :return: An iterator of :class:`~azure.data.tables.TableItem`
+        :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables.TableItem]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -316,7 +316,7 @@ class TableServiceClient(TablesBaseClient):
 
         :param str table_name: The table name
         :returns: A :class:`~azure.data.tables.TableClient` object.
-        :rtype: :class:`~azure.data.tables.TableClient`
+        :rtype: ~azure.data.tables.TableClient
 
         """
         pipeline = Pipeline(  # type: ignore

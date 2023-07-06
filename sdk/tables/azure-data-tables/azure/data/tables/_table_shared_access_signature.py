@@ -30,7 +30,7 @@ def generate_account_sas(
     Use the returned signature with the sas_token parameter of TableService.
 
     :param credential: Credential for the Azure account
-    :type credential: :class:`~azure.core.credentials.AzureNamedKeyCredential`
+    :type credential: ~azure.core.credentials.AzureNamedKeyCredential
     :param resource_types:
         Specifies the resource types that are accessible with the account SAS.
     :type resource_types: ResourceTypes
@@ -91,10 +91,10 @@ def generate_table_sas(credential: AzureNamedKeyCredential, table_name: str, **k
 
 
     :param credential: Credential used for creating Shared Access Signature
-    :type credential: :class:`~azure.core.credentials.AzureNamedKeyCredential`
+    :type credential: ~azure.core.credentials.AzureNamedKeyCredential
     :param table_name: Table name
     :type table_name: str
-    :keyword TableSasPermissions permission:
+    :keyword ~azure.data.tables.TableSasPermissions permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
         Required unless an id is given referencing a stored access policy
