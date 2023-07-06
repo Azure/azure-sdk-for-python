@@ -44,20 +44,20 @@ class EnumBase(str, Enum, metaclass=TypeInsensitiveEnumMeta):
         try:
             return cls(value)
         except ValueError:
+            str_value = str(value)
+            if value is None or str_value == "" or str_value.isspace():
+                return None
             try:
-                if value in [None, ""] or value.isspace():
-                    return None
-                value = str(value)
                 enum_members = {m.name: m.value for m in cls}
                 # Enums will accept almost any name, so we'll just uppercase it and remove whitespace.
-                extended_name = "".join(value.upper().split())
-                enum_members[extended_name] = value
+                extended_name = "".join(str_value.upper().split())
+                enum_members[extended_name] = str_value
                 ExtendedEnum = EnumBase(cls.__name__, enum_members)
-                return ExtendedEnum(value)
+                return ExtendedEnum(str_value)
             except:  # pylint:disable=bare-except
                 # In the case that something went wrong, we don't want to raise in case it breaks
-                # deserialization, so just fallback to returning the initial value.
-                return value
+                # deserialization, so just fallback to returning the initial value as a string.
+                return str_value
 
 
 class ArtifactArchitecture(EnumBase):
