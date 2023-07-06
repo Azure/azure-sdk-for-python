@@ -7,8 +7,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Connection": "keep-alive",
-        "Content-Length": "89",
+        "Content-Length": "39",
         "Content-Type": "application/json",
         "Repeatability-First-Sent": "sanitized",
         "Repeatability-Request-ID": "sanitized",
@@ -19,8 +18,8 @@
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
-        "validFrom": "2023-07-08T15:17:07.125344Z",
-        "validUntil": "2023-08-05T15:17:07.125344Z"
+        "validFrom": null,
+        "validUntil": null
       },
       "StatusCode": 201,
       "ResponseHeaders": {
@@ -28,7 +27,7 @@
         "api-supported-versions": "2023-03-31-preview, 2023-06-14",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
-        "Location": "99430346096479960",
+        "Location": "99464644326150728",
         "MS-CV": "sanitized",
         "Repeatability-Result": "accepted",
         "Request-Context": "appId=",
@@ -37,39 +36,66 @@
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
-        "id": "99430346096479960",
-        "createdAt": "2023-07-05T22:17:07.3589706\u002B00:00",
-        "validFrom": "2023-07-08T15:17:07.125344\u002B00:00",
-        "validUntil": "2023-08-05T15:17:07.125344\u002B00:00"
+        "id": "99464644326150728",
+        "createdAt": "2023-07-05T22:17:58.5631345\u002B00:00",
+        "validFrom": "2023-07-05T22:17:58.5008134\u002B00:00",
+        "validUntil": "2024-01-01T22:17:58.5008134\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99430346096479960?api-version=2023-06-14",
-      "RequestMethod": "DELETE",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99464644326150728/participants?api-version=2023-06-14",
+      "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
+        "Content-Length": "89",
+        "Content-Type": "application/merge-patch\u002Bjson",
         "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
       },
-      "RequestBody": null,
-      "StatusCode": 204,
+      "RequestBody": {
+        "participants": {
+          "chris": {
+            "role": "kafka"
+          },
+          "8:acs:sanitized1": {
+            "role": "Presenter"
+          }
+        }
+      },
+      "StatusCode": 400,
       "ResponseHeaders": {
-        "api-deprecated-versions": "2021-04-07, 2022-02-01",
-        "api-supported-versions": "2023-03-31-preview, 2023-06-14",
+        "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Request-Context": "appId=",
+        "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
-        "X-Cache": "CONFIG_NOCACHE"
+        "X-Cache": "CONFIG_NOCACHE",
+        "x-ms-error-code": "BadRequest"
       },
-      "ResponseBody": null
+      "ResponseBody": {
+        "error": {
+          "code": "BadRequest",
+          "message": "The request could not be understood by the server due to malformed syntax.",
+          "details": [
+            {
+              "code": "BadArgument",
+              "message": "The updateParticipantsRequestDto field is required.",
+              "target": "updateParticipantsRequestDto"
+            },
+            {
+              "code": "BadArgument",
+              "message": "The JSON value could not be converted to Microsoft.AzureCommunicationService.Rooms.Api.Contracts.V2023_06_14.RoleDto. Path: $.participants.chris.role | LineNumber: 0 | BytePositionInLine: 43.",
+              "target": "$.participants.chris.role"
+            }
+          ]
+        }
+      }
     }
   ],
   "Variables": {}
