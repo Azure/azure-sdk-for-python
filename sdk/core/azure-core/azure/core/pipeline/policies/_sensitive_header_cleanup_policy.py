@@ -23,11 +23,9 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import List, Optional, Any, TYPE_CHECKING, TypeVar
+from typing import List, Optional, Any, TypeVar
+from azure.core.pipeline import PipelineRequest
 from ._base import SansIOHTTPPolicy
-
-if TYPE_CHECKING:
-    from azure.core.pipeline import PipelineRequest
 
 HTTPRequestType = TypeVar("HTTPRequestType")
 
