@@ -41,6 +41,7 @@ class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):
     :param httpx.Response httpx_response: The response object returned from HttpX library
     :param ContextManager stream_contextmanager: The context manager to stream response data.
     """
+
     def __init__(
         self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]
     ) -> None:
