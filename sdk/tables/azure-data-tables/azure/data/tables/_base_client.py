@@ -139,13 +139,14 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
             self._policies.insert(0, CosmosPatchTransformPolicy())
 
     @property
-    def url(self):
+    def url(self) -> str:
         """The full endpoint URL to this entity, including SAS token if used.
 
         This could be either the primary endpoint,
         or the secondary endpoint depending on the current :func:`location_mode`.
 
-        :type: str
+        :return: The full endpoint URL including SAS token if used.
+        :rtype: str
         """
         return self._format_url(self._hosts[self._location_mode])
 
@@ -153,7 +154,8 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def _primary_endpoint(self):
         """The full primary endpoint URL.
 
-        :type: str
+        :return: The full primary endpoint URL.
+        :rtype: str
         """
         return self._format_url(self._hosts[LocationMode.PRIMARY])
 
@@ -161,6 +163,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def _primary_hostname(self):
         """The hostname of the primary endpoint.
 
+        :return: The hostname of the primary endpoint.
         :type: str
         """
         return self._hosts[LocationMode.PRIMARY]
@@ -172,8 +175,9 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         If not available a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
 
+        :return: The full secondary endpoint URL.
         :type: str
-        :raise ValueError:
+        :raise ValueError: If the secondary endpoint URL is not configured.
         """
         if not self._hosts[LocationMode.SECONDARY]:
             raise ValueError("No secondary host configured.")
@@ -186,14 +190,16 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         If not available this will be None. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
 
+        :return: The hostname of the secondary endpoint.
         :type: str or None
         """
         return self._hosts[LocationMode.SECONDARY]
 
     @property
-    def api_version(self):
+    def api_version(self) -> str:
         """The version of the Storage API used for requests.
 
+        :return: The Storage API version.
         :type: str
         """
         return self._client._config.version  # pylint: disable=protected-access
@@ -208,9 +214,9 @@ class TablesBaseClient(AccountHostsMixin):
         account URL already has a SAS token. The value can be one of AzureNamedKeyCredential,
         AzureSasCredential, or TokenCredentials from azure-core.
     :paramtype credential:
-        :class:`~azure.core.credentials.AzureNamedKeyCredential` or
-        :class:`~azure.core.credentials.AzureSasCredential` or
-        :class:`~azure.core.credentials.TokenCredential`
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or None
     :keyword api_version: Specifies the version of the operation to use for this request. Default value
         is "2019-02-02".
     :paramtype api_version: str
