@@ -148,7 +148,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         :return: The full endpoint URL including SAS token if used.
         :rtype: str
         """
-        return self._format_url(self._hosts[self._location_mode])
+        return self._format_url(self._hosts[self._location_mode])  # type: ignore
 
     @property
     def _primary_endpoint(self):
@@ -202,7 +202,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         :return: The Storage API version.
         :type: str
         """
-        return self._client._config.version  # pylint: disable=protected-access
+        return self._client._config.version  # type: ignore # pylint: disable=protected-access
 
 
 class TablesBaseClient(AccountHostsMixin):
