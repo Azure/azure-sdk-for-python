@@ -68,6 +68,7 @@ class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):
         :param pipeline: The pipeline object
         :type pipeline: ~azure.core.pipeline.Pipeline
         :keyword bool decompress: If True which is default, will attempt to decode the body based
+            on the *content-encoding* header.
         :return: An iterator for streaming response data.
         :rtype: AsyncIterator[bytes]
         """

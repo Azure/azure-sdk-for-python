@@ -91,7 +91,7 @@ class HttpXStreamDownloadGenerator:
     :param pipeline: The pipeline object
     :type pipeline: ~azure.core.pipeline.Pipeline
     :param response: The response object.
-    :type response: ~azure.core.experimental.transport.HttpResponse
+    :type response: ~azure.core.rest.HttpResponse
     :keyword bool decompress: If True which is default, will attempt to decode the body based
         on the *content-encoding* header.
     """
@@ -159,8 +159,6 @@ class HttpXTransport(HttpTransport):
         :param request: The request object to be sent.
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether to stream the response. Defaults to False.
-        :keyword int connection_timeout: The timeout setting for the connection.
-        :keyword bool connection_verify: Whether SSL verification is done or not.
         :return: An HTTPResponse object.
         :rtype: ~azure.core.experimental.transport.HttpXTransportResponse
         """
