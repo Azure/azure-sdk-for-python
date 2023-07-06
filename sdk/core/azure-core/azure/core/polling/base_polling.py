@@ -607,16 +607,12 @@ class _SansIOLROBasePolling(
         try:
             client = kwargs["client"]
         except KeyError:
-            raise ValueError(
-                "Need kwarg 'client' to be recreated from continuation_token"
-            ) from None
+            raise ValueError("Need kwarg 'client' to be recreated from continuation_token") from None
 
         try:
             deserialization_callback = kwargs["deserialization_callback"]
         except KeyError:
-            raise ValueError(
-                "Need kwarg 'deserialization_callback' to be recreated from continuation_token"
-            ) from None
+            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token") from None
 
         import pickle
 
