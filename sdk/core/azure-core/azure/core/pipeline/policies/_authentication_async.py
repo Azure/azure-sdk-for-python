@@ -13,8 +13,8 @@ from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.policies._authentication import (
     _BearerTokenCredentialPolicyBase,
 )
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import AsyncHttpResponse as AsyncRestHttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.rest import AsyncHttpResponse as AsyncRestHttpResponse, HttpRequest as RestHttpRequest
 
 from .._tools_async import await_result
 
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, AsyncRestHttpResponse)
-HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, RestHttpRequest)
 
 
 class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):

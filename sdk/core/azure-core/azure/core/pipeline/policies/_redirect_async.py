@@ -26,14 +26,14 @@
 from typing import TypeVar
 from azure.core.exceptions import TooManyRedirectsError
 from azure.core.pipeline import PipelineResponse, PipelineRequest
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import AsyncHttpResponse as AsyncRestHttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.rest import AsyncHttpResponse as AsyncRestHttpResponse, HttpRequest as RestHttpRequest
 from . import AsyncHTTPPolicy
 from ._redirect import RedirectPolicyBase, domain_changed
 from ._utils import get_domain
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, AsyncRestHttpResponse)
-HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, RestHttpRequest)
 
 
 class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy):

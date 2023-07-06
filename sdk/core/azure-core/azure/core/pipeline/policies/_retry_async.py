@@ -181,6 +181,8 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
                 end_time = time.time()
                 if absolute_timeout:
                     absolute_timeout -= end_time - start_time
+        if not response:
+            raise AzureError("Maximum retries exceeded.")
 
         self.update_context(response.context, retry_settings)
         return response

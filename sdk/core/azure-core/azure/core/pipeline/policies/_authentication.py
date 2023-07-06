@@ -6,8 +6,8 @@
 import time
 from typing import TYPE_CHECKING, Dict, Optional, TypeVar
 from azure.core.pipeline import PipelineRequest, PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpResponse as RestHttpResponse
+from azure.core.pipeline.transport import HttpResponse, HttpRequest
+from azure.core.rest import HttpResponse as RestHttpResponse, HttpRequest as RestHttpRequest
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
 
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     )
 
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, RestHttpResponse)
-HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, RestHttpRequest)
 
 
 # pylint:disable=too-few-public-methods
