@@ -359,8 +359,8 @@ class CallConnectionProperties(): # type: ignore # pylint: disable=too-many-inst
     :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
     :keyword source_display_name:  Display name of the call if dialing out.
     :paramtype source_display_name: str
-    :keyword source_identity: Source identity of the caller.
-    :paramtype source_identity: ~azure.communication.callautomation.CommunicationIdentifier
+    :keyword source: Source identity of the caller.
+    :paramtype source: ~azure.communication.callautomation.CommunicationIdentifier
     :keyword correlation_id: Correlation ID of the call
     :paramtype correlation_id: str
     :keyword answered_by: The identifier that answered the call
@@ -385,7 +385,7 @@ class CallConnectionProperties(): # type: ignore # pylint: disable=too-many-inst
      Required only when calling a PSTN callee."""
     source_display_name: Optional[str]
     """Display name of the call if dialing out."""
-    source_identity: Optional[CommunicationIdentifier]
+    source: Optional[CommunicationIdentifier]
     """Source identity of the caller."""
     correlation_id: Optional[str]
     """Correlation ID of the call"""
@@ -404,7 +404,7 @@ class CallConnectionProperties(): # type: ignore # pylint: disable=too-many-inst
         media_subscription_id: Optional[str] = None,
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
-        source_identity: Optional[CommunicationIdentifier] = None,
+        source: Optional[CommunicationIdentifier] = None,
         correlation_id: Optional[str] = None,
         answered_by: Optional[CommunicationUserIdentifier] = None,
         **kwargs
@@ -418,7 +418,7 @@ class CallConnectionProperties(): # type: ignore # pylint: disable=too-many-inst
         self.media_subscription_id = media_subscription_id
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
-        self.source_identity = source_identity
+        self.source = source
         self.correlation_id = correlation_id
         self.answered_by = answered_by
 
@@ -440,7 +440,7 @@ class CallConnectionProperties(): # type: ignore # pylint: disable=too-many-inst
             if call_connection_properties_generated.source_caller_id_number
             else None,
             source_display_name=call_connection_properties_generated.source_display_name,
-            source_identity=deserialize_identifier(call_connection_properties_generated.source_identity)
+            source=deserialize_identifier(call_connection_properties_generated.source_identity)
             if call_connection_properties_generated.source_identity
             else None,
             correlation_id=call_connection_properties_generated.correlation_id,

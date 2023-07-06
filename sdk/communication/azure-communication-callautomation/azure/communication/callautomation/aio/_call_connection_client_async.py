@@ -334,7 +334,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     async def play_media(
         self,
         play_source: Union['FileSource', 'TextSource', 'SsmlSource',
-                           List['FileSource', 'TextSource', 'SsmlSource']],
+                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         play_to: List['CommunicationIdentifier'],
         *,
         loop: bool = False,
@@ -359,8 +359,15 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        play_source_single: Union['FileSource', 'TextSource', 'SsmlSource'] = None
+        if isinstance(play_source, list):
+            if play_source:  # Check if the list is not empty
+                play_source_single = play_source[0]
+        else:
+            play_source_single = play_source
+
         play_request = PlayRequest(
-            play_source_info=play_source._to_generated(),#pylint:disable=protected-access
+            play_source_info=play_source_single._to_generated(),#pylint:disable=protected-access
             play_to=[serialize_identifier(identifier)
                      for identifier in play_to],
             play_options=PlayOptions(loop=loop),
@@ -373,7 +380,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     async def play_media_to_all(
         self,
         play_source: Union['FileSource', 'TextSource', 'SsmlSource',
-                           List['FileSource', 'TextSource', 'SsmlSource']],
+                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
@@ -396,7 +403,14 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        await self.play_media(play_source=play_source, play_to=[],
+        play_source_single: Union['FileSource', 'TextSource', 'SsmlSource'] = None
+        if isinstance(play_source, list):
+            if play_source:  # Check if the list is not empty
+                play_source_single = play_source[0]
+        else:
+            play_source_single = play_source
+
+        await self.play_media(play_source=play_source_single, play_to=[],
                               loop=loop,
                               operation_context=operation_context,
                               **kwargs)
@@ -409,7 +423,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         *,
         initial_silence_timeout: Optional[int] = None,
         play_prompt: Optional[Union['FileSource', 'TextSource', 'SsmlSource',
-                           List['FileSource', 'TextSource', 'SsmlSource']]] = None,
+                           List[Union['FileSource', 'TextSource', 'SsmlSource']]]] = None,
         interrupt_call_media_operation: bool = False,
         operation_context: Optional[str] = None,
         interrupt_prompt: bool = False,
@@ -458,6 +472,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             target_participant=serialize_identifier(target_participant)
         )
 
+        play_source_single: Union['FileSource', 'TextSource', 'SsmlSource'] = None
+        if isinstance(play_prompt, list):
+            if play_prompt:  # Check if the list is not empty
+                play_source_single = play_prompt[0]
+        else:
+            play_source_single = play_prompt
+
         if isinstance(input_type, str):
             input_type = RecognizeInputType[input_type.upper()]
 
@@ -487,7 +508,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         recognize_request = RecognizeRequest(
             recognize_input_type=input_type,
-            play_prompt=play_prompt._to_generated(),#pylint:disable=protected-access
+            play_prompt=play_source_single._to_generated(),#pylint:disable=protected-access
             interrupt_call_media_operation=interrupt_call_media_operation,
             operation_context=operation_context,
             recognize_options=options,
