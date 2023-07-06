@@ -333,7 +333,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace_async
     async def play_media(
         self,
-        play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource',
+                           List['FileSource', 'TextSource', 'SsmlSource']],
         play_to: List['CommunicationIdentifier'],
         *,
         loop: bool = False,
@@ -344,8 +345,11 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         :param play_source: A PlaySource representing the source to play.
         :type play_source: ~azure.communication.callautomation.FileSource or
-        ~azure.communication.callautomation.TextSource or ~azure.communication.callautomation.SsmlSource
-        :param play_to: The targets to play media to.
+         ~azure.communication.callautomation.TextSource or
+         ~azure.communication.callautomation.SsmlSource or
+         list[~azure.communication.callautomation.FileSource or
+          ~azure.communication.callautomation.TextSource or
+          ~azure.communication.callautomation.SsmlSource]
         :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
         :keyword loop: if the media should be repeated until cancelled.
         :paramtype loop: bool
@@ -368,7 +372,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace_async
     async def play_media_to_all(
         self,
-        play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource',
+                           List['FileSource', 'TextSource', 'SsmlSource']],
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
@@ -378,7 +383,11 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         :param play_source: A PlaySource representing the source to play.
         :type play_source: ~azure.communication.callautomation.FileSource or
-        ~azure.communication.callautomation.TextSource or ~azure.communication.callautomation.SsmlSource
+         ~azure.communication.callautomation.TextSource or
+         ~azure.communication.callautomation.SsmlSource or
+         list[~azure.communication.callautomation.FileSource or
+          ~azure.communication.callautomation.TextSource or
+          ~azure.communication.callautomation.SsmlSource]
         :keyword loop: if the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
@@ -399,7 +408,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         target_participant: 'CommunicationIdentifier',
         *,
         initial_silence_timeout: Optional[int] = None,
-        play_prompt: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None,
+        play_prompt: Optional[Union['FileSource', 'TextSource', 'SsmlSource',
+                           List['FileSource', 'TextSource', 'SsmlSource']]] = None,
         interrupt_call_media_operation: bool = False,
         operation_context: Optional[str] = None,
         interrupt_prompt: bool = False,
@@ -420,7 +430,11 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype initial_silence_timeout: int
         :keyword play_prompt: The source of the audio to be played for recognition.
         :paramtype play_prompt: ~azure.communication.callautomation.FileSource or
-        ~azure.communication.callautomation.TextSource or ~azure.communication.callautomation.SsmlSource
+         ~azure.communication.callautomation.TextSource or
+         ~azure.communication.callautomation.SsmlSource or
+         list[~azure.communication.callautomation.FileSource or
+          ~azure.communication.callautomation.TextSource or
+          ~azure.communication.callautomation.SsmlSource]
         :keyword interrupt_call_media_operation:
          If set recognize can barge into other existing queued-up/currently-processing requests.
         :paramtype interrupt_call_media_operation: bool
