@@ -9,7 +9,7 @@
 
 ### Breaking Changes
 
-- In _opertions.py, under the list_attached definition, the `skip_token` parameter was removed list definitions in favor of placing it within `nextLink`. 
+- In _operations.py, under the list_attached definition, the `skip_token` parameter was removed list definitions in favor of placing it within `nextLink`. 
 
 ### Bugs Fixed
 
