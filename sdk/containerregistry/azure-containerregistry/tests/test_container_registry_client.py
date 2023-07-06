@@ -926,7 +926,7 @@ class TestContainerRegistryClientUnitTests:
         assert x == " CRaZY DaTa !%$@&@34529875{)<>}"
         assert x.name == "CRAZYDATA!%$@&@34529875{)<>}"
         assert x.value == " CRaZY DaTa !%$@&@34529875{)<>}"
-        assert repr(x) == "<ArtifactArchitecture.CRAZYDATA!%$@&@34529875: ' CRaZY DaTa !%$@&@34529875{)<>'>"
+        assert repr(x) == "<ArtifactArchitecture.CRAZYDATA!%$@&@34529875{)<>}: ' CRaZY DaTa !%$@&@34529875{)<>}'>"
 
         # Test formatting characters
         x = ArtifactArchitecture._extended("'{}'")
