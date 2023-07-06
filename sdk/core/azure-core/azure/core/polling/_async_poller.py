@@ -91,7 +91,7 @@ async def async_poller(
     :type deserialization_callback: callable or msrest.serialization.Model
     :param polling_method: The polling strategy to adopt
     :type polling_method: ~azure.core.polling.PollingMethod
-    :returns: The final resource at the end of the polling.
+    :return: The final resource at the end of the polling.
     :rtype: any or None
     """
     poller = AsyncLROPoller(client, initial_response, deserialization_callback, polling_method)
