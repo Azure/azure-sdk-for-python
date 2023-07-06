@@ -1171,3 +1171,23 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                 with pytest.raises(ServiceBusError):
                     message = ServiceBusMessage("Handler message")
                     await sender.send_messages(message)
+
+    @pytest.mark.asyncio
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_async_session_by_session_client_conn_str_receive_handler_with_no_session(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+        if uamqp_transport==True:
+            pytest.skip("This test is for pyamqp only")
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
+            
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE_SESSION, max_wait_time=10)
+            start_time = time.time()
+            with pytest.raises(OperationTimeoutError):
+                await receiver._open_with_retry()
+            assert time.time() - start_time < 65 # Default service timeout value is 65 seconds
