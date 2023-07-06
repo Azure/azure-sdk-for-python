@@ -950,7 +950,7 @@ class TestContainerRegistryClientUnitTests:
         assert repr(x) == "<ArtifactArchitecture.MRO: 'mro'>"
 
         # Test non-string
-        assert ArtifactArchitecture._extended(42) == "42"
+        x = ArtifactArchitecture._extended(42)
         assert x == "42"
         assert x.name == "42"
         assert x.value == "42"
@@ -964,7 +964,7 @@ class TestContainerRegistryClientUnitTests:
         assert repr(x) == f"<ArtifactArchitecture.{'A' * 10000}: '{'a' * 10000}'>"
 
         # Test non-ascii
-        assert ArtifactArchitecture._extended("こんにちは") == "こんにちは"
+        x = ArtifactArchitecture._extended("こんにちは")
         assert x == "こんにちは"
         assert x.name == "こんにちは"
         assert x.value == "こんにちは"
