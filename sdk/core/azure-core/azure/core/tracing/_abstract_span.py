@@ -16,15 +16,11 @@ from typing import (
     ContextManager,
     Dict,
 )
+from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpResponse
+from azure.core.rest import HttpResponse as RestHttpResponse, AsyncHttpResponse as AsyncRestHttpResponse
+HttpResponseType = Union[HttpResponse, AsyncHttpResponse, RestHttpResponse, AsyncRestHttpResponse]
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport import (
-        HttpRequest,
-        HttpResponse,
-        AsyncHttpResponse,
-    )
-
-    HttpResponseType = Union[HttpResponse, AsyncHttpResponse]
     AttributeValue = Union[
         str,
         bool,
@@ -133,7 +129,7 @@ class AbstractSpan(Protocol):
         :type value: Union[str, int]
         """
 
-    def set_http_attributes(self, request: "HttpRequest", response: Optional["HttpResponseType"] = None) -> None:
+    def set_http_attributes(self, request: "HttpRequest", response: Optional[HttpResponseType] = None) -> None:
         """
         Add correct attributes for a http client span.
 

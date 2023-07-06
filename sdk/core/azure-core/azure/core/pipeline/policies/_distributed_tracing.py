@@ -27,7 +27,7 @@
 import logging
 import sys
 import urllib
-from typing import TYPE_CHECKING, Optional, Tuple, TypeVar
+from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -119,7 +119,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
             return
 
         span: "AbstractSpan" = request.context[self.TRACING_CONTEXT]
-        http_request: HttpRequest = request.http_request
+        http_request: Union[HttpRequest, RestHttpRequest] = request.http_request
         if span is not None:
             span.set_http_attributes(http_request, response=response)
             request_id = http_request.headers.get(self._REQUEST_ID)
