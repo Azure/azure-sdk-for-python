@@ -90,7 +90,7 @@ def build_get_schema_request(args: Iterable, kwargs: Any) -> HttpRequest:
             name = kwargs.pop("name")
             version = kwargs.pop("version")
         except KeyError:
-            raise TypeError(
+            raise TypeError(    # pylint:disable=raise-missing-from
                 """Missing required argument(s). Specify either `schema_id` """
                 """or `group_name`, `name`, `version."""
             )
