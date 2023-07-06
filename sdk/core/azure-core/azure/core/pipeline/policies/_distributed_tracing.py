@@ -29,6 +29,7 @@ import sys
 import urllib
 from typing import TYPE_CHECKING, Optional, Union, Tuple, TypeVar
 
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind
@@ -43,10 +44,7 @@ if TYPE_CHECKING:
     from azure.core.tracing._abstract_span import (
         AbstractSpan,
     )
-    from azure.core.pipeline import (
-        PipelineRequest,
-        PipelineResponse,
-    )
+
 
 HTTPRequestType = TypeVar("HTTPRequestType")
 HTTPResponseType = TypeVar("HTTPResponseType")
