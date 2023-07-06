@@ -198,7 +198,7 @@ class LROPoller(Generic[PollingReturnType_co]):
     def polling_method(self) -> PollingMethod[PollingReturnType_co]:
         """Return the polling method associated to this poller.
 
-        :returns: The polling method
+        :return: The polling method
         :rtype: ~azure.core.polling.PollingMethod
         """
         return self._polling_method
