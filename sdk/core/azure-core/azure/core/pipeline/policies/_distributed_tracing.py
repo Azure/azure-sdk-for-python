@@ -27,7 +27,7 @@
 import logging
 import sys
 import urllib
-from typing import TYPE_CHECKING, Optional, Union, Tuple
+from typing import TYPE_CHECKING, Optional, Union, Tuple, TypeVar
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.settings import settings
@@ -48,7 +48,8 @@ if TYPE_CHECKING:
         PipelineResponse,
     )
 
-    HttpResponseType = Union[HttpResponse, AsyncHttpResponse]
+HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPResponseType = TypeVar("HTTPResponseType")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -84,7 +85,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         self._network_span_namer = kwargs.get("network_span_namer", _default_network_span_namer)
         self._tracing_attributes = kwargs.get("tracing_attributes", {})
 
-    def on_request(self, request: "PipelineRequest") -> None:
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         ctxt = request.context.options
         try:
             span_impl_type = settings.tracing_implementation()
@@ -108,8 +109,8 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
 
     def end_span(
         self,
-        request: "PipelineRequest",
-        response: Optional["HttpResponseType"] = None,
+        request: PipelineRequest[HTTPRequestType],
+        response: Optional[HTTPResponseType] = None,
         exc_info: Optional[Tuple] = None,
     ) -> None:
         """Ends the span that is tracing the network and updates its status.
@@ -138,8 +139,10 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
             else:
                 span.finish()
 
-    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
+    def on_response(
+        self, request: PipelineRequest[HTTPRequestType], response: PipelineResponse[HTTPRequestType, HTTPResponseType]
+    ) -> None:
         self.end_span(request, response=response.http_response)
 
-    def on_exception(self, request: "PipelineRequest") -> None:
+    def on_exception(self, request: PipelineRequest[HTTPRequestType]) -> None:
         self.end_span(request, exc_info=sys.exc_info())

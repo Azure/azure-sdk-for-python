@@ -26,7 +26,7 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
-from typing import Optional
+from typing import Optional, TypeVar
 import logging
 from urllib.parse import urlparse
 
@@ -36,6 +36,8 @@ from azure.core.pipeline import PipelineResponse, PipelineRequest
 from ._base import HTTPPolicy, RequestHistory
 from ._utils import get_domain
 
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -164,7 +166,7 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
             :caption: Configuring a redirect policy.
     """
 
-    def send(self, request: PipelineRequest) -> PipelineResponse:
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Sends the PipelineRequest object to the next policy.
         Uses redirect settings to send request to redirect endpoint if necessary.
 

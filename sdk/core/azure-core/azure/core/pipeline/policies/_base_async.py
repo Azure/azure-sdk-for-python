@@ -33,24 +33,24 @@ if TYPE_CHECKING:
     from ..transport._base_async import AsyncHttpTransport
 
 
-AsyncHTTPResponseTypeVar = TypeVar("AsyncHTTPResponseTypeVar")
-HTTPResponseTypeVar = TypeVar("HTTPResponseTypeVar")
-HTTPRequestTypeVar = TypeVar("HTTPRequestTypeVar")
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 
-class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestTypeVar, AsyncHTTPResponseTypeVar]):
+class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
     """An async HTTP policy ABC.
 
     Use with an asynchronous pipeline.
     """
 
-    next: "AsyncHTTPPolicy[HTTPRequestTypeVar, AsyncHTTPResponseTypeVar]"
+    next: "AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]"
     """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
 
     @abc.abstractmethod
     async def send(
-        self, request: PipelineRequest[HTTPRequestTypeVar]
-    ) -> PipelineResponse[HTTPRequestTypeVar, AsyncHTTPResponseTypeVar]:
+        self, request: PipelineRequest[HTTPRequestType]
+    ) -> PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]:
         """Abstract send method for a asynchronous pipeline. Mutates the request.
 
         Context content is dependent on the HttpTransport.

@@ -23,11 +23,13 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import List, Optional, Any, TYPE_CHECKING
+from typing import List, Optional, Any, TYPE_CHECKING, TypeVar
 from ._base import SansIOHTTPPolicy
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest
+
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 
 class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
@@ -58,7 +60,7 @@ class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
             else blocked_redirect_headers
         )
 
-    def on_request(self, request: "PipelineRequest") -> None:
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """This is executed before sending the request to the next policy.
 
         :param request: The PipelineRequest object.

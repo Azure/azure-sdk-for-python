@@ -26,8 +26,10 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
+from typing import TypeVar
 import logging
 import time
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.exceptions import (
     AzureError,
     ClientAuthenticationError,
@@ -35,6 +37,9 @@ from azure.core.exceptions import (
 )
 from ._base_async import AsyncHTTPPolicy
 from ._retry import RetryPolicyBase
+
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -123,7 +128,9 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
                 return
         await self._sleep_backoff(settings, transport)
 
-    async def send(self, request):
+    async def send(
+        self, request: PipelineRequest[HTTPRequestType]
+    ) -> PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]:
         """Uses the configured retry policy to send the request to the next policy in the pipeline.
 
         :param request: The PipelineRequest object

@@ -23,11 +23,12 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import TypeVar
 from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
 from enum import Enum
-from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline import PipelineResponse, PipelineRequest
 from azure.core.exceptions import (
     AzureError,
     ClientAuthenticationError,
@@ -40,6 +41,9 @@ from azure.core.exceptions import (
 from ._base import HTTPPolicy, RequestHistory
 from . import _utils
 from ..._enum_meta import CaseInsensitiveEnumMeta
+
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -442,7 +446,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
                 return
         self._sleep_backoff(settings, transport)
 
-    def send(self, request):
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Sends the PipelineRequest object to the next policy. Uses retry settings if necessary.
 
         :param request: The PipelineRequest object

@@ -20,7 +20,8 @@ if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest, PipelineResponse
     from azure.core.pipeline.policies._universal import HTTPRequestType
 
-HTTPResponseTypeVar = TypeVar("HTTPResponseTypeVar")
+HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPResponseType = TypeVar("HTTPResponseType")
 
 
 # pylint:disable=too-few-public-methods
@@ -39,7 +40,7 @@ class _BearerTokenCredentialPolicyBase:
         self._token: Optional["AccessToken"] = None
 
     @staticmethod
-    def _enforce_https(request: "PipelineRequest") -> None:
+    def _enforce_https(request: PipelineRequest[HTTPRequestType]) -> None:
         # move 'enforce_https' from options to context so it persists
         # across retries but isn't passed to a transport implementation
         option = request.context.options.pop("enforce_https", None)
@@ -77,7 +78,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
     :raises: :class:`~azure.core.exceptions.ServiceRequestError`
     """
 
-    def on_request(self, request: "PipelineRequest") -> None:
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """Called before the policy sends a request.
 
         The base implementation authorizes the request with a bearer token.
@@ -90,7 +91,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
             self._token = self._credential.get_token(*self._scopes)
         self._update_headers(request.http_request.headers, self._token.token)
 
-    def authorize_request(self, request: "PipelineRequest", *scopes: str, **kwargs) -> None:
+    def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs) -> None:
         """Acquire a token from the credential and authorize the request with it.
 
         Keyword arguments are passed to the credential's get_token method. The token will be cached and used to
@@ -102,7 +103,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         self._token = self._credential.get_token(*scopes, **kwargs)
         self._update_headers(request.http_request.headers, self._token.token)
 
-    def send(self, request: "PipelineRequest") -> "PipelineResponse":
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Authorize request with a bearer token and send it to the next policy
 
         :param request: The pipeline request object
@@ -136,7 +137,9 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
 
         return response
 
-    def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+    def on_challenge(
+        self, request: PipelineRequest[HTTPRequestType], response: PipelineResponse[HTTPRequestType, HTTPResponseType]
+    ) -> bool:
         """Authorize request according to an authentication challenge
 
         This method is called when the resource provider responds 401 with a WWW-Authenticate header.
@@ -149,7 +152,9 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         # pylint:disable=unused-argument
         return False
 
-    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
+    def on_response(
+        self, request: PipelineRequest[HTTPRequestType], response: PipelineResponse[HTTPRequestType, HTTPResponseType]
+    ) -> None:
         """Executed after the request comes back from the next policy.
 
         :param request: Request to be modified after returning from the policy.
@@ -158,7 +163,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         :type response: ~azure.core.pipeline.PipelineResponse
         """
 
-    def on_exception(self, request: "PipelineRequest") -> None:
+    def on_exception(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """Executed when an exception is raised while executing the next policy.
 
         This method is executed inside the exception handler.
@@ -170,7 +175,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         return
 
 
-class AzureKeyCredentialPolicy(SansIOHTTPPolicy["HTTPRequestType", HTTPResponseTypeVar]):
+class AzureKeyCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """Adds a key header for the provided credential.
 
     :param credential: The credential used to authenticate requests.
@@ -199,7 +204,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy["HTTPRequestType", HTTPResponseT
         self._name = name
         self._prefix = prefix + " " if prefix else ""
 
-    def on_request(self, request: "PipelineRequest[HTTPRequestType]") -> None:
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         request.http_request.headers[self._name] = f"{self._prefix}{self._credential.key}"
 
 
@@ -217,7 +222,7 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy):
             raise ValueError("credential can not be None")
         self._credential = credential
 
-    def on_request(self, request):
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         url = request.http_request.url
         query = request.http_request.query
         signature = self._credential.signature

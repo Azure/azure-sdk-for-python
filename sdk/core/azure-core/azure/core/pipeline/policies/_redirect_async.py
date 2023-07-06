@@ -23,11 +23,15 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import TypeVar
 from azure.core.exceptions import TooManyRedirectsError
 from azure.core.pipeline import PipelineResponse, PipelineRequest
 from . import AsyncHTTPPolicy
 from ._redirect import RedirectPolicyBase, domain_changed
 from ._utils import get_domain
+
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 
 class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy):
@@ -48,7 +52,9 @@ class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy):
             :caption: Configuring an async redirect policy.
     """
 
-    async def send(self, request: PipelineRequest) -> PipelineResponse:
+    async def send(
+        self, request: PipelineRequest[HTTPRequestType]
+    ) -> PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]:
         """Sends the PipelineRequest object to the next policy.
         Uses redirect settings to send the request to redirect endpoint if necessary.
 

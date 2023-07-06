@@ -23,8 +23,12 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import TypeVar
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from ._base import SansIOHTTPPolicy
+
+HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPResponseType = TypeVar("HTTPResponseType")
 
 
 class CustomHookPolicy(SansIOHTTPPolicy):
@@ -39,7 +43,7 @@ class CustomHookPolicy(SansIOHTTPPolicy):
         self._request_callback = kwargs.get("raw_request_hook")
         self._response_callback = kwargs.get("raw_response_hook")
 
-    def on_request(self, request: PipelineRequest) -> None:
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """This is executed before sending the request to the next policy.
 
         :param request: The PipelineRequest object.
@@ -56,7 +60,9 @@ class CustomHookPolicy(SansIOHTTPPolicy):
         if response_callback:
             request.context["raw_response_hook"] = response_callback
 
-    def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:
+    def on_response(
+        self, request: PipelineRequest[HTTPRequestType], response: PipelineResponse[HTTPRequestType, HTTPResponseType]
+    ) -> None:
         """This is executed after the request comes back from the policy.
 
         :param request: The PipelineRequest object.
