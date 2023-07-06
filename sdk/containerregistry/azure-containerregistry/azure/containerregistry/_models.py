@@ -44,14 +44,20 @@ class EnumBase(str, Enum, metaclass=TypeInsensitiveEnumMeta):
         try:
             return cls(value)
         except ValueError:
-            if value in [None, ""]:
-                return None
-            value = str(value)
-            name = "".join(c for c in value.upper() if c.isalnum()).rstrip()
-            extended_values = {m.name: m.value for m in cls}
-            extended_values[name] = value
-            ExtendedEnum = EnumBase(cls.__name__, extended_values)
-            return ExtendedEnum(value)
+            try:
+                if value in [None, ""] or value.isspace():
+                    return None
+                value = str(value)
+                enum_members = {m.name: m.value for m in cls}
+                # Enums will accept almost any name, so we'll just uppercase it and remove whitespace.
+                extended_name = "".join(value.upper().split())
+                enum_members[extended_name] = value
+                ExtendedEnum = EnumBase(cls.__name__, enum_members)
+                return ExtendedEnum(value)
+            except:  # pylint:disable=bare-except
+                # In the case that something went wrong, we don't want to raise in case it breaks
+                # deserialization, so just fallback to returning the initial value.
+                return value
 
 
 class ArtifactArchitecture(EnumBase):
@@ -95,7 +101,6 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     :ivar bool can_read: Read Permissions for an artifact.
     :ivar bool can_list: List Permissions for an artifact.
     :ivar architecture: CPU Architecture of an artifact.
-        Note: any value not listed in enum ArtifactArchitecture will be string type.
     :vartype architecture: Optional[Union[str, ~azure.containerregistry.ArtifactArchitecture]]
     :ivar created_on: Time and date an artifact was created.
     :vartype created_on: Optional[~datetime.datetime]
@@ -103,7 +108,6 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     :ivar last_updated_on: Time and date an artifact was last updated.
     :vartype last_updated_on: Optional[~datetime.datetime]
     :ivar operating_system: Operating system for the artifact.
-        Note: any value not listed in enum ArtifactOperatingSystem will be string type.
     :vartype operating_system: Optional[Union[str, ~azure.containerregistry.ArtifactOperatingSystem]]
     :ivar Optional[str] repository_name: Repository name the artifact belongs to.
     :ivar Optional[int] size_in_bytes: Size of the artifact.
