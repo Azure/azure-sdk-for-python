@@ -49,6 +49,8 @@ from .._common.constants import (
     MGMT_REQUEST_DEAD_LETTER_REASON,
     MGMT_REQUEST_DEAD_LETTER_ERROR_DESCRIPTION,
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
+    OPERATION_TIMEOUT,
+    NEXT_AVAILABLE_SESSION
 )
 from .._common import mgmt_handlers
 from .._common.utils import utc_from_timestamp
@@ -341,6 +343,17 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         return cls(**constructor_args)
 
     def _create_handler(self, auth: Union["pyamqp_JWTTokenAuthAsync", "uamqp_JWTTokenAuthAsync"]) -> None:
+        link_properties = {CONSUMER_IDENTIFIER: self._name}
+        if self._session._session_id == NEXT_AVAILABLE_SESSION:
+            timeout_in_ms = self._max_wait_time * 1000 if self._max_wait_time else 0
+            # open_receive_link_base_jitter_in_ms = 100
+            # open_recieve_link_buffer_in_ms = 20
+            # open_receive_link_buffer_threshold_in_ms = 1000
+            # jitter_base_in_ms = min(timeout_in_ms * 0.01, open_receive_link_base_jitter_in_ms)
+            # timeout_in_ms = math.floor(timeout_in_ms - jitter_base_in_ms * random.random())
+            # if timeout_in_ms >= open_receive_link_buffer_threshold_in_ms:
+            #     timeout_in_ms -= open_recieve_link_buffer_in_ms
+            link_properties[OPERATION_TIMEOUT] = timeout_in_ms - 100
 
         self._handler = self._amqp_transport.create_receive_client_async(
             receiver=self,
@@ -362,7 +375,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             if self._prefetch_count != 0
             else 5,
             shutdown_after_timeout=False,
-            link_properties = {CONSUMER_IDENTIFIER:self._name}
+            link_properties = link_properties
         )
         # When prefetch is 0 and receive mode is PEEK_LOCK, release messages when they're received.
         # This will stop messages from expiring in the buffer and incrementing delivery count of a message.
