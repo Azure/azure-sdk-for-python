@@ -17,38 +17,6 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ConfigurationSettingFilter(_serialization.Model):
-    """Enables filtering of key-values.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar key: Filters key-values by their key field. Required.
-    :vartype key: str
-    :ivar label: Filters key-values by their label field.
-    :vartype label: str
-    """
-
-    _validation = {
-        "key": {"required": True},
-    }
-
-    _attribute_map = {
-        "key": {"key": "key", "type": "str"},
-        "label": {"key": "label", "type": "str"},
-    }
-
-    def __init__(self, *, key: str, label: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword key: Filters key-values by their key field. Required.
-        :paramtype key: str
-        :keyword label: Filters key-values by their label field.
-        :paramtype label: str
-        """
-        super().__init__(**kwargs)
-        self.key = key
-        self.label = label
-
-
 class Error(_serialization.Model):
     """Azure App Configuration error object.
 
@@ -312,6 +280,38 @@ class KeyValue(_serialization.Model):
         self.etag = etag
 
 
+class KeyValueFilter(_serialization.Model):
+    """Enables filtering of key-values.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar key: Filters key-values by their key field. Required.
+    :vartype key: str
+    :ivar label: Filters key-values by their label field.
+    :vartype label: str
+    """
+
+    _validation = {
+        "key": {"required": True},
+    }
+
+    _attribute_map = {
+        "key": {"key": "key", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+    }
+
+    def __init__(self, *, key: str, label: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: Filters key-values by their key field. Required.
+        :paramtype key: str
+        :keyword label: Filters key-values by their label field.
+        :paramtype label: str
+        """
+        super().__init__(**kwargs)
+        self.key = key
+        self.label = label
+
+
 class KeyValueListResult(_serialization.Model):
     """The result of a list request.
 
@@ -455,7 +455,7 @@ class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attri
     :vartype status: str or ~azure.appconfiguration.models.SnapshotStatus
     :ivar filters: A list of filters used to filter the key-values included in the snapshot.
      Required.
-    :vartype filters: list[~azure.appconfiguration.models.ConfigurationSettingFilter]
+    :vartype filters: list[~azure.appconfiguration.models.KeyValueFilter]
     :ivar composition_type: The composition type describes how the key-values within the snapshot
      are composed. The 'key' composition type ensures there are no two key-values containing the
      same key. The 'key_label' composition type ensures there are no two key-values containing the
@@ -494,7 +494,7 @@ class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attri
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
         "status": {"key": "status", "type": "str"},
-        "filters": {"key": "filters", "type": "[ConfigurationSettingFilter]"},
+        "filters": {"key": "filters", "type": "[KeyValueFilter]"},
         "composition_type": {"key": "composition_type", "type": "str"},
         "created": {"key": "created", "type": "iso-8601"},
         "expires": {"key": "expires", "type": "iso-8601"},
@@ -508,7 +508,7 @@ class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attri
     def __init__(
         self,
         *,
-        filters: List["_models.ConfigurationSettingFilter"],
+        filters: List["_models.KeyValueFilter"],
         composition_type: Optional[Union[str, "_models.CompositionType"]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -517,7 +517,7 @@ class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attri
         """
         :keyword filters: A list of filters used to filter the key-values included in the snapshot.
          Required.
-        :paramtype filters: list[~azure.appconfiguration.models.ConfigurationSettingFilter]
+        :paramtype filters: list[~azure.appconfiguration.models.KeyValueFilter]
         :keyword composition_type: The composition type describes how the key-values within the
          snapshot are composed. The 'key' composition type ensures there are no two key-values
          containing the same key. The 'key_label' composition type ensures there are no two key-values
