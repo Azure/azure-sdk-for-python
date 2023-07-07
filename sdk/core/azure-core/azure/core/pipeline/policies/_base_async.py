@@ -25,15 +25,15 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import Generic, TypeVar
 
-from .. import PipelineRequest, PipelineResponse
 from azure.core.pipeline.transport import (
     AsyncHttpResponse as LegacyAsyncHttpResponse,
     HttpRequest as LegacyHttpRequest,
     HttpResponse as LegacyHttpResponse,
 )
 from azure.core.rest import AsyncHttpResponse, HttpRequest, HttpResponse
+from .. import PipelineRequest, PipelineResponse
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, LegacyAsyncHttpResponse)
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
