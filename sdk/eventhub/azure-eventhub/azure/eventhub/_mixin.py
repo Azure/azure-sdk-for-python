@@ -34,8 +34,8 @@ class DictMixin(object):
         """Compare objects by comparing all attributes.
 
         :param any other: Any object
-        :rtype: bool
         :return: True if objects are equal, False otherwise.
+        :rtype: bool
         """
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
@@ -46,8 +46,8 @@ class DictMixin(object):
         """Compare objects by comparing all attributes.
 
         :param any other: Any object
-        :rtype: bool
         :return: True if objects are not equal, False otherwise.
+        :rtype: bool
         """
         return not self.__eq__(other)
 

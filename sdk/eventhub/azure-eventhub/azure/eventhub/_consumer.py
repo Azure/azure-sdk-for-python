@@ -192,8 +192,8 @@ class EventHubConsumer(
     def _open(self) -> bool:
         """Open the EventHubConsumer/EventHubProducer using the supplied connection.
 
-        :rtype: bool
         :return: Whether the ReceiveClient is open
+        :rtype: bool
         """
         # pylint: disable=protected-access
         if not self.running:

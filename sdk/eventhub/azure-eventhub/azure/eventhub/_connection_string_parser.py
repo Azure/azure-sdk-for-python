@@ -78,8 +78,8 @@ def parse_connection_string(conn_str):
 
     :param conn_str: The connection string that has to be parsed.
     :type conn_str: str
-    :rtype: ~azure.eventhub.EventHubConnectionStringProperties
     :return: A properties bag containing the parsed connection string.
+    :rtype: ~azure.eventhub.EventHubConnectionStringProperties
     """
     fully_qualified_namespace, policy, key, entity, signature = _parse_conn_str(
         conn_str, check_case=True

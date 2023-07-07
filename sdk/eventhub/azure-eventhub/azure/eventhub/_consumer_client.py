@@ -550,8 +550,8 @@ class EventHubConsumerClient(
             - `created_at` (UTC datetime.datetime)
             - `partition_ids` (list[str])
 
-        :rtype: dict[str, any]
         :return: A dictionary containing information about the Event Hub.
+        :rtype: dict[str, any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return super(EventHubConsumerClient, self)._get_eventhub_properties()
@@ -560,8 +560,8 @@ class EventHubConsumerClient(
         # type:() -> List[str]
         """Get partition IDs of the Event Hub.
 
-        :rtype: list[str]
         :return: A list of partition IDs.
+        :rtype: list[str]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return super(EventHubConsumerClient, self)._get_partition_ids()
@@ -582,8 +582,8 @@ class EventHubConsumerClient(
 
         :param partition_id: The target partition ID.
         :type partition_id: str
-        :rtype: dict[str, any]
         :return: A dictionary containing partition properties.
+        :rtype: dict[str, any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return super(EventHubConsumerClient, self)._get_partition_properties(
