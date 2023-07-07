@@ -580,7 +580,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         link_properties = kwargs.pop("link_properties")
 
         # If we have specified a client-side timeout, assure that it is encoded as an uint
-        if link_properties[OPERATION_TIMEOUT]:
+        if link_properties.get(OPERATION_TIMEOUT, None):
             link_properties[OPERATION_TIMEOUT] = amqp_uint_value(link_properties[OPERATION_TIMEOUT])
 
         kwargs.update(link_properties=link_properties)
