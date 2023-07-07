@@ -35,9 +35,8 @@ import xml.etree.ElementTree as ET
 import types
 import re
 import uuid
-from typing import IO, cast, Union, Optional, AnyStr, Dict, MutableMapping, Any, Set, Mapping, TypeVar
+from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Set, Mapping, TypeVar
 import urllib.parse
-from typing_extensions import Protocol
 
 from azure.core import __version__ as azcore_version
 from azure.core.exceptions import DecodeError
@@ -47,10 +46,16 @@ from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, Ht
 from azure.core.rest import HttpResponse, HttpRequest
 from ._base import SansIOHTTPPolicy
 
+from ..transport import HttpRequest as LegacyHttpRequest
+from ..transport._base import _HttpResponseBase as LegacySansIOHttpResponse
+from ...rest import HttpRequest
+from ...rest._rest_py3 import _HttpResponseBase as SansIOHttpResponse
+
 _LOGGER = logging.getLogger(__name__)
 
-HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
-HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
+HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
+HTTPResponseType = Union[LegacySansIOHttpResponse, SansIOHttpResponse]
+PipelineResponseType = PipelineResponse[HTTPRequestType, HTTPResponseType]
 
 
 class HeadersPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
