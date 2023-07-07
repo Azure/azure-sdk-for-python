@@ -250,7 +250,8 @@ class OperationResourcePolling(LongRunningOperation):
             # Check if we can extract status from initial response, if present
             try:
                 return self.get_status(pipeline_response)
-            except BadResponse:
+            # Wide catch, it may not even be JSON at all, deserialization is lenient
+            except Exception:  # pylint: disable=broad-except
                 pass
             return "InProgress"
         raise OperationFailed("Operation failed or canceled")
