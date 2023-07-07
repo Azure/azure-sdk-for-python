@@ -42,8 +42,6 @@ from azure.core import __version__ as azcore_version
 from azure.core.exceptions import DecodeError
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
-from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
-from azure.core.rest import HttpResponse, HttpRequest
 from ._base import SansIOHTTPPolicy
 
 from ..transport import HttpRequest as LegacyHttpRequest

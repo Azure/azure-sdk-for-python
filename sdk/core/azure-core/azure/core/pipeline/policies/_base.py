@@ -29,7 +29,6 @@ import copy
 import logging
 
 from typing import (
-    TYPE_CHECKING,
     Generic,
     TypeVar,
     Union,
@@ -40,15 +39,9 @@ from typing import (
 )
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
-from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
-from azure.core.rest import HttpResponse, HttpRequest
 
-if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpTransport
-
-
-HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
-HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
 

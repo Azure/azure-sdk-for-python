@@ -27,17 +27,11 @@ import abc
 
 from typing import Generic, TypeVar
 
-from azure.core.pipeline.transport import (
-    AsyncHttpResponse as LegacyAsyncHttpResponse,
-    HttpRequest as LegacyHttpRequest,
-    HttpResponse as LegacyHttpResponse,
-)
-from azure.core.rest import AsyncHttpResponse, HttpRequest, HttpResponse
 from .. import PipelineRequest, PipelineResponse
 
-AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, LegacyAsyncHttpResponse)
-HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
-HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 
 class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
