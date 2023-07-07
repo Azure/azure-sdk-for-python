@@ -5,8 +5,6 @@
 # pylint:disable=too-many-lines
 import threading
 import time
-import math
-import random
 import logging
 import functools
 import uuid
@@ -350,7 +348,7 @@ class ServiceBusReceiver(
 
     def _create_handler(self, auth: Union["pyamqp_JWTTokenAuth", "uamqp_JWTTokenAuth"]) -> None:
         link_properties = {CONSUMER_IDENTIFIER: self._name}
-        if self._session._session_id == NEXT_AVAILABLE_SESSION:
+        if self._session_id == NEXT_AVAILABLE_SESSION:
             timeout_in_ms = self._max_wait_time * 1000 if self._max_wait_time else 0
             # open_receive_link_base_jitter_in_ms = 100
             # open_recieve_link_buffer_in_ms = 20
