@@ -146,7 +146,7 @@ def build_received_shares_delete_request(received_share_id: str, **kwargs: Any) 
 
 
 def build_received_shares_list_attached_request(
-    *, reference_name: str, filter: Optional[str] = None, orderby: Optional[str] = None, **kwargs: Any
+    *, reference_name: str, filter: Optional[str] = None, order_by: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -164,8 +164,8 @@ def build_received_shares_list_attached_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if filter is not None:
         _params["filter"] = _SERIALIZER.query("filter", filter, "str")
-    if orderby is not None:
-        _params["orderby"] = _SERIALIZER.query("orderby", orderby, "str")
+    if order_by is not None:
+        _params["orderby"] = _SERIALIZER.query("order_by", order_by, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -174,7 +174,7 @@ def build_received_shares_list_attached_request(
 
 
 def build_received_shares_list_detached_request(
-    *, filter: Optional[str] = None, orderby: Optional[str] = None, **kwargs: Any
+    *, filter: Optional[str] = None, order_by: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -191,8 +191,8 @@ def build_received_shares_list_detached_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if filter is not None:
         _params["filter"] = _SERIALIZER.query("filter", filter, "str")
-    if orderby is not None:
-        _params["orderby"] = _SERIALIZER.query("orderby", orderby, "str")
+    if order_by is not None:
+        _params["orderby"] = _SERIALIZER.query("order_by", order_by, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -258,7 +258,7 @@ def build_received_shares_register_tenant_email_registration_request(
 
 
 def build_sent_shares_list_request(
-    *, reference_name: str, filter: Optional[str] = None, orderby: Optional[str] = None, **kwargs: Any
+    *, reference_name: str, filter: Optional[str] = None, order_by: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -276,8 +276,8 @@ def build_sent_shares_list_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if filter is not None:
         _params["filter"] = _SERIALIZER.query("filter", filter, "str")
-    if orderby is not None:
-        _params["orderby"] = _SERIALIZER.query("orderby", orderby, "str")
+    if order_by is not None:
+        _params["orderby"] = _SERIALIZER.query("order_by", order_by, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -385,7 +385,7 @@ def build_sent_shares_delete_request(sent_share_id: str, **kwargs: Any) -> HttpR
 
 
 def build_sent_shares_list_invitations_request(
-    sent_share_id: str, *, filter: Optional[str] = None, orderby: Optional[str] = None, **kwargs: Any
+    sent_share_id: str, *, filter: Optional[str] = None, order_by: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -413,8 +413,8 @@ def build_sent_shares_list_invitations_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if filter is not None:
         _params["filter"] = _SERIALIZER.query("filter", filter, "str")
-    if orderby is not None:
-        _params["orderby"] = _SERIALIZER.query("orderby", orderby, "str")
+    if order_by is not None:
+        _params["orderby"] = _SERIALIZER.query("order_by", order_by, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -594,7 +594,7 @@ def build_sent_shares_notify_user_invitation_request(
 
 
 def build_share_resources_list_request(
-    *, filter: Optional[str] = None, orderby: Optional[str] = None, **kwargs: Any
+    *, filter: Optional[str] = None, order_by: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -611,8 +611,8 @@ def build_share_resources_list_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if filter is not None:
         _params["filter"] = _SERIALIZER.query("filter", filter, "str")
-    if orderby is not None:
-        _params["orderby"] = _SERIALIZER.query("orderby", orderby, "str")
+    if order_by is not None:
+        _params["orderby"] = _SERIALIZER.query("order_by", order_by, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1767,7 +1767,7 @@ class ReceivedSharesOperations:
 
     @distributed_trace
     def list_attached(
-        self, *, reference_name: str, filter: Optional[str] = None, orderby: Optional[str] = None, **kwargs: Any
+        self, *, reference_name: str, filter: Optional[str] = None, order_by: Optional[str] = None, **kwargs: Any
     ) -> Iterable[JSON]:
         """Get a list of attached received shares.
 
@@ -1777,8 +1777,8 @@ class ReceivedSharesOperations:
         :paramtype reference_name: str
         :keyword filter: Filters the results using OData syntax. Default value is None.
         :paramtype filter: str
-        :keyword orderby: Sorts the results using OData syntax. Default value is None.
-        :paramtype orderby: str
+        :keyword order_by: Sorts the results using OData syntax. Default value is None.
+        :paramtype order_by: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1884,7 +1884,7 @@ class ReceivedSharesOperations:
                 request = build_received_shares_list_attached_request(
                     reference_name=reference_name,
                     filter=filter,
-                    orderby=orderby,
+                    order_by=order_by,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1944,7 +1944,7 @@ class ReceivedSharesOperations:
 
     @distributed_trace
     def list_detached(
-        self, *, filter: Optional[str] = None, orderby: Optional[str] = None, **kwargs: Any
+        self, *, filter: Optional[str] = None, order_by: Optional[str] = None, **kwargs: Any
     ) -> Iterable[JSON]:
         """Get a list of detached received shares.
 
@@ -1952,8 +1952,8 @@ class ReceivedSharesOperations:
 
         :keyword filter: Filters the results using OData syntax. Default value is None.
         :paramtype filter: str
-        :keyword orderby: Sorts the results using OData syntax. Default value is None.
-        :paramtype orderby: str
+        :keyword order_by: Sorts the results using OData syntax. Default value is None.
+        :paramtype order_by: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2058,7 +2058,7 @@ class ReceivedSharesOperations:
 
                 request = build_received_shares_list_detached_request(
                     filter=filter,
-                    orderby=orderby,
+                    order_by=order_by,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2478,7 +2478,7 @@ class SentSharesOperations:
 
     @distributed_trace
     def list(
-        self, *, reference_name: str, filter: Optional[str] = None, orderby: Optional[str] = None, **kwargs: Any
+        self, *, reference_name: str, filter: Optional[str] = None, order_by: Optional[str] = None, **kwargs: Any
     ) -> Iterable[JSON]:
         """Get a list of sent shares.
 
@@ -2488,8 +2488,8 @@ class SentSharesOperations:
         :paramtype reference_name: str
         :keyword filter: Filters the results using OData syntax. Default value is None.
         :paramtype filter: str
-        :keyword orderby: Sorts the results using OData syntax. Default value is None.
-        :paramtype orderby: str
+        :keyword order_by: Sorts the results using OData syntax. Default value is None.
+        :paramtype order_by: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2596,7 +2596,7 @@ class SentSharesOperations:
                 request = build_sent_shares_list_request(
                     reference_name=reference_name,
                     filter=filter,
-                    orderby=orderby,
+                    order_by=order_by,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3791,7 +3791,7 @@ class SentSharesOperations:
 
     @distributed_trace
     def list_invitations(
-        self, sent_share_id: str, *, filter: Optional[str] = None, orderby: Optional[str] = None, **kwargs: Any
+        self, sent_share_id: str, *, filter: Optional[str] = None, order_by: Optional[str] = None, **kwargs: Any
     ) -> Iterable[JSON]:
         """List all sent share invitations in a sent share.
 
@@ -3801,8 +3801,8 @@ class SentSharesOperations:
         :type sent_share_id: str
         :keyword filter: Filters the results using OData syntax. Default value is None.
         :paramtype filter: str
-        :keyword orderby: Sorts the results using OData syntax. Default value is None.
-        :paramtype orderby: str
+        :keyword order_by: Sorts the results using OData syntax. Default value is None.
+        :paramtype order_by: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3886,7 +3886,7 @@ class SentSharesOperations:
                 request = build_sent_shares_list_invitations_request(
                     sent_share_id=sent_share_id,
                     filter=filter,
-                    orderby=orderby,
+                    order_by=order_by,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4803,15 +4803,15 @@ class ShareResourcesOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, *, filter: Optional[str] = None, orderby: Optional[str] = None, **kwargs: Any) -> Iterable[JSON]:
+    def list(self, *, filter: Optional[str] = None, order_by: Optional[str] = None, **kwargs: Any) -> Iterable[JSON]:
         """API operation to list ShareResources.
 
         List share resources.
 
         :keyword filter: Filters the results using OData syntax. Default value is None.
         :paramtype filter: str
-        :keyword orderby: Sorts the results using OData syntax. Default value is None.
-        :paramtype orderby: str
+        :keyword order_by: Sorts the results using OData syntax. Default value is None.
+        :paramtype order_by: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4856,7 +4856,7 @@ class ShareResourcesOperations:
 
                 request = build_share_resources_list_request(
                     filter=filter,
-                    orderby=orderby,
+                    order_by=order_by,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
