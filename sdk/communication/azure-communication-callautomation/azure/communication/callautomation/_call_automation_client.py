@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Union, Optional, TYPE_CHECKING, Iterable, Dict
+from typing import List, Union, Optional, TYPE_CHECKING, Iterable, Dict, overload
 from urllib.parse import urlparse
 from azure.core.tracing.decorator import distributed_trace
 from ._version import SDK_MONIKER
@@ -20,7 +20,8 @@ from ._generated.models import (
     RedirectCallRequest,
     RejectCallRequest,
     StartCallRecordingRequest,
-    CustomContext
+    CustomContext,
+    CallLocator
 )
 from ._models import (
     CallConnectionProperties,
@@ -390,11 +391,11 @@ class CallAutomationClient(object):
             repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
-    @distributed_trace
+    @overload
     def start_recording(
         self,
-        call_locator: Union['ServerCallLocator', 'GroupCallLocator'],
         *,
+        server_call_id: str,
         recording_state_callback_url: Optional[str] = None,
         recording_content_type: Optional[Union[str, 'RecordingContent']] = None,
         recording_channel_type: Optional[Union[str, 'RecordingChannel']] = None,
@@ -407,9 +408,7 @@ class CallAutomationClient(object):
     ) -> RecordingProperties:
         """Start recording for a ongoing call. Locate the call with call locator.
 
-        :param call_locator: The call locator to locate ongoing call.
-        :type call_locator: ~azure.communication.callautomation.ServerCallLocator
-         or ~azure.communication.callautomation.GroupCallLocator
+        :keyword str server_call_id: The server call ID to locate ongoing call.
         :keyword recording_state_callback_url: The url to send notifications to.
         :paramtype recording_state_callback_url: str
         :keyword recording_content_type: The content type of call recording.
@@ -440,33 +439,96 @@ class CallAutomationClient(object):
         :rtype: ~azure.communication.callautomation.RecordingProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        channel_affinity_internal = []
+        ...
 
-        if channel_affinity:
-            for channel in channel_affinity:
-                channel_affinity_internal.append(channel._to_generated(# pylint:disable=protected-access
-                    ))
+    @overload
+    def start_recording(
+        self,
+        *,
+        group_call_id: str,
+        recording_state_callback_url: Optional[str] = None,
+        recording_content_type: Optional[Union[str, 'RecordingContent']] = None,
+        recording_channel_type: Optional[Union[str, 'RecordingChannel']] = None,
+        recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
+        audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
+        recording_storage_type: Optional[Union[str, 'RecordingStorage']] = None,
+        channel_affinity: Optional[List['ChannelAffinity']] = None,
+        external_storage_location: Optional[str] = None,
+        **kwargs
+    ) -> RecordingProperties:
+        """Start recording for a ongoing call. Locate the call with call locator.
 
+        :keyword str group_call_id: The group call ID to locate ongoing call.
+        :keyword recording_state_callback_url: The url to send notifications to.
+        :paramtype recording_state_callback_url: str
+        :keyword recording_content_type: The content type of call recording.
+        :paramtype recording_content_type: str or ~azure.communication.callautomation.RecordingContent
+        :keyword recording_channel_type: The channel type of call recording.
+        :paramtype recording_channel_type: str or ~azure.communication.callautomation.RecordingChannel
+        :keyword recording_format_type: The format type of call recording.
+        :paramtype recording_format_type: str or ~azure.communication.callautomation.RecordingFormat
+        :keyword audio_channel_participant_ordering:
+         The sequential order in which audio channels are assigned to participants in the unmixed recording.
+         When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not specified,
+         the audio channel to participant mapping will be automatically assigned based on the order in
+         which participant first audio was detected.
+         Channel to participant mapping details can be found in the metadata of the recording.
+        :paramtype audio_channel_participant_ordering: list[~azure.communication.callautomation.CommunicationIdentifier]
+        :keyword recording_storage_type: Recording storage mode.
+         ``External`` enables bring your own storage.
+        :paramtype recording_storage_type: str
+        :keyword channel_affinity: The channel affinity of call recording
+         When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified,
+         'channel' will be automatically assigned.
+         Channel-Participant mapping details can be found in the metadata of the recording.
+        :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity]
+        :keyword external_storage_location: The location where recording is stored,
+         when RecordingStorageType is set to 'BlobStorage'.
+        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage
+        :return: RecordingProperties
+        :rtype: ~azure.communication.callautomation.RecordingProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @distributed_trace
+    def start_recording(
+        self,
+        *args: Union['ServerCallLocator', 'GroupCallLocator'],
+        **kwargs
+    ) -> RecordingProperties:
+        channel_affinity: Optional[List['ChannelAffinity']] = kwargs.pop("channel_affinity", None) or []
+        channel_affinity_internal = [c._to_generated() for c in channel_affinity]  # pylint:disable=protected-access
+        if args:
+            call_locator=args[0]._to_generated()  # pylint:disable=protected-access
+        else:
+            if "group_call_id" in kwargs:
+                call_locator = CallLocator(group_call_id=kwargs["group_call_id"], kind="groupCallLocator")
+            elif "server_call_id" in kwargs:
+                call_locator = CallLocator(server_call_id=kwargs["server_call_id"], kind="serverCallLocator")
+            else:
+                raise ValueError("Please provide either 'group_call_id' or 'server_call_id'.")
         start_recording_request = StartCallRecordingRequest(
-            call_locator=call_locator._to_generated(# pylint:disable=protected-access
-            ),
-            recording_state_callback_uri = recording_state_callback_url,
-            recording_content_type = recording_content_type,
-            recording_channel_type = recording_channel_type,
-            recording_format_type = recording_format_type,
-            audio_channel_participant_ordering = audio_channel_participant_ordering,
-            recording_storage_type = recording_storage_type,
-            external_storage_location = external_storage_location,
+            call_locator=call_locator,
+            recording_state_callback_uri = kwargs.pop("recording_state_callback_url", None),
+            recording_content_type = kwargs.pop("recording_content_type", None),
+            recording_channel_type = kwargs.pop("recording_channel_type", None),
+            recording_format_type = kwargs.pop("recording_format_type", None),
+            audio_channel_participant_ordering = kwargs.pop("audio_channel_participant_ordering", None),
+            recording_storage_type = kwargs.pop("recording_storage_type", None),
+            external_storage_location = kwargs.pop("external_storage_location", None),
             channel_affinity = channel_affinity_internal,
             repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid()
         )
 
         recording_state_result = self._call_recording_client.start_recording(
-        start_call_recording = start_recording_request, **kwargs)
-
-        return RecordingProperties._from_generated(# pylint:disable=protected-access
-            recording_state_result)
+            start_call_recording=start_recording_request,
+            **kwargs
+        )
+        return RecordingProperties._from_generated(  # pylint:disable=protected-access
+            recording_state_result
+        )
 
     @distributed_trace
     def stop_recording(
