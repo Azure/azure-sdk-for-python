@@ -170,7 +170,7 @@ class AzureAppConfigurationClient:
         :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
-        :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
             :class:`~azure.core.exceptions.ClientAuthenticationError`
 
@@ -464,7 +464,7 @@ class AzureAppConfigurationClient:
         :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
-        :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
             :class:`~azure.core.exceptions.ClientAuthenticationError`
 
@@ -739,7 +739,7 @@ class AzureAppConfigurationClient:
         :keyword str accept_datetime: Filter out ConfigurationSetting created after this datetime
         :keyword list[str] fields: Specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
-        :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSetting]
         """
         if fields:
             fields = ["locked" if x == "read_only" else x for x in fields]
