@@ -742,8 +742,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :param int batch: The number of frames to attempt to read and process before returning. The default value
          is 1, i.e. process frames one-at-a-time. A higher value should only be used when a receiver is established
          and is processing incoming Transfer frames.
-        :rtype: None
-        :return: None
         """
         try:
             raise self._error

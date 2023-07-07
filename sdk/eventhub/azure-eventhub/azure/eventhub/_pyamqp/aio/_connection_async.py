@@ -257,6 +257,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :rtype: Tuple[int, Optional[Tuple[int, NamedTuple]]]
         :returns: A tuple with the incoming channel number, and the frame in the form or a tuple of performative
          descriptor and field values.
+        :rtype: tuple[int, tuple[int, NamedTuple]] or None
         """
         timeout: Optional[Union[int, float]] = None
         if wait is False:

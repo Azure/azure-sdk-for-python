@@ -190,6 +190,7 @@ class AMQPClientAsync(AMQPClientSync):
         :return: Whether or not the client is ready for operation.
         :rtype: bool
         :return: Whether or not the client is ready to start sending and/or receiving messages.
+        :rtype: bool
         """
         return True
 
@@ -316,6 +317,7 @@ class AMQPClientAsync(AMQPClientSync):
         :return: Whether the authentication handshake is complete.
         :rtype: bool
         :return: Whether the authentication handshake is complete.
+        :rtype: bool
         """
         if self._cbs_authenticator and not await self._cbs_authenticator.handle_token():
             await self._connection.listen(wait=self._socket_timeout)
@@ -331,6 +333,7 @@ class AMQPClientAsync(AMQPClientSync):
         :return: Whether the client is ready to process messages.
         :rtype: bool
         :return: Whether the handler is ready.
+        :rtype: bool
         """
         if not await self.auth_complete_async():
             return False
@@ -376,6 +379,7 @@ class AMQPClientAsync(AMQPClientSync):
         :return: The response to the management request.
         :rtype: ~pyamqp.message.Message
         :return: The response message.
+        :rtype: ~pyamqp.message.Message
         """
 
         # The method also takes "status_code_field" and "status_description_field"
@@ -510,6 +514,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         :return: Whether or not the client is ready to start sending messages.
         :rtype: bool
         :return: Whether the client is ready to start receiving messages.
+        :rtype: bool
         """
         # pylint: disable=protected-access
         if not self._link:
@@ -535,6 +540,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         :return: Whether or not the client should remain open for further work.
         :rtype: bool
         :return: Whether the client can remain open for further work.
+        :rtype: bool
         """
         await self._link.update_pending_deliveries()
         await self._connection.listen(wait=self._socket_timeout, **kwargs)
@@ -755,6 +761,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :return: Whether the client can remain open for further work.
         :rtype: bool
         :return: True if client can remain open for further work, False otherwise.
+        :rtype: bool
         """
         try:
             if self._link.current_link_credit == 0:
