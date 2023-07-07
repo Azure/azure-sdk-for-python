@@ -149,7 +149,7 @@ class RequestHistory(Generic[HTTPRequestType, HTTPResponseType]):
         error: Optional[Exception] = None,
         context: Optional[Dict[str, Any]] = None,
     ) -> None:
-        self.http_request = copy.deepcopy(http_request)
-        self.http_response = http_response
-        self.error = error
-        self.context = context
+        self.http_request: HTTPRequestType = copy.deepcopy(http_request)
+        self.http_response: Optional[HTTPResponseType] = http_response
+        self.error: Optional[Exception] = error
+        self.context: Optional[Dict[str, Any]] = context
