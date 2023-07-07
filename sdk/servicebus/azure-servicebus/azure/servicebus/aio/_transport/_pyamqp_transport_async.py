@@ -183,8 +183,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         receive_mode = kwargs.pop("receive_mode")
         link_properties = kwargs.pop("link_properties")
 
-        if receiver._session_id == NEXT_AVAILABLE_SESSION and receiver._max_wait_time:
-            timeout_in_ms = ((receiver._max_wait_time * 1000) - 100)
+        if receiver._session_id == NEXT_AVAILABLE_SESSION and receiver._max_wait_time: # pylint: disable=protected-access
+            timeout_in_ms = ((receiver._max_wait_time * 1000) - 100) # pylint: disable=protected-access
             # open_receive_link_base_jitter_in_ms = 100
             # open_recieve_link_buffer_in_ms = 20
             # open_receive_link_buffer_threshold_in_ms = 1000
