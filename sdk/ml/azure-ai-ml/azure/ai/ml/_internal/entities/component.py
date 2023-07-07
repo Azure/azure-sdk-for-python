@@ -210,6 +210,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         """This property is kept for compatibility with old mldesigner sdk."""
         obj = self._generate_additional_includes_obj()
         from azure.ai.ml._internal.entities._additional_includes import InternalAdditionalIncludes
+
         obj.__class__ = InternalAdditionalIncludes
         return obj
 
