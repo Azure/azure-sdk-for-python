@@ -29,17 +29,10 @@ from contextlib import AbstractAsyncContextManager
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 from ._tools_async import await_result as _await_result
-from .transport import (
-    AsyncHttpTransport,
-    AsyncHttpResponse as LegacyAsyncHttpResponse,
-    HttpRequest as LegacyHttpRequest,
-    HttpResponse as LegacyHttpResponse,
-)
-from azure.core.rest import AsyncHttpResponse, HttpRequest, HttpResponse
+from .transport import AsyncHttpTransport
 
-AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", LegacyAsyncHttpResponse, AsyncHttpResponse)
-HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
-HTTPRequestType = TypeVar("HTTPRequestType", LegacyHttpRequest, HttpRequest)
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 AsyncPoliciesType = Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 
