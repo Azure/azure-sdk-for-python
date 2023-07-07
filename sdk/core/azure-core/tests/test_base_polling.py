@@ -319,9 +319,7 @@ def test_post_direct_success(pipeline_client_builder, deserialization_cb, http_r
         {
             "operation-location": "http://example.org/async_monitor",
         },
-        {
-            "status": "succeeded"
-        },
+        {"status": "succeeded"},
     )
 
     def send(request, **kwargs):

@@ -300,9 +300,7 @@ async def test_post_direct_success(async_pipeline_client_builder, deserializatio
         {
             "operation-location": "http://example.org/async_monitor",
         },
-        {
-            "status": "succeeded"
-        },
+        {"status": "succeeded"},
     )
 
     async def send(request, **kwargs):
