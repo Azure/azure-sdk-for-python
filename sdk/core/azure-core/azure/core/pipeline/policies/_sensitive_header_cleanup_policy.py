@@ -25,11 +25,11 @@
 # --------------------------------------------------------------------------
 from typing import List, Optional, Any, TypeVar
 from azure.core.pipeline import PipelineRequest
-from azure.core.pipeline.transport import HttpRequest
-from azure.core.rest import HttpRequest as RestHttpRequest
+from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
+from azure.core.rest import HttpRequest
 from ._base import SansIOHTTPPolicy
 
-HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, RestHttpRequest)
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 
 class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):

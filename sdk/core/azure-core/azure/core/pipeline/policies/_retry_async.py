@@ -30,8 +30,8 @@ from typing import TypeVar
 import logging
 import time
 from azure.core.pipeline import PipelineRequest, PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import AsyncHttpResponse as AsyncRestHttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse as LegacyAsyncHttpResponse
+from azure.core.rest import AsyncHttpResponse
 from azure.core.exceptions import (
     AzureError,
     ClientAuthenticationError,
@@ -40,7 +40,7 @@ from azure.core.exceptions import (
 from ._base_async import AsyncHTTPPolicy
 from ._retry import RetryPolicyBase
 
-AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, AsyncRestHttpResponse)
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, LegacyAsyncHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)

@@ -32,13 +32,13 @@ from urllib.parse import urlparse
 
 from azure.core.exceptions import TooManyRedirectsError
 from azure.core.pipeline import PipelineResponse, PipelineRequest
-from azure.core.pipeline.transport import HttpResponse, HttpRequest
-from azure.core.rest import HttpResponse as RestHttpResponse, HttpRequest as RestHttpRequest
+from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.rest import HttpResponse, HttpRequest
 from ._base import HTTPPolicy, RequestHistory
 from ._utils import get_domain
 
-HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, RestHttpResponse)
-HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, RestHttpRequest)
+HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -31,8 +31,8 @@ from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.core.pipeline.transport import HttpResponse, HttpRequest
-from azure.core.rest import HttpResponse as RestHttpResponse, HttpRequest as RestHttpRequest
+from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.rest import HttpResponse, HttpRequest
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind
 
@@ -41,8 +41,8 @@ if TYPE_CHECKING:
         AbstractSpan,
     )
 
-HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, RestHttpResponse)
-HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, RestHttpRequest)
+HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -119,7 +119,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
             return
 
         span: "AbstractSpan" = request.context[self.TRACING_CONTEXT]
-        http_request: Union[HttpRequest, RestHttpRequest] = request.http_request
+        http_request: Union[HttpRequest, LegacyHttpRequest] = request.http_request
         if span is not None:
             span.set_http_attributes(http_request, response=response)
             request_id = http_request.headers.get(self._REQUEST_ID)

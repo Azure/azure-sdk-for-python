@@ -6,8 +6,8 @@
 import time
 from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any
 from azure.core.pipeline import PipelineRequest, PipelineResponse
-from azure.core.pipeline.transport import HttpResponse, HttpRequest
-from azure.core.rest import HttpResponse as RestHttpResponse, HttpRequest as RestHttpRequest
+from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.rest import HttpResponse, HttpRequest
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
 
@@ -20,8 +20,8 @@ if TYPE_CHECKING:
         AzureSasCredential,
     )
 
-HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, RestHttpResponse)
-HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, RestHttpRequest)
+HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 
 # pylint:disable=too-few-public-methods
