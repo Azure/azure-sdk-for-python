@@ -47,7 +47,7 @@ HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, RestHttpRequest)
 _LOGGER = logging.getLogger(__name__)
 
 
-def _default_network_span_namer(http_request: HttpRequest) -> str:
+def _default_network_span_namer(http_request: HTTPRequestType) -> str:
     """Extract the path to be used as network span name.
 
     :param http_request: The HTTP request
