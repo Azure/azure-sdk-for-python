@@ -279,6 +279,8 @@ class SsmlSource(object):
     """Ssml string for the cognitive service to be played."""
     play_source_cache_id: Optional[str]
     """Cached source id of the play media, if it exists."""
+    custom_voice_endpoint_id: Optional[str]
+    """Endpoint where the custom voice model was deployed."""
 
     def __init__(
             self,
@@ -291,6 +293,7 @@ class SsmlSource(object):
         super().__init__(**kwargs)
         self.ssml_text = ssml_text
         self.play_source_cache_id = play_source_cache_id
+        self.custom_voice_endpoint_id = custom_voice_endpoint_id
 
     def _to_generated(self):
         return PlaySourceInternal(
