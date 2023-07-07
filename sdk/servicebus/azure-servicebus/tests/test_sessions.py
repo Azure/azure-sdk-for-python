@@ -1341,11 +1341,16 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
             pytest.skip("This test is for pyamqp only")
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport, retry_total=1) as sb_client:
+            
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE_SESSION, max_wait_time=10,)
+            
             start_time = time.time()
             with pytest.raises(OperationTimeoutError):
-                with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                                  session_id=NEXT_AVAILABLE_SESSION, 
-                                                  max_wait_time=10,) as session:
+                receiver.receive_messages(max_wait_time=5)
+            assert time.time() - start_time < 65  # Default service operation timeout is 65 seconds
+            start_time2 = time.time()
+            with pytest.raises(OperationTimeoutError):
+                for msg in receiver:
                     pass
-            end_time = time.time()
-            assert end_time - start_time < 65  # Default service operation timeout is 65 seconds
+
+            assert time.time() - start_time2 < 65  # Default service operation timeout is 65 seconds
