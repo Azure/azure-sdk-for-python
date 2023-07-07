@@ -384,7 +384,8 @@ class ResourceNotModifiedError(HttpResponseError):
 class TooManyRedirectsError(HttpResponseError):
     """Reached the maximum number of redirect attempts.
 
-    :param list[~azure.core.pipeline.policies.RequestHistory] history: The history of requests made while trying to fulfill the request.
+    :param history: The history of requests made while trying to fulfill the request.
+    :type history: list[~azure.core.pipeline.policies.RequestHistory]
     """
 
     def __init__(self, history, *args, **kwargs):
