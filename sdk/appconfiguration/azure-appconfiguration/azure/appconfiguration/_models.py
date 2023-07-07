@@ -11,7 +11,7 @@ from ._generated._serialization import Model
 from ._generated.models import (
     KeyValue,
     Snapshot as GeneratedSnapshot,
-    ConfigurationSettingFilter as GeneratedConfigurationSettingFilter,
+    KeyValueFilter,
 )
 
 if sys.version_info >= (3, 8):
@@ -514,7 +514,7 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
     def _to_generated(self) -> GeneratedSnapshot:
         config_setting_filters = []
         for kv_filter in self.filters:
-            config_setting_filters.append(GeneratedConfigurationSettingFilter(key=kv_filter.key, label=kv_filter.label))
+            config_setting_filters.append(KeyValueFilter(key=kv_filter.key, label=kv_filter.label))
         return GeneratedSnapshot(
             filters=config_setting_filters,
             composition_type=self.composition_type,
