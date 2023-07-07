@@ -33,6 +33,7 @@ from .transport import AsyncHttpTransport
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPResponseType = TypeVar("HTTPResponseType")
 AsyncPoliciesType = Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 
