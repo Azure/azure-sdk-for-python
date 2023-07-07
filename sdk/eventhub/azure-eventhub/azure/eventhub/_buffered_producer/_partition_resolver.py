@@ -277,8 +277,8 @@ class PartitionResolver:
         """
         round-robin partition assignment
 
-        :rtype: str
         :return: The next partition id.
+        :rtype: str
         """
         with self._lock:
             self._idx += 1

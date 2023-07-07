@@ -217,8 +217,8 @@ class EventData(object):
 
         :param bytes content: The content value to be set as the body of the message.
         :param str content_type: The content type to be set on the message.
-        :rtype: ~azure.eventhub.EventData
         :return: An EventData object.
+        :rtype: ~azure.eventhub.EventData
         """
         event_data = cls(content)
         event_data.content_type = content_type
@@ -238,8 +238,8 @@ class EventData(object):
         :param ~uamqp.Message message: A received uamqp message.
         :param ~azure.eventhub.amqp.AmqpAnnotatedMessage message: An amqp annotated message.
         :param ~azure.eventhub.amqp.AmqpAnnotatedMessage raw_amqp_message: An amqp annotated message.
-        :rtype: ~azure.eventhub.EventData
         :return: An EventData object.
+        :rtype: ~azure.eventhub.EventData
         """
         event_data = cls(body="")
         # pylint: disable=protected-access
@@ -424,8 +424,8 @@ class EventData(object):
 
         :param str encoding: The encoding to use for decoding event data.
          Default is 'UTF-8'
-        :rtype: str
         :return: The content of the event as a string.
+        :rtype: str
         """
         data = self.body
         try:
@@ -448,8 +448,8 @@ class EventData(object):
 
         :param str encoding: The encoding to use for decoding event data.
          Default is 'UTF-8'
-        :rtype: dict[str, any]
         :return: A JSON object.
+        :rtype: dict[str, any]
         """
         data_str = self.body_as_str(encoding=encoding)
         try:

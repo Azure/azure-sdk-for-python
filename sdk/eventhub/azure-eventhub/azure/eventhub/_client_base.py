@@ -246,8 +246,8 @@ class EventHubSASTokenCredential(object):
         This method is automatically called when token is about to expire.
 
         :param str scopes: The list of scopes for which the token has access.
-        :rtype: ~azure.core.credentials.AccessToken
         :return: The access token.
+        :rtype: ~azure.core.credentials.AccessToken
         """
         return AccessToken(self.token, self.expiry)
 
@@ -277,8 +277,8 @@ class EventhubAzureSasTokenCredential(object):
         This method is automatically called when token is about to expire.
 
         :param str scopes: The scopes for the token request.
-        :rtype: ~azure.core.credentials.AccessToken
         :return: The access token.
+        :rtype: ~azure.core.credentials.AccessToken
         """
         signature, expiry = parse_sas_credential(self._credential)
         return AccessToken(signature, expiry)
@@ -355,8 +355,8 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         Create an ~uamqp.authentication.SASTokenAuth instance
          to authenticate the session.
 
-        :rtype: JWTTokenAuth or uamqp_JWTTokenAuth
         :return: The auth for the session.
+        :rtype: JWTTokenAuth or uamqp_JWTTokenAuth
         """
         try:
             # ignore mypy's warning because token_type is Optional
