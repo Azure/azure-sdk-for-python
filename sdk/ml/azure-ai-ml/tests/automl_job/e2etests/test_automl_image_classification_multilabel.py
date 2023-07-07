@@ -95,7 +95,7 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
 
         properties = get_automl_job_properties()
         if components:
-            properties["_aml_internal_automl_subgraph_orchestration"] = "true"
+            properties["_automl_subgraph_orchestration"] = "true"
             properties[
                 "_pipeline_id_override"
             ] = "azureml://registries/azmlft-dev-registry01/components/image_classification_pipeline"
