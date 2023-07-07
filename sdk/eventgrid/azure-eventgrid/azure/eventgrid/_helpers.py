@@ -147,7 +147,7 @@ def _from_cncf_events(event): # pylint: disable=inconsistent-return-statements
     If cloud events library is not installed, the event is returned back.
 
     :param event: The event to be serialized
-    :type event: cloudevents.CloudEvent
+    :type event: cloudevents.http.CloudEvent
     :return: The serialized event
     :rtype: Any
     """
