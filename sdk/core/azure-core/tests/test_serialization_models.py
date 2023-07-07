@@ -5,9 +5,8 @@
 import copy
 import json
 import datetime
-from typing import Any, Iterable, List, Literal, Dict, Mapping, Sequence, Set, Tuple, Optional, Union, overload
+from typing import Any, Iterable, List, Literal, Dict, Mapping, Sequence, Set, Tuple, Optional, overload
 import pytest
-import base64
 import isodate
 from azure.core.serialization import AzureJSONEncoder, Model, rest_field, rest_discriminator
 
