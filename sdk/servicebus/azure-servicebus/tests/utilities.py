@@ -7,12 +7,17 @@
 import logging
 import sys
 import time
+import os
 try:
     import uamqp
     uamqp_available = True
 except (ModuleNotFoundError, ImportError):
     uamqp_available = False
 from azure.servicebus._common.utils import utc_now
+
+# TODO: temporary - disable uamqp if China b/c of 8+ hr runtime
+uamqp_available = uamqp_available and os.environ.get('SERVICEBUS_ENDPOINT_SUFFIX') != '.servicebus.chinacloudapi.cn'
+
 
 def _get_default_handler():
     handler = logging.StreamHandler(stream=sys.stdout)
