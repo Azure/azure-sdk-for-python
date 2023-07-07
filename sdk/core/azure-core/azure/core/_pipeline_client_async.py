@@ -36,6 +36,8 @@ from typing import (
     Optional,
     cast,
 )
+from azure.core.pipeline.transport import AsyncHttpResponse as LegacyAsyncHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
 from .pipeline.transport._base import PipelineClientBase
@@ -48,9 +50,8 @@ from .pipeline.policies import (
     SensitiveHeaderCleanupPolicy,
 )
 
-
-HTTPRequestType = TypeVar("HTTPRequestType")
-AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", bound="AsyncContextManager")
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, LegacyAsyncHttpResponse)
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 _LOGGER = logging.getLogger(__name__)
 

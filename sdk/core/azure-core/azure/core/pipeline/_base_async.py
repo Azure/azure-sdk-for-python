@@ -33,10 +33,12 @@ from .transport import (
     AsyncHttpTransport,
     AsyncHttpResponse as LegacyAsyncHttpResponse,
     HttpRequest as LegacyHttpRequest,
+    HttpResponse as LegacyHttpResponse,
 )
-from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest, HttpResponse
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", LegacyAsyncHttpResponse, AsyncHttpResponse)
+HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", LegacyHttpRequest, HttpRequest)
 AsyncPoliciesType = Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
@@ -52,9 +54,9 @@ class _SansIOAsyncHTTPPolicyRunner(
     :type policy: ~azure.core.pipeline.policies.SansIOHTTPPolicy
     """
 
-    def __init__(self, policy: SansIOHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]) -> None:
+    def __init__(self, policy: SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]) -> None:
         super(_SansIOAsyncHTTPPolicyRunner, self).__init__()
-        self._policy = policy
+        self._policy: SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType] = policy
 
     async def send(
         self, request: PipelineRequest[HTTPRequestType]
@@ -91,7 +93,7 @@ class _AsyncTransportRunner(
 
     def __init__(self, sender: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]) -> None:
         super(_AsyncTransportRunner, self).__init__()
-        self._sender = sender
+        self._sender: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType] = sender
 
     async def send(
         self, request: PipelineRequest[HTTPRequestType]
@@ -142,7 +144,7 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         policies: Optional[AsyncPoliciesType] = None,
     ) -> None:
         self._impl_policies: List[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]] = []
-        self._transport = transport
+        self._transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType] = transport
 
         for policy in policies or []:
             if isinstance(policy, SansIOHTTPPolicy):
