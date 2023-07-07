@@ -253,7 +253,7 @@ class HttpSpanMixin(_MIXIN_BASE):
     _NET_PEER_NAME = "net.peer.name"
     _NET_PEER_PORT = "net.peer.port"
 
-    def set_http_attributes(self, request: "HttpRequest", response: Optional["HttpResponseType"] = None) -> None:
+    def set_http_attributes(self, request: HttpRequestType, response: Optional[HttpResponseType] = None) -> None:
         """
         Add correct attributes for a http client span.
 
