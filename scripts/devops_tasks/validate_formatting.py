@@ -74,7 +74,7 @@ if __name__ == "__main__":
                 error = "Code needs reformat." if result[1] == False else error
                 logging.error(f"Black run for {result[0]} ran into an issue: {error}")
 
-            raise ValueError("Found difference between formatted code and current commit. Please re-generate with the latest autorest.")
+            raise ValueError("Found difference between formatted code and current commit. Check https://aka.ms/azsdk/python/black for how to fix it.")
         
     else:
         print("Skipping formatting validation")
