@@ -124,7 +124,7 @@ if uamqp_installed:
             :param ~azure.eventhub._producer.EventHubProducer producer: The producer with handler to send messages.
             :param int timeout_time: Timeout time.
             :param Exception last_exception: Exception to raise if message timed out. Only used by uamqp transport.
-            :param any logger: Logger.
+            :param logging.Logger logger: Logger.
             """
             # pylint: disable=protected-access
             await producer._open()

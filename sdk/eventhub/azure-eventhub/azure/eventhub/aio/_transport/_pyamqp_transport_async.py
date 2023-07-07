@@ -111,7 +111,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :type producer: ~azure.eventhub.aio._producer_async.EventHubProducer
         :param int timeout_time: Timeout time.
         :param Exception last_exception: Exception to raise if message timed out. Only used by pyamqp transport.
-        :param any logger: Logger.
+        :param logging.Logger logger: Logger.
         """
         # pylint: disable=protected-access
         try:

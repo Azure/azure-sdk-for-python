@@ -171,7 +171,6 @@ class BlobCheckpointStore(CheckpointStore):
         :param str eventhub_name: The name of the specific Event Hub the partition ownerships are associated with,
          relative to the Event Hubs namespace that contains it.
         :param str consumer_group: The name of the consumer group the ownerships are associated with.
-        :rtype: iterable[dict[str, any]]
         :return: Iterable of dictionaries containing partition ownership information:
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
@@ -184,6 +183,7 @@ class BlobCheckpointStore(CheckpointStore):
                 - `last_modified_time` (float): The last time this ownership was claimed as a timestamp.
                 - `etag` (str): The Etag value for the last time this ownership was modified. Optional depending
                   on storage implementation.
+        :rtype: iterable[dict[str, any]]
         """
         try:
             blob_prefix = "{}/{}/{}/ownership/".format(
@@ -225,7 +225,6 @@ class BlobCheckpointStore(CheckpointStore):
         """Tries to claim ownership for a list of specified partitions.
 
         :param iterable[dict[str,any]] ownership_list: Iterable of dictionaries containing all the ownerships to claim.
-        :rtype: iterable[dict[str,any]]
         :return: Iterable of dictionaries containing partition ownership information:
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
@@ -238,6 +237,7 @@ class BlobCheckpointStore(CheckpointStore):
                 - `last_modified_time` (float): The last time this ownership was claimed as a timestamp.
                 - `etag` (str): The Etag value for the last time this ownership was modified. Optional depending
                   on storage implementation.
+        :rtype: iterable[dict[str,any]]
         """
         results = await asyncio.gather(
             *[self._claim_one_partition(x, **kwargs) for x in ownership_list],
@@ -299,7 +299,6 @@ class BlobCheckpointStore(CheckpointStore):
         :param str eventhub_name: The name of the specific Event Hub the checkpoints are associated with, relative to
          the Event Hubs namespace that contains it.
         :param str consumer_group: The name of the consumer group the checkpoints are associated with.
-        :rtype: iterable[dict[str,any]]
         :return: Iterable of dictionaries containing partition checkpoint information:
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
@@ -310,6 +309,7 @@ class BlobCheckpointStore(CheckpointStore):
                 - `partition_id` (str): The partition ID which the checkpoint is created for.
                 - `sequence_number` (int): The sequence number of the :class:`EventData<azure.eventhub.EventData>`.
                 - `offset` (str): The offset of the :class:`EventData<azure.eventhub.EventData>`.
+        :rtype: iterable[dict[str,any]]
         """
         blob_prefix = "{}/{}/{}/checkpoint/".format(
             fully_qualified_namespace, eventhub_name, consumer_group

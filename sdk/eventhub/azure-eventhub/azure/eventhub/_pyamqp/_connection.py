@@ -713,7 +713,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :param wait: Whether to wait for an incoming frame to be processed. Can be set to `True` to wait
          indefinitely, or an int to wait for a specified amount of time (in seconds). To not wait, set to `False`.
         :type wait: bool or float
-        :param ._pyamqp.constants.ConnectionState end_state: The desired end state to wait until.
+        :param ~._pyamqp.constants.ConnectionState end_state: The desired end state to wait until.
         :rtype: None
         """
         if wait is True:
@@ -863,7 +863,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
         Alternatively this method will be called on exiting a Connection context manager.
 
-        :param ~_pyamqp.error.AMQPError error: Optional error information to include in the close request.
+        :param ~._pyamqp.error.AMQPError error: Optional error information to include in the close request.
         :param bool wait: Whether to wait for a service Close response. Default is `False`.
         :rtype: None
         """

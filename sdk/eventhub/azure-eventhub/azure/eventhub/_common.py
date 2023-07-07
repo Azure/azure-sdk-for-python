@@ -653,7 +653,7 @@ class EventDataBatch(object):
         """DEPRECATED: Set the underlying BatchMessage.
         This is deprecated and will be removed in a later release.
 
-        :param BatchMessage value: The BatchMessage to set as the underlying uamqp.BatchMessage or LegacyBatchMessage.
+        :param BatchMessage value: The BatchMessage to set as the underlying amqp message for the EventDataBatch.
         """
         warnings.warn(
             "The `message` property is deprecated and will be removed in future versions.",
