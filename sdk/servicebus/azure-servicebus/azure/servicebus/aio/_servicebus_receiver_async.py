@@ -121,7 +121,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
     :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
     :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the receiver
      will automatically stop receiving. The default value is None, meaning no timeout.
-     If there is a sessionful queue or topic and NEXT_AVAILABLE_SESSION is specified, 
+     If there is a sessionful queue or topic and NEXT_AVAILABLE_SESSION is specified,
      max_wait_time will replace the server-side operation timeout when waiting on connecting to a session.
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
