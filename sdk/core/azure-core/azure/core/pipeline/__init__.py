@@ -39,7 +39,7 @@ class PipelineContext(Dict[str, Any]):
     the pipeline.
 
     :param transport: The HTTP transport type.
-    :type transport: ~azure.core.pipeline.transport.HttpTransport
+    :type transport: ~azure.core.pipeline.transport.HttpTransport or ~azure.core.pipeline.transport.AsyncHttpTransport
     :param any kwargs: Developer-defined keyword arguments.
     """
 
