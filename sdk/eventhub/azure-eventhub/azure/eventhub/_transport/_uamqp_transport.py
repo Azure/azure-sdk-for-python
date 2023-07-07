@@ -64,8 +64,9 @@ if uamqp_installed:
 
         :param error: The error received in the send attempt.
         :type error: Exception
-        :rtype: uamqp.errors.ErrorAction
         :return: The action to be taken according to error type.
+        :rtype: uamqp.errors.ErrorAction
+
         """
         if error.condition == b"com.microsoft:server-busy":
             return errors.ErrorAction(retry=True, backoff=4)
@@ -111,8 +112,9 @@ if uamqp_installed:
         def build_message(**kwargs):
             """
             Creates a uamqp.Message with given arguments.
-            :rtype: uamqp.Message
             :return: An instance of uamqp.Message.
+            :rtype: uamqp.Message
+
             """
             return Message(**kwargs)
 
@@ -120,8 +122,9 @@ if uamqp_installed:
         def build_batch_message(**kwargs):
             """
             Creates a uamqp.BatchMessage with given arguments.
-            :rtype: uamqp.BatchMessage
             :return: An instance of uamqp.BatchMessage.
+            :rtype: uamqp.BatchMessage
+
             """
             return BatchMessage(**kwargs)
 
@@ -130,8 +133,9 @@ if uamqp_installed:
             """
             Converts an AmqpAnnotatedMessage into an Amqp Message.
             :param ~azure.eventhub.amqp.AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
-            :rtype: uamqp.Message
             :return: An instance of uamqp.Message.
+            :rtype: uamqp.Message
+
             """
             message_header = None
             header_vals = annotated_message.header.values() if annotated_message.header else None
@@ -197,8 +201,9 @@ if uamqp_installed:
             :param uamqp.Message message: Message.
             :param str key: Key to set in application properties.
             :param str value: Value to set for key in application properties.
-            :rtype: uamqp.Message
             :return: Message with updated application properties.
+            :rtype: uamqp.Message
+
             """
             if not message.application_properties:
                 message.application_properties = {}
@@ -210,8 +215,9 @@ if uamqp_installed:
             """
             Gets the batch message encoded size given an underlying Message.
             :param uamqp.BatchMessage message: Message to get encoded size of.
-            :rtype: int
             :return: Size in bytes of the encoded batch message.
+            :rtype: int
+
             """
             return message.gather()[0].get_message_encoded_size()
 
@@ -220,8 +226,9 @@ if uamqp_installed:
             """
             Gets the message encoded size given an underlying Message.
             :param uamqp.Message message: Message to get encoded size of.
-            :rtype: int
             :return: Size in bytes of the encoded message.
+            :rtype: int
+
             """
             return message.get_message_encoded_size()
 
@@ -230,8 +237,9 @@ if uamqp_installed:
             """
             Returns max peer message size.
             :param uamqp.AMQPClient handler: Client to get remote max message size on link from.
-            :rtype: int
             :return: Max peer message size.
+            :rtype: int
+
             """
             return handler.message_handler._link.peer_max_message_size  # pylint:disable=protected-access
 
@@ -240,8 +248,9 @@ if uamqp_installed:
             """
             Creates the error retry policy.
             :param ~azure.eventhub._configuration.Configuration config: Configuration.
-            :rtype: uamqp.errors.ErrorPolicy
             :return: ErrorPolicy configured.
+            :rtype: uamqp.errors.ErrorPolicy
+
             """
             return errors.ErrorPolicy(max_retries=config.max_retries, on_error=_error_handler)
 
@@ -250,8 +259,9 @@ if uamqp_installed:
             """
             Creates and returns the link properties.
             :param dict[bytes, int] link_properties: The dict of symbols and corresponding values.
-            :rtype: dict
             :return: The link properties.
+            :rtype: dict
+
             """
             return {types.AMQPSymbol(symbol): types.AMQPLong(value) for (symbol, value) in link_properties.items()}
 
@@ -272,8 +282,9 @@ if uamqp_installed:
             :keyword bool debug: Required.
             :keyword str encoding: Required.
 
-            :rtype: uamqp.Connection
             :return: The connection.
+            :rtype: uamqp.Connection
+
             """
             endpoint = kwargs.pop("endpoint") # pylint:disable=unused-variable
             custom_endpoint_address = kwargs.pop("custom_endpoint_address") # pylint:disable=unused-variable
@@ -301,8 +312,8 @@ if uamqp_installed:
             :param connection: uamqp Connection.
             :type connection: uamqp.Connection
 
-            :rtype: uamqp.constants.ConnectionState
             :return: The connection state.
+            :rtype: uamqp.constants.ConnectionState
             """
             return connection._state    # pylint:disable=protected-access
 
@@ -322,8 +333,8 @@ if uamqp_installed:
             :keyword dict link_properties: Required.
             :keyword properties: Required.
 
+            :return: The send client.
             :rtype: uamqp.SendClient
-            :return: The uamqp SendClient.
             """
             target = kwargs.pop("target")
             retry_policy = kwargs.pop("retry_policy")
@@ -357,7 +368,7 @@ if uamqp_installed:
             :param ~azure.eventhub._producer.EventHubProducer producer: The producer with handler to send messages.
             :param int timeout_time: Timeout time.
             :param Exception last_exception: Exception to raise if message timed out. Only used by uamqp transport.
-            :param any logger: Logger.
+            :param logging.Logger logger: Logger.
             """
             # pylint: disable=protected-access
             producer._open()
@@ -379,8 +390,8 @@ if uamqp_installed:
 
             :param uamqp.Message message: The message to update.
             :param str partition_key: The partition key value.
-            :rtype: uamqp.Message
             :returns: Message with partition key annotation set.
+            :rtype: uamqp.Message
             """
             if partition_key:
                 annotations = message.annotations
@@ -418,8 +429,8 @@ if uamqp_installed:
             :param str source: Required.
             :param int offset: Required.
             :param bytes selector: Required.
-            :rtype: uamqp.Source
             :returns: Source.
+            :rtype: uamqp.Source
             """
             source = Source(source)
             if offset is not None:
@@ -449,8 +460,8 @@ if uamqp_installed:
             :keyword message_received_callback: Required.
             :keyword timeout: Required.
 
+            :returns: The receive client.
             :rtype: uamqp.ReceiveClient
-            :returns: ReceiveClient.
             """
 
             source = kwargs.pop("source")
@@ -519,8 +530,9 @@ if uamqp_installed:
             :keyword bool update_token: Required. Whether to update token. If not updating token,
             then pass 300 to refresh_window.
 
+            :returns: The JWTTokenAuth.
             :rtype: JWTTokenAuth
-            :returns: JWTTokenAuth.
+
             """
             update_token = kwargs.pop("update_token")
             refresh_window = 300
@@ -551,8 +563,9 @@ if uamqp_installed:
             :param _Address address: Required. The Address.
             :param JWTTokenAuth mgmt_auth: Auth for client.
             :param ~azure.eventhub._configuration.Configuration config: The configuration.
+            :returns: The mgmt AMQP client.
             :rtype: uamqp.AMQPClient
-            :returns: AMQPClient.
+
             """
 
             mgmt_target = f"amqps://{address.hostname}{address.path}"
@@ -578,8 +591,8 @@ if uamqp_installed:
             Return updated auth token.
             :param mgmt_auth: Auth.
             :type mgmt_auth: JWTTokenAuth
-            :rtype: str
             :return: Updated auth token.
+            :rtype: str
             """
             return mgmt_auth.token
 
@@ -593,8 +606,8 @@ if uamqp_installed:
             :keyword operation_type: Op type.
             :keyword status_code_field: mgmt status code.
             :keyword description_fields: mgmt status desc.
-            :rtype: tuple[int, str, any]
             :return: Status code, description, and response.
+            :rtype: tuple[int, str, any]
             """
             operation_type = kwargs.pop("operation_type")
             operation = kwargs.pop("operation")
@@ -616,9 +629,9 @@ if uamqp_installed:
             Gets error corresponding to status code.
             :param int status_code: Status code.
             :param str description: Description of error.
+            :return: Error corresponding to status code.
             :rtype: uamqp.errors.AMQPConnectionError or
              uamqp.errors.AuthenticationException or ~azure.eventhub.exceptions.ConnectError
-            :return: Error corresponding to status code.
             """
             if status_code in [401]:
                 return errors.AuthenticationException(
@@ -638,8 +651,8 @@ if uamqp_installed:
             Checks if timeout exception.
             :param ~azure.eventhub._client_base.ClientBase base: ClientBase.
             :param Exception exception: Exception to check.
-            :rtype: Exception
             :return: Timeout exception.
+            :rtype: Exception
             """
             if not base.running and isinstance(
                 exception, compat.TimeoutException
