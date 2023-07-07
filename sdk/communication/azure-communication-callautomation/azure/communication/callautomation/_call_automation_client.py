@@ -71,9 +71,9 @@ class CallAutomationClient(object):
      or ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: Azure Communication Call Automation API version.
     :paramtype api_version: str
-    :keyword source_identity: ACS User Identity to be used when the call is created or answered.
+    :keyword source: ACS User Identity to be used when the call is created or answered.
      If not provided, service will generate one.
-    :paramtype source_identity: ~azure.communication.callautomation.CommunicationUserIdentifier
+    :paramtype source: ~azure.communication.callautomation.CommunicationUserIdentifier
     """
     def __init__(
             self,
@@ -81,7 +81,7 @@ class CallAutomationClient(object):
             credential: Union['TokenCredential', 'AzureKeyCredential'],
             *,
             api_version: Optional[str] = None,
-            source_identity: Optional['CommunicationUserIdentifier'] = None,
+            source: Optional['CommunicationUserIdentifier'] = None,
             **kwargs
     ) -> None:
         if not credential:
@@ -99,6 +99,7 @@ class CallAutomationClient(object):
 
         self._client = AzureCommunicationCallAutomationService(
             endpoint,
+            credential,
             api_version=api_version or DEFAULT_VERSION,
             authentication_policy=get_authentication_policy(
                 endpoint, credential),
@@ -107,7 +108,7 @@ class CallAutomationClient(object):
 
         self._call_recording_client = self._client.call_recording
         self._downloader = ContentDownloader(self._call_recording_client)
-        self.source_identity = source_identity
+        self.source = source
 
     @classmethod
     def from_connection_string(
@@ -126,7 +127,6 @@ class CallAutomationClient(object):
 
         return cls(endpoint, access_key, **kwargs)
 
-    @distributed_trace
     def get_call_connection(
         self,
         call_connection_id: str,
@@ -187,7 +187,7 @@ class CallAutomationClient(object):
                 target_participant.source_caller_id_number) if target_participant.source_caller_id_number else None,
             source_display_name=target_participant.source_display_name,
             source_identity=serialize_communication_user_identifier(
-                self.source_identity) if self.source_identity else None,
+                self.source) if self.source else None,
             operation_context=operation_context,
             media_streaming_configuration=media_streaming_configuration.to_generated(
             ) if media_streaming_configuration else None,
@@ -257,8 +257,8 @@ class CallAutomationClient(object):
             source_caller_id_number=serialize_phone_identifier(
                 source_caller_id_number) if source_caller_id_number else None,
             source_display_name=source_display_name,
-            source_identity=serialize_identifier(
-                self.source_identity) if self.source_identity else None,
+            source=serialize_identifier(
+                self.source) if self.source else None,
             operation_context=operation_context,
             media_streaming_configuration=media_streaming_configuration.to_generated(
             ) if media_streaming_configuration else None,
@@ -311,8 +311,8 @@ class CallAutomationClient(object):
             media_streaming_configuration=media_streaming_configuration.to_generated(
             ) if media_streaming_configuration else None,
             azure_cognitive_services_endpoint_url=azure_cognitive_services_endpoint_url,
-            answered_by_identifier=serialize_communication_user_identifier(
-                self.source_identity) if self.source_identity else None,
+            answered_by=serialize_communication_user_identifier(
+                self.source) if self.source else None,
             operation_context=operation_context
         )
 
@@ -548,12 +548,12 @@ class CallAutomationClient(object):
 
         :param recording_url: Recording's url to be downloaded
         :type recording_url: str
-        :param offset: If provided, only download the bytes of the content in the specified range.
+        :keyword offset: If provided, only download the bytes of the content in the specified range.
          Offset of starting byte.
-        :type offset: int
-        :param length: If provided, only download the bytes of the content in the specified range.
+        :paramtype offset: int
+        :keyword length: If provided, only download the bytes of the content in the specified range.
          Length of the bytes to be downloaded.
-        :type length: int
+        :paramtype length: int
         :return: Iterable[bytes]
         :rtype: Iterable[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
