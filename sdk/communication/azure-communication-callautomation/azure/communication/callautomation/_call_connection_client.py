@@ -461,7 +461,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :keyword dtmf_stop_tones: List of tones that will stop recognizing.
         :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.DtmfTone]
         :keyword speech_recognition_model_endpoint_id: Endpoint id where the custom speech recognition model was deployed.
-        :paramtype speech_recognition_model_endpoint_id:  
+        :paramtype speech_recognition_model_endpoint_id:
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

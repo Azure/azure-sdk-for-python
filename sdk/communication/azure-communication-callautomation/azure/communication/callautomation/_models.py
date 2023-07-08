@@ -232,6 +232,8 @@ class TextSource(object):
         https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"""
     play_source_cache_id: Optional[str]
     """Cached source id of the play media, if it exists."""
+    custom_voice_endpoint_id: Optional[str]
+    """Endpoint where the custom voice was deployed"""
 
     def __init__(
             self,
