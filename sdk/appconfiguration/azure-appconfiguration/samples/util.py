@@ -16,6 +16,7 @@ def print_configuration_setting(config_setting):
     print(f"read_only: {config_setting.read_only}")
     print(f"etag: {config_setting.etag}")
 
+
 def print_snapshot(snapshot):
     if not snapshot:
         return
