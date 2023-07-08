@@ -48,9 +48,7 @@ class MiscellaneousOperations:
         self,
         **kwargs: Any
     ) -> AsyncIterable[_models.GetOperationsResponse]:
-        """List operations.
-
-        Lists all operations.
+        """Lists all operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either GetOperationsResponse or the result of
@@ -140,9 +138,7 @@ class MiscellaneousOperations:
         operation_id: str,
         **kwargs: Any
     ) -> _models.OperationDetails:
-        """Get operation.
-
-        Gets operation info.
+        """Gets operation info.
 
         :param operation_id: Unique operation ID.
         :type operation_id: str
@@ -203,9 +199,7 @@ class MiscellaneousOperations:
         self,
         **kwargs: Any
     ) -> _models.ResourceDetails:
-        """Get resource info.
-
-        Return information about the current resource.
+        """Return information about the current resource.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceDetails, or the result of cls(response)

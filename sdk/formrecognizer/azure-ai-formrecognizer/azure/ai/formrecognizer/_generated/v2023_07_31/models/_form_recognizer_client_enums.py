@@ -65,15 +65,6 @@ class DocumentAnalysisFeature(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Enable the recognition of various font styles.
     STYLE_FONT = "styleFont"
 
-class DocumentAnnotationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Annotation kind.
-    """
-
-    #: A visual check ✓.
-    CHECK = "check"
-    #: A visual cross X.
-    CROSS = "cross"
-
 class DocumentBarcodeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Barcode kind.
     """

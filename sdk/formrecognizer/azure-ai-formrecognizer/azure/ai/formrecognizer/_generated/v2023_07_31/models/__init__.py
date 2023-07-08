@@ -12,7 +12,7 @@ from ._models_py3 import AnalyzeResult
 from ._models_py3 import AnalyzeResultOperation
 from ._models_py3 import AuthorizeCopyRequest
 from ._models_py3 import AzureBlobContentSource
-from ._models_py3 import AzureBlobFileListSource
+from ._models_py3 import AzureBlobFileListContentSource
 from ._models_py3 import BoundingRegion
 from ._models_py3 import BuildDocumentClassifierRequest
 from ._models_py3 import BuildDocumentModelRequest
@@ -24,7 +24,6 @@ from ._models_py3 import CopyAuthorization
 from ._models_py3 import CurrencyValue
 from ._models_py3 import CustomDocumentModelsDetails
 from ._models_py3 import Document
-from ._models_py3 import DocumentAnnotation
 from ._models_py3 import DocumentBarcode
 from ._models_py3 import DocumentClassifierBuildOperationDetails
 from ._models_py3 import DocumentClassifierDetails
@@ -65,7 +64,6 @@ from ._form_recognizer_client_enums import (
     AnalyzeResultOperationStatus,
     ContentType,
     DocumentAnalysisFeature,
-    DocumentAnnotationKind,
     DocumentBarcodeKind,
     DocumentBuildMode,
     DocumentFieldType,
@@ -91,7 +89,7 @@ __all__ = [
     'AnalyzeResultOperation',
     'AuthorizeCopyRequest',
     'AzureBlobContentSource',
-    'AzureBlobFileListSource',
+    'AzureBlobFileListContentSource',
     'BoundingRegion',
     'BuildDocumentClassifierRequest',
     'BuildDocumentModelRequest',
@@ -103,7 +101,6 @@ __all__ = [
     'CurrencyValue',
     'CustomDocumentModelsDetails',
     'Document',
-    'DocumentAnnotation',
     'DocumentBarcode',
     'DocumentClassifierBuildOperationDetails',
     'DocumentClassifierDetails',
@@ -141,7 +138,6 @@ __all__ = [
     'AnalyzeResultOperationStatus',
     'ContentType',
     'DocumentAnalysisFeature',
-    'DocumentAnnotationKind',
     'DocumentBarcodeKind',
     'DocumentBuildMode',
     'DocumentFieldType',

@@ -136,9 +136,7 @@ class DocumentModelsOperations:
         content_type: Optional[Union[str, "_models.ContentType"]] = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Analyze document.
-
-        Analyzes document with document model.
+        """Analyzes document with document model.
 
         :param model_id: Unique document model name.
         :type model_id: str
@@ -240,9 +238,7 @@ class DocumentModelsOperations:
         result_id: str,
         **kwargs: Any
     ) -> _models.AnalyzeResultOperation:
-        """Get analyze result.
-
-        Gets the result of document analysis.
+        """Gets the result of document analysis.
 
         :param model_id: Unique document model name.
         :type model_id: str
@@ -361,9 +357,7 @@ class DocumentModelsOperations:
         build_request: _models.BuildDocumentModelRequest,
         **kwargs: Any
     ) -> AsyncDocumentModelAdministrationClientLROPoller[None]:
-        """Build document model.
-
-        Builds a custom document analysis model.
+        """Builds a custom document analysis model.
 
         :param build_request: Building request parameters.
         :type build_request: ~azure.ai.formrecognizer.v2023_07_31.models.BuildDocumentModelRequest
@@ -493,9 +487,7 @@ class DocumentModelsOperations:
         compose_request: _models.ComposeDocumentModelRequest,
         **kwargs: Any
     ) -> AsyncDocumentModelAdministrationClientLROPoller[None]:
-        """Compose document model.
-
-        Creates a new document model from document types of existing document models.
+        """Creates a new document model from document types of existing document models.
 
         :param compose_request: Compose request parameters.
         :type compose_request: ~azure.ai.formrecognizer.v2023_07_31.models.ComposeDocumentModelRequest
@@ -571,9 +563,7 @@ class DocumentModelsOperations:
         authorize_copy_request: _models.AuthorizeCopyRequest,
         **kwargs: Any
     ) -> _models.CopyAuthorization:
-        """Generate copy authorization.
-
-        Generates authorization to copy a document model to this location with specified modelId and
+        """Generates authorization to copy a document model to this location with specified modelId and
         optional description.
 
         :param authorize_copy_request: Authorize copy request parameters.
@@ -696,9 +686,7 @@ class DocumentModelsOperations:
         copy_to_request: _models.CopyAuthorization,
         **kwargs: Any
     ) -> AsyncDocumentModelAdministrationClientLROPoller[None]:
-        """Copy document model.
-
-        Copies document model to the target resource, region, and modelId.
+        """Copies document model to the target resource, region, and modelId.
 
         :param model_id: Unique document model name.
         :type model_id: str
@@ -776,9 +764,7 @@ class DocumentModelsOperations:
         self,
         **kwargs: Any
     ) -> AsyncIterable[_models.GetDocumentModelsResponse]:
-        """List document models.
-
-        List all document models.
+        """List all document models.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either GetDocumentModelsResponse or the result of
@@ -868,9 +854,7 @@ class DocumentModelsOperations:
         model_id: str,
         **kwargs: Any
     ) -> _models.DocumentModelDetails:
-        """Get document model.
-
-        Gets detailed document model information.
+        """Gets detailed document model information.
 
         :param model_id: Unique document model name.
         :type model_id: str
@@ -932,9 +916,7 @@ class DocumentModelsOperations:
         model_id: str,
         **kwargs: Any
     ) -> None:
-        """Delete document model.
-
-        Deletes document model.
+        """Deletes document model.
 
         :param model_id: Unique document model name.
         :type model_id: str

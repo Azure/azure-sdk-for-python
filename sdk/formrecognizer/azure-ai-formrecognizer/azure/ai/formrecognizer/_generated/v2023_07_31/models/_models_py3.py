@@ -140,9 +140,10 @@ class AddressValue(msrest.serialization.Model):
 class AnalyzeDocumentRequest(msrest.serialization.Model):
     """Document analysis parameters.
 
-    :ivar url_source: Document URL to analyze.
+    :ivar url_source: Document URL to analyze.  Either urlSource or base64Source must be specified.
     :vartype url_source: str
-    :ivar base64_source: Base64 encoding of the document to analyze.
+    :ivar base64_source: Base64 encoding of the document to analyze.  Either urlSource or
+     base64Source must be specified.
     :vartype base64_source: bytearray
     """
 
@@ -159,9 +160,11 @@ class AnalyzeDocumentRequest(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword url_source: Document URL to analyze.
+        :keyword url_source: Document URL to analyze.  Either urlSource or base64Source must be
+         specified.
         :paramtype url_source: str
-        :keyword base64_source: Base64 encoding of the document to analyze.
+        :keyword base64_source: Base64 encoding of the document to analyze.  Either urlSource or
+         base64Source must be specified.
         :paramtype base64_source: bytearray
         """
         super(AnalyzeDocumentRequest, self).__init__(**kwargs)
@@ -434,7 +437,7 @@ class AzureBlobContentSource(msrest.serialization.Model):
         self.prefix = prefix
 
 
-class AzureBlobFileListSource(msrest.serialization.Model):
+class AzureBlobFileListContentSource(msrest.serialization.Model):
     """File list in Azure Blob Storage.
 
     All required parameters must be populated in order to send to Azure.
@@ -470,7 +473,7 @@ class AzureBlobFileListSource(msrest.serialization.Model):
          documents for training.
         :paramtype file_list: str
         """
-        super(AzureBlobFileListSource, self).__init__(**kwargs)
+        super(AzureBlobFileListContentSource, self).__init__(**kwargs)
         self.container_url = container_url
         self.file_list = file_list
 
@@ -575,11 +578,13 @@ class BuildDocumentModelRequest(msrest.serialization.Model):
     :ivar build_mode: Required. Custom document model build mode. Known values are: "template",
      "neural".
     :vartype build_mode: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentBuildMode
-    :ivar azure_blob_source: Azure Blob Storage location containing the training data.
+    :ivar azure_blob_source: Azure Blob Storage location containing the training data.  Either
+     azureBlobSource or azureBlobFileListSource must be specified.
     :vartype azure_blob_source: ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobContentSource
     :ivar azure_blob_file_list_source: Azure Blob Storage file list specifying the training data.
+     Either azureBlobSource or azureBlobFileListSource must be specified.
     :vartype azure_blob_file_list_source:
-     ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobFileListSource
+     ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobFileListContentSource
     :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     """
@@ -595,7 +600,7 @@ class BuildDocumentModelRequest(msrest.serialization.Model):
         'description': {'key': 'description', 'type': 'str'},
         'build_mode': {'key': 'buildMode', 'type': 'str'},
         'azure_blob_source': {'key': 'azureBlobSource', 'type': 'AzureBlobContentSource'},
-        'azure_blob_file_list_source': {'key': 'azureBlobFileListSource', 'type': 'AzureBlobFileListSource'},
+        'azure_blob_file_list_source': {'key': 'azureBlobFileListSource', 'type': 'AzureBlobFileListContentSource'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -606,7 +611,7 @@ class BuildDocumentModelRequest(msrest.serialization.Model):
         build_mode: Union[str, "_models.DocumentBuildMode"],
         description: Optional[str] = None,
         azure_blob_source: Optional["_models.AzureBlobContentSource"] = None,
-        azure_blob_file_list_source: Optional["_models.AzureBlobFileListSource"] = None,
+        azure_blob_file_list_source: Optional["_models.AzureBlobFileListContentSource"] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
@@ -618,13 +623,14 @@ class BuildDocumentModelRequest(msrest.serialization.Model):
         :keyword build_mode: Required. Custom document model build mode. Known values are: "template",
          "neural".
         :paramtype build_mode: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentBuildMode
-        :keyword azure_blob_source: Azure Blob Storage location containing the training data.
+        :keyword azure_blob_source: Azure Blob Storage location containing the training data.  Either
+         azureBlobSource or azureBlobFileListSource must be specified.
         :paramtype azure_blob_source:
          ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobContentSource
         :keyword azure_blob_file_list_source: Azure Blob Storage file list specifying the training
-         data.
+         data.  Either azureBlobSource or azureBlobFileListSource must be specified.
         :paramtype azure_blob_file_list_source:
-         ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobFileListSource
+         ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobFileListContentSource
         :keyword tags: A set of tags. List of key-value tag attributes associated with the document
          model.
         :paramtype tags: dict[str, str]
@@ -639,35 +645,40 @@ class BuildDocumentModelRequest(msrest.serialization.Model):
 
 
 class ClassifierDocumentTypeDetails(msrest.serialization.Model):
-    """Training data source.
+    """Classifier document type info.
 
-    :ivar azure_blob_source: Azure Blob Storage location containing the training data.
+    :ivar azure_blob_source: Azure Blob Storage location containing the training data for a
+     classifier document type.  Either azureBlobSource or azureBlobFileListSource must be specified.
     :vartype azure_blob_source: ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobContentSource
-    :ivar azure_blob_file_list_source: Azure Blob Storage file list specifying the training data.
+    :ivar azure_blob_file_list_source: Azure Blob Storage file list specifying the training data
+     for a classifier document type.  Either azureBlobSource or azureBlobFileListSource must be
+     specified.
     :vartype azure_blob_file_list_source:
-     ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobFileListSource
+     ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobFileListContentSource
     """
 
     _attribute_map = {
         'azure_blob_source': {'key': 'azureBlobSource', 'type': 'AzureBlobContentSource'},
-        'azure_blob_file_list_source': {'key': 'azureBlobFileListSource', 'type': 'AzureBlobFileListSource'},
+        'azure_blob_file_list_source': {'key': 'azureBlobFileListSource', 'type': 'AzureBlobFileListContentSource'},
     }
 
     def __init__(
         self,
         *,
         azure_blob_source: Optional["_models.AzureBlobContentSource"] = None,
-        azure_blob_file_list_source: Optional["_models.AzureBlobFileListSource"] = None,
+        azure_blob_file_list_source: Optional["_models.AzureBlobFileListContentSource"] = None,
         **kwargs
     ):
         """
-        :keyword azure_blob_source: Azure Blob Storage location containing the training data.
+        :keyword azure_blob_source: Azure Blob Storage location containing the training data for a
+         classifier document type.  Either azureBlobSource or azureBlobFileListSource must be specified.
         :paramtype azure_blob_source:
          ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobContentSource
-        :keyword azure_blob_file_list_source: Azure Blob Storage file list specifying the training
-         data.
+        :keyword azure_blob_file_list_source: Azure Blob Storage file list specifying the training data
+         for a classifier document type.  Either azureBlobSource or azureBlobFileListSource must be
+         specified.
         :paramtype azure_blob_file_list_source:
-         ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobFileListSource
+         ~azure.ai.formrecognizer.v2023_07_31.models.AzureBlobFileListContentSource
         """
         super(ClassifierDocumentTypeDetails, self).__init__(**kwargs)
         self.azure_blob_source = azure_blob_source
@@ -677,9 +688,11 @@ class ClassifierDocumentTypeDetails(msrest.serialization.Model):
 class ClassifyDocumentRequest(msrest.serialization.Model):
     """Document classification parameters.
 
-    :ivar url_source: Document URL to classify.
+    :ivar url_source: Document URL to classify.  Either urlSource or base64Source must be
+     specified.
     :vartype url_source: str
-    :ivar base64_source: Base64 encoding of the document to classify.
+    :ivar base64_source: Base64 encoding of the document to classify.  Either urlSource or
+     base64Source must be specified.
     :vartype base64_source: bytearray
     """
 
@@ -696,9 +709,11 @@ class ClassifyDocumentRequest(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword url_source: Document URL to classify.
+        :keyword url_source: Document URL to classify.  Either urlSource or base64Source must be
+         specified.
         :paramtype url_source: str
-        :keyword base64_source: Base64 encoding of the document to classify.
+        :keyword base64_source: Base64 encoding of the document to classify.  Either urlSource or
+         base64Source must be specified.
         :paramtype base64_source: bytearray
         """
         super(ClassifyDocumentRequest, self).__init__(**kwargs)
@@ -1014,53 +1029,6 @@ class Document(msrest.serialization.Model):
         self.bounding_regions = bounding_regions
         self.spans = spans
         self.fields = fields
-        self.confidence = confidence
-
-
-class DocumentAnnotation(msrest.serialization.Model):
-    """An annotation object that represents a visual annotation in the document, such as checks ✓ and crosses X.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar kind: Required. Annotation kind. Known values are: "check", "cross".
-    :vartype kind: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentAnnotationKind
-    :ivar polygon: Required. Bounding polygon of the annotation.
-    :vartype polygon: list[float]
-    :ivar confidence: Required. Confidence of correctly extracting the annotation.
-    :vartype confidence: float
-    """
-
-    _validation = {
-        'kind': {'required': True},
-        'polygon': {'required': True},
-        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
-    }
-
-    _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'polygon': {'key': 'polygon', 'type': '[float]'},
-        'confidence': {'key': 'confidence', 'type': 'float'},
-    }
-
-    def __init__(
-        self,
-        *,
-        kind: Union[str, "_models.DocumentAnnotationKind"],
-        polygon: List[float],
-        confidence: float,
-        **kwargs
-    ):
-        """
-        :keyword kind: Required. Annotation kind. Known values are: "check", "cross".
-        :paramtype kind: str or ~azure.ai.formrecognizer.v2023_07_31.models.DocumentAnnotationKind
-        :keyword polygon: Required. Bounding polygon of the annotation.
-        :paramtype polygon: list[float]
-        :keyword confidence: Required. Confidence of correctly extracting the annotation.
-        :paramtype confidence: float
-        """
-        super(DocumentAnnotation, self).__init__(**kwargs)
-        self.kind = kind
-        self.polygon = polygon
         self.confidence = confidence
 
 
@@ -2365,8 +2333,6 @@ class DocumentPage(msrest.serialization.Model):
     :ivar lines: Extracted lines from the page, potentially containing both textual and visual
      elements.
     :vartype lines: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentLine]
-    :ivar annotations: Extracted annotations from the page.
-    :vartype annotations: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentAnnotation]
     :ivar barcodes: Extracted barcodes from the page.
     :vartype barcodes: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentBarcode]
     :ivar formulas: Extracted formulas from the page.
@@ -2391,7 +2357,6 @@ class DocumentPage(msrest.serialization.Model):
         'words': {'key': 'words', 'type': '[DocumentWord]'},
         'selection_marks': {'key': 'selectionMarks', 'type': '[DocumentSelectionMark]'},
         'lines': {'key': 'lines', 'type': '[DocumentLine]'},
-        'annotations': {'key': 'annotations', 'type': '[DocumentAnnotation]'},
         'barcodes': {'key': 'barcodes', 'type': '[DocumentBarcode]'},
         'formulas': {'key': 'formulas', 'type': '[DocumentFormula]'},
     }
@@ -2408,7 +2373,6 @@ class DocumentPage(msrest.serialization.Model):
         words: Optional[List["_models.DocumentWord"]] = None,
         selection_marks: Optional[List["_models.DocumentSelectionMark"]] = None,
         lines: Optional[List["_models.DocumentLine"]] = None,
-        annotations: Optional[List["_models.DocumentAnnotation"]] = None,
         barcodes: Optional[List["_models.DocumentBarcode"]] = None,
         formulas: Optional[List["_models.DocumentFormula"]] = None,
         **kwargs
@@ -2436,8 +2400,6 @@ class DocumentPage(msrest.serialization.Model):
         :keyword lines: Extracted lines from the page, potentially containing both textual and visual
          elements.
         :paramtype lines: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentLine]
-        :keyword annotations: Extracted annotations from the page.
-        :paramtype annotations: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentAnnotation]
         :keyword barcodes: Extracted barcodes from the page.
         :paramtype barcodes: list[~azure.ai.formrecognizer.v2023_07_31.models.DocumentBarcode]
         :keyword formulas: Extracted formulas from the page.
@@ -2453,7 +2415,6 @@ class DocumentPage(msrest.serialization.Model):
         self.words = words
         self.selection_marks = selection_marks
         self.lines = lines
-        self.annotations = annotations
         self.barcodes = barcodes
         self.formulas = formulas
 

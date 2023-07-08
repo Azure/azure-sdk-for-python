@@ -106,9 +106,7 @@ class DocumentClassifiersOperations:
         build_request: _models.BuildDocumentClassifierRequest,
         **kwargs: Any
     ) -> AsyncDocumentModelAdministrationClientLROPoller[None]:
-        """Build document classifier.
-
-        Builds a custom document classifier.
+        """Builds a custom document classifier.
 
         :param build_request: Building request parameters.
         :type build_request: ~azure.ai.formrecognizer.v2023_07_31.models.BuildDocumentClassifierRequest
@@ -183,9 +181,7 @@ class DocumentClassifiersOperations:
         self,
         **kwargs: Any
     ) -> AsyncIterable[_models.GetDocumentClassifiersResponse]:
-        """List document classifiers.
-
-        List all document classifiers.
+        """List all document classifiers.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either GetDocumentClassifiersResponse or the result of
@@ -275,9 +271,7 @@ class DocumentClassifiersOperations:
         classifier_id: str,
         **kwargs: Any
     ) -> _models.DocumentClassifierDetails:
-        """Get document classifier.
-
-        Gets detailed document classifier information.
+        """Gets detailed document classifier information.
 
         :param classifier_id: Unique document classifier name.
         :type classifier_id: str
@@ -339,9 +333,7 @@ class DocumentClassifiersOperations:
         classifier_id: str,
         **kwargs: Any
     ) -> None:
-        """Delete document classifier.
-
-        Deletes document classifier.
+        """Deletes document classifier.
 
         :param classifier_id: Unique document classifier name.
         :type classifier_id: str
@@ -474,9 +466,7 @@ class DocumentClassifiersOperations:
         content_type: Optional[Union[str, "_models.ContentType"]] = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Classify document.
-
-        Classifies document with document classifier.
+        """Classifies document with document classifier.
 
         :param classifier_id: Unique document classifier name.
         :type classifier_id: str
@@ -567,9 +557,7 @@ class DocumentClassifiersOperations:
         result_id: str,
         **kwargs: Any
     ) -> _models.AnalyzeResultOperation:
-        """Get document classifier result.
-
-        Gets the result of document classifier.
+        """Gets the result of document classifier.
 
         :param classifier_id: Unique document classifier name.
         :type classifier_id: str
