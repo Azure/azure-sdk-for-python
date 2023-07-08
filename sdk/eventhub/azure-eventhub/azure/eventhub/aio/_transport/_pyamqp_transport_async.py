@@ -52,8 +52,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword bool debug: Required.
         :keyword str encoding: Required.
 
-        :rtype: ~pyamqp.aio.Connection
         :return: The created ConnectionAsync.
+        :rtype: ~pyamqp.aio.Connection
         """
         endpoint = kwargs.pop("endpoint")
         host = kwargs.pop("host")  # pylint:disable=unused-variable
@@ -85,8 +85,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword dict link_properties: Required.
         :keyword properties: Required.
 
-        :rtype: ~pyamqp.aio.SendClient
         :return: The created SendClientAsync.
+        :rtype: ~pyamqp.aio.SendClient
         """
         target = kwargs.pop("target")
         # TODO: extra passed in to pyamqp, but not used. should be used?
@@ -145,8 +145,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword message_received_callback: Required.
         :keyword timeout: Required.
 
-        :rtype: ~pyamqp.aio.ReceiveClient
         :return: The created ReceiveClientAsync.
+        :rtype: ~pyamqp.aio.ReceiveClient
         """
 
         source = kwargs.pop("source")
@@ -265,8 +265,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword bool update_token: Required. Whether to update token. If not updating token,
         then pass 300 to refresh_window.
 
-        :rtype: ~pyamqp.aio._authentication_async.JWTTokenAuthAsync
         :return: The JWTTokenAuth.
+        :rtype: ~pyamqp.aio._authentication_async.JWTTokenAuthAsync
         """
         # TODO: figure out why we're passing all these args to pyamqp JWTTokenAuth, which aren't being used
         update_token = kwargs.pop("update_token")  # pylint: disable=unused-variable
@@ -295,8 +295,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :param JWTTokenAuth mgmt_auth: Auth for client.
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
 
-        :rtype: ~pyamqp.aio.AMQPClient
         :return: The created AMQPClientAsync.
+        :rtype: ~pyamqp.aio.AMQPClient
         """
 
         return AMQPClientAsync(
@@ -315,8 +315,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         Return updated auth token.
         :param JWTTokenAuth mgmt_auth: Auth.
 
-        :rtype: str
         :return: The updated auth token.
+        :rtype: str
         """
         return (await mgmt_auth.get_token()).token
 
@@ -331,8 +331,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword int status_code_field: mgmt status code.
         :keyword any description_fields: mgmt status desc.
 
-        :rtype: ~pyamqp.aio.AMQPClient
         :return: The mgmt client.
+        :rtype: ~pyamqp.aio.AMQPClient
         """
         operation_type = kwargs.pop("operation_type")
         operation = kwargs.pop("operation")

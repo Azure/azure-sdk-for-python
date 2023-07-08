@@ -714,7 +714,6 @@ class EventHubProducerClient(
          partition_key to only be string type, they might fail to parse the non-string value.**
         :keyword int or None max_size_in_bytes: The maximum size of bytes data that an EventDataBatch
          object can hold. By default, the value is determined by your Event Hubs tier.
-        :rtype: ~azure.eventhub.EventDataBatch
         :return: An EventDataBatch object
 
         .. admonition:: Example:
@@ -725,7 +724,7 @@ class EventHubProducerClient(
                 :language: python
                 :dedent: 4
                 :caption: Create EventDataBatch object within limited size
-
+        :rtype: ~azure.eventhub.EventDataBatch
         """
         if not self._max_message_size_on_link:
             await self._get_max_message_size()
@@ -757,8 +756,8 @@ class EventHubProducerClient(
             - `created_at` (UTC datetime.datetime)
             - `partition_ids` (list[str])
 
-        :rtype: dict[str, any]
         :return: A dictionary containing information about the Event Hub.
+        :rtype: dict[str, any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(
@@ -768,8 +767,8 @@ class EventHubProducerClient(
     async def get_partition_ids(self) -> List[str]:
         """Get partition IDs of the Event Hub.
 
-        :rtype: list[str]
         :return: A list of partition IDs.
+        :rtype: list[str]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(EventHubProducerClient, self)._get_partition_ids_async()
@@ -789,8 +788,8 @@ class EventHubProducerClient(
 
         :param partition_id: The target partition ID.
         :type partition_id: str
-        :rtype: dict[str, any]
         :return: A dict of partition properties.
+        :rtype: dict[str, any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(

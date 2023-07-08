@@ -162,8 +162,8 @@ class EventHubSASTokenCredential(object):
         This method is automatically called when token is about to expire.
 
         :param str scopes: The list of scopes for which the token has access.
-        :rtype: ~azure.core.credentials.AccessToken
         :return: The token object
+        :rtype: ~azure.core.credentials.AccessToken
         """
         return AccessToken(self.token, self.expiry)
 
@@ -207,8 +207,8 @@ class EventhubAzureSasTokenCredentialAsync(object):
         This method is automatically called when token is about to expire.
 
         :param str scopes: The list of scopes for which the token has access.
-        :rtype: ~azure.core.credentials.AccessToken
         :return: The access token.
+        :rtype: ~azure.core.credentials.AccessToken
         """
         signature, expiry = parse_sas_credential(self._credential)
         return AccessToken(signature, expiry)
@@ -269,8 +269,8 @@ class ClientBaseAsync(ClientBase):
         Create an ~uamqp.authentication.SASTokenAuthAsync instance to authenticate
         the session.
 
-        :rtype: ~uamqp.authentication.JWTTokenAsync or JWTTokenAuthAsync
         :return: A JWTTokenAuthAsync instance to authenticate the session.
+        :rtype: ~uamqp.authentication.JWTTokenAsync or JWTTokenAuthAsync
 
         """
         try:

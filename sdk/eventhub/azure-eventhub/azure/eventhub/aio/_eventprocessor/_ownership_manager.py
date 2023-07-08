@@ -54,8 +54,8 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
     async def claim_ownership(self) -> List[str]:
         """Claims ownership for this EventProcessor
 
-        :rtype: list[str]
         :return: The list of partition ids claimed by this EventProcessor.
+        :rtype: list[str]
         """
         if not self.cached_parition_ids:
             await self._retrieve_partition_ids()
@@ -118,8 +118,8 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         :type ownership_list: iterable[dict[str, any]]
         :param all_partition_ids: The list of all partition ids.
         :type all_partition_ids: list[str]
-        :rtype: list[dict[str, any]]
         :return: The list of partition ownership that this EventProcessor claims.
+        :rtype: list[dict[str, any]]
         """
         now = time.time()
         ownership_dict = {

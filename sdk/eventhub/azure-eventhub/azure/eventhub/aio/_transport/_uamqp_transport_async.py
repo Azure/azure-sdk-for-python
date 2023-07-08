@@ -274,8 +274,8 @@ if uamqp_installed:
             :keyword bool update_token: Required. Whether to update token. If not updating token,
             then pass 300 to refresh_window.
 
-            :rtype: JWTTokenAsync
             :return: A JWTTokenAsync instance.
+            :rtype: JWTTokenAsync
             """
             update_token = kwargs.pop("update_token")
             refresh_window = 300
@@ -307,8 +307,8 @@ if uamqp_installed:
             :param JWTTokenAuth mgmt_auth: Auth for client.
             :param ~azure.eventhub._configuration.Configuration config: The configuration.
 
-            :rtype: ~uamqp.AMQPClientAsync
             :return: The mgmt AMQP client.
+            :rtype: ~uamqp.AMQPClientAsync
             """
 
             mgmt_target = f"amqps://{address.hostname}{address.path}"
@@ -323,8 +323,8 @@ if uamqp_installed:
             """
             Return updated auth token.
             :param JWTTokenAuth mgmt_auth: Auth.
-            :rtype: str
             :return: Updated token.
+            :rtype: str
             """
             return mgmt_auth.token
 
@@ -348,8 +348,8 @@ if uamqp_installed:
             :keyword status_code_field: mgmt status code.
             :keyword description_fields: mgmt status desc.
 
-            :rtype: tuple
             :return: Status code, description, response.
+            :rtype: tuple
             """
             operation_type = kwargs.pop("operation_type")
             operation = kwargs.pop("operation")
