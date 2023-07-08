@@ -1,11 +1,9 @@
 # Release History
 
-## 1.4.1 (Unreleased)
+## 1.4.1 (2023-07-11)
 
 ### Features Added
 - Added support for `Snapshot` CRUD operations.
-
-### Breaking Changes
 
 ### Bugs Fixed
 - Fixed async `update_sync_token` to use async/await keywords
