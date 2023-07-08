@@ -5,10 +5,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.appconfiguration import ConfigurationSetting, Snapshot
 
 
-def print_configuration_setting(config_setting: ConfigurationSetting):
+def print_configuration_setting(config_setting):
     if not config_setting:
         return
     print(f"key: {config_setting.key}")
@@ -17,7 +16,7 @@ def print_configuration_setting(config_setting: ConfigurationSetting):
     print(f"read_only: {config_setting.read_only}")
     print(f"etag: {config_setting.etag}")
 
-def print_snapshot(snapshot: Snapshot):
+def print_snapshot(snapshot):
     if not snapshot:
         return
     print(f"name: {snapshot.name}")
