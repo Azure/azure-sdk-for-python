@@ -300,7 +300,9 @@ class SsmlSource(object):
     def _to_generated(self):
         return PlaySourceInternal(
             source_type=PlaySourceType.SSML,
-            ssml_source=SsmlSourceInternal(ssml_text=self.ssml_text,custom_voice_endpoint_id=self.custom_voice_endpoint_id),
+            ssml_source=SsmlSourceInternal(
+                ssml_text=self.ssml_text,
+                custom_voice_endpoint_id=self.custom_voice_endpoint_id),
             play_source_id=self.play_source_cache_id
         )
 
