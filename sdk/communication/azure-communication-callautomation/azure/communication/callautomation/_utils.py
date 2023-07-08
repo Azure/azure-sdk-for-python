@@ -4,8 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Dict, Any, Union
-import uuid
-from datetime import datetime
 from ._shared.models import (
     CommunicationIdentifier,
     CommunicationUserIdentifier,
