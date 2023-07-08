@@ -448,7 +448,7 @@ need to do this once across all repos using our CLA.
 
 This project has adopted the
 [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information,
-see the [Code of Conduct FAQ][code_of_conduct_faq] or contact opencode@microsoft.com with any
+see the [Code of Conduct FAQ][coc_faq] or contact [opencode@microsoft.com](coc_contact) with any
 additional questions or comments.
 
 <!-- LINKS -->
@@ -466,5 +466,4 @@ additional questions or comments.
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
 [troubleshooting_guide]: https://aka.ms/azsdk/python/appconfiguration/troubleshoot
-[code_of_conduct_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [label_concept]: https://docs.microsoft.com/azure/azure-app-configuration/concept-key-value#label-keys
