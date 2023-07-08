@@ -28,8 +28,6 @@ from ._models import (
 )
 from ._content_downloader import ContentDownloader
 from ._utils import (
-    get_repeatability_guid,
-    get_repeatability_timestamp,
     serialize_phone_identifier,
     serialize_identifier,
     serialize_communication_user_identifier
@@ -197,8 +195,6 @@ class CallAutomationClient(object):
 
         result = self._client.create_call(
             create_call_request=create_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
         return CallConnectionProperties._from_generated(# pylint:disable=protected-access
@@ -268,8 +264,6 @@ class CallAutomationClient(object):
 
         result = self._client.create_call(
             create_call_request=create_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
         return CallConnectionProperties._from_generated(# pylint:disable=protected-access
@@ -318,8 +312,6 @@ class CallAutomationClient(object):
 
         result = self._client.answer_call(
             answer_call_request=answer_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
         return CallConnectionProperties._from_generated(# pylint:disable=protected-access
@@ -356,8 +348,6 @@ class CallAutomationClient(object):
 
         self._client.redirect_call(
             redirect_call_request=redirect_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
     @distributed_trace
@@ -386,8 +376,6 @@ class CallAutomationClient(object):
 
         self._client.reject_call(
             reject_call_request=reject_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
     @distributed_trace
@@ -457,9 +445,7 @@ class CallAutomationClient(object):
             audio_channel_participant_ordering = audio_channel_participant_ordering,
             recording_storage_type = recording_storage_type,
             external_storage_location = external_storage_location,
-            channel_affinity = channel_affinity_internal,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid()
+            channel_affinity = channel_affinity_internal
         )
 
         recording_state_result = self._call_recording_client.start_recording(

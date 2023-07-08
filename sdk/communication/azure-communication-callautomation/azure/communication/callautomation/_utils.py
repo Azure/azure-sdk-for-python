@@ -20,12 +20,6 @@ from ._generated.models import (
     PhoneNumberIdentifierModel
 )
 
-def get_repeatability_guid():
-    return uuid.uuid4()
-
-def get_repeatability_timestamp():
-    return datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
-
 def serialize_identifier(
         identifier:CommunicationIdentifier
         ) -> Dict[str, Any]:
