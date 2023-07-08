@@ -503,7 +503,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         recognize_request = RecognizeRequest(
             recognize_input_type=input_type,
-            play_prompt=play_source_single._to_generated(),#pylint:disable=protected-access
+            play_prompt=play_source_single._to_generated() if play_source_single is not None else None,#pylint:disable=protected-access
             interrupt_call_media_operation=interrupt_call_media_operation,
             operation_context=operation_context,
             recognize_options=options,
