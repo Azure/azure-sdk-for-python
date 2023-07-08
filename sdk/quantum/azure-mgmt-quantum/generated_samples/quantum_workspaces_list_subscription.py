@@ -14,7 +14,7 @@ from azure.mgmt.quantum import AzureQuantumManagementClient
     pip install azure-identity
     pip install azure-mgmt-quantum
 # USAGE
-    python quantum_workspaces_delete.py
+    python quantum_workspaces_list_subscription.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,12 +29,11 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    client.workspaces.begin_delete(
-        resource_group_name="quantumResourcegroup",
-        workspace_name="quantumworkspace1",
-    ).result()
+    response = client.workspaces.list_by_subscription()
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/quantum/resource-manager/Microsoft.Quantum/preview/2022-01-10-preview/examples/quantumWorkspacesDelete.json
+# x-ms-original-file: specification/quantum/resource-manager/Microsoft.Quantum/preview/2022-01-10-preview/examples/quantumWorkspacesListSubscription.json
 if __name__ == "__main__":
     main()
