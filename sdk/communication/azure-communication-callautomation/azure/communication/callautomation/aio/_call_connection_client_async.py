@@ -422,6 +422,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         dtmf_stop_tones: Optional[List[str or 'DtmfTone']] = None,
         choices: Optional[List["Choice"]] = None,
         end_silence_timeout_in_ms: Optional[int] = None,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
         **kwargs
     ) -> None:
         """Recognize tones from specific participant in the call.
@@ -452,6 +453,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype dtmf_max_tones_to_collect: int
         :keyword dtmf_stop_tones: List of tones that will stop recognizing.
         :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.DtmfTone]
+        :keyword speech_recognition_model_endpoint_id:
+        Endpoint id where the custom speech recognition model was deployed.
+        :paramtype speech_recognition_model_endpoint_id:
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -459,7 +463,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         options = RecognizeOptions(
             interrupt_prompt=interrupt_prompt,
             initial_silence_timeout_in_seconds=initial_silence_timeout,
-            target_participant=serialize_identifier(target_participant)
+            target_participant=serialize_identifier(target_participant),
+            speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id
         )
 
         play_source_single: Union['FileSource', 'TextSource', 'SsmlSource'] = None
@@ -498,7 +503,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         recognize_request = RecognizeRequest(
             recognize_input_type=input_type,
-            play_prompt=play_source_single._to_generated(),#pylint:disable=protected-access
+            play_prompt=play_source_single._to_generated() if play_source_single is not None else None,#pylint:disable=protected-access
             interrupt_call_media_operation=interrupt_call_media_operation,
             operation_context=operation_context,
             recognize_options=options,
