@@ -1,6 +1,6 @@
 # Release History
 
-## 1.4.1 (2023-07-11)
+## 1.5.0b1 (2023-07-11)
 
 ### Features Added
 - Added support for `Snapshot` CRUD operations.
