@@ -37,7 +37,7 @@ pip install azure-appconfiguration
 | [conditional_operation_sample.py](conditional_operation_sample) / [conditional_operation_sample_async.py](conditional_operation_sample_async) | demos conditional set/get/delete operations |
 | [read_only_sample.py](read_only_sample) / [read_only_sample_async.py](read_only_sample_async) | demos set_read_only operations |
 | [list_revision_sample.py](list_revision_sample) / [list_revision_sample_async.py](list_revision_sample_async) | demos list revision operations |
-| [sync_token_samples.py](sync_token_samples) / [sync_token_sample_asyncs.py](sync_token_sample_asyncs) | demos the `update_sync_token` method |
+| [sync_token_samples.py](sync_token_samples) / [sync_token_sample_async.py](sync_token_sample_async) | demos the `update_sync_token` method |
 | [snapshot_samples.py](snapshot_samples) / [snapshot_samples_async.py](snapshot_samples_async) | demos create/get/archive/recover/list operations on configuration setting snapshot |
 
 <!-- LINKS -->
@@ -55,6 +55,6 @@ pip install azure-appconfiguration
 [list_revision_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/list_revision_sample.py
 [list_revision_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/list_revision_sample_async.py
 [sync_token_samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/sync_token_samples.py
-[sync_token_sample_asyncs]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/sync_token_samples_async.py
+[sync_token_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/sync_token_samples_async.py
 [snapshot_samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/snapshot_samples.py
 [snapshot_samples_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/snapshot_samples_async.py
