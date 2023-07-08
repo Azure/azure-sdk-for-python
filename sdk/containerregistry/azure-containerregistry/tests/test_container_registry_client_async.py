@@ -17,6 +17,8 @@ from azure.containerregistry import (
     ArtifactManifestOrder,
     ArtifactTagProperties,
     ArtifactTagOrder,
+    ArtifactArchitecture,
+    ArtifactOperatingSystem,
     DigestValidationError,
 )
 from azure.containerregistry.aio import ContainerRegistryClient
@@ -862,3 +864,52 @@ class TestContainerRegistryClientAsyncUnitTests:
                 async for chunk in stream:
                     pass
             assert str(exp.value) == "The content of retrieved blob digest does not match the requested digest."
+    
+    @pytest.mark.asyncio
+    async def test_deserialize_manifest(self):
+        def get_manifest(encoding: Optional[str] = None) -> str:
+            manifest = {
+                "manifests": [
+                    {
+                        "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+                        "imageSize": 2199,
+                        "digest": "sha256:86fed9f0203a09f13cbbb9842132e9000eeff51b3de0d4ff66ee03ab0e860d1f",
+                        "architecture": "amd64",
+                        "os": "linux"
+                    },
+                    {
+                        "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+                        "imageSize": 566,
+                        "digest": "sha256:b808af65792ab617b9032c20fb12c455dc2bf5efe1af3f0ac81a129560772d35",
+                        "annotations": {
+                            "vnd.docker.reference.digest": "sha256:86fed9f0203a09f13cbbb9842132e9000eeff51b3de0d4ff66ee03ab0e860d1f",
+                            "vnd.docker.reference.type": "attestation-manifest"
+                        },
+                        "architecture": "unknown",
+                        "os": "unknown",
+                    }
+                ]
+            }
+            return json.dumps(manifest)
+        async def send(request: PipelineRequest, **kwargs) -> MyMagicMock:
+            return MyMagicMock(
+                status_code=200,
+                content_type="application/json; charset=utf-8",
+                text=get_manifest,
+        )
+        
+        async with ContainerRegistryClient(
+            endpoint=self.containerregistry_endpoint, transport = MyMagicMock(send=send)
+        ) as client:
+            manifests = client.list_manifest_properties(HELLO_WORLD)
+            async for manifest in manifests:
+                if manifest.size_in_bytes == 2199:
+                    assert isinstance(manifest.architecture, ArtifactArchitecture)
+                    assert manifest.architecture == "amd64"
+                    assert isinstance(manifest.operating_system, ArtifactOperatingSystem)
+                    assert manifest.operating_system == "linux"
+                if manifest.size_in_bytes == 566:
+                    assert isinstance(manifest.architecture, str)
+                    assert manifest.architecture == "unknown"
+                    assert isinstance(manifest.operating_system, str)
+                    assert manifest.operating_system == "unknown"
