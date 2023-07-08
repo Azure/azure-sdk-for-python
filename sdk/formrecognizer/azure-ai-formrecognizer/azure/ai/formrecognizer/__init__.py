@@ -73,7 +73,6 @@ from ._models import (
     QuotaDetails,
     DocumentFormula,
     DocumentBarcode,
-    DocumentAnnotation,
 )
 from ._api_versions import FormRecognizerApiVersion, DocumentAnalysisApiVersion
 
@@ -149,7 +148,6 @@ __all__ = [
     "QuotaDetails",
     "DocumentFormula",
     "DocumentBarcode",
-    "DocumentAnnotation",
 ]
 
 __VERSION__ = VERSION

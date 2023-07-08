@@ -174,21 +174,6 @@ class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_layout_url_annotations(self, client):
-        async with client:
-            poller = await client.begin_analyze_document_from_url("prebuilt-layout", self.annotations_url_jpg)
-            layout = await poller.result()
-        assert len(layout.pages) > 0
-        assert len(layout.pages[0].annotations) > 0
-        assert layout.pages[0].annotations[0].kind == "check"
-        assert layout.pages[0].annotations[0].polygon
-        assert layout.pages[0].annotations[0].confidence > 0.5
-
-    @pytest.mark.live_test_only
-    @skip_flaky_test
-    @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    @recorded_by_proxy_async
     async def test_layout_url_barcodes(self, client):
         async with client:
             poller = await client.begin_analyze_document_from_url("prebuilt-layout", self.barcode_url_tif)

@@ -2859,66 +2859,6 @@ class DocumentParagraph:
         )
 
 
-class DocumentAnnotation:
-    """An annotation object that represents a visual annotation in the document,
-    such as checks ✓ and crosses X.
-    """
-
-    kind: str
-    """Annotation kind. Known values are: "check", "cross"."""
-    polygon: Sequence[Point]
-    """Bounding polygon of the annotation."""
-    confidence: float
-    """Confidence of correctly extracting the annotation."""
-
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.kind = kwargs.get("kind", None)
-        self.polygon = kwargs.get("polygon", None)
-        self.confidence = kwargs.get("confidence", None)
-
-    @classmethod
-    def _from_generated(cls, annotation):
-        return cls(
-            kind=annotation.kind,
-            polygon=get_polygon(annotation),
-            confidence=annotation.confidence
-        )
-
-    def __repr__(self) -> str:
-        return (
-            f"DocumentAnnotation(kind={self.kind}, polygon={self.polygon}, confidence={self.confidence})"
-        )
-
-    def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of DocumentAnnotation."""
-        return {
-            "kind": self.kind,
-            "polygon": [f.to_dict() for f in self.polygon]
-            if self.polygon
-            else [],
-            "confidence": self.confidence,
-        }
-
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "DocumentAnnotation":
-        """Converts a dict in the shape of a DocumentAnnotation to the model itself.
-
-        :param Dict data: A dictionary in the shape of DocumentAnnotation.
-        :return: DocumentAnnotation
-        :rtype: DocumentAnnotation
-        """
-        return cls(
-            kind=data.get("kind", None),
-            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
-            if len(data.get("polygon", [])) > 0
-            else [],
-            confidence=data.get("confidence", None),
-        )
-
-
 class DocumentBarcode:
     """A barcode object."""
 
@@ -3071,7 +3011,7 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
     """Content and layout elements extracted from a page of the input.
 
     .. versionadded:: 2023-07-31
-        The *annotations*, *barcodes*, and *formulas* properties.
+        The *barcodes*, and *formulas* properties.
     """
 
     page_number: int
@@ -3096,8 +3036,6 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
     lines: Optional[List[DocumentLine]]
     """Extracted lines from the page, potentially containing both textual and
      visual elements."""
-    annotations: List[DocumentAnnotation]
-    """Extracted annotations from the page."""
     barcodes: List[DocumentBarcode]
     """Extracted barcodes from the page."""
     formulas: List[DocumentFormula]
@@ -3113,13 +3051,11 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
         self.words = kwargs.get("words", None)
         self.selection_marks = kwargs.get("selection_marks", None)
         self.lines = kwargs.get("lines", None)
-        self.annotations = kwargs.get("annotations", None)
         self.barcodes = kwargs.get("barcodes", None)
         self.formulas = kwargs.get("formulas", None)
 
     @classmethod
     def _from_generated(cls, page):
-        annotations = page.annotations if hasattr(page, "annotations") else None
         barcodes = page.barcodes if hasattr(page, "barcodes") else None
         formulas = page.formulas if hasattr(page, "formulas") else None
 
@@ -3143,12 +3079,6 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             if page.selection_marks
             else [],
             spans=prepare_document_spans(page.spans),
-            annotations=[
-                DocumentAnnotation._from_generated(annotation)
-                for annotation in annotations
-            ]
-            if annotations
-            else [],
             barcodes=[
                 DocumentBarcode._from_generated(barcode)
                 for barcode in barcodes
@@ -3168,8 +3098,7 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             f"DocumentPage(page_number={self.page_number}, angle={self.angle}, "
             f"width={self.width}, height={self.height}, unit={self.unit}, lines={repr(self.lines)}, "
             f"words={repr(self.words)}, selection_marks={repr(self.selection_marks)}, "
-            f"spans={repr(self.spans)}, annotations={repr(self.annotations)}, "
-            f"barcodes={repr(self.barcodes)}, formulas={repr(self.formulas)})"
+            f"spans={repr(self.spans)}, barcodes={repr(self.barcodes)}, formulas={repr(self.formulas)})"
         )
 
     def to_dict(self) -> Dict:
@@ -3191,9 +3120,6 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             else [],
             "spans": [f.to_dict() for f in self.spans]
             if self.spans
-            else [],
-            "annotations": [f.to_dict() for f in self.annotations]
-            if self.annotations
             else [],
             "barcodes": [f.to_dict() for f in self.barcodes]
             if self.barcodes
@@ -3228,9 +3154,6 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             else [],
             spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
             if len(data.get("spans", [])) > 0
-            else [],
-            annotations=[DocumentAnnotation.from_dict(v) for v in data.get("annotations")]  # type: ignore
-            if len(data.get("annotations", [])) > 0
             else [],
             barcodes=[DocumentBarcode.from_dict(v) for v in data.get("barcodes")]  # type: ignore
             if len(data.get("barcodes", [])) > 0

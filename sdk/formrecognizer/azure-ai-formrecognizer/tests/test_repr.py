@@ -298,21 +298,6 @@ def document_selection_mark(bounding_box, document_span):
     return model, model_repr
 
 @pytest.fixture
-def document_annotation(bounding_box, document_span):
-    model = _models.DocumentAnnotation(
-                    kind="check",
-                    polygon=bounding_box[0],
-                    confidence=0.8
-                )
-    model_repr = "DocumentAnnotation(kind={}, polygon={}, confidence={})".format(
-            "check",
-            bounding_box[1],
-            0.8,
-        )
-    assert repr(model) == model_repr
-    return model, model_repr
-
-@pytest.fixture
 def document_barcode(bounding_box, document_span):
     model = _models.DocumentBarcode(
                     kind="QRCode",
@@ -351,7 +336,7 @@ def document_formula(bounding_box, document_span):
     return model, model_repr
 
 @pytest.fixture
-def document_page(document_span, document_word, document_selection_mark, document_line, document_annotation, document_formula, document_barcode):
+def document_page(document_span, document_word, document_selection_mark, document_line, document_formula, document_barcode):
     model = _models.DocumentPage(
         page_number=1,
         angle=120.0,
@@ -363,12 +348,11 @@ def document_page(document_span, document_word, document_selection_mark, documen
         selection_marks=[document_selection_mark[0]],
         lines=[document_line[0]],
         kind="document",
-        annotations=[document_annotation[0]],
         formulas=[document_formula[0]],
         barcodes=[document_barcode[0]],
     )
     model_repr = "DocumentPage(page_number={}, angle={}, width={}, height={}, unit={}, lines=[{}], words=[{}], selection_marks=[{}], spans=[{}], " \
-                 "kind={}, annotations=[{}], barcodes=[{}], formulas=[{}])".format(
+                 "kind={}, barcodes=[{}], formulas=[{}])".format(
                 1,
                 120.0,
                 8.0,
@@ -379,7 +363,6 @@ def document_page(document_span, document_word, document_selection_mark, documen
                 document_selection_mark[1],
                 document_span[1],
                 "document",
-                document_annotation[1],
                 document_barcode[1],
                 document_formula[1],
             )

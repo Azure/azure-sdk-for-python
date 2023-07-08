@@ -12,6 +12,8 @@ This version of the client library defaults to the service API version `2023-07-
 - Removed `kind` property from `DocumentPage`.
 - Removed `images` property from `DocumentPage`.
 - Removed `DocumentImage` model.
+- Removed `annotations` property from `DocumentPage`.
+- Removed `DocumentAnnotation` model.
 - Removed `common_name` property from `DocumentKeyValuePair`.
 - Changed `AnalysisFeature` enum member names and values. Supported enum members are: `OCR_HIGH_RESOLUTION`, `LANGUAGES`, `BARCODES`, `FORMULAS`, `KEY_VALUE_PAIRS`, `STYLE_FONT`.
 

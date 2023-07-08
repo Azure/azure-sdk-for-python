@@ -695,18 +695,6 @@ class TestToDict(FormRecognizerTest):
                     ],
                 ),
             ],
-            annotations=[
-                _models.DocumentAnnotation(
-                    kind="check",
-                    polygon=[
-                        _models.Point(1427.0, 1669.0),
-                        _models.Point(1527.0, 1669.0),
-                        _models.Point(1527.0, 1698.0),
-                        _models.Point(1427.0, 1698.0),
-                    ],
-                    confidence=0.8
-                )
-            ],
             barcodes=[
                 _models.DocumentBarcode(
                     kind="QRCode",
@@ -799,18 +787,6 @@ class TestToDict(FormRecognizerTest):
                         },
                     ],
                 },
-            ],
-            "annotations": [
-                {
-                    "kind": "check",
-                    "polygon": [
-                        {"x": 1427.0, "y": 1669.0},
-                        {"x": 1527.0, "y": 1669.0},
-                        {"x": 1527.0, "y": 1698.0},
-                        {"x": 1427.0, "y": 1698.0}
-                    ],
-                    "confidence": 0.8
-                }
             ],
             "barcodes": [
                 {
@@ -1265,18 +1241,6 @@ class TestToDict(FormRecognizerTest):
                             spans=[_models.DocumentSpan(offset=5, length=2)],
                         ),
                     ],
-                    annotations=[
-                        _models.DocumentAnnotation(
-                            kind="check",
-                            polygon=[
-                                _models.Point(1427.0, 1669.0),
-                                _models.Point(1527.0, 1669.0),
-                                _models.Point(1527.0, 1698.0),
-                                _models.Point(1427.0, 1698.0),
-                            ],
-                            confidence=0.8
-                        )
-                    ],
                     barcodes=[
                         _models.DocumentBarcode(
                             kind="QRCode",
@@ -1534,18 +1498,6 @@ class TestToDict(FormRecognizerTest):
                                 },
                             ],
                         },
-                    ],
-                    "annotations": [
-                        {
-                            "kind": "check",
-                            "polygon": [
-                                {"x": 1427.0, "y": 1669.0},
-                                {"x": 1527.0, "y": 1669.0},
-                                {"x": 1527.0, "y": 1698.0},
-                                {"x": 1427.0, "y": 1698.0}
-                            ],
-                            "confidence": 0.8
-                        }
                     ],
                     "barcodes": [
                         {
