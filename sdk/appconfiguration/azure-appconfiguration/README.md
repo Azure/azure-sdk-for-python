@@ -250,7 +250,7 @@ for item in config_settings:
 
 ### Create a Snapshot
 
-<!-- SNIPPET:snapshot_samples.py.create_snapshot -->
+<!-- SNIPPET:snapshot_samples.create_snapshot -->
 
 ```python
 from azure.appconfiguration import ConfigurationSettingFilter
@@ -260,55 +260,61 @@ response = client.begin_create_snapshot(name="my_snapshot_name", filters=filters
 created_snapshot = response.result()
 print_snapshot(created_snapshot)
 ```
+
 <!-- END SNIPPET -->
 
 ### Get a Snapshot
 
-<!-- SNIPPET:snapshot_samples.py.get_snapshot -->
+<!-- SNIPPET:snapshot_samples.get_snapshot -->
 
 ```python
 received_snapshot = client.get_snapshot(name="my_snapshot_name")
 ```
+
 <!-- END SNIPPET -->
 
 ### Archive a Snapshot
 
-<!-- SNIPPET:snapshot_samples.py.archive_snapshot -->
+<!-- SNIPPET:snapshot_samples.archive_snapshot -->
 
 ```python
 archived_snapshot = client.archive_snapshot(name="my_snapshot_name")
 print_snapshot(archived_snapshot)
 ```
+
 <!-- END SNIPPET -->
 
 ### Recover a Snapshot
 
-<!-- SNIPPET:snapshot_samples.py.recover_snapshot -->
+<!-- SNIPPET:snapshot_samples.recover_snapshot -->
 
 ```python
 recovered_snapshot = client.recover_snapshot(name="my_snapshot_name")
 print_snapshot(recovered_snapshot)
 ```
+
 <!-- END SNIPPET -->
 
 ### List Snapshots
 
-<!-- SNIPPET:snapshot_samples.py.list_snapshots -->
+<!-- SNIPPET:snapshot_samples.list_snapshots -->
 
 ```python
 for snapshot in client.list_snapshots():
     print_snapshot(snapshot)
 ```
+
 <!-- END SNIPPET -->
 
 ### List Configuration Settings of a Snapshot
 
-<!-- SNIPPET:snapshot_samples.py.list_snapshot_configuration_settings -->
+<!-- SNIPPET:snapshot_samples.list_snapshot_configuration_settings -->
 
 ```python
 for config_setting in client.list_snapshot_configuration_settings(name="my_snapshot_name"):
     print_configuration_setting(config_setting)
 ```
+
 <!-- END SNIPPET -->
 
 ### Async APIs
@@ -353,7 +359,7 @@ async for item in config_settings:
 
 <!-- END SNIPPET -->
 
-<!-- SNIPPET:snapshot_samples_async.py.create_snapshot -->
+<!-- SNIPPET:snapshot_samples_async.create_snapshot -->
 
 ```python
 from azure.appconfiguration import ConfigurationSettingFilter
@@ -363,45 +369,51 @@ response = await client.begin_create_snapshot(name="my_snapshot_name", filters=f
 created_snapshot = await response.result()
 print_snapshot(created_snapshot)
 ```
+
 <!-- END SNIPPET -->
 
-<!-- SNIPPET:snapshot_samples_async.py.get_snapshot -->
+<!-- SNIPPET:snapshot_samples_async.get_snapshot -->
 
 ```python
 received_snapshot = await client.get_snapshot(name="my_snapshot_name")
 ```
+
 <!-- END SNIPPET -->
 
-<!-- SNIPPET:snapshot_samples_async.py.archive_snapshot -->
+<!-- SNIPPET:snapshot_samples_async.archive_snapshot -->
 
 ```python
 archived_snapshot = await client.archive_snapshot(name="my_snapshot_name")
 print_snapshot(archived_snapshot)
 ```
+
 <!-- END SNIPPET -->
 
-<!-- SNIPPET:snapshot_samples_async.py.recover_snapshot -->
+<!-- SNIPPET:snapshot_samples_async.recover_snapshot -->
 
 ```python
 recovered_snapshot = await client.recover_snapshot(name="my_snapshot_name")
 print_snapshot(recovered_snapshot)
 ```
+
 <!-- END SNIPPET -->
 
-<!-- SNIPPET:snapshot_samples_async.py.list_snapshots -->
+<!-- SNIPPET:snapshot_samples_async.list_snapshots -->
 
 ```python
 async for snapshot in client.list_snapshots():
     print_snapshot(snapshot)
 ```
+
 <!-- END SNIPPET -->
 
-<!-- SNIPPET:snapshot_samples_async.py.list_snapshot_configuration_settings -->
+<!-- SNIPPET:snapshot_samples_async.list_snapshot_configuration_settings -->
 
 ```python
 async for config_setting in client.list_snapshot_configuration_settings(name="my_snapshot_name"):
     print_configuration_setting(config_setting)
 ```
+
 <!-- END SNIPPET -->
 
 ## Troubleshooting
