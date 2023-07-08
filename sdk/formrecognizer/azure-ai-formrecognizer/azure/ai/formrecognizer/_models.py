@@ -271,7 +271,7 @@ class Point(namedtuple("Point", "x y")):
         """Returns a dict representation of Point.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {"x": self.x, "y": self.y}
 
@@ -318,7 +318,7 @@ class TextAppearance:
         """Returns a dict representation of TextAppearance.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "style_name": self.style_name,
@@ -361,7 +361,7 @@ class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_num
         """Returns a dict representation of FormPageRange.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "first_page_number": self.first_page_number,
@@ -413,7 +413,7 @@ class FormElement:
         """Returns a dict representation of FormElement.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "text": self.text,
@@ -486,7 +486,7 @@ class FormWord(FormElement):
         """Returns a dict representation of FormWord.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "text": self.text,
@@ -563,7 +563,7 @@ class FormSelectionMark(FormElement):
         """Returns a dict representation of FormSelectionMark.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "text": self.text,
@@ -650,7 +650,7 @@ class FormLine(FormElement):
         """Returns a dict representation of FormLine.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "text": self.text,
@@ -767,7 +767,7 @@ class FormTableCell:  # pylint:disable=too-many-instance-attributes
         """Returns a dict representation of FormTableCell.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "text": self.text,
@@ -860,7 +860,7 @@ class FormTable:
         """Returns a dict representation of FormTable.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "page_number": self.page_number,
@@ -949,7 +949,7 @@ class FormPage:
         """Returns a dict representation of FormPage.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "page_number": self.page_number,
@@ -1064,7 +1064,7 @@ class FieldData:
         """Returns a dict representation of FieldData.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "text": self.text,
@@ -1179,7 +1179,7 @@ class FormField:
         """Returns a dict representation of FormField.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         value = self.value
         if isinstance(self.value, dict):
@@ -1271,7 +1271,7 @@ class RecognizedForm:
         """Returns a dict representation of RecognizedForm.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "fields": {k: v.to_dict() for k, v in self.fields.items()}
@@ -1338,7 +1338,7 @@ class FormRecognizerError:
         """Returns a dict representation of FormRecognizerError.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {"code": self.code, "message": self.message}
 
@@ -1395,7 +1395,7 @@ class CustomFormModelField:
         """Returns a dict representation of CustomFormModelField.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {"label": self.label, "accuracy": self.accuracy, "name": self.name}
 
@@ -1486,7 +1486,7 @@ class TrainingDocumentInfo:
         """Returns a dict representation of TrainingDocumentInfo.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "name": self.name,
@@ -1547,7 +1547,7 @@ class AccountProperties:
         """Returns a dict representation of AccountProperties.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "custom_model_count": self.custom_model_count,
@@ -1593,7 +1593,7 @@ class CustomFormModelProperties:
         """Returns a dict representation of CustomFormModelProperties.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {"is_composed_model": self.is_composed_model}
 
@@ -1672,7 +1672,7 @@ class CustomFormModelInfo:
         """Returns a dict representation of CustomFormModelInfo.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "model_id": self.model_id,
@@ -1798,7 +1798,7 @@ class CustomFormSubmodel:
         """Returns a dict representation of CustomFormSubmodel.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "model_id": self.model_id,
@@ -1924,7 +1924,7 @@ class CustomFormModel:
         """Returns a dict representation of CustomFormModel.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "model_id": self.model_id,
@@ -2001,7 +2001,7 @@ class DocumentSpan:
         """Returns a dict representation of DocumentSpan.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "offset": self.offset,
@@ -2052,7 +2052,7 @@ class BoundingRegion:
         """Returns a dict representation of BoundingRegion.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "page_number": self.page_number,
@@ -2170,7 +2170,7 @@ class AddressValue:  # pylint: disable=too-many-instance-attributes
         """Returns a dict representation of AddressValue.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "house_number": self.house_number,
@@ -2255,7 +2255,7 @@ class CurrencyValue:
         """Returns a dict representation of CurrencyValue.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "amount": self.amount,
@@ -2310,7 +2310,7 @@ class DocumentLanguage:
         """Returns a dict representation of DocumentLanguage.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "locale": self.locale,
@@ -2410,7 +2410,7 @@ class DocumentField:
         """Returns a dict representation of DocumentField.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
 
         value = self.value
@@ -2524,7 +2524,7 @@ class AnalyzedDocument:
         """Returns a dict representation of AnalyzedDocument.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "doc_type": self.doc_type,
@@ -2604,7 +2604,7 @@ class DocumentKeyValueElement:
         """Returns a dict representation of DocumentKeyValueElement.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "content": self.content,
@@ -2681,7 +2681,7 @@ class DocumentKeyValuePair:
         """Returns a dict representation of DocumentKeyValuePair.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "key": self.key.to_dict() if self.key else None,
@@ -2750,7 +2750,7 @@ class DocumentWord:
         """Returns a dict representation of DocumentWord.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "content": self.content,
@@ -2820,7 +2820,7 @@ class DocumentSelectionMark:
         """Returns a dict representation of DocumentSelectionMark.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "state": self.state,
@@ -2881,7 +2881,7 @@ class DocumentLine:
         """Returns a dict representation of DocumentLine.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "content": self.content,
@@ -2971,7 +2971,7 @@ class DocumentParagraph:
         """Returns a dict representation of DocumentParagraph.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "role": self.role,
@@ -3420,7 +3420,7 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
         """Returns a dict representation of DocumentPage.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "page_number": self.page_number,
@@ -3567,7 +3567,7 @@ class DocumentStyle:
         """Returns a dict representation of DocumentStyle.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "is_handwritten": self.is_handwritten,
@@ -3667,7 +3667,7 @@ class DocumentTableCell:
         """Returns a dict representation of DocumentTableCell.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "kind": self.kind,
@@ -3752,7 +3752,7 @@ class DocumentTable:
         """Returns a dict representation of DocumentTable.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "row_count": self.row_count,
@@ -3835,7 +3835,7 @@ class DocumentTypeDetails:
         """Returns a dict representation of DocumentTypeDetails.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "description": self.description,
@@ -4148,7 +4148,7 @@ class DocumentAnalysisInnerError:
         """Returns a dict representation of DocumentAnalysisInnerError.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "code": self.code,
@@ -4216,7 +4216,7 @@ class DocumentAnalysisError:
         """Returns a dict representation of DocumentAnalysisError.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "code": self.code,
@@ -4301,7 +4301,7 @@ class OperationSummary:
         """Returns a dict representation of OperationSummary.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "operation_id": self.operation_id,
@@ -4406,7 +4406,7 @@ class OperationDetails(OperationSummary):
         """Returns a dict representation of OperationDetails.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "operation_id": self.operation_id,
@@ -4562,7 +4562,7 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
         """Returns a dict representation of AnalyzeResult.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "api_version": self.api_version,
@@ -4657,7 +4657,7 @@ class CustomDocumentModelsDetails:
         """Returns a dict representation of CustomDocumentModelsDetails.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
             "count": self.count,
@@ -4771,7 +4771,7 @@ class ResourceDetails:
         """Returns a dict representation of ResourceDetails.
 
         :return: Dict
-        :rtype: Dict
+        :rtype: dict
         """
         return {
                 "custom_document_models": self.custom_document_models.to_dict()

@@ -79,7 +79,7 @@ def adjust_value_type(value_type):
 def adjust_confidence(score: Optional[float]) -> float:
     """Adjust confidence when not returned.
 
-    :param Optional[float] score: Confidence score to be adjusted.
+    :param float or None score: Confidence score to be adjusted.
     :return: The adjusted confidence score.
     :rtype: float
     """
@@ -91,7 +91,7 @@ def adjust_confidence(score: Optional[float]) -> float:
 def adjust_text_angle(text_angle: Optional[float]) -> Optional[float]:
     """Adjust to (-180, 180]
 
-    :param Optional[float] text_angle: The text angle to be adjusted.
+    :param float or None text_angle: The text angle to be adjusted.
     :return: The adjusted text angle.
     :rtype: float
     """
@@ -119,7 +119,7 @@ def get_authentication_policy(credential):
 def get_content_type(form: Any) -> str:
     """Source: https://en.wikipedia.org/wiki/Magic_number_(programming)#Magic_numbers_in_files
 
-    :param Any form: The input form data.
+    :param any form: The input form data.
     :return: Returns an appropriate content type based on the input data.
     :rtype: str
     """
