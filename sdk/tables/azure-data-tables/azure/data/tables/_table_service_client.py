@@ -41,8 +41,8 @@ class TableServiceClient(TablesBaseClient):
         authenticated with a SAS token.
     :keyword credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential,
-        AzureSasCredential, or TokenCredential from azure-core.
+        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
+        AzureSasCredential (azure-core), or a TokenCredential implementation from azure-identity.
     :paramtype credential:
         ~azure.core.credentials.AzureNamedKeyCredential or
         ~azure.core.credentials.AzureSasCredential or

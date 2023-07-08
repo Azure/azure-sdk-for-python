@@ -943,8 +943,8 @@ class Serializer(object):
         a basic type (str, int, float, dict, list) it will simply be
         cast to str.
 
-        :param dict[str, Any] attr: Object to be serialized.
-        :rtype: dict[str, Any] or str
+        :param dict attr: Object to be serialized.
+        :rtype: dict or str
         """
         if attr is None:
             return None
