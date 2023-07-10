@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 from typing import List, Union, Optional, TYPE_CHECKING, AsyncIterable
 from urllib.parse import urlparse
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
@@ -99,8 +98,8 @@ class CallAutomationClient(object):
 
         self._client = AzureCommunicationCallAutomationService(
             endpoint,
+            credential,
             api_version=api_version or DEFAULT_VERSION,
-            credential=credential,
             authentication_policy=get_authentication_policy(
                 endpoint, credential, is_async=True),
             sdk_moniker=SDK_MONIKER,
@@ -127,7 +126,6 @@ class CallAutomationClient(object):
 
         return cls(endpoint, access_key, **kwargs)
 
-    @distributed_trace
     def get_call_connection(
         self,
         call_connection_id: str,
@@ -501,12 +499,12 @@ class CallAutomationClient(object):
 
         :param recording_url: Recording's url to be downloaded
         :type recording_url: str
-        :param offset: If provided, only download the bytes of the content in the specified range.
+        :keyword offset: If provided, only download the bytes of the content in the specified range.
          Offset of starting byte.
-        :type offset: int
-        :param length: If provided, only download the bytes of the content in the specified range.
+        :paramtype offset: int
+        :keyword length: If provided, only download the bytes of the content in the specified range.
          Length of the bytes to be downloaded.
-        :type length: int
+        :paramtype length: int
         :return: AsyncIterable[bytes]
         :rtype: AsyncIterable[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
