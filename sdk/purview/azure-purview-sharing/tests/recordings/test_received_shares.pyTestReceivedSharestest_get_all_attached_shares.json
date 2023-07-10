@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Jun 2023 18:33:58 GMT",
+        "Date": "Thu, 29 Jun 2023 18:37:08 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15723.3 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15723.3 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Jun 2023 18:33:58 GMT",
+        "Date": "Thu, 29 Jun 2023 18:37:08 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15723.3 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.15723.3 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,7 +172,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "a7815c5d-eff5-4def-a0ed-a0d9e824b2be",
+        "client-request-id": "38d19d4d-aef8-425a-bd73-e584b56581f6",
         "Connection": "keep-alive",
         "Content-Length": "285",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -190,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "a7815c5d-eff5-4def-a0ed-a0d9e824b2be",
+        "client-request-id": "38d19d4d-aef8-425a-bd73-e584b56581f6",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Jun 2023 18:33:58 GMT",
+        "Date": "Thu, 29 Jun 2023 18:37:08 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.15723.3 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15723.3 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -213,7 +213,7 @@
       }
     },
     {
-      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/b9d374c2-30d7-4e91-a750-a53238002652?api-version=2023-05-30-preview",
+      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/6143851f-930b-4050-a437-00b6bfbf2b4e?api-version=2023-05-30-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -250,13 +250,13 @@
       "ResponseHeaders": {
         "Content-Length": "683",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Jun 2023 18:34:11 GMT",
-        "Location": "/sentShares/b9d374c2-30d7-4e91-a750-a53238002652/b9d374c2-30d7-4e91-a750-a53238002652",
+        "Date": "Thu, 29 Jun 2023 18:37:13 GMT",
+        "Location": "/sentShares/6143851f-930b-4050-a437-00b6bfbf2b4e/6143851f-930b-4050-a437-00b6bfbf2b4e",
         "Operation-Id": "https://fake_account.share.purview.azure.com/operationResults/00000000-0000-0000-0000-000000000000?api-version=2023-05-30-preview",
         "Operation-Location": "https://fake_account.share.purview.azure.com/operationResults/00000000-0000-0000-0000-000000000000?api-version=2023-05-30-preview",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-correlation-request-id": "61bde5e2-d40c-4ac8-814c-44219e1ed20e"
+        "x-ms-correlation-request-id": "c63c4247-9fd5-45f5-940d-2b19bad38427"
       },
       "ResponseBody": {
         "properties": {
@@ -280,18 +280,18 @@
             }
           },
           "state": "Succeeded",
-          "createdAt": "2023-06-29T18:34:08.0072091Z",
+          "createdAt": "2023-06-29T18:37:11.6117563Z",
           "dependsOn": [],
           "senderName": "python-sdk-share",
           "senderTenantName": "Microsoft"
         },
         "shareKind": "InPlace",
-        "id": "b9d374c2-30d7-4e91-a750-a53238002652",
+        "id": "6143851f-930b-4050-a437-00b6bfbf2b4e",
         "type": "SentShare"
       }
     },
     {
-      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/b9d374c2-30d7-4e91-a750-a53238002652/sentShareInvitations/242f81b5-fe36-402b-9a27-5d2af7f33308?api-version=2023-05-30-preview",
+      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/6143851f-930b-4050-a437-00b6bfbf2b4e/sentShareInvitations/4430cf68-61db-4e05-af7b-297bad6d362b?api-version=2023-05-30-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -313,11 +313,11 @@
       "ResponseHeaders": {
         "Content-Length": "364",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Jun 2023 18:34:13 GMT",
-        "Location": "/sentShares/b9d374c2-30d7-4e91-a750-a53238002652/sentShareInvitations/242f81b5-fe36-402b-9a27-5d2af7f33308/242f81b5-fe36-402b-9a27-5d2af7f33308",
+        "Date": "Thu, 29 Jun 2023 18:37:17 GMT",
+        "Location": "/sentShares/6143851f-930b-4050-a437-00b6bfbf2b4e/sentShareInvitations/4430cf68-61db-4e05-af7b-297bad6d362b/4430cf68-61db-4e05-af7b-297bad6d362b",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-correlation-request-id": "4c6cec1b-579e-4497-ab04-db57a7a1d62f"
+        "x-ms-correlation-request-id": "3f0187d1-bbcb-4fff-998e-78706540b145"
       },
       "ResponseBody": {
         "properties": {
@@ -325,13 +325,13 @@
           "notify": true,
           "shareStatus": "Detached",
           "expirationDate": "2024-01-01T00:00:00Z",
-          "sentAt": "2023-06-29T18:34:13.9220064Z",
+          "sentAt": "2023-06-29T18:37:17.3189637Z",
           "senderName": "python-sdk-share",
           "senderTenantName": "Microsoft",
           "state": "Succeeded"
         },
         "invitationKind": "User",
-        "id": "242f81b5-fe36-402b-9a27-5d2af7f33308",
+        "id": "4430cf68-61db-4e05-af7b-297bad6d362b",
         "type": "sentShares/sentShareInvitations"
       }
     },
@@ -349,10 +349,10 @@
       "ResponseHeaders": {
         "Content-Length": "891",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Jun 2023 18:34:14 GMT",
+        "Date": "Thu, 29 Jun 2023 18:37:17 GMT",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-correlation-request-id": "3b8a83be-56f8-4302-9808-17bf90deed62"
+        "x-ms-correlation-request-id": "7922c3c4-286e-4adc-9c8a-1c1f85cff585"
       },
       "ResponseBody": {
         "value": [
@@ -437,13 +437,13 @@
       "ResponseHeaders": {
         "Content-Length": "927",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 29 Jun 2023 18:34:17 GMT",
+        "Date": "Thu, 29 Jun 2023 18:37:21 GMT",
         "Location": "/receivedShares/4fa3d9f8-0fcc-4b31-b4d0-1ca025e4cc81/4fa3d9f8-0fcc-4b31-b4d0-1ca025e4cc81",
-        "Operation-Id": "https://fake_account.share.purview.azure.com/operationResults/89b993b1-da2b-429f-b2d7-885aa7787799?api-version=2023-05-30-preview",
-        "Operation-Location": "https://fake_account.share.purview.azure.com/operationResults/89b993b1-da2b-429f-b2d7-885aa7787799?api-version=2023-05-30-preview",
+        "Operation-Id": "https://fake_account.share.purview.azure.com/operationResults/5301c19d-c9fd-4ae8-bbe9-aad3952e6f98?api-version=2023-05-30-preview",
+        "Operation-Location": "https://fake_account.share.purview.azure.com/operationResults/5301c19d-c9fd-4ae8-bbe9-aad3952e6f98?api-version=2023-05-30-preview",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-correlation-request-id": "e83e5c04-766a-43ef-b4b6-309f60651089"
+        "x-ms-correlation-request-id": "44c0af27-e66b-418c-9e9b-ac474a9d482b"
       },
       "ResponseBody": {
         "properties": {
@@ -476,6 +476,94 @@
         "shareKind": "InPlace",
         "id": "4fa3d9f8-0fcc-4b31-b4d0-1ca025e4cc81",
         "type": "ReceivedShare"
+      }
+    },
+    {
+      "RequestUri": "https://fake_account.share.purview.azure.com/receivedShares/attached?referenceName=%2Fsubscriptions%2F00000000-0000-0000-0000-000000000000%2FresourceGroups%2FfakeResourceGroup%2Fproviders%2FMicrosoft.Storage%2FstorageAccounts%2FfakeStorageAccountR\u0026api-version=2023-05-30-preview\u0026orderby=properties%2FcreatedAt%20desc",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-purview-sharing/1.0.0b1 Python/3.10.11 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "1868",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 29 Jun 2023 18:37:22 GMT",
+        "Server": "Kestrel",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-ms-correlation-request-id": "1059a49b-67e7-4e73-8f02-c073eed09b42"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "properties": {
+              "createdAt": "2023-06-14T23:20:29.8790458Z",
+              "sharedAt": "2023-06-14T23:20:29.8790458Z",
+              "displayName": "sentShare-Test",
+              "state": "Creating",
+              "shareStatus": "Attached",
+              "sentShareDescription": "A sample share",
+              "receiverName": "python-sdk-share",
+              "receiverTenantName": "Microsoft",
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft",
+              "assetLocation": "southafricanorth",
+              "assetStoreKind": "AdlsGen2Account",
+              "sink": {
+                "properties": {
+                  "containerName": "containerellxvxonnlukvfzbwhlexfzqfs",
+                  "folder": "folderpubhxhmiibnxcvqchnbi",
+                  "mountPath": "mountPathciynxouybsqvfgmcfwtt",
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccountR",
+                  "type": "ArmResourceReference"
+                }
+              }
+            },
+            "shareKind": "InPlace",
+            "id": "4fa3d9f8-0fcc-4b31-b4d0-1ca025e4cc81",
+            "type": "ReceivedShare"
+          },
+          {
+            "properties": {
+              "createdAt": "2023-06-14T23:40:34.0273608Z",
+              "sharedAt": "2023-06-14T23:40:34.0273608Z",
+              "displayName": "sentShare-Test",
+              "state": "Succeeded",
+              "shareStatus": "Attached",
+              "sentShareDescription": "A sample share",
+              "receiverName": "python-sdk-share",
+              "receiverTenantName": "Microsoft",
+              "senderName": "python-sdk-share",
+              "senderTenantName": "Microsoft",
+              "assetLocation": "southafricanorth",
+              "assetStoreKind": "AdlsGen2Account",
+              "sink": {
+                "properties": {
+                  "containerName": "containerellxvxonnlukvfzbwhlexfzqfs",
+                  "folder": "folderpubhxhmiibnxcvqchnbi",
+                  "mountPath": "mountPathciynxouybsqvfgmcfwtt",
+                  "location": "southafricanorth"
+                },
+                "storeKind": "AdlsGen2Account",
+                "storeReference": {
+                  "referenceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fakeResourceGroup/providers/Microsoft.Storage/storageAccounts/fakeStorageAccountR",
+                  "type": "ArmResourceReference"
+                }
+              }
+            },
+            "shareKind": "InPlace",
+            "id": "5dddc37c-afb1-4c8a-87a8-230cdd411778",
+            "type": "ReceivedShare"
+          }
+        ]
       }
     }
   ],
