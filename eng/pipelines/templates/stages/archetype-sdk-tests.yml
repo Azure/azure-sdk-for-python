@@ -155,7 +155,7 @@ stages:
         timeoutInMinutes: 90
 
         variables:
-          PythonVersion: '3.9'
+          PythonVersion: '3.7'
 
         pool:
           name: azsdk-pool-mms-ubuntu-2004-general
