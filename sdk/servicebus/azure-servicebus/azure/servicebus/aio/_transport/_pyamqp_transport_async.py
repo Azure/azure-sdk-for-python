@@ -196,7 +196,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             # If we have specified a client-side timeout, assure that it is encoded as an uint
             link_properties[OPERATION_TIMEOUT] = amqp_uint_value(timeout_in_ms)
 
-        kwargs.update(link_properties=link_properties)
+        kwargs["link_properties"] = link_properties
 
         return ReceiveClientAsync(
             config.hostname,
