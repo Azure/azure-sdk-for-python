@@ -270,7 +270,7 @@ class Point(namedtuple("Point", "x y")):
     def to_dict(self) -> Dict:
         """Returns a dict representation of Point.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {"x": self.x, "y": self.y}
@@ -279,7 +279,7 @@ class Point(namedtuple("Point", "x y")):
     def from_dict(cls, data: Dict) -> "Point":
         """Converts a dict in the shape of a Point to the model itself.
 
-        :param Dict data: A dictionary in the shape of Point.
+        :param dict data: A dictionary in the shape of Point.
         :return: Point
         :rtype: Point
         """
@@ -317,7 +317,7 @@ class TextAppearance:
     def to_dict(self) -> Dict:
         """Returns a dict representation of TextAppearance.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -329,7 +329,7 @@ class TextAppearance:
     def from_dict(cls, data: Dict) -> "TextAppearance":
         """Converts a dict in the shape of a TextAppearance to the model itself.
 
-        :param Dict data: A dictionary in the shape of TextAppearance.
+        :param dict data: A dictionary in the shape of TextAppearance.
         :return: TextAppearance
         :rtype: TextAppearance
         """
@@ -360,7 +360,7 @@ class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_num
     def to_dict(self) -> Dict:
         """Returns a dict representation of FormPageRange.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -372,7 +372,7 @@ class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_num
     def from_dict(cls, data: Dict) -> "FormPageRange":
         """Converts a dict in the shape of a FormPageRange to the model itself.
 
-        :param Dict data: A dictionary in the shape of FormPageRange.
+        :param dict data: A dictionary in the shape of FormPageRange.
         :return: FormPageRange
         :rtype: FormPageRange
         """
@@ -412,7 +412,7 @@ class FormElement:
     def to_dict(self) -> Dict:
         """Returns a dict representation of FormElement.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -428,7 +428,7 @@ class FormElement:
     def from_dict(cls, data: Dict) -> "FormElement":
         """Converts a dict in the shape of a FormElement to the model itself.
 
-        :param Dict data: A dictionary in the shape of FormElement.
+        :param dict data: A dictionary in the shape of FormElement.
         :return: FormElement
         :rtype: FormElement
         """
@@ -485,7 +485,7 @@ class FormWord(FormElement):
     def to_dict(self) -> Dict:
         """Returns a dict representation of FormWord.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -502,7 +502,7 @@ class FormWord(FormElement):
     def from_dict(cls, data: Dict) -> "FormWord":
         """Converts a dict in the shape of a FormWord to the model itself.
 
-        :param Dict data: A dictionary in the shape of FormWord.
+        :param dict data: A dictionary in the shape of FormWord.
         :return: FormWord
         :rtype: FormWord
         """
@@ -562,7 +562,7 @@ class FormSelectionMark(FormElement):
     def to_dict(self) -> Dict:
         """Returns a dict representation of FormSelectionMark.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -580,7 +580,7 @@ class FormSelectionMark(FormElement):
     def from_dict(cls, data: Dict) -> "FormSelectionMark":
         """Converts a dict in the shape of a FormSelectionMark to the model itself.
 
-        :param Dict data: A dictionary in the shape of FormSelectionMark.
+        :param dict data: A dictionary in the shape of FormSelectionMark.
         :return: FormSelectionMark
         :rtype: FormSelectionMark
         """
@@ -649,7 +649,7 @@ class FormLine(FormElement):
     def to_dict(self) -> Dict:
         """Returns a dict representation of FormLine.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -667,7 +667,7 @@ class FormLine(FormElement):
     def from_dict(cls, data: Dict) -> "FormLine":
         """Converts a dict in the shape of a FormLine to the model itself.
 
-        :param Dict data: A dictionary in the shape of FormLine.
+        :param dict data: A dictionary in the shape of FormLine.
         :return: FormLine
         :rtype: FormLine
         """
@@ -766,7 +766,7 @@ class FormTableCell:  # pylint:disable=too-many-instance-attributes
     def to_dict(self) -> Dict:
         """Returns a dict representation of FormTableCell.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -791,7 +791,7 @@ class FormTableCell:  # pylint:disable=too-many-instance-attributes
     def from_dict(cls, data: Dict) -> "FormTableCell":
         """Converts a dict in the shape of a FormTableCell to the model itself.
 
-        :param Dict data: A dictionary in the shape of FormTableCell.
+        :param dict data: A dictionary in the shape of FormTableCell.
         :return: FormTableCell
         :rtype: FormTableCell
         """
@@ -859,7 +859,7 @@ class FormTable:
     def to_dict(self) -> Dict:
         """Returns a dict representation of FormTable.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -876,7 +876,7 @@ class FormTable:
     def from_dict(cls, data: Dict) -> "FormTable":
         """Converts a dict in the shape of a FormTable to the model itself.
 
-        :param Dict data: A dictionary in the shape of FormTable.
+        :param dict data: A dictionary in the shape of FormTable.
         :return: FormTable
         :rtype: FormTable
         """
@@ -948,7 +948,7 @@ class FormPage:
     def to_dict(self) -> Dict:
         """Returns a dict representation of FormPage.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -968,7 +968,7 @@ class FormPage:
     def from_dict(cls, data: Dict) -> "FormPage":
         """Converts a dict in the shape of a FormPage to the model itself.
 
-        :param Dict data: A dictionary in the shape of FormPage.
+        :param dict data: A dictionary in the shape of FormPage.
         :return: FormPage
         :rtype: FormPage
         """
@@ -1063,7 +1063,7 @@ class FieldData:
     def to_dict(self) -> Dict:
         """Returns a dict representation of FieldData.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -1081,7 +1081,7 @@ class FieldData:
     def from_dict(cls, data: Dict) -> "FieldData":
         """Converts a dict in the shape of a FieldData to the model itself.
 
-        :param Dict data: A dictionary in the shape of FieldData.
+        :param dict data: A dictionary in the shape of FieldData.
         :return: FieldData
         :rtype: FieldData
         """
@@ -1178,7 +1178,7 @@ class FormField:
     def to_dict(self) -> Dict:
         """Returns a dict representation of FormField.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         value = self.value
@@ -1199,7 +1199,7 @@ class FormField:
     def from_dict(cls, data: Dict) -> "FormField":
         """Converts a dict in the shape of a FormField to the model itself.
 
-        :param Dict data: A dictionary in the shape of FormField.
+        :param dict data: A dictionary in the shape of FormField.
         :return: FormField
         :rtype: FormField
         """
@@ -1270,7 +1270,7 @@ class RecognizedForm:
     def to_dict(self) -> Dict:
         """Returns a dict representation of RecognizedForm.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -1288,7 +1288,7 @@ class RecognizedForm:
     def from_dict(cls, data: Dict) -> "RecognizedForm":
         """Converts a dict in the shape of a RecognizedForm to the model itself.
 
-        :param Dict data: A dictionary in the shape of RecognizedForm.
+        :param dict data: A dictionary in the shape of RecognizedForm.
         :return: RecognizedForm
         :rtype: RecognizedForm
         """
@@ -1337,7 +1337,7 @@ class FormRecognizerError:
     def to_dict(self) -> Dict:
         """Returns a dict representation of FormRecognizerError.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {"code": self.code, "message": self.message}
@@ -1346,7 +1346,7 @@ class FormRecognizerError:
     def from_dict(cls, data: Dict) -> "FormRecognizerError":
         """Converts a dict in the shape of a FormRecognizerError to the model itself.
 
-        :param Dict data: A dictionary in the shape of FormRecognizerError.
+        :param dict data: A dictionary in the shape of FormRecognizerError.
         :return: FormRecognizerError
         :rtype: FormRecognizerError
         """
@@ -1394,7 +1394,7 @@ class CustomFormModelField:
     def to_dict(self) -> Dict:
         """Returns a dict representation of CustomFormModelField.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {"label": self.label, "accuracy": self.accuracy, "name": self.name}
@@ -1403,7 +1403,7 @@ class CustomFormModelField:
     def from_dict(cls, data: Dict) -> "CustomFormModelField":
         """Converts a dict in the shape of a CustomFormModelField to the model itself.
 
-        :param Dict data: A dictionary in the shape of CustomFormModelField.
+        :param dict data: A dictionary in the shape of CustomFormModelField.
         :return: CustomFormModelField
         :rtype: CustomFormModelField
         """
@@ -1485,7 +1485,7 @@ class TrainingDocumentInfo:
     def to_dict(self) -> Dict:
         """Returns a dict representation of TrainingDocumentInfo.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -1500,7 +1500,7 @@ class TrainingDocumentInfo:
     def from_dict(cls, data: Dict) -> "TrainingDocumentInfo":
         """Converts a dict in the shape of a TrainingDocumentInfo to the model itself.
 
-        :param Dict data: A dictionary in the shape of TrainingDocumentInfo.
+        :param dict data: A dictionary in the shape of TrainingDocumentInfo.
         :return: TrainingDocumentInfo
         :rtype: TrainingDocumentInfo
         """
@@ -1546,7 +1546,7 @@ class AccountProperties:
     def to_dict(self) -> Dict:
         """Returns a dict representation of AccountProperties.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -1558,7 +1558,7 @@ class AccountProperties:
     def from_dict(cls, data: Dict) -> "AccountProperties":
         """Converts a dict in the shape of a AccountProperties to the model itself.
 
-        :param Dict data: A dictionary in the shape of AccountProperties.
+        :param dict data: A dictionary in the shape of AccountProperties.
         :return: AccountProperties
         :rtype: AccountProperties
         """
@@ -1592,7 +1592,7 @@ class CustomFormModelProperties:
     def to_dict(self) -> Dict:
         """Returns a dict representation of CustomFormModelProperties.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {"is_composed_model": self.is_composed_model}
@@ -1601,7 +1601,7 @@ class CustomFormModelProperties:
     def from_dict(cls, data: Dict) -> "CustomFormModelProperties":
         """Converts a dict in the shape of a CustomFormModelProperties to the model itself.
 
-        :param Dict data: A dictionary in the shape of CustomFormModelProperties.
+        :param dict data: A dictionary in the shape of CustomFormModelProperties.
         :return: CustomFormModelProperties
         :rtype: CustomFormModelProperties
         """
@@ -1671,7 +1671,7 @@ class CustomFormModelInfo:
     def to_dict(self) -> Dict:
         """Returns a dict representation of CustomFormModelInfo.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -1687,7 +1687,7 @@ class CustomFormModelInfo:
     def from_dict(cls, data: Dict) -> "CustomFormModelInfo":
         """Converts a dict in the shape of a CustomFormModelInfo to the model itself.
 
-        :param Dict data: A dictionary in the shape of CustomFormModelInfo.
+        :param dict data: A dictionary in the shape of CustomFormModelInfo.
         :return: CustomFormModelInfo
         :rtype: CustomFormModelInfo
         """
@@ -1797,7 +1797,7 @@ class CustomFormSubmodel:
     def to_dict(self) -> Dict:
         """Returns a dict representation of CustomFormSubmodel.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -1813,7 +1813,7 @@ class CustomFormSubmodel:
     def from_dict(cls, data: Dict) -> "CustomFormSubmodel":
         """Converts a dict in the shape of a CustomFormSubmodel to the model itself.
 
-        :param Dict data: A dictionary in the shape of CustomFormSubmodel.
+        :param dict data: A dictionary in the shape of CustomFormSubmodel.
         :return: CustomFormSubmodel
         :rtype: CustomFormSubmodel
         """
@@ -1923,7 +1923,7 @@ class CustomFormModel:
     def to_dict(self) -> Dict:
         """Returns a dict representation of CustomFormModel.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -1946,7 +1946,7 @@ class CustomFormModel:
     def from_dict(cls, data: Dict) -> "CustomFormModel":
         """Converts a dict in the shape of a CustomFormModel to the model itself.
 
-        :param Dict data: A dictionary in the shape of CustomFormModel.
+        :param dict data: A dictionary in the shape of CustomFormModel.
         :return: CustomFormModel
         :rtype: CustomFormModel
         """
@@ -2000,7 +2000,7 @@ class DocumentSpan:
     def to_dict(self) -> Dict:
         """Returns a dict representation of DocumentSpan.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -2012,7 +2012,7 @@ class DocumentSpan:
     def from_dict(cls, data: Dict) -> "DocumentSpan":
         """Converts a dict in the shape of a DocumentSpan to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentSpan.
+        :param dict data: A dictionary in the shape of DocumentSpan.
         :return: DocumentSpan
         :rtype: DocumentSpan
         """
@@ -2051,7 +2051,7 @@ class BoundingRegion:
     def to_dict(self) -> Dict:
         """Returns a dict representation of BoundingRegion.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -2065,7 +2065,7 @@ class BoundingRegion:
     def from_dict(cls, data: Dict) -> "BoundingRegion":
         """Converts a dict in the shape of a BoundingRegion to the model itself.
 
-        :param Dict data: A dictionary in the shape of BoundingRegion.
+        :param dict data: A dictionary in the shape of BoundingRegion.
         :return: BoundingRegion
         :rtype: BoundingRegion
         """
@@ -2169,7 +2169,7 @@ class AddressValue:  # pylint: disable=too-many-instance-attributes
     def to_dict(self) -> Dict:
         """Returns a dict representation of AddressValue.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -2193,7 +2193,7 @@ class AddressValue:  # pylint: disable=too-many-instance-attributes
     def from_dict(cls, data: Dict) -> "AddressValue":
         """Converts a dict in the shape of a AddressValue to the model itself.
 
-        :param Dict data: A dictionary in the shape of AddressValue.
+        :param dict data: A dictionary in the shape of AddressValue.
         :return: AddressValue
         :rtype: AddressValue
         """
@@ -2254,7 +2254,7 @@ class CurrencyValue:
     def to_dict(self) -> Dict:
         """Returns a dict representation of CurrencyValue.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -2267,7 +2267,7 @@ class CurrencyValue:
     def from_dict(cls, data: Dict) -> "CurrencyValue":
         """Converts a dict in the shape of a CurrencyValue to the model itself.
 
-        :param Dict data: A dictionary in the shape of CurrencyValue.
+        :param dict data: A dictionary in the shape of CurrencyValue.
         :return: CurrencyValue
         :rtype: CurrencyValue
         """
@@ -2309,7 +2309,7 @@ class DocumentLanguage:
     def to_dict(self) -> Dict:
         """Returns a dict representation of DocumentLanguage.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -2324,7 +2324,7 @@ class DocumentLanguage:
     def from_dict(cls, data: Dict) -> "DocumentLanguage":
         """Converts a dict in the shape of a DocumentLanguage to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentLanguage.
+        :param dict data: A dictionary in the shape of DocumentLanguage.
         :return: DocumentLanguage
         :rtype: DocumentLanguage
         """
@@ -2409,7 +2409,7 @@ class DocumentField:
     def to_dict(self) -> Dict:
         """Returns a dict representation of DocumentField.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
 
@@ -2443,7 +2443,7 @@ class DocumentField:
     def from_dict(cls, data: Dict) -> "DocumentField":
         """Converts a dict in the shape of a DocumentField to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentField.
+        :param dict data: A dictionary in the shape of DocumentField.
         :return: DocumentField
         :rtype: DocumentField
         """
@@ -2523,7 +2523,7 @@ class AnalyzedDocument:
     def to_dict(self) -> Dict:
         """Returns a dict representation of AnalyzedDocument.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -2544,7 +2544,7 @@ class AnalyzedDocument:
     def from_dict(cls, data: Dict) -> "AnalyzedDocument":
         """Converts a dict in the shape of a AnalyzedDocument to the model itself.
 
-        :param Dict data: A dictionary in the shape of AnalyzedDocument.
+        :param dict data: A dictionary in the shape of AnalyzedDocument.
         :return: AnalyzedDocument
         :rtype: AnalyzedDocument
         """
@@ -2603,7 +2603,7 @@ class DocumentKeyValueElement:
     def to_dict(self) -> Dict:
         """Returns a dict representation of DocumentKeyValueElement.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -2620,7 +2620,7 @@ class DocumentKeyValueElement:
     def from_dict(cls, data: Dict) -> "DocumentKeyValueElement":
         """Converts a dict in the shape of a DocumentKeyValueElement to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentKeyValueElement.
+        :param dict data: A dictionary in the shape of DocumentKeyValueElement.
         :return: DocumentKeyValueElement
         :rtype: DocumentKeyValueElement
         """
@@ -2680,7 +2680,7 @@ class DocumentKeyValuePair:
     def to_dict(self) -> Dict:
         """Returns a dict representation of DocumentKeyValuePair.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -2694,7 +2694,7 @@ class DocumentKeyValuePair:
     def from_dict(cls, data: Dict) -> "DocumentKeyValuePair":
         """Converts a dict in the shape of a DocumentKeyValuePair to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentKeyValuePair.
+        :param dict data: A dictionary in the shape of DocumentKeyValuePair.
         :return: DocumentKeyValuePair
         :rtype: DocumentKeyValuePair
         """
@@ -2749,7 +2749,7 @@ class DocumentWord:
     def to_dict(self) -> Dict:
         """Returns a dict representation of DocumentWord.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -2765,7 +2765,7 @@ class DocumentWord:
     def from_dict(cls, data: Dict) -> "DocumentWord":
         """Converts a dict in the shape of a DocumentWord to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentWord.
+        :param dict data: A dictionary in the shape of DocumentWord.
         :return: DocumentWord
         :rtype: DocumentWord
         """
@@ -2819,7 +2819,7 @@ class DocumentSelectionMark:
     def to_dict(self) -> Dict:
         """Returns a dict representation of DocumentSelectionMark.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -2835,7 +2835,7 @@ class DocumentSelectionMark:
     def from_dict(cls, data: Dict) -> "DocumentSelectionMark":
         """Converts a dict in the shape of a DocumentSelectionMark to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentSelectionMark.
+        :param dict data: A dictionary in the shape of DocumentSelectionMark.
         :return: DocumentSelectionMark
         :rtype: DocumentSelectionMark
         """
@@ -2880,7 +2880,7 @@ class DocumentLine:
     def to_dict(self) -> Dict:
         """Returns a dict representation of DocumentLine.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -2897,7 +2897,7 @@ class DocumentLine:
     def from_dict(cls, data: Dict) -> "DocumentLine":
         """Converts a dict in the shape of a DocumentLine to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentLine.
+        :param dict data: A dictionary in the shape of DocumentLine.
         :return: DocumentLine
         :rtype: DocumentLine
         """
@@ -2970,7 +2970,7 @@ class DocumentParagraph:
     def to_dict(self) -> Dict:
         """Returns a dict representation of DocumentParagraph.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -2988,7 +2988,7 @@ class DocumentParagraph:
     def from_dict(cls, data: Dict) -> "DocumentParagraph":
         """Converts a dict in the shape of a DocumentParagraph to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentParagraph.
+        :param dict data: A dictionary in the shape of DocumentParagraph.
         :return: DocumentParagraph
         :rtype: DocumentParagraph
         """
@@ -3055,7 +3055,7 @@ class DocumentAnnotation:
     def from_dict(cls, data: Dict[str, Any]) -> "DocumentAnnotation":
         """Converts a dict in the shape of a DocumentAnnotation to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentAnnotation.
+        :param dict data: A dictionary in the shape of DocumentAnnotation.
         :return: DocumentAnnotation
         :rtype: DocumentAnnotation
         """
@@ -3132,7 +3132,7 @@ class DocumentBarcode:
     def from_dict(cls, data: Dict[str, Any]) -> "DocumentBarcode":
         """Converts a dict in the shape of a DocumentBarcode to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentBarcode.
+        :param dict data: A dictionary in the shape of DocumentBarcode.
         :return: DocumentBarcode
         :rtype: DocumentBarcode
         """
@@ -3209,7 +3209,7 @@ class DocumentFormula:
     def from_dict(cls, data: Dict[str, Any]) -> "DocumentFormula":
         """Converts a dict in the shape of a DocumentFormula to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentFormula.
+        :param dict data: A dictionary in the shape of DocumentFormula.
         :return: DocumentFormula
         :rtype: DocumentFormula
         """
@@ -3281,7 +3281,7 @@ class DocumentImage:
     def from_dict(cls, data: Dict[str, Any]) -> "DocumentImage":
         """Converts a dict in the shape of a DocumentImage to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentImage.
+        :param dict data: A dictionary in the shape of DocumentImage.
         :return: DocumentImage
         :rtype: DocumentImage
         """
@@ -3419,7 +3419,7 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
     def to_dict(self) -> Dict:
         """Returns a dict representation of DocumentPage.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -3459,7 +3459,7 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
     def from_dict(cls, data: Dict) -> "DocumentPage":
         """Converts a dict in the shape of a DocumentPage to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentPage.
+        :param dict data: A dictionary in the shape of DocumentPage.
         :return: DocumentPage
         :rtype: DocumentPage
         """
@@ -3566,7 +3566,7 @@ class DocumentStyle:
     def to_dict(self) -> Dict:
         """Returns a dict representation of DocumentStyle.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -3586,7 +3586,7 @@ class DocumentStyle:
     def from_dict(cls, data: Dict) -> "DocumentStyle":
         """Converts a dict in the shape of a DocumentStyle to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentStyle.
+        :param dict data: A dictionary in the shape of DocumentStyle.
         :return: DocumentStyle
         :rtype: DocumentStyle
         """
@@ -3666,7 +3666,7 @@ class DocumentTableCell:
     def to_dict(self) -> Dict:
         """Returns a dict representation of DocumentTableCell.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -3688,7 +3688,7 @@ class DocumentTableCell:
     def from_dict(cls, data: Dict) -> "DocumentTableCell":
         """Converts a dict in the shape of a DocumentTableCell to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentTableCell.
+        :param dict data: A dictionary in the shape of DocumentTableCell.
         :return: DocumentTableCell
         :rtype: DocumentTableCell
         """
@@ -3751,7 +3751,7 @@ class DocumentTable:
     def to_dict(self) -> Dict:
         """Returns a dict representation of DocumentTable.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -3772,7 +3772,7 @@ class DocumentTable:
     def from_dict(cls, data: Dict) -> "DocumentTable":
         """Converts a dict in the shape of a DocumentTable to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentTable.
+        :param dict data: A dictionary in the shape of DocumentTable.
         :return: DocumentTable
         :rtype: DocumentTable
         """
@@ -3834,7 +3834,7 @@ class DocumentTypeDetails:
     def to_dict(self) -> Dict:
         """Returns a dict representation of DocumentTypeDetails.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -3848,7 +3848,7 @@ class DocumentTypeDetails:
     def from_dict(cls, data: Dict) -> "DocumentTypeDetails":
         """Converts a dict in the shape of a DocumentTypeDetails to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentTypeDetails.
+        :param dict data: A dictionary in the shape of DocumentTypeDetails.
         :return: DocumentTypeDetails
         :rtype: DocumentTypeDetails
         """
@@ -3929,7 +3929,7 @@ class DocumentModelSummary:
     def from_dict(cls, data: Dict[str, Any]) -> "DocumentModelSummary":
         """Converts a dict in the shape of a DocumentModelSummary to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentModelSummary.
+        :param dict data: A dictionary in the shape of DocumentModelSummary.
         :return: DocumentModelSummary
         :rtype: DocumentModelSummary
         """
@@ -4008,7 +4008,7 @@ class DocumentClassifierDetails:
     def from_dict(cls, data: Dict[str, Any]) -> "DocumentClassifierDetails":
         """Converts a dict in the shape of a DocumentClassifierDetails to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentClassifierDetails.
+        :param dict data: A dictionary in the shape of DocumentClassifierDetails.
         :return: DocumentClassifierDetails
         :rtype: DocumentClassifierDetails
         """
@@ -4095,7 +4095,7 @@ class DocumentModelDetails(DocumentModelSummary):
     def from_dict(cls, data: Dict[str, Any]) -> "DocumentModelDetails":
         """Converts a dict in the shape of a DocumentModelDetails to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentModelDetails.
+        :param dict data: A dictionary in the shape of DocumentModelDetails.
         :return: DocumentModelDetails
         :rtype: DocumentModelDetails
         """
@@ -4147,7 +4147,7 @@ class DocumentAnalysisInnerError:
     def to_dict(self) -> Dict:
         """Returns a dict representation of DocumentAnalysisInnerError.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -4160,7 +4160,7 @@ class DocumentAnalysisInnerError:
     def from_dict(cls, data: Dict) -> "DocumentAnalysisInnerError":
         """Converts a dict in the shape of a DocumentAnalysisInnerError to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentAnalysisInnerError.
+        :param dict data: A dictionary in the shape of DocumentAnalysisInnerError.
         :return: DocumentAnalysisInnerError
         :rtype: DocumentAnalysisInnerError
         """
@@ -4215,7 +4215,7 @@ class DocumentAnalysisError:
     def to_dict(self) -> Dict:
         """Returns a dict representation of DocumentAnalysisError.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -4230,7 +4230,7 @@ class DocumentAnalysisError:
     def from_dict(cls, data: Dict) -> "DocumentAnalysisError":
         """Converts a dict in the shape of a DocumentAnalysisError to the model itself.
 
-        :param Dict data: A dictionary in the shape of DocumentAnalysisError.
+        :param dict data: A dictionary in the shape of DocumentAnalysisError.
         :return: DocumentAnalysisError
         :rtype: DocumentAnalysisError
         """
@@ -4300,7 +4300,7 @@ class OperationSummary:
     def to_dict(self) -> Dict:
         """Returns a dict representation of OperationSummary.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -4319,7 +4319,7 @@ class OperationSummary:
     def from_dict(cls, data: Dict) -> "OperationSummary":
         """Converts a dict in the shape of a OperationSummary to the model itself.
 
-        :param Dict data: A dictionary in the shape of OperationSummary.
+        :param dict data: A dictionary in the shape of OperationSummary.
         :return: OperationSummary
         :rtype: OperationSummary
         """
@@ -4405,7 +4405,7 @@ class OperationDetails(OperationSummary):
     def to_dict(self) -> Dict:
         """Returns a dict representation of OperationDetails.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -4426,7 +4426,7 @@ class OperationDetails(OperationSummary):
     def from_dict(cls, data: Dict) -> "OperationDetails":
         """Converts a dict in the shape of a OperationDetails to the model itself.
 
-        :param Dict data: A dictionary in the shape of OperationDetails.
+        :param dict data: A dictionary in the shape of OperationDetails.
         :return: OperationDetails
         :rtype: OperationDetails
         """
@@ -4561,7 +4561,7 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
     def to_dict(self) -> Dict:
         """Returns a dict representation of AnalyzeResult.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -4595,7 +4595,7 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
     def from_dict(cls, data: Dict) -> "AnalyzeResult":
         """Converts a dict in the shape of a AnalyzeResult to the model itself.
 
-        :param Dict data: A dictionary in the shape of AnalyzeResult.
+        :param dict data: A dictionary in the shape of AnalyzeResult.
         :return: AnalyzeResult
         :rtype: AnalyzeResult
         """
@@ -4656,7 +4656,7 @@ class CustomDocumentModelsDetails:
     def to_dict(self) -> Dict:
         """Returns a dict representation of CustomDocumentModelsDetails.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -4668,7 +4668,7 @@ class CustomDocumentModelsDetails:
     def from_dict(cls, data: Dict) -> "CustomDocumentModelsDetails":
         """Converts a dict in the shape of a CustomDocumentModelsDetails to the model itself.
 
-        :param Dict data: A dictionary in the shape of CustomDocumentModelsDetails.
+        :param dict data: A dictionary in the shape of CustomDocumentModelsDetails.
         :return: CustomDocumentModelsDetails
         :rtype: CustomDocumentModelsDetails
         """
@@ -4723,7 +4723,7 @@ class QuotaDetails:
     def from_dict(cls, data: Dict) -> "QuotaDetails":
         """Converts a dict in the shape of a QuotaDetails to the model itself.
 
-        :param Dict data: A dictionary in the shape of QuotaDetails.
+        :param dict data: A dictionary in the shape of QuotaDetails.
         :return: QuotaDetails
         :rtype: QuotaDetails
         """
@@ -4770,7 +4770,7 @@ class ResourceDetails:
     def to_dict(self) -> Dict:
         """Returns a dict representation of ResourceDetails.
 
-        :return: Dict
+        :return: dict
         :rtype: dict
         """
         return {
@@ -4786,7 +4786,7 @@ class ResourceDetails:
     def from_dict(cls, data: Dict) -> "ResourceDetails":
         """Converts a dict in the shape of a ResourceDetails to the model itself.
 
-        :param Dict data: A dictionary in the shape of ResourceDetails.
+        :param dict data: A dictionary in the shape of ResourceDetails.
         :return: ResourceDetails
         :rtype: ResourceDetails
         """
