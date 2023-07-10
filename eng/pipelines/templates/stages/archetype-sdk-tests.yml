@@ -162,15 +162,15 @@ stages:
           vmImage: MMSUbuntu20.04
 
         steps:
-          - pwsh: |
-              python -m pip install setuptools==58.3.0
-              python -m pip install -r eng/ci_tools.txt 
-            displayName: 'Install Necessary Dependencies'
           - task: UsePythonVersion@0
             displayName: 'Use Python 3.7'
             inputs:
               scriptPath: 'scripts/devops_tasks/install_python_version.py'
               arguments: '${{ variables.PythonVersion }} --installer_folder="../_pyinstaller'
+          - pwsh: |
+              python -m pip install setuptools==58.3.0
+              python -m pip install -r eng/ci_tools.txt 
+            displayName: 'Install Necessary Dependencies'
           - task: PythonScript@0
             displayName: 'Run Pylint Next'
             continueOnError: true
