@@ -170,8 +170,7 @@ stages:
             displayName: 'Use Python 3.7'
             inputs:
               scriptPath: 'scripts/devops_tasks/install_python_version.py'
-              arguments: >-
-                "--version_spec=${{ variables.PythonVersion }}"
+              arguments: '${{ parameters.versionSpec }} --installer_folder="../_pyinstaller'
           - task: PythonScript@0
             displayName: 'Run Pylint Next'
             continueOnError: true
