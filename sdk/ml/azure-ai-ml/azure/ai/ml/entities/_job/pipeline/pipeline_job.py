@@ -10,8 +10,8 @@ from functools import partial
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_10_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_04_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
@@ -33,7 +33,6 @@ from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
-from azure.ai.ml.entities._inputs_outputs.group_input import GroupInput
 
 # from azure.ai.ml.entities._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from azure.ai.ml.entities._credentials import (
@@ -43,6 +42,7 @@ from azure.ai.ml.entities._credentials import (
     _BaseJobIdentityConfiguration,
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._inputs_outputs.group_input import GroupInput
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
@@ -51,8 +51,8 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 )
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import Job
-from azure.ai.ml.entities._job.job_service import JobService
-from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineIOMixin
+from azure.ai.ml.entities._job.job_service import JobServiceBase
+from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineJobIOMixin
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
@@ -62,7 +62,7 @@ from azure.ai.ml.exceptions import ErrorTarget, UserErrorException
 module_logger = logging.getLogger(__name__)
 
 
-class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatableMixin):
+class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidatableMixin):
     """Pipeline job.
 
     You should not instantiate this class directly. Instead, you should
@@ -125,13 +125,16 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             ComponentSource.DSL,
             ComponentSource.YAML_COMPONENT,
         ]:
-            self._inputs = self._build_inputs_dict(component.inputs, inputs)
-            # Build the outputs from entity output definition
-            self._outputs = self._build_outputs_dict(component.outputs, outputs)
+            self._inputs = self._build_inputs_dict(inputs, input_definition_dict=component.inputs)
+            # for pipeline component created pipeline jobs,
+            # it's output should have same value with the component outputs
+            self._outputs = self._build_pipeline_outputs_dict(component.outputs)
         else:
             # Build inputs/outputs dict without meta when definition not available
-            self._inputs = self._build_inputs_dict_without_meta(inputs)
-            self._outputs = self._build_outputs_dict_without_meta(outputs)
+            self._inputs = self._build_inputs_dict(inputs)
+            # for node created pipeline jobs,
+            # it's output should have same value with the given outputs
+            self._outputs = self._build_pipeline_outputs_dict(outputs=outputs)
         source = kwargs.pop("_source", ComponentSource.CLASS)
         if component is None:
             component = PipelineComponent(
@@ -210,8 +213,14 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
 
     @settings.setter
     def settings(self, value):
-        if value is not None and not isinstance(value, PipelineJobSettings):
-            raise TypeError("settings must be PipelineJobSettings but got {}".format(type(value)))
+        if value is not None:
+            if isinstance(value, PipelineJobSettings):
+                # since PipelineJobSettings inherit _AttrDict, we need add this branch to distinguish with dict
+                pass
+            elif isinstance(value, dict):
+                value = PipelineJobSettings(**value)
+            else:
+                raise TypeError("settings must be PipelineJobSettings or dict but got {}".format(type(value)))
         self._settings = value
 
     @classmethod
@@ -244,8 +253,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         return validation_result
 
     def _customized_validate(self) -> MutableValidationResult:
-        """Validate that all provided inputs and parameters are valid for
-        current pipeline and components in it."""
+        """Validate that all provided inputs and parameters are valid for current pipeline and components in it."""
         validation_result = super(PipelineJob, self)._customized_validate()
 
         if isinstance(self.component, PipelineComponent):
@@ -399,8 +407,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         return validation_result
 
     def _remove_pipeline_input(self):
-        """Remove None pipeline input.If not remove, it will pass "None" to
-        backend."""
+        """Remove None pipeline input.If not remove, it will pass "None" to backend."""
         redundant_pipeline_inputs = []
         for pipeline_input_name, pipeline_input in self._inputs.items():
             if isinstance(pipeline_input, PipelineInput) and pipeline_input._data is None:
@@ -449,8 +456,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         )
 
     def _to_rest_object(self) -> JobBase:
-        """Build current parameterized pipeline instance to a pipeline job object
-        before submission.
+        """Build current parameterized pipeline instance to a pipeline job object before submission.
 
         :return: Rest pipeline job.
         """
@@ -532,13 +538,13 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             component = properties.component_id
         else:
             component = PipelineComponent._load_from_rest_pipeline_job(
-                dict(
-                    inputs=from_rest_inputs,
-                    outputs=from_rest_outputs,
-                    display_name=properties.display_name,
-                    description=properties.description,
-                    jobs=sub_nodes,
-                )
+                {
+                    "inputs": from_rest_inputs,
+                    "outputs": from_rest_outputs,
+                    "display_name": properties.display_name,
+                    "description": properties.description,
+                    "jobs": sub_nodes,
+                }
             )
 
         job = PipelineJob(
@@ -554,7 +560,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             experiment_name=properties.experiment_name,
             status=properties.status,
             creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
-            services=JobService._from_rest_job_services(properties.services) if properties.services else None,
+            services=JobServiceBase._from_rest_job_services(properties.services) if properties.services else None,
             compute=get_resource_name_from_arm_id_safe(properties.compute_id),
             settings=settings_sdk,
             identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)

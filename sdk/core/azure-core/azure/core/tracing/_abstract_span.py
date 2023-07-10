@@ -4,15 +4,17 @@
 # ------------------------------------
 """Protocol that defines what functions wrappers of tracing libraries should implement."""
 from enum import Enum
+from urllib.parse import urlparse
+
 from typing import (
     TYPE_CHECKING,
     Any,
     Sequence,
-    Dict,
     Optional,
     Union,
     Callable,
     ContextManager,
+    Dict,
 )
 
 if TYPE_CHECKING:
@@ -51,70 +53,87 @@ class SpanKind(Enum):
 
 
 class AbstractSpan(Protocol):
-    """Wraps a span from a distributed tracing implementation."""
+    """Wraps a span from a distributed tracing implementation.
+
+    If a span is given wraps the span. Else a new span is created.
+    The optional argument name is given to the new span.
+
+    :param span: The span to wrap
+    :type span: Any
+    :param name: The name of the span
+    :type name: str
+    """
 
     def __init__(  # pylint: disable=super-init-not-called
-        self, span=None, name=None, **kwargs
-    ):
-        # type: (Optional[Any], Optional[str], Any) -> None
-        """
-        If a span is given wraps the span. Else a new span is created.
-        The optional argument name is given to the new span.
-        """
+        self, span: Optional[Any] = None, name: Optional[str] = None, **kwargs
+    ) -> None:
+        pass
 
-    def span(self, name="child_span", **kwargs):
-        # type: (Optional[str], Any) -> AbstractSpan
+    def span(self, name: str = "child_span", **kwargs) -> "AbstractSpan":
         """
         Create a child span for the current span and append it to the child spans list.
         The child span must be wrapped by an implementation of AbstractSpan
+
+        :param name: The name of the child span
+        :type name: str
+        :return: The child span
+        :rtype: AbstractSpan
         """
 
     @property
-    def kind(self):
-        # type: () -> Optional[SpanKind]
+    def kind(self) -> Optional[SpanKind]:
         """Get the span kind of this span.
 
         :rtype: SpanKind
+        :return: The span kind of this span
         """
 
     @kind.setter
-    def kind(self, value):
-        # type: (SpanKind) -> None
-        """Set the span kind of this span."""
+    def kind(self, value: SpanKind) -> None:
+        """Set the span kind of this span.
+
+        :param value: The span kind of this span
+        :type value: SpanKind
+        """
 
     def __enter__(self):
         """Start a span."""
 
     def __exit__(self, exception_type, exception_value, traceback):
-        """Finish a span."""
+        """Finish a span.
 
-    def start(self):
-        # type: () -> None
+        :param exception_type: The type of the exception
+        :type exception_type: type
+        :param exception_value: The value of the exception
+        :type exception_value: Exception
+        :param traceback: The traceback of the exception
+        :type traceback: Traceback
+        """
+
+    def start(self) -> None:
         """Set the start time for a span."""
 
-    def finish(self):
-        # type: () -> None
+    def finish(self) -> None:
         """Set the end time for a span."""
 
-    def to_header(self):
-        # type: () -> Dict[str, str]
-        """
-        Returns a dictionary with the header labels and values.
+    def to_header(self) -> Dict[str, str]:
+        """Returns a dictionary with the header labels and values.
+
+        :return: A dictionary with the header labels and values
+        :rtype: dict
         """
 
-    def add_attribute(self, key, value):
-        # type: (str, Union[str, int]) -> None
+    def add_attribute(self, key: str, value: Union[str, int]) -> None:
         """
         Add attribute (key value pair) to the current span.
 
         :param key: The key of the key value pair
         :type key: str
         :param value: The value of the key value pair
-        :type value: str
+        :type value: Union[str, int]
         """
 
-    def set_http_attributes(self, request, response=None):
-        # type: (HttpRequest, Optional[HttpResponseType]) -> None
+    def set_http_attributes(self, request: "HttpRequest", response: Optional["HttpResponseType"] = None) -> None:
         """
         Add correct attributes for a http client span.
 
@@ -124,8 +143,7 @@ class AbstractSpan(Protocol):
         :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
         """
 
-    def get_trace_parent(self):
-        # type: () -> str
+    def get_trace_parent(self) -> str:
         """Return traceparent string.
 
         :return: a traceparent string
@@ -133,74 +151,83 @@ class AbstractSpan(Protocol):
         """
 
     @property
-    def span_instance(self):
-        # type: () -> Any
+    def span_instance(self) -> Any:
         """
         Returns the span the class is wrapping.
         """
 
     @classmethod
-    def link(cls, traceparent, attributes=None):
-        # type: (str, Attributes) -> None
+    def link(cls, traceparent: str, attributes: Optional["Attributes"] = None) -> None:
         """
         Given a traceparent, extracts the context and links the context to the current tracer.
 
         :param traceparent: A string representing a traceparent
         :type traceparent: str
+        :param attributes: Any additional attributes that should be added to link
+        :type attributes: dict
         """
 
     @classmethod
-    def link_from_headers(cls, headers, attributes=None):
-        # type: (Dict[str, str], Attributes) -> None
+    def link_from_headers(cls, headers: Dict[str, str], attributes: Optional["Attributes"] = None) -> None:
         """
         Given a dictionary, extracts the context and links the context to the current tracer.
 
         :param headers: A dictionary of the request header as key value pairs.
         :type headers: dict
+        :param attributes: Any additional attributes that should be added to link
+        :type attributes: dict
         """
 
     @classmethod
-    def get_current_span(cls):
-        # type: () -> Any
+    def get_current_span(cls) -> Any:
         """
         Get the current span from the execution context. Return None otherwise.
+
+        :return: The current span
+        :rtype: AbstractSpan
         """
 
     @classmethod
-    def get_current_tracer(cls):
-        # type: () -> Any
+    def get_current_tracer(cls) -> Any:
         """
         Get the current tracer from the execution context. Return None otherwise.
+
+        :return: The current tracer
+        :rtype: Any
         """
 
     @classmethod
-    def set_current_span(cls, span):
-        # type: (Any) -> None
-        """
-        Set the given span as the current span in the execution context.
+    def set_current_span(cls, span: Any) -> None:
+        """Set the given span as the current span in the execution context.
+
+        :param span: The span to set as the current span
+        :type span: Any
         """
 
     @classmethod
-    def set_current_tracer(cls, tracer):
-        # type: (Any) -> None
-        """
-        Set the given tracer as the current tracer in the execution context.
+    def set_current_tracer(cls, tracer: Any) -> None:
+        """Set the given tracer as the current tracer in the execution context.
+
+        :param tracer: The tracer to set as the current tracer
+        :type tracer: Any
         """
 
     @classmethod
-    def change_context(cls, span):
-        # type: (AbstractSpan) -> ContextManager
+    def change_context(cls, span: "AbstractSpan") -> ContextManager:
         """Change the context for the life of this context manager.
 
+        :param span: The span to run in the new context
+        :type span: AbstractSpan
         :rtype: contextmanager
+        :return: A context manager that will run the given span in the new context
         """
 
     @classmethod
-    def with_current_context(cls, func):
-        # type: (Callable) -> Callable
+    def with_current_context(cls, func: Callable) -> Callable:
         """Passes the current spans to the new context the function will be run in.
 
         :param func: The function that will be run in the new context
+        :type func: callable
         :return: The target the pass in instead of the function
         :rtype: callable
         """
@@ -221,21 +248,29 @@ class HttpSpanMixin(_MIXIN_BASE):
     _HTTP_METHOD = "http.method"
     _HTTP_URL = "http.url"
     _HTTP_STATUS_CODE = "http.status_code"
+    _NET_PEER_NAME = "net.peer.name"
+    _NET_PEER_PORT = "net.peer.port"
 
-    def set_http_attributes(self, request, response=None):
-        # type: (HttpRequest, Optional[HttpResponseType]) -> None
+    def set_http_attributes(self, request: "HttpRequest", response: Optional["HttpResponseType"] = None) -> None:
         """
         Add correct attributes for a http client span.
 
         :param request: The request made
         :type request: HttpRequest
-        :param response: The response received by the server. Is None if no response received.
+        :param response: The response received from the server. Is None if no response received.
         :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
         """
         self.kind = SpanKind.CLIENT
         self.add_attribute(self._SPAN_COMPONENT, "http")
         self.add_attribute(self._HTTP_METHOD, request.method)
         self.add_attribute(self._HTTP_URL, request.url)
+
+        parsed_url = urlparse(request.url)
+        if parsed_url.hostname:
+            self.add_attribute(self._NET_PEER_NAME, parsed_url.hostname)
+        if parsed_url.port and parsed_url.port not in [80, 443]:
+            self.add_attribute(self._NET_PEER_PORT, parsed_url.port)
+
         user_agent = request.headers.get("User-Agent")
         if user_agent:
             self.add_attribute(self._HTTP_USER_AGENT, user_agent)
@@ -245,7 +280,7 @@ class HttpSpanMixin(_MIXIN_BASE):
             self.add_attribute(self._HTTP_STATUS_CODE, 504)
 
 
-class Link(object):
+class Link:
     """
     This is a wrapper class to link the context to the current tracer.
     :param headers: A dictionary of the request header as key value pairs.
@@ -254,7 +289,6 @@ class Link(object):
     :type attributes: dict
     """
 
-    def __init__(self, headers, attributes=None):
-        # type: (Dict[str, str], Attributes) -> None
+    def __init__(self, headers: Dict[str, str], attributes: Optional["Attributes"] = None) -> None:
         self.headers = headers
         self.attributes = attributes

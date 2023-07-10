@@ -29,18 +29,19 @@ async def test_async_gen_data(port, http_request):
                 raise StopAsyncIteration
 
     async with TrioRequestsTransport() as transport:
-        req = http_request('GET', 'http://localhost:{}/basic/anything'.format(port), data=AsyncGen())
+        req = http_request("GET", "http://localhost:{}/basic/anything".format(port), data=AsyncGen())
         response = await transport.send(req)
         if is_rest(http_request):
             assert is_rest(response)
-        assert json.loads(response.text())['data'] == "azerty"
+        assert json.loads(response.text())["data"] == "azerty"
+
 
 @pytest.mark.trio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_send_data(port, http_request):
     async with TrioRequestsTransport() as transport:
-        req = http_request('PUT', 'http://localhost:{}/basic/anything'.format(port), data=b"azerty")
+        req = http_request("PUT", "http://localhost:{}/basic/anything".format(port), data=b"azerty")
         response = await transport.send(req)
         if is_rest(http_request):
             assert is_rest(response)
-        assert json.loads(response.text())['data'] == "azerty"
+        assert json.loads(response.text())["data"] == "azerty"

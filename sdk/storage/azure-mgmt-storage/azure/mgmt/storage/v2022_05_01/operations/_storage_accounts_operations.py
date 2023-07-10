@@ -47,8 +47,8 @@ def build_check_name_availability_request(subscription_id: str, **kwargs: Any) -
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -59,7 +59,7 @@ def build_check_name_availability_request(subscription_id: str, **kwargs: Any) -
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -78,8 +78,8 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -95,7 +95,7 @@ def build_create_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -113,7 +113,7 @@ def build_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
+    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -127,7 +127,7 @@ def build_delete_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -146,7 +146,7 @@ def build_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
+    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -162,7 +162,7 @@ def build_get_properties_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -181,8 +181,8 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -198,7 +198,7 @@ def build_update_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -215,7 +215,7 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
+    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -224,7 +224,7 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -239,7 +239,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
+    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -254,7 +254,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -276,7 +276,7 @@ def build_list_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
+    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -292,7 +292,7 @@ def build_list_keys_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -311,8 +311,8 @@ def build_regenerate_key_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -328,7 +328,7 @@ def build_regenerate_key_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -347,8 +347,8 @@ def build_list_account_sas_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -364,7 +364,7 @@ def build_list_account_sas_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -383,8 +383,8 @@ def build_list_service_sas_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -400,7 +400,7 @@ def build_list_service_sas_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -418,7 +418,7 @@ def build_failover_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
+    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -432,7 +432,7 @@ def build_failover_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -446,7 +446,7 @@ def build_hierarchical_namespace_migration_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
+    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -462,7 +462,7 @@ def build_hierarchical_namespace_migration_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -480,7 +480,7 @@ def build_abort_hierarchical_namespace_migration_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
+    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -496,7 +496,7 @@ def build_abort_hierarchical_namespace_migration_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -513,8 +513,8 @@ def build_restore_blob_ranges_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -530,7 +530,7 @@ def build_restore_blob_ranges_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -548,7 +548,7 @@ def build_revoke_user_delegation_keys_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
+    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -562,7 +562,7 @@ def build_revoke_user_delegation_keys_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -640,7 +640,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         :param account_name: The name of the storage account within the specified resource group.
          Storage account names must be between 3 and 24 characters in length and use numbers and
-         lower-case letters only. Is either a model type or a IO type. Required.
+         lower-case letters only. Is either a StorageAccountCheckNameAvailabilityParameters type or a IO
+         type. Required.
         :type account_name:
          ~azure.mgmt.storage.v2022_05_01.models.StorageAccountCheckNameAvailabilityParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -662,9 +663,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CheckNameAvailabilityResult]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CheckNameAvailabilityResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -685,9 +686,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -704,7 +705,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    check_name_availability.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Storage/checkNameAvailability"}  # type: ignore
+    check_name_availability.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Storage/checkNameAvailability"
+    }
 
     def _create_initial(
         self,
@@ -724,9 +727,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.StorageAccount]]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.StorageAccount]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -749,9 +752,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -770,7 +773,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    _create_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}"}  # type: ignore
+    _create_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}"
+    }
 
     @overload
     def begin_create(
@@ -874,8 +879,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :param parameters: The parameters to provide for the created account. Is either a model type or
-         a IO type. Required.
+        :param parameters: The parameters to provide for the created account. Is either a
+         StorageAccountCreateParameters type or a IO type. Required.
         :type parameters: ~azure.mgmt.storage.v2022_05_01.models.StorageAccountCreateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -896,14 +901,14 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.StorageAccount]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.StorageAccount] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._create_initial(  # type: ignore
+            raw_result = self._create_initial(
                 resource_group_name=resource_group_name,
                 account_name=account_name,
                 parameters=parameters,
@@ -923,7 +928,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -935,9 +940,11 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}"}  # type: ignore
+    begin_create.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}"
+    }
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -968,8 +975,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             resource_group_name=resource_group_name,
@@ -981,9 +988,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -996,7 +1003,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}"}  # type: ignore
+    delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}"
+    }
 
     @distributed_trace
     def get_properties(
@@ -1038,8 +1047,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.StorageAccount]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        cls: ClsType[_models.StorageAccount] = kwargs.pop("cls", None)
 
         request = build_get_properties_request(
             resource_group_name=resource_group_name,
@@ -1052,9 +1061,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1071,7 +1080,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    get_properties.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}"}  # type: ignore
+    get_properties.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}"
+    }
 
     @overload
     def update(
@@ -1171,8 +1182,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :param parameters: The parameters to provide for the updated account. Is either a model type or
-         a IO type. Required.
+        :param parameters: The parameters to provide for the updated account. Is either a
+         StorageAccountUpdateParameters type or a IO type. Required.
         :type parameters: ~azure.mgmt.storage.v2022_05_01.models.StorageAccountUpdateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1193,9 +1204,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.StorageAccount]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.StorageAccount] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1218,9 +1229,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1237,7 +1248,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}"}  # type: ignore
+    update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}"
+    }
 
     @distributed_trace
     def list(self, **kwargs: Any) -> Iterable["_models.StorageAccount"]:
@@ -1252,8 +1265,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.StorageAccountListResult]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        cls: ClsType[_models.StorageAccountListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1274,7 +1287,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1290,7 +1303,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -1298,13 +1311,13 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("StorageAccountListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -1317,7 +1330,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Storage/storageAccounts"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Storage/storageAccounts"}
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.StorageAccount"]:
@@ -1335,8 +1348,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.StorageAccountListResult]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        cls: ClsType[_models.StorageAccountListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1358,7 +1371,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1374,7 +1387,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -1382,13 +1395,13 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("StorageAccountListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -1401,7 +1414,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts"}  # type: ignore
+    list_by_resource_group.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts"
+    }
 
     @distributed_trace
     def list_keys(
@@ -1436,8 +1451,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.StorageAccountListKeysResult]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        cls: ClsType[_models.StorageAccountListKeysResult] = kwargs.pop("cls", None)
 
         request = build_list_keys_request(
             resource_group_name=resource_group_name,
@@ -1450,9 +1465,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1469,7 +1484,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    list_keys.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/listKeys"}  # type: ignore
+    list_keys.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/listKeys"
+    }
 
     @overload
     def regenerate_key(
@@ -1552,7 +1569,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
          lower-case letters only. Required.
         :type account_name: str
         :param regenerate_key: Specifies name of the key which should be regenerated -- key1, key2,
-         kerb1, kerb2. Is either a model type or a IO type. Required.
+         kerb1, kerb2. Is either a StorageAccountRegenerateKeyParameters type or a IO type. Required.
         :type regenerate_key:
          ~azure.mgmt.storage.v2022_05_01.models.StorageAccountRegenerateKeyParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -1574,9 +1591,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.StorageAccountListKeysResult]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.StorageAccountListKeysResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1599,9 +1616,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1618,7 +1635,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    regenerate_key.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/regenerateKey"}  # type: ignore
+    regenerate_key.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/regenerateKey"
+    }
 
     @overload
     def list_account_sas(
@@ -1700,7 +1719,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
          lower-case letters only. Required.
         :type account_name: str
         :param parameters: The parameters to provide to list SAS credentials for the storage account.
-         Is either a model type or a IO type. Required.
+         Is either a AccountSasParameters type or a IO type. Required.
         :type parameters: ~azure.mgmt.storage.v2022_05_01.models.AccountSasParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1721,9 +1740,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ListAccountSasResponse]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ListAccountSasResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1746,9 +1765,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1765,7 +1784,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    list_account_sas.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/ListAccountSas"}  # type: ignore
+    list_account_sas.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/ListAccountSas"
+    }
 
     @overload
     def list_service_sas(
@@ -1844,8 +1865,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :param parameters: The parameters to provide to list service SAS credentials. Is either a model
-         type or a IO type. Required.
+        :param parameters: The parameters to provide to list service SAS credentials. Is either a
+         ServiceSasParameters type or a IO type. Required.
         :type parameters: ~azure.mgmt.storage.v2022_05_01.models.ServiceSasParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1866,9 +1887,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ListServiceSasResponse]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ListServiceSasResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1891,9 +1912,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1910,7 +1931,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    list_service_sas.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/ListServiceSas"}  # type: ignore
+    list_service_sas.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/ListServiceSas"
+    }
 
     def _failover_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -1926,8 +1949,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_failover_request(
             resource_group_name=resource_group_name,
@@ -1939,9 +1962,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1954,7 +1977,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    _failover_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/failover"}  # type: ignore
+    _failover_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/failover"
+    }
 
     @distributed_trace
     def begin_failover(self, resource_group_name: str, account_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -1984,11 +2009,11 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._failover_initial(  # type: ignore
                 resource_group_name=resource_group_name,
@@ -2006,9 +2031,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -2020,9 +2045,11 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_failover.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/failover"}  # type: ignore
+    begin_failover.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/failover"
+    }
 
     def _hierarchical_namespace_migration_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, account_name: str, request_type: str, **kwargs: Any
@@ -2038,8 +2065,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_hierarchical_namespace_migration_request(
             resource_group_name=resource_group_name,
@@ -2052,9 +2079,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2068,7 +2095,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    _hierarchical_namespace_migration_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/hnsonmigration"}  # type: ignore
+    _hierarchical_namespace_migration_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/hnsonmigration"
+    }
 
     @distributed_trace
     def begin_hierarchical_namespace_migration(
@@ -2103,11 +2132,11 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._hierarchical_namespace_migration_initial(  # type: ignore
                 resource_group_name=resource_group_name,
@@ -2126,9 +2155,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -2140,9 +2169,11 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_hierarchical_namespace_migration.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/hnsonmigration"}  # type: ignore
+    begin_hierarchical_namespace_migration.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/hnsonmigration"
+    }
 
     def _abort_hierarchical_namespace_migration_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -2158,8 +2189,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_abort_hierarchical_namespace_migration_request(
             resource_group_name=resource_group_name,
@@ -2171,9 +2202,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2187,7 +2218,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    _abort_hierarchical_namespace_migration_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/aborthnsonmigration"}  # type: ignore
+    _abort_hierarchical_namespace_migration_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/aborthnsonmigration"
+    }
 
     @distributed_trace
     def begin_abort_hierarchical_namespace_migration(
@@ -2217,11 +2250,11 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._abort_hierarchical_namespace_migration_initial(  # type: ignore
                 resource_group_name=resource_group_name,
@@ -2239,9 +2272,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -2253,9 +2286,11 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_abort_hierarchical_namespace_migration.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/aborthnsonmigration"}  # type: ignore
+    begin_abort_hierarchical_namespace_migration.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/aborthnsonmigration"
+    }
 
     def _restore_blob_ranges_initial(
         self,
@@ -2275,9 +2310,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BlobRestoreStatus]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.BlobRestoreStatus] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -2300,9 +2335,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2319,11 +2354,13 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("BlobRestoreStatus", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    _restore_blob_ranges_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/restoreBlobRanges"}  # type: ignore
+    _restore_blob_ranges_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/restoreBlobRanges"
+    }
 
     @overload
     def begin_restore_blob_ranges(
@@ -2418,8 +2455,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :param parameters: The parameters to provide for restore blob ranges. Is either a model type or
-         a IO type. Required.
+        :param parameters: The parameters to provide for restore blob ranges. Is either a
+         BlobRestoreParameters type or a IO type. Required.
         :type parameters: ~azure.mgmt.storage.v2022_05_01.models.BlobRestoreParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2440,14 +2477,14 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BlobRestoreStatus]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.BlobRestoreStatus] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._restore_blob_ranges_initial(  # type: ignore
+            raw_result = self._restore_blob_ranges_initial(
                 resource_group_name=resource_group_name,
                 account_name=account_name,
                 parameters=parameters,
@@ -2467,9 +2504,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -2481,9 +2518,11 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_restore_blob_ranges.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/restoreBlobRanges"}  # type: ignore
+    begin_restore_blob_ranges.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/restoreBlobRanges"
+    }
 
     @distributed_trace
     def revoke_user_delegation_keys(  # pylint: disable=inconsistent-return-statements
@@ -2514,8 +2553,8 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))  # type: Literal["2022-05-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_revoke_user_delegation_keys_request(
             resource_group_name=resource_group_name,
@@ -2527,9 +2566,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2542,4 +2581,6 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    revoke_user_delegation_keys.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/revokeUserDelegationKeys"}  # type: ignore
+    revoke_user_delegation_keys.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/revokeUserDelegationKeys"
+    }

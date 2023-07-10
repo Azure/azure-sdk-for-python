@@ -7,10 +7,11 @@
 import base64
 import json
 import calendar
-from typing import (cast,
-                    Tuple,
-                    Union,
-                    )
+from typing import (
+    cast,
+    Tuple,
+    Union,
+)
 from datetime import datetime
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken, AzureKeyCredential
@@ -31,9 +32,7 @@ def _convert_datetime_to_utc_int(input_datetime):
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]
     if conn_str is None:
-        raise ValueError(
-            "Connection string is undefined."
-        )
+        raise ValueError("Connection string is undefined.")
     endpoint = None
     shared_access_key = None
     for element in conn_str.split(";"):
@@ -49,7 +48,7 @@ def parse_connection_str(conn_str):
         )
     left_slash_pos = cast(str, endpoint).find("//")
     if left_slash_pos != -1:
-        host = cast(str, endpoint)[left_slash_pos + 2:]
+        host = cast(str, endpoint)[left_slash_pos + 2 :]
     else:
         host = str(endpoint)
 
@@ -88,20 +87,23 @@ def create_access_token(token):
         raise ValueError(token_parse_err_msg)
 
     try:
-        padded_base64_payload = base64.b64decode(
-            parts[1] + '==').decode('ascii')
+        padded_base64_payload = base64.b64decode(parts[1] + "==").decode("ascii")
         payload = json.loads(padded_base64_payload)
-        return AccessToken(token,
-                           _convert_datetime_to_utc_int(datetime.fromtimestamp(payload['exp'], TZ_UTC)))
+        return AccessToken(
+            token,
+            _convert_datetime_to_utc_int(
+                datetime.fromtimestamp(payload["exp"], TZ_UTC)
+            ),
+        )
     except ValueError as val_error:
         raise ValueError(token_parse_err_msg) from val_error
 
 
 def get_authentication_policy(
-        endpoint,  # type: str
-        credential,  # type: Union[TokenCredential, AzureKeyCredential, str]
-        decode_url=False,  # type: bool
-        is_async=False,  # type: bool
+    endpoint,  # type: str
+    credential,  # type: Union[TokenCredential, AzureKeyCredential, str]
+    decode_url=False,  # type: bool
+    is_async=False,  # type: bool
 ):
     # type: (...) -> Union[BearerTokenCredentialPolicy, HMACCredentialsPolicy]
     """Returns the correct authentication policy based
@@ -121,14 +123,21 @@ def get_authentication_policy(
     if hasattr(credential, "get_token"):
         if is_async:
             from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
+
             return AsyncBearerTokenCredentialPolicy(
-                credential, "https://communication.azure.com//.default")
+                credential, "https://communication.azure.com//.default"
+            )
         from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+
         return BearerTokenCredentialPolicy(
-            credential, "https://communication.azure.com//.default")
+            credential, "https://communication.azure.com//.default"
+        )
     if isinstance(credential, (AzureKeyCredential, str)):
         from .._shared.policy import HMACCredentialsPolicy
+
         return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
 
-    raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
-                    "or a token credential from azure.identity".format(type(credential)))
+    raise TypeError(
+        "Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
+        "or a token credential from azure.identity".format(type(credential))
+    )

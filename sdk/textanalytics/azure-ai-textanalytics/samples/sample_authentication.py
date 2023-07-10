@@ -28,12 +28,11 @@ USAGE:
     5) AZURE_CLIENT_SECRET - the secret of your active directory application.
 """
 
-import os
-
 
 def sample_authentication_with_api_key_credential() -> None:
     print("\n.. authentication_with_api_key_credential")
     # [START create_ta_client_with_key]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
     endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
@@ -59,6 +58,7 @@ def sample_authentication_with_azure_active_directory() -> None:
     """
     print("\n.. authentication_with_azure_active_directory")
     # [START create_ta_client_with_aad]
+    import os
     from azure.ai.textanalytics import TextAnalyticsClient
     from azure.identity import DefaultAzureCredential
 

@@ -596,7 +596,7 @@ class TimeSeriesDatabaseConnectionsOperations:
         :param time_series_database_connection_name: Name of time series database connection. Required.
         :type time_series_database_connection_name: str
         :param time_series_database_connection_description: The time series database connection
-         description. Is either a model type or a IO type. Required.
+         description. Is either a TimeSeriesDatabaseConnection type or a IO type. Required.
         :type time_series_database_connection_description:
          ~azure.mgmt.digitaltwins.v2022_05_31.models.TimeSeriesDatabaseConnection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

@@ -86,8 +86,8 @@ class TableServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-09-01"))  # type: Literal["2021-09-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ListTableServices]
+        api_version: Literal["2021-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-09-01"))
+        cls: ClsType[_models.ListTableServices] = kwargs.pop("cls", None)
 
         request = build_list_request(
             resource_group_name=resource_group_name,
@@ -99,9 +99,9 @@ class TableServicesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -118,7 +118,9 @@ class TableServicesOperations:
 
         return deserialized
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/tableServices"}  # type: ignore
+    list.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/tableServices"
+    }
 
     @overload
     async def set_service_properties(
@@ -212,7 +214,7 @@ class TableServicesOperations:
         :type account_name: str
         :param parameters: The properties of a storage account’s Table service, only properties for
          Storage Analytics and CORS (Cross-Origin Resource Sharing) rules can be specified. Is either a
-         model type or a IO type. Required.
+         TableServiceProperties type or a IO type. Required.
         :type parameters: ~azure.mgmt.storage.v2021_09_01.models.TableServiceProperties or IO
         :keyword table_service_name: The name of the Table Service within the specified storage
          account. Table Service Name must be 'default'. Default value is "default". Note that overriding
@@ -237,10 +239,10 @@ class TableServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-09-01"))  # type: Literal["2021-09-01"]
-        table_service_name = kwargs.pop("table_service_name", "default")  # type: Literal["default"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TableServiceProperties]
+        api_version: Literal["2021-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-09-01"))
+        table_service_name: Literal["default"] = kwargs.pop("table_service_name", "default")
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TableServiceProperties] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -264,9 +266,9 @@ class TableServicesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -283,7 +285,9 @@ class TableServicesOperations:
 
         return deserialized
 
-    set_service_properties.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/tableServices/{tableServiceName}"}  # type: ignore
+    set_service_properties.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/tableServices/{tableServiceName}"
+    }
 
     @distributed_trace_async
     async def get_service_properties(
@@ -319,9 +323,9 @@ class TableServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-09-01"))  # type: Literal["2021-09-01"]
-        table_service_name = kwargs.pop("table_service_name", "default")  # type: Literal["default"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TableServiceProperties]
+        api_version: Literal["2021-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-09-01"))
+        table_service_name: Literal["default"] = kwargs.pop("table_service_name", "default")
+        cls: ClsType[_models.TableServiceProperties] = kwargs.pop("cls", None)
 
         request = build_get_service_properties_request(
             resource_group_name=resource_group_name,
@@ -334,9 +338,9 @@ class TableServicesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -353,4 +357,6 @@ class TableServicesOperations:
 
         return deserialized
 
-    get_service_properties.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/tableServices/{tableServiceName}"}  # type: ignore
+    get_service_properties.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/tableServices/{tableServiceName}"
+    }

@@ -10,7 +10,9 @@ from azure.appconfiguration import (
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
+    Snapshot,
 )
+from azure.core.exceptions import ResourceExistsError
 from consts import (
     KEY,
     LABEL,
@@ -23,10 +25,10 @@ class AppConfigTestCase(AzureRecordedTestCase):
     def create_aad_client(self, appconfiguration_endpoint_string):
         cred = self.get_credential(AzureAppConfigurationClient)
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
-    
+
     def create_client(self, appconfiguration_connection_string):
         return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-    
+
     def create_config_setting(self):
         return ConfigurationSetting(
             key=KEY,
@@ -35,7 +37,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             content_type=TEST_CONTENT_TYPE,
             tags={"tag1": "tag1", "tag2": "tag2"},
         )
-    
+
     def create_config_setting_no_label(self):
         return ConfigurationSetting(
             key=KEY,
@@ -44,21 +46,13 @@ class AppConfigTestCase(AzureRecordedTestCase):
             content_type=TEST_CONTENT_TYPE,
             tags={"tag1": "tag1", "tag2": "tag2"},
         )
-   
+
     def add_for_test(self, client, config_setting):
-        key = config_setting.key
-        label = config_setting.label
-        exist = bool(
-            list(
-                client.list_configuration_settings(
-                    key_filter=key, label_filter=label
-                )
-            )
-        )
-        if exist:
-            client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
-        return client.add_configuration_setting(config_setting)
-    
+        try:
+            client.add_configuration_setting(config_setting)
+        except ResourceExistsError:
+            pass
+
     def set_up(self, appconfiguration_string, is_aad=False):
         if is_aad:
             self.client = self.create_aad_client(appconfiguration_string)
@@ -66,7 +60,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             self.client = self.create_client(appconfiguration_string)
         self.add_for_test(self.client, self.create_config_setting())
         self.add_for_test(self.client, self.create_config_setting_no_label())
-    
+
     def tear_down(self):
         if self.client is not None:
             config_settings = self.client.list_configuration_settings()
@@ -77,6 +71,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
 
     def _order_dict(self, d):
         from collections import OrderedDict
+
         new = OrderedDict()
         for k, v in d.items():
             new[k] = str(v)
@@ -96,3 +91,19 @@ class AppConfigTestCase(AzureRecordedTestCase):
             assert key1.secret_id == key2.secret_id
         else:
             assert key1.value == key2.value
+
+    def _assert_snapshots(self, snapshot: Snapshot, expected_snapshot: Snapshot):
+        assert snapshot.composition_type == expected_snapshot.composition_type
+        assert snapshot.created == expected_snapshot.created
+        assert snapshot.etag == expected_snapshot.etag
+        assert snapshot.expires == expected_snapshot.expires
+        assert len(snapshot.filters) == len(expected_snapshot.filters)
+        for index, filter in enumerate(snapshot.filters):
+            assert filter.key == expected_snapshot.filters[index].key
+            assert filter.label == expected_snapshot.filters[index].label
+        assert snapshot.items_count == expected_snapshot.items_count
+        assert snapshot.name == expected_snapshot.name
+        assert snapshot.retention_period == expected_snapshot.retention_period
+        assert snapshot.size == expected_snapshot.size
+        assert snapshot.status == expected_snapshot.status
+        assert snapshot.tags == expected_snapshot.tags

@@ -19,6 +19,7 @@ from ._credentials import (
     SharedTokenCacheCredential,
     VisualStudioCodeCredential,
     ClientAssertionCredential,
+    WorkloadIdentityCredential,
 )
 
 
@@ -37,4 +38,5 @@ __all__ = [
     "SharedTokenCacheCredential",
     "VisualStudioCodeCredential",
     "ClientAssertionCredential",
+    "WorkloadIdentityCredential",
 ]

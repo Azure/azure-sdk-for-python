@@ -5,8 +5,7 @@
 import base64
 import json
 import time
-
-import six
+from urllib.parse import urlparse
 
 try:
     from unittest import mock
@@ -111,7 +110,7 @@ class Request:
         if self.url_substring and self.url_substring not in request.url:
             add_discrepancy("url substring", self.url_substring, request.url)
 
-        parsed = six.moves.urllib_parse.urlparse(request.url)
+        parsed = urlparse(request.url)
         if self.authority and parsed.netloc != self.authority:
             add_discrepancy("authority", self.authority, parsed.netloc)
 
@@ -194,8 +193,14 @@ def msal_validating_transport(requests, responses, **kwargs):
 
 
 def urlsafeb64_decode(s):
-    if isinstance(s, six.text_type):
+    if isinstance(s, str):
         s = s.encode("ascii")
 
     padding_needed = 4 - len(s) % 4
     return base64.urlsafe_b64decode(s + b"=" * padding_needed)
+
+
+def get_token_payload_contents(token: str):
+    _, payload, _ = token.split(".")
+    decoded_payload = urlsafeb64_decode(payload).decode()
+    return json.loads(decoded_payload)

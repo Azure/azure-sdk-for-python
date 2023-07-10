@@ -26,6 +26,7 @@
 import collections.abc
 import asyncio
 from itertools import groupby
+from typing import Iterator, cast
 from multidict import CIMultiDict
 from ._http_response_impl_async import (
     AsyncHttpResponseImpl,
@@ -62,17 +63,20 @@ class _KeysView(collections.abc.KeysView):
         super().__init__(items)
         self._items = items
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[str]:
         for key, _ in self._items:
             yield key
 
     def __contains__(self, key):
-        for k in self.__iter__():
-            if key.lower() == k.lower():
-                return True
+        try:
+            for k in self.__iter__():
+                if cast(str, key).lower() == k.lower():
+                    return True
+        except AttributeError:  # Catch "lower()" if key not a string
+            pass
         return False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"dict_keys({list(self.__iter__())})"
 
 
@@ -102,15 +106,27 @@ class _CIMultiDict(CIMultiDict):
         return iter(self.keys())
 
     def keys(self):
-        """Return a new view of the dictionary's keys."""
+        """Return a new view of the dictionary's keys.
+
+        :return: A new view of the dictionary's keys
+        :rtype: ~collections.abc.KeysView
+        """
         return _KeysView(self.items())
 
     def items(self):
-        """Return a new view of the dictionary's items."""
+        """Return a new view of the dictionary's items.
+
+        :return: A new view of the dictionary's items
+        :rtype: ~collections.abc.ItemsView
+        """
         return _ItemsView(super().items())
 
     def values(self):
-        """Return a new view of the dictionary's values."""
+        """Return a new view of the dictionary's values.
+
+        :return: A new view of the dictionary's values
+        :rtype: ~collections.abc.ValuesView
+        """
         return _ValuesView(self.items())
 
     def __getitem__(self, key: str) -> str:
@@ -138,6 +154,9 @@ class _RestAioHttpTransportResponseBackcompatMixin(AsyncHttpResponseBackcompatMi
         when accessing the body method. The behavior here is the same as if the
         caller did an async read of the response first. But for backcompat reasons,
         we need to support this decompression within the synchronous body method.
+
+        :return: The response's bytes
+        :rtype: bytes
         """
         return _aiohttp_body_helper(self)
 
@@ -151,9 +170,7 @@ class _RestAioHttpTransportResponseBackcompatMixin(AsyncHttpResponseBackcompatMi
         return super().__getattr__(attr)
 
 
-class RestAioHttpTransportResponse(
-    AsyncHttpResponseImpl, _RestAioHttpTransportResponseBackcompatMixin
-):
+class RestAioHttpTransportResponse(AsyncHttpResponseImpl, _RestAioHttpTransportResponseBackcompatMixin):
     def __init__(self, *, internal_response, decompress: bool = True, **kwargs):
         headers = _CIMultiDict(internal_response.headers)
         super().__init__(
@@ -172,16 +189,17 @@ class RestAioHttpTransportResponse(
     def __getstate__(self):
         state = self.__dict__.copy()
         # Remove the unpicklable entries.
-        state[
-            "_internal_response"
-        ] = None  # aiohttp response are not pickable (see headers comments)
+        state["_internal_response"] = None  # aiohttp response are not pickable (see headers comments)
         state["headers"] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
 
     @property
-    def content(self):
-        # type: (...) -> bytes
-        """Return the response's content in bytes."""
+    def content(self) -> bytes:
+        """Return the response's content in bytes.
+
+        :return: The response's content in bytes
+        :rtype: bytes
+        """
         if self._content is None:
             raise ResponseNotReadError(self)
         return _aiohttp_body_helper(self)

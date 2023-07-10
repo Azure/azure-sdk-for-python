@@ -11,13 +11,15 @@ compute: azureml:cpu-cluster
 jobs:
   hello_world_component_inline:
     command: echo Hello World & sleep 1h
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
     services:
       "my_ssh":
-        job_service_type: "ssh"
+        type: "ssh"
+        ssh_public_keys: "xyz123"
       "my_tensorboard":
-        job_service_type: "tensor_board"
-        properties:
-          logDir: "~/tblog" # where you want to store the tensor_board output
+        type: "tensor_board"
+        log_dir: "~/tblog" # where you want to store the tensor_board output
       "my_jupyterlab":
-        job_service_type: "jupyter_lab"
+        type: "jupyter_lab"
+      "my_vscode":
+        type: "vs_code"

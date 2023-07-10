@@ -7,7 +7,6 @@ import time
 from typing import Any, Callable, Dict, Optional
 
 from msal import TokenCache
-import six
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, DecodeError
@@ -47,7 +46,7 @@ class ManagedIdentityClientBase(abc.ABC):
                     message = "Failed to deserialize JSON from response"
                 else:
                     message = 'Unexpected content type "{}"'.format(response.http_response.content_type)
-                six.raise_from(ClientAuthenticationError(message=message, response=response.http_response), ex)
+                raise ClientAuthenticationError(message=message, response=response.http_response) from ex
 
         if not content:
             raise ClientAuthenticationError(message="No token received.", response=response.http_response)
@@ -75,9 +74,13 @@ class ManagedIdentityClientBase(abc.ABC):
 
         return token
 
-    def get_cached_token(self, *scopes: str) -> Optional[AccessToken]:
+    def get_cached_token(
+        self, *scopes: str
+    ) -> Optional[AccessToken]:
         resource = _scopes_to_resource(*scopes)
-        tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource])
+        tokens = self._cache.find(
+            TokenCache.CredentialType.ACCESS_TOKEN, target=[resource]
+        )
         for token in tokens:
             expires_on = int(token["expires_on"])
             if expires_on > time.time():

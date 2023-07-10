@@ -34,7 +34,8 @@ steps:
   - script: |
       python -m pip install pip==20.3.3
       python -m pip install wheel==0.37.0
-      pip install -r eng/ci_tools.txt
+      python -m pip install setuptools==58.3.0
+      python -m pip install -r eng/ci_tools.txt
       pip --version
       pip freeze
     displayName: 'Prep Environment'
@@ -88,7 +89,7 @@ steps:
       CustomCondition: '${{ parameters.RunCoverage }}'
 
   - pwsh: |
-      python -m pip install coverage==4.5.4
+      python -m pip install coverage==7.2.5
       python scripts/devops_tasks/create_coverage.py
     displayName: Create Coverage Report
     condition: and(succeeded(), ${{ parameters.RunCoverage }})

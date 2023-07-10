@@ -115,7 +115,7 @@ def validate_message(message: Union[MessageType, MessageContent]):
             )
         schema_id = content_type_parts[1]
     except AttributeError:
-        raise InvalidContentError(
+        raise InvalidContentError(  # pylint:disable=raise-missing-from
             f"Content type {content_type} was not in the expected format of Avro MIME type + schema ID."
         )
 

@@ -185,6 +185,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 except asyncio.CancelledError:  # pylint: disable=try-except-raise
                     raise
                 except Exception as exception:  # pylint: disable=broad-except
+                    # If optional dependency is not installed, do not retry.
+                    if isinstance(exception, ImportError):
+                        raise exception
                     if (
                         isinstance(exception, errors.AMQPLinkError)
                         and exception.condition == errors.ErrorCondition.LinkStolen  # pylint: disable=no-member
@@ -255,7 +258,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         if update_token:
             # update_token not actually needed by pyamqp
             # just using to detect wh
-            return JWTTokenAuthAsync(auth_uri, auth_uri, get_token)
+            return JWTTokenAuthAsync(auth_uri, auth_uri, get_token, token_type=token_type)
         return JWTTokenAuthAsync(
             auth_uri,
             auth_uri,
@@ -294,7 +297,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         Return updated auth token.
         :param mgmt_auth: Auth.
         """
-        return await mgmt_auth.get_token()
+        return (await mgmt_auth.get_token()).token
 
     @staticmethod
     async def mgmt_client_request_async(mgmt_client, mgmt_msg, **kwargs):

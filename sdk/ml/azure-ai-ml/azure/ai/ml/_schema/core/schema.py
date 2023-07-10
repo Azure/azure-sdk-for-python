@@ -56,10 +56,8 @@ class PathAwareSchema(PatchedBaseSchema, metaclass=PatchedSchemaMeta):
 
     @pre_load
     def trim_dump_only(self, data, **kwargs):
-        """Marshmallow raises if dump_only fields are present in the schema.
-        This is not desirable for our use case, where read-only properties can
-        be present in the yaml, and should simply be ignored, while we should
-        raise in.
+        """Marshmallow raises if dump_only fields are present in the schema. This is not desirable for our use case,
+        where read-only properties can be present in the yaml, and should simply be ignored, while we should raise in.
 
         the case an unknown field is present - to prevent typos.
         """
@@ -74,14 +72,12 @@ class PathAwareSchema(PatchedBaseSchema, metaclass=PatchedSchemaMeta):
 
 
 class YamlFileSchema(PathAwareSchema):
-    """Base class that allows derived classes to be built from paths to
-    separate yaml files in place of inline yaml definitions.
+    """Base class that allows derived classes to be built from paths to separate yaml files in place of inline yaml
+    definitions.
 
-    This will be transparent to any parent schema containing a nested
-    schema of the derived class, it will not need a union type for the
-    schema, a YamlFile string will be resolved by the pre_load method
-    into a dictionary. On loading the child yaml, update the base path
-    to use for loading sub-child files.
+    This will be transparent to any parent schema containing a nested schema of the derived class, it will not need a
+    union type for the schema, a YamlFile string will be resolved by the pre_load method into a dictionary. On loading
+    the child yaml, update the base path to use for loading sub-child files.
     """
 
     def __init__(self, *args, **kwargs):

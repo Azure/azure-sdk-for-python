@@ -3,5 +3,5 @@
   "reportUnnecessaryTypeIgnoreComment": "warning",
   "reportTypeCommentUsage": true,
   "reportMissingImports": false,
-  "pythonVersion": "3.10"
+  "pythonVersion": "3.7"
 }

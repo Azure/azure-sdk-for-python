@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
+from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion
 from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema
 from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
@@ -21,10 +21,14 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 from ..._schema import PathAwareSchema
 from .._util import validate_attribute_type
+from .._validation import MutableValidationResult
+from .code import ComponentCodeMixin
 from .component import Component
 
 
-class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=too-many-instance-attributes
+class ParallelComponent(
+    Component, ParameterizedParallel, ComponentCodeMixin
+):  # pylint: disable=too-many-instance-attributes
     """Parallel component version, used to define a parallel component.
 
     :param name: Name of the component.
@@ -79,7 +83,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
         Details will be provided in the error message.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         name: Optional[str] = None,
@@ -154,7 +158,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
 
             try:
                 self.mini_batch_size = int(self.mini_batch_size)
-            except ValueError:
+            except ValueError as e:
                 unit = self.mini_batch_size[-2:].lower()
                 if unit == "kb":
                     self.mini_batch_size = int(self.mini_batch_size[0:-2]) * 1024
@@ -163,7 +167,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
                 elif unit == "gb":
                     self.mini_batch_size = int(self.mini_batch_size[0:-2]) * 1024 * 1024 * 1024
                 else:
-                    raise ValueError("mini_batch_size unit must be kb, mb or gb")
+                    raise ValueError("mini_batch_size unit must be kb, mb or gb") from e
 
     @property
     def instance_count(self) -> int:
@@ -221,6 +225,11 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
         else:
             self.task.environment = value
 
+    def _customized_validate(self) -> MutableValidationResult:
+        validation_result = super()._customized_validate()
+        self._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(validation_result)
+        return validation_result
+
     @classmethod
     def _attr_type_map(cls) -> dict:
         return {
@@ -235,7 +244,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
             "resources": (dict, JobResourceConfiguration),
         }
 
-    def _to_rest_object(self) -> ComponentVersionData:
+    def _to_rest_object(self) -> ComponentVersion:
         rest_object = super()._to_rest_object()
         # schema required list while backend accept json string
         if self.partition_keys:
@@ -243,7 +252,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
         return rest_object
 
     @classmethod
-    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
         # schema required list while backend accept json string
         # update rest obj as it will be
         partition_keys = obj.properties.component_spec.get("partition_keys", None)

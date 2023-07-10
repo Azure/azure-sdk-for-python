@@ -22,12 +22,30 @@ class GetTokenMixin(abc.ABC):
         super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
 
     @abc.abstractmethod
-    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
-        """Attempt to acquire an access token from a cache or by redeeming a refresh token"""
+    def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Optional[AccessToken]:
+        """Attempt to acquire an access token from a cache or by redeeming a refresh token.
+
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+
+        :return: An access token with the desired scopes if successful; otherwise, None.
+        :rtype: ~azure.core.credentials.AccessToken or None
+        """
 
     @abc.abstractmethod
     def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
-        """Request an access token from the STS"""
+        """Request an access token from the STS.
+
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
+        """
 
     def _should_refresh(self, token: AccessToken) -> bool:
         now = int(time.time())
@@ -46,7 +64,8 @@ class GetTokenMixin(abc.ABC):
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
             required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``

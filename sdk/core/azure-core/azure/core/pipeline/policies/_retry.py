@@ -1,4 +1,3 @@
-# pylint: disable=no-self-use
 # --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -24,23 +23,10 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-"""
-This module is the requests implementation of Pipeline ABC
-"""
 from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
 from enum import Enum
-from typing import (  # pylint: disable=unused-import
-    TYPE_CHECKING,
-    List,
-    Callable,
-    Iterator,
-    Any,
-    Union,
-    Dict,
-    Optional,
-)
 from azure.core.pipeline import PipelineResponse
 from azure.core.exceptions import (
     AzureError,
@@ -64,7 +50,7 @@ class RetryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Fixed = "fixed"
 
 
-class RetryPolicyBase(object):
+class RetryPolicyBase:
     # pylint: disable=too-many-instance-attributes
     #: Maximum backoff time.
     BACKOFF_MAX = 120
@@ -84,21 +70,24 @@ class RetryPolicyBase(object):
         retry_codes = self._RETRY_CODES
         status_codes = kwargs.pop("retry_on_status_codes", [])
         self._retry_on_status_codes = set(status_codes) | retry_codes
-        self._method_whitelist = frozenset(
-            ["HEAD", "GET", "PUT", "DELETE", "OPTIONS", "TRACE"]
-        )
+        self._method_whitelist = frozenset(["HEAD", "GET", "PUT", "DELETE", "OPTIONS", "TRACE"])
         self._respect_retry_after_header = True
         super(RetryPolicyBase, self).__init__()
 
     @classmethod
     def no_retries(cls):
-        """Disable retries."""
+        """Disable retries.
+
+        :return: A retry policy with retries disabled.
+        :rtype: ~azure.core.pipeline.policies.RetryPolicy or ~azure.core.pipeline.policies.AsyncRetryPolicy
+        """
         return cls(retry_total=0)
 
     def configure_retries(self, options):
         """Configures the retry settings.
 
         :param options: keyword arguments from context.
+        :type options: dict
         :return: A dict containing settings and history for retries.
         :rtype: dict
         """
@@ -132,11 +121,12 @@ class RetryPolicyBase(object):
             backoff_value = settings["backoff"] * (2 ** (consecutive_errors_len - 1))
         return min(settings["max_backoff"], backoff_value)
 
-    def parse_retry_after(self, retry_after):
+    def parse_retry_after(self, retry_after: str) -> float:
         """Helper to parse Retry-After and get value in seconds.
 
         :param str retry_after: Retry-After header
         :rtype: float
+        :return: Value of Retry-After in seconds.
         """
         return _utils.parse_retry_after(retry_after)
 
@@ -153,12 +143,22 @@ class RetryPolicyBase(object):
     def _is_connection_error(self, err):
         """Errors when we're fairly sure that the server did not receive the
         request, so it should be safe to retry.
+
+        :param err: The error raised by the pipeline.
+        :type err: ~azure.core.exceptions.AzureError
+        :return: True if connection error, False if not.
+        :rtype: bool
         """
         return isinstance(err, ServiceRequestError)
 
     def _is_read_error(self, err):
         """Errors that occur after the request has been started, so we should
         assume that the server began processing it.
+
+        :param err: The error raised by the pipeline.
+        :type err: ~azure.core.exceptions.AzureError
+        :return: True if read error, False if not.
+        :rtype: bool
         """
         return isinstance(err, ServiceResponseError)
 
@@ -174,11 +174,7 @@ class RetryPolicyBase(object):
         :return: True if method should be retried upon. False if not in method allowlist.
         :rtype: bool
         """
-        if (
-            response
-            and request.method.upper() in ["POST", "PATCH"]
-            and response.status_code in [500, 503, 504]
-        ):
+        if response and request.method.upper() in ["POST", "PATCH"] and response.status_code in [500, 503, 504]:
             return True
         if request.method.upper() not in settings["methods"]:
             return False
@@ -211,14 +207,9 @@ class RetryPolicyBase(object):
         has_retry_after = bool(response.http_response.headers.get("Retry-After"))
         if has_retry_after and self._respect_retry_after_header:
             return True
-        if not self._is_method_retryable(
-            settings, response.http_request, response=response.http_response
-        ):
+        if not self._is_method_retryable(settings, response.http_request, response=response.http_response):
             return False
-        return (
-            settings["total"]
-            and response.http_response.status_code in self._retry_on_status_codes
-        )
+        return settings["total"] and response.http_response.status_code in self._retry_on_status_codes
 
     def is_exhausted(self, settings):
         """Checks if any retries left.
@@ -243,49 +234,40 @@ class RetryPolicyBase(object):
         """Increment the retry counters.
 
         :param settings: The retry settings.
+        :type settings: dict
         :param response: A pipeline response object.
         :type response: ~azure.core.pipeline.PipelineResponse
         :param error: An error encountered during the request, or
          None if the response was received successfully.
+        :type error: ~azure.core.exceptions.AzureError
         :return: Whether any retry attempt is available
          True if more retry attempts available, False otherwise
         :rtype: bool
         """
         settings["total"] -= 1
 
-        if (
-            isinstance(response, PipelineResponse)
-            and response.http_response.status_code == 202
-        ):
+        if isinstance(response, PipelineResponse) and response.http_response.status_code == 202:
             return False
 
         if error and self._is_connection_error(error):
             # Connect retry?
             settings["connect"] -= 1
-            settings["history"].append(
-                RequestHistory(response.http_request, error=error)
-            )
+            settings["history"].append(RequestHistory(response.http_request, error=error))
 
         elif error and self._is_read_error(error):
             # Read retry?
             settings["read"] -= 1
             if hasattr(response, "http_request"):
-                settings["history"].append(
-                    RequestHistory(response.http_request, error=error)
-                )
+                settings["history"].append(RequestHistory(response.http_request, error=error))
 
         else:
             # Incrementing because of a server error like a 500 in
-            # status_forcelist and a the given method is in the allowlist
+            # status_forcelist and the given method is in the allowlist
             if response:
                 settings["status"] -= 1
-                if hasattr(response, "http_request") and hasattr(
-                    response, "http_response"
-                ):
+                if hasattr(response, "http_request") and hasattr(response, "http_response"):
                     settings["history"].append(
-                        RequestHistory(
-                            response.http_request, http_response=response.http_response
-                        )
+                        RequestHistory(response.http_request, http_response=response.http_response)
                     )
 
         if self.is_exhausted(settings):
@@ -333,16 +315,12 @@ class RetryPolicyBase(object):
         # if connection_timeout is already set, ensure it doesn't exceed absolute_timeout
         connection_timeout = request.context.options.get("connection_timeout")
         if connection_timeout:
-            request.context.options["connection_timeout"] = min(
-                connection_timeout, absolute_timeout
-            )
+            request.context.options["connection_timeout"] = min(connection_timeout, absolute_timeout)
 
         # otherwise, try to ensure the transport's configured connection_timeout doesn't exceed absolute_timeout
         # ("connection_config" isn't defined on Async/HttpTransport but all implementations in this library have it)
         elif hasattr(request.context.transport, "connection_config"):
-            default_timeout = getattr(
-                request.context.transport.connection_config, "timeout", absolute_timeout
-            )
+            default_timeout = getattr(request.context.transport.connection_config, "timeout", absolute_timeout)
             try:
                 if absolute_timeout < default_timeout:
                     request.context.options["connection_timeout"] = absolute_timeout
@@ -422,6 +400,9 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
         :param response: The PipelineResponse object.
         :type response: ~azure.core.pipeline.PipelineResponse
         :param transport: The HTTP transport type.
+        :type transport: ~azure.core.pipeline.transport.HttpTransport
+        :return: Whether a sleep was done or not
+        :rtype: bool
         """
         retry_after = self.get_retry_after(response)
         if retry_after:
@@ -434,6 +415,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
 
         :param dict settings: The retry settings.
         :param transport: The HTTP transport type.
+        :type transport: ~azure.core.pipeline.transport.HttpTransport
         """
         backoff = self.get_backoff_time(settings)
         if backoff <= 0:
@@ -450,6 +432,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
 
         :param dict settings: The retry settings.
         :param transport: The HTTP transport type.
+        :type transport: ~azure.core.pipeline.transport.HttpTransport
         :param response: The PipelineResponse object.
         :type response: ~azure.core.pipeline.PipelineResponse
         """
@@ -478,16 +461,14 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
         is_response_error = True
 
         while retry_active:
+            start_time = time.time()
             try:
-                start_time = time.time()
                 self._configure_timeout(request, absolute_timeout, is_response_error)
                 response = self.next.send(request)
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)
                     if retry_active:
-                        self.sleep(
-                            retry_settings, request.context.transport, response=response
-                        )
+                        self.sleep(retry_settings, request.context.transport, response=response)
                         is_response_error = True
                         continue
                 break
@@ -496,12 +477,8 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise
             except AzureError as err:
-                if absolute_timeout > 0 and self._is_method_retryable(
-                    retry_settings, request.http_request
-                ):
-                    retry_active = self.increment(
-                        retry_settings, response=request, error=err
-                    )
+                if absolute_timeout > 0 and self._is_method_retryable(retry_settings, request.http_request):
+                    retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)
                         if isinstance(err, ServiceRequestError):

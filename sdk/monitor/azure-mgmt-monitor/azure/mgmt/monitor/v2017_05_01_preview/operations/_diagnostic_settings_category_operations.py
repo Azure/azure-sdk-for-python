@@ -38,7 +38,7 @@ def build_get_request(resource_uri: str, name: str, **kwargs: Any) -> HttpReques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2017-05-01-preview"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -48,7 +48,7 @@ def build_get_request(resource_uri: str, name: str, **kwargs: Any) -> HttpReques
         "name": _SERIALIZER.url("name", name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -63,7 +63,7 @@ def build_list_request(resource_uri: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2017-05-01-preview"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +72,7 @@ def build_list_request(resource_uri: str, **kwargs: Any) -> HttpRequest:
         "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -89,7 +89,7 @@ class DiagnosticSettingsCategoryOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2017_05_01_preview.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2017_05_01_preview.MonitorManagementClient`'s
         :attr:`diagnostic_settings_category` attribute.
     """
 
@@ -112,7 +112,7 @@ class DiagnosticSettingsCategoryOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticSettingsCategoryResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2017_05_01_preview.models.DiagnosticSettingsCategoryResource
+        :rtype: ~azure.mgmt.monitor.v2017_05_01_preview.models.DiagnosticSettingsCategoryResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -126,8 +126,8 @@ class DiagnosticSettingsCategoryOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2017-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DiagnosticSettingsCategoryResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-05-01-preview"))
+        cls: ClsType[_models.DiagnosticSettingsCategoryResource] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_uri=resource_uri,
@@ -138,10 +138,11 @@ class DiagnosticSettingsCategoryOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -158,7 +159,7 @@ class DiagnosticSettingsCategoryOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/{resourceUri}/providers/Microsoft.Insights/diagnosticSettingsCategories/{name}"}  # type: ignore
+    get.metadata = {"url": "/{resourceUri}/providers/Microsoft.Insights/diagnosticSettingsCategories/{name}"}
 
     @distributed_trace
     def list(self, resource_uri: str, **kwargs: Any) -> _models.DiagnosticSettingsCategoryResourceCollection:
@@ -169,7 +170,7 @@ class DiagnosticSettingsCategoryOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticSettingsCategoryResourceCollection or the result of cls(response)
         :rtype:
-         ~$(python-base-namespace).v2017_05_01_preview.models.DiagnosticSettingsCategoryResourceCollection
+         ~azure.mgmt.monitor.v2017_05_01_preview.models.DiagnosticSettingsCategoryResourceCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -183,8 +184,8 @@ class DiagnosticSettingsCategoryOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2017-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DiagnosticSettingsCategoryResourceCollection]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-05-01-preview"))
+        cls: ClsType[_models.DiagnosticSettingsCategoryResourceCollection] = kwargs.pop("cls", None)
 
         request = build_list_request(
             resource_uri=resource_uri,
@@ -194,10 +195,11 @@ class DiagnosticSettingsCategoryOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -214,4 +216,4 @@ class DiagnosticSettingsCategoryOperations:
 
         return deserialized
 
-    list.metadata = {"url": "/{resourceUri}/providers/Microsoft.Insights/diagnosticSettingsCategories"}  # type: ignore
+    list.metadata = {"url": "/{resourceUri}/providers/Microsoft.Insights/diagnosticSettingsCategories"}

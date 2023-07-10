@@ -8,8 +8,8 @@ import logging
 
 from marshmallow import ValidationError, fields, post_load, pre_dump
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import RandomSamplingAlgorithmRule, SamplingAlgorithmType
-from azure.ai.ml._schema.core.fields import StringTransformedEnum
+from azure.ai.ml._restclient.v2023_02_01_preview.models import RandomSamplingAlgorithmRule, SamplingAlgorithmType
+from azure.ai.ml._schema.core.fields import StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake
 
@@ -24,6 +24,14 @@ class RandomSamplingAlgorithmSchema(metaclass=PatchedSchemaMeta):
     )
 
     seed = fields.Int()
+
+    logbase = UnionField(
+        [
+            fields.Number(),
+            fields.Str(),
+        ],
+        data_key="logbase",
+    )
 
     rule = StringTransformedEnum(
         allowed_values=[

@@ -40,10 +40,10 @@ class InfrastructureEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     'Enabled'.
     """
 
-    #: Default value for single layer of encryption for data at rest.
     ENABLED = "Enabled"
-    #: Additional (2nd) layer of encryption for data at rest
+    """Default value for single layer of encryption for data at rest."""
     DISABLED = "Disabled"
+    """Additional (2nd) layer of encryption for data at rest"""
 
 
 class MinimalTlsVersionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):

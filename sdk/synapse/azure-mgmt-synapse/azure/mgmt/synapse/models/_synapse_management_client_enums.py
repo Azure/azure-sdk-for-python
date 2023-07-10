@@ -779,3 +779,11 @@ class WorkspacePublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta)
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+
+class WorkspaceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """status of Start Integrationruntimes."""
+
+    IN_PROGRESS = "InProgress"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"

@@ -1,0 +1,24 @@
+Service: storage-file-datalake
+
+Project: sdk/storage/azure-storage-file-datalake
+
+PrimaryPackage: azure-storage-file-datalake
+
+PackageVersions:
+- azure-core: 1.26.1
+  azure-storage-file-datalake: 12.9.1
+- azure-core: source
+  azure-storage-file-datalake: source
+
+Tests:
+- Test: download
+  Class: DownloadTest
+  Arguments: &sizes
+  - --size 10240 --parallel 64
+  - --size 10485760 --parallel 32
+  - --size 1073741824 --parallel 1 --warmup 60 --duration 60
+  - --size 1073741824 --parallel 8 --warmup 60 --duration 60
+
+- Test: upload
+  Class: UploadTest
+  Arguments: *sizes

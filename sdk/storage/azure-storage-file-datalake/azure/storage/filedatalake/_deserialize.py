@@ -27,6 +27,9 @@ def deserialize_dir_properties(response, obj, headers):
     metadata = deserialize_metadata(response, obj, headers)
     dir_properties = DirectoryProperties(
         metadata=metadata,
+        owner=response.headers.get('x-ms-owner'),
+        group=response.headers.get('x-ms-group'),
+        permissions=response.headers.get('x-ms-permissions'),
         **headers
     )
     return dir_properties
@@ -34,8 +37,13 @@ def deserialize_dir_properties(response, obj, headers):
 
 def deserialize_file_properties(response, obj, headers):
     metadata = deserialize_metadata(response, obj, headers)
+    # DataLake specific headers that are not deserialized in blob are pulled directly from the raw response header
     file_properties = FileProperties(
         metadata=metadata,
+        encryption_context=response.headers.get('x-ms-encryption-context'),
+        owner=response.headers.get('x-ms-owner'),
+        group=response.headers.get('x-ms-group'),
+        permissions=response.headers.get('x-ms-permissions'),
         **headers
     )
     if 'Content-Range' in headers:
@@ -82,7 +90,7 @@ def get_datalake_service_properties(datalake_properties):
     return datalake_properties
 
 
-def from_blob_properties(blob_properties):
+def from_blob_properties(blob_properties, **additional_args):
     file_props = FileProperties()
     file_props.name = blob_properties.name
     file_props.etag = blob_properties.etag
@@ -96,6 +104,13 @@ def from_blob_properties(blob_properties):
     file_props.deleted_time = blob_properties.deleted_time
     file_props.remaining_retention_days = blob_properties.remaining_retention_days
     file_props.content_settings = blob_properties.content_settings
+
+    # Parse additional Datalake-only properties
+    file_props.encryption_context = additional_args.pop('encryption_context', None)
+    file_props.owner = additional_args.pop('owner', None)
+    file_props.group = additional_args.pop('group', None)
+    file_props.permissions = additional_args.pop('permissions', None)
+
     return file_props
 
 

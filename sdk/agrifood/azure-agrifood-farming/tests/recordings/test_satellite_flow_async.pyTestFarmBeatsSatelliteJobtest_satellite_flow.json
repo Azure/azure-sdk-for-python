@@ -1,0 +1,762 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "182",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "client_id=39d176c5-91b6-454b-854d-55813c17d92d\u0026client_secret=KCf8Q~J3H5tYIwsneXeV_aMSAwR5QTDM.1SsNcee\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Ffarmbeats.azure.net%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "92",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 22 Feb 2023 13:44:07 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": [
+          "fpc=At5mL4m7BPdPrquR-YFQ2ocU3PbiAwAAAP4SiNsOAAAA; expires=Fri, 24-Mar-2023 13:44:08 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14649.20 - KRC ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "access_token": "Sanitized"
+      }
+    },
+    {
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-29476?api-version=2022-11-01-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "2",
+        "Content-Type": "application/merge-patch\u002Bjson",
+        "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {},
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2022-11-01-preview",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Security-Policy": "self",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 22 Feb 2023 13:44:08 GMT",
+        "ETag": "0200614d-0000-0600-0000-63f61c280000",
+        "mise-correlation-id": "9301f351-3c52-453a-bf42-78fae6ad2a14",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-throttle-information": "1000"
+      },
+      "ResponseBody": {
+        "id": "test-party-29476",
+        "eTag": "0200614d-0000-0600-0000-63f61c280000",
+        "createdDateTime": "2023-02-16T00:26:15Z",
+        "modifiedDateTime": "2023-02-22T13:44:08Z",
+        "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
+        "modifiedBy": "9002b50e-dc98-445e-a865-72dce38ecafd"
+      }
+    },
+    {
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-29476/boundaries/satellite-flow-asdftest-boundary?api-version=2022-11-01-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "408",
+        "Content-Type": "application/merge-patch\u002Bjson",
+        "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                73.70457172393799,
+                20.545385304358106
+              ],
+              [
+                73.70457172393799,
+                20.545385304358106
+              ],
+              [
+                73.70448589324951,
+                20.542411534243367
+              ],
+              [
+                73.70877742767334,
+                20.541688176010233
+              ],
+              [
+                73.71023654937744,
+                20.545083911372505
+              ],
+              [
+                73.70663166046143,
+                20.546992723579137
+              ],
+              [
+                73.70457172393799,
+                20.545385304358106
+              ]
+            ]
+          ]
+        },
+        "status": "\u003Cstring\u003E",
+        "name": "\u003Cstring\u003E",
+        "description": "\u003Cstring\u003E"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Security-Policy": "self",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 22 Feb 2023 13:44:08 GMT",
+        "ETag": "0100eea8-0000-0600-0000-63ed78270000",
+        "mise-correlation-id": "0837c81b-9a0a-4dba-89cc-dd5cc459a8da",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-throttle-information": "1000"
+      },
+      "ResponseBody": {
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                73.70457172393799,
+                20.545385304358106
+              ],
+              [
+                73.70457172393799,
+                20.545385304358106
+              ],
+              [
+                73.70448589324951,
+                20.542411534243367
+              ],
+              [
+                73.70877742767334,
+                20.541688176010233
+              ],
+              [
+                73.71023654937744,
+                20.545083911372505
+              ],
+              [
+                73.70663166046143,
+                20.546992723579137
+              ],
+              [
+                73.70457172393799,
+                20.545385304358106
+              ]
+            ]
+          ]
+        },
+        "crs": "WGS84",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [
+            73.70711478791443,
+            20.54418916247634
+          ]
+        },
+        "bbox": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                73.70448589324951,
+                20.541688176010233
+              ],
+              [
+                73.70448589324951,
+                20.546992723579137
+              ],
+              [
+                73.71023654937744,
+                20.546992723579137
+              ],
+              [
+                73.71023654937744,
+                20.541688176010233
+              ]
+            ]
+          ]
+        },
+        "partyId": "test-party-29476",
+        "area": {
+          "unit": "Acre",
+          "value": 60.405
+        },
+        "id": "satellite-flow-asdftest-boundary",
+        "eTag": "0100eea8-0000-0600-0000-63ed78270000",
+        "status": "\u003Cstring\u003E",
+        "createdDateTime": "2023-02-16T00:26:15Z",
+        "modifiedDateTime": "2023-02-22T13:44:08Z",
+        "name": "\u003Cstring\u003E",
+        "description": "\u003Cstring\u003E",
+        "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
+        "modifiedBy": "9002b50e-dc98-445e-a865-72dce38ecafd"
+      }
+    },
+    {
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-47465?api-version=2022-11-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "345",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "boundaryId": "satellite-flow-asdftest-boundary",
+        "endDateTime": "2020-01-31T00:00:00Z",
+        "partyId": "test-party-29476",
+        "startDateTime": "2020-01-01T00:00:00Z",
+        "provider": "Microsoft",
+        "source": "Sentinel_2_L2A",
+        "data": {
+          "imageNames": [
+            "NDVI"
+          ],
+          "imageFormats": [
+            "TIF"
+          ],
+          "imageResolution": [
+            10
+          ]
+        },
+        "name": "\u003Cstring\u003E",
+        "description": "\u003Cstring\u003E"
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Security-Policy": "self",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 22 Feb 2023 13:44:09 GMT",
+        "Location": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-47465?api-version=2022-11-01-preview",
+        "mise-correlation-id": "23a37ddf-4259-4976-8a1f-8d0069d996f1",
+        "operation-location": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-47465?api-version=2022-11-01-preview",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-throttle-information": "1284"
+      },
+      "ResponseBody": {
+        "partyId": "test-party-29476",
+        "boundaryId": "satellite-flow-asdftest-boundary",
+        "startDateTime": "2020-01-01T00:00:00Z",
+        "endDateTime": "2020-01-31T00:00:00Z",
+        "provider": "Microsoft",
+        "source": "Sentinel_2_L2A",
+        "data": {
+          "imageNames": [
+            "NDVI"
+          ],
+          "imageFormats": [
+            "TIF"
+          ],
+          "imageResolutions": [
+            10.0
+          ]
+        },
+        "id": "satellite-flow-asdfjob-47465",
+        "status": "Waiting",
+        "message": "Created job \u0027satellite-flow-asdfjob-47465\u0027 to fetch satellite data for boundary \u0027satellite-flow-asdftest-boundary\u0027 from startDate \u002701/01/2020\u0027 to endDate \u002701/31/2020\u0027 (both inclusive).",
+        "createdDateTime": "2023-02-22T13:44:09Z",
+        "name": "\u003Cstring\u003E",
+        "description": "\u003Cstring\u003E"
+      }
+    },
+    {
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-47465?api-version=2022-11-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Security-Policy": "self",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 22 Feb 2023 13:44:09 GMT",
+        "mise-correlation-id": "cbcb146c-eb74-4b08-ab34-cf37d09cc3de",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-throttle-information": "100"
+      },
+      "ResponseBody": {
+        "partyId": "test-party-29476",
+        "boundaryId": "satellite-flow-asdftest-boundary",
+        "startDateTime": "2020-01-01T00:00:00Z",
+        "endDateTime": "2020-01-31T00:00:00Z",
+        "provider": "Microsoft",
+        "source": "Sentinel_2_L2A",
+        "data": {
+          "imageNames": [
+            "NDVI"
+          ],
+          "imageFormats": [
+            "TIF"
+          ],
+          "imageResolutions": [
+            10.0
+          ]
+        },
+        "id": "satellite-flow-asdfjob-47465",
+        "status": "Waiting",
+        "message": "Created job \u0027satellite-flow-asdfjob-47465\u0027 to fetch satellite data for boundary \u0027satellite-flow-asdftest-boundary\u0027 from startDate \u002701/01/2020\u0027 to endDate \u002701/31/2020\u0027 (both inclusive).",
+        "createdDateTime": "2023-02-22T13:44:09Z",
+        "lastActionDateTime": "2023-02-22T13:44:09Z",
+        "startTime": "2023-02-22T13:44:09Z",
+        "name": "\u003Cstring\u003E",
+        "description": "\u003Cstring\u003E"
+      }
+    },
+    {
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-47465?api-version=2022-11-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Security-Policy": "self",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 22 Feb 2023 13:44:39 GMT",
+        "mise-correlation-id": "9322abc5-ca39-4200-b763-e4bfaa473775",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-throttle-information": "100"
+      },
+      "ResponseBody": {
+        "partyId": "test-party-29476",
+        "boundaryId": "satellite-flow-asdftest-boundary",
+        "startDateTime": "2020-01-01T00:00:00Z",
+        "endDateTime": "2020-01-31T00:00:00Z",
+        "provider": "Microsoft",
+        "source": "Sentinel_2_L2A",
+        "data": {
+          "imageNames": [
+            "NDVI"
+          ],
+          "imageFormats": [
+            "TIF"
+          ],
+          "imageResolutions": [
+            10.0
+          ]
+        },
+        "id": "satellite-flow-asdfjob-47465",
+        "status": "Succeeded",
+        "durationInSeconds": 13.4261951,
+        "message": "Satellite data is available for 12 days from provider in the requested date range. Successfully fetched data for 12 days.",
+        "createdDateTime": "2023-02-22T13:44:09Z",
+        "lastActionDateTime": "2023-02-22T13:44:22Z",
+        "startTime": "2023-02-22T13:44:09Z",
+        "endTime": "2023-02-22T13:44:22Z",
+        "name": "\u003Cstring\u003E",
+        "description": "\u003Cstring\u003E"
+      }
+    },
+    {
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-47465?api-version=2022-11-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Security-Policy": "self",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 22 Feb 2023 13:44:40 GMT",
+        "mise-correlation-id": "32bf92a2-2f5b-4610-8ed3-8d211e10db77",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-throttle-information": "100"
+      },
+      "ResponseBody": {
+        "partyId": "test-party-29476",
+        "boundaryId": "satellite-flow-asdftest-boundary",
+        "startDateTime": "2020-01-01T00:00:00Z",
+        "endDateTime": "2020-01-31T00:00:00Z",
+        "provider": "Microsoft",
+        "source": "Sentinel_2_L2A",
+        "data": {
+          "imageNames": [
+            "NDVI"
+          ],
+          "imageFormats": [
+            "TIF"
+          ],
+          "imageResolutions": [
+            10.0
+          ]
+        },
+        "id": "satellite-flow-asdfjob-47465",
+        "status": "Succeeded",
+        "durationInSeconds": 13.4261951,
+        "message": "Satellite data is available for 12 days from provider in the requested date range. Successfully fetched data for 12 days.",
+        "createdDateTime": "2023-02-22T13:44:09Z",
+        "lastActionDateTime": "2023-02-22T13:44:22Z",
+        "startTime": "2023-02-22T13:44:09Z",
+        "endTime": "2023-02-22T13:44:22Z",
+        "name": "\u003Cstring\u003E",
+        "description": "\u003Cstring\u003E"
+      }
+    },
+    {
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes?provider=Microsoft\u0026partyId=test-party-29476\u0026boundaryId=satellite-flow-asdftest-boundary\u0026source=Sentinel_2_L2A\u0026startDateTime=2020-01-01T00:00:00.000Z\u0026endDateTime=2020-01-31T00:00:00.000Z\u0026maxCloudCoveragePercentage=100.0\u0026maxDarkPixelCoveragePercentage=100.0\u0026api-version=2022-11-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Security-Policy": "self",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 22 Feb 2023 13:44:40 GMT",
+        "mise-correlation-id": "a052a98d-c37d-44cc-8f16-84f1bae68a14",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-throttle-information": "6500"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "sceneDateTime": "2020-01-30T00:00:00Z",
+            "provider": "Microsoft",
+            "source": "Sentinel_2_L2A",
+            "imageFiles": [
+              {
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-29476%2fsatellite-flow-asdftest-boundary%2f2020-01-30%2f00-00-00%2fndvi_10.tif",
+                "name": "NDVI",
+                "resolution": 10.0
+              }
+            ],
+            "imageFormat": "TIF",
+            "cloudCoverPercentage": 0.0,
+            "darkPixelPercentage": 0.0,
+            "ndviMedianValue": 0.635833740234375,
+            "boundaryId": "satellite-flow-asdftest-boundary",
+            "partyId": "test-party-29476",
+            "id": "49435f45-ed77-080c-809e-359161dde1e2",
+            "eTag": "00000434-0000-0600-0000-63ed782d0000"
+          },
+          {
+            "sceneDateTime": "2020-01-28T00:00:00Z",
+            "provider": "Microsoft",
+            "source": "Sentinel_2_L2A",
+            "imageFiles": [
+              {
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-29476%2fsatellite-flow-asdftest-boundary%2f2020-01-28%2f00-00-00%2fndvi_10.tif",
+                "name": "NDVI",
+                "resolution": 10.0
+              }
+            ],
+            "imageFormat": "TIF",
+            "cloudCoverPercentage": 0.0,
+            "darkPixelPercentage": 0.0,
+            "ndviMedianValue": 0.5881445407867432,
+            "boundaryId": "satellite-flow-asdftest-boundary",
+            "partyId": "test-party-29476",
+            "id": "131b8bc3-606a-e946-d930-1eeadfc58377",
+            "eTag": "00000334-0000-0600-0000-63ed782d0000"
+          },
+          {
+            "sceneDateTime": "2020-01-25T00:00:00Z",
+            "provider": "Microsoft",
+            "source": "Sentinel_2_L2A",
+            "imageFiles": [
+              {
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-29476%2fsatellite-flow-asdftest-boundary%2f2020-01-25%2f00-00-00%2fndvi_10.tif",
+                "name": "NDVI",
+                "resolution": 10.0
+              }
+            ],
+            "imageFormat": "TIF",
+            "cloudCoverPercentage": 0.0,
+            "darkPixelPercentage": 0.0,
+            "ndviMedianValue": 0.5896583795547485,
+            "boundaryId": "satellite-flow-asdftest-boundary",
+            "partyId": "test-party-29476",
+            "id": "1e109ae4-c546-369f-fc78-24445bc063a6",
+            "eTag": "00000e34-0000-0600-0000-63ed78300000"
+          },
+          {
+            "sceneDateTime": "2020-01-23T00:00:00Z",
+            "provider": "Microsoft",
+            "source": "Sentinel_2_L2A",
+            "imageFiles": [
+              {
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-29476%2fsatellite-flow-asdftest-boundary%2f2020-01-23%2f00-00-00%2fndvi_10.tif",
+                "name": "NDVI",
+                "resolution": 10.0
+              }
+            ],
+            "imageFormat": "TIF",
+            "cloudCoverPercentage": 0.0,
+            "darkPixelPercentage": 0.0,
+            "ndviMedianValue": 0.5230016112327576,
+            "boundaryId": "satellite-flow-asdftest-boundary",
+            "partyId": "test-party-29476",
+            "id": "0933d19b-75b4-22a5-3500-9e21d695afb5",
+            "eTag": "00000d34-0000-0600-0000-63ed78300000"
+          },
+          {
+            "sceneDateTime": "2020-01-20T00:00:00Z",
+            "provider": "Microsoft",
+            "source": "Sentinel_2_L2A",
+            "imageFiles": [
+              {
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-29476%2fsatellite-flow-asdftest-boundary%2f2020-01-20%2f00-00-00%2fndvi_10.tif",
+                "name": "NDVI",
+                "resolution": 10.0
+              }
+            ],
+            "imageFormat": "TIF",
+            "cloudCoverPercentage": 0.0,
+            "darkPixelPercentage": 0.0,
+            "ndviMedianValue": 0.6815409064292908,
+            "boundaryId": "satellite-flow-asdftest-boundary",
+            "partyId": "test-party-29476",
+            "id": "e8f4de79-89cd-0e9f-a0ac-5cac50029779",
+            "eTag": "00000c34-0000-0600-0000-63ed78300000"
+          },
+          {
+            "sceneDateTime": "2020-01-18T00:00:00Z",
+            "provider": "Microsoft",
+            "source": "Sentinel_2_L2A",
+            "imageFiles": [
+              {
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-29476%2fsatellite-flow-asdftest-boundary%2f2020-01-18%2f00-00-00%2fndvi_10.tif",
+                "name": "NDVI",
+                "resolution": 10.0
+              }
+            ],
+            "imageFormat": "TIF",
+            "cloudCoverPercentage": 0.0,
+            "darkPixelPercentage": 0.0,
+            "ndviMedianValue": 0.6772042512893677,
+            "boundaryId": "satellite-flow-asdftest-boundary",
+            "partyId": "test-party-29476",
+            "id": "234e0190-7374-182e-7911-28ef75ff4408",
+            "eTag": "00000b34-0000-0600-0000-63ed78300000"
+          },
+          {
+            "sceneDateTime": "2020-01-15T00:00:00Z",
+            "provider": "Microsoft",
+            "source": "Sentinel_2_L2A",
+            "imageFiles": [
+              {
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-29476%2fsatellite-flow-asdftest-boundary%2f2020-01-15%2f00-00-00%2fndvi_10.tif",
+                "name": "NDVI",
+                "resolution": 10.0
+              }
+            ],
+            "imageFormat": "TIF",
+            "cloudCoverPercentage": 100.0,
+            "darkPixelPercentage": 0.0,
+            "ndviMedianValue": -0.005950259510427713,
+            "boundaryId": "satellite-flow-asdftest-boundary",
+            "partyId": "test-party-29476",
+            "id": "2210dccc-af4d-5098-ee63-0bbe974e4a8e",
+            "eTag": "00000934-0000-0600-0000-63ed78300000"
+          },
+          {
+            "sceneDateTime": "2020-01-13T00:00:00Z",
+            "provider": "Microsoft",
+            "source": "Sentinel_2_L2A",
+            "imageFiles": [
+              {
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-29476%2fsatellite-flow-asdftest-boundary%2f2020-01-13%2f00-00-00%2fndvi_10.tif",
+                "name": "NDVI",
+                "resolution": 10.0
+              }
+            ],
+            "imageFormat": "TIF",
+            "cloudCoverPercentage": 0.0,
+            "darkPixelPercentage": 0.0,
+            "ndviMedianValue": 0.40305525064468384,
+            "boundaryId": "satellite-flow-asdftest-boundary",
+            "partyId": "test-party-29476",
+            "id": "83a85425-cfa8-45a5-7066-463dc20087d7",
+            "eTag": "00000a34-0000-0600-0000-63ed78300000"
+          },
+          {
+            "sceneDateTime": "2020-01-10T00:00:00Z",
+            "provider": "Microsoft",
+            "source": "Sentinel_2_L2A",
+            "imageFiles": [
+              {
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-29476%2fsatellite-flow-asdftest-boundary%2f2020-01-10%2f00-00-00%2fndvi_10.tif",
+                "name": "NDVI",
+                "resolution": 10.0
+              }
+            ],
+            "imageFormat": "TIF",
+            "cloudCoverPercentage": 0.0,
+            "darkPixelPercentage": 0.0,
+            "ndviMedianValue": 0.6626869440078735,
+            "boundaryId": "satellite-flow-asdftest-boundary",
+            "partyId": "test-party-29476",
+            "id": "91879f9c-3e5e-5221-8e9b-aec9dd5154a0",
+            "eTag": "00000834-0000-0600-0000-63ed782f0000"
+          },
+          {
+            "sceneDateTime": "2020-01-08T00:00:00Z",
+            "provider": "Microsoft",
+            "source": "Sentinel_2_L2A",
+            "imageFiles": [
+              {
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-29476%2fsatellite-flow-asdftest-boundary%2f2020-01-08%2f00-00-00%2fndvi_10.tif",
+                "name": "NDVI",
+                "resolution": 10.0
+              }
+            ],
+            "imageFormat": "TIF",
+            "cloudCoverPercentage": 100.0,
+            "darkPixelPercentage": 0.0,
+            "ndviMedianValue": 0.18780821561813354,
+            "boundaryId": "satellite-flow-asdftest-boundary",
+            "partyId": "test-party-29476",
+            "id": "6038e0bc-4e32-a0a4-b168-a12ebf914d25",
+            "eTag": "00000734-0000-0600-0000-63ed782f0000"
+          },
+          {
+            "sceneDateTime": "2020-01-05T00:00:00Z",
+            "provider": "Microsoft",
+            "source": "Sentinel_2_L2A",
+            "imageFiles": [
+              {
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-29476%2fsatellite-flow-asdftest-boundary%2f2020-01-05%2f00-00-00%2fndvi_10.tif",
+                "name": "NDVI",
+                "resolution": 10.0
+              }
+            ],
+            "imageFormat": "TIF",
+            "cloudCoverPercentage": 0.0,
+            "darkPixelPercentage": 0.0,
+            "ndviMedianValue": 0.6943548917770386,
+            "boundaryId": "satellite-flow-asdftest-boundary",
+            "partyId": "test-party-29476",
+            "id": "141fee1c-f928-d4ef-b248-86336c0ee997",
+            "eTag": "00000634-0000-0600-0000-63ed782f0000"
+          },
+          {
+            "sceneDateTime": "2020-01-03T00:00:00Z",
+            "provider": "Microsoft",
+            "source": "Sentinel_2_L2A",
+            "imageFiles": [
+              {
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-29476%2fsatellite-flow-asdftest-boundary%2f2020-01-03%2f00-00-00%2fndvi_10.tif",
+                "name": "NDVI",
+                "resolution": 10.0
+              }
+            ],
+            "imageFormat": "TIF",
+            "cloudCoverPercentage": 0.0,
+            "darkPixelPercentage": 0.0,
+            "ndviMedianValue": 0.5072696208953857,
+            "boundaryId": "satellite-flow-asdftest-boundary",
+            "partyId": "test-party-29476",
+            "id": "ae074540-958a-8b8f-d812-19a0361f7306",
+            "eTag": "00000534-0000-0600-0000-63ed782f0000"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?filePath=Microsoft/Sentinel_2_L2A/test-party-29476/satellite-flow-asdftest-boundary/2020-01-30/00-00-00/ndvi_10.tif\u0026api-version=2022-11-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json, application/octet-stream",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
+        "Connection": "keep-alive",
+        "Content-Disposition": "attachment; filename=\u0022ndvi_10.tif\u0022",
+        "Content-Security-Policy": "self",
+        "Content-Type": "application/octet-stream",
+        "Date": "Wed, 22 Feb 2023 13:44:41 GMT",
+        "mise-correlation-id": "ce7701ed-a611-4a32-9369-a067b9bc883c",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "x-ms-throttle-information": "100"
+      },
+      "ResponseBody": "TU0AKgAAAAgAEQEAAAMAAAABAEAAAAEBAAMAAAABADsAAAECAAMAAAABACAAAAEDAAMAAAABgLIAAAEGAAMAAAABAAEAAAERAAQAAAACAAAA3AEVAAMAAAABAAEAAAEWAAMAAAABACAAAAEXAAQAAAACAAAA5AEaAAUAAAABAAAA7AEbAAUAAAABAAAA9AEoAAMAAAABAAEAAAFTAAMAAAABAAMAAIMOAAwAAAADAAAA/ISCAAwAAAAGAAABFIevAAMAAAAcAAABRIexAAIAAAAPAAABfAAAAAAAAAAAAYsAABTQAAATRQAAEYoAAAABAAAAAQAAAAEAAAABPxeOAAAAAAA/F5GYkIycNAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQFJtFkwAAABANIwHtxLsIAAAAAAAAAAAAAEAAQAAAAYEAAAAAAEAAgQBAAAAAQABBAKHsQAGAAAIAAAAAAEQ5ggBh7EABgAHCAYAAAABI45XR1MgODR8V0dTIDg0fAB4Xt3ZeVjNa7sH8IRkSiqpSKOpeW61Vuv7Xa1mZUjGpE1JRSVUikwpFZF5DFubzBRtw1YyJDObkiIZMw97b6QI7/J7r/Ne55z3eq/Odc71TuePz39rPc9zP7/n99z3ff3mnlRSmvt3QKs9Z\u002Bhi\u002BISi6P4UNzW09Pv/T4jUNLo53qKL1VDaqivT4cN7Urs16TC4pf/\u002Bu6Oe0Tn2G5dDUUo9XToWUjpfjTLdo5Q23qSD3nwyuIjS4cNbGuffDc1rVKjUPuk7fA1yoXFhJ9rtOUWnO7F0u36Q0tefKQqqo/f5MHp/Nad0djPxrF1L4/47oMWZ8VROvISm3B6COnEF24ca03T7YdrkqlBs4UcXH2NKcZgeQ0bQf18VvT4nUNYQSJ/Aj/RseY5/VXTxiqbu5Qg8k5xGjXq24MSPUXhQ3sT2u1/TxuIEpYu06WAUSPsO94kD8\u002BktimfA2CB6lqTRfchzyi8aUPxpITV/ONzSfP9KCNlh2l\u002BoZfvqzTi7rxhnW40Q1BbNRX3bcHzoqUGDhkF0vg6KrkXQ9VcTuu5Xp1tFLAd0uESPLBfKb52gLCOSou37qbkq4buW5v1no2m6Mu2PJ5KlTynu0IGGY9RwdVEKavLuCmoN/FBtvxWvleu\u002B7w3NQ9LpGCqm2yhfOnedTsm47fToOpFubzwoL55Dme1Y2qutEWh0HYRN\u002BeeR/u1iS\u002Bv4Z6DRnDQa592meZgTHap2Eatq6fQ1hx2Mxn\u002BHyo1HUXF1MhovW\u002BPbqSvUPhRAy8wRNAs6RdeL1ZS9mEHZa1u6e56lu\u002BVqulXWU2I\u002BkJaG9oKOupXYlbQBy2tuYb7qXMR\u002BymtpTf8oKK8cja9\u002Bj6iy0JldHz\u002Bl0cZHdOkcSfGzbtS54vIdztbOwHGbUjQmzMK3pJ/YK/8axSM1ab2plrZtVSmdcI5O3RR7MfYu5WOvUDbAhDzwO\u002B1V7gi6dpKgglXY9bwZWdJApJStx4S3azA8orCl9f29IHXuZYTkJCN8/w5sKfiEcq3b\u002BKJaz/aJBrSbcI\u002BOVUup2t/nOxQ/nI1Tr06irqgEX3WlND6/ltZNF9i32zaaeT6i/boS2mjfpLPZdsra69IrOY/ekf502XtC0Le0J/sZXcYfH02QrKyK8EmL8YPGW4zOk2PkuJWQqfxDayhs0Q1GzOs3mHizPULHbEH6Ex/8nBCMum3L8OmXjjTYNJVG80V4OT5LUBayBhW\u002BZXjYy5Y6vcNoVraEfetiaBbzhv0q77O/wwbapnSn441UYncZvSpHc8D853Tr9ERgW7yTfRryqbHIGTuU72CQZzO8G09jiEMegoo6wFfeGs52F2Az\u002BFlLa/\u002B/wpJNH7BMdALho65ghNeviCwfhgUnLXBonQpu3KhAY5USDYIk7J/6G97GDRKcXLcVT6MnoKmPOXseHSfUP9Y9QmizMZqiszIarxhG858XkTnKlPWeQ\u002B7YSl\u002BzR5SH1wocE5bT8pgZtfzv4cdNyfAcfhcDDXYh0LESUyeVIfp5NIZmX8RAE8L3RQjG7FnQUhz/G9g07C22Fo/F4lEXkLwtHMHqDoiPjkNWDx2U/JqNqtI0NBrZ0\u002BShMh1bLaLV4p8EHcqfspNZOFXLQqk7\u002BS5dtlymg6QNrfqdo83PEey9viNNX4joVLKLjvdjKRn8nB4jllOm7yFwXreczsO/UkdVH1tizDCk6gk8755CYLIXYrVmYdbpQkTPn4DQo2kY3zQME/8oR4ZPLubum9tSTP8TuNnqPfKnfkZp8ghckXsha/KvCHxijfCXUmy\u002BVoeHZUFsOzWLmsXnqOt0l7azttNpwR06lloL7HKs2TcohO1nyan95gidIpbQue1iOmc8oeMEN/afOoeGmh7ssyKGfcr0afuHAd1ehtM9xVLg2kZGh2v9aVrdF9d/S8E0q64YWH0SoW/XIk5fCRNOP8W0h5eRPOtXTFLbitgca8yz2C0I/2MHpJnilmL8m7F/KVuHD2vNcXyVLl7fikLTKxucWVWHdVFOWDtqKR6vvk6jg11o5P2B9tvSKdEsFM63yMiCzqrLBKY5x6l28ipeNe3C7XnXaJDrSGudGlqdfEWJuiOd017TOLw3O3mvp842dZq8DKZoan8B1kZRtFSLjt0NaHZvJttt64Ad8W5ITDqI8bm3kGDbgIklbxFVIkLStEbM3G\u002BIHN8kLIgKFfiJ78NS\u002BxJMfEpaivWvYi897vsdW707jiPLMnCzIBWvpvyEmr0H8DnhIDtldKPRdtB8tyrtc4/QRekAsaaUjmOW0jxxrcC2dBZ1Vmii6XNHnMlVR8HyW2z7dAgtFt9S5PZXtHt6k47ZrWgmiWOPbseokzmO/a7vpSjuocA1pA1d75bQ/tBSmt42ZIcbBbiY44ts6CKh50RMVNwHoZPUMWlsIKYN8MH0pzko9JIgp8cVgbQwH5beg2DsEw7dwWJoalS3GHe4ymYk9g3FsSSz79i9PprWqgto/fUce2e74tmtAGr\u002BUUS17DnsJrvInlHdaTZqMaXN5ykZ\u002B4ZWz2Q0DNQTmE1Vo0E7svPcDfi25Qbb2NqwK5Kpffwu\u002B2or8uDu1TTfV0QDh0r2fGJFA88PtIiuoIt\u002BikBysC1RfEdRTx1h/\u002BHDFf2DIfattkLKQDcEhYxCuNZviPvYgGjJeSSJJci63YgDhvnImNQkkErCEPWDDyJU3qDPvmhoWq\u002BH8Vwd9Huq\u002BjfjH/NU8U69cRLs3TmTvbfn06s6mv7K4XR4WI6G4RVUdZpMvWUu1Bu\u002Bgga\u002BKbQ6tlpR081mn7l72X9gMq2PpQl6XSqg6Z61NNx4gmrHG9lHpZaWXybSJLKcFu\u002B8aTephEZqe6kzzYPGHg2Ku3M0Lbo30enLVYFk9zzKLogpnatEs6EVbHN2E5bN9kfiptaYOdkNcYdSMUPjFeJmOmHm69VYvHoBFhbnITR5pcA/9w6WuT9G9pFLoJ4STJ1KYLN6NrRaH4PZvDsYvDnmr\u002BIPVOyPv8MzwYaUwVT9UZsdlm9iJ\u002BOh7BjxCs\u002B7DGWrqjHU2hWM916z8DY9jRrKztRujKLOgGYae4bQOTZY4NgpksZ7QRP9RlqZBFM29RxFC5tot3wFHTdVUrTyF1qe206rPy5R5nSP8sx7lIVF02WJj0B26CURe5h2v/9CvdlLcNvwFdJyyhHWeQWmaK/DCt/eWBhwHsnWEszPT8G6tAXIC52LBWfKBHF5rRFZmYLITuUQP6\u002BDXe\u002BJsNAshZZpAVxNf0TQlX0YY90dE9xW/SX\u002B9G0ZSIK64L52IduWWLC1os5vV7SZvW4tZTeJFtucmsy2r9vjQWdFf3eoAc0LPlK/m\u002BIM9PWg/UNNytrtEQwO6Uvqj6fNvLEUz42mvEZOV48H9NvZn75TMumeq3i2I\u002BopO6dH75RDRNly8uU3ul4LFWDGNIorX1C0RfE\u002BLczDtfX2SOdQhPnrIzVaHbuqkrHG9x7iY\u002Bswo2cH7J/3GYfiK5EzcrIgo08rzM87jMTebRFa2gVDRu2E9NUkWJ2WY/i5LRh9ZAOCg4oRVmGGkGR9BLzqgdc7y/CmNOI7mmkps3MJ2VHRu7eZ\u002BDvbzteg3mJHdrv6iR1cW\u002BFjWh2eP4pmm3xL6qsdpkXIIoqszSiVJQk8LPxIQwM6S/TpEpxImW53uk3Pprf3U8r3h9Df0YseQycRbz3o5FxPy6UzKc2sIJ6NEohDHOk65CDlZx/Q\u002BEwkzjhFYuZHH4z33o\u002BZ5ZmYdmkjZrQbiNgfR2K8ZyZyavdi5Vo7LE7wFmRdj0L6xiXIGCPCvDdDMO1jOFKrn2BG\u002BnyMCXuGydl9EHm1M8barkRE2noMG/CakjPvqdutn0D9vQPuLlbHvU\u002BXUb/TH89vXkWD4ix3tHxAFZ1QdpG4sP27DDQWm7PjbjVaxKSSBdvpX/dZ4K1pRm4poW2NOa2\u002BbKZ4wmLKrw\u002Bme4KTos\u002BX06\u002BLHjmzmeKOz2jXMJw26xJIv9l062crEOd/oeR4MaXllrScPIYdp\u002Blg5xpFbn\u002BkiintojAq/TYiM5sR5/sWyU9GINVPiszWjwRLTbKQoXsN2UZKyKz/gvnDh2O2x2JkLz\u002BEnIUvkDv0EvZIViHGdA7mWioh\u002BNwphF1UpbzoJvWdJ3\u002BHZrunqPf/gAsRv6Lo2Ci863VCqHNv/uqC94GB1Dh9nxqPvqBu0Sf83jGOpvmxdJNXcTAqBT6hGeSELnQ\u002BXEZ7iSptt2nQaWoretTP4eCw9fSbMol2yi9pXHqeJoOn06xwMqWfcgVeahGKscYSdfcUueU1HY69oXpKEUrfGiKzVwSmFT9S1J\u002BnEHWxFJEeezFF6Tjip55Dms1tQbZ/I\u002Bb5lyA1YxQWVb1DLFIQu7kMqUaGyGq9EYtbL0K6nQdSzSdg2\u002BkHyM0bh4epVuxr0kjNiHSBWmEemp/F47b3aty2vIVvJ9vi6cQQ3NI7j2bvg9TWfcNeMY1sfVcPTZ6\u002BNL3Zk24P3wgGPOzHAYozLI9aRZd7beg05TqdNI5RLFKj/IcaemdkUpadTLtFn9gnZjANNIbQ7EQhHbdWC2QdRlD8pZxOpVoU7Q2gzYC37BaQgRtaXTDl\u002BAMsKyWOFq9Edk8ppl74gFlb2iHyWyxmtHIWzFPcZfEFazAv6z7Sylci0fY2YnQaIdcPxTD1K5htF4\u002BosVGYXL0E8XstsbBC5/v9p6hBLKn220JB7z9Osnt1EJ41jMctRyXc26KC1z99xLNfrKlcO579NTxo6u7LHrfzqTergRZT1Omlcljg83kk/fyH0vvaGbqe7kX7Gn3alahQrDKV7o/N6dE5geJVzrTvV0NrbWf2ubaEViXz6PhVVeCcfYd2F3ZQdPQaaedE1y/HaP42BrVu1pgadhw5DSux/VQo0lqfQkRlBdJMNBBjtgTT99wXJJzOQdi1fUhLvYE5G/Mxu\u002B17JOfUIvKFH6ao6COt616MHluBoNjumDx9DRIrq4T4Nc42CdrdmkF1o2h80xiPWq1\u002BqLMvR5V7AKpyTuDqYkVOvKbo8x2L6BzQiQavY9g1TVELhlyn/Otzgd9SP/oVy\u002Bhz1ZQexf6kUQWdbyZSdF1O6YQC4kA1XZpC6FiiSruqKbQ8fIc2g6bTZdjHP9v3iK7Sb4RbL0ovrKFLyHia\u002B21G9bCtyHJ\u002BgTS9aMQPa48pfhNxunQkrvd/gdRufog8IBLEbE9AVumP\u002BPlLDyztYY5ZZ1URZdaMMGpi0ul2mLlUcYZurkXMixmIaF3wH/mPug0O36Ep5QTuLw9Do4uit/85FPUDxrHNrQyafKigka8hrftF03X/Yco1H9BQ0bu1i4\u002Bm\u002BPg7uraeL/A0WUu/XRn0DttMSY0LXW2T6LzwkSKv7yINHtFd/wMltR/osExC2wA1Wl4IptVEfzokHhKIM4/S44IaPScepLTQnE7292gstcW1YTlIdYnFYD8HeOlXYdozDVTc9kbN8sdI7RmMyctjBAuu5\u002BKq6kuqjV\u002BEfanGSB\u002B6FavOqWFpm/VY9PNQbCtRjPVQjNyAIVjq95eemX3Pegp6apyk0sUCKom98FEayNYJW2ge2kj54zeUOu\u002BgPEyb0hXxdM8/w959l7HbA2\u002BKzNLoFCAViD5q0W3OOUUPV0mrd8m0uG1E56b1dJaX0EVzkpAHZNN9KCqooX3ZS9ptnaSo9xopyUkVyDo308fhEz32j6XEPpD2wb\u002BzV2UX3G/ejHSXJIS9ssKI0B4ID7iKLWVLsKFoNmK7hiJ5xAZBmoESHm8IYS\u002B731CvW4OsQiPMr52CFVuUsHFVKnaIJqHIRx877mpg4ej6v8Rvf6haoDd6tKJvzaBj3UXF8wqgpO0oStcF0/PpTOIXE4r135GXt5Fz9rDf8Tp2jttGA8No9nlwVODg\u002BoiSYYGKnBZBk5nd2HN0HU0/B9Bk91n2ET2mS\u002B4Buov9KFe/RNfPn\u002Bk6dRBl0V0p9j4hkLfaRa\u002BXIfTSy6UszYeOjRXsfXsf20RPx6qLlxATfAbJajuxqLEAOUnbkJWZiPisJYgdoC6YtycHh67E4cnICLxoPxabtjQjPugIjiQ9QMH3Ou\u002BjHAcT\u002B\u002BKD76D/XP/SKmaUwMA8SLH/C\u002Bj71I84ReHsijZWUc6NlI\u002BuJTxWUp43QJGjk2lWXYGXqyypnRBI019UBJY1prQtOEt9CzE7b/NhZ\u002BVb1E6NpIGSJnucOk\u002BrrNGU676lT547PTTfkD\u002Bdp8xzPylvI/A2/8IB5ac5QDGWe91ESgwO0nLZaraT7Eah8WpkenXDwjAjZGh3R1L7OgQ9iEHYk32CgXmXMazmKxY9LkPe4o44PP06KpO\u002BovB\u002BMvLcBiIfXzGzKA0bw\u002Bpxedx/\u002BeZGvcBOArudPTlQp57uDYoabPN6OuTKaFuiRgdFjWQzYiBRsIq\u002BewMp7TWG/XsPoFaPnlTbNIzaxT8LjAosaZ90nzoVzVTuvZxtEuOotaGGRnXbaFh/gJbOEZSVLKCneiW9F72m\u002B7rpRMBzgUTjB8ra/0af6gv0q\u002BtCn3n1lPetpt2qvuxkchQ3QlbglFMyiu5cQW6/1VgyYzmmtR\u002BMSbVn/yzMDOFRcowzMkFUwkgsG1mLHd3tUXxkJfbHz8HOMmNsNYhD2nvl/97//AmMLOoreF7d2HlUzfveB/CSECk0aJ6nXe3auz0Pfd6103AqZQgnlUIkJY7IlCllKgmhRKhUlHk8iEMUmTKUzLODc8pQJ2S6P7\u002B71l3PfZ5zb3et53nWM/zxWvufvfb\u002BvT/7O3w\u002BG7wMA3wne6ELH6358Dq0AwqrQjipimFvthB2N6vAqRkMWaUDcN8VSqUSMmUkJPa\u002BcA6czDLPHAy90ingNfnA\u002BvoMaPf6GT1VV2AjsIS8og3yR/oQvGwG72IxPEefhE\u002BzEYItc\u002BG1P5wlWFIBYes8\u002BJl8QOCkWgxQ7wMkqkHqTzCQu9Epzlra9G045cSMp1WZcZQ7247mytUoIcOSNdHWh2ZeGUCTZKDFFvm07eo02ht0jxrmR1DH9Fl0Z2ArPeubQq\u002BKKuf/oqb2bwErfmP5FRyBf3IsFCG1kDkYQ1iXCpfUh\u002BAY7IZzmyV4ZrYQPn8D6TIxVOHMM45SQXa3hWVR4gStZcthoCGF6R4VrEwKYPOxBpyLzfAZ\u002BhRe3G/w2FAHj9tzoKpuhRd/OgKrwqAMKmepNg6Bb/whBO5diGCjkfBc5A9\u002BmR54WQuhaxNEpcOmUdpyEaVql9Cq8DjK6/mVkicPp/Buj1hxO01oypI2Sk6aSTlR3pSlmEFrF86nCnVfanD3o9NxxnQ8ady/z87ml/9mCpXYBYoXwaDP50AX90Nq8xGyxwsh0VGDq\u002BEiOFw7A\u002BudBnA\u002BexniEXagZzcAg2yQ9jWW7QcZ1KwKoJk8ASZWIjgcOQ/XQ1PgXvMzpGnJoGWrIDXdBMXzMHg52sG35hoGLJHAX8uJFZKhg8AkBXyqz7C1UK4YAcnygXB8kAPNBHU6Xv2AUpcfocStu2nyL2cpMiqUQgyX06BuF1ijD\u002B2kqX0VNLrfcwodnECh6YY01P4Sjeefp2UrnWjJah3K2RDzp/np3TWovpXDe1EBBvweCu9B9\u002BHVshoi7SEwNwqEZUIk7GwuwMrXDy7LrOCy6iE8TD5DqWsM8bFyFlerP8w3rEXPMzehI30K3W2e0BfkwH5pGpzqVkDcZzCUF1Lg6dsA5bhceKcDXlo\u002BUHVTsHwqFfA\u002BWg\u002BV5R/wiw\u002BAsqkSwscPYVvZF933x9CZmleUuIn5nXt40SR5dxry5TQFHIkjyaMilv\u002BxPIpYkUwhfbqQ960oUlb3I8qeQoHcrZTZ4wbttIqg/Yss/zS/7/rJ8A7WgHfIKPiUJEKWwezXaxw4t5tD/0E7dO5ZQvfKZ5iIZ0JwOR6i18/BezEHHsfs4b58HEuQ1wE3tyz03rsFGlsHonfvBzBL2AHHsZ5widwNz1BfeC7wglcKs96urILnOiFEFb0hzH3C8hT2g6q4HViVBfHJCqh6hkFQfBmWqnhqf3eJNoXX0LjAYkrOuELjpRspbGIRDZ4cTZS/meXbR5NGyD9R\u002BI4MCnQaSML7G0le05MGJxEV7HpAtV9P/Vn2v\u002B5/mRKiLHUoSz6CrtdD8C4BAi8r2JoEw9zKGmr5ztTadTH6xNwFp3EN\u002BGQF10w\u002BuG7Pwa\u002BYynKvyoVQrIL56uX02agY1juy4VgRBvtlFuAnfoFsz04I1r\u002BHUl8H3u2/wi\u002B9Dr6TEuHX9p4VIDWCf7YZVBkb4N0wHz6T2\u002BG8LwUmB4ahu\u002Bloyi/rR7HTY2nCwSEU3xpNMXM30QiTozTkXX/WoDUfmX2QTIMq19DwEA0KSI4g0XsDGrP/Ef10Xo0q1Uf8w/zekfnAh7vwHt4PyuG34LHDFjTMGaKHRuDKlNRybDfdevgQXX7dCvPAejhLg5izsA78N77glU35q6pyiLYbw/VlJvratcFu9wUIhlfAOTud3Rv8sD5wW7YL3OZLED3rDRXuQ5UVgYAJi1gDBryG7zQp/JYVwecIU/\u002BvzbBMeQtdMqYXb1dT3aJnVNjDmSZyrlJsuguN31RKI4sms2JsORR14DFFWk2jUEd38unvQAOrbpPKpIrG2KdTXOHsf5Sdza9oIYhSvSE07AKPxAI4rnkC8Qo\u002BJGuiwLfdT5/CEqlu7z1qiqmA0eGbEPWphBxXIY58B5eEGpbdpCfgtXWHx5pfYDO\u002BELbDtkEsuAjHQZ7g/H4N/L37wJt1HQJpX8iPnIBk1TCm1lksWugBV/EoyHkR8NlVAlloX7jODoC2QTq9GFlDF8e/pFstSdToPJ1yMo1onM5bGl2SS3Gyy6wxXotp9L3ZNJK7jyJOJtAQ9\u002BE0\u002BNNSCtrXTDPNp1DKu2f/PH\u002BqDIJfDkNopw3J9Arwhv8Kpw/XmbVvCIstW6E9TklHZffonFUZ9Cyi4LH8DEQn7OHmu4zF73IHnImG4Cv0Id7KnIkm1\u002BGQswJu\u002B4bCTecn2AR/gG2jD3gXPCCsOgflS20IZ6\u002BHdPItlmDeEjh9sYJsXTuUQ\u002B4w928VuDOK6cvH6fRk4c90dmAIFReYUoVnAK18tYGmeVdTygwvio\u002BPZw07OIrG1lZTeNZtGnFnIsVYh9H4Jm2mRjxaWuL1z7Kz\u002BWXcQih2FUF5WwFM4MH9WBA0OZOoJi2XGi910K8v8\u002BhYiD09Nt4KE2kBPFIDIDxwELJucSxF0Si4VKrg/uokOAELwE1n7gnTCLgkG8DRWhsmudNh2vgWrkZeEP4cC7wdCvch78FfU80S3fNi6lkDZZkjlJOiIQ6PhLtTItSzP1PzDXW6O3glrRz9llLajCktNYXGbTOjWc9uUYL/U9ZI9f0UzdtLY9MyKEJLnX6qs6Yxeq0UFiyg5VPfdJpfrrsOwsoAuEeVQdF8ADYbBVT/i4DpIfKo/OwTuu1/n5oenkKX4TpwMSuBx8kICNrLIC2XsxThjeB31QRv1/czuwN2fndg16AF\u002B5GnYebzO4y6lELvcDcY8zRhqzMY/BVq4NVmQFi/hyWN2w5uQgScHk8EXk2ET2IQ5D0Xwyq6A30O6VNHVg8q\u002BN2IFn/9nTYeN6A0SwuaGr2TYqZIWcM23qHIZ9to/NAZFF3/iDkHztPoLZkUNrKU0hb4d5rfwzcAIuP1EG0ZBJllA/R\u002B5NGRKDuqfVtDe\u002B1Caevj3XTfJQg9xl6DuXwQuE0LwL9QBlntRJZy7QFIX7\u002BB\u002B6UNEEqmgWNcArckpkfgXgFnry10PyuoY\u002BFV6GwpheX0g7CP2gf\u002B5TKIl\u002BazBPp1kCh6wemuLhDEge9LLShPW8BO2oh\u002B5f3oU30hrfvDjhLLzCn7bCHNVr2gsS1fKMLgr4IG6lJUbDXFp4IirJfRj4OY1097KE49r7PsbH7eUOYOC7gAD\u002Bcp4GiEUovbEyp9W02fZgVSdbourZ8VQY8ePYZ63U36dkIdhuMdYBVnARcNM5Z8aiDEV4zg/obp\u002BSrfwC27Ce6PW8C9WgzXvBDoGWZRq8ESZh5wglnwXtjHPoPbgnimlzjPkq5KgsclYziY1MDjzluINCMgKewHu2FR6BNK1GEynw7OeE4bbeWUK3hCm\u002BPf04yh5TSiVwFr\u002BGYHmsrUYIKsjQZRKI0c9SNFbx5Lo68EdZadzS/9cQjka5bAm\u002BsPqfprai8JpCO2LfRC4xXt3LSWsvLv09sgId1rj6ejmS/p/u27cHh3Gy5uaizJ/msQJ88GT30GRLNmgj9GDk5uPTgfukC4rj8cvB/R5yoN9Nh4CqbnC8DlnwD3ygu4MTX8TtJfA7xpu5n6d0B6mVkP33ZCmT4X7rlpsDy\u002BAF31VtGL9tF0Nuw3Kh0gpGuZH6n0qjNlvnvNSubY0gqzuxQ70ZdCJ0nJP3ApDdx8rrPcf8sPtwtAaReoKvyA4Pfo7fyOfh73iXaO6UJ5tma07vdSusDbQVfqYqgodCyVjf0Iy4vh4JyqYcmf9QC2zYHC8AMgfwpX92VMLZi91OsMZLEDIal4BQe9BvQX18K1/0eIt0yDaJwN\u002BHmpLJfWM7DP7Au3\u002B6HgNUfBudUMnLKJcE9m1livMHQrC6Q/cn6BhuFk\u002BnX8IGp7XAT1qT4sTUMzOj23Ly1LmE9JB69RwBgHCp6ZSTGd5/5bfuXCICj69WH7UskmG6gzd0r5pg4qPzGa1t8aQtl/2FN5bRk9ON5AXxK\u002B0auux6FXOwP8LD2Wd7IhyKwVgvxoeJp6gTdhOXhbReB302XuFnUonB3Z/k\u002B82hQiOgNB727g9mpjGU/xRv/FtbDWOwWnHQZwqC2H85Fs8BKvwP3iWXhUV8L8vBa09YbAtPt02J0dCaOE1ej1Juw7au2ZToc0mZ7Q9xklNDvT3FoZjVB72Vnmv8svGewPkeUoZo4Rw9NoD9SFn2j3\u002BrVUev86bTjVm/J/qKfyrCa6kDYP6o97QGvQBGi3lrJk2lz4jmB6luCP4AvuQlm6H4oRwRBMy4B8VhCULmMgvLYDssOxkH/Qg4yZIT1fp0LUmMYy07SH1brDsNUOhsOKyTDtcx32qmR4jNMCpztzBuSthu3897D0D4Lb5/ngtejCdq8t/RFykbX98g\u002B0KL2Z5owbR7nRmlSU0URjGh52lvnv8stCvkL2YT6kWx9Bsu8mTEZY0P4yf1q9\u002BTytqB9FzHvoTOQhulR5hz5YPEf/Kj\u002B49zJjKc6bQ7J9NVS7EpnfVgnxyxRmLnKFx8hYKNSvQiaZCkELM1vzmF5hUzUUkb9B8SQKkn5qLKdZfJgWF8Cqsh32S4TQz9kBC6N8WC2\u002BC5su12FV8RQOjVwIhgoha7eFZOYjcJq609N3pqz133pReGwaRbz5ibnrdWhNewHFzlF0lvnv8nt59of3vQnA8e1Q1LTAQf0k1adb0zaePm2v9qYql3LaGd\u002BfTp4Koi\u002BxH2Cq3wDRNn2W7OejkP24Eqp9K\u002BGp3grZvBPM/KYOjydVEGsPheLgQ0jDcyANfgeBtxKCos3gVdTBJc6F5WjaDLMDJ2G3ggu3mBmwf3oaxsHWcI4cDOfQn2B/YREs4uzgXrQSktanEBxoA2dnPLp0nfodlZV4UlyDFs02PE7T6kpp5sq2zvL\u002Bh/w\u002BW3fCv8MRXlliDGi7A9HYBugvnE0PRtTS2YsKOrS0kQ5pHaCaSzep9XkpTDRCINFaxVKFGEKVEAaVxhEopwyD\u002BE4S85yA59wqyM5/hTKI6Yl9veA\u002Buje4jZqQLnkJ55JUcG56smxP6cHEXR/WVn0g0H0FgUAA7ojVEDvfZu5PJwhS0iA/eAySeA2IaQrTo2yBTnItNdzQZhWfqqdR11fSxkVPKf2mFS0KN\u002Bss778KWmu/0h98JdUvHUx1i1XomZkBM89W8IpVkP5QzfK1t4RqQigUeTcgLZsOxVxvyBSL4DV3GqQXy8Gf2w1yZpaSfj/PU6ZBkLcQ/PDdkI\u002BzYvEdE\u002BGyvBAWz0eCv3kZhAtyQTtuQXklkZlFZMz5ybyKnOGpZD63Sgob\u002B9f0a6wvHYx9wzoyL5gqvkTQLvMG2iSN7izTfwVII5g\u002Bb08/lqxqNkRpxkzv2g7Zfi7kl9ygsP8AWZYRPN6vhcuiQgjrxJC8nw5RwBx4eMTB07oImFPOkgb5QXp4LEyTS2CtyoDgZi0zH98FtbtCtT4acrEthCeuw62QuTN8S6B7bxvd7kilsz0/sS5FNlLTuYO0Z/NlynrxL/V7/10gOHqbOUtuQPWgHBL1k3DeUQEn15FwbVsJ92gDiFs1oYh\u002BCEVZdyjyPViccj84zusJ54JKmI2ZyNTyAeQzjUFTYhGQ4walYDIkZ1PBy1kF64wb9Da/ieqenGOdNbehBq9RdI5GUt6UlM6e738K3PsyM0/PAxAmLQY1mkFae5PF5Y2GbfZDWGxWg20z0\u002Bszswdn1HJ4MHfs9//ivN4oIXrErB3\u002BClh22KJv\u002BBhq6ulCh2adYNUM96NzzmfoyMr9lHPGtLPn\u002BN8GLm8Ow/21PSSWCXCNuQ79wr6wrp8IapkJZVR/yA\u002B4QpA0mZ0Vu53qR815PnToalda69fA2pw0h0qZvq/YP7iz7/q/BALeHShcvMDtGwaO1zy4aO6B2pkkOn10OB2afJVyHfJZ2dKnlK25nTJuuXb2mf8fUPHl\u002BVTYdSllbdrCWlibT1ney/\u002Bzd95fALnh3ro="
+    }
+  ],
+  "Variables": {}
+}

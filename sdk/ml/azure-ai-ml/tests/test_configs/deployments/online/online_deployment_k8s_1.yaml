@@ -8,7 +8,7 @@ code_configuration:
   scoring_script: score.py
 environment:
   conda_file: ../model-1/environment/conda.yml
-  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:20230227.v1
 request_settings:
   request_timeout_ms: 3000
   max_concurrent_requests_per_instance: 1

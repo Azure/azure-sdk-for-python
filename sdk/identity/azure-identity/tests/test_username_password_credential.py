@@ -111,7 +111,7 @@ def test_username_password_credential():
         username="user@azure",
         password="secret_password",
         transport=transport,
-        instance_discovery=False,  # kwargs are passed to MSAL; this one prevents an AAD verification request
+        disable_instance_discovery=True,  # kwargs are passed to MSAL; this one prevents an AAD verification request
     )
 
     token = credential.get_token("scope")

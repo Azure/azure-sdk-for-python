@@ -89,7 +89,7 @@ class ReservationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AvailableScopeProperties] = kwargs.pop("cls", None)
 
@@ -149,13 +149,13 @@ class ReservationOperations:
     ) -> AsyncLROPoller[_models.AvailableScopeProperties]:
         """Get Available Scopes for ``Reservation``.
 
-        Get Available Scopes for ``Reservation``.
+        Check whether the scopes from request is valid for ``Reservation``.
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param reservation_id: Id of the Reservation Item. Required.
+        :param reservation_id: Id of the reservation item. Required.
         :type reservation_id: str
-        :param body: Required.
+        :param body: Scopes to be checked for eligibility. Required.
         :type body: ~azure.mgmt.reservations.models.AvailableScopeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -187,13 +187,13 @@ class ReservationOperations:
     ) -> AsyncLROPoller[_models.AvailableScopeProperties]:
         """Get Available Scopes for ``Reservation``.
 
-        Get Available Scopes for ``Reservation``.
+        Check whether the scopes from request is valid for ``Reservation``.
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param reservation_id: Id of the Reservation Item. Required.
+        :param reservation_id: Id of the reservation item. Required.
         :type reservation_id: str
-        :param body: Required.
+        :param body: Scopes to be checked for eligibility. Required.
         :type body: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -223,13 +223,14 @@ class ReservationOperations:
     ) -> AsyncLROPoller[_models.AvailableScopeProperties]:
         """Get Available Scopes for ``Reservation``.
 
-        Get Available Scopes for ``Reservation``.
+        Check whether the scopes from request is valid for ``Reservation``.
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param reservation_id: Id of the Reservation Item. Required.
+        :param reservation_id: Id of the reservation item. Required.
         :type reservation_id: str
-        :param body: Is either a model type or a IO type. Required.
+        :param body: Scopes to be checked for eligibility. Is either a AvailableScopeRequest type or a
+         IO type. Required.
         :type body: ~azure.mgmt.reservations.models.AvailableScopeRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -251,7 +252,7 @@ class ReservationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AvailableScopeProperties] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -310,7 +311,7 @@ class ReservationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[List[_models.ReservationResponse]]] = kwargs.pop("cls", None)
 
@@ -347,11 +348,16 @@ class ReservationOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
+        response_headers = {}
         if response.status_code == 200:
             deserialized = self._deserialize("[ReservationResponse]", pipeline_response)
 
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
@@ -432,8 +438,8 @@ class ReservationOperations:
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param body: Information needed to Split a reservation item. Is either a model type or a IO
-         type. Required.
+        :param body: Information needed to Split a reservation item. Is either a SplitRequest type or a
+         IO type. Required.
         :type body: ~azure.mgmt.reservations.models.SplitRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -455,7 +461,7 @@ class ReservationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[List[_models.ReservationResponse]] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -513,7 +519,7 @@ class ReservationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[List[_models.ReservationResponse]]] = kwargs.pop("cls", None)
 
@@ -550,11 +556,16 @@ class ReservationOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
+        response_headers = {}
         if response.status_code == 200:
             deserialized = self._deserialize("[ReservationResponse]", pipeline_response)
 
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
@@ -638,8 +649,8 @@ class ReservationOperations:
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param body: Information needed for commercial request for a reservation. Is either a model
-         type or a IO type. Required.
+        :param body: Information needed for commercial request for a reservation. Is either a
+         MergeRequest type or a IO type. Required.
         :type body: ~azure.mgmt.reservations.models.MergeRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -661,7 +672,7 @@ class ReservationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[List[_models.ReservationResponse]] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -722,7 +733,7 @@ class ReservationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[_models.ReservationList] = kwargs.pop("cls", None)
 
         error_map = {
@@ -781,16 +792,16 @@ class ReservationOperations:
 
     @distributed_trace_async
     async def get(
-        self, reservation_id: str, reservation_order_id: str, expand: Optional[str] = None, **kwargs: Any
+        self, reservation_order_id: str, reservation_id: str, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.ReservationResponse:
         """Get ``Reservation`` details.
 
         Get specific ``Reservation`` details.
 
-        :param reservation_id: Id of the Reservation Item. Required.
-        :type reservation_id: str
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
+        :param reservation_id: Id of the reservation item. Required.
+        :type reservation_id: str
         :param expand: Supported value of this query is renewProperties. Default value is None.
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -809,12 +820,12 @@ class ReservationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[_models.ReservationResponse] = kwargs.pop("cls", None)
 
         request = build_get_request(
-            reservation_id=reservation_id,
             reservation_order_id=reservation_order_id,
+            reservation_id=reservation_id,
             expand=expand,
             api_version=api_version,
             template_url=self.get.metadata["url"],
@@ -860,7 +871,7 @@ class ReservationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.ReservationResponse]] = kwargs.pop("cls", None)
 
@@ -898,11 +909,19 @@ class ReservationOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
+        response_headers = {}
         if response.status_code == 200:
             deserialized = self._deserialize("ReservationResponse", pipeline_response)
 
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
@@ -926,7 +945,7 @@ class ReservationOperations:
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param reservation_id: Id of the Reservation Item. Required.
+        :param reservation_id: Id of the reservation item. Required.
         :type reservation_id: str
         :param parameters: Information needed to patch a reservation item. Required.
         :type parameters: ~azure.mgmt.reservations.models.Patch
@@ -963,7 +982,7 @@ class ReservationOperations:
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param reservation_id: Id of the Reservation Item. Required.
+        :param reservation_id: Id of the reservation item. Required.
         :type reservation_id: str
         :param parameters: Information needed to patch a reservation item. Required.
         :type parameters: IO
@@ -994,9 +1013,9 @@ class ReservationOperations:
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param reservation_id: Id of the Reservation Item. Required.
+        :param reservation_id: Id of the reservation item. Required.
         :type reservation_id: str
-        :param parameters: Information needed to patch a reservation item. Is either a model type or a
+        :param parameters: Information needed to patch a reservation item. Is either a Patch type or a
          IO type. Required.
         :type parameters: ~azure.mgmt.reservations.models.Patch or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -1018,7 +1037,7 @@ class ReservationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ReservationResponse] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -1045,7 +1064,10 @@ class ReservationOperations:
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs),
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -1073,7 +1095,7 @@ class ReservationOperations:
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param reservation_id: Id of the Reservation Item. Required.
+        :param reservation_id: Id of the reservation item. Required.
         :type reservation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
@@ -1091,7 +1113,7 @@ class ReservationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_archive_request(
@@ -1129,11 +1151,11 @@ class ReservationOperations:
     ) -> None:
         """Unarchive a ``Reservation``.
 
-        Unarchiving a ``Reservation`` moves it to the state it was before archiving.
+        Restores a ``Reservation`` to the state it was before archiving.
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param reservation_id: Id of the Reservation Item. Required.
+        :param reservation_id: Id of the reservation item. Required.
         :type reservation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
@@ -1151,7 +1173,7 @@ class ReservationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_unarchive_request(
@@ -1185,16 +1207,16 @@ class ReservationOperations:
 
     @distributed_trace
     def list_revisions(
-        self, reservation_id: str, reservation_order_id: str, **kwargs: Any
+        self, reservation_order_id: str, reservation_id: str, **kwargs: Any
     ) -> AsyncIterable["_models.ReservationResponse"]:
         """Get ``Reservation`` revisions.
 
         List of all the revisions for the ``Reservation``.
 
-        :param reservation_id: Id of the Reservation Item. Required.
-        :type reservation_id: str
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
+        :param reservation_id: Id of the reservation item. Required.
+        :type reservation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ReservationResponse or the result of cls(response)
         :rtype:
@@ -1204,7 +1226,7 @@ class ReservationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[_models.ReservationList] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1219,8 +1241,8 @@ class ReservationOperations:
             if not next_link:
 
                 request = build_list_revisions_request(
-                    reservation_id=reservation_id,
                     reservation_order_id=reservation_order_id,
+                    reservation_id=reservation_id,
                     api_version=api_version,
                     template_url=self.list_revisions.metadata["url"],
                     headers=_headers,
@@ -1281,9 +1303,9 @@ class ReservationOperations:
         :param filter: May be used to filter by reservation properties. The filter supports 'eq', 'or',
          and 'and'. It does not currently support 'ne', 'gt', 'le', 'ge', or 'not'. Reservation
          properties include sku/name, properties/{appliedScopeType, archived, displayName,
-         displayProvisioningState, effectiveDateTime, expiryDate, provisioningState, quantity, renew,
-         reservedResourceType, term, userFriendlyAppliedScopeType, userFriendlyRenewState}. Default
-         value is None.
+         displayProvisioningState, effectiveDateTime, expiryDate, expiryDateTime, provisioningState,
+         quantity, renew, reservedResourceType, term, userFriendlyAppliedScopeType,
+         userFriendlyRenewState}. Default value is None.
         :type filter: str
         :param orderby: May be used to sort order by reservation properties. Default value is None.
         :type orderby: str
@@ -1306,7 +1328,7 @@ class ReservationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[_models.ReservationsListResult] = kwargs.pop("cls", None)
 
         error_map = {

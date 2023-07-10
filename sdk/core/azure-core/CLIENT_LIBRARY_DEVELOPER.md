@@ -115,7 +115,7 @@ synchronous_transport = RequestsTransport()
 
 For example if you would like to alter connection pool you can initialise `RequestsTransport` with an instance of `requests.Session`.
 
- ```Python
+ ```python
  import requests
  from azure.core.pipeline.transport import RequestsTransport
  session = requests.Session()
@@ -496,6 +496,9 @@ from azure.core.pipeline.policies import (
 |  |  | retry_backoff_max | x | x | The maximum back off time. Default value is `120` seconds (2 minutes). |
 |  |  | retry_mode | x | x | Fixed or exponential delay between attempts, default is exponential. |
 |  |  | timeout | x | x | Timeout setting for the operation in seconds, default is `604800s` (7 days). |
+| SensitiveHeaderCleanupPolicy | SansIOHTTPPolicy | | | | |
+|  |  | blocked_redirect_headers | x | | The headers to clean up when redirecting to another domain. |
+|  |  | disable_redirect_cleanup | x | | Opt out cleaning up sensitive headers when redirecting to another domain. |
 
 ### The Pipeline
 
@@ -600,6 +603,9 @@ manager, with `__aenter__`, `__aexit__`, and `close` methods.
 | --- | --- |
 | Key Vault ([example][kv_tenant_id]) | Request access in a tenant that was discovered as part of an authentication challenge
 
+## Long-running operation (LRO) customization
+
+See [doc/dev/customize_long_running_operation.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_long_running_operation.md) for more information.
 
 [cae_doc]: https://docs.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation
 [custom_creds_sample]: https://github.com/Azure/azure-sdk-for-python/blob/fc95f8d3d84d076ffea158116ca1bf6912689c70/sdk/identity/azure-identity/samples/custom_credentials.py

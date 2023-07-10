@@ -38,4 +38,4 @@ conf:
   spark.dynamicAllocation.enabled: True
   spark.dynamicAllocation.minExecutors: 1
   spark.dynamicAllocation.maxExecutors: 4
-#environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+#environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33

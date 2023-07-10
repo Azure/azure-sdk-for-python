@@ -19,8 +19,7 @@ from ._system_data import SystemData
 
 
 class Resource(abc.ABC):
-    """
-    Base class for entity classes, can't be instantiated directly.
+    """Base class for entity classes, can't be instantiated directly.
 
     Resource abstract object that serves as a base for creating resources.
     Helper class that provides a standard way to create an abc.ABC using inheritance.
@@ -37,7 +36,6 @@ class Resource(abc.ABC):
         False will force a more-compact printing style. By default, the YAML output is only used in jupyter
         notebooks. Be aware that some bookkeeping values are shown only in the non-YAML output.
     :paramtype print_as_yaml: bool
-
     """
 
     def __init__(
@@ -48,8 +46,7 @@ class Resource(abc.ABC):
         properties: Optional[Dict] = None,
         **kwargs,
     ):
-        """
-        Class Resource constructor.
+        """Class Resource constructor.
 
         :param name: Name of the resource.
         :type name: str
@@ -122,8 +119,7 @@ class Resource(abc.ABC):
 
     @abc.abstractmethod
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
-        """
-        Dump the object content into a file.
+        """Dump the object content into a file.
 
         :param dest: The destination to receive this object's data.
             Must be either a path to a local file, or an already-open file stream.
@@ -137,8 +133,7 @@ class Resource(abc.ABC):
     @classmethod
     # pylint: disable=unused-argument
     def _resolve_cls_and_type(cls, data, params_override):
-        """
-        Resolve the class to use for deserializing the data. Return current class if no override is provided.
+        """Resolve the class to use for deserializing the data. Return current class if no override is provided.
 
         :param data: Data to deserialize.
         :type data: dict
@@ -158,8 +153,7 @@ class Resource(abc.ABC):
         params_override: Optional[list] = None,
         **kwargs,
     ) -> "Resource":
-        """
-        Construct a resource object from a file. @classmethod.
+        """Construct a resource object from a file. @classmethod.
 
         :param cls: Indicates that this is a class method.
         :type cls: class

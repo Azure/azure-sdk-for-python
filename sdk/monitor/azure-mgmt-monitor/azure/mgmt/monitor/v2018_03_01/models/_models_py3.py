@@ -13,13 +13,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -27,7 +28,7 @@ class ActionGroupList(_serialization.Model):
     """A list of action groups.
 
     :ivar value: The list of action groups.
-    :vartype value: list[~$(python-base-namespace).v2018_03_01.models.ActionGroupResource]
+    :vartype value: list[~azure.mgmt.monitor.v2018_03_01.models.ActionGroupResource]
     :ivar next_link: Provides the link to retrieve the next set of elements.
     :vartype next_link: str
     """
@@ -38,11 +39,15 @@ class ActionGroupList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ActionGroupResource"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.ActionGroupResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of action groups.
-        :paramtype value: list[~$(python-base-namespace).v2018_03_01.models.ActionGroupResource]
+        :paramtype value: list[~azure.mgmt.monitor.v2018_03_01.models.ActionGroupResource]
         :keyword next_link: Provides the link to retrieve the next set of elements.
         :paramtype next_link: str
         """
@@ -66,7 +71,7 @@ class ActionGroupPatchBody(_serialization.Model):
         "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -113,7 +118,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -151,30 +156,29 @@ class ActionGroupResource(Resource):  # pylint: disable=too-many-instance-attrib
      enabled, then none of its receivers will receive communications.
     :vartype enabled: bool
     :ivar email_receivers: The list of email receivers that are part of this action group.
-    :vartype email_receivers: list[~$(python-base-namespace).v2018_03_01.models.EmailReceiver]
+    :vartype email_receivers: list[~azure.mgmt.monitor.v2018_03_01.models.EmailReceiver]
     :ivar sms_receivers: The list of SMS receivers that are part of this action group.
-    :vartype sms_receivers: list[~$(python-base-namespace).v2018_03_01.models.SmsReceiver]
+    :vartype sms_receivers: list[~azure.mgmt.monitor.v2018_03_01.models.SmsReceiver]
     :ivar webhook_receivers: The list of webhook receivers that are part of this action group.
-    :vartype webhook_receivers: list[~$(python-base-namespace).v2018_03_01.models.WebhookReceiver]
+    :vartype webhook_receivers: list[~azure.mgmt.monitor.v2018_03_01.models.WebhookReceiver]
     :ivar itsm_receivers: The list of ITSM receivers that are part of this action group.
-    :vartype itsm_receivers: list[~$(python-base-namespace).v2018_03_01.models.ItsmReceiver]
+    :vartype itsm_receivers: list[~azure.mgmt.monitor.v2018_03_01.models.ItsmReceiver]
     :ivar azure_app_push_receivers: The list of AzureAppPush receivers that are part of this action
      group.
     :vartype azure_app_push_receivers:
-     list[~$(python-base-namespace).v2018_03_01.models.AzureAppPushReceiver]
+     list[~azure.mgmt.monitor.v2018_03_01.models.AzureAppPushReceiver]
     :ivar automation_runbook_receivers: The list of AutomationRunbook receivers that are part of
      this action group.
     :vartype automation_runbook_receivers:
-     list[~$(python-base-namespace).v2018_03_01.models.AutomationRunbookReceiver]
+     list[~azure.mgmt.monitor.v2018_03_01.models.AutomationRunbookReceiver]
     :ivar voice_receivers: The list of voice receivers that are part of this action group.
-    :vartype voice_receivers: list[~$(python-base-namespace).v2018_03_01.models.VoiceReceiver]
+    :vartype voice_receivers: list[~azure.mgmt.monitor.v2018_03_01.models.VoiceReceiver]
     :ivar logic_app_receivers: The list of logic app receivers that are part of this action group.
-    :vartype logic_app_receivers:
-     list[~$(python-base-namespace).v2018_03_01.models.LogicAppReceiver]
+    :vartype logic_app_receivers: list[~azure.mgmt.monitor.v2018_03_01.models.LogicAppReceiver]
     :ivar azure_function_receivers: The list of azure function receivers that are part of this
      action group.
     :vartype azure_function_receivers:
-     list[~$(python-base-namespace).v2018_03_01.models.AzureFunctionReceiver]
+     list[~azure.mgmt.monitor.v2018_03_01.models.AzureFunctionReceiver]
     """
 
     _validation = {
@@ -223,8 +227,8 @@ class ActionGroupResource(Resource):  # pylint: disable=too-many-instance-attrib
         voice_receivers: Optional[List["_models.VoiceReceiver"]] = None,
         logic_app_receivers: Optional[List["_models.LogicAppReceiver"]] = None,
         azure_function_receivers: Optional[List["_models.AzureFunctionReceiver"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -237,32 +241,30 @@ class ActionGroupResource(Resource):  # pylint: disable=too-many-instance-attrib
          enabled, then none of its receivers will receive communications.
         :paramtype enabled: bool
         :keyword email_receivers: The list of email receivers that are part of this action group.
-        :paramtype email_receivers: list[~$(python-base-namespace).v2018_03_01.models.EmailReceiver]
+        :paramtype email_receivers: list[~azure.mgmt.monitor.v2018_03_01.models.EmailReceiver]
         :keyword sms_receivers: The list of SMS receivers that are part of this action group.
-        :paramtype sms_receivers: list[~$(python-base-namespace).v2018_03_01.models.SmsReceiver]
+        :paramtype sms_receivers: list[~azure.mgmt.monitor.v2018_03_01.models.SmsReceiver]
         :keyword webhook_receivers: The list of webhook receivers that are part of this action group.
-        :paramtype webhook_receivers:
-         list[~$(python-base-namespace).v2018_03_01.models.WebhookReceiver]
+        :paramtype webhook_receivers: list[~azure.mgmt.monitor.v2018_03_01.models.WebhookReceiver]
         :keyword itsm_receivers: The list of ITSM receivers that are part of this action group.
-        :paramtype itsm_receivers: list[~$(python-base-namespace).v2018_03_01.models.ItsmReceiver]
+        :paramtype itsm_receivers: list[~azure.mgmt.monitor.v2018_03_01.models.ItsmReceiver]
         :keyword azure_app_push_receivers: The list of AzureAppPush receivers that are part of this
          action group.
         :paramtype azure_app_push_receivers:
-         list[~$(python-base-namespace).v2018_03_01.models.AzureAppPushReceiver]
+         list[~azure.mgmt.monitor.v2018_03_01.models.AzureAppPushReceiver]
         :keyword automation_runbook_receivers: The list of AutomationRunbook receivers that are part of
          this action group.
         :paramtype automation_runbook_receivers:
-         list[~$(python-base-namespace).v2018_03_01.models.AutomationRunbookReceiver]
+         list[~azure.mgmt.monitor.v2018_03_01.models.AutomationRunbookReceiver]
         :keyword voice_receivers: The list of voice receivers that are part of this action group.
-        :paramtype voice_receivers: list[~$(python-base-namespace).v2018_03_01.models.VoiceReceiver]
+        :paramtype voice_receivers: list[~azure.mgmt.monitor.v2018_03_01.models.VoiceReceiver]
         :keyword logic_app_receivers: The list of logic app receivers that are part of this action
          group.
-        :paramtype logic_app_receivers:
-         list[~$(python-base-namespace).v2018_03_01.models.LogicAppReceiver]
+        :paramtype logic_app_receivers: list[~azure.mgmt.monitor.v2018_03_01.models.LogicAppReceiver]
         :keyword azure_function_receivers: The list of azure function receivers that are part of this
          action group.
         :paramtype azure_function_receivers:
-         list[~$(python-base-namespace).v2018_03_01.models.AzureFunctionReceiver]
+         list[~azure.mgmt.monitor.v2018_03_01.models.AzureFunctionReceiver]
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.group_short_name = group_short_name
@@ -323,8 +325,8 @@ class AutomationRunbookReceiver(_serialization.Model):
         is_global_runbook: bool,
         name: Optional[str] = None,
         service_uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword automation_account_id: The Azure automation account Id which holds this runbook and
          authenticate to Azure resource. Required.
@@ -371,7 +373,7 @@ class AzureAppPushReceiver(_serialization.Model):
         "email_address": {"key": "emailAddress", "type": "str"},
     }
 
-    def __init__(self, *, name: str, email_address: str, **kwargs):
+    def __init__(self, *, name: str, email_address: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the Azure mobile app push receiver. Names must be unique across all
          receivers within an action group. Required.
@@ -415,8 +417,8 @@ class AzureFunctionReceiver(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, function_app_resource_id: str, function_name: str, http_trigger_url: str, **kwargs
-    ):
+        self, *, name: str, function_app_resource_id: str, function_name: str, http_trigger_url: str, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the azure function receiver. Names must be unique across all
          receivers within an action group. Required.
@@ -448,7 +450,7 @@ class MultiMetricCriteria(_serialization.Model):
     :vartype additional_properties: dict[str, JSON]
     :ivar criterion_type: Specifies the type of threshold criteria. Required. Known values are:
      "StaticThresholdCriterion" and "DynamicThresholdCriterion".
-    :vartype criterion_type: str or ~$(python-base-namespace).v2018_03_01.models.CriterionType
+    :vartype criterion_type: str or ~azure.mgmt.monitor.v2018_03_01.models.CriterionType
     :ivar name: Name of the criteria. Required.
     :vartype name: str
     :ivar metric_name: Name of the metric. Required.
@@ -457,10 +459,9 @@ class MultiMetricCriteria(_serialization.Model):
     :vartype metric_namespace: str
     :ivar time_aggregation: the criteria time aggregation types. Required. Known values are:
      "Average", "Count", "Minimum", "Maximum", and "Total".
-    :vartype time_aggregation: str or
-     ~$(python-base-namespace).v2018_03_01.models.AggregationTypeEnum
+    :vartype time_aggregation: str or ~azure.mgmt.monitor.v2018_03_01.models.AggregationTypeEnum
     :ivar dimensions: List of dimension conditions.
-    :vartype dimensions: list[~$(python-base-namespace).v2018_03_01.models.MetricDimension]
+    :vartype dimensions: list[~azure.mgmt.monitor.v2018_03_01.models.MetricDimension]
     :ivar skip_metric_validation: Allows creating an alert rule on a custom metric that isn't yet
      emitted, by causing the metric validation to be skipped.
     :vartype skip_metric_validation: bool
@@ -501,8 +502,8 @@ class MultiMetricCriteria(_serialization.Model):
         metric_namespace: Optional[str] = None,
         dimensions: Optional[List["_models.MetricDimension"]] = None,
         skip_metric_validation: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -515,17 +516,16 @@ class MultiMetricCriteria(_serialization.Model):
         :paramtype metric_namespace: str
         :keyword time_aggregation: the criteria time aggregation types. Required. Known values are:
          "Average", "Count", "Minimum", "Maximum", and "Total".
-        :paramtype time_aggregation: str or
-         ~$(python-base-namespace).v2018_03_01.models.AggregationTypeEnum
+        :paramtype time_aggregation: str or ~azure.mgmt.monitor.v2018_03_01.models.AggregationTypeEnum
         :keyword dimensions: List of dimension conditions.
-        :paramtype dimensions: list[~$(python-base-namespace).v2018_03_01.models.MetricDimension]
+        :paramtype dimensions: list[~azure.mgmt.monitor.v2018_03_01.models.MetricDimension]
         :keyword skip_metric_validation: Allows creating an alert rule on a custom metric that isn't
          yet emitted, by causing the metric validation to be skipped.
         :paramtype skip_metric_validation: bool
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.criterion_type = None  # type: Optional[str]
+        self.criterion_type: Optional[str] = None
         self.name = name
         self.metric_name = metric_name
         self.metric_namespace = metric_namespace
@@ -544,7 +544,7 @@ class DynamicMetricCriteria(MultiMetricCriteria):  # pylint: disable=too-many-in
     :vartype additional_properties: dict[str, JSON]
     :ivar criterion_type: Specifies the type of threshold criteria. Required. Known values are:
      "StaticThresholdCriterion" and "DynamicThresholdCriterion".
-    :vartype criterion_type: str or ~$(python-base-namespace).v2018_03_01.models.CriterionType
+    :vartype criterion_type: str or ~azure.mgmt.monitor.v2018_03_01.models.CriterionType
     :ivar name: Name of the criteria. Required.
     :vartype name: str
     :ivar metric_name: Name of the metric. Required.
@@ -553,25 +553,23 @@ class DynamicMetricCriteria(MultiMetricCriteria):  # pylint: disable=too-many-in
     :vartype metric_namespace: str
     :ivar time_aggregation: the criteria time aggregation types. Required. Known values are:
      "Average", "Count", "Minimum", "Maximum", and "Total".
-    :vartype time_aggregation: str or
-     ~$(python-base-namespace).v2018_03_01.models.AggregationTypeEnum
+    :vartype time_aggregation: str or ~azure.mgmt.monitor.v2018_03_01.models.AggregationTypeEnum
     :ivar dimensions: List of dimension conditions.
-    :vartype dimensions: list[~$(python-base-namespace).v2018_03_01.models.MetricDimension]
+    :vartype dimensions: list[~azure.mgmt.monitor.v2018_03_01.models.MetricDimension]
     :ivar skip_metric_validation: Allows creating an alert rule on a custom metric that isn't yet
      emitted, by causing the metric validation to be skipped.
     :vartype skip_metric_validation: bool
     :ivar operator: The operator used to compare the metric value against the threshold. Required.
      Known values are: "GreaterThan", "LessThan", and "GreaterOrLessThan".
-    :vartype operator: str or ~$(python-base-namespace).v2018_03_01.models.DynamicThresholdOperator
+    :vartype operator: str or ~azure.mgmt.monitor.v2018_03_01.models.DynamicThresholdOperator
     :ivar alert_sensitivity: The extent of deviation required to trigger an alert. This will affect
      how tight the threshold is to the metric series pattern. Required. Known values are: "Low",
      "Medium", and "High".
     :vartype alert_sensitivity: str or
-     ~$(python-base-namespace).v2018_03_01.models.DynamicThresholdSensitivity
+     ~azure.mgmt.monitor.v2018_03_01.models.DynamicThresholdSensitivity
     :ivar failing_periods: The minimum number of violations required within the selected lookback
      time window required to raise an alert. Required.
-    :vartype failing_periods:
-     ~$(python-base-namespace).v2018_03_01.models.DynamicThresholdFailingPeriods
+    :vartype failing_periods: ~azure.mgmt.monitor.v2018_03_01.models.DynamicThresholdFailingPeriods
     :ivar ignore_data_before: Use this option to set the date from which to start learning the
      metric historical data and calculate the dynamic thresholds (in ISO8601 format).
     :vartype ignore_data_before: ~datetime.datetime
@@ -616,8 +614,8 @@ class DynamicMetricCriteria(MultiMetricCriteria):  # pylint: disable=too-many-in
         dimensions: Optional[List["_models.MetricDimension"]] = None,
         skip_metric_validation: Optional[bool] = None,
         ignore_data_before: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -630,26 +628,24 @@ class DynamicMetricCriteria(MultiMetricCriteria):  # pylint: disable=too-many-in
         :paramtype metric_namespace: str
         :keyword time_aggregation: the criteria time aggregation types. Required. Known values are:
          "Average", "Count", "Minimum", "Maximum", and "Total".
-        :paramtype time_aggregation: str or
-         ~$(python-base-namespace).v2018_03_01.models.AggregationTypeEnum
+        :paramtype time_aggregation: str or ~azure.mgmt.monitor.v2018_03_01.models.AggregationTypeEnum
         :keyword dimensions: List of dimension conditions.
-        :paramtype dimensions: list[~$(python-base-namespace).v2018_03_01.models.MetricDimension]
+        :paramtype dimensions: list[~azure.mgmt.monitor.v2018_03_01.models.MetricDimension]
         :keyword skip_metric_validation: Allows creating an alert rule on a custom metric that isn't
          yet emitted, by causing the metric validation to be skipped.
         :paramtype skip_metric_validation: bool
         :keyword operator: The operator used to compare the metric value against the threshold.
          Required. Known values are: "GreaterThan", "LessThan", and "GreaterOrLessThan".
-        :paramtype operator: str or
-         ~$(python-base-namespace).v2018_03_01.models.DynamicThresholdOperator
+        :paramtype operator: str or ~azure.mgmt.monitor.v2018_03_01.models.DynamicThresholdOperator
         :keyword alert_sensitivity: The extent of deviation required to trigger an alert. This will
          affect how tight the threshold is to the metric series pattern. Required. Known values are:
          "Low", "Medium", and "High".
         :paramtype alert_sensitivity: str or
-         ~$(python-base-namespace).v2018_03_01.models.DynamicThresholdSensitivity
+         ~azure.mgmt.monitor.v2018_03_01.models.DynamicThresholdSensitivity
         :keyword failing_periods: The minimum number of violations required within the selected
          lookback time window required to raise an alert. Required.
         :paramtype failing_periods:
-         ~$(python-base-namespace).v2018_03_01.models.DynamicThresholdFailingPeriods
+         ~azure.mgmt.monitor.v2018_03_01.models.DynamicThresholdFailingPeriods
         :keyword ignore_data_before: Use this option to set the date from which to start learning the
          metric historical data and calculate the dynamic thresholds (in ISO8601 format).
         :paramtype ignore_data_before: ~datetime.datetime
@@ -664,7 +660,7 @@ class DynamicMetricCriteria(MultiMetricCriteria):  # pylint: disable=too-many-in
             skip_metric_validation=skip_metric_validation,
             **kwargs
         )
-        self.criterion_type = "DynamicThresholdCriterion"  # type: str
+        self.criterion_type: str = "DynamicThresholdCriterion"
         self.operator = operator
         self.alert_sensitivity = alert_sensitivity
         self.failing_periods = failing_periods
@@ -672,7 +668,8 @@ class DynamicMetricCriteria(MultiMetricCriteria):  # pylint: disable=too-many-in
 
 
 class DynamicThresholdFailingPeriods(_serialization.Model):
-    """The minimum number of violations required within the selected lookback time window required to raise an alert.
+    """The minimum number of violations required within the selected lookback time window required to
+    raise an alert.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -695,7 +692,9 @@ class DynamicThresholdFailingPeriods(_serialization.Model):
         "min_failing_periods_to_alert": {"key": "minFailingPeriodsToAlert", "type": "float"},
     }
 
-    def __init__(self, *, number_of_evaluation_periods: float, min_failing_periods_to_alert: float, **kwargs):
+    def __init__(
+        self, *, number_of_evaluation_periods: float, min_failing_periods_to_alert: float, **kwargs: Any
+    ) -> None:
         """
         :keyword number_of_evaluation_periods: The number of aggregated lookback points. The lookback
          time window is calculated based on the aggregation granularity (windowSize) and the selected
@@ -724,7 +723,7 @@ class EmailReceiver(_serialization.Model):
     :vartype email_address: str
     :ivar status: The receiver status of the e-mail. Known values are: "NotSpecified", "Enabled",
      and "Disabled".
-    :vartype status: str or ~$(python-base-namespace).v2018_03_01.models.ReceiverStatus
+    :vartype status: str or ~azure.mgmt.monitor.v2018_03_01.models.ReceiverStatus
     """
 
     _validation = {
@@ -739,7 +738,7 @@ class EmailReceiver(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, *, name: str, email_address: str, **kwargs):
+    def __init__(self, *, name: str, email_address: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the email receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -770,7 +769,7 @@ class EnableRequest(_serialization.Model):
         "receiver_name": {"key": "receiverName", "type": "str"},
     }
 
-    def __init__(self, *, receiver_name: str, **kwargs):
+    def __init__(self, *, receiver_name: str, **kwargs: Any) -> None:
         """
         :keyword receiver_name: The name of the receiver to resubscribe. Required.
         :paramtype receiver_name: str
@@ -793,7 +792,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -844,8 +843,8 @@ class ItsmReceiver(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, workspace_id: str, connection_id: str, ticket_configuration: str, region: str, **kwargs
-    ):
+        self, *, name: str, workspace_id: str, connection_id: str, ticket_configuration: str, region: str, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the Itsm receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -897,7 +896,7 @@ class LogicAppReceiver(_serialization.Model):
         "callback_url": {"key": "callbackUrl", "type": "str"},
     }
 
-    def __init__(self, *, name: str, resource_id: str, callback_url: str, **kwargs):
+    def __init__(self, *, name: str, resource_id: str, callback_url: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the logic app receiver. Names must be unique across all receivers
          within an action group. Required.
@@ -929,8 +928,12 @@ class MetricAlertAction(_serialization.Model):
     }
 
     def __init__(
-        self, *, action_group_id: Optional[str] = None, web_hook_properties: Optional[Dict[str, str]] = None, **kwargs
-    ):
+        self,
+        *,
+        action_group_id: Optional[str] = None,
+        web_hook_properties: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword action_group_id: the id of the action group to use.
         :paramtype action_group_id: str
@@ -959,7 +962,7 @@ class MetricAlertCriteria(_serialization.Model):
      "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
      "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria", and
      "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria".
-    :vartype odata_type: str or ~$(python-base-namespace).v2018_03_01.models.Odatatype
+    :vartype odata_type: str or ~azure.mgmt.monitor.v2018_03_01.models.Odatatype
     """
 
     _validation = {
@@ -979,7 +982,7 @@ class MetricAlertCriteria(_serialization.Model):
         }
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -987,7 +990,7 @@ class MetricAlertCriteria(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):
@@ -1002,9 +1005,9 @@ class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):
      "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
      "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria", and
      "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria".
-    :vartype odata_type: str or ~$(python-base-namespace).v2018_03_01.models.Odatatype
+    :vartype odata_type: str or ~azure.mgmt.monitor.v2018_03_01.models.Odatatype
     :ivar all_of: the list of multiple metric criteria for this 'all of' operation.
-    :vartype all_of: list[~$(python-base-namespace).v2018_03_01.models.MultiMetricCriteria]
+    :vartype all_of: list[~azure.mgmt.monitor.v2018_03_01.models.MultiMetricCriteria]
     """
 
     _validation = {
@@ -1022,17 +1025,17 @@ class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
         all_of: Optional[List["_models.MultiMetricCriteria"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
         :keyword all_of: the list of multiple metric criteria for this 'all of' operation.
-        :paramtype all_of: list[~$(python-base-namespace).v2018_03_01.models.MultiMetricCriteria]
+        :paramtype all_of: list[~azure.mgmt.monitor.v2018_03_01.models.MultiMetricCriteria]
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.odata_type = "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
         self.all_of = all_of
 
 
@@ -1077,13 +1080,13 @@ class MetricAlertResource(Resource):  # pylint: disable=too-many-instance-attrib
      one resource.
     :vartype target_resource_region: str
     :ivar criteria: defines the specific alert criteria information. Required.
-    :vartype criteria: ~$(python-base-namespace).v2018_03_01.models.MetricAlertCriteria
+    :vartype criteria: ~azure.mgmt.monitor.v2018_03_01.models.MetricAlertCriteria
     :ivar auto_mitigate: the flag that indicates whether the alert should be auto resolved or not.
      The default is true.
     :vartype auto_mitigate: bool
     :ivar actions: the array of actions that are performed when the alert rule becomes active, and
      when an alert condition is resolved.
-    :vartype actions: list[~$(python-base-namespace).v2018_03_01.models.MetricAlertAction]
+    :vartype actions: list[~azure.mgmt.monitor.v2018_03_01.models.MetricAlertAction]
     :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
     :vartype last_updated_time: ~datetime.datetime
     :ivar is_migrated: the value indicating whether this alert rule is migrated.
@@ -1142,8 +1145,8 @@ class MetricAlertResource(Resource):  # pylint: disable=too-many-instance-attrib
         target_resource_region: Optional[str] = None,
         auto_mitigate: Optional[bool] = None,
         actions: Optional[List["_models.MetricAlertAction"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -1173,13 +1176,13 @@ class MetricAlertResource(Resource):  # pylint: disable=too-many-instance-attrib
          one resource.
         :paramtype target_resource_region: str
         :keyword criteria: defines the specific alert criteria information. Required.
-        :paramtype criteria: ~$(python-base-namespace).v2018_03_01.models.MetricAlertCriteria
+        :paramtype criteria: ~azure.mgmt.monitor.v2018_03_01.models.MetricAlertCriteria
         :keyword auto_mitigate: the flag that indicates whether the alert should be auto resolved or
          not. The default is true.
         :paramtype auto_mitigate: bool
         :keyword actions: the array of actions that are performed when the alert rule becomes active,
          and when an alert condition is resolved.
-        :paramtype actions: list[~$(python-base-namespace).v2018_03_01.models.MetricAlertAction]
+        :paramtype actions: list[~azure.mgmt.monitor.v2018_03_01.models.MetricAlertAction]
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.description = description
@@ -1201,17 +1204,17 @@ class MetricAlertResourceCollection(_serialization.Model):
     """Represents a collection of alert rule resources.
 
     :ivar value: the values for the alert rule resources.
-    :vartype value: list[~$(python-base-namespace).v2018_03_01.models.MetricAlertResource]
+    :vartype value: list[~azure.mgmt.monitor.v2018_03_01.models.MetricAlertResource]
     """
 
     _attribute_map = {
         "value": {"key": "value", "type": "[MetricAlertResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.MetricAlertResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.MetricAlertResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: the values for the alert rule resources.
-        :paramtype value: list[~$(python-base-namespace).v2018_03_01.models.MetricAlertResource]
+        :paramtype value: list[~azure.mgmt.monitor.v2018_03_01.models.MetricAlertResource]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -1246,13 +1249,13 @@ class MetricAlertResourcePatch(_serialization.Model):  # pylint: disable=too-man
      created/updated. Mandatory for MultipleResourceMultipleMetricCriteria.
     :vartype target_resource_region: str
     :ivar criteria: defines the specific alert criteria information.
-    :vartype criteria: ~$(python-base-namespace).v2018_03_01.models.MetricAlertCriteria
+    :vartype criteria: ~azure.mgmt.monitor.v2018_03_01.models.MetricAlertCriteria
     :ivar auto_mitigate: the flag that indicates whether the alert should be auto resolved or not.
      The default is true.
     :vartype auto_mitigate: bool
     :ivar actions: the array of actions that are performed when the alert rule becomes active, and
      when an alert condition is resolved.
-    :vartype actions: list[~$(python-base-namespace).v2018_03_01.models.MetricAlertAction]
+    :vartype actions: list[~azure.mgmt.monitor.v2018_03_01.models.MetricAlertAction]
     :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
     :vartype last_updated_time: ~datetime.datetime
     :ivar is_migrated: the value indicating whether this alert rule is migrated.
@@ -1296,8 +1299,8 @@ class MetricAlertResourcePatch(_serialization.Model):  # pylint: disable=too-man
         criteria: Optional["_models.MetricAlertCriteria"] = None,
         auto_mitigate: Optional[bool] = None,
         actions: Optional[List["_models.MetricAlertAction"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1323,13 +1326,13 @@ class MetricAlertResourcePatch(_serialization.Model):  # pylint: disable=too-man
          created/updated. Mandatory for MultipleResourceMultipleMetricCriteria.
         :paramtype target_resource_region: str
         :keyword criteria: defines the specific alert criteria information.
-        :paramtype criteria: ~$(python-base-namespace).v2018_03_01.models.MetricAlertCriteria
+        :paramtype criteria: ~azure.mgmt.monitor.v2018_03_01.models.MetricAlertCriteria
         :keyword auto_mitigate: the flag that indicates whether the alert should be auto resolved or
          not. The default is true.
         :paramtype auto_mitigate: bool
         :keyword actions: the array of actions that are performed when the alert rule becomes active,
          and when an alert condition is resolved.
-        :paramtype actions: list[~$(python-base-namespace).v2018_03_01.models.MetricAlertAction]
+        :paramtype actions: list[~azure.mgmt.monitor.v2018_03_01.models.MetricAlertAction]
         """
         super().__init__(**kwargs)
         self.tags = tags
@@ -1360,9 +1363,9 @@ class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):
      "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
      "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria", and
      "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria".
-    :vartype odata_type: str or ~$(python-base-namespace).v2018_03_01.models.Odatatype
+    :vartype odata_type: str or ~azure.mgmt.monitor.v2018_03_01.models.Odatatype
     :ivar all_of: The list of metric criteria for this 'all of' operation.
-    :vartype all_of: list[~$(python-base-namespace).v2018_03_01.models.MetricCriteria]
+    :vartype all_of: list[~azure.mgmt.monitor.v2018_03_01.models.MetricCriteria]
     """
 
     _validation = {
@@ -1380,17 +1383,17 @@ class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
         all_of: Optional[List["_models.MetricCriteria"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
         :keyword all_of: The list of metric criteria for this 'all of' operation.
-        :paramtype all_of: list[~$(python-base-namespace).v2018_03_01.models.MetricCriteria]
+        :paramtype all_of: list[~azure.mgmt.monitor.v2018_03_01.models.MetricCriteria]
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.odata_type = "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
         self.all_of = all_of
 
 
@@ -1404,7 +1407,7 @@ class MetricAlertStatus(_serialization.Model):
     :ivar type: The extended resource type name.
     :vartype type: str
     :ivar properties: The alert status properties of the metric alert status.
-    :vartype properties: ~$(python-base-namespace).v2018_03_01.models.MetricAlertStatusProperties
+    :vartype properties: ~azure.mgmt.monitor.v2018_03_01.models.MetricAlertStatusProperties
     """
 
     _attribute_map = {
@@ -1421,8 +1424,8 @@ class MetricAlertStatus(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         type: Optional[str] = None,
         properties: Optional["_models.MetricAlertStatusProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The status name.
         :paramtype name: str
@@ -1431,7 +1434,7 @@ class MetricAlertStatus(_serialization.Model):
         :keyword type: The extended resource type name.
         :paramtype type: str
         :keyword properties: The alert status properties of the metric alert status.
-        :paramtype properties: ~$(python-base-namespace).v2018_03_01.models.MetricAlertStatusProperties
+        :paramtype properties: ~azure.mgmt.monitor.v2018_03_01.models.MetricAlertStatusProperties
         """
         super().__init__(**kwargs)
         self.name = name
@@ -1444,17 +1447,17 @@ class MetricAlertStatusCollection(_serialization.Model):
     """Represents a collection of alert rule resources.
 
     :ivar value: the values for the alert rule resources.
-    :vartype value: list[~$(python-base-namespace).v2018_03_01.models.MetricAlertStatus]
+    :vartype value: list[~azure.mgmt.monitor.v2018_03_01.models.MetricAlertStatus]
     """
 
     _attribute_map = {
         "value": {"key": "value", "type": "[MetricAlertStatus]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.MetricAlertStatus"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.MetricAlertStatus"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: the values for the alert rule resources.
-        :paramtype value: list[~$(python-base-namespace).v2018_03_01.models.MetricAlertStatus]
+        :paramtype value: list[~azure.mgmt.monitor.v2018_03_01.models.MetricAlertStatus]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -1483,8 +1486,8 @@ class MetricAlertStatusProperties(_serialization.Model):
         dimensions: Optional[Dict[str, str]] = None,
         status: Optional[str] = None,
         timestamp: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword dimensions: An object describing the type of the dimensions.
         :paramtype dimensions: dict[str, str]
@@ -1509,7 +1512,7 @@ class MetricCriteria(MultiMetricCriteria):
     :vartype additional_properties: dict[str, JSON]
     :ivar criterion_type: Specifies the type of threshold criteria. Required. Known values are:
      "StaticThresholdCriterion" and "DynamicThresholdCriterion".
-    :vartype criterion_type: str or ~$(python-base-namespace).v2018_03_01.models.CriterionType
+    :vartype criterion_type: str or ~azure.mgmt.monitor.v2018_03_01.models.CriterionType
     :ivar name: Name of the criteria. Required.
     :vartype name: str
     :ivar metric_name: Name of the metric. Required.
@@ -1518,16 +1521,15 @@ class MetricCriteria(MultiMetricCriteria):
     :vartype metric_namespace: str
     :ivar time_aggregation: the criteria time aggregation types. Required. Known values are:
      "Average", "Count", "Minimum", "Maximum", and "Total".
-    :vartype time_aggregation: str or
-     ~$(python-base-namespace).v2018_03_01.models.AggregationTypeEnum
+    :vartype time_aggregation: str or ~azure.mgmt.monitor.v2018_03_01.models.AggregationTypeEnum
     :ivar dimensions: List of dimension conditions.
-    :vartype dimensions: list[~$(python-base-namespace).v2018_03_01.models.MetricDimension]
+    :vartype dimensions: list[~azure.mgmt.monitor.v2018_03_01.models.MetricDimension]
     :ivar skip_metric_validation: Allows creating an alert rule on a custom metric that isn't yet
      emitted, by causing the metric validation to be skipped.
     :vartype skip_metric_validation: bool
     :ivar operator: the criteria operator. Required. Known values are: "Equals", "GreaterThan",
      "GreaterThanOrEqual", "LessThan", and "LessThanOrEqual".
-    :vartype operator: str or ~$(python-base-namespace).v2018_03_01.models.Operator
+    :vartype operator: str or ~azure.mgmt.monitor.v2018_03_01.models.Operator
     :ivar threshold: the criteria threshold value that activates the alert. Required.
     :vartype threshold: float
     """
@@ -1566,8 +1568,8 @@ class MetricCriteria(MultiMetricCriteria):
         metric_namespace: Optional[str] = None,
         dimensions: Optional[List["_models.MetricDimension"]] = None,
         skip_metric_validation: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1580,16 +1582,15 @@ class MetricCriteria(MultiMetricCriteria):
         :paramtype metric_namespace: str
         :keyword time_aggregation: the criteria time aggregation types. Required. Known values are:
          "Average", "Count", "Minimum", "Maximum", and "Total".
-        :paramtype time_aggregation: str or
-         ~$(python-base-namespace).v2018_03_01.models.AggregationTypeEnum
+        :paramtype time_aggregation: str or ~azure.mgmt.monitor.v2018_03_01.models.AggregationTypeEnum
         :keyword dimensions: List of dimension conditions.
-        :paramtype dimensions: list[~$(python-base-namespace).v2018_03_01.models.MetricDimension]
+        :paramtype dimensions: list[~azure.mgmt.monitor.v2018_03_01.models.MetricDimension]
         :keyword skip_metric_validation: Allows creating an alert rule on a custom metric that isn't
          yet emitted, by causing the metric validation to be skipped.
         :paramtype skip_metric_validation: bool
         :keyword operator: the criteria operator. Required. Known values are: "Equals", "GreaterThan",
          "GreaterThanOrEqual", "LessThan", and "LessThanOrEqual".
-        :paramtype operator: str or ~$(python-base-namespace).v2018_03_01.models.Operator
+        :paramtype operator: str or ~azure.mgmt.monitor.v2018_03_01.models.Operator
         :keyword threshold: the criteria threshold value that activates the alert. Required.
         :paramtype threshold: float
         """
@@ -1603,7 +1604,7 @@ class MetricCriteria(MultiMetricCriteria):
             skip_metric_validation=skip_metric_validation,
             **kwargs
         )
-        self.criterion_type = "StaticThresholdCriterion"  # type: str
+        self.criterion_type: str = "StaticThresholdCriterion"
         self.operator = operator
         self.threshold = threshold
 
@@ -1633,7 +1634,7 @@ class MetricDimension(_serialization.Model):
         "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(self, *, name: str, operator: str, values: List[str], **kwargs):
+    def __init__(self, *, name: str, operator: str, values: List[str], **kwargs: Any) -> None:
         """
         :keyword name: Name of the dimension. Required.
         :paramtype name: str
@@ -1665,7 +1666,7 @@ class SmsReceiver(_serialization.Model):
     :vartype phone_number: str
     :ivar status: The status of the receiver. Known values are: "NotSpecified", "Enabled", and
      "Disabled".
-    :vartype status: str or ~$(python-base-namespace).v2018_03_01.models.ReceiverStatus
+    :vartype status: str or ~azure.mgmt.monitor.v2018_03_01.models.ReceiverStatus
     """
 
     _validation = {
@@ -1682,7 +1683,7 @@ class SmsReceiver(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs):
+    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the SMS receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -1725,7 +1726,7 @@ class VoiceReceiver(_serialization.Model):
         "phone_number": {"key": "phoneNumber", "type": "str"},
     }
 
-    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs):
+    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the voice receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -1763,7 +1764,7 @@ class WebhookReceiver(_serialization.Model):
         "service_uri": {"key": "serviceUri", "type": "str"},
     }
 
-    def __init__(self, *, name: str, service_uri: str, **kwargs):
+    def __init__(self, *, name: str, service_uri: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the webhook receiver. Names must be unique across all receivers
          within an action group. Required.
@@ -1788,7 +1789,7 @@ class WebtestLocationAvailabilityCriteria(MetricAlertCriteria):
      "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
      "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria", and
      "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria".
-    :vartype odata_type: str or ~$(python-base-namespace).v2018_03_01.models.Odatatype
+    :vartype odata_type: str or ~azure.mgmt.monitor.v2018_03_01.models.Odatatype
     :ivar web_test_id: The Application Insights web test Id. Required.
     :vartype web_test_id: str
     :ivar component_id: The Application Insights resource Id. Required.
@@ -1819,8 +1820,8 @@ class WebtestLocationAvailabilityCriteria(MetricAlertCriteria):
         component_id: str,
         failed_location_count: float,
         additional_properties: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1833,7 +1834,7 @@ class WebtestLocationAvailabilityCriteria(MetricAlertCriteria):
         :paramtype failed_location_count: float
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.odata_type = "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria"
         self.web_test_id = web_test_id
         self.component_id = component_id
         self.failed_location_count = failed_location_count

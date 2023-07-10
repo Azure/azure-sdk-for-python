@@ -1,16 +1,22 @@
 # Release History
 
-## 1.4.0 (Unreleased)
+## 1.5.0b1 (2023-07-11)
 
 ### Features Added
-
-### Breaking Changes
+- Added support for `Snapshot` CRUD operations.
 
 ### Bugs Fixed
+- Fixed async `update_sync_token` to use async/await keywords
+
+### Other Changes
+- Bumped minimum dependency on `azure-core` to `>=1.25.0`.
+- Updated the default `api_version` to "2022-11-01-preview".
+
+## 1.4.0 (2022-02-13)
 
 ### Other Changes
 - Python 2.7 is no longer supported. Please use Python version 3.7 or later.
-- Bumped mininum dependency on `azure-core` to `>=1.24.0`.
+- Bumped minimum dependency on `azure-core` to `>=1.24.0`.
 - Changed the default async transport from `AsyncioRequestsTransport` to the one used in current `azure-core` (`AioHttpTransport`). ([#26427](https://github.com/Azure/azure-sdk-for-python/issues/26427))
 - Dropped `msrest` requirement.
 - Added dependency `isodate` with version range `>=0.6.0`.

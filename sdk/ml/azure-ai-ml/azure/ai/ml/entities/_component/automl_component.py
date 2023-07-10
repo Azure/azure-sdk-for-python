@@ -14,10 +14,9 @@ from azure.ai.ml.entities._component.component import Component
 class AutoMLComponent(Component):
     """AutoML component entity, used to define an automl component.
 
-    AutoML Component will only be used "internally" for the mentioned
-    scenarios that need it. AutoML Component schema is not intended to
-    be used by the end users and therefore it won't be provided to the
-    end users and it won't have public documentation for the users.
+    AutoML Component will only be used "internally" for the mentioned scenarios that need it. AutoML Component schema is
+    not intended to be used by the end users and therefore it won't be provided to the end users and it won't have
+    public documentation for the users.
     """
 
     def __init__(

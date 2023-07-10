@@ -20,15 +20,15 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class MicrosoftResourceHealthConfiguration(Configuration):
-    """Configuration for MicrosoftResourceHealth.
+class ResourceHealthMgmtClientConfiguration(Configuration):
+    """Configuration for ResourceHealthMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call. Required.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     """
 
@@ -36,14 +36,13 @@ class MicrosoftResourceHealthConfiguration(Configuration):
         self,
         credential: "TokenCredential",
         subscription_id: str,
-        **kwargs  # type: Any
+        **kwargs: Any
     ):
-        # type: (...) -> None
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        super(MicrosoftResourceHealthConfiguration, self).__init__(**kwargs)
+        super(ResourceHealthMgmtClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.subscription_id = subscription_id
@@ -53,9 +52,8 @@ class MicrosoftResourceHealthConfiguration(Configuration):
 
     def _configure(
         self,
-        **kwargs  # type: Any
+        **kwargs: Any
     ):
-        # type: (...) -> None
         self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)

@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -49,7 +49,7 @@ class PrivateLinkScopesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2019_10_17.aio.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2019_10_17.aio.MonitorManagementClient`'s
         :attr:`private_link_scopes` attribute.
     """
 
@@ -70,14 +70,14 @@ class PrivateLinkScopesOperations:
         :return: An iterator like instance of either AzureMonitorPrivateLinkScope or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AzureMonitorPrivateLinkScopeListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))
+        cls: ClsType[_models.AzureMonitorPrivateLinkScopeListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -98,16 +98,23 @@ class PrivateLinkScopesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -115,14 +122,15 @@ class PrivateLinkScopesOperations:
             deserialized = self._deserialize("AzureMonitorPrivateLinkScopeListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -134,7 +142,7 @@ class PrivateLinkScopesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/microsoft.insights/privateLinkScopes"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/microsoft.insights/privateLinkScopes"}
 
     @distributed_trace
     def list_by_resource_group(
@@ -149,14 +157,14 @@ class PrivateLinkScopesOperations:
         :return: An iterator like instance of either AzureMonitorPrivateLinkScope or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AzureMonitorPrivateLinkScopeListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))
+        cls: ClsType[_models.AzureMonitorPrivateLinkScopeListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -178,16 +186,23 @@ class PrivateLinkScopesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -195,14 +210,15 @@ class PrivateLinkScopesOperations:
             deserialized = self._deserialize("AzureMonitorPrivateLinkScopeListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -214,7 +230,9 @@ class PrivateLinkScopesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/privateLinkScopes"}  # type: ignore
+    list_by_resource_group.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/privateLinkScopes"
+    }
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, scope_name: str, **kwargs: Any
@@ -230,8 +248,8 @@ class PrivateLinkScopesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             resource_group_name=resource_group_name,
@@ -243,10 +261,11 @@ class PrivateLinkScopesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -258,7 +277,9 @@ class PrivateLinkScopesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/privateLinkScopes/{scopeName}"}  # type: ignore
+    _delete_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/privateLinkScopes/{scopeName}"
+    }
 
     @distributed_trace_async
     async def begin_delete(self, resource_group_name: str, scope_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -284,11 +305,11 @@ class PrivateLinkScopesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
@@ -306,7 +327,7 @@ class PrivateLinkScopesOperations:
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))  # type: AsyncPollingMethod
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -318,9 +339,11 @@ class PrivateLinkScopesOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/privateLinkScopes/{scopeName}"}  # type: ignore
+    begin_delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/privateLinkScopes/{scopeName}"
+    }
 
     @distributed_trace_async
     async def get(
@@ -335,7 +358,7 @@ class PrivateLinkScopesOperations:
         :type scope_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AzureMonitorPrivateLinkScope or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope
+        :rtype: ~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -349,8 +372,8 @@ class PrivateLinkScopesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AzureMonitorPrivateLinkScope]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))
+        cls: ClsType[_models.AzureMonitorPrivateLinkScope] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -362,10 +385,11 @@ class PrivateLinkScopesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -381,7 +405,9 @@ class PrivateLinkScopesOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/privateLinkScopes/{scopeName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/privateLinkScopes/{scopeName}"
+    }
 
     @overload
     async def create_or_update(
@@ -404,13 +430,13 @@ class PrivateLinkScopesOperations:
         :param azure_monitor_private_link_scope_payload: Properties that need to be specified to create
          or update a Azure Monitor PrivateLinkScope. Required.
         :type azure_monitor_private_link_scope_payload:
-         ~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope
+         ~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AzureMonitorPrivateLinkScope or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope
+        :rtype: ~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -440,7 +466,7 @@ class PrivateLinkScopesOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AzureMonitorPrivateLinkScope or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope
+        :rtype: ~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -461,15 +487,16 @@ class PrivateLinkScopesOperations:
         :param scope_name: The name of the Azure Monitor PrivateLinkScope resource. Required.
         :type scope_name: str
         :param azure_monitor_private_link_scope_payload: Properties that need to be specified to create
-         or update a Azure Monitor PrivateLinkScope. Is either a model type or a IO type. Required.
+         or update a Azure Monitor PrivateLinkScope. Is either a AzureMonitorPrivateLinkScope type or a
+         IO type. Required.
         :type azure_monitor_private_link_scope_payload:
-         ~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope or IO
+         ~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AzureMonitorPrivateLinkScope or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope
+        :rtype: ~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -483,9 +510,9 @@ class PrivateLinkScopesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AzureMonitorPrivateLinkScope]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AzureMonitorPrivateLinkScope] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -508,10 +535,11 @@ class PrivateLinkScopesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -527,11 +555,13 @@ class PrivateLinkScopesOperations:
             deserialized = self._deserialize("AzureMonitorPrivateLinkScope", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/privateLinkScopes/{scopeName}"}  # type: ignore
+    create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/privateLinkScopes/{scopeName}"
+    }
 
     @overload
     async def update_tags(
@@ -553,13 +583,13 @@ class PrivateLinkScopesOperations:
         :type scope_name: str
         :param private_link_scope_tags: Updated tag information to set into the PrivateLinkScope
          instance. Required.
-        :type private_link_scope_tags: ~$(python-base-namespace).v2019_10_17.models.TagsResource
+        :type private_link_scope_tags: ~azure.mgmt.monitor.v2019_10_17.models.TagsResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AzureMonitorPrivateLinkScope or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope
+        :rtype: ~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -589,7 +619,7 @@ class PrivateLinkScopesOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AzureMonitorPrivateLinkScope or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope
+        :rtype: ~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -610,14 +640,14 @@ class PrivateLinkScopesOperations:
         :param scope_name: The name of the Azure Monitor PrivateLinkScope resource. Required.
         :type scope_name: str
         :param private_link_scope_tags: Updated tag information to set into the PrivateLinkScope
-         instance. Is either a model type or a IO type. Required.
-        :type private_link_scope_tags: ~$(python-base-namespace).v2019_10_17.models.TagsResource or IO
+         instance. Is either a TagsResource type or a IO type. Required.
+        :type private_link_scope_tags: ~azure.mgmt.monitor.v2019_10_17.models.TagsResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AzureMonitorPrivateLinkScope or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope
+        :rtype: ~azure.mgmt.monitor.v2019_10_17.models.AzureMonitorPrivateLinkScope
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -631,9 +661,9 @@ class PrivateLinkScopesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AzureMonitorPrivateLinkScope]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-17-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AzureMonitorPrivateLinkScope] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -656,10 +686,11 @@ class PrivateLinkScopesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -675,4 +706,6 @@ class PrivateLinkScopesOperations:
 
         return deserialized
 
-    update_tags.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/privateLinkScopes/{scopeName}"}  # type: ignore
+    update_tags.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/privateLinkScopes/{scopeName}"
+    }

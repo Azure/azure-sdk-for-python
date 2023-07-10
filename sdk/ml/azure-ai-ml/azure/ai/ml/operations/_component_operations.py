@@ -8,27 +8,25 @@ import time
 import types
 from functools import partial
 from inspect import Parameter, signature
-from typing import Callable, Dict, Iterable, Optional, Union, List, Any
+from typing import Any, Callable, Dict, Iterable, List, Optional, Union
+
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
-from azure.ai.ml._restclient.v2022_10_01.models import ListViewType
+from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion, ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
     OperationScope,
     _ScopeDependentOperations,
 )
-
-# from azure.ai.ml._telemetry import (
-#     ActivityType,
-#     monitor_with_activity,
-#     monitor_with_telemetry_mixin,
-# )
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
+    _create_or_update_autoincrement,
     _get_latest,
     _get_next_version_from_container,
     _resolve_label_to_asset,
@@ -36,6 +34,7 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
 from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml._vendor.azure_resources.operations import DeploymentsOperations
 from azure.ai.ml.constants._common import (
     DEFAULT_COMPONENT_VERSION,
     DEFAULT_LABEL_NAME,
@@ -44,22 +43,24 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.entities import Component, ValidationResult
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
-from .._utils._cache_utils import CachedNodeResolver
 
+from .._utils._cache_utils import CachedNodeResolver
 from .._utils._experimental import experimental
 from .._utils.utils import is_data_binding_expression
 from ..entities._builders import BaseNode
 from ..entities._builders.condition_node import ConditionNode
 from ..entities._builders.control_flow_node import LoopNode
 from ..entities._component.automl_component import AutoMLComponent
+from ..entities._component.code import ComponentCodeMixin
 from ..entities._component.pipeline_component import PipelineComponent
 from ..entities._job.pipeline._attr_dict import has_attr_safe
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
 from ._operation_orchestrator import OperationOrchestrator
+from ._workspace_operations import WorkspaceOperations
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class ComponentOperations(_ScopeDependentOperations):
@@ -76,11 +77,13 @@ class ComponentOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         service_client: Union[ServiceClient102022, ServiceClient102021Dataplane],
         all_operations: OperationsContainer,
+        preflight_operation: Optional[DeploymentsOperations] = None,
         **kwargs: Dict,
     ):
         super(ComponentOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self._version_operation = service_client.component_versions
+        self._preflight_operation = preflight_operation
         self._container_operation = service_client.component_containers
         self._all_operations = all_operations
         self._init_args = kwargs
@@ -88,6 +91,8 @@ class ComponentOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
         self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
+
+        self._client_key: Optional[str] = None
 
     @property
     def _code_operations(self) -> CodeOperations:
@@ -101,12 +106,19 @@ class ComponentOperations(_ScopeDependentOperations):
         )
 
     @property
+    def _workspace_operations(self) -> WorkspaceOperations:
+        return self._all_operations.get_operation(
+            AzureMLResourceType.WORKSPACE,
+            lambda x: isinstance(x, WorkspaceOperations),
+        )
+
+    @property
     def _job_operations(self):
         from ._job_operations import JobOperations
 
         return self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations))
 
-    # @monitor_with_activity(logger, "Component.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Component.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Union[str, None] = None,
@@ -160,7 +172,37 @@ class ComponentOperations(_ScopeDependentOperations):
             )
         )
 
-    # @monitor_with_telemetry_mixin(logger, "Component.Get", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "ComponentVersion.Get", ActivityType.INTERNALCALL)
+    def _get_component_version(self, name: str, version: Optional[str] = DEFAULT_COMPONENT_VERSION) -> ComponentVersion:
+        """Returns ComponentVersion information about the specified component name and version.
+
+        :param name: Name of the code component.
+        :type name: str
+        :param version: Version of the component.
+        :type version: Optional[str]
+        :return: The ComponentVersion object of the specified component name and version.
+        :rtype: ~azure.ai.ml.entities.ComponentVersion
+        """
+        result = (
+            self._version_operation.get(
+                name=name,
+                version=version,
+                resource_group_name=self._resource_group_name,
+                registry_name=self._registry_name,
+                **self._init_args,
+            )
+            if self._registry_name
+            else self._version_operation.get(
+                name=name,
+                version=version,
+                resource_group_name=self._resource_group_name,
+                workspace_name=self._workspace_name,
+                **self._init_args,
+            )
+        )
+        return result
+
+    @monitor_with_telemetry_mixin(logger, "Component.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Component:
         """Returns information about the specified component.
 
@@ -194,23 +236,7 @@ class ComponentOperations(_ScopeDependentOperations):
         if label:
             return _resolve_label_to_asset(self, name, label)
 
-        result = (
-            self._version_operation.get(
-                name=name,
-                version=version,
-                resource_group_name=self._resource_group_name,
-                registry_name=self._registry_name,
-                **self._init_args,
-            )
-            if self._registry_name
-            else self._version_operation.get(
-                name=name,
-                version=version,
-                resource_group_name=self._resource_group_name,
-                workspace_name=self._workspace_name,
-                **self._init_args,
-            )
-        )
+        result = self._get_component_version(name, version)
         component = Component._from_rest_object(result)
         self._resolve_dependencies_for_pipeline_component_jobs(
             component,
@@ -220,12 +246,13 @@ class ComponentOperations(_ScopeDependentOperations):
         return component
 
     @experimental
-    # @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.PUBLICAPI)
     # pylint: disable=no-self-use
     def validate(
         self,
         component: Union[Component, types.FunctionType],
         raise_on_failure: bool = False,
+        **kwargs,
     ) -> ValidationResult:
         """validate a specified component. if there are inline defined
         entities, e.g. Environment, Code, they won't be created.
@@ -237,13 +264,19 @@ class ComponentOperations(_ScopeDependentOperations):
         :return: All validation errors
         :type: ValidationResult
         """
-        return self._validate(component, raise_on_failure=raise_on_failure)
+        return self._validate(
+            component,
+            raise_on_failure=raise_on_failure,
+            # TODO 2330505: change this to True after remote validation is ready
+            skip_remote_validation=kwargs.pop("skip_remote_validation", True),
+        )
 
-    # @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
+    @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
     def _validate(  # pylint: disable=no-self-use
         self,
         component: Union[Component, types.FunctionType],
-        raise_on_failure: bool = False,
+        raise_on_failure: bool,
+        skip_remote_validation: bool,
     ) -> ValidationResult:
         """Implementation of validate. Add this function to avoid calling validate() directly in create_or_update(),
         which will impact telemetry statistics & bring experimental warning in create_or_update().
@@ -252,18 +285,34 @@ class ComponentOperations(_ScopeDependentOperations):
         if isinstance(component, types.FunctionType):
             component = _refine_component(component)
 
-        # local validation only for now
-        # TODO: use remote call to validate the entire component after MFE API is ready
+        # local validation
         result = component._validate(raise_error=raise_on_failure)
+        # remote validation, note that preflight_operation is not available for registry client
+        if not skip_remote_validation and self._preflight_operation:
+            workspace = self._workspace_operations.get()
+            remote_validation_result = self._preflight_operation.begin_validate(
+                resource_group_name=self._resource_group_name,
+                deployment_name=self._workspace_name,
+                parameters=component._build_rest_object_for_remote_validation(
+                    location=workspace.location,
+                    workspace_name=self._workspace_name,
+                ),
+                **self._init_args,
+            )
+            result.merge_with(remote_validation_result.result(), overwrite=True)
+        # resolve location for diagnostics from remote validation
         result.resolve_location_for_diagnostics(component._source_path)
-        return result
+        return result.try_raise(
+            error_target=ErrorTarget.COMPONENT,
+            raise_error=raise_on_failure,
+        )
 
-    # @monitor_with_telemetry_mixin(
-    #     logger,
-    #     "Component.CreateOrUpdate",
-    #     ActivityType.PUBLICAPI,
-    #     extra_keys=["is_anonymous"],
-    # )
+    @monitor_with_telemetry_mixin(
+        logger,
+        "Component.CreateOrUpdate",
+        ActivityType.PUBLICAPI,
+        extra_keys=["is_anonymous"],
+    )
     def create_or_update(
         self, component: Union[Component, types.FunctionType], version=None, *, skip_validation: bool = False, **kwargs
     ) -> Component:
@@ -295,7 +344,11 @@ class ComponentOperations(_ScopeDependentOperations):
             component = _refine_component(component)
         if version is not None:
             component.version = version
-        if not component.version and component._auto_increment_version:
+        # In non-registry scenario, if component does not have version, no need to get next version here.
+        # As Component property version has setter that updates `_auto_increment_version` in-place, then
+        # a component will get a version after its creation, and it will always use this version in its
+        # future creation operations, which breaks version auto increment mechanism.
+        if self._registry_name and not component.version and component._auto_increment_version:
             component.version = _get_next_version_from_container(
                 name=component.name,
                 container_operation=self._container_operation,
@@ -309,14 +362,36 @@ class ComponentOperations(_ScopeDependentOperations):
             component._is_anonymous = kwargs.pop("is_anonymous", False)
 
         if not skip_validation:
-            self._validate(component, raise_on_failure=True)
+            self._validate(component, raise_on_failure=True, skip_remote_validation=True)
 
         # Create all dependent resources
-        self._resolve_arm_id_or_upload_dependencies(component)
+        # Only upload dependencies if component is NOT IPP
+        if not component._intellectual_property:
+            self._resolve_arm_id_or_upload_dependencies(component)
 
         name, version = component._get_rest_name_version()
         rest_component_resource = component._to_rest_object()
         result = None
+        try:
+            if not component._is_anonymous and kwargs.get("skip_if_no_change"):
+                client_component_hash = rest_component_resource.properties.properties.get("client_component_hash")
+                remote_component_version = self._get_component_version(name=name)  # will raise error if not found.
+                remote_component_hash = remote_component_version.properties.properties.get("client_component_hash")
+                if client_component_hash == remote_component_hash:
+                    component.version = remote_component_version.properties.component_spec.get(
+                        "version"
+                    )  # only update the default version component instead of creating a new version component
+                    version = component.version
+                    rest_component_resource = component._to_rest_object()
+                    logger.warning(
+                        "The component is not modified compared to the default version "
+                        "and the new version component registration is skipped."
+                    )
+        except ResourceNotFoundError as e:
+            logger.info("Failed to get component version, %s", e)
+        except Exception as e:  # pylint: disable=broad-except
+            logger.error("Failed to compare client_component_hash, %s", e)
+
         try:
             if self._registry_name:
                 start_time = time.time()
@@ -340,14 +415,27 @@ class ComponentOperations(_ScopeDependentOperations):
                 polling_wait(poller=poller, start_time=start_time, message=message, timeout=None)
 
             else:
-                result = self._version_operation.create_or_update(
-                    name=name,
-                    version=version,
-                    resource_group_name=self._resource_group_name,
-                    workspace_name=self._workspace_name,
-                    body=rest_component_resource,
-                    **self._init_args,
-                )
+                # _auto_increment_version can be True for non-registry component creation operation;
+                # and anonymous component should use hash as version
+                if not component._is_anonymous and component._auto_increment_version:
+                    result = _create_or_update_autoincrement(
+                        name=name,
+                        body=rest_component_resource,
+                        version_operation=self._version_operation,
+                        container_operation=self._container_operation,
+                        resource_group_name=self._operation_scope.resource_group_name,
+                        workspace_name=self._workspace_name,
+                        **self._init_args,
+                    )
+                else:
+                    result = self._version_operation.create_or_update(
+                        name=name,
+                        version=version,
+                        resource_group_name=self._resource_group_name,
+                        workspace_name=self._workspace_name,
+                        body=rest_component_resource,
+                        **self._init_args,
+                    )
         except Exception as e:
             raise e
 
@@ -363,7 +451,7 @@ class ComponentOperations(_ScopeDependentOperations):
         )
         return component
 
-    # @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
@@ -390,7 +478,7 @@ class ComponentOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    # @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,
@@ -459,9 +547,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 not isinstance(component.environment, dict)
                 and not type(component.environment).__name__ == "InternalEnvironment"
             ):
-                component.environment = resolver(
-                    component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
-                )
+                component.environment = resolver(component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
 
     def _resolve_arm_id_or_upload_dependencies(self, component: Component) -> None:
         if isinstance(component, AutoMLComponent):
@@ -505,21 +591,15 @@ class ComponentOperations(_ScopeDependentOperations):
         the base path of the pipeline component.
         :type base_path: str
         """
-        from azure.ai.ml.entities._builders import Pipeline
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 
         for _, job_instance in jobs.items():
             # resolve inputs for each job's component
-            if isinstance(job_instance, Pipeline):
-                node: Pipeline = job_instance
-                self._job_operations._resolve_pipeline_job_inputs(
-                    node,
-                    base_path,
-                )
-            elif isinstance(job_instance, BaseNode):
+            if isinstance(job_instance, BaseNode):
                 node: BaseNode = job_instance
                 self._job_operations._resolve_job_inputs(
-                    map(lambda x: x._data, node.inputs.values()),
+                    # parameter group input need to be flattened first
+                    self._job_operations._flatten_group_inputs(node.inputs),
                     base_path,
                 )
             elif isinstance(job_instance, AutoMLJob):
@@ -559,6 +639,7 @@ class ComponentOperations(_ScopeDependentOperations):
         The ideal solution should be done after PRS team decides how to handle parallel.task.code
         """
         from azure.ai.ml.entities import Parallel, ParallelComponent
+
         if not isinstance(node, Parallel):
             return
         component = node._component  # pylint: disable=protected-access
@@ -574,9 +655,7 @@ class ComponentOperations(_ScopeDependentOperations):
             )
             node.task.code = component.code
         if node.task.environment:
-            node.task.environment = resolver(
-                component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
-            )
+            node.task.environment = resolver(component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
 
     @classmethod
     def _set_default_display_name_for_anonymous_component_in_node(cls, node: BaseNode, default_name: str):
@@ -592,12 +671,12 @@ class ComponentOperations(_ScopeDependentOperations):
         # TODO: the same anonymous component with different node name will have different anonymous hash
         # as their display name will be different.
         if (
-                isinstance(component, Component)
-                # check if component is anonymous and not created based on its id. We can't directly check
-                # node._component._is_anonymous as it will be set to True on component creation,
-                # which is later than this check
-                and not component.id
-                and not component.display_name
+            isinstance(component, Component)
+            # check if component is anonymous and not created based on its id. We can't directly check
+            # node._component._is_anonymous as it will be set to True on component creation,
+            # which is later than this check
+            and not component.id
+            and not component.display_name
         ):
             component.display_name = default_name
 
@@ -616,22 +695,22 @@ class ComponentOperations(_ScopeDependentOperations):
                 node.compute_name = resolver(node.compute_name, azureml_type=AzureMLResourceType.COMPUTE)
 
     @classmethod
-    def _divide_nodes_to_resolve_into_layers(
-        cls,
-        component: PipelineComponent,
-        extra_operations: List[Callable]
-    ):
-        """Traverse the pipeline component and divide nodes to resolve into layers.
+    def _divide_nodes_to_resolve_into_layers(cls, component: PipelineComponent, extra_operations: List[Callable]):
+        """Traverse the pipeline component and divide nodes to resolve into layers. Note that all leaf nodes will be
+        put in the last layer.
         For example, for below pipeline component, assuming that all nodes need to be resolved:
           A
          /|\
         B C D
         | |
         E F
+        |
+        G
         return value will be:
         [
-          [("B", B), ("C", C), ("D", D)],
-          [("E", E), ("F", F)],
+          [("B", B), ("C", C)],
+          [("E", E)],
+          [("D", D), ("F", F), ("G", G)],
         ]
 
         :param component: The pipeline component to resolve.
@@ -641,41 +720,78 @@ class ComponentOperations(_ScopeDependentOperations):
         :return: A list of layers of nodes to resolve.
         :rtype: List[List[Tuple[str, BaseNode]]]
         """
-        # add an empty layer to mark the end of the first layer
-        layers, cur_layer_head, cur_layer = [list(component.jobs.items()), []], 0, 0
+        nodes_to_process = list(component.jobs.items())
+        layers = []
+        leaf_nodes = []
 
-        while cur_layer < len(layers) and cur_layer_head < len(layers[cur_layer]):
-            key, job_instance = layers[cur_layer][cur_layer_head]
-            cur_layer_head += 1
+        while nodes_to_process:
+            layers.append([])
+            new_nodes_to_process = []
+            for key, job_instance in nodes_to_process:
+                cls._resolve_binding_on_supported_fields_for_node(job_instance)
+                if isinstance(job_instance, LoopNode):
+                    job_instance = job_instance.body
 
-            cls._resolve_binding_on_supported_fields_for_node(job_instance)
-            if isinstance(job_instance, LoopNode):
-                job_instance = job_instance.body
+                for extra_operation in extra_operations:
+                    extra_operation(job_instance, key)
 
-            for extra_operation in extra_operations:
-                extra_operation(job_instance, key)
+                if isinstance(job_instance, BaseNode) and isinstance(job_instance._component, PipelineComponent):
+                    # candidates for next layer
+                    new_nodes_to_process.extend(job_instance.component.jobs.items())
+                    # use layers to store pipeline nodes in each layer for now
+                    layers[-1].append((key, job_instance))
+                else:
+                    # note that LoopNode has already been replaced by its body here
+                    leaf_nodes.append((key, job_instance))
+            nodes_to_process = new_nodes_to_process
 
-            if isinstance(job_instance, BaseNode) and isinstance(job_instance._component, PipelineComponent):
-                if cur_layer + 1 == len(layers):
-                    layers.append([])
-                layers[cur_layer+1].extend(job_instance.component.jobs.items())
-
-            if cur_layer_head == len(layers[cur_layer]):
-                cur_layer += 1
-                cur_layer_head = 0
-
-        # if there is no subgraph, pop the empty layer inserted at the beginning
-        if len(layers[-1]) == 0:
+        # if there is subgraph, the last item in layers will be empty for now as all leaf nodes are stored in leaf_nodes
+        if len(layers) != 0:
             layers.pop()
+            layers.append(leaf_nodes)
 
         return layers
 
+    def _get_workspace_key(self) -> str:
+        try:
+            workspace_rest = self._workspace_operations._operation.get(
+                resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
+            )
+            return workspace_rest.workspace_id
+        except HttpResponseError:
+            return "{}/{}/{}".format(self._subscription_id, self._resource_group_name, self._workspace_name)
+
+    def _get_registry_key(self) -> str:
+        """Get key for used registry.
+        Note that, although registry id is in registry discovery response, it is not in RegistryDiscoveryDto; and we'll
+        lose the information after deserialization.
+        To avoid changing related rest client, we simply use registry related information from self to construct
+        registry key, which means that on-disk cache will be invalid if a registry is deleted and then created
+        again with the same name.
+        """
+        return "{}/{}/{}".format(self._subscription_id, self._resource_group_name, self._registry_name)
+
+    def _get_client_key(self) -> str:
+        """Get key for used client.
+        Key should be able to uniquely identify used registry or workspace.
+        """
+        # check cache first
+        if self._client_key:
+            return self._client_key
+
+        # registry name has a higher priority comparing to workspace name according to current __init__ implementation
+        # of MLClient
+        if self._registry_name:
+            self._client_key = "registry/" + self._get_registry_key()
+        elif self._workspace_name:
+            self._client_key = "workspace/" + self._get_workspace_key()
+        else:
+            # This should never happen.
+            raise ValueError("Either workspace name or registry name must be provided to use component operations.")
+        return self._client_key
+
     def _resolve_dependencies_for_pipeline_component_jobs(
-        self,
-        component: Union[Component, str],
-        resolver: Callable,
-        *,
-        resolve_inputs: bool = True
+        self, component: Union[Component, str], resolver: Callable, *, resolve_inputs: bool = True
     ):
         """Resolve dependencies for pipeline component jobs.
         Will directly return if component is not a pipeline component.
@@ -707,7 +823,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 partial(self._try_resolve_environment_for_component, resolver=resolver),
                 partial(self._try_resolve_compute_for_node, resolver=resolver),
                 # should we resolve code here after we do extra operations concurrently?
-            ]
+            ],
         )
 
         # cache anonymous component only for now
@@ -715,17 +831,11 @@ class ComponentOperations(_ScopeDependentOperations):
         # relatively simple and of small number of distinct instances
         component_cache = CachedNodeResolver(
             resolver=resolver,
-            subscription_id=self._subscription_id,
-            resource_group_name=self._resource_group_name,
-            workspace_name=self._workspace_name,
-            registry_name=self._registry_name,
+            client_key=self._get_client_key(),
         )
 
         for layer in reversed(layers):
             for _, job_instance in layer:
-                if isinstance(job_instance, LoopNode):
-                    job_instance = job_instance.body
-
                 if isinstance(job_instance, AutoMLJob):
                     # only compute is resolved here
                     self._job_operations._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)
@@ -820,7 +930,8 @@ def _refine_component(component_func: types.FunctionType) -> Component:
 
 
 def _try_resolve_code_for_component(component: Component, get_arm_id_and_fill_back: Callable) -> None:
-    with component._resolve_local_code() as code:
-        if code is None:
-            return
-        component.code = get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)
+    if isinstance(component, ComponentCodeMixin):
+        with component._build_code() as code:
+            if code is None:
+                return
+            component.code = get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)

@@ -35,11 +35,11 @@ from typing import (
     Tuple,
     IO,
     Any,
-    Dict,
     Iterable,
     MutableMapping,
     AsyncIterable,
     cast,
+    Dict,
 )
 import xml.etree.ElementTree as ET
 from urllib.parse import urlparse
@@ -67,22 +67,16 @@ FilesType = Union[Mapping[str, FileType], Sequence[Tuple[str, FileType]]]
 ContentTypeBase = Union[str, bytes, Iterable[bytes]]
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
+DataType = Optional[Union[bytes, Dict[str, Union[str, int]]]]
+
 ########################### HELPER SECTION #################################
 
 
 def _verify_data_object(name, value):
     if not isinstance(name, str):
-        raise TypeError(
-            "Invalid type for data name. Expected str, got {}: {}".format(
-                type(name), name
-            )
-        )
+        raise TypeError("Invalid type for data name. Expected str, got {}: {}".format(type(name), name))
     if value is not None and not isinstance(value, (str, bytes, int, float)):
-        raise TypeError(
-            "Invalid type for data value. Expected primitive type, got {}: {}".format(
-                type(name), name
-            )
-        )
+        raise TypeError("Invalid type for data value. Expected primitive type, got {}: {}".format(type(name), name))
 
 
 def set_urlencoded_body(data, has_files):
@@ -105,9 +99,7 @@ def set_urlencoded_body(data, has_files):
 
 
 def set_multipart_body(files):
-    formatted_files = {
-        f: _format_data_helper(d) for f, d in files.items() if d is not None
-    }
+    formatted_files = {f: _format_data_helper(d) for f, d in files.items() if d is not None}
     return {}, formatted_files
 
 
@@ -188,8 +180,8 @@ def decode_to_text(encoding: Optional[str], content: bytes) -> str:
     return codecs.getincrementaldecoder("utf-8-sig")(errors="replace").decode(content)
 
 
-class HttpRequestBackcompatMixin(object):
-    def __getattr__(self, attr):
+class HttpRequestBackcompatMixin:
+    def __getattr__(self, attr: str):
         backcompat_attrs = [
             "files",
             "data",
@@ -224,6 +216,9 @@ class HttpRequestBackcompatMixin(object):
     def _multipart_mixed_info(self):
         """DEPRECATED: Information used to make multipart mixed requests.
         This is deprecated and will be removed in a later release.
+
+        :rtype: tuple
+        :return: (requests, policies, boundary, kwargs)
         """
         try:
             return self._multipart_mixed_info_val
@@ -234,6 +229,8 @@ class HttpRequestBackcompatMixin(object):
     def _multipart_mixed_info(self, val):
         """DEPRECATED: Set information to make multipart mixed requests.
         This is deprecated and will be removed in a later release.
+
+        :param tuple val: (requests, policies, boundary, kwargs)
         """
         self._multipart_mixed_info_val = val
 
@@ -241,6 +238,9 @@ class HttpRequestBackcompatMixin(object):
     def _query(self):
         """DEPRECATED: Query parameters passed in by user
         This is deprecated and will be removed in a later release.
+
+        :rtype: dict
+        :return: Query parameters
         """
         query = urlparse(self.url).query
         if query:
@@ -248,16 +248,21 @@ class HttpRequestBackcompatMixin(object):
         return {}
 
     @property
-    def _body(self):
+    def _body(self) -> DataType:
         """DEPRECATED: Body of the request. You should use the `content` property instead
         This is deprecated and will be removed in a later release.
+
+        :rtype: bytes
+        :return: Body of the request
         """
         return self._data
 
     @_body.setter
-    def _body(self, val):
+    def _body(self, val: DataType):
         """DEPRECATED: Set the body of the request
         This is deprecated and will be removed in a later release.
+
+        :param bytes val: Body of the request
         """
         self._data = val
 
@@ -266,6 +271,8 @@ class HttpRequestBackcompatMixin(object):
         This is deprecated and will be removed in a later release.
         You should pass the query parameters through the kwarg `params`
         instead.
+
+        :param dict params: Query parameters
         """
         return _format_parameters_helper(self, params)
 
@@ -273,13 +280,14 @@ class HttpRequestBackcompatMixin(object):
         """DEPRECATED: Set the streamed request body.
         This is deprecated and will be removed in a later release.
         You should pass your stream content through the `content` kwarg instead
+
+        :param data: Streamed data
+        :type data: bytes or iterable
         """
         if not isinstance(data, binary_type) and not any(
             hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]
         ):
-            raise TypeError(
-                "A streamable data source must be an open file-like object or iterable."
-            )
+            raise TypeError("A streamable data source must be an open file-like object or iterable.")
         headers = self._set_body(content=data)
         self._files = None
         self.headers.update(headers)
@@ -288,6 +296,8 @@ class HttpRequestBackcompatMixin(object):
         """DEPRECATED: Set the text body
         This is deprecated and will be removed in a later release.
         You should pass your text content through the `content` kwarg instead
+
+        :param str data: Text data
         """
         headers = self._set_body(content=data)
         self.headers.update(headers)
@@ -297,6 +307,9 @@ class HttpRequestBackcompatMixin(object):
         """DEPRECATED: Set the xml body.
         This is deprecated and will be removed in a later release.
         You should pass your xml content through the `content` kwarg instead
+
+        :param data: XML data
+        :type data: xml.etree.ElementTree.Element
         """
         headers = self._set_body(content=data)
         self.headers.update(headers)
@@ -306,6 +319,9 @@ class HttpRequestBackcompatMixin(object):
         """DEPRECATED: Set the json request body.
         This is deprecated and will be removed in a later release.
         You should pass your json content through the `json` kwarg instead
+
+        :param data: JSON data
+        :type data: dict
         """
         headers = self._set_body(json=data)
         self.headers.update(headers)
@@ -315,6 +331,9 @@ class HttpRequestBackcompatMixin(object):
         """DEPRECATED: Set the formrequest body.
         This is deprecated and will be removed in a later release.
         You should pass your stream content through the `files` kwarg instead
+
+        :param data: Form data
+        :type data: dict
         """
         if data is None:
             data = {}
@@ -332,6 +351,8 @@ class HttpRequestBackcompatMixin(object):
         """DEPRECATED: Set the bytes request body.
         This is deprecated and will be removed in a later release.
         You should pass your bytes content through the `content` kwarg instead
+
+        :param bytes data: Bytes data
         """
         headers = self._set_body(content=data)
         # we don't want default Content-Type
@@ -344,6 +365,9 @@ class HttpRequestBackcompatMixin(object):
     def _set_multipart_mixed(self, *requests, **kwargs):
         """DEPRECATED: Set the multipart mixed info.
         This is deprecated and will be removed in a later release.
+
+        :param requests: Requests to be sent in the multipart request
+        :type requests: list[HttpRequest]
         """
         self.multipart_mixed_info = (
             requests,
@@ -355,18 +379,28 @@ class HttpRequestBackcompatMixin(object):
     def _prepare_multipart_body(self, content_index=0):
         """DEPRECATED: Prepare your request body for multipart requests.
         This is deprecated and will be removed in a later release.
+
+        :param int content_index: The index of the request to be sent in the multipart request
+        :returns: The updated index after all parts in this request have been added.
+        :rtype: int
         """
         return _prepare_multipart_body_helper(self, content_index)
 
     def _serialize(self):
         """DEPRECATED: Serialize this request using application/http spec.
         This is deprecated and will be removed in a later release.
+
         :rtype: bytes
+        :return: The serialized request
         """
         return _serialize_request(self)
 
     def _add_backcompat_properties(self, request, memo):
-        """While deepcopying, we also need to add the private backcompat attrs"""
-        request._multipart_mixed_info = (  # pylint: disable=protected-access
-            copy.deepcopy(self._multipart_mixed_info, memo)
+        """While deepcopying, we also need to add the private backcompat attrs.
+
+        :param HttpRequest request: The request to copy from
+        :param dict memo: The memo dict used by deepcopy
+        """
+        request._multipart_mixed_info = copy.deepcopy(  # pylint: disable=protected-access
+            self._multipart_mixed_info, memo
         )

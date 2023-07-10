@@ -1,16 +1,20 @@
 # Release History
 
-## 11.4.0b3 (Unreleased)
+## 11.4.0b4 (2023-07-11)
+
+### Features Added
+
+- Added `VectorSearch` support.
+
+### Breaking Changes
+
+- Deprecated `SentimentSkillV1` and `EntityRecognitionSkillV1`.
+
+## 11.4.0b3 (2023-02-07)
 
 ### Features Added
 
 - Added the semantic reranker score and captions on `SearchResult`.(thanks to @LucasVascovici for the contribution)
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 11.4.0b2 (2022-11-08)
 

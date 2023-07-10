@@ -11,6 +11,7 @@ class DocumentAnalysisApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Form Recognizer API versions supported by DocumentAnalysisClient and DocumentModelAdministrationClient."""
 
     #: This is the default version
+    V2023_02_28_PREVIEW = "2023-02-28-preview"
     V2022_08_31 = "2022-08-31"
 
 
@@ -23,7 +24,11 @@ class FormRecognizerApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 def validate_api_version(api_version: str, client_kind: str) -> None:
-    """Raise ValueError if api_version is invalid"""
+    """Raise ValueError if api_version is invalid
+
+    :param str api_version: API version to be validated.
+    :param str client_kind: Type of client to validate with supported API versions.
+    """
 
     if client_kind == "form":
         try:
@@ -40,7 +45,7 @@ def validate_api_version(api_version: str, client_kind: str) -> None:
                 )
             except ValueError:
                 pass
-            raise ValueError(err_message)
+            raise ValueError(err_message)  # pylint: disable=raise-missing-from
     else:
         try:
             DocumentAnalysisApiVersion(api_version)
@@ -56,4 +61,4 @@ def validate_api_version(api_version: str, client_kind: str) -> None:
                 )
             except ValueError:
                 pass
-            raise ValueError(err_message)
+            raise ValueError(err_message)  # pylint: disable=raise-missing-from

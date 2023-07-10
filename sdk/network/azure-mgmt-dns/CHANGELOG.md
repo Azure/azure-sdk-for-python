@@ -1,5 +1,23 @@
 # Release History
 
+## 8.1.0 (2023-06-14)
+
+### Features Added
+
+  - Added operation group DnssecConfigsOperations
+  - Model RecordSet has a new parameter ds_records
+  - Model RecordSet has a new parameter naptr_records
+  - Model RecordSet has a new parameter tlsa_records
+  - Model Zone has a new parameter signing_keys
+  - Model Zone has a new parameter system_data
+
+## 8.1.0b1 (2023-02-10)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
 ## 8.0.0 (2021-04-14)
 
  - GA release

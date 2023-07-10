@@ -11,7 +11,6 @@ from azure.core.async_paging import AsyncItemPaged
 
 from .._models import KeyVaultSecret, DeletedSecret, SecretProperties
 from .._shared import AsyncKeyVaultClientBase
-from .._shared.exceptions import error_map as _error_map
 from .._shared._polling_async import AsyncDeleteRecoverPollingMethod
 
 
@@ -48,6 +47,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         :param str name: The name of the secret
         :param str version: (optional) Version of the secret to get. If unspecified, gets the latest version.
 
+        :returns: The fetched secret.
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
 
         :raises:
@@ -62,7 +62,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Get a secret
                 :dedent: 8
         """
-        bundle = await self._client.get_secret(self.vault_url, name, version or "", error_map=_error_map, **kwargs)
+        bundle = await self._client.get_secret(self.vault_url, name, version or "", **kwargs)
         return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace_async
@@ -76,11 +76,12 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :keyword bool enabled: Whether the secret is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
-        :paramtype tags: Dict[str, str]
+        :paramtype tags: Dict[str, str] or None
         :keyword str content_type: An arbitrary string indicating the type of the secret, e.g. 'password'
         :keyword ~datetime.datetime not_before: Not before date of the secret in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the secret in UTC
 
+        :returns: The created or updated secret.
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
 
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -113,7 +114,6 @@ class SecretClient(AsyncKeyVaultClientBase):
             self.vault_url,
             name,
             parameters=parameters,
-            error_map=_error_map,
             **kwargs
         )
         return KeyVaultSecret._from_secret_bundle(bundle)
@@ -132,11 +132,12 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :keyword bool enabled: Whether the secret is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
-        :paramtype tags: Dict[str, str]
+        :paramtype tags: Dict[str, str] or None
         :keyword str content_type: An arbitrary string indicating the type of the secret, e.g. 'password'
         :keyword ~datetime.datetime not_before: Not before date of the secret in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the secret in UTC
 
+        :returns: The updated secret properties.
         :rtype: ~azure.keyvault.secrets.SecretProperties
 
         :raises:
@@ -171,7 +172,6 @@ class SecretClient(AsyncKeyVaultClientBase):
             name,
             secret_version=version or "",
             parameters=parameters,
-            error_map=_error_map,
             **kwargs
         )
         return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
@@ -233,6 +233,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: Name of the secret to back up
 
+        :returns: The backup result, in a protected bytes format that can only be used by Azure Key Vault.
         :rtype: bytes
 
         :raises:
@@ -247,7 +248,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Back up a secret
                 :dedent: 8
         """
-        backup_result = await self._client.backup_secret(self.vault_url, name, error_map=_error_map, **kwargs)
+        backup_result = await self._client.backup_secret(self.vault_url, name, **kwargs)
         return backup_result.value
 
     @distributed_trace_async
@@ -274,7 +275,6 @@ class SecretClient(AsyncKeyVaultClientBase):
         bundle = await self._client.restore_secret(
             self.vault_url,
             parameters=self._models.SecretRestoreParameters(secret_bundle_backup=backup),
-            error_map=_error_map,
             **kwargs
         )
         return SecretProperties._from_secret_bundle(bundle)
@@ -287,6 +287,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: Name of the secret to delete.
 
+        :returns: The deleted secret.
         :rtype: ~azure.keyvault.secrets.DeletedSecret
 
         :raises:
@@ -305,7 +306,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         deleted_secret = DeletedSecret._from_deleted_secret_bundle(
-            await self._client.delete_secret(self.vault_url, name, error_map=_error_map, **kwargs)
+            await self._client.delete_secret(self.vault_url, name, **kwargs)
         )
 
         polling_method = AsyncDeleteRecoverPollingMethod(
@@ -325,6 +326,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: Name of the deleted secret
 
+        :returns: The deleted secret.
         :rtype: ~azure.keyvault.secrets.DeletedSecret
 
         :raises:
@@ -339,7 +341,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Get a deleted secret
                 :dedent: 8
         """
-        bundle = await self._client.get_deleted_secret(self.vault_url, name, error_map=_error_map, **kwargs)
+        bundle = await self._client.get_deleted_secret(self.vault_url, name, **kwargs)
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     @distributed_trace
@@ -391,7 +393,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 await secret_client.purge_deleted_secret("secret-name")
 
         """
-        await self._client.purge_deleted_secret(self.vault_url, name, error_map=_error_map, **kwargs)
+        await self._client.purge_deleted_secret(self.vault_url, name, **kwargs)
 
     @distributed_trace_async
     async def recover_deleted_secret(self, name: str, **kwargs) -> SecretProperties:
@@ -403,6 +405,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: Name of the deleted secret to recover
 
+        :returns: The recovered secret's properties.
         :rtype: ~azure.keyvault.secrets.SecretProperties
 
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -419,7 +422,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         recovered_secret = SecretProperties._from_secret_bundle(
-            await self._client.recover_deleted_secret(self.vault_url, name, error_map=_error_map, **kwargs)
+            await self._client.recover_deleted_secret(self.vault_url, name, **kwargs)
         )
 
         command = partial(self.get_secret, name=name, **kwargs)

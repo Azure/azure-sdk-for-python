@@ -5,11 +5,11 @@
 import abc
 import base64
 import json
+import os
 import time
 from uuid import uuid4
 from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union, Dict
 
-import six
 from msal import TokenCache
 
 from azure.core.pipeline import PipelineResponse
@@ -17,8 +17,10 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
+from .._constants import EnvironmentVariables
 from .utils import get_default_authority, normalize_authority, resolve_tenant
 from .aadclient_certificate import AadClientCertificate
+
 
 if TYPE_CHECKING:
     from azure.core.pipeline import AsyncPipeline, Pipeline
@@ -39,10 +41,10 @@ class AadClientBase(abc.ABC):
             self,
             tenant_id: str,
             client_id: str,
-            authority: str = None,
-            cache: TokenCache = None,
+            authority: Optional[str] = None,
+            cache: Optional[TokenCache] = None,
             *,
-            additionally_allowed_tenants: List[str] = None,
+            additionally_allowed_tenants: Optional[List[str]] = None,
             **kwargs: Any
     ) -> None:
         self._authority = normalize_authority(authority) if authority else get_default_authority()
@@ -51,6 +53,7 @@ class AadClientBase(abc.ABC):
 
         self._cache = cache or TokenCache()
         self._client_id = client_id
+        self._capabilities = None if EnvironmentVariables.AZURE_IDENTITY_DISABLE_CP1 in os.environ else ["CP1"]
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._pipeline = self._build_pipeline(**kwargs)
 
@@ -72,7 +75,7 @@ class AadClientBase(abc.ABC):
         return None
 
     def get_cached_refresh_tokens(self, scopes: Iterable[str]) -> List[Dict]:
-        """Assumes all cached refresh tokens belong to the same user"""
+        # Assumes all cached refresh tokens belong to the same user.
         return self._cache.find(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes))
 
     @abc.abstractmethod
@@ -171,6 +174,10 @@ class AadClientBase(abc.ABC):
             "redirect_uri": redirect_uri,
             "scope": " ".join(scopes),
         }
+
+        claims = _merge_claims_challenge_and_capabilities(self._capabilities, kwargs.get("claims"))
+        if claims:
+            data["claims"] = claims
         if client_secret:
             data["client_secret"] = client_secret
 
@@ -191,27 +198,24 @@ class AadClientBase(abc.ABC):
             "scope": " ".join(scopes),
         }
 
+        claims = _merge_claims_challenge_and_capabilities(self._capabilities, kwargs.get("claims"))
+        if claims:
+            data["claims"] = claims
+
         request = self._post(data, **kwargs)
         return request
 
     def _get_client_certificate_assertion(self, certificate: AadClientCertificate, **kwargs: Any) -> str:
         now = int(time.time())
-        header = six.ensure_binary(
-            json.dumps({"typ": "JWT", "alg": "RS256", "x5t": certificate.thumbprint}), encoding="utf-8"
-        )
-        payload = six.ensure_binary(
-            json.dumps(
-                {
-                    "jti": str(uuid4()),
-                    "aud": self._get_token_url(**kwargs),
-                    "iss": self._client_id,
-                    "sub": self._client_id,
-                    "nbf": now,
-                    "exp": now + (60 * 30),
-                }
-            ),
-            encoding="utf-8",
-        )
+        header = json.dumps({"typ": "JWT", "alg": "RS256", "x5t": certificate.thumbprint}).encode("utf-8")
+        payload = json.dumps({
+            "jti": str(uuid4()),
+            "aud": self._get_token_url(**kwargs),
+            "iss": self._client_id,
+            "sub": self._client_id,
+            "nbf": now,
+            "exp": now + (60 * 30),
+        }).encode("utf-8")
         jws = base64.urlsafe_b64encode(header) + b"." + base64.urlsafe_b64encode(payload)
         signature = certificate.sign(jws)
         jwt_bytes = jws + b"." + base64.urlsafe_b64encode(signature)
@@ -233,6 +237,11 @@ class AadClientBase(abc.ABC):
             "grant_type": "client_credentials",
             "scope": " ".join(scopes),
         }
+
+        claims = _merge_claims_challenge_and_capabilities(self._capabilities, kwargs.get("claims"))
+        if claims:
+            data["claims"] = claims
+
         request = self._post(data, **kwargs)
         return request
 
@@ -250,6 +259,11 @@ class AadClientBase(abc.ABC):
             "requested_token_use": "on_behalf_of",
             "scope": " ".join(scopes),
         }
+
+        claims = _merge_claims_challenge_and_capabilities(self._capabilities, kwargs.get("claims"))
+        if claims:
+            data["claims"] = claims
+
         if isinstance(client_credential, AadClientCertificate):
             data["client_assertion"] = self._get_client_certificate_assertion(client_credential)
             data["client_assertion_type"] = JWT_BEARER_ASSERTION
@@ -272,6 +286,11 @@ class AadClientBase(abc.ABC):
             "client_id": self._client_id,
             "client_info": 1,  # request AAD include home_account_id in its response
         }
+
+        claims = _merge_claims_challenge_and_capabilities(self._capabilities, kwargs.get("claims"))
+        if claims:
+            data["claims"] = claims
+
         request = self._post(data, **kwargs)
         return request
 
@@ -289,6 +308,10 @@ class AadClientBase(abc.ABC):
             "client_id": self._client_id,
             "client_info": 1,  # request AAD include home_account_id in its response
         }
+        claims = _merge_claims_challenge_and_capabilities(self._capabilities, kwargs.get("claims"))
+        if claims:
+            data["claims"] = claims
+
         if isinstance(client_credential, AadClientCertificate):
             data["client_assertion"] = self._get_client_certificate_assertion(client_credential)
             data["client_assertion_type"] = JWT_BEARER_ASSERTION
@@ -297,8 +320,7 @@ class AadClientBase(abc.ABC):
         request = self._post(data, **kwargs)
         return request
 
-    def _get_token_url(self, **kwargs):
-        # type: (**Any) -> str
+    def _get_token_url(self, **kwargs: Any) -> str:
         tenant = resolve_tenant(
             self._tenant_id,
             additionally_allowed_tenants=self._additionally_allowed_tenants,
@@ -309,6 +331,17 @@ class AadClientBase(abc.ABC):
     def _post(self, data: Dict, **kwargs: Any) -> HttpRequest:
         url = self._get_token_url(**kwargs)
         return HttpRequest("POST", url, data=data, headers={"Content-Type": "application/x-www-form-urlencoded"})
+
+
+def _merge_claims_challenge_and_capabilities(capabilities, claims_challenge):
+    # Represent capabilities as {"access_token": {"xms_cc": {"values": capabilities}}}
+    # and then merge/add it into incoming claims
+    if not capabilities:
+        return claims_challenge
+    claims_dict = json.loads(claims_challenge) if claims_challenge else {}
+    for key in ["access_token"]:
+        claims_dict.setdefault(key, {}).update(xms_cc={"values": capabilities})
+    return json.dumps(claims_dict)
 
 
 def _scrub_secrets(response: Dict) -> None:

@@ -1,0 +1,122 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utshare284e30e0?restype=share",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Wed, 01 Feb 2023 00:51:21 GMT",
+        "x-ms-version": "2022-11-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Date": "Wed, 01 Feb 2023 00:50:34 GMT",
+        "ETag": "\u00220x8DB03EE544BBA7E\u0022",
+        "Last-Modified": "Wed, 01 Feb 2023 00:50:35 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2022-11-02"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utshare284e30e0/file284e30e0.",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-allow-trailing-dot": "true",
+        "x-ms-content-length": "1024",
+        "x-ms-date": "Wed, 01 Feb 2023 00:51:23 GMT",
+        "x-ms-file-attributes": "none",
+        "x-ms-file-creation-time": "now",
+        "x-ms-file-last-write-time": "now",
+        "x-ms-file-permission": "Inherit",
+        "x-ms-type": "file",
+        "x-ms-version": "2022-11-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Date": "Wed, 01 Feb 2023 00:50:35 GMT",
+        "ETag": "\u00220x8DB03EE545CFC48\u0022",
+        "Last-Modified": "Wed, 01 Feb 2023 00:50:35 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2023-02-01T00:50:35.5536968Z",
+        "x-ms-file-creation-time": "2023-02-01T00:50:35.5536968Z",
+        "x-ms-file-id": "13835128424026341376",
+        "x-ms-file-last-write-time": "2023-02-01T00:50:35.5536968Z",
+        "x-ms-file-parent-id": "0",
+        "x-ms-file-permission-key": "6195413519394405181*13244350442060319835",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2022-11-02"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utshare284e30e0/file284e30e0.?comp=rangelist",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-allow-trailing-dot": "true",
+        "x-ms-date": "Wed, 01 Feb 2023 00:51:23 GMT",
+        "x-ms-version": "2022-11-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Wed, 01 Feb 2023 00:50:35 GMT",
+        "ETag": "\u00220x8DB03EE545CFC48\u0022",
+        "Last-Modified": "Wed, 01 Feb 2023 00:50:35 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-content-length": "1024",
+        "x-ms-version": "2022-11-02"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CRanges /\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utshare284e30e0/file284e30e0.",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-allow-trailing-dot": "true",
+        "x-ms-date": "Wed, 01 Feb 2023 00:51:23 GMT",
+        "x-ms-version": "2022-11-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "1024",
+        "Content-Type": "application/octet-stream",
+        "Date": "Wed, 01 Feb 2023 00:50:35 GMT",
+        "ETag": "\u00220x8DB03EE545CFC48\u0022",
+        "Last-Modified": "Wed, 01 Feb 2023 00:50:35 GMT",
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2023-02-01T00:50:35.5536968Z",
+        "x-ms-file-creation-time": "2023-02-01T00:50:35.5536968Z",
+        "x-ms-file-id": "13835128424026341376",
+        "x-ms-file-last-write-time": "2023-02-01T00:50:35.5536968Z",
+        "x-ms-file-parent-id": "0",
+        "x-ms-file-permission-key": "6195413519394405181*13244350442060319835",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-type": "File",
+        "x-ms-version": "2022-11-02"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

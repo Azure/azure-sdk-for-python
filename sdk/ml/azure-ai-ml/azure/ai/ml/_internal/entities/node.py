@@ -8,20 +8,18 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml import Input, Output
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.constants import JobType
-from azure.ai.ml.entities import Component, Job
-from azure.ai.ml.entities._builders import BaseNode
-from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput
-from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
-
+from ... import Input, Output
+from ..._schema import PathAwareSchema
+from ...constants import JobType
+from ...entities import Component, Job
+from ...entities._builders import BaseNode
+from ...entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput
+from ...entities._util import convert_ordered_dict_to_dict
 from .._schema.component import NodeType
 
 
 class InternalBaseNode(BaseNode):
-    """Base class for node of internal components in pipeline. Can be
-    instantiated directly.
+    """Base class for node of internal components in pipeline. Can be instantiated directly.
 
     :param type: Type of pipeline node
     :type type: str
@@ -126,10 +124,10 @@ class InternalBaseNode(BaseNode):
 
         base_dict.update(
             convert_ordered_dict_to_dict(
-                dict(
-                    componentId=self._get_component_id(),
-                    type=self.type,
-                )
+                {
+                    "componentId": self._get_component_id(),
+                    "type": self.type,
+                }
             )
         )
         return base_dict
@@ -177,9 +175,10 @@ class HDInsight(InternalBaseNode):
 
     @property
     def driver_memory(self) -> str:
-        """Amount of memory to use for the driver process. It's the same format as JVM memory
-        strings. Use lower-case suffixes, e.g. k, m, g, t, and p, for kilobyte, megabyte, gigabyte
-        and terabyte respectively. Example values are 10k, 10m and 10g.
+        """Amount of memory to use for the driver process.
+
+        It's the same format as JVM memory strings. Use lower-case suffixes, e.g. k, m, g, t, and p, for kilobyte,
+        megabyte, gigabyte and terabyte respectively. Example values are 10k, 10m and 10g.
         """
         return self._driver_memory
 
@@ -198,9 +197,10 @@ class HDInsight(InternalBaseNode):
 
     @property
     def executor_memory(self) -> str:
-        """Amount of memory to use per executor process. It's the same format as JVM memory strings.
-        Use lower-case suffixes, e.g. k, m, g, t, and p, for kilobyte, megabyte, gigabyte
-        and terabyte respectively. Example values are 10k, 10m and 10g.
+        """Amount of memory to use per executor process.
+
+        It's the same format as JVM memory strings. Use lower-case suffixes, e.g. k, m, g, t, and p, for kilobyte,
+        megabyte, gigabyte and terabyte respectively. Example values are 10k, 10m and 10g.
         """
         return self._executor_memory
 

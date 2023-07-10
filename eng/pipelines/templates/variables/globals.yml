@@ -5,3 +5,5 @@ variables:
   Package.EnableSBOMSigning: true
   # this will be disabled until issue#24299 is addressed.
   DisableDockerDetector: true
+  # Disable CodeQL injections except for where we specifically enable it
+  Codeql.SkipTaskAutoInjection: true

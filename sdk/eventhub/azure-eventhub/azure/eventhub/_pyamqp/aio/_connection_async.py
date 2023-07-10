@@ -134,6 +134,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         self._properties = kwargs.pop(
             "properties", None
         )  # type: Optional[Dict[str, str]]
+        self._remote_properties = None  # type: Optional[Dict[str, str]]
 
         self._allow_pipelined_open = kwargs.pop(
             "allow_pipelined_open", True
@@ -430,6 +431,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             )
             return
         self._remote_max_frame_size = frame[2]
+        self._remote_properties = frame[9]
         if self.state == ConnectionState.OPEN_SENT:
             await self._set_state(ConnectionState.OPENED)
         elif self.state == ConnectionState.HDR_EXCH:
@@ -546,8 +548,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """
         try:
             await self._incoming_endpoints[channel]._incoming_end(frame)  # pylint:disable=protected-access
+            outgoing_channel = self._incoming_endpoints[channel].channel
             self._incoming_endpoints.pop(channel)
-            self._outgoing_endpoints.pop(channel)
+            self._outgoing_endpoints.pop(outgoing_channel)
         except KeyError:
             #close the connection
             await self.close(

@@ -25,15 +25,20 @@ USAGE:
 import os
 import asyncio
 
+
 def format_bounding_region(bounding_regions):
     if not bounding_regions:
         return "N/A"
-    return ", ".join("Page #{}: {}".format(region.page_number, format_polygon(region.polygon)) for region in bounding_regions)
+    return ", ".join(
+        f"Page #{region.page_number}: {format_polygon(region.polygon)}"
+        for region in bounding_regions
+    )
+
 
 def format_polygon(polygon):
     if not polygon:
         return "N/A"
-    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in polygon])
+    return ", ".join([f"[{p.x}, {p.y}]" for p in polygon])
 
 
 async def get_words_on_document_line_async():
@@ -63,31 +68,23 @@ async def get_words_on_document_line_async():
             )
         result = await poller.result()
 
-    for idx, page in enumerate(result.pages):
-        print("----Analyzing lines and words from page #{}----".format(idx + 1))
+    for page in result.pages:
+        print(f"----Analyzing lines and words from page #{page.page_number}----")
         print(
-            "Page has width: {} and height: {}, measured with unit: {}".format(
-                page.width, page.height, page.unit
-            )
+            f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}"
         )
 
         if page.lines is not None:
             for line_idx, line in enumerate(page.lines):
                 words = line.get_words()
                 print(
-                    "...Line # {} has word count {} and text '{}' within bounding polygon '{}'".format(
-                        line_idx,
-                        len(words),
-                        line.content,
-                        format_polygon(line.polygon),
-                    )
+                    f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
+                    f"within bounding polygon '{format_polygon(line.polygon)}'"
                 )
 
                 for word in words:
                     print(
-                        "......Word '{}' has a confidence of {}".format(
-                            word.content, word.confidence
-                        )
+                        f"......Word '{word.content}' has a confidence of {word.confidence}"
                     )
 
     print("----------------------------------------")
@@ -98,4 +95,27 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    import sys
+    from azure.core.exceptions import HttpResponseError
+
+    try:
+        asyncio.run(main())
+    except HttpResponseError as error:
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
+        # Examples of how to check an HttpResponseError
+        # Check by error code:
+        if error.error is not None:
+            if error.error.code == "InvalidImage":
+                print(f"Received an invalid image error: {error.error}")
+            if error.error.code == "InvalidRequest":
+                print(f"Received an invalid request error: {error.error}")
+            # Raise the error again after printing it
+            raise
+        # If the inner error is None and then it is possible to check the message to get more information:
+        if "Invalid request".casefold() in error.message.casefold():
+            print(f"Uh-oh! Seems there was an invalid request: {error}")
+        # Raise the error again
+        raise

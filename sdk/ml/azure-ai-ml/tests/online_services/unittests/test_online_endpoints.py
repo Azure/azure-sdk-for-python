@@ -1,16 +1,14 @@
 from pathlib import Path
-from typing import Callable
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 import pytest
 from pytest_mock import MockFixture
-from requests import Response
-
-from azure.ai.ml import load_online_endpoint
+from azure.ai.ml import load_online_endpoint, load_online_deployment
 from azure.ai.ml._restclient.v2022_10_01.models import EndpointAuthKeys
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
 )
+from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     OnlineDeploymentData,
     OnlineDeploymentDetails,
@@ -19,7 +17,6 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AzureMLResourceType, HttpResponseStatusCode
-from azure.ai.ml.entities import OnlineEndpoint
 from azure.ai.ml.operations import (
     DatastoreOperations,
     EnvironmentOperations,
@@ -29,7 +26,7 @@ from azure.ai.ml.operations import (
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._online_endpoint_operations import _strip_zeroes_from_traffic
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
+from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
 from azure.identity import DefaultAzureCredential
 
@@ -393,20 +390,16 @@ class TestOnlineEndpointsOperations:
         mock_online_endpoint_operations._online_operation.get.assert_called_once()
         mock_online_endpoint_operations._online_operation.list_keys.assert_called_once()
 
-    def test_create_no_file_throw_exception(
-        self, mock_online_endpoint_operations: OnlineEndpointOperations
-    ) -> None:
+    def test_create_no_file_throw_exception(self, mock_online_endpoint_operations: OnlineEndpointOperations) -> None:
         with pytest.raises(Exception):
             mock_online_endpoint_operations.begin_create(name="random_name", file=None)
 
-    def test_create_no_type_throw_exception(
-        self, mock_online_endpoint_operations: OnlineEndpointOperations
-    ) -> None:
+    def test_create_no_type_throw_exception(self, mock_online_endpoint_operations: OnlineEndpointOperations) -> None:
         with pytest.raises(Exception):
             mock_online_endpoint_operations.begin_create(name="random_name", file=None)
 
     def test_create_no_type_in_file_throw_exception(
-        self, mock_online_endpoint_operations: OnlineEndpointOperations,  create_yaml_no_type
+        self, mock_online_endpoint_operations: OnlineEndpointOperations, create_yaml_no_type
     ) -> None:
         with pytest.raises(Exception):
             mock_online_endpoint_operations.begin_create(name="random_name", file=None)
@@ -430,9 +423,7 @@ class TestOnlineEndpointsOperations:
         mock_online_endpoint_operations._online_operation.begin_regenerate_keys.assert_called_once()
         mock_online_endpoint_operations._online_operation.get.assert_called_once()
 
-    def test_regenerate_invalid_key_type(
-        self, mock_online_endpoint_operations: OnlineEndpointOperations
-    ) -> None:
+    def test_regenerate_invalid_key_type(self, mock_online_endpoint_operations: OnlineEndpointOperations) -> None:
         with pytest.raises(Exception):
             mock_online_endpoint_operations.begin_regenerate_keys(name="random_name", key_type="invalid key type")
 
@@ -445,6 +436,7 @@ class TestOnlineEndpointsOperations:
         pytest.param({"blue": "100", "green": "0"}, {"blue": "100"}),
         pytest.param({"green": "0"}, {}),
         pytest.param({}, {}),
+        pytest.param({"blue": "10", "GREEN": "90"}, {"blue": "10", "green": "90"}),
     ],
 )
 def test_strip_traffic_from_traffic_map(traffic, expected_traffic) -> None:
@@ -453,3 +445,11 @@ def test_strip_traffic_from_traffic_map(traffic, expected_traffic) -> None:
         assert expected_traffic[k] == v
     for k, v in expected_traffic.items():
         assert result[k] == v
+
+
+def test_deployment_with_data_collector() -> None:
+    online_deployment = load_online_deployment(
+        source="./tests/test_configs/deployments/online/online_deployment_data_storage_basic.yaml"
+    )
+    assert online_deployment.data_collector.collections["request"].enabled == "true"
+    assert online_deployment.data_collector.collections["response"].enabled == "false"

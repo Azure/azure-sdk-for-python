@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "49",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b4 Python/3.10.10 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
@@ -18,9 +18,9 @@
         "calling": "inbound",
         "sms": "inbound\u002Boutbound"
       },
-      "StatusCode": 404,
+      "StatusCode": 403,
       "ResponseHeaders": {
-        "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-12-01",
+        "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-12-01, 2022-12-02-preview2",
         "Content-Type": "application/json",
         "Date": "sanitized",
         "MS-CV": "sanitized",
@@ -28,12 +28,12 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "257ms"
+        "X-Processing-Time": "93ms"
       },
       "ResponseBody": {
         "error": {
-          "code": "InternalError",
-          "message": "The server encountered an internal error."
+          "code": "InsufficientPermissions",
+          "message": "Phone number not owned by this resource."
         }
       }
     }

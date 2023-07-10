@@ -4,7 +4,7 @@
 # ------------------------------------
 import functools
 import os
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.transport import HttpRequest
@@ -17,7 +17,7 @@ from .._internal.managed_identity_client import ManagedIdentityClient
 
 
 class AzureArcCredential(ManagedIdentityBase):
-    def get_client(self, **kwargs) -> Optional[ManagedIdentityClient]:
+    def get_client(self, **kwargs: Any) -> Optional[ManagedIdentityClient]:
         url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
         imds = os.environ.get(EnvironmentVariables.IMDS_ENDPOINT)
         if url and imds:
@@ -28,12 +28,14 @@ class AzureArcCredential(ManagedIdentityBase):
             )
         return None
 
-    def __enter__(self):
-        self._client.__enter__()
+    def __enter__(self) -> "AzureArcCredential":
+        if self._client:
+            self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
-        self._client.__exit__(*args)
+    def __exit__(self, *args: Any) -> None:
+        if self._client:
+            self._client.__exit__(*args)
 
     def close(self) -> None:
         self.__exit__()
@@ -64,16 +66,18 @@ def _get_secret_key(response: PipelineResponse) -> str:
     # expecting header with structure like 'Basic realm=<file path>'
     try:
         key_file = header.split("=")[1]
-    except IndexError:
+    except IndexError as ex:
         raise ClientAuthenticationError(
             message="Did not receive a correct value from WWW-Authenticate header: {}".format(header)
-        )
-    with open(key_file, "r") as file:
+        ) from ex
+    with open(key_file, "r", encoding="utf-8") as file:
         try:
             return file.read()
         except Exception as error:  # pylint:disable=broad-except
             # user is expected to have obtained read permission prior to this being called
-            raise ClientAuthenticationError(message="Could not read file {} contents: {}".format(key_file, error))
+            raise ClientAuthenticationError(
+                message="Could not read file {} contents: {}".format(key_file, error)
+            ) from error
 
 
 class ArcChallengeAuthPolicy(HTTPPolicy):

@@ -42,7 +42,7 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '7.3'
+    DEFAULT_API_VERSION = '7.4'
     _PROFILE_TAG = "azure.keyvault.KeyVaultClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -119,11 +119,11 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
 
     def __init__(
         self,
-        api_version=None, # type: Optional[str]
-        profile=KnownProfiles.default, # type: KnownProfiles
-        **kwargs  # type: Any
+        api_version: Optional[str]=None,
+        profile: KnownProfiles=KnownProfiles.default,
+        **kwargs: Any
     ):
-        if api_version == '2016-10-01' or api_version == '7.0' or api_version == '7.1' or api_version == '7.2' or api_version == '7.3':
+        if api_version == '2016-10-01' or api_version == '7.0' or api_version == '7.1' or api_version == '7.2' or api_version == '7.3' or api_version == '7.4':
             base_url = '{vaultBaseUrl}'
         else:
             raise ValueError("API version {} is not available".format(api_version))
@@ -147,6 +147,7 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
            * 7.1: :mod:`v7_1.models<azure.keyvault.v7_1.models>`
            * 7.2: :mod:`v7_2.models<azure.keyvault.v7_2.models>`
            * 7.3: :mod:`v7_3.models<azure.keyvault.v7_3.models>`
+           * 7.4: :mod:`v7_4.models<azure.keyvault.v7_4.models>`
         """
         if api_version == '2016-10-01':
             from .v2016_10_01 import models
@@ -162,6 +163,9 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
             return models
         elif api_version == '7.3':
             from .v7_3 import models
+            return models
+        elif api_version == '7.4':
+            from .v7_4 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 

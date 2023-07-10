@@ -27,11 +27,9 @@ USAGE:
 """
 
 
-import os
-
-
 def sample_classify_document_single_label() -> None:
     # [START single_label_classify]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -70,7 +68,7 @@ def sample_classify_document_single_label() -> None:
             )
         elif classification_result.is_error is True:
             print("Document text '{}' has an error with code '{}' and message '{}'".format(
-                doc, classification_result.code, classification_result.message
+                doc, classification_result.error.code, classification_result.error.message
             ))
     # [END single_label_classify]
 

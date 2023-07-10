@@ -8,7 +8,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "131",
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "azsdk-python-identity/1.13.0b1 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-identity/1.13.0b2 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": "client_id=sanitized\u0026client_secret=sanitized\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fcommunication.azure.com%2F%2F.default",
       "StatusCode": 200,
@@ -40,12 +40,13 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b4 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "api-supported-versions": "2022-12-01",
+        "api-supported-versions": "2022-12-01, 2022-12-02-preview2",
+        "Cache-Control": "max-age=21600, private, stale-while-revalidate=86400",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
@@ -53,17 +54,10 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "346ms"
+        "X-Processing-Time": "636ms"
       },
       "ResponseBody": {
         "phoneNumberLocalities": [
-          {
-            "localizedName": "Anchorage",
-            "administrativeDivision": {
-              "localizedName": "AK",
-              "abbreviatedName": "AK"
-            }
-          },
           {
             "localizedName": "Huntsville",
             "administrativeDivision": {
@@ -142,13 +136,6 @@
             }
           },
           {
-            "localizedName": "Irvine",
-            "administrativeDivision": {
-              "localizedName": "CA",
-              "abbreviatedName": "CA"
-            }
-          },
-          {
             "localizedName": "Los Angeles",
             "administrativeDivision": {
               "localizedName": "CA",
@@ -164,13 +151,6 @@
           },
           {
             "localizedName": "Sacramento",
-            "administrativeDivision": {
-              "localizedName": "CA",
-              "abbreviatedName": "CA"
-            }
-          },
-          {
-            "localizedName": "Salinas",
             "administrativeDivision": {
               "localizedName": "CA",
               "abbreviatedName": "CA"
@@ -233,6 +213,13 @@
             }
           },
           {
+            "localizedName": "Denver",
+            "administrativeDivision": {
+              "localizedName": "CO",
+              "abbreviatedName": "CO"
+            }
+          },
+          {
             "localizedName": "Grand Junction",
             "administrativeDivision": {
               "localizedName": "CO",
@@ -258,20 +245,6 @@
             "administrativeDivision": {
               "localizedName": "CT",
               "abbreviatedName": "CT"
-            }
-          },
-          {
-            "localizedName": "Wilmington",
-            "administrativeDivision": {
-              "localizedName": "DE",
-              "abbreviatedName": "DE"
-            }
-          },
-          {
-            "localizedName": "Cape Coral",
-            "administrativeDivision": {
-              "localizedName": "FL",
-              "abbreviatedName": "FL"
             }
           },
           {
@@ -324,6 +297,13 @@
             }
           },
           {
+            "localizedName": "Port St Lucie",
+            "administrativeDivision": {
+              "localizedName": "FL",
+              "abbreviatedName": "FL"
+            }
+          },
+          {
             "localizedName": "Sarasota",
             "administrativeDivision": {
               "localizedName": "FL",
@@ -331,7 +311,7 @@
             }
           },
           {
-            "localizedName": "St. Petersburg",
+            "localizedName": "Tampa",
             "administrativeDivision": {
               "localizedName": "FL",
               "abbreviatedName": "FL"
@@ -401,7 +381,7 @@
             }
           },
           {
-            "localizedName": "Mason City",
+            "localizedName": "Iowa City",
             "administrativeDivision": {
               "localizedName": "IA",
               "abbreviatedName": "IA"
@@ -597,6 +577,13 @@
             }
           },
           {
+            "localizedName": "Boston",
+            "administrativeDivision": {
+              "localizedName": "MA",
+              "abbreviatedName": "MA"
+            }
+          },
+          {
             "localizedName": "Chicopee",
             "administrativeDivision": {
               "localizedName": "MA",
@@ -618,21 +605,7 @@
             }
           },
           {
-            "localizedName": "Baltimore",
-            "administrativeDivision": {
-              "localizedName": "MD",
-              "abbreviatedName": "MD"
-            }
-          },
-          {
             "localizedName": "Bethesda",
-            "administrativeDivision": {
-              "localizedName": "MD",
-              "abbreviatedName": "MD"
-            }
-          },
-          {
-            "localizedName": "Silver Spring",
             "administrativeDivision": {
               "localizedName": "MD",
               "abbreviatedName": "MD"
@@ -688,13 +661,6 @@
             }
           },
           {
-            "localizedName": "Pontiac",
-            "administrativeDivision": {
-              "localizedName": "MI",
-              "abbreviatedName": "MI"
-            }
-          },
-          {
             "localizedName": "Saginaw",
             "administrativeDivision": {
               "localizedName": "MI",
@@ -703,13 +669,6 @@
           },
           {
             "localizedName": "Sault Ste Marie",
-            "administrativeDivision": {
-              "localizedName": "MI",
-              "abbreviatedName": "MI"
-            }
-          },
-          {
-            "localizedName": "Troy",
             "administrativeDivision": {
               "localizedName": "MI",
               "abbreviatedName": "MI"
@@ -756,19 +715,61 @@
               "localizedName": "MO",
               "abbreviatedName": "MO"
             }
+          },
+          {
+            "localizedName": "Marshall",
+            "administrativeDivision": {
+              "localizedName": "MO",
+              "abbreviatedName": "MO"
+            }
+          },
+          {
+            "localizedName": "Springfield",
+            "administrativeDivision": {
+              "localizedName": "MO",
+              "abbreviatedName": "MO"
+            }
+          },
+          {
+            "localizedName": "St. Charles",
+            "administrativeDivision": {
+              "localizedName": "MO",
+              "abbreviatedName": "MO"
+            }
+          },
+          {
+            "localizedName": "Biloxi",
+            "administrativeDivision": {
+              "localizedName": "MS",
+              "abbreviatedName": "MS"
+            }
+          },
+          {
+            "localizedName": "Jackson",
+            "administrativeDivision": {
+              "localizedName": "MS",
+              "abbreviatedName": "MS"
+            }
+          },
+          {
+            "localizedName": "Starkville",
+            "administrativeDivision": {
+              "localizedName": "MS",
+              "abbreviatedName": "MS"
+            }
           }
         ],
         "nextLink": "/availablePhoneNumbers/countries/US/localities?skip=100\u0026api-version=2022-12-01\u0026maxPageSize=100"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/areaCodes?phoneNumberType=geographic\u0026skip=0\u0026assignmentType=person\u0026locality=Anchorage\u0026api-version=2022-12-01",
+      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/areaCodes?phoneNumberType=geographic\u0026skip=0\u0026assignmentType=person\u0026locality=Huntsville\u0026administrativeDivision=AL\u0026api-version=2022-12-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b4 Python/3.10.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
@@ -776,7 +777,8 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "api-supported-versions": "2021-03-07, 2022-12-01",
+        "api-supported-versions": "2021-03-07, 2022-12-01, 2022-12-02-preview2",
+        "Cache-Control": "max-age=21600, private, stale-while-revalidate=86400",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
@@ -784,12 +786,15 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "1086ms"
+        "X-Processing-Time": "2409ms"
       },
       "ResponseBody": {
         "areaCodes": [
           {
-            "areaCode": "907"
+            "areaCode": "256"
+          },
+          {
+            "areaCode": "938"
           }
         ],
         "nextLink": null

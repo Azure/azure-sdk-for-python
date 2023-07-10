@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
-from ._application_insights_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class ManagedServiceIdentity(msrest.serialization.Model):
+class ManagedServiceIdentity(_serialization.Model):
     """Managed service identity (system assigned and/or user assigned identities).
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -28,9 +30,9 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
     :vartype tenant_id: str
-    :ivar type: Required. Type of managed service identity (where both SystemAssigned and
-     UserAssigned types are allowed). Possible values include: "None", "SystemAssigned",
-     "UserAssigned", "SystemAssigned,UserAssigned".
+    :ivar type: Type of managed service identity (where both SystemAssigned and UserAssigned types
+     are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+     "SystemAssigned,UserAssigned".
     :vartype type: str or
      ~azure.mgmt.applicationinsights.v2021_08_01.models.ManagedServiceIdentityType
     :ivar user_assigned_identities: The set of user assigned identities associated with the
@@ -42,29 +44,29 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'type': {'required': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
     }
 
     def __init__(
         self,
         *,
-        type: Union[str, "ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "UserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword type: Required. Type of managed service identity (where both SystemAssigned and
-         UserAssigned types are allowed). Possible values include: "None", "SystemAssigned",
-         "UserAssigned", "SystemAssigned,UserAssigned".
+        :keyword type: Type of managed service identity (where both SystemAssigned and UserAssigned
+         types are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+         "SystemAssigned,UserAssigned".
         :paramtype type: str or
          ~azure.mgmt.applicationinsights.v2021_08_01.models.ManagedServiceIdentityType
         :keyword user_assigned_identities: The set of user assigned identities associated with the
@@ -74,14 +76,14 @@ class ManagedServiceIdentity(msrest.serialization.Model):
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.applicationinsights.v2021_08_01.models.UserAssignedIdentity]
         """
-        super(ManagedServiceIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -97,44 +99,40 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or
      ~azure.mgmt.applicationinsights.v2021_08_01.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or
      ~azure.mgmt.applicationinsights.v2021_08_01.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
@@ -142,44 +140,44 @@ class SystemData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or
          ~azure.mgmt.applicationinsights.v2021_08_01.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or
          ~azure.mgmt.applicationinsights.v2021_08_01.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -189,7 +187,8 @@ class SystemData(msrest.serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -203,46 +202,40 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         """
-        super(TrackedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
 
-class UserAssignedIdentity(msrest.serialization.Model):
+class UserAssignedIdentity(_serialization.Model):
     """User assigned identity properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -254,22 +247,18 @@ class UserAssignedIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UserAssignedIdentity, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
 
@@ -289,13 +278,13 @@ class WorkbookResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar identity: Identity used for BYOS.
     :vartype identity: ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookResourceIdentity
-    :ivar kind: The kind of workbook. Only valid value is shared. Possible values include: "user",
+    :ivar kind: The kind of workbook. Only valid value is shared. Known values are: "user" and
      "shared".
     :vartype kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.Kind
     :ivar etag: Resource etag.
@@ -303,21 +292,21 @@ class WorkbookResource(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'WorkbookResourceIdentity'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "WorkbookResourceIdentity"},
+        "kind": {"key": "kind", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
     }
 
     def __init__(
@@ -325,32 +314,32 @@ class WorkbookResource(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["WorkbookResourceIdentity"] = None,
-        kind: Optional[Union[str, "Kind"]] = None,
+        identity: Optional["_models.WorkbookResourceIdentity"] = None,
+        kind: Optional[Union[str, "_models.Kind"]] = None,
         etag: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword identity: Identity used for BYOS.
         :paramtype identity:
          ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookResourceIdentity
-        :keyword kind: The kind of workbook. Only valid value is shared. Possible values include:
-         "user", "shared".
+        :keyword kind: The kind of workbook. Only valid value is shared. Known values are: "user" and
+         "shared".
         :paramtype kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.Kind
         :keyword etag: Resource etag.
         :paramtype etag: str
         """
-        super(WorkbookResource, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.kind = kind
         self.etag = etag
 
 
-class Workbook(WorkbookResource):
+class Workbook(WorkbookResource):  # pylint: disable=too-many-instance-attributes
     """An Application Insights workbook definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -365,13 +354,13 @@ class Workbook(WorkbookResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar identity: Identity used for BYOS.
     :vartype identity: ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookResourceIdentity
-    :ivar kind: The kind of workbook. Only valid value is shared. Possible values include: "user",
+    :ivar kind: The kind of workbook. Only valid value is shared. Known values are: "user" and
      "shared".
     :vartype kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.Kind
     :ivar etag: Resource etag.
@@ -406,37 +395,37 @@ class Workbook(WorkbookResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'time_modified': {'readonly': True},
-        'user_id': {'readonly': True},
-        'revision': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "time_modified": {"readonly": True},
+        "user_id": {"readonly": True},
+        "revision": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'WorkbookResourceIdentity'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'serialized_data': {'key': 'properties.serializedData', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'time_modified': {'key': 'properties.timeModified', 'type': 'iso-8601'},
-        'category': {'key': 'properties.category', 'type': 'str'},
-        'tags_properties_tags': {'key': 'properties.tags', 'type': '[str]'},
-        'user_id': {'key': 'properties.userId', 'type': 'str'},
-        'source_id': {'key': 'properties.sourceId', 'type': 'str'},
-        'storage_uri': {'key': 'properties.storageUri', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'revision': {'key': 'properties.revision', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "WorkbookResourceIdentity"},
+        "kind": {"key": "kind", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "serialized_data": {"key": "properties.serializedData", "type": "str"},
+        "version": {"key": "properties.version", "type": "str"},
+        "time_modified": {"key": "properties.timeModified", "type": "iso-8601"},
+        "category": {"key": "properties.category", "type": "str"},
+        "tags_properties_tags": {"key": "properties.tags", "type": "[str]"},
+        "user_id": {"key": "properties.userId", "type": "str"},
+        "source_id": {"key": "properties.sourceId", "type": "str"},
+        "storage_uri": {"key": "properties.storageUri", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "revision": {"key": "properties.revision", "type": "str"},
     }
 
     def __init__(
@@ -444,8 +433,8 @@ class Workbook(WorkbookResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["WorkbookResourceIdentity"] = None,
-        kind: Optional[Union[str, "Kind"]] = None,
+        identity: Optional["_models.WorkbookResourceIdentity"] = None,
+        kind: Optional[Union[str, "_models.Kind"]] = None,
         etag: Optional[str] = None,
         display_name: Optional[str] = None,
         serialized_data: Optional[str] = None,
@@ -455,18 +444,18 @@ class Workbook(WorkbookResource):
         source_id: Optional[str] = None,
         storage_uri: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword identity: Identity used for BYOS.
         :paramtype identity:
          ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookResourceIdentity
-        :keyword kind: The kind of workbook. Only valid value is shared. Possible values include:
-         "user", "shared".
+        :keyword kind: The kind of workbook. Only valid value is shared. Known values are: "user" and
+         "shared".
         :paramtype kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.Kind
         :keyword etag: Resource etag.
         :paramtype etag: str
@@ -490,7 +479,7 @@ class Workbook(WorkbookResource):
         :keyword description: The description of the workbook.
         :paramtype description: str
         """
-        super(Workbook, self).__init__(tags=tags, location=location, identity=identity, kind=kind, etag=etag, **kwargs)
+        super().__init__(tags=tags, location=location, identity=identity, kind=kind, etag=etag, **kwargs)
         self.system_data = None
         self.display_name = display_name
         self.serialized_data = serialized_data
@@ -505,7 +494,7 @@ class Workbook(WorkbookResource):
         self.revision = None
 
 
-class WorkbookError(msrest.serialization.Model):
+class WorkbookError(_serialization.Model):
     """Error response.
 
     :ivar error: The error details.
@@ -513,24 +502,19 @@ class WorkbookError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'WorkbookErrorDefinition'},
+        "error": {"key": "error", "type": "WorkbookErrorDefinition"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["WorkbookErrorDefinition"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.WorkbookErrorDefinition"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error details.
         :paramtype error: ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookErrorDefinition
         """
-        super(WorkbookError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class WorkbookErrorDefinition(msrest.serialization.Model):
+class WorkbookErrorDefinition(_serialization.Model):
     """Error definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -539,35 +523,31 @@ class WorkbookErrorDefinition(msrest.serialization.Model):
     :vartype code: str
     :ivar message: Description of the error.
     :vartype message: str
-    :ivar inner_error: Internal error details.
-    :vartype inner_error: any
+    :ivar innererror: Internal error details.
+    :vartype innererror: ~azure.mgmt.applicationinsights.v2021_08_01.models.WorkbookInnerErrorTrace
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'inner_error': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "innererror": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'inner_error': {'key': 'innerError', 'type': 'object'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "innererror": {"key": "innererror", "type": "WorkbookInnerErrorTrace"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(WorkbookErrorDefinition, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
-        self.inner_error = None
+        self.innererror = None
 
 
-class WorkbookInnerErrorTrace(msrest.serialization.Model):
+class WorkbookInnerErrorTrace(_serialization.Model):
     """Error details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -577,20 +557,16 @@ class WorkbookInnerErrorTrace(msrest.serialization.Model):
     """
 
     _validation = {
-        'trace': {'readonly': True},
+        "trace": {"readonly": True},
     }
 
     _attribute_map = {
-        'trace': {'key': 'trace', 'type': '[str]'},
+        "trace": {"key": "trace", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(WorkbookInnerErrorTrace, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.trace = None
 
 
@@ -607,9 +583,9 @@ class WorkbookResourceIdentity(ManagedServiceIdentity):
     :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
     :vartype tenant_id: str
-    :ivar type: Required. Type of managed service identity (where both SystemAssigned and
-     UserAssigned types are allowed). Possible values include: "None", "SystemAssigned",
-     "UserAssigned", "SystemAssigned,UserAssigned".
+    :ivar type: Type of managed service identity (where both SystemAssigned and UserAssigned types
+     are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+     "SystemAssigned,UserAssigned".
     :vartype type: str or
      ~azure.mgmt.applicationinsights.v2021_08_01.models.ManagedServiceIdentityType
     :ivar user_assigned_identities: The set of user assigned identities associated with the
@@ -621,29 +597,29 @@ class WorkbookResourceIdentity(ManagedServiceIdentity):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'type': {'required': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
     }
 
     def __init__(
         self,
         *,
-        type: Union[str, "ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "UserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword type: Required. Type of managed service identity (where both SystemAssigned and
-         UserAssigned types are allowed). Possible values include: "None", "SystemAssigned",
-         "UserAssigned", "SystemAssigned,UserAssigned".
+        :keyword type: Type of managed service identity (where both SystemAssigned and UserAssigned
+         types are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+         "SystemAssigned,UserAssigned".
         :paramtype type: str or
          ~azure.mgmt.applicationinsights.v2021_08_01.models.ManagedServiceIdentityType
         :keyword user_assigned_identities: The set of user assigned identities associated with the
@@ -653,10 +629,10 @@ class WorkbookResourceIdentity(ManagedServiceIdentity):
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.applicationinsights.v2021_08_01.models.UserAssignedIdentity]
         """
-        super(WorkbookResourceIdentity, self).__init__(type=type, user_assigned_identities=user_assigned_identities, **kwargs)
+        super().__init__(type=type, user_assigned_identities=user_assigned_identities, **kwargs)
 
 
-class WorkbooksListResult(msrest.serialization.Model):
+class WorkbooksListResult(_serialization.Model):
     """Workbook list result.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -668,36 +644,31 @@ class WorkbooksListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Workbook]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Workbook]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link:
         :paramtype next_link: str
         """
-        super(WorkbooksListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class WorkbookUpdateParameters(msrest.serialization.Model):
+class WorkbookUpdateParameters(_serialization.Model):
     """The parameters that can be provided when updating workbook properties properties.
 
-    :ivar kind: The kind of workbook. Only valid value is shared. Possible values include: "user",
+    :ivar kind: The kind of workbook. Only valid value is shared. Known values are: "user" and
      "shared".
     :vartype kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.SharedTypeKind
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar display_name: The user-defined name (display name) of the workbook.
     :vartype display_name: str
@@ -716,20 +687,20 @@ class WorkbookUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'serialized_data': {'key': 'properties.serializedData', 'type': 'str'},
-        'category': {'key': 'properties.category', 'type': 'str'},
-        'tags_properties_tags': {'key': 'properties.tags', 'type': '[str]'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'revision': {'key': 'properties.revision', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "serialized_data": {"key": "properties.serializedData", "type": "str"},
+        "category": {"key": "properties.category", "type": "str"},
+        "tags_properties_tags": {"key": "properties.tags", "type": "[str]"},
+        "description": {"key": "properties.description", "type": "str"},
+        "revision": {"key": "properties.revision", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        kind: Optional[Union[str, "SharedTypeKind"]] = None,
+        kind: Optional[Union[str, "_models.SharedTypeKind"]] = None,
         tags: Optional[Dict[str, str]] = None,
         display_name: Optional[str] = None,
         serialized_data: Optional[str] = None,
@@ -737,13 +708,13 @@ class WorkbookUpdateParameters(msrest.serialization.Model):
         tags_properties_tags: Optional[List[str]] = None,
         description: Optional[str] = None,
         revision: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword kind: The kind of workbook. Only valid value is shared. Possible values include:
-         "user", "shared".
+        :keyword kind: The kind of workbook. Only valid value is shared. Known values are: "user" and
+         "shared".
         :paramtype kind: str or ~azure.mgmt.applicationinsights.v2021_08_01.models.SharedTypeKind
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword display_name: The user-defined name (display name) of the workbook.
         :paramtype display_name: str
@@ -760,7 +731,7 @@ class WorkbookUpdateParameters(msrest.serialization.Model):
         :keyword revision: The unique revision id for this workbook definition.
         :paramtype revision: str
         """
-        super(WorkbookUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.kind = kind
         self.tags = tags
         self.display_name = display_name

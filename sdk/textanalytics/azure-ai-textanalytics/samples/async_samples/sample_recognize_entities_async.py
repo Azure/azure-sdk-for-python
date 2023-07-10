@@ -20,8 +20,6 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-from __future__ import annotations
-import os
 import asyncio
 
 
@@ -30,8 +28,10 @@ async def sample_recognize_entities_async() -> None:
         "In this sample, we are a catering business, and we're looking to sort the reviews "
         "for our organization based off of the organization that hired us for catering"
     )
-    organization_to_reviews: dict[str, list[str]] = {}
+
     # [START recognize_entities_async]
+    import os
+    import typing
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 
@@ -52,11 +52,12 @@ async def sample_recognize_entities_async() -> None:
         result = await text_analytics_client.recognize_entities(reviews)
 
     result = [review for review in result if not review.is_error]
+    organization_to_reviews: typing.Dict[str, typing.List[str]] = {}
 
     for idx, review in enumerate(result):
         for entity in review.entities:
             print(f"Entity '{entity.text}' has category '{entity.category}'")
-    # [END recognize_entities_async]
+
             if entity.category == 'Organization':
                 organization_to_reviews.setdefault(entity.text, [])
                 organization_to_reviews[entity.text].append(reviews[idx])
@@ -67,6 +68,7 @@ async def sample_recognize_entities_async() -> None:
                 organization, "\n\n".join(reviews)
             )
         )
+    # [END recognize_entities_async]
 
 
 async def main():

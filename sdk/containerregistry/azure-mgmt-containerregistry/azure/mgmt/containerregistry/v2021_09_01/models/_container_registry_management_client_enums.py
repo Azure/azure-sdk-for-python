@@ -7,63 +7,62 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class Action(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The action of IP ACL rule.
-    """
+class Action(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action of IP ACL rule."""
 
     ALLOW = "Allow"
 
-class ActionsRequired(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """A message indicating if changes on the service provider require any updates on the consumer.
-    """
+
+class ActionsRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A message indicating if changes on the service provider require any updates on the consumer."""
 
     NONE = "None"
     RECREATE = "Recreate"
 
-class ConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The private link service connection status.
-    """
+
+class ConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private link service connection status."""
 
     APPROVED = "Approved"
     PENDING = "Pending"
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DefaultAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The default action of allow or deny when no other rules match.
-    """
+
+class DefaultAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The default action of allow or deny when no other rules match."""
 
     ALLOW = "Allow"
     DENY = "Deny"
 
-class EncryptionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether or not the encryption is enabled for container registry.
-    """
+
+class EncryptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether or not the encryption is enabled for container registry."""
 
     ENABLED = "enabled"
     DISABLED = "disabled"
 
-class ExportPolicyStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The value that indicates whether the policy is enabled or not.
-    """
+
+class ExportPolicyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The value that indicates whether the policy is enabled or not."""
 
     ENABLED = "enabled"
     DISABLED = "disabled"
 
-class ImportMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ImportMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """When Force, any existing target tags will be overwritten. When NoForce, any existing target
     tags will fail the operation before any copying begins.
     """
@@ -71,39 +70,39 @@ class ImportMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     NO_FORCE = "NoForce"
     FORCE = "Force"
 
-class LastModifiedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that last modified the resource.
-    """
+
+class LastModifiedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that last modified the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class NetworkRuleBypassOptions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether to allow trusted Azure services to access a network restricted registry.
-    """
+
+class NetworkRuleBypassOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether to allow trusted Azure services to access a network restricted registry."""
 
     AZURE_SERVICES = "AzureServices"
     NONE = "None"
 
-class PasswordName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The password name.
-    """
+
+class PasswordName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The password name."""
 
     PASSWORD = "password"
     PASSWORD2 = "password2"
 
-class PolicyStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The value that indicates whether the policy is enabled or not.
-    """
+
+class PolicyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The value that indicates whether the policy is enabled or not."""
 
     ENABLED = "enabled"
     DISABLED = "disabled"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state of private endpoint connection resource.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of private endpoint connection resource."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -112,54 +111,56 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether or not public network access is allowed for the container registry.
-    """
+
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether or not public network access is allowed for the container registry."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class RegistryUsageUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The unit of measurement.
-    """
+
+class RegistryUsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The unit of measurement."""
 
     COUNT = "Count"
     BYTES = "Bytes"
 
-class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The identity type.
-    """
+
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The identity type."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     NONE = "None"
 
-class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The SKU name of the container registry. Required for registry creation.
-    """
+
+class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SKU name of the container registry. Required for registry creation."""
 
     CLASSIC = "Classic"
     BASIC = "Basic"
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The SKU tier based on the SKU name.
-    """
+
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SKU tier based on the SKU name."""
 
     CLASSIC = "Classic"
     BASIC = "Basic"
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class TrustPolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of trust policy.
-    """
+
+class TrustPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of trust policy."""
 
     NOTARY = "Notary"
 
-class WebhookAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class WebhookAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """WebhookAction."""
 
     PUSH = "push"
     DELETE = "delete"
@@ -167,16 +168,16 @@ class WebhookAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CHART_PUSH = "chart_push"
     CHART_DELETE = "chart_delete"
 
-class WebhookStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the webhook at the time the operation was called.
-    """
+
+class WebhookStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the webhook at the time the operation was called."""
 
     ENABLED = "enabled"
     DISABLED = "disabled"
 
-class ZoneRedundancy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether or not zone redundancy is enabled for this container registry
-    """
+
+class ZoneRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether or not zone redundancy is enabled for this container registry."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"

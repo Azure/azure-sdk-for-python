@@ -27,7 +27,7 @@
 
 import functools
 
-from typing import Awaitable, Callable, Any, TypeVar, overload
+from typing import Awaitable, Callable, Any, TypeVar, overload, Optional
 from typing_extensions import ParamSpec
 from .common import change_context, get_function_and_class_name
 from . import SpanKind as _SpanKind
@@ -38,9 +38,7 @@ T = TypeVar("T")
 
 
 @overload
-def distributed_trace_async(
-    __func: Callable[P, Awaitable[T]]
-) -> Callable[P, Awaitable[T]]:
+def distributed_trace_async(__func: Callable[P, Awaitable[T]]) -> Callable[P, Awaitable[T]]:
     pass
 
 
@@ -52,7 +50,7 @@ def distributed_trace_async(  # pylint:disable=function-redefined
 
 
 def distributed_trace_async(  # pylint:disable=function-redefined
-    __func: Callable[P, Awaitable[T]] = None, **kwargs: Any
+    __func: Optional[Callable[P, Awaitable[T]]] = None, **kwargs: Any
 ):
     """Decorator to apply to function to get traced automatically.
 

@@ -19,13 +19,15 @@
                 "signature": "credential: \"TokenCredential\",",
                 "description": "Credential needed for the client to connect to Azure. Required.",
                 "docstring_type": "~azure.core.credentials.TokenCredential",
-                "required": true
+                "required": true,
+                "method_location": "positional"
             },
             "subscription_id": {
                 "signature": "subscription_id: str,",
                 "description": "The ID of the target subscription. Required.",
                 "docstring_type": "str",
-                "required": true
+                "required": true,
+                "method_location": "positional"
             }
         },
         "async": {
@@ -51,19 +53,22 @@
                     "signature": "api_version: Optional[str]=None,",
                     "description": "API version to use if no profile is provided, or if missing in profile.",
                     "docstring_type": "str",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 },
                 "base_url": {
                     "signature": "base_url: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 },
                 "profile": {
                     "signature": "profile: KnownProfiles=KnownProfiles.default,",
                     "description": "A profile definition, from KnownProfiles to dict.",
                     "docstring_type": "azure.profiles.KnownProfiles",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 }
             },
             "async": {
@@ -71,19 +76,22 @@
                     "signature": "api_version: Optional[str] = None,",
                     "description": "API version to use if no profile is provided, or if missing in profile.",
                     "docstring_type": "str",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 },
                 "base_url": {
                     "signature": "base_url: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 },
                 "profile": {
                     "signature": "profile: KnownProfiles = KnownProfiles.default,",
                     "description": "A profile definition, from KnownProfiles to dict.",
                     "docstring_type": "azure.profiles.KnownProfiles",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 }
             }
         }
@@ -102,6 +110,8 @@
     "operation_mixins": {
         "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Iterable\"]}}, \"regular\": {\"local\": {\".\": [[\"models\", \"_models\"]]}, \"azurecore\": {\"azure.core.paging\": [\"ItemPaged\"]}}}",
         "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\"]}}, \"regular\": {\"local\": {\"..\": [[\"models\", \"_models\"]]}, \"azurecore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}}}",
+        "sync_mixin_typing_definitions": "",
+        "async_mixin_typing_definitions": "",
         "operations": {
             "list_operations" : {
                 "sync": {

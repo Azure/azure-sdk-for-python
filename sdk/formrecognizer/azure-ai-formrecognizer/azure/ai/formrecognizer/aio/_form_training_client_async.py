@@ -150,7 +150,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                     deserialization_callback=deserialization_callback,
                 )
 
-            response = await self._client.train_custom_model_async(
+            response = await self._client.train_custom_model_async(  # type: ignore
                 train_request=self._generated_models.TrainRequest(
                     source=training_files_url,
                     use_label_file=use_training_labels,
@@ -196,6 +196,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
         :param model_id: Model identifier.
         :type model_id: str
+        :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
 
@@ -437,7 +438,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                 **kwargs
             )
         except ValueError:
-            raise ValueError("Method 'begin_create_composed_model' is only available for API version V2_1 and up")
+            raise ValueError("Method 'begin_create_composed_model' is only available for API version V2_1 and up")  # pylint: disable=raise-missing-from
 
     def get_form_recognizer_client(self, **kwargs: Any) -> FormRecognizerClient:
         """Get an instance of a FormRecognizerClient from FormTrainingClient.
@@ -447,8 +448,8 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         """
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._client._client._pipeline._transport),
-            policies=self._client._client._pipeline._impl_policies,
-        )  # type: AsyncPipeline
+            policies=self._client._client._pipeline._impl_policies,  # type: ignore
+        )
         client = FormRecognizerClient(
             endpoint=self._endpoint,
             credential=self._credential,
@@ -457,7 +458,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
             **kwargs
         )
         # need to share config, but can't pass as a keyword into client
-        client._client._config = self._client._client._config
+        client._client._config = self._client._config
         return client
 
     async def __aenter__(self) -> "FormTrainingClient":

@@ -71,12 +71,38 @@ class FileAuthSamplesAsync(object):
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
 
+    async def authentication_default_azure_credential_async(self):
+        # [START file_share_oauth]
+        # Get a credential for authentication
+        # DefaultAzureCredential attempts a chained set of authentication methods.
+        # See documentation here: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
+        from azure.identity.aio import DefaultAzureCredential
+        default_credential = DefaultAzureCredential()
+
+        # Instantiate a ShareServiceClient using a token credential and token_intent
+        from azure.storage.fileshare.aio import ShareServiceClient
+        share_service_client = ShareServiceClient(
+            account_url=self.account_url,
+            credential=default_credential,
+            # When using a token credential, you MUST also specify a token_intent
+            token_intent='backup'
+        )
+
+        # Only Directory and File operations, and a certain few Share operations, are currently supported for OAuth.
+        # Create a ShareFileClient from the ShareServiceClient.
+        share_client = share_service_client.get_share_client('myshare')
+        share_file_client = share_client.get_file_client('mydirectory/myfile')
+
+        properties = await share_file_client.get_file_properties()
+        # [END file_share_oauth]
+
 
 async def main():
     sample = FileAuthSamplesAsync()
     await sample.authentication_connection_string_async()
     await sample.authentication_shared_access_key_async()
     await sample.authentication_shared_access_signature_async()
+    await sample.authentication_default_azure_credential_async()
 
 if __name__ == '__main__':
     asyncio.run(main())

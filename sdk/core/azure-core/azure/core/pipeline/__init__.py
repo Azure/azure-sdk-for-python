@@ -24,17 +24,13 @@
 #
 # --------------------------------------------------------------------------
 
-import abc
-from typing import TypeVar, Generic
-from contextlib import AbstractContextManager  # pylint: disable=unused-import
+from typing import TypeVar, Generic, Dict, Any
 
-ABC = abc.ABC
-
-HTTPResponseType = TypeVar("HTTPResponseType")
-HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPResponseType = TypeVar("HTTPResponseType", covariant=True)
+HTTPRequestType = TypeVar("HTTPRequestType", covariant=True)
 
 
-class PipelineContext(dict):
+class PipelineContext(Dict[str, Any]):
     """A context object carried by the pipeline request and response containers.
 
     This is transport specific and can contain data persisted between
@@ -43,7 +39,8 @@ class PipelineContext(dict):
     the pipeline.
 
     :param transport: The HTTP transport type.
-    :param kwargs: Developer-defined keyword arguments.
+    :type transport: ~azure.core.pipeline.transport.HttpTransport or ~azure.core.pipeline.transport.AsyncHttpTransport
+    :param any kwargs: Developer-defined keyword arguments.
     """
 
     _PICKLE_CONTEXT = {"deserialized_data"}
@@ -91,14 +88,14 @@ class PipelineContext(dict):
             raise ValueError("Context value {} cannot be deleted.".format(key))
         return super(PipelineContext, self).__delitem__(key)
 
-    def clear(self):
+    def clear(self):  # pylint: disable=docstring-missing-return, docstring-missing-rtype
         """Context objects cannot be cleared.
 
         :raises: TypeError
         """
         raise TypeError("Context objects cannot be cleared.")
 
-    def update(self, *args, **kwargs):
+    def update(self, *args, **kwargs):  # pylint: disable=docstring-missing-return, docstring-missing-rtype
         """Context objects cannot be updated.
 
         :raises: TypeError
@@ -106,7 +103,14 @@ class PipelineContext(dict):
         raise TypeError("Context objects cannot be updated.")
 
     def pop(self, *args):
-        """Removes specified key and returns the value."""
+        """Removes specified key and returns the value.
+
+        :param args: The key to remove.
+        :type args: str
+        :return: The value for this key.
+        :rtype: any
+        :raises: ValueError If the key is in the protected list.
+        """
         if args and args[0] in self._protected:
             raise ValueError("Context value {} cannot be popped.".format(args[0]))
         return super(PipelineContext, self).pop(*args)
@@ -124,8 +128,7 @@ class PipelineRequest(Generic[HTTPRequestType]):
     :type context: ~azure.core.pipeline.PipelineContext
     """
 
-    def __init__(self, http_request, context):
-        # type: (HTTPRequestType, PipelineContext) -> None
+    def __init__(self, http_request: HTTPRequestType, context: PipelineContext) -> None:
         self.http_request = http_request
         self.context = context
 
@@ -148,8 +151,12 @@ class PipelineResponse(Generic[HTTPRequestType, HTTPResponseType]):
     :type context: ~azure.core.pipeline.PipelineContext
     """
 
-    def __init__(self, http_request, http_response, context):
-        # type: (HTTPRequestType, HTTPResponseType, PipelineContext) -> None
+    def __init__(
+        self,
+        http_request: HTTPRequestType,
+        http_response: HTTPResponseType,
+        context: PipelineContext,
+    ) -> None:
         self.http_request = http_request
         self.http_response = http_response
         self.context = context

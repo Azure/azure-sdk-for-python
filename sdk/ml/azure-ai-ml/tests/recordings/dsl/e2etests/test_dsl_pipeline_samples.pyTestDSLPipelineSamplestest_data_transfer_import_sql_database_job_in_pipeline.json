@@ -1,0 +1,261 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2023-04-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "1546",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.13 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "description": "submit a pipeline with data transfer import database job",
+          "properties": {},
+          "tags": {},
+          "displayName": "data_transfer_import_database_pipeline_from_builder",
+          "experimentName": "azure-ai-ml",
+          "isArchived": false,
+          "jobType": "Pipeline",
+          "inputs": {
+            "query_source_snowflake": {
+              "jobInputType": "literal",
+              "value": "select top(10) Name from SalesLT.ProductCategory"
+            },
+            "connection_target_azuresql": {
+              "jobInputType": "literal",
+              "value": "azureml:my_azuresqldb_connection"
+            }
+          },
+          "jobs": {
+            "sql_blob_node_input": {
+              "type": "data_transfer",
+              "task": "import_data",
+              "source": {
+                "type": "database",
+                "query": "select top(10) Name from SalesLT.ProductCategory",
+                "connection": "azureml:my_azuresqldb_connection"
+              },
+              "name": "sql_blob_node_input",
+              "outputs": {
+                "sink": {
+                  "job_output_type": "mltable"
+                }
+              },
+              "_source": "BUILTIN",
+              "componentId": "azureml://registries/azureml/components/import_data_database/versions/0.0.1"
+            },
+            "sql_blob": {
+              "type": "data_transfer",
+              "task": "import_data",
+              "source": {
+                "type": "database",
+                "query": "${{parent.inputs.query_source_snowflake}}",
+                "connection": "${{parent.inputs.connection_target_azuresql}}"
+              },
+              "name": "sql_blob",
+              "outputs": {
+                "sink": {
+                  "job_output_type": "mltable"
+                }
+              },
+              "_source": "BUILTIN",
+              "componentId": "azureml://registries/azureml/components/import_data_database/versions/0.0.1"
+            }
+          },
+          "outputs": {},
+          "settings": {
+            "default_compute": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/serverless",
+            "_source": "DSL"
+          }
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "3415",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 18 Apr 2023 09:38:14 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2023-04-01-preview",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-09c381f113829e3585374644a8a67745-fcad9d17102cedc6-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "int-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "2dd4a452-e5e1-4d8a-a58e-8444f3a2d729",
+        "x-ms-ratelimit-remaining-subscription-writes": "1197",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "JAPANEAST:20230418T093814Z:2dd4a452-e5e1-4d8a-a58e-8444f3a2d729",
+        "x-request-time": "0.465"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000",
+        "name": "000000000000000000000",
+        "type": "Microsoft.MachineLearningServices/workspaces/jobs",
+        "properties": {
+          "description": "submit a pipeline with data transfer import database job",
+          "tags": {},
+          "properties": {},
+          "displayName": "data_transfer_import_database_pipeline_from_builder",
+          "status": "NotStarted",
+          "experimentName": "azure-ai-ml",
+          "services": {
+            "Tracking": {
+              "jobServiceType": "Tracking",
+              "port": null,
+              "endpoint": "azureml://int.api.azureml-test.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?",
+              "status": null,
+              "errorMessage": null,
+              "properties": null,
+              "nodes": null
+            },
+            "Studio": {
+              "jobServiceType": "Studio",
+              "port": null,
+              "endpoint": "https://ml.azure.com/runs/000000000000000000000?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
+              "status": null,
+              "errorMessage": null,
+              "properties": null,
+              "nodes": null
+            }
+          },
+          "computeId": null,
+          "isArchived": false,
+          "identity": null,
+          "componentId": null,
+          "notificationSetting": null,
+          "secretsConfiguration": null,
+          "jobType": "Pipeline",
+          "settings": {
+            "default_compute": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/serverless",
+            "_source": "DSL"
+          },
+          "jobs": {
+            "sql_blob_node_input": {
+              "type": "data_transfer",
+              "task": "import_data",
+              "source": {
+                "type": "database",
+                "query": "select top(10) Name from SalesLT.ProductCategory",
+                "connection": "azureml:my_azuresqldb_connection"
+              },
+              "name": "sql_blob_node_input",
+              "outputs": {
+                "sink": {
+                  "job_output_type": "mltable"
+                }
+              },
+              "_source": "BUILTIN",
+              "componentId": "azureml://registries/azureml/components/import_data_database/versions/0.0.1"
+            },
+            "sql_blob": {
+              "type": "data_transfer",
+              "task": "import_data",
+              "source": {
+                "type": "database",
+                "query": "${{parent.inputs.query_source_snowflake}}",
+                "connection": "${{parent.inputs.connection_target_azuresql}}"
+              },
+              "name": "sql_blob",
+              "outputs": {
+                "sink": {
+                  "job_output_type": "mltable"
+                }
+              },
+              "_source": "BUILTIN",
+              "componentId": "azureml://registries/azureml/components/import_data_database/versions/0.0.1"
+            }
+          },
+          "inputs": {
+            "query_source_snowflake": {
+              "description": null,
+              "jobInputType": "literal",
+              "value": "select top(10) Name from SalesLT.ProductCategory"
+            },
+            "connection_target_azuresql": {
+              "description": null,
+              "jobInputType": "literal",
+              "value": "azureml:my_azuresqldb_connection"
+            }
+          },
+          "outputs": {},
+          "sourceJobId": null
+        },
+        "systemData": {
+          "createdAt": "2023-04-18T09:38:14.2276104\u002B00:00",
+          "createdBy": "Ying Chen",
+          "createdByType": "User"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000/cancel?api-version=2023-04-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.13 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "4",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 18 Apr 2023 09:38:17 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationResults/jc:4cb595ba-a971-49ea-b17f-fc1f049f599d:000000000000000000000?api-version=2023-04-01-preview",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "int-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-async-operation-timeout": "PT1H",
+        "x-ms-correlation-request-id": "213e9715-ca4f-4e13-881d-a8776028088c",
+        "x-ms-ratelimit-remaining-subscription-writes": "1198",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "JAPANEAST:20230418T093817Z:213e9715-ca4f-4e13-881d-a8776028088c",
+        "x-request-time": "0.413"
+      },
+      "ResponseBody": "null"
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationResults/jc:4cb595ba-a971-49ea-b17f-fc1f049f599d:000000000000000000000?api-version=2023-04-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.13 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Tue, 18 Apr 2023 09:38:18 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-df4d6f2aa558c6d5cda101a9e4205afc-124a745d4237e114-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "int-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "eef61321-de96-4330-8d31-c80370904c5e",
+        "x-ms-ratelimit-remaining-subscription-reads": "11998",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "JAPANEAST:20230418T093818Z:eef61321-de96-4330-8d31-c80370904c5e",
+        "x-request-time": "0.028"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

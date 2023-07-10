@@ -29,7 +29,7 @@ jobs:
     type: command
 
     command: pip freeze && echo ${{inputs.literal_input}}
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
     code: ./
     experiment_name: test-iris-example-1
     description: Train a model on the Iris dataset-1.
@@ -55,7 +55,7 @@ jobs:
     type: command
 
     command: echo Hello World
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
     name: "test2"
     compute: "azureml:cpu-cluster"
     experiment_name: test-iris-example-2
@@ -73,7 +73,7 @@ jobs:
     type: command
 
     command: pip freeze && echo ${{inputs.test1}}
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
     code: ./
     experiment_name: test-iris-example-1
     description: Train a model on the Iris dataset-1.

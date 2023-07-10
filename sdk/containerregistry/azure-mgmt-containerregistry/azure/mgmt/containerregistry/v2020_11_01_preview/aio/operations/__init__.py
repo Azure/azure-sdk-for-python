@@ -18,16 +18,22 @@ from ._scope_maps_operations import ScopeMapsOperations
 from ._tokens_operations import TokensOperations
 from ._webhooks_operations import WebhooksOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'ConnectedRegistriesOperations',
-    'ExportPipelinesOperations',
-    'RegistriesOperations',
-    'ImportPipelinesOperations',
-    'Operations',
-    'PipelineRunsOperations',
-    'PrivateEndpointConnectionsOperations',
-    'ReplicationsOperations',
-    'ScopeMapsOperations',
-    'TokensOperations',
-    'WebhooksOperations',
+    "ConnectedRegistriesOperations",
+    "ExportPipelinesOperations",
+    "RegistriesOperations",
+    "ImportPipelinesOperations",
+    "Operations",
+    "PipelineRunsOperations",
+    "PrivateEndpointConnectionsOperations",
+    "ReplicationsOperations",
+    "ScopeMapsOperations",
+    "TokensOperations",
+    "WebhooksOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

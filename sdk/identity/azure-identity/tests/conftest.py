@@ -7,7 +7,6 @@ import sys
 
 from unittest import mock
 import pytest
-import six
 from devtools_testutils import test_proxy, add_general_regex_sanitizer, is_live, add_body_key_sanitizer
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
 
@@ -78,9 +77,9 @@ def get_certificate_parameters(content, password_protected_content, password, ex
     # type: (bytes, bytes, str, str) -> dict
     current_directory = os.path.dirname(__file__)
     parameters = {
-        "cert_bytes": six.ensure_binary(content),
+        "cert_bytes": content,
         "cert_path": os.path.join(current_directory, "certificate." + extension),
-        "cert_with_password_bytes": six.ensure_binary(password_protected_content),
+        "cert_with_password_bytes": password_protected_content,
         "cert_with_password_path": os.path.join(current_directory, "certificate-with-password." + extension),
         "password": password,
     }
@@ -103,7 +102,8 @@ def live_pem_certificate(live_service_principal):
     password = os.environ.get("CERTIFICATE_PASSWORD")
 
     if content and password_protected_content and password:
-        parameters = get_certificate_parameters(content, password_protected_content, password, "pem")
+        parameters = get_certificate_parameters(
+            content.encode("utf-8"), password_protected_content.encode("utf-8"), password, "pem")
         return dict(live_service_principal, **parameters)
 
     pytest.skip("Missing PEM certificate configuration")
@@ -118,9 +118,8 @@ def live_pfx_certificate(live_service_principal):
 
     if encoded_content and encoded_password_protected_content and password:
         import base64
-
-        content = base64.b64decode(six.ensure_binary(encoded_content))
-        password_protected_content = base64.b64decode(six.ensure_binary(encoded_password_protected_content))
+        content = base64.b64decode(encoded_content.encode("utf-8"))
+        password_protected_content = base64.b64decode(encoded_password_protected_content.encode("utf-8"))
 
         parameters = get_certificate_parameters(content, password_protected_content, password, "pfx")
         return dict(live_service_principal, **parameters)
@@ -174,7 +173,7 @@ def add_sanitizers(test_proxy):
         add_general_regex_sanitizer(regex=user_assigned_identity_client_id, value=PLAYBACK_CLIENT_ID)
     if "CAE_ARM_URL" in os.environ and "CAE_TENANT_ID" in os.environ and "CAE_USERNAME" in os.environ:
         try:
-            from six.moves.urllib_parse import urlparse
+            from urllib.parse import urlparse
             arm_url = os.environ["CAE_ARM_URL"]
             real = urlparse(arm_url)
             add_general_regex_sanitizer(regex=real.netloc, value="management.azure.com")

@@ -41,27 +41,40 @@ import os
 def sample_compose_model():
     # [START composed_model]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
+    from azure.ai.formrecognizer import (
+        DocumentModelAdministrationClient,
+        ModelBuildMode,
+    )
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-    po_supplies = os.environ['PURCHASE_ORDER_OFFICE_SUPPLIES_SAS_URL']
-    po_equipment = os.environ['PURCHASE_ORDER_OFFICE_EQUIPMENT_SAS_URL']
-    po_furniture = os.environ['PURCHASE_ORDER_OFFICE_FURNITURE_SAS_URL']
-    po_cleaning_supplies = os.environ['PURCHASE_ORDER_OFFICE_CLEANING_SUPPLIES_SAS_URL']
+    po_supplies = os.environ["PURCHASE_ORDER_OFFICE_SUPPLIES_SAS_URL"]
+    po_equipment = os.environ["PURCHASE_ORDER_OFFICE_EQUIPMENT_SAS_URL"]
+    po_furniture = os.environ["PURCHASE_ORDER_OFFICE_FURNITURE_SAS_URL"]
+    po_cleaning_supplies = os.environ["PURCHASE_ORDER_OFFICE_CLEANING_SUPPLIES_SAS_URL"]
 
-    document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_model_admin_client = DocumentModelAdministrationClient(
+        endpoint=endpoint, credential=AzureKeyCredential(key)
+    )
     supplies_poller = document_model_admin_client.begin_build_document_model(
-        ModelBuildMode.TEMPLATE, blob_container_url=po_supplies, description="Purchase order-Office supplies"
+        ModelBuildMode.TEMPLATE,
+        blob_container_url=po_supplies,
+        description="Purchase order-Office supplies",
     )
     equipment_poller = document_model_admin_client.begin_build_document_model(
-        ModelBuildMode.TEMPLATE, blob_container_url=po_equipment, description="Purchase order-Office Equipment"
+        ModelBuildMode.TEMPLATE,
+        blob_container_url=po_equipment,
+        description="Purchase order-Office Equipment",
     )
     furniture_poller = document_model_admin_client.begin_build_document_model(
-        ModelBuildMode.TEMPLATE, blob_container_url=po_furniture, description="Purchase order-Furniture"
+        ModelBuildMode.TEMPLATE,
+        blob_container_url=po_furniture,
+        description="Purchase order-Furniture",
     )
     cleaning_supplies_poller = document_model_admin_client.begin_build_document_model(
-        ModelBuildMode.TEMPLATE, blob_container_url=po_cleaning_supplies, description="Purchase order-Cleaning Supplies"
+        ModelBuildMode.TEMPLATE,
+        blob_container_url=po_cleaning_supplies,
+        description="Purchase order-Cleaning Supplies",
     )
     supplies_model = supplies_poller.result()
     equipment_model = equipment_poller.result()
@@ -72,7 +85,7 @@ def sample_compose_model():
         supplies_model.model_id,
         equipment_model.model_id,
         furniture_model.model_id,
-        cleaning_supplies_model.model_id
+        cleaning_supplies_model.model_id,
     ]
 
     poller = document_model_admin_client.begin_compose_document_model(
@@ -81,18 +94,43 @@ def sample_compose_model():
     model = poller.result()
 
     print("Office Supplies Composed Model Info:")
-    print("Model ID: {}".format(model.model_id))
-    print("Description: {}".format(model.description))
-    print("Model created on: {}\n".format(model.created_on))
+    print(f"Model ID: {model.model_id}")
+    print(f"Description: {model.description}")
+    print(f"Model created on: {model.created_on}")
+    print(f"Model expires on: {model.expires_on}")
     print("Doc types the model can recognize:")
     for name, doc_type in model.doc_types.items():
-        print("\nDoc Type: '{}' which has the following fields:".format(name))
+        print(f"Doc Type: '{name}' which has the following fields:")
         for field_name, field in doc_type.field_schema.items():
-            print("Field: '{}' has type '{}' and confidence score {}".format(
-                field_name, field["type"], doc_type.field_confidence[field_name]
-            ))
+            print(
+                f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                f"{doc_type.field_confidence[field_name]}"
+            )
     # [END composed_model]
 
 
-if __name__ == '__main__':
-    sample_compose_model()
+if __name__ == "__main__":
+    import sys
+    from azure.core.exceptions import HttpResponseError
+
+    try:
+        sample_compose_model()
+    except HttpResponseError as error:
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
+        # Examples of how to check an HttpResponseError
+        # Check by error code:
+        if error.error is not None:
+            if error.error.code == "InvalidImage":
+                print(f"Received an invalid image error: {error.error}")
+            if error.error.code == "InvalidRequest":
+                print(f"Received an invalid request error: {error.error}")
+            # Raise the error again after printing it
+            raise
+        # If the inner error is None and then it is possible to check the message to get more information:
+        if "Invalid request".casefold() in error.message.casefold():
+            print(f"Uh-oh! Seems there was an invalid request: {error}")
+        # Raise the error again
+        raise

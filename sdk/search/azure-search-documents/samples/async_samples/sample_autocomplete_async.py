@@ -28,6 +28,7 @@ service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
 index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
 key = os.getenv("AZURE_SEARCH_API_KEY")
 
+
 async def autocomplete_query():
     # [START autocomplete_query_async]
     from azure.core.credentials import AzureKeyCredential
@@ -43,5 +44,6 @@ async def autocomplete_query():
             print("    Completion: {}".format(result["text"]))
     # [END autocomplete_query_async]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(autocomplete_query())

@@ -3,16 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.core.credentials import AzureNamedKeyCredential
 import pytest
 import platform
 import os
 
+from datetime import datetime, timedelta
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ClientAuthenticationError
+from azure.identity.aio import DefaultAzureCredential
+from azure.data.tables import AccountSasPermissions, ResourceTypes, generate_account_sas
 from azure.data.tables.aio import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
 from azure.data.tables._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
@@ -173,6 +175,69 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
         assert ("URI does not match number of key properties for the resource") in str(exc.value)
         assert ("Please check your account URL.") in str(exc.value)
         await valid_tc.delete_table()
+    
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_error_handling(self, tables_storage_account_name, tables_primary_storage_account_key):
+        async with TableServiceClient(
+            self.account_url(tables_storage_account_name, "table"),
+            credential=DefaultAzureCredential(
+                exclude_shared_token_cache_credential=True,
+                exclude_powershell_credential=True,
+                exclude_cli_credential=True,
+                exclude_environment_credential=True,
+            )
+        ) as service_client:
+            with pytest.raises(ClientAuthenticationError):
+                await service_client.create_table_if_not_exists(table_name="TestInsert")
+    
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_client_with_sas_token(self, tables_storage_account_name, tables_primary_storage_account_key):
+        base_url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        sas_token = self.generate_sas(
+            generate_account_sas,
+            tables_primary_storage_account_key,
+            resource_types=ResourceTypes.from_string("sco"),
+            permission=AccountSasPermissions.from_string("rwdlacu"),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        
+        async with TableServiceClient(base_url, credential=AzureSasCredential(sas_token)) as client:
+            await client.create_table(table_name)
+            name_filter = "TableName eq '{}'".format(table_name)
+            count = 0
+            result = client.query_tables(name_filter)
+            async for table in result:
+                count += 1
+            assert count == 1
+        
+        async with TableClient(base_url, table_name, credential=AzureSasCredential(sas_token)) as client:
+            entities = client.query_entities(
+                query_filter='PartitionKey eq @pk',
+                parameters={'pk': 'dummy-pk'},
+            )
+            async for e in entities:
+                pass
+        
+        async with TableClient.from_table_url(f"{base_url}/{table_name}", credential=AzureSasCredential(sas_token)) as client:
+            entities = client.query_entities(
+                query_filter='PartitionKey eq @pk',
+                parameters={'pk': 'dummy-pk'},
+            )
+            async for e in entities:
+                pass
+        
+        sas_url = f"{base_url}/{table_name}?{sas_token}"
+        async with TableClient.from_table_url(sas_url) as client:
+            entities = client.query_entities(
+                query_filter='PartitionKey eq @pk',
+                parameters={'pk': 'dummy-pk'},
+            )
+            async for e in entities:
+                pass
+            await client.delete_table()
 
 
 class TestTableClientAsyncUnitTests(AsyncTableTestCase):

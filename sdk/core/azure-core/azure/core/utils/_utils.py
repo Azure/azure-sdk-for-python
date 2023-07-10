@@ -7,7 +7,6 @@
 import datetime
 from typing import (
     Any,
-    Dict,
     Iterable,
     Iterator,
     Mapping,
@@ -15,10 +14,11 @@ from typing import (
     Optional,
     Tuple,
     Union,
+    Dict,
 )
 from datetime import timezone
 
-TZ_UTC = timezone.utc  # type: ignore
+TZ_UTC = timezone.utc
 
 
 class _FixedOffset(datetime.tzinfo):
@@ -48,6 +48,8 @@ class _FixedOffset(datetime.tzinfo):
 def _convert_to_isoformat(date_time):
     """Deserialize a date in RFC 3339 format to datetime object.
     Check https://tools.ietf.org/html/rfc3339#section-5.8 for examples.
+
+    :param str date_time: The date in RFC 3339 format.
     """
     if not date_time:
         return None
@@ -84,7 +86,7 @@ def _convert_to_isoformat(date_time):
     return deserialized
 
 
-def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping:
+def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping[str, Any]:
     """Return a case-insensitive mutable mapping from an inputted mapping structure.
 
     :return: A case-insensitive mutable mapping object.
@@ -102,12 +104,13 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
     case_insensitive_dict = CaseInsensitiveDict()
     case_insensitive_dict['Key'] = 'some_value'
     case_insensitive_dict['key'] == 'some_value' #True
+
+    :param data: Initial data to store in the dictionary.
+    :type data: Mapping[str, Any] or Iterable[Tuple[str, Any]]
     """
 
     def __init__(
-        self,
-        data: Optional[Union[Mapping[str, Any], Iterable[Tuple[str, Any]]]] = None,
-        **kwargs: Any
+        self, data: Optional[Union[Mapping[str, Any], Iterable[Tuple[str, Any]]]] = None, **kwargs: Any
     ) -> None:
         self._store: Dict[str, Any] = {}
         if data is None:
@@ -119,8 +122,13 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
         return CaseInsensitiveDict(self._store.values())
 
     def __setitem__(self, key: str, value: Any) -> None:
-        """
-        Set the `key` to `value`. The original key will be stored with the value
+        """Set the `key` to `value`.
+
+        The original key will be stored with the value
+
+        :param str key: The key to set.
+        :param value: The value to set the key to.
+        :type value: any
         """
         self._store[key.lower()] = (key, value)
 
@@ -137,9 +145,7 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
         return len(self._store)
 
     def lowerkey_items(self):
-        return (
-            (lower_case_key, pair[1]) for lower_case_key, pair in self._store.items()
-        )
+        return ((lower_case_key, pair[1]) for lower_case_key, pair in self._store.items())
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Mapping):

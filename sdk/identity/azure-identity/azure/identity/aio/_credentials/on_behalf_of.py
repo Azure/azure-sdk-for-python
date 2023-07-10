@@ -44,6 +44,15 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_on_behalf_of_credential_async]
+            :end-before: [END create_on_behalf_of_credential_async]
+            :language: python
+            :dedent: 4
+            :caption: Create an OnBehalfOfCredential.
     """
 
     def __init__(
@@ -51,8 +60,8 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         tenant_id: str,
         client_id: str,
         *,
-        client_certificate: bytes = None,
-        client_secret: str = None,
+        client_certificate: Optional[bytes] = None,
+        client_secret: Optional[str] = None,
         user_assertion: str,
         **kwargs: Any
     ) -> None:
@@ -71,9 +80,9 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
                     '"client_certificate" is not a valid certificate in PEM or PKCS12 format'
                 )
                 raise ValueError(message) from ex
-            self._client_credential = AadClientCertificate(
+            self._client_credential: Union[str, AadClientCertificate] = AadClientCertificate(
                 cert["private_key"], password=cert.get("passphrase")
-            )  # type: Union[str, AadClientCertificate]
+            )
         elif client_secret:
             self._client_credential = client_secret
         else:
@@ -89,7 +98,9 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
     async def close(self) -> None:
         await self._client.close()
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    async def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:

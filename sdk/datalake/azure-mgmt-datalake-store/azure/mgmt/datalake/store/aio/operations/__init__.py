@@ -13,11 +13,17 @@ from ._trusted_id_providers_operations import TrustedIdProvidersOperations
 from ._operations import Operations
 from ._locations_operations import LocationsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AccountsOperations',
-    'FirewallRulesOperations',
-    'VirtualNetworkRulesOperations',
-    'TrustedIdProvidersOperations',
-    'Operations',
-    'LocationsOperations',
+    "AccountsOperations",
+    "FirewallRulesOperations",
+    "VirtualNetworkRulesOperations",
+    "TrustedIdProvidersOperations",
+    "Operations",
+    "LocationsOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -34,9 +34,8 @@ These sample programs show common scenarios for the Text Analytics client's offe
 |[sample_multi_label_classify.py][multi_label_classify_sample] and [sample_multi_label_classify_async.py][multi_label_classify_sample_async]|Use a custom model to classify documents into multiple categories|
 |[sample_model_version.py][sample_model_version] and [sample_model_version_async.py][sample_model_version_async]|Set the model version for pre-built Text Analytics models|
 |[sample_analyze_healthcare_action.py][sample_analyze_healthcare_action] and [sample_analyze_healthcare_action_async.py][sample_analyze_healthcare_action_async]|Run a healthcare and PII analysis together|
-|[sample_extract_summary.py][extract_summary_sample] and [sample_extract_summary_async.py][extract_summary_sample_async]|As part of the analyze API, run extractive text summarization on documents|
-|[sample_abstract_summary.py][abstract_summary_sample] and [sample_abstract_summary_async.py][abstract_summary_sample_async]|As part of the analyze API, run abstractive text summarization on documents|
-|[sample_dynamic_classification.py][dynamic_classification_sample] and [sample_dynamic_classification_async.py][dynamic_classification_sample_async]|Dynamically classify documents without needing to train a model.|
+|[sample_extract_summary.py][extract_summary_sample] and [sample_extract_summary_async.py][extract_summary_sample_async]|Run extractive text summarization on documents|
+|[sample_abstract_summary.py][abstract_summary_sample] and [sample_abstract_summary_async.py][abstract_summary_sample_async]|Run abstractive text summarization on documents|
 
 ## Prerequisites
 * Python 3.7 or later is required to use this package
@@ -48,7 +47,7 @@ These sample programs show common scenarios for the Text Analytics client's offe
 1. Install the Azure Text Analytics client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-textanalytics --pre
+pip install azure-ai-textanalytics
 ```
 For more information about how the versioning story of the SDK corresponds to the versioning story of the service's API, see [here][versioning_story_readme].
 
@@ -119,8 +118,6 @@ what you can do with the Azure Text Analytics client library.
 [extract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_summary_async.py
 [abstract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_abstract_summary.py
 [abstract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_abstract_summary_async.py
-[dynamic_classification_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_dynamic_classification.py
-[dynamic_classification_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_dynamic_classification_async.py
 [pip]: https://pypi.org/project/pip/
 [azure_subscription]: https://azure.microsoft.com/free/
 [azure_language_account]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows

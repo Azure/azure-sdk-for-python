@@ -85,8 +85,8 @@ stages:
 
                       - script: |
                           set -e
-                          pip install -r eng/release_requirements.txt
-                          pip install tools/azure-sdk-tools
+                          python -m pip install -r eng/release_requirements.txt
+                          python -m pip install tools/azure-sdk-tools
                         displayName: Install Release Dependencies
 
                       - task: PythonScript@0
@@ -96,23 +96,34 @@ stages:
                           scriptPath: 'scripts/devops_tasks/verify_dependencies_present.py'
                           arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
 
-                      - task: TwineAuthenticate@1
-                        displayName: 'Authenticate to registry: pypi.org'
-                        inputs:
-                          pythonUploadServiceConnection: 'PyPI Upload (azure-sdk token)'
-
                       - task: TwineAuthenticate@0
                         displayName: 'Authenticate to feed: ${{parameters.DevFeedName}}'
                         inputs:
                           artifactFeeds: ${{parameters.DevFeedName}}
 
-                      - script: |
-                          set -e
-                          twine upload --repository 'pypi' --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*.whl
-                          echo "Uploaded whl to pypi"
-                          twine upload --repository 'pypi' --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*.zip
-                          echo "Uploaded zip to pypi"
-                        displayName: 'Publish package to registry: pypi.org'
+                      - pwsh: |
+                          $esrpDirectory = "$(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}"
+                          New-Item -ItemType Directory -Force -Path $esrpDirectory
+
+                          Get-ChildItem -Path "$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}" `
+                            | Where-Object { ($_.Name -like "*.zip" -or $_.Name -like "*.whl") } `
+                            | Copy-Item -Destination $esrpDirectory
+
+                          Get-ChildItem $esrpDirectory
+                        displayName: Isolate files for ESRP Publish
+
+                      - task: EsrpRelease@2
+                        displayName: 'Publish to ESRP'
+                        inputs:
+                          ConnectedServiceName: 'ESRP Release Service'
+                          Intent: 'PackageDistribution'
+                          ContentType: 'PyPI'
+                          PackageLocation: $(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}
+                          Owners: $(Build.RequestedForEmail)
+                          Approvers: $(Build.RequestedForEmail)
+                          ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
+                          MainPublisher: 'ESRPRELPACMANTEST'
+                          DomainTenantId: '72f988bf-86f1-41af-91ab-2d7cd011db47'
 
                       - script: |
                           set -e
@@ -206,7 +217,7 @@ stages:
                       - checkout: self
                       - task: UsePythonVersion@0
                       - script: |
-                          pip install "./tools/azure-sdk-tools[build]"
+                          python -m pip install "./tools/azure-sdk-tools[build]"
                         displayName: Install versioning tool dependencies
                       - pwsh: |
                           sdk_increment_version --package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}
@@ -217,7 +228,6 @@ stages:
                           PRBranchName: increment-package-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
                           CommitMsg: "Increment package version after release of ${{ artifact.name }}"
                           PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
-                          PRLabels: "auto-merge"
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
           - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
             - template: /eng/pipelines/templates/jobs/smoke.tests.yml
@@ -245,7 +255,7 @@ stages:
       - task: UsePythonVersion@0
       - script: |
           set -e
-          pip install twine
+          python -m pip install twine
         displayName: Install Twine
 
       - template: ../steps/auth-dev-feed.yml

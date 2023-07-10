@@ -10,6 +10,7 @@ import pytest
 from azure.core.rest import HttpRequest
 import collections.abc
 
+
 @pytest.fixture
 def assert_aiterator_body():
     async def _comparer(request, final_value):
@@ -18,7 +19,9 @@ def assert_aiterator_body():
             parts.append(part)
         content = b"".join(parts)
         assert content == final_value
+
     return _comparer
+
 
 def test_transfer_encoding_header():
     async def streaming_body(data):
@@ -28,6 +31,7 @@ def test_transfer_encoding_header():
 
     request = HttpRequest("POST", "http://example.org", data=data)
     assert "Content-Length" not in request.headers
+
 
 def test_override_content_length_header():
     async def streaming_body(data):
@@ -39,8 +43,9 @@ def test_override_content_length_header():
     request = HttpRequest("POST", "http://example.org", data=data, headers=headers)
     assert request.headers["Content-Length"] == "0"
 
+
 @pytest.mark.asyncio
-async def test_aiterable_content(assert_aiterator_body): # cspell:disable-line
+async def test_aiterable_content(assert_aiterator_body):  # cspell:disable-line
     class Content:
         async def __aiter__(self):
             yield b"test 123"
@@ -48,6 +53,7 @@ async def test_aiterable_content(assert_aiterator_body): # cspell:disable-line
     request = HttpRequest("POST", "http://example.org", content=Content())
     assert request.headers == {}
     await assert_aiterator_body(request, b"test 123")
+
 
 @pytest.mark.asyncio
 async def test_aiterator_content(assert_aiterator_body):
@@ -77,6 +83,7 @@ async def test_aiterator_content(assert_aiterator_body):
 
     assert request.headers == {}
     await assert_aiterator_body(request, b"Hello, world!")
+
 
 @pytest.mark.asyncio
 async def test_read_content(assert_aiterator_body):

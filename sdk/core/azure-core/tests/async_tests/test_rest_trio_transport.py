@@ -10,11 +10,13 @@ from rest_client_async import AsyncTestRestClient
 from utils import readonly_checks
 import pytest
 
+
 @pytest.fixture
 async def client(port):
     async with TrioRequestsTransport() as transport:
         async with AsyncTestRestClient(port, transport=transport) as client:
             yield client
+
 
 @pytest.mark.trio
 async def test_async_gen_data(client, port):
@@ -31,15 +33,17 @@ async def test_async_gen_data(client, port):
             except StopIteration:
                 raise StopAsyncIteration
 
-    request = HttpRequest('GET', 'http://localhost:{}/basic/anything'.format(port), content=AsyncGen())
+    request = HttpRequest("GET", "http://localhost:{}/basic/anything".format(port), content=AsyncGen())
     response = await client.send_request(request)
-    assert response.json()['data'] == "azerty"
+    assert response.json()["data"] == "azerty"
+
 
 @pytest.mark.trio
 async def test_send_data(port, client):
-    request = HttpRequest('PUT', 'http://localhost:{}/basic/anything'.format(port), content=b"azerty")
+    request = HttpRequest("PUT", "http://localhost:{}/basic/anything".format(port), content=b"azerty")
     response = await client.send_request(request)
-    assert response.json()['data'] == "azerty"
+    assert response.json()["data"] == "azerty"
+
 
 @pytest.mark.trio
 async def test_readonly(client):
@@ -49,7 +53,9 @@ async def test_readonly(client):
 
     assert isinstance(response, RestTrioRequestsTransportResponse)
     from azure.core.pipeline.transport import TrioRequestsTransportResponse
+
     readonly_checks(response, old_response_class=TrioRequestsTransportResponse)
+
 
 @pytest.mark.trio
 async def test_decompress_compressed_header(client):
@@ -61,6 +67,7 @@ async def test_decompress_compressed_header(client):
     assert response.content == content
     assert response.text() == "hello world"
 
+
 @pytest.mark.trio
 async def test_decompress_compressed_header_stream(client):
     # expect plain text
@@ -70,6 +77,7 @@ async def test_decompress_compressed_header_stream(client):
     assert content == b"hello world"
     assert response.content == content
     assert response.text() == "hello world"
+
 
 @pytest.mark.trio
 async def test_decompress_compressed_header_stream_body_content(client):

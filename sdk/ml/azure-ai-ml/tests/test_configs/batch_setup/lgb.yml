@@ -3,6 +3,6 @@
 command: python ./python-guide/advanced_example.py
 environment:
   conda_file: conda_file.yml
-  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
 code: ./light_gbm_examples
 compute: azureml:cpu-cluster

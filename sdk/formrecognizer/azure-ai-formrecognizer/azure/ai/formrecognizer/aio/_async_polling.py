@@ -12,43 +12,43 @@ from typing_extensions import Protocol, runtime_checkable
 from azure.core.polling import AsyncLROPoller, AsyncPollingMethod
 from .._polling import parse_operation_id
 
-PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 
 @runtime_checkable
-class AsyncDocumentModelAdministrationLROPoller(Protocol[PollingReturnType]):
+class AsyncDocumentModelAdministrationLROPoller(Protocol[PollingReturnType_co]):  # pylint: disable=name-too-long
     """Implements a protocol followed by returned poller objects."""
 
     @property
-    def details(  # pylint: disable=no-self-use, unused-argument
+    def details(  # pylint: disable=unused-argument
         self,
     ) -> Mapping[str, Any]:
         ...
 
-    def polling_method(  # pylint: disable=no-self-use
+    def polling_method(
         self,
-    ) -> AsyncPollingMethod[PollingReturnType]:
+    ) -> AsyncPollingMethod[PollingReturnType_co]:
         ...
 
-    def continuation_token(self) -> str:  # pylint: disable=no-self-use
+    def continuation_token(self) -> str:
         ...
 
-    def status(self) -> str:  # pylint: disable=no-self-use
+    def status(self) -> str:
         ...
 
-    async def result(  # pylint: disable=no-self-use, unused-argument
+    async def result(  # pylint: disable=unused-argument
         self,
-    ) -> PollingReturnType:
+    ) -> PollingReturnType_co:
         ...
 
-    async def wait(self) -> None:  # pylint: disable=no-self-use, unused-argument
+    async def wait(self) -> None:  # pylint: disable=unused-argument
         ...
 
-    def done(self) -> bool:  # pylint: disable=no-self-use
+    def done(self) -> bool:
         ...
 
 
-class AsyncDocumentModelAdministrationClientLROPoller(AsyncLROPoller[PollingReturnType]):
+class AsyncDocumentModelAdministrationClientLROPoller(AsyncLROPoller[PollingReturnType_co]):  # pylint: disable=name-too-long
     """Custom poller for model build operations. Call `result()` on the poller to return
     a :class:`~azure.ai.formrecognizer.DocumentModelInfo`.
 
@@ -65,7 +65,11 @@ class AsyncDocumentModelAdministrationClientLROPoller(AsyncLROPoller[PollingRetu
 
     @property
     def details(self) -> Mapping[str, Any]:
-        """Returns metadata associated with the long-running operation."""
+        """Returns metadata associated with the long-running operation.
+
+        :return: Returns metadata associated with the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
         created_on = self._current_body.get("createdDateTime", None)
         if created_on:
             created_on = datetime.datetime.strptime(created_on, "%Y-%m-%dT%H:%M:%SZ")
@@ -85,7 +89,7 @@ class AsyncDocumentModelAdministrationClientLROPoller(AsyncLROPoller[PollingRetu
 
     @classmethod
     def from_continuation_token(
-        cls, polling_method: AsyncPollingMethod[PollingReturnType], continuation_token: str, **kwargs: Any
+        cls, polling_method: AsyncPollingMethod[PollingReturnType_co], continuation_token: str, **kwargs: Any
     ) -> "AsyncDocumentModelAdministrationClientLROPoller":
         (
             client,

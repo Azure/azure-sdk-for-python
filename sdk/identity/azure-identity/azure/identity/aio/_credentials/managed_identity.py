@@ -32,10 +32,20 @@ class ManagedIdentityCredential(AsyncContextManager):
         or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
         learn what values it expects.
     :paramtype identity_config: Mapping[str, str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_managed_identity_credential_async]
+            :end-before: [END create_managed_identity_credential_async]
+            :language: python
+            :dedent: 4
+            :caption: Create a ManagedIdentityCredential.
     """
 
     def __init__(self, **kwargs: Any) -> None:
         self._credential = None  # type: Optional[AsyncTokenCredential]
+        exclude_workload_identity = kwargs.pop("_exclude_workload_identity_credential", False)
 
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
             if os.environ.get(EnvironmentVariables.IDENTITY_HEADER):
@@ -70,18 +80,19 @@ class ManagedIdentityCredential(AsyncContextManager):
                 from .cloud_shell import CloudShellCredential
 
                 self._credential = CloudShellCredential(**kwargs)
-        elif all(os.environ.get(var) for var in EnvironmentVariables.TOKEN_EXCHANGE_VARS):
-            _LOGGER.info("%s will use token exchange", self.__class__.__name__)
-            from .token_exchange import TokenExchangeCredential
+        elif all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS) \
+                and not exclude_workload_identity:
+            _LOGGER.info("%s will use workload identity", self.__class__.__name__)
+            from .workload_identity import WorkloadIdentityCredential
 
             client_id = kwargs.pop("client_id", None) or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
             if not client_id:
                 raise ValueError('Configure the environment with a client ID or pass a value for "client_id" argument')
 
-            self._credential = TokenExchangeCredential(
+            self._credential = WorkloadIdentityCredential(
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 client_id=client_id,
-                token_file_path=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
+                file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
                 **kwargs
             )
         else:
@@ -109,7 +120,9 @@ class ManagedIdentityCredential(AsyncContextManager):
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: managed identity isn't available in the hosting environment
         """
         if not self._credential:

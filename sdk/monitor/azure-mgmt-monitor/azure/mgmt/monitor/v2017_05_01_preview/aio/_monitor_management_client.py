@@ -12,7 +12,7 @@ from typing import Any, Awaitable, TYPE_CHECKING
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
 from ..._serialization import Deserializer, Serializer
 from ._configuration import MonitorManagementClientConfiguration
 from .operations import (
@@ -33,18 +33,18 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
 
     :ivar diagnostic_settings_category: DiagnosticSettingsCategoryOperations operations
     :vartype diagnostic_settings_category:
-     $(python-base-namespace).v2017_05_01_preview.aio.operations.DiagnosticSettingsCategoryOperations
+     azure.mgmt.monitor.v2017_05_01_preview.aio.operations.DiagnosticSettingsCategoryOperations
     :ivar diagnostic_settings: DiagnosticSettingsOperations operations
     :vartype diagnostic_settings:
-     $(python-base-namespace).v2017_05_01_preview.aio.operations.DiagnosticSettingsOperations
+     azure.mgmt.monitor.v2017_05_01_preview.aio.operations.DiagnosticSettingsOperations
     :ivar metric_definitions: MetricDefinitionsOperations operations
     :vartype metric_definitions:
-     $(python-base-namespace).v2017_05_01_preview.aio.operations.MetricDefinitionsOperations
+     azure.mgmt.monitor.v2017_05_01_preview.aio.operations.MetricDefinitionsOperations
     :ivar metrics: MetricsOperations operations
-    :vartype metrics: $(python-base-namespace).v2017_05_01_preview.aio.operations.MetricsOperations
+    :vartype metrics: azure.mgmt.monitor.v2017_05_01_preview.aio.operations.MetricsOperations
     :ivar subscription_diagnostic_settings: SubscriptionDiagnosticSettingsOperations operations
     :vartype subscription_diagnostic_settings:
-     $(python-base-namespace).v2017_05_01_preview.aio.operations.SubscriptionDiagnosticSettingsOperations
+     azure.mgmt.monitor.v2017_05_01_preview.aio.operations.SubscriptionDiagnosticSettingsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
@@ -66,9 +66,9 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
         self._config = MonitorManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -115,5 +115,5 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

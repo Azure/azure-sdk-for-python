@@ -10,7 +10,6 @@ from datetime import datetime
 from math import isnan
 from enum import Enum
 
-import six
 from azure.core import MatchConditions
 from azure.core.exceptions import raise_with_traceback
 
@@ -39,8 +38,7 @@ def _prepare_key(keyvalue):
         raise TypeError('PartitionKey or RowKey must be of type string.')
 
 
-def _parameter_filter_substitution(parameters, query_filter):
-    # type: (Dict[str, str], str) -> str
+def _parameter_filter_substitution(parameters: Dict[str, str], query_filter: str) -> str:
     """Replace user defined parameter in filter
     :param parameters: User defined parameters
     :param str query_filter: Filter for querying
@@ -54,7 +52,7 @@ def _parameter_filter_substitution(parameters, query_filter):
                     filter_strings[index] = str(val).lower()
                 elif isinstance(val, (float)):
                     filter_strings[index] = str(val)
-                elif isinstance(val, six.integer_types):
+                elif isinstance(val, int):
                     if val.bit_length() <= 32:
                         filter_strings[index] = str(val)
                     else:
@@ -63,7 +61,7 @@ def _parameter_filter_substitution(parameters, query_filter):
                     filter_strings[index] = "datetime'{}'".format(_to_utc_datetime(val))
                 elif isinstance(val, UUID):
                     filter_strings[index] = "guid'{}'".format(str(val))
-                elif isinstance(val, six.binary_type):
+                elif isinstance(val, bytes):
                     v = str(hexlify(val))
                     if v[0] == 'b': # Python 3 adds a 'b' and quotations, python 2.7 does neither
                         v = v[2:-1]

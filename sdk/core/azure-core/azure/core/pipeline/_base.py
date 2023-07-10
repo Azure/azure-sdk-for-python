@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 import logging
-from typing import Generic, TypeVar, List, Union, Any, Dict
+from typing import Generic, TypeVar, Union, Any, List, Dict, Optional, Iterable
 from contextlib import AbstractContextManager
 from azure.core.pipeline import (
     PipelineRequest,
@@ -34,16 +34,17 @@ from azure.core.pipeline import (
 )
 from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
 from ._tools import await_result as _await_result
+from .transport import HttpTransport
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-HttpTransportType = TypeVar("HttpTransportType")
+
 
 _LOGGER = logging.getLogger(__name__)
-PoliciesType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
+PoliciesType = Iterable[Union[HTTPPolicy, SansIOHTTPPolicy]]
 
 
-class _SansIOHTTPPolicyRunner(HTTPPolicy):
+class _SansIOHTTPPolicyRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """Sync implementation of the SansIO policy.
 
     Modifies the request and sends to the next policy in the chain.
@@ -52,13 +53,11 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy):
     :type policy: ~azure.core.pipeline.policies.SansIOHTTPPolicy
     """
 
-    def __init__(self, policy):
-        # type: (SansIOHTTPPolicy) -> None
+    def __init__(self, policy: SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]) -> None:
         super(_SansIOHTTPPolicyRunner, self).__init__()
         self._policy = policy
 
-    def send(self, request):
-        # type: (PipelineRequest) -> PipelineResponse
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Modifies the request and sends to the next policy in the chain.
 
         :param request: The PipelineRequest object.
@@ -77,20 +76,20 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy):
         return response
 
 
-class _TransportRunner(HTTPPolicy):
+class _TransportRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """Transport runner.
 
     Uses specified HTTP transport type to send request and returns response.
 
     :param sender: The Http Transport instance.
+    :type sender: ~azure.core.pipeline.transport.HttpTransport
     """
 
-    def __init__(self, sender):
-        # type: (HttpTransportType) -> None
+    def __init__(self, sender: HttpTransport[HTTPRequestType, HTTPResponseType]) -> None:
         super(_TransportRunner, self).__init__()
         self._sender = sender
 
-    def send(self, request):
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """HTTP transport send method.
 
         :param request: The PipelineRequest object.
@@ -98,6 +97,12 @@ class _TransportRunner(HTTPPolicy):
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
+        # "insecure_domain_change" is used to indicate that a redirect
+        # has occurred to a different domain. This tells the SensitiveHeaderCleanupPolicy
+        # to clean up sensitive headers. We need to remove it before sending the request
+        # to the transport layer. This code is needed to handle the case that the
+        # SensitiveHeaderCleanupPolicy is not added into the pipeline and "insecure_domain_change" is not popped.
+        request.context.options.pop("insecure_domain_change", False)
         return PipelineResponse(
             request.http_request,
             self._sender.send(request.http_request, **request.context.options),
@@ -112,6 +117,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     of the HTTP sender. The transport is the last node in the pipeline.
 
     :param transport: The Http Transport instance
+    :type transport: ~azure.core.pipeline.transport.HttpTransport
     :param list policies: List of configured policies.
 
     .. admonition:: Example:
@@ -124,9 +130,12 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
             :caption: Builds the pipeline for synchronous transport.
     """
 
-    def __init__(self, transport, policies=None):
-        # type: (HttpTransportType, PoliciesType) -> None
-        self._impl_policies = []  # type: List[HTTPPolicy]
+    def __init__(
+        self,
+        transport: HttpTransport[HTTPRequestType, HTTPResponseType],
+        policies: Optional[PoliciesType] = None,
+    ) -> None:
+        self._impl_policies: List[HTTPPolicy[HTTPRequestType, HTTPResponseType]] = []
         self._transport = transport
 
         for policy in policies or []:
@@ -139,28 +148,29 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         if self._impl_policies:
             self._impl_policies[-1].next = _TransportRunner(self._transport)
 
-    def __enter__(self):
-        # type: () -> Pipeline
-        self._transport.__enter__()  # type: ignore
+    def __enter__(self) -> "Pipeline":
+        self._transport.__enter__()
         return self
 
     def __exit__(self, *exc_details):  # pylint: disable=arguments-differ
         self._transport.__exit__(*exc_details)
 
     @staticmethod
-    def _prepare_multipart_mixed_request(request):
-        # type: (HTTPRequestType) -> None
+    def _prepare_multipart_mixed_request(request: HTTPRequestType) -> None:
         """Will execute the multipart policies.
 
         Does nothing if "set_multipart_mixed" was never called.
+
+        :param request: The request object.
+        :type request: ~azure.core.rest.HttpRequest
         """
         multipart_mixed_info = request.multipart_mixed_info  # type: ignore
         if not multipart_mixed_info:
             return
 
-        requests = multipart_mixed_info[0]  # type: List[HTTPRequestType]
-        policies = multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
-        pipeline_options = multipart_mixed_info[3]  # type: Dict[str, Any]
+        requests: List[HTTPRequestType] = multipart_mixed_info[0]
+        policies: List[SansIOHTTPPolicy] = multipart_mixed_info[1]
+        pipeline_options: Dict[str, Any] = multipart_mixed_info[3]
 
         # Apply on_requests concurrently to all requests
         import concurrent.futures
@@ -180,8 +190,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
                 _ for _ in executor.map(prepare_requests, requests)
             ]
 
-    def _prepare_multipart(self, request):
-        # type: (HTTPRequestType) -> None
+    def _prepare_multipart(self, request: HTTPRequestType) -> None:
         # This code is fine as long as HTTPRequestType is actually
         # azure.core.pipeline.transport.HTTPRequest, bu we don't check it in here
         # since we didn't see (yet) pipeline usage where it's not this actual instance
@@ -189,8 +198,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         self._prepare_multipart_mixed_request(request)
         request.prepare_multipart_body()  # type: ignore
 
-    def run(self, request, **kwargs):
-        # type: (HTTPRequestType, Any) -> PipelineResponse
+    def run(self, request: HTTPRequestType, **kwargs: Any) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Runs the HTTP Request through the chained policies.
 
         :param request: The HTTP request object.
@@ -200,12 +208,6 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         """
         self._prepare_multipart(request)
         context = PipelineContext(self._transport, **kwargs)
-        pipeline_request = PipelineRequest(
-            request, context
-        )  # type: PipelineRequest[HTTPRequestType]
-        first_node = (
-            self._impl_policies[0]
-            if self._impl_policies
-            else _TransportRunner(self._transport)
-        )
-        return first_node.send(pipeline_request)  # type: ignore
+        pipeline_request: PipelineRequest[HTTPRequestType] = PipelineRequest(request, context)
+        first_node = self._impl_policies[0] if self._impl_policies else _TransportRunner(self._transport)
+        return first_node.send(pipeline_request)

@@ -95,6 +95,12 @@ def test_send_and_receive_large_body_size(connstr_receivers, uamqp_transport, ti
     if sys.platform.startswith('darwin'):
         pytest.skip("Skipping on OSX - open issue regarding message size")
     connection_str, receivers = connstr_receivers
+
+    # TODO: sending large batch to China cloud results in write timeout for pyamqp
+    # https://github.com/Azure/azure-sdk-for-python/issues/29177
+    if not uamqp_transport and 'servicebus.windows.net' not in connection_str:
+        pytest.skip("Skipping for pyamqp - open issue regarding write timeout")
+
     client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
     with client:
         payload = 250 * 1024
@@ -104,7 +110,7 @@ def test_send_and_receive_large_body_size(connstr_receivers, uamqp_transport, ti
         client.send_event(EventData("A" * payload))
 
     received = []
-    timeout = 10 * timeout_factor
+    timeout = 20 * timeout_factor
     for r in receivers:
         received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=timeout)])
 
@@ -242,11 +248,14 @@ def test_send_and_receive_small_body(connstr_receivers, payload, uamqp_transport
     connection_str, receivers = connstr_receivers
 
     settings.tracing_implementation.set_value(fake_span)
+    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
+
     with fake_span(name="SendTest") as root_span:
-        client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
         with client:
             batch = client.create_batch()
             batch.add(EventData(payload))
+            batch.add(EventData(payload))
+
             client.send_batch(batch)
             client.send_event(EventData(payload))
         received = []
@@ -254,23 +263,40 @@ def test_send_and_receive_small_body(connstr_receivers, payload, uamqp_transport
         for r in receivers:
             received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=timeout)])
 
-    assert len(received) == 2
+    assert len(received) == 3
     assert list(received[0].body)[0] == payload
     assert list(received[1].body)[0] == payload
+    assert list(received[2].body)[0] == payload
 
-    # TODO: check for send/message span links and traceparents (issue #28141).
     # Will need to modify FakeSpan in conftest.
     assert root_span.name == "SendTest"
-    assert len(root_span.children[0].children) == 3
-    assert root_span.children[0].children[0].name == "Azure.EventHubs.message"
-    assert root_span.children[0].children[0].kind == SpanKind.PRODUCER
-    assert root_span.children[0].children[1].name == "Azure.EventHubs.send"
-    assert root_span.children[0].children[1].kind == SpanKind.CLIENT
-    assert root_span.children[0].children[2].name == "Azure.EventHubs.send"
-    assert root_span.children[0].children[2].kind == SpanKind.CLIENT
-    assert len(root_span.children[0].children[2].children) == 1
-    assert root_span.children[0].children[2].children[0].name == "Azure.EventHubs.message"
-    assert root_span.children[0].children[2].children[0].kind == SpanKind.PRODUCER
+    assert len(root_span.children) == 5
+
+    # Check first message added to batch.
+    assert root_span.children[0].name == "EventHubs.message"
+    assert root_span.children[0].kind == SpanKind.PRODUCER
+
+    # Check second message added to batch.
+    assert root_span.children[1].name == "EventHubs.message"
+    assert root_span.children[1].kind == SpanKind.PRODUCER
+
+    # Check send span corresponding to send_batch
+    assert root_span.children[2].name == "EventHubs.send"
+    assert root_span.children[2].kind == SpanKind.CLIENT
+    assert len(root_span.children[2].links) == 2
+    assert root_span.children[2].links[0].headers['traceparent'] == root_span.children[0].traceparent
+    assert root_span.children[2].links[1].headers['traceparent'] == root_span.children[1].traceparent
+
+    # Check message sent using send_event
+    assert root_span.children[3].name == "EventHubs.message"
+    assert root_span.children[3].kind == SpanKind.PRODUCER
+
+    # Check send span corresponding to send_event
+    assert root_span.children[4].name == "EventHubs.send"
+    assert root_span.children[4].kind == SpanKind.CLIENT
+    assert len(root_span.children[4].links) == 1
+    assert root_span.children[4].links[0].headers['traceparent'] == root_span.children[3].traceparent
+
     # MUST RESET TRACING IMPLEMENTATION TO NONE, ELSE ALL OTHER TESTS ADD TRACING
     settings.tracing_implementation.set_value(None)
 

@@ -12,20 +12,21 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import MLTableJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import PipelineJob as RestPipelineJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models._azure_machine_learning_workspaces_enums import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MLTableJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models._azure_machine_learning_workspaces_enums import (
     LearningRateScheduler,
     StochasticOptimizer,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_data_binding_expression, load_yaml
-from azure.ai.ml.constants._common import ARM_ID_PREFIX
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, AssetTypes, InputOutputModes
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities import CommandComponent, Component, Job, PipelineJob, SparkComponent
 from azure.ai.ml.entities._assets import Code
+from azure.ai.ml.entities._component.datatransfer_component import DataTransferComponent
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
@@ -33,7 +34,13 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     validate_pipeline_input_key_contains_allowed_characters,
 )
 from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
-from azure.ai.ml.entities._job.job_service import JobService
+from azure.ai.ml.entities._job.job_service import (
+    JobService,
+    JupyterLabJobService,
+    SshJobService,
+    TensorBoardJobService,
+    VsCodeJobService,
+)
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
 from azure.ai.ml.exceptions import UserErrorException, ValidationException
 
@@ -585,7 +592,9 @@ class TestPipelineJobSchema:
             assert from_rest_output.mode == rest_output_data.mode
 
     def assert_inline_component(self, component_job, component_dict):
-        assert isinstance(component_job.component, (CommandComponent, ParallelComponent, SparkComponent))
+        assert isinstance(
+            component_job.component, (CommandComponent, ParallelComponent, SparkComponent, DataTransferComponent)
+        )
         component = component_job.component or component_job.trial
         assert component._is_anonymous
         # hash will be generated before create_or_update, so can't check it in unit tests
@@ -615,6 +624,20 @@ class TestPipelineJobSchema:
         component_dict = load_yaml(
             "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
         )
+        self.assert_inline_component(spark_component, component_dict)
+
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_files_job.yaml"
+        job = load_job(test_path)
+        # make sure inline component is parsed into component entity
+        spark_component = job.jobs["merge_files_job"]
+        component_dict = load_yaml("./tests/test_configs/components/data_transfer/merge_files.yaml")
+        self.assert_inline_component(spark_component, component_dict)
+
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/copy_files.yaml"
+        job = load_job(test_path)
+        # make sure inline component is parsed into component entity
+        spark_component = job.jobs["copy_files"]
+        component_dict = load_yaml("./tests/test_configs/components/data_transfer/copy_files.yaml")
         self.assert_inline_component(spark_component, component_dict)
 
     def test_pipeline_job_inline_component_file_with_complex_path(self):
@@ -1129,9 +1152,13 @@ class TestPipelineJobSchema:
         # msrest has been removed from public interface
         distribution_obj = TensorFlowDistribution(**distribution_dict)
 
-        with pytest.raises(ValidationError, match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema"):
+        with pytest.raises(
+            ValidationError, match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema"
+        ):
             _ = PyTorchDistributionSchema(context={"base_path": "./"}).dump(distribution_dict)
-        with pytest.raises(ValidationError, match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema"):
+        with pytest.raises(
+            ValidationError, match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema"
+        ):
             _ = PyTorchDistributionSchema(context={"base_path": "./"}).dump(distribution_obj)
 
         after_dump_correct = TensorFlowDistributionSchema(context={"base_path": "./"}).dump(distribution_obj)
@@ -1162,7 +1189,7 @@ class TestPipelineJobSchema:
                         "_source": "YAML.JOB",
                         "command": "pip freeze && echo " "${{inputs.literal_input}}",
                         "description": "Train a model on the Iris " "dataset-1.",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {
                             "literal_input": {"default": "7", "type": "integer"},
                             "test1": {"mode": "ro_mount", "type": "uri_file"},
@@ -1177,7 +1204,7 @@ class TestPipelineJobSchema:
                         "_source": "YAML.JOB",
                         "command": "echo Hello World",
                         "description": "Train a model on the Iris dataset-2.",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {
                             "test1": {"mode": "ro_mount", "type": "uri_file"},
                             "test2": {"type": "uri_file"},
@@ -1191,7 +1218,7 @@ class TestPipelineJobSchema:
                         "_source": "YAML.JOB",
                         "command": "pip freeze && echo ${{inputs.test1}}",
                         "description": "Train a model on the Iris dataset-1.",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {"test1": {"type": "uri_file", "mode": "ro_mount"}},
                         "is_deterministic": True,
                         "outputs": {"test1": {"type": "uri_folder"}},
@@ -1207,7 +1234,7 @@ class TestPipelineJobSchema:
                         "_source": "YAML.JOB",
                         "command": "pip freeze && echo " "${{inputs.literal_input}}",
                         "description": "Train a model on the Iris " "dataset-1.",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {
                             "literal_input": {"default": "7", "type": "integer"},
                             "test1": {"mode": "ro_mount", "type": "uri_file"},
@@ -1222,7 +1249,7 @@ class TestPipelineJobSchema:
                         "_source": "YAML.JOB",
                         "command": "echo Hello World",
                         "description": "Train a model on the Iris dataset-2.",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {
                             "test1": {"mode": "ro_mount", "type": "uri_file"},
                             "test2": {"type": "uri_file"},
@@ -1236,7 +1263,7 @@ class TestPipelineJobSchema:
                         "_source": "YAML.JOB",
                         "command": "pip freeze && echo ${{inputs.test1}}",
                         "description": "Train a model on the Iris dataset-1.",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {"test1": {"type": "uri_file", "mode": "ro_mount"}},
                         "is_deterministic": True,
                         "outputs": {"test1": {"type": "uri_folder", "mode": "mount"}},
@@ -1270,7 +1297,7 @@ class TestPipelineJobSchema:
             "hello_world_inline_commandjob_1": {
                 "_source": "YAML.JOB",
                 "command": "pip freeze && echo ${{inputs.literal_input}}",
-                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 "inputs": {
                     "literal_input": {"type": "integer"},
                     "test1": {"type": "uri_file", "mode": "ro_mount"},
@@ -1284,7 +1311,7 @@ class TestPipelineJobSchema:
             "hello_world_inline_commandjob_2": {
                 "_source": "YAML.JOB",
                 "command": "pip freeze && echo ${{inputs.test1}}",
-                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 "inputs": {
                     "test1": {"mode": "ro_mount", "type": "uri_file"},
                     "test2": {"type": "uri_folder"},
@@ -1297,7 +1324,7 @@ class TestPipelineJobSchema:
             "hello_world_inline_commandjob_3": {
                 "_source": "YAML.JOB",
                 "command": "pip freeze && echo ${{inputs.test1}}",
-                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 "inputs": {
                     "test1": {"mode": "ro_mount", "type": "uri_file"},
                     "test2": {"type": "uri_file"},
@@ -1537,14 +1564,6 @@ class TestPipelineJobSchema:
         if "image_" in job_key and "classification" in job_key:
             original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
                 "type": "choice",
-                "values": ["yolov5"],
-            }
-            self._raise_error_on_wrong_schema(
-                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
-            )
-
-            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
-                "type": "choice",
                 "values": ["vitb16r224"],
             }
             dump_yaml_to_file(test_yaml_path, original_dict_copy)
@@ -1557,14 +1576,6 @@ class TestPipelineJobSchema:
         elif "object_detection" in job_key:
             original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
                 "type": "choice",
-                "values": ["vitb16r224"],
-            }
-            self._raise_error_on_wrong_schema(
-                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
-            )
-
-            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
-                "type": "choice",
                 "values": ["yolov5", "fasterrcnn_resnet50_fpn"],
             }
             dump_yaml_to_file(test_yaml_path, original_dict_copy)
@@ -1575,27 +1586,6 @@ class TestPipelineJobSchema:
             self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
 
         elif "instance_segmentation" in job_key:
-            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
-                "type": "choice",
-                "values": ["vitb16r224"],
-            }
-            self._raise_error_on_wrong_schema(
-                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
-            )
-
-            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
-                "type": "choice",
-                "values": ["fasterrcnn_resnet50_fpn"],
-            }
-            self._raise_error_on_wrong_schema(
-                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
-            )
-
-            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = "yolov5"
-            self._raise_error_on_wrong_schema(
-                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
-            )
-
             original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
                 "type": "choice",
                 "values": ["maskrcnn_resnet152_fpn", "maskrcnn_resnet18_fpn"],
@@ -1655,13 +1645,15 @@ class TestPipelineJobSchema:
         assert job.component._job_sources == {"REMOTE.REGISTRY": 1}
         assert job.component._source == "YAML.JOB"
 
-    def test_command_job_node_services_in_pipeline(self):
-        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_node_services.yml"
+    def test_command_job_node_services_in_pipeline_with_properties(self):
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_node_services_with_properties.yml"
         job: PipelineJob = load_job(source=test_path)
         node_services = job.jobs["hello_world_component_inline"].services
 
-        for name, service in node_services.items():
-            assert isinstance(service, JobService)
+        assert isinstance(node_services.get("my_ssh"), SshJobService)
+        assert isinstance(node_services.get("my_tensorboard"), TensorBoardJobService)
+        assert isinstance(node_services.get("my_jupyterlab"), JupyterLabJobService)
+        assert isinstance(node_services.get("my_vscode"), VsCodeJobService)
 
         job_rest_obj = job._to_rest_object()
         rest_services = job_rest_obj.properties.jobs["hello_world_component_inline"]["services"]
@@ -1669,6 +1661,7 @@ class TestPipelineJobSchema:
         assert rest_services == {
             "my_ssh": {
                 "job_service_type": "SSH",
+                "properties": {"sshPublicKeys": "xyz123"},
             },
             "my_tensorboard": {
                 "job_service_type": "TensorBoard",
@@ -1676,6 +1669,42 @@ class TestPipelineJobSchema:
             },
             "my_jupyterlab": {
                 "job_service_type": "JupyterLab",
+            },
+            "my_vscode": {
+                "job_service_type": "VSCode",
+            },
+        }
+
+    def test_command_job_node_services_in_pipeline(self):
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_node_services.yml"
+        job: PipelineJob = load_job(source=test_path)
+        node_services = job.jobs["hello_world_component_inline"].services
+
+        assert isinstance(node_services.get("my_ssh"), SshJobService)
+        assert isinstance(node_services.get("my_tensorboard"), TensorBoardJobService)
+        assert isinstance(node_services.get("my_jupyterlab"), JupyterLabJobService)
+        assert isinstance(node_services.get("my_vscode"), VsCodeJobService)
+
+        assert node_services.get("my_ssh").ssh_public_keys == "xyz123"
+        assert node_services.get("my_tensorboard").log_dir == "~/tblog"
+
+        job_rest_obj = job._to_rest_object()
+        rest_services = job_rest_obj.properties.jobs["hello_world_component_inline"]["services"]
+        # rest object of node in pipeline should be pure dict
+        assert rest_services == {
+            "my_ssh": {
+                "job_service_type": "SSH",
+                "properties": {"sshPublicKeys": "xyz123"},
+            },
+            "my_tensorboard": {
+                "job_service_type": "TensorBoard",
+                "properties": {"logDir": "~/tblog"},
+            },
+            "my_jupyterlab": {
+                "job_service_type": "JupyterLab",
+            },
+            "my_vscode": {
+                "job_service_type": "VSCode",
             },
         }
 
@@ -1684,8 +1713,10 @@ class TestPipelineJobSchema:
         job: PipelineJob = load_job(source=test_path)
         node_services = job.jobs["hello_world_component_inline"].services
 
-        for name, service in node_services.items():
-            assert isinstance(service, JobService)
+        assert isinstance(node_services.get("my_ssh"), SshJobService)
+        assert isinstance(node_services.get("my_tensorboard"), TensorBoardJobService)
+        assert isinstance(node_services.get("my_jupyterlab"), JupyterLabJobService)
+        assert isinstance(node_services.get("my_vscode"), VsCodeJobService)
 
         job_rest_obj = job._to_rest_object()
 
@@ -1693,6 +1724,7 @@ class TestPipelineJobSchema:
         assert job_rest_obj.properties.jobs["hello_world_component_inline"]["services"] == {
             "my_ssh": {
                 "job_service_type": "SSH",
+                "properties": {"sshPublicKeys": "xyz123"},
             },
             "my_tensorboard": {
                 "job_service_type": "TensorBoard",
@@ -1700,6 +1732,39 @@ class TestPipelineJobSchema:
             },
             "my_jupyterlab": {
                 "job_service_type": "JupyterLab",
+            },
+            "my_vscode": {
+                "job_service_type": "VSCode",
+            },
+        }
+
+    def test_command_job_node_services_in_pipeline_with_no_component_with_properties(self):
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_node_services_inline_job_with_properties.yml"
+        job: PipelineJob = load_job(source=test_path)
+        node_services = job.jobs["hello_world_component_inline"].services
+
+        assert isinstance(node_services.get("my_ssh"), SshJobService)
+        assert isinstance(node_services.get("my_tensorboard"), TensorBoardJobService)
+        assert isinstance(node_services.get("my_jupyterlab"), JupyterLabJobService)
+        assert isinstance(node_services.get("my_vscode"), VsCodeJobService)
+
+        job_rest_obj = job._to_rest_object()
+
+        # rest object of node in pipeline should be pure dict
+        assert job_rest_obj.properties.jobs["hello_world_component_inline"]["services"] == {
+            "my_ssh": {
+                "job_service_type": "SSH",
+                "properties": {"sshPublicKeys": "xyz123"},
+            },
+            "my_tensorboard": {
+                "job_service_type": "TensorBoard",
+                "properties": {"logDir": "~/tblog"},
+            },
+            "my_jupyterlab": {
+                "job_service_type": "JupyterLab",
+            },
+            "my_vscode": {
+                "job_service_type": "VSCode",
             },
         }
 
@@ -1783,3 +1848,7 @@ class TestPipelineJobSchema:
     ):
         pipeline: PipelineJob = load_job(source=pipeline_job_path)
         pipeline._to_rest_object()
+
+    def test_pipeline_job_with_spark_component(self):
+        yaml_path = r"./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_spark_component.yml"
+        load_job(yaml_path)

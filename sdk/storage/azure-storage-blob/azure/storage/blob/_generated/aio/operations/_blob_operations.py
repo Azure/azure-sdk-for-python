@@ -202,6 +202,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers = {}
         if response.status_code == 200:
             response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+            response_headers["x-ms-creation-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-creation-time")
+            )
             response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
             response_headers["x-ms-or-policy-id"] = self._deserialize("str", response.headers.get("x-ms-or-policy-id"))
             response_headers["x-ms-or"] = self._deserialize("{str}", response.headers.get("x-ms-or"))
@@ -280,6 +283,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code == 206:
             response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+            response_headers["x-ms-creation-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-creation-time")
+            )
             response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
             response_headers["x-ms-or-policy-id"] = self._deserialize("str", response.headers.get("x-ms-or-policy-id"))
             response_headers["x-ms-or"] = self._deserialize("{str}", response.headers.get("x-ms-or"))

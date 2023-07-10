@@ -29,22 +29,16 @@ class TestDatastoreOperations:
         mock_datastore_operation._operation.list.assert_called_once()
         mock_datastore_operation._operation.list_secrets.assert_not_called()
 
-    def test_delete(
-        self, mock_from_rest, mock_datastore_operation: DatastoreOperations
-    ) -> None:
+    def test_delete(self, mock_from_rest, mock_datastore_operation: DatastoreOperations) -> None:
         mock_datastore_operation.delete("random_name")
         mock_datastore_operation._operation.delete.assert_called_once()
 
-    def test_get_no_secrets(
-        self, mock_from_rest, mock_datastore_operation: DatastoreOperations
-    ) -> None:
+    def test_get_no_secrets(self, mock_from_rest, mock_datastore_operation: DatastoreOperations) -> None:
         mock_datastore_operation.get("random_name")
         mock_datastore_operation._operation.get.assert_called_once()
         mock_datastore_operation._operation.list_secrets.assert_not_called()
 
-    def test_get_no_secrets_with_secrets(
-        self, mock_from_rest, mock_datastore_operation: DatastoreOperations
-    ) -> None:
+    def test_get_no_secrets_with_secrets(self, mock_from_rest, mock_datastore_operation: DatastoreOperations) -> None:
         mock_datastore_operation.get("random_name", include_secrets=True)
         mock_datastore_operation._operation.get.assert_called_once()
         mock_datastore_operation._operation.list_secrets.assert_called_once()

@@ -5,13 +5,13 @@
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
-from ._generated_models import UpdateSettingsRequest
+from ._generated_models import UpdateSettingRequest
 from ._internal import KeyVaultClientBase
 from ._models import KeyVaultSetting
 
 
 class KeyVaultSettingsClient(KeyVaultClientBase):
-    """Provides methods to update, get, and list settings for an Azure Key Vault.
+    """Provides methods to update, get, and list Managed HSM account settings.
 
     :param str vault_url: URL of the vault on which the client will operate. This is also called the vault's "DNS Name".
         You should validate that this URL references a valid Key Vault or Managed HSM resource.
@@ -37,7 +37,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        result = self._client.get_setting_value(vault_base_url=self._vault_url, setting_name=name, **kwargs)
+        result = self._client.get_setting(vault_base_url=self._vault_url, setting_name=name, **kwargs)
         return KeyVaultSetting._from_generated(result)
 
     @distributed_trace
@@ -61,20 +61,21 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def update_setting(self, name: str, value: str, **kwargs) -> KeyVaultSetting:
-        """Updates a given account setting with the provided value.
+    def update_setting(self, setting: KeyVaultSetting, **kwargs) -> KeyVaultSetting:
+        """Updates the named account setting with the provided value.
 
-        :param str name: The name of the account setting to update.
-        :param str value: The value to set.
+        :param setting: A :class:`~azure.keyvault.administration.KeyVaultSetting` to update. The account setting with
+            the provided name will be updated to have the provided value.
+        :type setting: ~azure.keyvault.administration.KeyVaultSetting
 
         :returns: The updated account setting, as a :class:`~azure.keyvault.administration.KeyVaultSetting`.
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        parameters = UpdateSettingsRequest(value=value)
-        result = self._client.update_settings(
+        parameters = UpdateSettingRequest(value=setting.value)
+        result = self._client.update_setting(
             vault_base_url=self._vault_url,
-            setting_name=name,
+            setting_name=setting.name,
             parameters=parameters,
             **kwargs
         )

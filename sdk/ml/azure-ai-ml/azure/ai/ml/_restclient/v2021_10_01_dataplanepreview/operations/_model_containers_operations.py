@@ -9,7 +9,13 @@ import functools
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -26,7 +32,8 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-    T = TypeVar('T')
+
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
@@ -40,10 +47,10 @@ def build_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
     skiptoken = kwargs.pop('skiptoken', None)  # type: Optional[str]
     list_view_type = kwargs.pop('list_view_type', None)  # type: Optional[Union[str, "_models.ListViewType"]]
 
-    api_version = "2021-10-01-dataplanepreview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models')
@@ -84,7 +91,8 @@ def build_delete_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-10-01-dataplanepreview"
+    api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{name}')
@@ -122,7 +130,8 @@ def build_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2021-10-01-dataplanepreview"
+    api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{name}')
@@ -160,9 +169,9 @@ def build_create_or_update_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-10-01-dataplanepreview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{name}')
@@ -238,6 +247,9 @@ class ModelContainersOperations(object):
         :type skiptoken: str
         :param list_view_type: View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
+        :keyword api_version: Api Version. The default value is "2021-10-01-dataplanepreview". Note
+         that overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ModelContainerResourceArmPaginatedResult or the
          result of cls(response)
@@ -245,31 +257,34 @@ class ModelContainersOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.ModelContainerResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelContainerResourceArmPaginatedResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        api_version = kwargs.pop("api_version", "2021-10-01-dataplanepreview")  # type: str
+
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ModelContainerResourceArmPaginatedResult"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     registry_name=registry_name,
+                    api_version=api_version,
                     skiptoken=skiptoken,
                     list_view_type=list_view_type,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     registry_name=registry_name,
+                    api_version=api_version,
                     skiptoken=skiptoken,
                     list_view_type=list_view_type,
                     template_url=next_link,
@@ -299,11 +314,9 @@ class ModelContainersOperations(object):
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models'}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models"}  # type: ignore
 
     @distributed_trace
     def delete(
@@ -324,24 +337,27 @@ class ModelContainersOperations(object):
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
+        :keyword api_version: Api Version. The default value is "2021-10-01-dataplanepreview". Note
+         that overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
+        api_version = kwargs.pop("api_version", "2021-10-01-dataplanepreview")  # type: str
+
         request = build_delete_request(
             name=name,
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            template_url=self.delete.metadata['url'],
+            api_version=api_version,
+            template_url=self.delete.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -357,8 +373,7 @@ class ModelContainersOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{name}'}  # type: ignore
-
+    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{name}"}  # type: ignore
 
     @distributed_trace
     def get(
@@ -379,24 +394,27 @@ class ModelContainersOperations(object):
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
+        :keyword api_version: Api Version. The default value is "2021-10-01-dataplanepreview". Note
+         that overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ModelContainerData, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ModelContainerData
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelContainerData"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ModelContainerData"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
+        api_version = kwargs.pop("api_version", "2021-10-01-dataplanepreview")  # type: str
+
         request = build_get_request(
             name=name,
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            template_url=self.get.metadata['url'],
+            api_version=api_version,
+            template_url=self.get.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -409,15 +427,14 @@ class ModelContainersOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ModelContainerData', pipeline_response)
+        deserialized = self._deserialize("ModelContainerData", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{name}'}  # type: ignore
-
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{name}"}  # type: ignore
 
     def _create_or_update_initial(
         self,
@@ -428,24 +445,24 @@ class ModelContainersOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ModelContainerData"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelContainerData"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ModelContainerData"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2021-10-01-dataplanepreview")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'ModelContainerData')
+        _json = self._serialize.body(body, "ModelContainerData")
 
         request = build_create_or_update_request_initial(
             name=name,
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._create_or_update_initial.metadata['url'],
+            template_url=self._create_or_update_initial.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -458,18 +475,21 @@ class ModelContainersOperations(object):
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         response_headers = {}
-        response_headers['x-ms-async-operation-timeout']=self._deserialize('duration', response.headers.get('x-ms-async-operation-timeout'))
-        response_headers['Azure-AsyncOperation']=self._deserialize('str', response.headers.get('Azure-AsyncOperation'))
+        response_headers["x-ms-async-operation-timeout"] = self._deserialize(
+            "duration", response.headers.get("x-ms-async-operation-timeout")
+        )
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
 
-        deserialized = self._deserialize('ModelContainerData', pipeline_response)
+        deserialized = self._deserialize("ModelContainerData", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{name}'}  # type: ignore
-
+    _create_or_update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{name}"}  # type: ignore
 
     @distributed_trace
     def begin_create_or_update(
@@ -493,6 +513,9 @@ class ModelContainersOperations(object):
         :type registry_name: str
         :param body: Container entity to create or update.
         :type body: ~azure.mgmt.machinelearningservices.models.ModelContainerData
+        :keyword api_version: Api Version. The default value is "2021-10-01-dataplanepreview". Note
+         that overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -507,49 +530,54 @@ class ModelContainersOperations(object):
          ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.ModelContainerData]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelContainerData"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2021-10-01-dataplanepreview")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, azure.core.polling.PollingMethod]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ModelContainerData"]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._create_or_update_initial(
                 name=name,
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
                 body=body,
+                api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
-            response_headers['x-ms-async-operation-timeout']=self._deserialize('duration', response.headers.get('x-ms-async-operation-timeout'))
-            response_headers['Azure-AsyncOperation']=self._deserialize('str', response.headers.get('Azure-AsyncOperation'))
-            
-            deserialized = self._deserialize('ModelContainerData', pipeline_response)
+            response_headers["x-ms-async-operation-timeout"] = self._deserialize(
+                "duration", response.headers.get("x-ms-async-operation-timeout")
+            )
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+            deserialized = self._deserialize("ModelContainerData", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)
             return deserialized
 
-
-        if polling is True: polling_method = ARMPolling(lro_delay, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method = ARMPolling(lro_delay, **kwargs)
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{name}'}  # type: ignore
+    begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{name}"}  # type: ignore
