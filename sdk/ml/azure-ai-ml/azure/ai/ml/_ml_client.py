@@ -222,9 +222,26 @@ class MLClient:
         # registry_name is present when the operations need referring assets from registry.
         # the subscription, resource group, if provided, will be ignored and replaced by
         # whatever is received from the registry discovery service.
+
         if registry_name:
+            # get the workspace location here if workspace_reference is provided
+            workspace_reference = kwargs.pop("workspace_reference", None)
+            workspace_location = None
+            if workspace_reference:
+                ws_ops = WorkspaceOperations(
+                    OperationScope(subscription_id, resource_group_name, workspace_reference),
+                    ServiceClient042023Preview(
+                        credential=self._credential,
+                        subscription_id=subscription_id,
+                        **kwargs,
+                    ),
+                    self._credential,
+                )
+                workspace_details = ws_ops.get(workspace_reference)
+                workspace_location = workspace_details.location
+
             self._service_client_10_2021_dataplanepreview, resource_group_name, subscription_id = get_registry_client(
-                self._credential, registry_name, **kwargs
+                self._credential, registry_name, workspace_location, **kwargs
             )
 
         self._operation_scope = OperationScope(subscription_id, resource_group_name, workspace_name, registry_name)
@@ -381,7 +398,6 @@ class MLClient:
             self._datastores,
             self._operation_container,
             requests_pipeline=self._requests_pipeline,
-            service_client_ws=self._service_client_10_2022_preview,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.MODEL, self._models)
