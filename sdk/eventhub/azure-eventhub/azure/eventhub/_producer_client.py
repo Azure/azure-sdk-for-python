@@ -827,7 +827,7 @@ class EventHubProducerClient(
                 timeout_time = time.time() + timeout if timeout else None
                 self._buffered_producer_dispatcher.flush(timeout_time=timeout_time)
 
-    def close(self, *, flush: bool = True, **kwargs: Any) -> None:
+    def close(self, *, flush: bool = True, timeout: Optional[float] = None, **kwargs: Any) -> None:
         """Close the Producer client underlying AMQP connection and links.
 
         :keyword bool flush: Buffered mode only. If set to True, events in the buffer will be sent
