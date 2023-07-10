@@ -71,12 +71,12 @@ def generate_account_sas(
     _validate_not_none("account_name", credential.named_key.name)
     _validate_not_none("account_key", credential.named_key.key)
     if permission is str:
-        permission = AccountSasPermissions.from_string(permission=permission)  # type: ignore
+        permission = AccountSasPermissions.from_string(permission=permission)  # type: ignore[arg-type]
     sas = TableSharedAccessSignature(credential)
     return sas.generate_account(
         "t",
         resource_types,
-        permission,
+        permission,  # type: ignore[arg-type]
         expiry,
         start=kwargs.pop("start", None),
         ip_address_or_range=kwargs.pop("ip_address_or_range", None),
