@@ -88,6 +88,8 @@ def _convert_to_isoformat(date_time):
 
 def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping[str, Any]:
     """Return a case-insensitive mutable mapping from an inputted mapping structure.
+    :param args: The input mapping structure.
+    :type args: Mapping[str, Any] or Iterable[Tuple[str, Any]
 
     :return: A case-insensitive mutable mapping object.
     :rtype: ~collections.abc.MutableMapping

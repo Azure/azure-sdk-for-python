@@ -48,9 +48,9 @@ class _SansIOAsyncHTTPPolicyRunner(
     :type policy: ~azure.core.pipeline.policies.SansIOHTTPPolicy
     """
 
-    def __init__(self, policy: SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]) -> None:
+    def __init__(self, policy: SansIOHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]) -> None:
         super(_SansIOAsyncHTTPPolicyRunner, self).__init__()
-        self._policy: SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType] = policy
+        self._policy = policy
 
     async def send(
         self, request: PipelineRequest[HTTPRequestType]

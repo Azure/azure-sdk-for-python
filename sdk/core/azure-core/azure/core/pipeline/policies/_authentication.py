@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
-from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any
+from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
 from azure.core.rest import HttpResponse, HttpRequest
@@ -56,10 +56,10 @@ class _BearerTokenCredentialPolicyBase:
             )
 
     @staticmethod
-    def _update_headers(headers: MutableMapping[str, Any], token: str) -> None:
+    def _update_headers(headers: MutableMapping[str, str], token: str) -> None:
         """Updates the Authorization header with the bearer token.
 
-        :param MutableMapping[str, Any] headers: The HTTP Request headers
+        :param MutableMapping[str, str] headers: The HTTP Request headers
         :param str token: The OAuth token.
         """
         headers["Authorization"] = "Bearer {}".format(token)

@@ -26,8 +26,8 @@
 
 from typing import TypeVar, Generic, Dict, Any
 
-HTTPResponseType = TypeVar("HTTPResponseType", covariant=True)
-HTTPRequestType = TypeVar("HTTPRequestType", covariant=True)
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 
 class PipelineContext(Dict[str, Any]):
@@ -88,16 +88,21 @@ class PipelineContext(Dict[str, Any]):
             raise ValueError("Context value {} cannot be deleted.".format(key))
         return super(PipelineContext, self).__delitem__(key)
 
-    def clear(self):  # pylint: disable=docstring-missing-return, docstring-missing-rtype
+    def clear(self) -> None:
         """Context objects cannot be cleared.
 
+        :return: None
+        :rtype: None
         :raises: TypeError
         """
         raise TypeError("Context objects cannot be cleared.")
 
-    def update(self, *args, **kwargs):  # pylint: disable=docstring-missing-return, docstring-missing-rtype
+    def update(self, *args, **kwargs):
         """Context objects cannot be updated.
 
+        :param str args: The key to update.
+        :return: None
+        :rtype: None
         :raises: TypeError
         """
         raise TypeError("Context objects cannot be updated.")
