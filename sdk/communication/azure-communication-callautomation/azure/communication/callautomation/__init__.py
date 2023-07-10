@@ -41,6 +41,7 @@ from ._generated.models._enums import (
     RecordingFormat,
     RecognizeInputType,
     DtmfTone,
+    Gender,
     CallConnectionState,
     RecordingState
 )
@@ -56,6 +57,7 @@ __all__ = [
     "FileSource",
     "TextSource",
     "SsmlSource",
+    "Gender",
     "Choice",
     "ChannelAffinity",
 

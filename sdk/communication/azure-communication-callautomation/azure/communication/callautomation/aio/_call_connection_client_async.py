@@ -500,7 +500,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             options.dtmf_options = dtmf_options
             options.speech_options = speech_options
         elif input_type == RecognizeInputType.CHOICES:
-            options.choices = choices
+            options.choices = [choice._to_generated() for choice in choices] #pylint:disable=protected-access
         else:
             raise NotImplementedError(f"{type(input_type).__name__} is not supported")
 
