@@ -29,7 +29,7 @@ def _get_json_content(obj): # pylint: disable=inconsistent-return-statements
         # storage queue
         return json.loads(obj.content)
     except ValueError as err:
-        raise ValueError(msg) from err
+        raise ValueError(err, msg) from err
     except AttributeError:
         # eventhubs
         try:
@@ -38,9 +38,9 @@ def _get_json_content(obj): # pylint: disable=inconsistent-return-statements
             # servicebus
             return json.loads(next(obj.body))
         except ValueError as err:
-            raise ValueError(msg) from err
+            raise ValueError(err, msg) from err
         except: # pylint: disable=bare-except
             try:
                 return json.loads(obj)
             except ValueError as err:
-                raise ValueError(msg) from err
+                raise ValueError(err, msg) from err

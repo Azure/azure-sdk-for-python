@@ -160,7 +160,7 @@ def _from_cncf_events(event): # pylint: disable=inconsistent-return-statements
     except Exception as err: # pylint: disable=broad-except
         msg = """Failed to serialize the event. Please ensure your
         CloudEvents is correctly formatted (https://pypi.org/project/cloudevents/)"""
-        raise ValueError(msg) from err
+        raise ValueError(err, msg) from err
 
 
 def _build_request(endpoint, content_type, events, *, channel_name=None):
