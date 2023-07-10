@@ -7,20 +7,20 @@
 # --------------------------------------------------------------------------
 
 from ._service_operations import ServiceOperations
-from ._container_operations import ContainerOperations
 from ._blob_operations import BlobOperations
+from ._container_operations import ContainerOperations
 from ._page_blob_operations import PageBlobOperations
 from ._append_blob_operations import AppendBlobOperations
 from ._block_blob_operations import BlockBlobOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "ServiceOperations",
-    "ContainerOperations",
     "BlobOperations",
+    "ContainerOperations",
     "PageBlobOperations",
     "AppendBlobOperations",
     "BlockBlobOperations",
