@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+import pytest
 
 from azure.core.credentials import AzureKeyCredential
 from azure.communication.callautomation import (
@@ -36,6 +37,17 @@ class TestCallRecordingClient(unittest.TestCase):
             raise
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
+
+        with pytest.raises(ValueError):
+            call_locator = ServerCallLocator(server_call_id = "locatorId")
+            callautomation_client.start_recording(call_locator, group_call_id="foo")
+        with pytest.raises(ValueError):
+            call_locator = ServerCallLocator(server_call_id = "locatorId")
+            callautomation_client.start_recording(call_locator=call_locator, server_call_id="foo")
+        with pytest.raises(ValueError):
+            callautomation_client.start_recording(group_call_id="foo", server_call_id="bar")
+
+
 
 
     def test_stop_recording(self):

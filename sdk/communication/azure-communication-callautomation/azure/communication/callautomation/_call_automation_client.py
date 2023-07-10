@@ -3,7 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Union, Optional, TYPE_CHECKING, Iterable, Dict, overload
+from typing import List, Union, Optional, TYPE_CHECKING, Iterable, Dict, cast, overload
+from unittest.mock import call
 from urllib.parse import urlparse
 from azure.core.tracing.decorator import distributed_trace
 from ._version import SDK_MONIKER
@@ -25,7 +26,8 @@ from ._generated.models import (
 )
 from ._models import (
     CallConnectionProperties,
-    RecordingProperties
+    RecordingProperties,
+    ChannelAffinity
 )
 from ._content_downloader import ContentDownloader
 from ._utils import (
@@ -60,7 +62,8 @@ if TYPE_CHECKING:
     )
     from azure.core.exceptions import HttpResponseError
 
-class CallAutomationClient(object):
+
+class CallAutomationClient:
     """A client to interact with the AzureCommunicationService CallAutomation service.
     Call Automation provides developers the ability to build server-based,
     intelligent call workflows, and call recording for voice and PSTN channels.
@@ -124,7 +127,6 @@ class CallAutomationClient(object):
         :rtype: ~azure.communication.callautomation.CallAutomationClient
         """
         endpoint, access_key = parse_connection_str(conn_str)
-
         return cls(endpoint, access_key, **kwargs)
 
     @distributed_trace
@@ -147,7 +149,8 @@ class CallAutomationClient(object):
         return CallConnectionClient._from_callautomation_client( #pylint:disable=protected-access
             callautomation_client=self._client,
             call_connection_id=call_connection_id,
-            **kwargs)
+            **kwargs
+        )
 
     @distributed_trace
     def create_call(
@@ -271,10 +274,9 @@ class CallAutomationClient(object):
             create_call_request=create_call_request,
             repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
-            **kwargs)
-
-        return CallConnectionProperties._from_generated(# pylint:disable=protected-access
-            result)
+            **kwargs
+        )
+        return CallConnectionProperties._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace
     def answer_call(
@@ -321,10 +323,9 @@ class CallAutomationClient(object):
             answer_call_request=answer_call_request,
             repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
-            **kwargs)
-
-        return CallConnectionProperties._from_generated(# pylint:disable=protected-access
-            result)
+            **kwargs
+        )
+        return CallConnectionProperties._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace
     def redirect_call(
@@ -347,7 +348,7 @@ class CallAutomationClient(object):
         user_custom_context = CustomContext(
             voip_headers=target_participant.voip_headers,
             sip_headers=target_participant.sip_headers
-            ) if target_participant.sip_headers or target_participant.voip_headers else None
+        ) if target_participant.sip_headers or target_participant.voip_headers else None
 
         redirect_call_request = RedirectCallRequest(
             incoming_call_context=incoming_call_context,
@@ -359,7 +360,8 @@ class CallAutomationClient(object):
             redirect_call_request=redirect_call_request,
             repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
-            **kwargs)
+            **kwargs
+        )
 
     @distributed_trace
     def reject_call(
@@ -389,7 +391,8 @@ class CallAutomationClient(object):
             reject_call_request=reject_call_request,
             repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
-            **kwargs)
+            **kwargs
+        )
 
     @overload
     def start_recording(
@@ -497,17 +500,32 @@ class CallAutomationClient(object):
         *args: Union['ServerCallLocator', 'GroupCallLocator'],
         **kwargs
     ) -> RecordingProperties:
-        channel_affinity: Optional[List['ChannelAffinity']] = kwargs.pop("channel_affinity", None) or []
-        channel_affinity_internal = [c._to_generated() for c in channel_affinity]  # pylint:disable=protected-access
+        # pylint:disable=protected-access
+        channel_affinity: List[ChannelAffinity] = kwargs.pop("channel_affinity", None) or []
+        channel_affinity_internal = [c._to_generated() for c in channel_affinity]
+        call_locator: Optional[CallLocator] = None
         if args:
-            call_locator=args[0]._to_generated()  # pylint:disable=protected-access
+            call_locator = args[0]._to_generated()
         else:
-            if "group_call_id" in kwargs:
-                call_locator = CallLocator(group_call_id=kwargs["group_call_id"], kind="groupCallLocator")
-            elif "server_call_id" in kwargs:
-                call_locator = CallLocator(server_call_id=kwargs["server_call_id"], kind="serverCallLocator")
-            else:
-                raise ValueError("Please provide either 'group_call_id' or 'server_call_id'.")
+            if "call_locator" in kwargs:
+                call_locator = kwargs["call_locator"]._to_generated()
+        if "group_call_id" in kwargs:
+            if call_locator is not None:
+                raise ValueError(
+                    "Received multiple values for call locator. "
+                    "Please provide either 'group_call_id' or 'server_call_id'."
+                )
+            call_locator = CallLocator(group_call_id=kwargs["group_call_id"], kind="groupCallLocator")
+        if "server_call_id" in kwargs:
+            if call_locator is not None:
+                raise ValueError(
+                    "Received multiple values for call locator. "
+                    "Please provide either 'group_call_id' or 'server_call_id'."
+                )
+            call_locator = CallLocator(server_call_id=kwargs["server_call_id"], kind="serverCallLocator")
+        if call_locator is None:
+            raise ValueError("Call locator required. Please provide either 'group_call_id' or 'server_call_id'.")
+
         start_recording_request = StartCallRecordingRequest(
             call_locator=call_locator,
             recording_state_callback_uri = kwargs.pop("recording_state_callback_url", None),
@@ -526,9 +544,7 @@ class CallAutomationClient(object):
             start_call_recording=start_recording_request,
             **kwargs
         )
-        return RecordingProperties._from_generated(  # pylint:disable=protected-access
-            recording_state_result
-        )
+        return RecordingProperties._from_generated(recording_state_result)
 
     @distributed_trace
     def stop_recording(
@@ -544,7 +560,7 @@ class CallAutomationClient(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._call_recording_client.stop_recording(recording_id = recording_id, **kwargs)
+        self._call_recording_client.stop_recording(recording_id=recording_id, **kwargs)
 
     @distributed_trace
     def pause_recording(
@@ -560,7 +576,7 @@ class CallAutomationClient(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._call_recording_client.pause_recording(recording_id = recording_id, **kwargs)
+        self._call_recording_client.pause_recording(recording_id=recording_id, **kwargs)
 
     @distributed_trace
     def resume_recording(
@@ -576,7 +592,7 @@ class CallAutomationClient(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._call_recording_client.resume_recording(recording_id = recording_id, **kwargs)
+        self._call_recording_client.resume_recording(recording_id=recording_id, **kwargs)
 
     @distributed_trace
     def get_recording_properties(
@@ -593,9 +609,10 @@ class CallAutomationClient(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         recording_state_result = self._call_recording_client.get_recording_properties(
-            recording_id = recording_id, **kwargs)
-        return RecordingProperties._from_generated(# pylint:disable=protected-access
-            recording_state_result)
+            recording_id=recording_id,
+            **kwargs
+        )
+        return RecordingProperties._from_generated(recording_state_result)  # pylint:disable=protected-access
 
     @distributed_trace
     def download_recording(
@@ -621,9 +638,9 @@ class CallAutomationClient(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         stream = self._downloader.download_streaming(
-            source_location = recording_url,
-            offset = offset,
-            length = length,
+            source_location=recording_url,
+            offset=offset,
+            length=length,
             **kwargs
         )
         return stream
@@ -642,4 +659,14 @@ class CallAutomationClient(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._downloader.delete_recording(recording_location = recording_url, **kwargs)
+        self._downloader.delete_recording(recording_location=recording_url, **kwargs)
+
+    def __enter__(self) -> "CallAutomationClient":
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args) -> None:
+        self.close()
+
+    def close(self) -> None:
+        self._client.__exit__()

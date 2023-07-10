@@ -66,7 +66,8 @@ if TYPE_CHECKING:
     from .._generated.models._enums import DtmfTone
     from azure.core.exceptions import HttpResponseError
 
-class CallConnectionClient(object): # pylint: disable=client-accepts-api-version-keyword
+
+class CallConnectionClient:
     """A client to interact with ongoing call. This client can be used to do mid-call actions,
     such as Transfer and Play Media. Call must be estbalished to perform these actions.
 
@@ -152,11 +153,10 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
         call_properties = await self._call_connection_client.get_call(
             call_connection_id=self._call_connection_id,
-            **kwargs)
-
+            **kwargs
+        )
         return CallConnectionProperties._from_generated(call_properties) # pylint:disable=protected-access
 
     @distributed_trace_async
@@ -169,16 +169,17 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
         if is_for_everyone:
             await self._call_connection_client.terminate_call(
                 self._call_connection_id,
                 repeatability_first_sent=get_repeatability_timestamp(),
                 repeatability_request_id=get_repeatability_guid(),
-                **kwargs)
+                **kwargs
+            )
         else:
             await self._call_connection_client.hangup_call(
-                self._call_connection_id, **kwargs)
+                self._call_connection_id, **kwargs
+            )
 
     @distributed_trace_async
     async def get_participant(
@@ -194,10 +195,11 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: ~azure.communication.callautomation.CallParticipant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
         participant = await self._call_connection_client.get_participant(
-            self._call_connection_id, target_participant.raw_id, **kwargs)
-
+            self._call_connection_id,
+            target_participant.raw_id,
+            **kwargs
+        )
         return CallParticipant._from_generated(participant) # pylint:disable=protected-access
 
     @distributed_trace
@@ -208,6 +210,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: ItemPaged[azure.communication.callautomation.CallParticipant]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        # TODO: This method is completely broken.
         return self._call_connection_client.get_participants(self._call_connection_id, **kwargs).values
 
     @distributed_trace_async
@@ -240,13 +243,16 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             ) if sip_headers or voip_headers else None
         request = TransferToParticipantRequest(
             target_participant=serialize_identifier(target_participant),
-            custom_context=user_custom_context, operation_context=operation_context)
-
+            custom_context=user_custom_context,
+            operation_context=operation_context
+        )
         return await self._call_connection_client.transfer_to_participant(
-            self._call_connection_id, request,
+            self._call_connection_id,
+            request,
             repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
-            **kwargs)
+            **kwargs
+        )
 
     @distributed_trace_async
     async def add_participant(
@@ -312,15 +318,15 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """
         remove_participant_request = RemoveParticipantRequest(
             participant_to_remove=serialize_identifier(target_participant),
-            operation_context=operation_context)
-
+            operation_context=operation_context
+        )
         response = await self._call_connection_client.remove_participant(
             self._call_connection_id,
             remove_participant_request,
             repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
-            **kwargs)
-
+            **kwargs
+        )
         return RemoveParticipantResult._from_generated(response) # pylint:disable=protected-access
 
     @distributed_trace_async
@@ -380,10 +386,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        await self.play_media(play_source=play_source, play_to=[],
-                              loop=loop,
-                              operation_context=operation_context,
-                              **kwargs)
+        await self.play_media(
+            play_source=play_source,
+            play_to=[],
+            loop=loop,
+            operation_context=operation_context,
+            **kwargs
+        )
 
     @distributed_trace_async
     async def start_recognizing_media(
@@ -436,10 +445,6 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             initial_silence_timeout_in_seconds=initial_silence_timeout,
             target_participant=serialize_identifier(target_participant)
         )
-
-        if isinstance(input_type, str):
-            input_type = RecognizeInputType[input_type.upper()]
-
         if input_type == RecognizeInputType.DTMF:
             dtmf_options=DtmfOptions(
                 inter_tone_timeout_in_seconds=dtmf_inter_tone_timeout,
@@ -462,33 +467,30 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         elif input_type == RecognizeInputType.CHOICES:
             options.choices = choices
         else:
-            raise NotImplementedError(f"{type(input_type).__name__} is not supported")
+            raise NotImplementedError(f"{input_type} is not supported")
 
         recognize_request = RecognizeRequest(
             recognize_input_type=input_type,
-            play_prompt=play_prompt._to_generated(),#pylint:disable=protected-access
+            play_prompt=play_prompt._to_generated(),  # pylint:disable=protected-access
             interrupt_call_media_operation=interrupt_call_media_operation,
             operation_context=operation_context,
             recognize_options=options,
             **kwargs
         )
-
         await self._call_media_client.recognize(
-            self._call_connection_id, recognize_request)
+            self._call_connection_id,
+            recognize_request
+        )
 
     @distributed_trace_async
-    async def cancel_all_media_operations(
-        self,
-        **kwargs
-    ) -> None:
+    async def cancel_all_media_operations(self, **kwargs) -> None:
         """ Cancels all the queued media operations.
 
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        await self._call_media_client.cancel_all_media_operations(
-            self._call_connection_id, **kwargs)
+        await self._call_media_client.cancel_all_media_operations(self._call_connection_id, **kwargs)
 
     @distributed_trace_async
     async def start_continuous_dtmf_recognition(
@@ -510,12 +512,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context)
-
+            operation_context=operation_context
+        )
         await self._call_media_client.start_continuous_dtmf_recognition(
             self._call_connection_id,
             continuous_dtmf_recognition_request,
-            **kwargs)
+            **kwargs
+        )
 
     @distributed_trace_async
     async def stop_continuous_dtmf_recognition(
@@ -537,12 +540,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context)
-
+            operation_context=operation_context
+        )
         await self._call_media_client.stop_continuous_dtmf_recognition(
             self._call_connection_id,
             continuous_dtmf_recognition_request,
-            **kwargs)
+            **kwargs
+        )
 
     @distributed_trace_async
     async def send_dtmf(
@@ -568,12 +572,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         send_dtmf_request = SendDtmfRequest(
             tones=tones,
             target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context)
-
+            operation_context=operation_context
+        )
         await self._call_media_client.send_dtmf(
             self._call_connection_id,
             send_dtmf_request,
-            **kwargs)
+            **kwargs
+        )
 
     @distributed_trace_async
     async def mute_participants(
@@ -596,14 +601,14 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """
         mute_participants_request = MuteParticipantsRequest(
             target_participants=[serialize_identifier(target_participant)],
-            operation_context=operation_context)
-
+            operation_context=operation_context
+        )
         response =  await self._call_connection_client.mute(
             self._call_connection_id,
             mute_participants_request,
-            **kwargs)
-
-        return MuteParticipantsResult._from_generated(response) # pylint:disable=protected-access
+            **kwargs
+        )
+        return MuteParticipantsResult._from_generated(response)  # pylint:disable=protected-access
 
     async def __aenter__(self) -> "CallConnectionClient":
         await self._client.__aenter__()

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Optional, List, Union, Dict
+from typing import TYPE_CHECKING, Iterable, Optional, List, Union, Dict
 from urllib.parse import urlparse
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -63,7 +63,8 @@ if TYPE_CHECKING:
     from ._generated.models._enums import DtmfTone
     from azure.core.exceptions import HttpResponseError
 
-class CallConnectionClient(object): # pylint: disable=client-accepts-api-version-keyword
+
+class CallConnectionClient:
     """A client to interact with ongoing call. This client can be used to do mid-call actions,
     such as Transfer and Play Media. Call must be estbalished to perform these actions.
 
@@ -77,7 +78,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     :keyword api_version: Azure Communication Call Automation API version.
     :paramtype api_version: str
     """
-    def __init__(# pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
+    def __init__(
         self,
         endpoint: str,
         credential: Union['TokenCredential', 'AzureKeyCredential'],
@@ -149,9 +150,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
         call_properties = self._call_connection_client.get_call(call_connection_id=self._call_connection_id, **kwargs)
-
         return CallConnectionProperties._from_generated(call_properties) # pylint:disable=protected-access
 
     @distributed_trace
@@ -164,16 +163,18 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
         if is_for_everyone:
             self._call_connection_client.terminate_call(
                 self._call_connection_id,
                 repeatability_first_sent=get_repeatability_timestamp(),
                 repeatability_request_id=get_repeatability_guid(),
-                **kwargs)
+                **kwargs
+            )
         else:
             self._call_connection_client.hangup_call(
-                self._call_connection_id, **kwargs)
+                self._call_connection_id,
+                **kwargs
+            )
 
     @distributed_trace
     def get_participant(
@@ -189,18 +190,19 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: ~azure.communication.callautomation.CallParticipant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
         participant = self._call_connection_client.get_participant(
-            self._call_connection_id, target_participant.raw_id, **kwargs)
-
+            self._call_connection_id,
+            target_participant.raw_id,
+            **kwargs
+        )
         return CallParticipant._from_generated(participant) # pylint:disable=protected-access
 
     @distributed_trace
-    def list_participants(self, **kwargs) -> ItemPaged[CallParticipant]:
+    def list_participants(self, **kwargs) -> Iterable[CallParticipant]:
         """List all participants in this call.
 
         :return: List of CallParticipant
-        :rtype: ItemPaged[azure.communication.callautomation.CallParticipant]
+        :rtype: Iterable[azure.communication.callautomation.CallParticipant]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._call_connection_client.get_participants(self._call_connection_id, **kwargs).values
@@ -235,13 +237,15 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             ) if sip_headers or voip_headers else None
         request = TransferToParticipantRequest(
             target_participant=serialize_identifier(target_participant),
-            custom_context=user_custom_context, operation_context=operation_context)
-
-        return self._call_connection_client.transfer_to_participant(
+            custom_context=user_custom_context, operation_context=operation_context
+        )
+        result = self._call_connection_client.transfer_to_participant(
             self._call_connection_id, request,
             repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
-            **kwargs)
+            **kwargs
+        )
+        return TransferCallResult._from_generated(result)
 
     @distributed_trace
     def add_participant(
@@ -276,15 +280,15 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             source_display_name=target_participant.source_display_name,
             custom_context=user_custom_context,
             invitation_timeout=invitation_timeout,
-            operation_context=operation_context)
-
+            operation_context=operation_context
+        )
         response = self._call_connection_client.add_participant(
             self._call_connection_id,
             add_participant_request,
             repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
-            **kwargs)
-
+            **kwargs
+        )
         return AddParticipantResult._from_generated(response) # pylint:disable=protected-access
 
     @distributed_trace
@@ -432,10 +436,6 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             initial_silence_timeout_in_seconds=initial_silence_timeout,
             target_participant=serialize_identifier(target_participant)
         )
-
-        if isinstance(input_type, str):
-            input_type = RecognizeInputType[input_type.upper()]
-
         if input_type == RecognizeInputType.DTMF:
             dtmf_options=DtmfOptions(
                 inter_tone_timeout_in_seconds=dtmf_inter_tone_timeout,
@@ -458,33 +458,30 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         elif input_type == RecognizeInputType.CHOICES:
             options.choices = choices
         else:
-            raise NotImplementedError(f"{type(input_type).__name__} is not supported")
+            raise ValueError(f"{input_type} is not supported")
 
         recognize_request = RecognizeRequest(
             recognize_input_type=input_type,
-            play_prompt=play_prompt._to_generated(),#pylint:disable=protected-access
+            play_prompt=play_prompt._to_generated(),  # pylint:disable=protected-access
             interrupt_call_media_operation=interrupt_call_media_operation,
             operation_context=operation_context,
             recognize_options=options,
+        )
+        self._call_media_client.recognize(
+            self._call_connection_id,
+            recognize_request,
             **kwargs
         )
 
-        self._call_media_client.recognize(
-            self._call_connection_id, recognize_request)
-
     @distributed_trace
-    def cancel_all_media_operations(
-        self,
-        **kwargs
-    ) -> None:
+    def cancel_all_media_operations(self, **kwargs) -> None:
         """Cancels all the ongoing and queued media operations for this call.
 
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._call_media_client.cancel_all_media_operations(
-            self._call_connection_id, **kwargs)
+        self._call_media_client.cancel_all_media_operations(self._call_connection_id, **kwargs)
 
     @distributed_trace
     def start_continuous_dtmf_recognition(
@@ -506,12 +503,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context)
-
+            operation_context=operation_context
+        )
         self._call_media_client.start_continuous_dtmf_recognition(
             self._call_connection_id,
             continuous_dtmf_recognition_request,
-            **kwargs)
+            **kwargs
+        )
 
     @distributed_trace
     def stop_continuous_dtmf_recognition(
@@ -533,12 +531,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context)
-
+            operation_context=operation_context
+        )
         self._call_media_client.stop_continuous_dtmf_recognition(
             self._call_connection_id,
             continuous_dtmf_recognition_request,
-            **kwargs)
+            **kwargs
+        )
 
     @distributed_trace
     def send_dtmf(
@@ -564,12 +563,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         send_dtmf_request = SendDtmfRequest(
             tones=tones,
             target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context)
-
+            operation_context=operation_context
+        )
         self._call_media_client.send_dtmf(
             self._call_connection_id,
             send_dtmf_request,
-            **kwargs)
+            **kwargs
+        )
 
     @distributed_trace
     def mute_participants(
@@ -592,11 +592,10 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """
         mute_participants_request = MuteParticipantsRequest(
             target_participants=[serialize_identifier(target_participant)],
-            operation_context=operation_context)
-
+            operation_context=operation_context
+        )
         response = self._call_connection_client.mute(
             self._call_connection_id,
             mute_participants_request,
             **kwargs)
-
-        return MuteParticipantsResult._from_generated(response) # pylint:disable=protected-access
+        return MuteParticipantsResult._from_generated(response)  # pylint:disable=protected-access
