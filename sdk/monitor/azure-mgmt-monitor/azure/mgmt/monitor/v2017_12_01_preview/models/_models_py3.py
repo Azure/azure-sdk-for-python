@@ -53,9 +53,9 @@ class MetricNamespace(_serialization.Model):
     :vartype name: str
     :ivar classification: Kind of namespace. Known values are: "Platform", "Custom", and "Qos".
     :vartype classification: str or
-     ~$(python-base-namespace).v2017_12_01_preview.models.NamespaceClassification
+     ~azure.mgmt.monitor.v2017_12_01_preview.models.NamespaceClassification
     :ivar properties: Properties which include the fully qualified namespace name.
-    :vartype properties: ~$(python-base-namespace).v2017_12_01_preview.models.MetricNamespaceName
+    :vartype properties: ~azure.mgmt.monitor.v2017_12_01_preview.models.MetricNamespaceName
     """
 
     _attribute_map = {
@@ -85,9 +85,9 @@ class MetricNamespace(_serialization.Model):
         :paramtype name: str
         :keyword classification: Kind of namespace. Known values are: "Platform", "Custom", and "Qos".
         :paramtype classification: str or
-         ~$(python-base-namespace).v2017_12_01_preview.models.NamespaceClassification
+         ~azure.mgmt.monitor.v2017_12_01_preview.models.NamespaceClassification
         :keyword properties: Properties which include the fully qualified namespace name.
-        :paramtype properties: ~$(python-base-namespace).v2017_12_01_preview.models.MetricNamespaceName
+        :paramtype properties: ~azure.mgmt.monitor.v2017_12_01_preview.models.MetricNamespaceName
         """
         super().__init__(**kwargs)
         self.id = id
@@ -103,7 +103,7 @@ class MetricNamespaceCollection(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: The values for the metric namespaces. Required.
-    :vartype value: list[~$(python-base-namespace).v2017_12_01_preview.models.MetricNamespace]
+    :vartype value: list[~azure.mgmt.monitor.v2017_12_01_preview.models.MetricNamespace]
     """
 
     _validation = {
@@ -117,7 +117,7 @@ class MetricNamespaceCollection(_serialization.Model):
     def __init__(self, *, value: List["_models.MetricNamespace"], **kwargs: Any) -> None:
         """
         :keyword value: The values for the metric namespaces. Required.
-        :paramtype value: list[~$(python-base-namespace).v2017_12_01_preview.models.MetricNamespace]
+        :paramtype value: list[~azure.mgmt.monitor.v2017_12_01_preview.models.MetricNamespace]
         """
         super().__init__(**kwargs)
         self.value = value

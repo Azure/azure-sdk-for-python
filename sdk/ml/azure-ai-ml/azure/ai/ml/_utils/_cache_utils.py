@@ -4,7 +4,6 @@
 import hashlib
 import logging
 import os.path
-import tempfile
 import threading
 import time
 from collections import defaultdict
@@ -15,6 +14,7 @@ from typing import Callable, Dict, List, Optional, Union
 
 from azure.ai.ml._utils._asset_utils import get_object_hash
 from azure.ai.ml._utils.utils import (
+    get_versioned_base_directory_for_cache,
     is_concurrent_component_registration_enabled,
     is_on_disk_cache_enabled,
     is_private_preview_enabled,
@@ -23,6 +23,7 @@ from azure.ai.ml._utils.utils import (
 from azure.ai.ml.constants._common import AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS, AzureMLResourceType
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
+from azure.ai.ml.entities._component.code import ComponentCodeMixin
 
 logger = logging.getLogger(__name__)
 
@@ -94,34 +95,17 @@ class CachedNodeResolver(object):
     def __init__(
         self,
         resolver: Callable[[Union[Component, str]], str],
-        subscription_id: Optional[str],
-        resource_group_name: Optional[str],
-        workspace_name: Optional[str],
-        registry_name: Optional[str],
+        client_key: str,
     ):
         self._resolver = resolver
         self._cache: Dict[str, _CacheContent] = {}
         self._nodes_to_resolve: List[BaseNode] = []
 
-        self._client_hash = self._get_client_hash(subscription_id, resource_group_name, workspace_name, registry_name)
+        hash_obj = hashlib.sha256()
+        hash_obj.update(client_key.encode("utf-8"))
+        self._client_hash = hash_obj.hexdigest()
         # the same client share 1 lock
         self._lock = _node_resolution_lock[self._client_hash]
-
-    @staticmethod
-    def _get_client_hash(
-        subscription_id: Optional[str],
-        resource_group_name: Optional[str],
-        workspace_name: Optional[str],
-        registry_name: Optional[str],
-    ) -> str:
-        """Get a hash for used client.
-
-        Works for both workspace client and registry client.
-        """
-        object_hash = hashlib.sha256()
-        for s in [subscription_id, resource_group_name, workspace_name, registry_name]:
-            object_hash.update(str(s).encode("utf-8"))
-        return object_hash.hexdigest()
 
     @staticmethod
     def _get_component_registration_max_workers():
@@ -190,16 +174,19 @@ class CachedNodeResolver(object):
         # TODO: calculate hash without resolving additional includes (copy code to temp folder)
         # note that it's still thread-safe with current implementation, as only read operations are
         # done on the original code folder
-        with component._resolve_local_code() as code:  # pylint: disable=protected-access
-            if code is None or code._is_remote:  # pylint: disable=protected-access
-                return in_memory_hash
+        if not (
+            isinstance(component, ComponentCodeMixin)
+            and component._with_local_code()  # pylint: disable=protected-access
+        ):
+            return in_memory_hash
 
+        with component._build_code() as code:  # pylint: disable=protected-access
             if hasattr(code, "_upload_hash"):
                 content_hash = code._upload_hash  # pylint: disable=protected-access
             else:
-                path = code.path if os.path.isabs(code.path) else os.path.join(code.base_path, code.path)
-                if os.path.exists(path):
-                    content_hash = get_object_hash(path)
+                code_path = code.path if os.path.isabs(code.path) else os.path.join(code.base_path, code.path)
+                if os.path.exists(code_path):
+                    content_hash = get_object_hash(code_path)
                 else:
                     # this will be gated by schema validation, so it shouldn't happen except for mock tests
                     return in_memory_hash
@@ -213,15 +200,9 @@ class CachedNodeResolver(object):
     @property
     def _on_disk_cache_dir(self) -> Path:
         """Get the base path for on disk cache."""
-        from azure.ai.ml._version import VERSION
-
-        return Path(tempfile.gettempdir()).joinpath(
-            ".azureml",
-            "azure-ai-ml",
-            VERSION,
-            "cache",
-            self._client_hash,
+        return get_versioned_base_directory_for_cache().joinpath(
             "components",
+            self._client_hash,
         )
 
     def _get_on_disk_cache_path(self, on_disk_hash: str) -> Path:

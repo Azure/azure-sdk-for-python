@@ -1,0 +1,29 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+name: additional_files
+version: 0.0.1
+type: command
+description: A sample to demonstrate component with additional files
+inputs: {}
+outputs: {}
+command: >-
+  echo Hello World
+environment:
+  image: zzn2/azureml_sdk
+additional_includes:
+ - ../additional_includes/docker/DockerFile
+ - type: artifact
+   organization: https://msdata.visualstudio.com/
+   project: Vienna
+   feed: component-sdk-test-feed
+   name: test_additional_include
+   version: version_1
+   scope: project
+ - type: artifact
+   organization: https://msdata.visualstudio.com/
+   project: Vienna
+   feed: component-sdk-test-feed
+   name: test_additional_include
+   version: version_3
+   scope: project

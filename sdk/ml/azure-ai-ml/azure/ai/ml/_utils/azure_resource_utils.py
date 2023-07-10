@@ -3,10 +3,11 @@
 # ---------------------------------------------------------
 
 
-from typing import List, Dict, Optional
-import azure.mgmt.resourcegraph as arg
-from azure.mgmt.resource import SubscriptionClient, ResourceManagementClient
+from typing import Dict, List, Optional
+
 from azure.core.credentials import TokenCredential
+
+from .._vendor.azure_resources import ResourceManagementClient
 
 
 def get_resources_from_subscriptions(
@@ -17,9 +18,19 @@ def get_resources_from_subscriptions(
     if subscription_list is not None:
         subsList = subscription_list
     else:
+        try:
+            from azure.mgmt.resource import SubscriptionClient  # pylint: disable=import-error
+        except ImportError as e:
+            raise ImportError("azure-mgmt-resource is required to get all accessible subscriptions") from e
+
         subsClient = SubscriptionClient(credential)
         for sub in subsClient.subscriptions.list():
             subsList.append(sub.as_dict().get("subscription_id"))
+
+    try:
+        import azure.mgmt.resourcegraph as arg  # pylint: disable=import-error
+    except ImportError as e:
+        raise ImportError("azure-mgmt-resourcegraph is required query resources from subscriptions") from e
 
     # Create Azure Resource Graph client and set options
     argClient = arg.ResourceGraphClient(credential)

@@ -23,14 +23,14 @@ from .._job.job_resource_configuration import JobResourceConfiguration
 from .._job.parallel.parallel_job import ParallelJob
 from .._job.parallel.parallel_task import ParallelTask
 from .._job.parallel.retry_settings import RetrySettings
-from .._job.pipeline._io import NodeOutput
+from .._job.pipeline._io import NodeOutput, NodeWithGroupInputMixin
 from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, validate_attribute_type
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
 
 
-class Parallel(BaseNode):
+class Parallel(BaseNode, NodeWithGroupInputMixin):
     """Base class for parallel node, used for parallel component version consumption.
 
     You should not instantiate this class directly. Instead, you should
@@ -141,7 +141,7 @@ class Parallel(BaseNode):
 
             try:
                 mini_batch_size = int(mini_batch_size)
-            except ValueError:
+            except ValueError as e:
                 unit = mini_batch_size[-2:].lower()
                 if unit == "kb":
                     mini_batch_size = int(mini_batch_size[0:-2]) * 1024
@@ -150,7 +150,7 @@ class Parallel(BaseNode):
                 elif unit == "gb":
                     mini_batch_size = int(mini_batch_size[0:-2]) * 1024 * 1024 * 1024
                 else:
-                    raise ValueError("mini_batch_size unit must be kb, mb or gb")
+                    raise ValueError("mini_batch_size unit must be kb, mb or gb") from e
 
         self.mini_batch_size = mini_batch_size
         self.partition_keys = partition_keys
@@ -323,16 +323,16 @@ class Parallel(BaseNode):
         rest_obj = super(Parallel, self)._to_rest_object(**kwargs)
         rest_obj.update(
             convert_ordered_dict_to_dict(
-                dict(
-                    componentId=self._get_component_id(),
-                    retry_settings=get_rest_dict_for_node_attrs(self.retry_settings),
-                    logging_level=self.logging_level,
-                    mini_batch_size=self.mini_batch_size,
-                    partition_keys=json.dumps(self.partition_keys)
+                {
+                    "componentId": self._get_component_id(),
+                    "retry_settings": get_rest_dict_for_node_attrs(self.retry_settings),
+                    "logging_level": self.logging_level,
+                    "mini_batch_size": self.mini_batch_size,
+                    "partition_keys": json.dumps(self.partition_keys)
                     if self.partition_keys is not None
                     else self.partition_keys,
-                    resources=get_rest_dict_for_node_attrs(self.resources),
-                )
+                    "resources": get_rest_dict_for_node_attrs(self.resources),
+                }
             )
         )
         return rest_obj

@@ -293,7 +293,7 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
         # a conscious decision was made to exclude the timestamp in the generated token
         # this is to avoid having two snapshot ids in the query parameters when the user appends the snapshot timestamp
         exclude = [BlobQueryStringConstants.SIGNED_TIMESTAMP]
-        return '&'.join(['{0}={1}'.format(n, url_quote(v))
+        return '&'.join([f'{n}={url_quote(v)}'
                          for n, v in self.query_dict.items() if v is not None and n not in exclude])
 
 

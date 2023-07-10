@@ -3,15 +3,15 @@
 # ---------------------------------------------------------
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     DiagnoseRequestProperties as RestDiagnoseRequestProperties,
 )
-from azure.ai.ml._restclient.v2022_12_01_preview.models import DiagnoseResponseResult as RestDiagnoseResponseResult
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import DiagnoseResponseResult as RestDiagnoseResponseResult
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     DiagnoseResponseResultValue as RestDiagnoseResponseResultValue,
 )
-from azure.ai.ml._restclient.v2022_12_01_preview.models import DiagnoseResult as RestDiagnoseResult
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import DiagnoseResult as RestDiagnoseResult
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     DiagnoseWorkspaceParameters as RestDiagnoseWorkspaceParameters,
 )
 

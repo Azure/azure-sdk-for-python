@@ -8,6 +8,7 @@
 
 from ._operations import Operations
 from ._monitors_operations import MonitorsOperations
+from ._elastic_versions_operations import ElasticVersionsOperations
 from ._monitored_resources_operations import MonitoredResourcesOperations
 from ._deployment_info_operations import DeploymentInfoOperations
 from ._external_user_operations import ExternalUserOperations
@@ -25,14 +26,16 @@ from ._associate_traffic_filter_operations import AssociateTrafficFilterOperatio
 from ._detach_and_delete_traffic_filter_operations import DetachAndDeleteTrafficFilterOperations
 from ._detach_traffic_filter_operations import DetachTrafficFilterOperations
 from ._traffic_filters_operations import TrafficFiltersOperations
+from ._organizations_operations import OrganizationsOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "Operations",
     "MonitorsOperations",
+    "ElasticVersionsOperations",
     "MonitoredResourcesOperations",
     "DeploymentInfoOperations",
     "ExternalUserOperations",
@@ -50,6 +53,7 @@ __all__ = [
     "DetachAndDeleteTrafficFilterOperations",
     "DetachTrafficFilterOperations",
     "TrafficFiltersOperations",
+    "OrganizationsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

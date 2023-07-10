@@ -6,7 +6,9 @@ import json
 import logging
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2022_10_01.models import ResourceConfiguration as RestResourceConfiguration
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    ResourceConfiguration as RestResourceConfiguration,
+)
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 

@@ -23,9 +23,7 @@ namespace_name = PACKAGE_NAME.replace("-", ".")
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
-    version = re.search(
-        r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE
-    ).group(1)
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError("Cannot find version information")
@@ -72,7 +70,7 @@ setup(
     packages=find_packages(exclude=exclude_packages),
     python_requires=">=3.7",
     install_requires=[
-        "azure-core<2.0.0,>=1.24.0",
+        "azure-core<2.0.0,>=1.25.0",
         "isodate>=0.6.0",
     ],
 )

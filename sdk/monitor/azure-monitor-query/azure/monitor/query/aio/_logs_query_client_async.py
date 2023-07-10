@@ -19,19 +19,28 @@ from ._helpers_async import get_authentication_policy
 from .._exceptions import LogsQueryError
 
 
-class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyword
+class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-keyword
     """LogsQueryClient. Use this client to collect and organize log and performance data from
     monitored resources. Data from different sources such as platform logs from Azure services,
     log and performance data from virtual machines agents, and usage and performance data from
     apps can be consolidated into a single Azure Log Analytics workspace.
 
     The various data types can be analyzed together using the
-    [Kusto Query Language](https://docs.microsoft.com/azure/data-explorer/kusto/query/)
+    [Kusto Query Language](https://learn.microsoft.com/azure/data-explorer/kusto/query/)
 
     :param credential: The credential to authenticate the client
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io/v1'.
     :paramtype endpoint: Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_logs_query_client_async]
+            :end-before: [END create_logs_query_client_async]
+            :language: python
+            :dedent: 4
+            :caption: Creating the asynchronous LogsQueryClient with a TokenCredential.
     """
 
     def __init__(self, credential: AsyncTokenCredential, **kwargs: Any) -> None:
@@ -47,7 +56,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
             credential=credential,
             authentication_policy=auth_policy or get_authentication_policy(credential, audience),
             endpoint=self._endpoint,
-            **kwargs
+            **kwargs,
         )
         self._query_op = self._client.query
 
@@ -57,10 +66,8 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         workspace_id: str,
         query: str,
         *,
-        timespan: Optional[Union[
-            timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]
-        ]],
-        **kwargs: Any
+        timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]],
+        **kwargs: Any,
     ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
         """Execute an Analytics query.
 
@@ -70,7 +77,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
          Azure portal.
         :type workspace_id: str
         :param query: The Kusto query. Learn more about the `Kusto query syntax
-         <https://docs.microsoft.com/azure/data-explorer/kusto/query/>`_.
+         <https://learn.microsoft.com/azure/data-explorer/kusto/query/>`_.
         :type query: str
         :keyword timespan: Required. The timespan for which to query the data. This can be a timedelta,
          a timedelta and a start datetime, or a start datetime/end datetime. Set to None to not constrain
@@ -89,6 +96,15 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         :return: LogsQueryResult if there is a success or LogsQueryPartialResult when there is a partial success.
         :rtype: ~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryPartialResult
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_log_query_async.py
+                :start-after: [START send_logs_query_async]
+                :end-before: [END send_logs_query_async]
+                :language: python
+                :dedent: 0
+                :caption: Get a response for a single log query.
         """
         timespan_iso = construct_iso8601(timespan)
         include_statistics = kwargs.pop("include_statistics", False)
@@ -96,31 +112,21 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         server_timeout = kwargs.pop("server_timeout", None)
         additional_workspaces = kwargs.pop("additional_workspaces", None)
 
-        prefer = process_prefer(
-            server_timeout, include_statistics, include_visualization
-        )
+        prefer = process_prefer(server_timeout, include_statistics, include_visualization)
 
-        body = {
-            "query": query,
-            "timespan": timespan_iso,
-            "workspaces": additional_workspaces
-        }
+        body = {"query": query, "timespan": timespan_iso, "workspaces": additional_workspaces}
 
         try:
-            generated_response = (
-                await self._query_op.execute(  # pylint: disable=protected-access
-                    workspace_id=workspace_id, body=body, prefer=prefer, **kwargs
-                )
+            generated_response = await self._query_op.execute(  # pylint: disable=protected-access
+                workspace_id=workspace_id, body=body, prefer=prefer, **kwargs
             )
         except HttpResponseError as err:
             process_error(err, LogsQueryError)
         response: Union[LogsQueryResult, LogsQueryPartialResult]
         if not generated_response.get("error"):
-            response = LogsQueryResult._from_generated( # pylint: disable=protected-access
-                generated_response
-            )
+            response = LogsQueryResult._from_generated(generated_response)  # pylint: disable=protected-access
         else:
-            response = LogsQueryPartialResult._from_generated( # pylint: disable=protected-access
+            response = LogsQueryPartialResult._from_generated(  # pylint: disable=protected-access
                 generated_response, LogsQueryError
             )
         return response
@@ -143,14 +149,21 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         :rtype: list[~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryPartialResult
          or ~azure.monitor.query.LogsQueryError]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_batch_query_async.py
+                :start-after: [START send_query_batch_async]
+                :end-before: [END send_query_batch_async]
+                :language: python
+                :dedent: 0
+                :caption: Execute multiple queries in a batch.
         """
         try:
             queries = [LogsBatchQuery(**cast(Dict, q)) for q in queries]
         except (KeyError, TypeError):
             pass
-        queries = [
-            cast(LogsBatchQuery, q)._to_generated() for q in queries # pylint: disable=protected-access
-        ]
+        queries = [cast(LogsBatchQuery, q)._to_generated() for q in queries]  # pylint: disable=protected-access
         request_order = [req["id"] for req in queries]
         batch = {"requests": queries}
         generated = await self._query_op.batch(batch, **kwargs)
@@ -170,11 +183,9 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         resource_id: str,
         query: str,
         *,
-        timespan: Optional[Union[
-            timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]
-        ],
-        **kwargs: Any
-        ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
+        timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]],
+        **kwargs: Any,
+    ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
         """Execute a Kusto query on a resource.
 
         Returns all the Azure Monitor logs matching the given Kusto query for an Azure resource.
@@ -183,7 +194,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
          '/subscriptions/<sid>/resourceGroups/<rg>/providers/<providerName>/<resourceType>/<resourceName>'.
         :type resource_id: str
         :param query: The Kusto query. Learn more about the `Kusto query syntax
-         <https://docs.microsoft.com/azure/data-explorer/kusto/query/>`_.
+         <https://learn.microsoft.com/azure/data-explorer/kusto/query/>`_.
         :type query: str
         :keyword timespan: Required. The timespan for which to query the data. This can be a timedelta,
          a timedelta and a start datetime, or a start datetime/end datetime. Set to None to not constrain
@@ -205,12 +216,12 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
 
         .. admonition:: Example:
 
-        .. literalinclude:: ../samples/async_samples/sample_resource_logs_query_async.py
-            :start-after: [START resource_logs_query_async]
-            :end-before: [END resource_logs_query_async]
-            :language: python
-            :dedent: 0
-            :caption: Get a response for a single query on a resource's logs.
+            .. literalinclude:: ../samples/async_samples/sample_resource_logs_query_async.py
+                :start-after: [START resource_logs_query_async]
+                :end-before: [END resource_logs_query_async]
+                :language: python
+                :dedent: 0
+                :caption: Get a response for a single query on a resource's logs.
         """
         timespan_iso = construct_iso8601(timespan)
         include_statistics = kwargs.pop("include_statistics", False)
@@ -218,9 +229,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         server_timeout = kwargs.pop("server_timeout", None)
         additional_workspaces = kwargs.pop("additional_workspaces", None)
 
-        prefer = process_prefer(
-            server_timeout, include_statistics, include_visualization
-        )
+        prefer = process_prefer(server_timeout, include_statistics, include_visualization)
 
         body = {
             "query": query,
@@ -229,21 +238,17 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         }
 
         try:
-            generated_response = (
-                await self._query_op.resource_execute(  # pylint: disable=protected-access
-                    resource_id=resource_id, body=body, prefer=prefer, **kwargs
-                )
+            generated_response = await self._query_op.resource_execute(  # pylint: disable=protected-access
+                resource_id=resource_id, body=body, prefer=prefer, **kwargs
             )
         except HttpResponseError as err:
             process_error(err, LogsQueryError)
 
         response: Union[LogsQueryResult, LogsQueryPartialResult]
         if not generated_response.get("error"):
-            response = LogsQueryResult._from_generated( # pylint: disable=protected-access
-                generated_response
-            )
+            response = LogsQueryResult._from_generated(generated_response)  # pylint: disable=protected-access
         else:
-            response = LogsQueryPartialResult._from_generated( # pylint: disable=protected-access
+            response = LogsQueryPartialResult._from_generated(  # pylint: disable=protected-access
                 generated_response, LogsQueryError
             )
         return response

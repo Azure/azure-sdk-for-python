@@ -10,31 +10,37 @@ USAGE:
     1) METRICS_RESOURCE_URI - The resource URI of the resource for which the metrics are being queried.
 
     This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
-    For more information on DefaultAzureCredential, see https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
+    For more information on DefaultAzureCredential, see https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 
     In this example, a Storage account resource URI is taken.
 """
-import os
 import asyncio
-from azure.monitor.query.aio import MetricsQueryClient
+
+# [START send_metric_namespaces_query_async]
+import os
+
+from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
+from azure.monitor.query.aio import MetricsQueryClient
 
-class ListNameSpaces():
-    async def list_namespaces(self):
-        credential = DefaultAzureCredential()
 
-        client = MetricsQueryClient(credential)
+async def list_namespaces():
+    credential = DefaultAzureCredential()
+    client = MetricsQueryClient(credential)
 
-        metrics_uri = os.environ['METRICS_RESOURCE_URI']
-        async with client:
+    metrics_uri = os.environ["METRICS_RESOURCE_URI"]
+    async with client:
+        try:
             response = client.list_metric_namespaces(metrics_uri)
             async for item in response:
                 print(item.fully_qualified_namespace)
                 print(item.type)
+        except HttpResponseError as err:
+            print("something fatal happened")
+            print(err)
+    await credential.close()
 
-async def main():
-    sample = ListNameSpaces()
-    await sample.list_namespaces()
+# [END send_metric_namespaces_query_async]
 
-if __name__ == '__main__':
-    asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(list_namespaces())

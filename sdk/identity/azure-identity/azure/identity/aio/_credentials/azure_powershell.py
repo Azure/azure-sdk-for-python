@@ -30,6 +30,15 @@ class AzurePowerShellCredential(AsyncContextManager):
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
     :keyword int process_timeout: Seconds to wait for the Azure PowerShell process to respond. Defaults to 10 seconds.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_azure_power_shell_credential_async]
+            :end-before: [END create_azure_power_shell_credential_async]
+            :language: python
+            :dedent: 4
+            :caption: Create an AzurePowerShellCredential.
     """
 
     def __init__(
@@ -47,7 +56,7 @@ class AzurePowerShellCredential(AsyncContextManager):
     @log_get_token_async
     async def get_token(
         self, *scopes: str, **kwargs: Any
-    ) -> AccessToken:  # pylint:disable=no-self-use,unused-argument
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -57,7 +66,9 @@ class AzurePowerShellCredential(AsyncContextManager):
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke Azure PowerShell, or
           no account is authenticated
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked Azure PowerShell but didn't

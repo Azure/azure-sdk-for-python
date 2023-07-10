@@ -23,6 +23,7 @@ USAGE:
 
 import os
 
+
 def authentication_with_api_key_credential():
     # [START create_search_client_with_key]
     from azure.core.credentials import AzureKeyCredential
@@ -39,6 +40,7 @@ def authentication_with_api_key_credential():
 
     print("There are {} documents in the {} search index.".format(result, repr(index_name)))
 
+
 def authentication_service_client_with_api_key_credential():
     # [START create_search_service_client_with_key]
     from azure.core.credentials import AzureKeyCredential
@@ -50,6 +52,7 @@ def authentication_service_client_with_api_key_credential():
     search_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     # [END create_search_service_client_with_key]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     authentication_with_api_key_credential()
     authentication_service_client_with_api_key_credential()

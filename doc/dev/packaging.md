@@ -1,5 +1,7 @@
 # Azure packaging
 
+[comment]: # ( cspell:ignore myservice )
+
 This article describes the recommendations for defining namespace packaging to release a package inside the `azure` namespace. Being inside the `azure` namespace means that a service `myservice` can be imported using:
 ```python
 import azure.myservice
@@ -115,6 +117,7 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'License :: OSI Approved :: MIT License',
     ],
     python_requires=">=3.7",
@@ -144,7 +147,7 @@ Since the package is Python 3 only, do NOT make this wheel universal. This usual
 
 # I already have a package that supports Python 2, can I get short version on how to udpate to Python 3 only?
 
-- Remove "universal" from setup.cfg, or completly remove the file if it was the only option
+- Remove "universal" from setup.cfg, or completely remove the file if it was the only option
 - In setup.py:
   - Remove `extra_requires`
   - Add `python_requires=">=3.7",`
@@ -184,4 +187,4 @@ The "extras_requires" section MUST include a conditional dependency on "azure-ns
     }
 ```
 
-An additional verification is that wheels installs `azure-nskpg` ONLY on Python 2.
+An additional verification is that wheels installs `azure-nspkg` ONLY on Python 2.

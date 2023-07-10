@@ -3,23 +3,39 @@
 # ---------------------------------------------------------
 from typing import Optional
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import Objective as RestObjective
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Objective as RestObjective
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class Objective(RestTranslatableMixin):
     """Optimization objective.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param goal: Required. Defines supported metric goals for hyperparameter tuning. Possible values
-     include: "minimize", "maximize".
+    :param goal: Required. Defines supported metric goals for hyperparameter tuning. Acceptable values
+     are: "minimize", "maximize".
     :type goal: str
     :param primary_metric: Required. Name of the metric to optimize.
     :type primary_metric: str
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]
+            :end-before: [END configure_sweep_job_bayesian_sampling_algorithm]
+            :language: python
+            :dedent: 8
+            :caption: Assigning an objective to a SweepJob
     """
 
-    def __init__(self, goal: Optional[str] = None, primary_metric: Optional[str] = None):
+    def __init__(self, goal: str, primary_metric: Optional[str] = None) -> None:
+        """Optimization objective.
+
+        :param goal: Required. Defines supported metric goals for hyperparameter tuning. Acceptable values
+        are: "minimize", "maximize".
+        :type goal: str
+        :param primary_metric: Required. The name of the metric to optimize.
+        :type primary_metric: str
+        """
         self.goal = goal.lower()
         self.primary_metric = primary_metric
 

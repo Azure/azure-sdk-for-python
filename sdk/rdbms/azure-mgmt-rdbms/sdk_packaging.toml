@@ -2,4 +2,6 @@
 package_name = "azure-mgmt-rdbms"
 package_pprint_name = "RDBMS Management"
 package_doc_id = ""
-is_stable = true
+is_stable = false
+title = "MySQLManagementClient"
+sub_namespace = "mysql"

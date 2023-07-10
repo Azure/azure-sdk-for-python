@@ -48,6 +48,8 @@ def assert_dsl_curated(pipeline: PipelineJob, job_yaml, omit_fields):
     "mock_component_hash",
     "mock_set_headers_with_user_aml_token",
     "recorded_test",
+    "mock_asset_name",
+    "mock_anon_component_version",
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
@@ -378,7 +380,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         validation_result = client.jobs.validate(pipeline)
         assert validation_result.passed is False
         assert validation_result.error_messages == {
-            "jobs.add_greeting_column": "Should not specify min or max executors when dynamic allocation is disabled.",
+            "jobs.add_greeting_column.conf": "Should not specify min or max executors "
+            "when dynamic allocation is disabled.",
         }
 
     @pytest.mark.e2etest

@@ -44,7 +44,7 @@ setup(
     author='Microsoft Corporation',
     keywords="azure, azure sdk",
     classifiers=[
-        'Development Status :: 4 - Beta',
+        "Development Status :: 4 - Beta",
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',

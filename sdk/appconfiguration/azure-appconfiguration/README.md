@@ -9,7 +9,7 @@ Use the client library for App Configuration to create and manage application co
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration)
 | [Package (Pypi)][package]
 | [Package (Conda)](https://anaconda.org/microsoft/azure-appconfiguration/)
-| [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration)
+| [API reference documentation](https://learn.microsoft.com/python/api/azure-appconfiguration/azure.appconfiguration?view=azure-python)
 | [Product documentation][appconfig_docs]
 
 ## _Disclaimer_
@@ -67,7 +67,8 @@ Once you have the value of the connection string, you can create the AzureAppCon
 ```python
 import os
 from azure.appconfiguration import AzureAppConfigurationClient
-CONNECTION_STRING = os.environ['APPCONFIGURATION_CONNECTION_STRING']
+
+CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
 # Create app config client
 client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
@@ -176,11 +177,7 @@ There are two ways to store a Configuration Setting:
 
 ```python
 config_setting = ConfigurationSetting(
-    key="MyKey",
-    label="MyLabel",
-    value="my value",
-    content_type="my content type",
-    tags={"my tag": "my tag value"}
+    key="MyKey", label="MyLabel", value="my value", content_type="my content type", tags={"my tag": "my tag value"}
 )
 added_config_setting = client.add_configuration_setting(config_setting)
 ```
@@ -206,9 +203,7 @@ Get a previously stored Configuration Setting.
 <!-- SNIPPET:hello_world_sample.get_config_setting -->
 
 ```python
-fetched_config_setting = client.get_configuration_setting(
-    key="MyKey"
-)
+fetched_config_setting = client.get_configuration_setting(key="MyKey")
 ```
 
 <!-- END SNIPPET -->
@@ -252,7 +247,8 @@ To use the async client library, import the AzureAppConfigurationClient from pac
 ```python
 import os
 from azure.appconfiguration.aio import AzureAppConfigurationClient
-CONNECTION_STRING = os.environ['APPCONFIGURATION_CONNECTION_STRING']
+
+CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
 # Create app config client
 client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
@@ -266,9 +262,7 @@ For instance, to retrieve a Configuration Setting asynchronously, async_client c
 <!-- SNIPPET:hello_world_sample_async.get_config_setting -->
 
 ```python
-fetched_config_setting = await client.get_configuration_setting(
-    key="MyKey"
-)
+fetched_config_setting = await client.get_configuration_setting(key="MyKey")
 ```
 
 <!-- END SNIPPET -->
@@ -333,4 +327,4 @@ additional questions or comments.
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
-[troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md
+[troubleshooting_guide]: https://aka.ms/azsdk/python/appconfiguration/troubleshoot

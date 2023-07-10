@@ -6,8 +6,9 @@ import base64
 import functools
 import pickle
 from typing import TYPE_CHECKING
-
 from urllib.parse import urlparse
+
+from azure.core.tracing.decorator import distributed_trace
 
 from ._models import KeyVaultBackupResult
 from ._internal import KeyVaultClientBase, parse_folder_url
@@ -15,7 +16,6 @@ from ._internal.polling import KeyVaultBackupClientPolling, KeyVaultBackupClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any
     from azure.core.polling import LROPoller
 
 
@@ -42,6 +42,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
     """
 
     # pylint:disable=protected-access
+    @distributed_trace
     def begin_backup(
         self, blob_storage_url: str, sas_token: str, **kwargs
     ) -> "LROPoller[KeyVaultBackupResult]":
@@ -98,6 +99,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             **kwargs
         )
 
+    @distributed_trace
     def begin_restore(self, folder_url: str, sas_token: str, **kwargs) -> "LROPoller":
         """Restore a Key Vault backup.
 
@@ -111,6 +113,8 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         :keyword str continuation_token: a continuation token to restart polling from a saved state
         :keyword str key_name: name of a single key in the backup. When set, only this key will be restored.
 
+        :returns: An :class:`~azure.core.polling.LROPoller` instance. Call `wait()` or `result()` on this object to wait
+            for the operation to complete (the return value is None in either case).
         :rtype: ~azure.core.polling.LROPoller
 
         Examples:

@@ -4,18 +4,37 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+import logging
 import os
-
 import pytest
-from devtools_testutils import add_general_regex_sanitizer, add_body_key_sanitizer, add_uri_regex_sanitizer, test_proxy
+from devtools_testutils import (
+    add_general_regex_sanitizer,
+    add_body_key_sanitizer,
+    add_uri_regex_sanitizer,
+    test_proxy,
+    is_live,
+)
+from testcase import import_image, is_public_endpoint
+from constants import HELLO_WORLD
 
-# Fixture
-from testcase import load_registry
+logger = logging.getLogger()
 
-
-def pytest_configure(config):
-    config.addinivalue_line("usefixtures", "load_registry")
+@pytest.fixture(scope="session", autouse=True)
+def load_registry():
+    if not is_live():
+        return
+    logger.info("loading registry")
+    endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
+    endpoint_anon = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")
+    repo = HELLO_WORLD
+    tags = ["latest", "v1"]
+    try:
+        import_image(endpoint, repo, tags)
+        if is_public_endpoint(endpoint_anon):
+            import_image(endpoint_anon, repo, tags)
+    except Exception as e:
+        logger.exception(e)
+        raise
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):

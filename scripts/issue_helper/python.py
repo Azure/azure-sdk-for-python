@@ -5,7 +5,7 @@ from github.Issue import Issue
 
 from common import Common
 
-_PYTHON_OWNER = {'msyyc', 'Wzb123456789'}
+_PYTHON_OWNER = {'msyyc', 'Wzb123456789', 'github-actions[bot]'}
 _PYTHON_REPO = 'Azure/azure-sdk-for-python'
 _FILE_OUT_NAME_PYTHON = 'sdk_issue_python.md'
 

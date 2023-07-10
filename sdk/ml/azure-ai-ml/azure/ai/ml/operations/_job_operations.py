@@ -10,7 +10,10 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, Optional, Union
 
 import jwt
-from marshmallow.exceptions import ValidationError as SchemaValidationError
+from azure.core.credentials import TokenCredential
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from azure.ai.ml._artifacts._artifact_utilities import (
     _upload_and_generate_remote_uri,
@@ -26,17 +29,16 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane
 from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
-from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ListViewType, UserIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, UserIdentity
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
     OperationScope,
     _ScopeDependentOperations,
 )
-
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -56,12 +58,12 @@ from azure.ai.ml.constants._common import (
     GIT_PATH_PREFIX,
     LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT,
     LOCAL_COMPUTE_TARGET,
+    SERVERLESS_COMPUTE,
     SHORT_URI_FORMAT,
     SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME,
     TID_FMT,
     AssetTypes,
     AzureMLResourceType,
-    SERVERLESS_COMPUTE,
 )
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
@@ -76,7 +78,7 @@ from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, _ValidationResultBuilder
+from azure.ai.ml.entities._validation import SchemaValidatableMixin
 from azure.ai.ml.exceptions import (
     ComponentException,
     ErrorCategory,
@@ -85,16 +87,12 @@ from azure.ai.ml.exceptions import (
     JobParsingError,
     MlException,
     PipelineChildJobError,
+    UserErrorException,
     ValidationErrorType,
     ValidationException,
-    UserErrorException,
 )
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.sweep import SweepJob
-from azure.core.credentials import TokenCredential
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.polling import LROPoller
-from azure.core.tracing.decorator import distributed_trace
 
 from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
@@ -403,7 +401,7 @@ class JobOperations(_ScopeDependentOperations):
                 # so we raise a more helpful one
                 response = e.response
                 response.reason = "Not found compute with name {}".format(compute_name)
-                raise ResourceNotFoundError(response=response)
+                raise ResourceNotFoundError(response=response) from e
         return None
 
     @distributed_trace
@@ -433,7 +431,7 @@ class JobOperations(_ScopeDependentOperations):
         create_or_update(), which will impact telemetry statistics &
         bring experimental warning in create_or_update().
         """
-        git_code_validation_result = _ValidationResultBuilder.success()
+        git_code_validation_result = SchemaValidatableMixin._create_empty_validation_result()
         # TODO: move this check to Job._validate after validation is supported for all job types
         # If private features are enable and job has code value of type str we need to check
         # that it is a valid git path case. Otherwise we should throw a ValidationException
@@ -604,6 +602,8 @@ class JobOperations(_ScopeDependentOperations):
                 )
             return self._resolve_azureml_id(Job._from_rest_object(result))
         except Exception as ex:  # pylint: disable=broad-except
+            from marshmallow.exceptions import ValidationError as SchemaValidationError
+
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:
@@ -892,7 +892,7 @@ class JobOperations(_ScopeDependentOperations):
 
         if isinstance(job, PipelineJob):
             # Resolve top-level inputs
-            self._resolve_pipeline_job_inputs(job, job._base_path)
+            self._resolve_job_inputs(self._flatten_group_inputs(job.inputs), job._base_path)
             # inputs in sub-pipelines has been resolved in
             # self._resolve_arm_id_or_azureml_id(job, self._orchestrators.get_asset_arm_id)
             # as they are part of the pipeline component
@@ -972,20 +972,21 @@ class JobOperations(_ScopeDependentOperations):
         for entry in entries:
             self._resolve_job_input(entry, base_path)
 
-    def _resolve_pipeline_job_inputs(self, job: PipelineJob, base_path: str):
-        """resolve pipeline job inputs as ARM id or remote url."""
-        inputs = []
+    # TODO: move it to somewhere else?
+    @classmethod
+    def _flatten_group_inputs(cls, inputs):
+        """Get flatten values from an InputDict."""
+        input_values = []
         # Flatten inputs for pipeline job
-        for key, item in job.inputs.items():
+        for key, item in inputs.items():
             if isinstance(item, _GroupAttrDict):
-                inputs.extend(item.flatten(group_parameter_name=key))
+                input_values.extend(item.flatten(group_parameter_name=key))
             else:
                 # skip resolving inferred optional input without path (in do-while + dynamic input case)
                 if isinstance(item._data, Input) and not item._data.path and item._meta._is_inferred_optional:
                     continue
-                inputs.append(item._data)
-        for entry in inputs:
-            self._resolve_job_input(entry, base_path)
+                input_values.append(item._data)
+        return input_values
 
     def _resolve_job_input(self, entry: Union[Input, str, bool, int, float], base_path: str) -> None:
         """resolve job input as ARM id or remote url."""
@@ -1075,7 +1076,7 @@ class JobOperations(_ScopeDependentOperations):
                 error=e,
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
-            )
+            ) from e
 
     def _resolve_job_inputs_arm_id(self, job: Job) -> None:
         try:
@@ -1237,7 +1238,7 @@ class JobOperations(_ScopeDependentOperations):
                 target=ErrorTarget.JOB,
                 no_personal_data_message=e.no_personal_data_message,
                 error_category=e.error_category,
-            )
+            ) from e
 
         # Create a pipeline component for pipeline job if user specified component in job yaml.
         if (

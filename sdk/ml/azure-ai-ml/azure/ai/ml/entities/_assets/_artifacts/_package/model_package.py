@@ -45,7 +45,7 @@ class PackageInputPathId:
     :type resource_id: str
     """
 
-    def __init__(self, input_path_type: Optional[str] = None, resource_id: Optional[str] = None):
+    def __init__(self, *, input_path_type: Optional[str] = None, resource_id: Optional[str] = None):
         self.input_path_type = input_path_type
         self.resource_id = resource_id
 
@@ -77,11 +77,11 @@ class PackageInputPathVersion:
 
     def __init__(
         self,
+        *,
         input_path_type: Optional[str] = None,
         resource_name: Optional[str] = None,
         resource_version: Optional[str] = None,
     ):
-
         self.input_path_type = input_path_type
         self.resource_name = resource_name
         self.resource_version = resource_version
@@ -115,7 +115,7 @@ class PackageInputPathUrl:
     :type url: str
     """
 
-    def __init__(self, input_path_type: Optional[str] = None, url: Optional[str] = None):
+    def __init__(self, *, input_path_type: Optional[str] = None, url: Optional[str] = None):
         self.input_path_type = input_path_type
         self.url = url
 
@@ -150,6 +150,7 @@ class ModelPackageInput:
 
     def __init__(
         self,
+        *,
         type: Optional[str] = None,
         path: Optional[Union[PackageInputPathId, PackageInputPathUrl, PackageInputPathVersion]] = None,
         mode: Optional[str] = None,

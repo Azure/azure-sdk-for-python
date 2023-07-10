@@ -64,7 +64,7 @@ class AsyncDataFileReader(object):  # pylint: disable=too-many-instance-attribut
         else:
             self.codec = avro_codec_raw.decode('utf-8')
         if self.codec not in VALID_CODECS:
-            raise DataFileException('Unknown codec: %s.' % self.codec)
+            raise DataFileException(f"Unknown codec: {self.codec}.")
 
         # get ready to read
         self._block_count = 0
@@ -146,8 +146,7 @@ class AsyncDataFileReader(object):  # pylint: disable=too-many-instance-attribut
 
         # check magic number
         if header.get('magic') != MAGIC:
-            fail_msg = "Not an Avro data file: %s doesn't match %s." \
-                       % (header.get('magic'), MAGIC)
+            fail_msg = f"Not an Avro data file: {header.get('magic')} doesn't match {MAGIC}."
             raise schema.AvroException(fail_msg)
 
         # set metadata
@@ -163,7 +162,7 @@ class AsyncDataFileReader(object):  # pylint: disable=too-many-instance-attribut
             await self.raw_decoder.skip_long()
             self._datum_decoder = self._raw_decoder
         else:
-            raise DataFileException("Unknown codec: %r" % self.codec)
+            raise DataFileException(f"Unknown codec: {self.codec!r}")
 
     async def _skip_sync(self):
         """

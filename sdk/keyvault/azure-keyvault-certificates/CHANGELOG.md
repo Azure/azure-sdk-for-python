@@ -1,14 +1,22 @@
 # Release History
 
-## 4.7.1 (Unreleased)
+## 4.8.0b2 (Unreleased)
 
 ### Features Added
+- Added `CertificateProperties.x509_thumbprint_string` to return the hexadecimal string representation of the SHA-1 hash
+  of the certificate.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.8.0b1 (2023-05-16)
+
+### Bugs Fixed
+- Token requests made during AD FS authentication no longer specify an erroneous "adfs" tenant ID
+  ([#29888](https://github.com/Azure/azure-sdk-for-python/issues/29888))
 
 ## 4.7.0 (2023-03-16)
 

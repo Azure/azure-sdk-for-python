@@ -43,8 +43,7 @@ def prep_if_none_match(etag: str, match_condition: MatchConditions) -> Optional[
 
 
 def get_access_conditions(
-        model: Any,
-        match_condition: MatchConditions = MatchConditions.Unconditionally
+    model: Any, match_condition: MatchConditions = MatchConditions.Unconditionally
 ) -> Tuple[Dict[int, Any], Dict[str, bool]]:
     error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
 
@@ -66,8 +65,8 @@ def get_access_conditions(
         if match_condition == MatchConditions.IfMissing:
             error_map[412] = ResourceExistsError
         return error_map, dict(if_match=if_match, if_none_match=if_none_match)
-    except AttributeError:
-        raise ValueError("Unable to get e_tag from the model")
+    except AttributeError as ex:
+        raise ValueError("Unable to get e_tag from the model") from ex
 
 
 def normalize_endpoint(endpoint):
@@ -75,9 +74,7 @@ def normalize_endpoint(endpoint):
         if not endpoint.lower().startswith("http"):
             endpoint = "https://" + endpoint
         elif not endpoint.lower().startswith("https"):
-            raise ValueError(
-                "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
-            )
+            raise ValueError("Bearer token authentication is not permitted for non-TLS protected (non-https) URLs.")
         return endpoint
-    except AttributeError:
-        raise ValueError("Endpoint must be a string.")
+    except AttributeError as ex:
+        raise ValueError("Endpoint must be a string.") from ex
