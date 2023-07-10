@@ -68,7 +68,7 @@ class TestReceivedShares(TestPurviewSharing):
         assert created_invitation['id'] == str(sent_share_invitation_id)
         assert created_invitation['properties']['targetEmail'] == consumerEmail
 
-        list_detached_request = build_received_shares_list_detached_request(orderby="properties/createdAt desc")
+        list_detached_request = build_received_shares_list_detached_request(order_by="properties/createdAt desc")
         list_detached_response = client.send_request(list_detached_request)
 
         assert list_detached_response is not None
@@ -126,7 +126,7 @@ class TestReceivedShares(TestPurviewSharing):
         assert created_invitation['id'] == str(sent_share_invitation_id)
         assert created_invitation['properties']['targetEmail'] == consumerEmail
 
-        list_detached_request = build_received_shares_list_detached_request(orderby="properties/createdAt desc")
+        list_detached_request = build_received_shares_list_detached_request(order_by="properties/createdAt desc")
         list_detached_response = client.send_request(list_detached_request)
 
         assert list_detached_response is not None
@@ -189,7 +189,7 @@ class TestReceivedShares(TestPurviewSharing):
         assert created_invitation['id'] == str(sent_share_invitation_id)
         assert created_invitation['properties']['targetEmail'] == consumerEmail
 
-        list_detached_request = build_received_shares_list_detached_request(orderby="properties/createdAt desc")
+        list_detached_request = build_received_shares_list_detached_request(order_by="properties/createdAt desc")
         list_detached_response = client.send_request(list_detached_request)
 
         assert list_detached_response is not None
@@ -256,7 +256,7 @@ class TestReceivedShares(TestPurviewSharing):
         assert created_invitation['id'] == str(sent_share_invitation_id)
         assert created_invitation['properties']['targetEmail'] == consumerEmail
 
-        list_detached_request = build_received_shares_list_detached_request(orderby="properties/createdAt desc")
+        list_detached_request = build_received_shares_list_detached_request(order_by="properties/createdAt desc")
         list_detached_response = client.send_request(list_detached_request)
 
         assert list_detached_response is not None
@@ -351,7 +351,7 @@ class TestReceivedShares(TestPurviewSharing):
         assert created_invitation['id'] == str(sent_share_invitation_id)
         assert created_invitation['properties']['targetEmail'] == consumerEmail
 
-        list_detached_request = build_received_shares_list_detached_request(orderby="properties/createdAt desc")
+        list_detached_request = build_received_shares_list_detached_request(order_by="properties/createdAt desc")
         list_detached_response = client.send_request(list_detached_request)
 
         assert list_detached_response is not None
@@ -390,7 +390,7 @@ class TestReceivedShares(TestPurviewSharing):
 
         list_attached_request = build_received_shares_list_attached_request(
             reference_name=consumer_storage_account_resource_id,
-            orderby="properties/createdAt desc")
+            order_by="properties/createdAt desc")
         list_attached_response = client.send_request(list_attached_request)
 
         assert list_attached_response is not None

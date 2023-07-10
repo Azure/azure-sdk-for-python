@@ -20,7 +20,7 @@ class TestShareResources(TestPurviewSharing):
 
         list_request = build_share_resources_list_request(
             filter="properties/storeKind eq 'AdlsGen2Account'",
-            orderby="properties/createdAt desc")
+            order_by="properties/createdAt desc")
         
         list_response = client.send_request(list_request)
 

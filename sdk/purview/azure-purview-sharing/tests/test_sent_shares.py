@@ -137,7 +137,7 @@ class TestSentShares(TestPurviewSharing):
 
         list_request = build_sent_shares_list_request(
             reference_name=sent_share["properties"]["artifact"]["storeReference"]["referenceName"],
-            orderby="properties/createdAt desc")
+            order_by="properties/createdAt desc")
         
         list_response = client.send_request(list_request)
 
