@@ -34,19 +34,9 @@ from ._models import TableEntityPropertiesPaged, UpdateMode, TableAccessPolicy, 
 class TableClient(TablesBaseClient):
     """A client to interact with a specific Table in an Azure Tables account.
 
-    :param str endpoint: A URL to an Azure Tables account.
-    :param str table_name: The name of the table.
-    :keyword credential:
-        The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
-        AzureSasCredential (azure-core), or a TokenCredential implementation from azure-identity.
-    :paramtype credential:
-        ~azure.core.credentials.AzureNamedKeyCredential or
-        ~azure.core.credentials.AzureSasCredential or
-        ~azure.core.credentials.TokenCredential or None
-    :keyword api_version: Specifies the version of the operation to use for this request. Default value
-        is "2019-02-02".
-    :paramtype api_version: str
+    :ivar str account_name: The name of the Tables account.
+    :ivar str table_name: The name of the table.
+    :ivar str scheme: The scheme component in the full URL to the Tables account.
     """
 
     def __init__( # pylint: disable=missing-client-constructor-parameter-credential
@@ -72,7 +62,6 @@ class TableClient(TablesBaseClient):
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
         :paramtype api_version: str
-
         :returns: None
         """
         if not table_name:
@@ -194,7 +183,6 @@ class TableClient(TablesBaseClient):
         :param signed_identifiers: Access policies to set for the table
         :type signed_identifiers: dict[str, ~azure.data.tables.TableAccessPolicy] or dict[str, None]
         :return: None
-        :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         identifiers = []
@@ -250,7 +238,6 @@ class TableClient(TablesBaseClient):
         if the table does not exist
 
         :return: None
-        :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -296,7 +283,6 @@ class TableClient(TablesBaseClient):
             The default value is Unconditionally.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
-        :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:

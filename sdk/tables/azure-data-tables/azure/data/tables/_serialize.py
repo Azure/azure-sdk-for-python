@@ -255,8 +255,8 @@ def _add_entity_properties(source):
 def serialize_iso(attr: Optional[Union[str, datetime]]) -> Optional[str]:
     """Serialize Datetime object into ISO-8601 formatted string.
 
-    :param datetime attr: Object to be serialized.
-    :type attr: str or datetime.datetime
+    :param attr: Object to be serialized.
+    :type attr: str or ~datetime.datetime or None
     :return: A ISO-8601 formatted string or None
     :rtype: str or None
     :raises ValueError: When unable to serialize the input object.

@@ -152,7 +152,6 @@ class TableServiceClient(TablesBaseClient):
         :keyword cors: Cross-origin resource sharing rules
         :paramtype cors: list[~azure.data.tables.TableCorsRule]
         :return: None
-        :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         cors = kwargs.pop('cors', None)
@@ -232,7 +231,6 @@ class TableServiceClient(TablesBaseClient):
         :param table_name: The Table name.
         :type table_name: str
         :return: None
-        :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:

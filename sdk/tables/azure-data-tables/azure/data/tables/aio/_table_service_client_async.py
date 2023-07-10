@@ -40,7 +40,7 @@ class TableServiceClient(AsyncTablesBaseClient):
     :keyword credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
-        AzureSasCredential (azure-core), or a TokenCredential implementation from azure-identity.
+        AzureSasCredential (azure-core), or an AsyncTokenCredential implementation from azure-identity.
     :paramtype credential:
         ~azure.core.credentials.AzureNamedKeyCredential or
         ~azure.core.credentials.AzureSasCredential or
@@ -152,15 +152,14 @@ class TableServiceClient(AsyncTablesBaseClient):
          including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :keyword analytics_logging: Properties for analytics
-        :paramtype analytics_logging: ~azure.data.tables.TableAnalyticsLogging
+        :paramtype analytics_logging: ~azure.data.tables.TableAnalyticsLogging or None
         :keyword hour_metrics: Hour level metrics
-        :paramtype hour_metrics: ~azure.data.tables.TableMetrics
+        :paramtype hour_metrics: ~azure.data.tables.TableMetrics or None
         :keyword minute_metrics: Minute level metrics
-        :paramtype minute_metrics: ~azure.data.tables.TableMetrics
+        :paramtype minute_metrics: ~azure.data.tables.TableMetrics or None
         :keyword cors: Cross-origin resource sharing rules
-        :paramtype cors: list[~azure.data.tables.TableCorsRule]
+        :paramtype cors: list[~azure.data.tables.TableCorsRule] or None
         :return: None
-        :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         if cors:
@@ -236,7 +235,6 @@ class TableServiceClient(AsyncTablesBaseClient):
 
         :param str table_name: The Table name.
         :return: None
-        :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -256,7 +254,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in returned ItemPaged
-        :return: An iterator of :class:`~azure.data.tables.TableItem`
+        :return: An async iterator of :class:`~azure.data.tables.TableItem`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableItem]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -286,7 +284,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword parameters: Dictionary for formatting query with additional, user defined parameters
         :paramtype parameters:  dict[str, Any]
-        :return: An iterator of :class:`~azure.data.tables.TableItem`
+        :return: An async iterator of :class:`~azure.data.tables.TableItem`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableItem]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 

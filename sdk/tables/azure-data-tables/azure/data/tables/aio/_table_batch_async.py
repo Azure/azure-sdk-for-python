@@ -31,18 +31,9 @@ class TableBatchOperations(object):
     supported within a single transaction. The batch can include at most 100
     entities, and its total payload may be no more than 4 MB in size.
 
-    :param client: An AzureTable object.
-    :type client: ~azure.data.tables._generated.aio.AzureTable
-    :param serializer: A Serializer object for request serialization.
-    :type serializer: ~azure.data.tables._generated._serialization.Serializer
-    :param deserializer: A Deserializer object for request deserialization.
-    :type deserializer: ~azure.data.tables._generated._serialization.Deserializer
-    :param config: An AzureTableConfiguration object.
-    :type config: ~azure.data.tables._generated.aio._configuration.AzureTableConfiguration
-    :param table_name: The name of the Table to perform operations on.
-    :type table_name: str
-    :param is_cosmos_endpoint: True if the client endpoint is for Tables Cosmos. False if not. Default is False.
-    :type is_cosmos_endpoint: bool
+    :ivar str table_name: The name of the table.
+    :ivar requests: A list of :class:`~azure.core.pipeline.transport.HttpRequest` in a batch.
+    :vartype requests: list[~azure.core.pipeline.transport.HttpRequest]
     """
 
     def __init__(
@@ -166,16 +157,16 @@ class TableBatchOperations(object):
             Must contain a PartitionKey and a RowKey.
         :type: entity: dict[str, Any] or ~azure.data.tables.models.Entity
         :param timeout: The timeout parameter is expressed in seconds.
-        :type timeout: int
+        :type timeout: int or None
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
             limit that is recorded in the analytics logs when analytics logging is enabled.
-        :type request_id_parameter: str
+        :type request_id_parameter: str or None
         :param response_preference: Specifies the return format. Default is return without content.
         :type response_preference: str or ~azure.data.tables.models.ResponseFormat
         :param format: Specifies the media type for the response. Known values are:
             "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
             "application/json;odata=fullmetadata".
-        :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :type format: str or ~azure.data.tables.models.OdataMetadataFormat or None
         :return: None
         """
         data_service_version = "3.0"
@@ -326,21 +317,21 @@ class TableBatchOperations(object):
         :param row_key: The row key of the entity.
         :type row_key: str
         :param timeout: The timeout parameter is expressed in seconds.
-        :type timeout: int
+        :type timeout: int or None
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
             limit that is recorded in the analytics logs when analytics logging is enabled.
-        :type request_id_parameter: str
+        :type request_id_parameter: str or None
         :param if_match: Match condition for an entity to be updated. If specified and a matching
             entity is not found, an error will be raised. To force an unconditional update, set to the
             wildcard character (*). If not specified, an insert will be performed when no existing entity
             is found to update and a replace will be performed if an existing entity is found.
-        :type if_match: str
+        :type if_match: str or None
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, object]
+        :type table_entity_properties: dict[str, object] or None
         :param format: Specifies the media type for the response. Known values are:
             "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
             "application/json;odata=fullmetadata".
-        :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :type format: str or ~azure.data.tables.models.OdataMetadataFormat or None
         :return: None
         """
         data_service_version = "3.0"
@@ -429,21 +420,21 @@ class TableBatchOperations(object):
         :param row_key: The row key of the entity.
         :type row_key: str
         :param timeout: The timeout parameter is expressed in seconds.
-        :type timeout: int
+        :type timeout: int or None
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
             limit that is recorded in the analytics logs when analytics logging is enabled.
-        :type request_id_parameter: str
+        :type request_id_parameter: str or None
         :param if_match: Match condition for an entity to be updated. If specified and a matching
             entity is not found, an error will be raised. To force an unconditional update, set to the
             wildcard character (*). If not specified, an insert will be performed when no existing entity
             is found to update and a merge will be performed if an existing entity is found.
-        :type if_match: str
+        :type if_match: str or None
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, object]
+        :type table_entity_properties: dict[str, object] or None
         :param format: Specifies the media type for the response. Known values are:
             "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
             "application/json;odata=fullmetadata".
-        :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :type format: str or ~azure.data.tables.models.OdataMetadataFormat or None
         :return: None
         """
         data_service_version = "3.0"
@@ -584,14 +575,14 @@ class TableBatchOperations(object):
          wildcard character (*).
         :type if_match: str
         :param timeout: The timeout parameter is expressed in seconds.
-        :type timeout: int
+        :type timeout: int or None
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when analytics logging is enabled.
-        :type request_id_parameter: str
+        :type request_id_parameter: str or None
         :param format: Specifies the media type for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
-        :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :type format: str or ~azure.data.tables.models.OdataMetadataFormat or None
         :return: None
         """
         data_service_version = "3.0"
@@ -661,7 +652,6 @@ class TableBatchOperations(object):
         :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
         :return: None
-        :rtype: None
         :raises ValueError: If mode type is not supported.
 
         .. admonition:: Example:
