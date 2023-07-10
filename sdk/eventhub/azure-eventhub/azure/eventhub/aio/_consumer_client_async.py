@@ -715,7 +715,7 @@ class EventHubConsumerClient(
         :param partition_id: The target partition ID.
         :type partition_id: str
         :return: A dictionary containing partition properties.
-        :rtype: Dict
+        :rtype: dict
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(
