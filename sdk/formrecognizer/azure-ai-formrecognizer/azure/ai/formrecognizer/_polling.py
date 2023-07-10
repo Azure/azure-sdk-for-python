@@ -133,7 +133,7 @@ class DocumentModelAdministrationPolling(OperationResourcePolling):
     def get_final_get_url(self, pipeline_response: Any) -> None:
         """If a final GET is needed, returns the URL.
 
-        :param Any pipeline_response: The pipeline response to get the final url.
+        :param any pipeline_response: The pipeline response to get the final url.
         :rtype: None
         """
         return None
