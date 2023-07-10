@@ -155,7 +155,7 @@ stages:
         timeoutInMinutes: 90
 
         variables:
-          PythonVersion: '3.7'
+          PythonVersion: '3.9'
 
         pool:
           name: azsdk-pool-mms-ubuntu-2004-general
@@ -171,7 +171,7 @@ stages:
             inputs:
              scriptPath: 'scripts/devops_tasks/install_python_version.py'
             arguments: >-
-              "--version_spec 3.7"
+              "--version_spec=3.7"
           - task: PythonScript@0
             displayName: 'Run Pylint Next'
             continueOnError: true
