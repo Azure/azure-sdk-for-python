@@ -65,7 +65,7 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.28.0",
         "cryptography>=2.1.4",
-        "typing-extensions>=4.0.1",
+        "typing-extensions>=4.3.0",
         "isodate>=0.6.1"
     ],
     extras_require={
