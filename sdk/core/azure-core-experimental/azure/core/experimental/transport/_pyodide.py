@@ -110,7 +110,7 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
         :rtype: bytes
         """
         if self._closed:
-            raise StopAsyncIteration()  # pylint: disable=raise-missing-from
+            raise StopAsyncIteration()
 
         # remember the initial stream position
         start_pos = self._stream.tell()
