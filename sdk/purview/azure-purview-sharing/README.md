@@ -166,8 +166,7 @@ invitation_request = client.sent_shares.create_invitation(
     sent_share_invitation_id=str(sent_share_invitation_id),
     sent_share_invitation=invitation)
 
-invitation_response = invitation_request.result()
-created_invitation = json.dumps(invitation_response)
+created_invitation = json.dumps(invitation_request)
 print(created_invitation)
 ```
 
@@ -248,7 +247,7 @@ received_share['properties']['sink'] = sink
 update_request = client.received_shares.begin_create_or_replace(
     received_share['id'],
     content_type="application/json",
-    content=json.dumps(received_share=received_share))
+    received_share=received_share)
 
 update_response = update_request.result()
 print(update_response)
