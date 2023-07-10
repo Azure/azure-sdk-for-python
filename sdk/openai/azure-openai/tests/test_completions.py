@@ -33,7 +33,7 @@ class TestCompletions(AzureRecordedTestCase):
             openai.Completion.create(prompt="hello world", model=deployment)
         assert "Must provide an 'engine' or 'deployment_id' parameter" in str(e.value)
 
-    @pytest.mark.parametrize("api_type", [ALL])
+    @pytest.mark.parametrize("api_type", ALL)
     @configure
     def test_completion(self, azure_openai_creds, api_type):
         kwargs = {"model": azure_openai_creds["completions_model"]} if api_type == "openai" \

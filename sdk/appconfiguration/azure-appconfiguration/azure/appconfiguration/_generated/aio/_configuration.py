@@ -25,14 +25,14 @@ class AzureAppConfigurationConfiguration(Configuration):  # pylint: disable=too-
     :param sync_token: Used to guarantee real-time consistency between requests. Default value is
      None.
     :type sync_token: str
-    :keyword api_version: Api Version. Default value is "1.0". Note that overriding this default
-     value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-11-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, sync_token: Optional[str] = None, **kwargs: Any) -> None:
         super(AzureAppConfigurationConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "1.0")  # type: str
+        api_version: str = kwargs.pop("api_version", "2022-11-01-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

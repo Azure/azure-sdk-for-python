@@ -119,22 +119,23 @@ def spark(
     :param description: The description of the job.
     :type description: str
     :param tags: The dictionary of tags for the job. Tags can be added, removed, and updated.
-    :type tags: Dict[str, str]
-    :param code: The source code to run the job.
+    :type tags: dict[str, str]
+    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
+        to a remote location.
     :type code: Union[str, os.PathLike]
     :param entry: The file or class entry point.
-    :type entry: Union[Dict[str, str], ~azure.ai.ml.entities.SparkJobEntry]
+    :type entry: Union[dict[str, str], ~azure.ai.ml.entities.SparkJobEntry]
     :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
-    :type py_files: List[str]
+    :type py_files: list[str]
     :param jars: The list of .JAR files to include on the driver and executor classpaths.
-    :type jars: List[str]
+    :type jars: list[str]
     :param files: The list of files to be placed in the working directory of each executor.
-    :type files: List[str]
+    :type files: list[str]
     :param archives: The list of archives to be extracted into the working directory of each executor.
-    :type archives: List[str]
+    :type archives: list[str]
     :param identity: The identity that the Spark job will use while running on compute.
     :type identity: Union[
-        Dict[str, str],
+        dict[str, str],
         ~azure.ai.ml.entities.ManagedIdentityConfiguration,
         ~azure.ai.ml.entities.AmlTokenConfiguration,
         ~azure.ai.ml.entities.UserIdentityConfiguration]
@@ -160,19 +161,19 @@ def spark(
         enabled.
     :type dynamic_allocation_max_executors: int
     :param conf: A dictionary with pre-defined Spark configurations key and values.
-    :type conf: Dict[str, str]
+    :type conf: dict[str, str]
     :param environment: The Azure ML environment to run the job in.
     :type environment: Union[str, ~azure.ai.ml.entities.Environment]
     :param inputs: A mapping of input names to input data used in the job.
-    :type inputs: Dict[str, ~azure.ai.ml.Input]
+    :type inputs: dict[str, ~azure.ai.ml.Input]
     :param outputs: A mapping of output names to output data used in the job.
-    :type outputs: Dict[str, ~azure.ai.ml.Output]
+    :type outputs: dict[str, ~azure.ai.ml.Output]
     :param args: The arguments for the job.
     :type args: str
     :param compute: The compute resource the job runs on.
     :type compute: str
     :param resources: The compute resource configuration for the job.
-    :type resources: Union[Dict, ~azure.ai.ml.entities.SparkResourceConfiguration]
+    :type resources: Union[dict, ~azure.ai.ml.entities.SparkResourceConfiguration]
 
     .. admonition:: Example:
         :class: tip

@@ -17,7 +17,7 @@ from azure.core.polling.base_polling import (
 
 from azure.core.exceptions import HttpResponseError, ODataV4Format
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import (
+from azure.core.rest import (
     HttpResponse,
     AsyncHttpResponse,
     HttpRequest,
@@ -42,6 +42,7 @@ class DocumentTranslationLROPoller(LROPoller[PollingReturnType_co]):
     def id(self) -> str:
         """The ID for the translation operation
 
+        :return: The str ID for the translation operation.
         :rtype: str
         """
         if self._polling_method._current_body:  # type: ignore # pylint: disable=protected-access
@@ -56,6 +57,7 @@ class DocumentTranslationLROPoller(LROPoller[PollingReturnType_co]):
     def details(self) -> TranslationStatus:
         """The details for the translation operation
 
+        :return: The details for the translation operation.
         :rtype: ~azure.ai.translation.document.TranslationStatus
         """
         if self._polling_method._current_body:  # type: ignore # pylint: disable=protected-access
@@ -65,7 +67,7 @@ class DocumentTranslationLROPoller(LROPoller[PollingReturnType_co]):
         return TranslationStatus(id=self._polling_method._get_id_from_headers())  # type: ignore # pylint: disable=protected-access
 
     @classmethod
-    def from_continuation_token(
+    def from_continuation_token( # pylint: disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype
         cls,
         polling_method,
         continuation_token,
@@ -101,6 +103,8 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
 
     def finished(self) -> bool:
         """Is this polling finished?
+
+        :return: True/False for whether polling is complete.
         :rtype: bool
         """
         return self._finished(self.status())
@@ -122,20 +126,21 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
             return self._current_body.id
         return self._get_id_from_headers()
 
+    # pylint: disable=arguments-differ
     def from_continuation_token(self, continuation_token: str, **kwargs: Any) -> Tuple:  # type: ignore
         try:
             client = kwargs["client"]
-        except KeyError:
+        except KeyError as exc:
             raise ValueError(
                 "Need kwarg 'client' to be recreated from continuation_token"
-            )
+            ) from exc
 
         try:
             deserialization_callback = kwargs["deserialization_callback"]
-        except KeyError:
+        except KeyError as exc:
             raise ValueError(
                 "Need kwarg 'deserialization_callback' to be recreated from continuation_token"
-            )
+            ) from exc
 
         return client, self._cont_token_response, deserialization_callback
 
@@ -143,8 +148,6 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
         """Poll status of operation so long as operation is incomplete and
         we have an endpoint to query.
 
-        :param callable update_cmd: The function to call to retrieve the
-         latest status of the long running operation.
         :raises: OperationFailed if operation status 'Failed' or 'Canceled'.
         :raises: BadStatus if response status invalid.
         :raises: BadResponse if response invalid.
@@ -169,7 +172,13 @@ class TranslationPolling(OperationResourcePolling):
     """Implements a Location polling."""
 
     def can_poll(self, pipeline_response: PipelineResponseType) -> bool:
-        """Answer if this polling method could be used."""
+        """Answer if this polling method could be used.
+
+        :param pipeline_response: The PipelineResponse type
+        :type pipeline_response: PipelineResponseType
+        :return: Whether polling should be performed.
+        :rtype: bool
+        """
         response = pipeline_response.http_response
         can_poll = self._operation_location_header in response.headers
         if can_poll:
@@ -193,6 +202,8 @@ class TranslationPolling(OperationResourcePolling):
         """Process the latest status update retrieved from a 'location' header.
 
         :param azure.core.pipeline.PipelineResponse pipeline_response: latest REST call response.
+        :return: The current operation status
+        :rtype: str
         :raises: BadResponse if response has no body and not status 202.
         """
         response = pipeline_response.http_response
@@ -206,12 +217,13 @@ class TranslationPolling(OperationResourcePolling):
             "The response from long running operation does not contain a body."
         )
 
-    # pylint: disable=R0201
     def _map_nonstandard_statuses(self, status: str, body: Dict[str, Any]) -> str:
         """Map non-standard statuses.
 
         :param str status: lro process status.
         :param str body: pipeline response body.
+        :return: The current operation status.
+        :rtype: str
         """
         if status == "ValidationFailed":
             self.raise_error(body)

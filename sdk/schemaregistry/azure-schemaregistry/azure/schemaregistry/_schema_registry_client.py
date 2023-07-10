@@ -113,6 +113,7 @@ class SchemaRegistryClient(object):
         :param format: Format for the schema being registered.
          For now Avro is the only supported schema format by the service.
         :type format: Union[str, SchemaFormat]
+        :return: The SchemaProperties associated with the registered schema.
         :rtype: ~azure.schemaregistry.SchemaProperties
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -140,12 +141,12 @@ class SchemaRegistryClient(object):
 
     @overload
     def get_schema(
-        self, *, group_name: str, name: str, version: int, **kwargs
+        self, *, group_name: str, name: str, version: int, **kwargs: Any
     ) -> Schema:
         ...
 
     @distributed_trace
-    def get_schema(self, *args: str, **kwargs: Any) -> Schema:
+    def get_schema(self, *args: str, **kwargs: Any) -> Schema:  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
         """Gets a registered schema. There are two ways to call this method:
 
         1) To get a registered schema by its unique ID, pass the `schema_id` parameter and any optional
@@ -154,10 +155,12 @@ class SchemaRegistryClient(object):
         2) To get a specific version of a schema within the specified schema group, pass in the required
         keyword arguments `group_name`, `name`, and `version` and any optional keyword arguments.
 
-        :param str schema_id: References specific schema in registry namespace.
+        :param str schema_id: References specific schema in registry namespace. Required if `group_name`,
+         `name`, and `version` are not provided.
         :keyword str group_name: Name of schema group that contains the registered schema.
         :keyword str name: Name of schema which should be retrieved.
         :keyword int version: Version of schema which should be retrieved.
+        :return: The schema stored in the registry associated with the provided arguments.
         :rtype: ~azure.schemaregistry.Schema
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -200,6 +203,7 @@ class SchemaRegistryClient(object):
         :param str definition: String representation of the schema for which properties should be retrieved.
         :param format: Format for the schema for which properties should be retrieved.
         :type format: Union[str, SchemaFormat]
+        :return: The SchemaProperties associated with the provided schema metadata.
         :rtype: ~azure.schemaregistry.SchemaProperties
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 

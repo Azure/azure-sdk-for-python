@@ -17,6 +17,7 @@ stages:
         BuildTargetingString: ${{ service }}
         JobName: ${{ replace(service, '-', '_') }}
         SupportedClouds: 'Public,UsGov,China'
+        TestTimeoutInMinutes: 180
         CloudConfig:
           Public:
             SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
@@ -28,6 +29,7 @@ stages:
             SubscriptionConfiguration: $(sub-config-cn-test-resources)
             MatrixFilters:
               - ArmTemplateParameters=^(?!.*enableHsm.*true)
+            Location: chinanorth3
         ${{ if eq(service, 'azure-keyvault-keys') }}:
           ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly') }}:
             # Test azure-keyvault-keys on Managed HSM for weekly tests only

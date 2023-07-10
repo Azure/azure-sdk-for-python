@@ -16,14 +16,14 @@ from marshmallow import Schema
 from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion, ComponentVersionProperties
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSchema
-from azure.ai.ml._utils.utils import is_data_binding_expression, hash_dict
-from azure.ai.ml.constants._common import COMPONENT_TYPE, ARM_ID_PREFIX, ASSET_ARM_ID_REGEX_FORMAT
+from azure.ai.ml._utils.utils import hash_dict, is_data_binding_expression
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ARM_ID_REGEX_FORMAT, COMPONENT_TYPE
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
 from azure.ai.ml.entities._builders import BaseNode, Command
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode, LoopNode
 from azure.ai.ml.entities._component.component import Component
-from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
+from azure.ai.ml.entities._inputs_outputs import GroupInput, Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.pipeline._attr_dict import (
     has_attr_safe,
@@ -286,14 +286,6 @@ class PipelineComponent(Component):
         """Return a dictionary from component variable name to component object."""
         return self._jobs
 
-    @classmethod
-    def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
-        component_io = super()._build_io(io_dict, is_input)
-        if is_input:
-            # Restore flattened parameters to group
-            component_io = GroupInput.restore_flattened_inputs(component_io)
-        return component_io
-
     def _get_anonymous_hash(self) -> str:
         """Get anonymous hash for pipeline component."""
         # ideally we should always use rest object to generate hash as it's the same as
@@ -316,15 +308,6 @@ class PipelineComponent(Component):
             ],
         )
         return hash_value
-
-    def _get_flattened_inputs(self):
-        _result = {}
-        for key, val in self.inputs.items():
-            if isinstance(val, GroupInput):
-                _result.update(val.flatten(group_parameter_name=key))
-                continue
-            _result[key] = val
-        return _result
 
     @classmethod
     def _load_from_rest_pipeline_job(cls, data: Dict):

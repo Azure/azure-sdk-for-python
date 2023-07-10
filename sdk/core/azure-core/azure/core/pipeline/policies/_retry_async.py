@@ -75,12 +75,15 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
             :caption: Configuring an async retry policy.
     """
 
-    async def _sleep_for_retry(self, response, transport):  # pylint:disable=invalid-overridden-method
+    async def _sleep_for_retry(self, response, transport):
         """Sleep based on the Retry-After response header value.
 
         :param response: The PipelineResponse object.
         :type response: ~azure.core.pipeline.PipelineResponse
         :param transport: The HTTP transport type.
+        :type transport: ~azure.core.pipeline.transport.AsyncHttpTransport
+        :return: Whether the retry-after value was found.
+        :rtype: bool
         """
         retry_after = self.get_retry_after(response)
         if retry_after:
@@ -88,18 +91,19 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
             return True
         return False
 
-    async def _sleep_backoff(self, settings, transport):  # pylint:disable=invalid-overridden-method
+    async def _sleep_backoff(self, settings, transport):
         """Sleep using exponential backoff. Immediately returns if backoff is 0.
 
         :param dict settings: The retry settings.
         :param transport: The HTTP transport type.
+        :type transport: ~azure.core.pipeline.transport.AsyncHttpTransport
         """
         backoff = self.get_backoff_time(settings)
         if backoff <= 0:
             return
         await transport.sleep(backoff)
 
-    async def sleep(self, settings, transport, response=None):  # pylint:disable=invalid-overridden-method
+    async def sleep(self, settings, transport, response=None):
         """Sleep between retry attempts.
 
         This method will respect a server's ``Retry-After`` response header
@@ -109,6 +113,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
 
         :param dict settings: The retry settings.
         :param transport: The HTTP transport type.
+        :type transport: ~azure.core.pipeline.transport.AsyncHttpTransport
         :param response: The PipelineResponse object.
         :type response: ~azure.core.pipeline.PipelineResponse
         """
@@ -118,7 +123,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
                 return
         await self._sleep_backoff(settings, transport)
 
-    async def send(self, request):  # pylint:disable=invalid-overridden-method
+    async def send(self, request):
         """Uses the configured retry policy to send the request to the next policy in the pipeline.
 
         :param request: The PipelineRequest object
@@ -137,8 +142,8 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
         is_response_error = True
 
         while retry_active:
+            start_time = time.time()
             try:
-                start_time = time.time()
                 self._configure_timeout(request, absolute_timeout, is_response_error)
                 response = await self.next.send(request)
                 if self.is_retry(retry_settings, response):
