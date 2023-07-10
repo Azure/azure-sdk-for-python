@@ -166,6 +166,10 @@ stages:
               python -m pip install setuptools==58.3.0
               python -m pip install -r eng/ci_tools.txt 
             displayName: 'Install Necessary Dependencies'
+          - task: UsePythonVersion@0
+            displayName: 'Use Python 3.7'
+            inputs:
+             versionSpec: '3.7'
           - task: PythonScript@0
             displayName: 'Run Pylint Next'
             continueOnError: true
