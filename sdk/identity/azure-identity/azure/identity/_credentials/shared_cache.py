@@ -52,7 +52,9 @@ class SharedTokenCacheCredential:
         self.__exit__()
 
     @log_get_token("SharedTokenCacheCredential")
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Get an access token for `scopes` from the shared cache.
 
         If no access token is cached, attempt to acquire one using a cached refresh token.
@@ -64,8 +66,10 @@ class SharedTokenCacheCredential:
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure
+        :keyword str tenant_id: not used by this credential; any value provided will be ignored.
         :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
             token. Defaults to False.
+
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user

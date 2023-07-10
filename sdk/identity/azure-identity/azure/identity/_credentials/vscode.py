@@ -140,7 +140,9 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
         self.__exit__()
 
     @log_get_token("VSCodeCredential")
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
 
         This method is called automatically by Azure SDK clients.

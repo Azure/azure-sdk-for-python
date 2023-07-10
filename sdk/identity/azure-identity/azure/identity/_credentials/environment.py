@@ -120,7 +120,9 @@ class EnvironmentCredential:
         self.__exit__()
 
     @log_get_token("EnvironmentCredential")
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -129,6 +131,7 @@ class EnvironmentCredential:
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword str claims: not used by this credential; any value provided will be ignored.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
