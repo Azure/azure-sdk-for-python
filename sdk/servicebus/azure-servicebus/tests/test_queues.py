@@ -1202,7 +1202,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
 
             too_large = "A" * 256 * 1024
     
-            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+            with sb_client.get_queue_sender(servicebus_queue.name, socket_timeout=0.5) as sender:
                 with pytest.raises(MessageSizeExceededError):
                     sender.send_messages(ServiceBusMessage(too_large))
 
