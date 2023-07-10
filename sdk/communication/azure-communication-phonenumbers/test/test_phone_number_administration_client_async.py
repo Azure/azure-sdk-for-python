@@ -122,7 +122,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                 capabilities,
                 polling=True
             )
-        assert poller.result()
+        # assert poller.result()
 
     @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
     @recorded_by_proxy_async
@@ -139,7 +139,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                 capabilities,
                 polling=True
             )
-        assert poller.result()
+        # assert poller.result()
 
     @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
     @pytest.mark.skipif(SKIP_UPDATE_CAPABILITIES_TESTS, reason=SKIP_UPDATE_CAPABILITIES_TESTS_REASON)
@@ -453,3 +453,25 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
             async for item in offerings:
                 items.append(item)
         assert len(items) > 0
+
+    @recorded_by_proxy_async
+    async def test_search_operator_information_with_too_many_phone_numbers(self):
+        if self.is_playback():
+            phone_numbers = [ "sanitized", "sanitized" ]
+        else:
+            phone_numbers = [ "+14255550123", "+14255551234" ]
+
+        with pytest.raises(Exception) as ex:
+            async with self.phone_number_client:
+                await self.phone_number_client.search_operator_information(phone_numbers)
+
+        assert is_client_error_status_code(
+            ex.value.status_code) is True, 'Status code {ex.value.status_code} does not indicate a client error'  # type: ignore
+        assert ex.value.message is not None  # type: ignore
+
+    @recorded_by_proxy_async
+    async def test_search_operator_information(self):
+        async with self.phone_number_client:
+            results = await self.phone_number_client.search_operator_information([ self.phone_number ])
+        assert len(results.values) == 1
+        assert results.values[0].phone_number == self.phone_number

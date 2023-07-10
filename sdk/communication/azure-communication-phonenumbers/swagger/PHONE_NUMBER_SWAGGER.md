@@ -11,7 +11,7 @@ autorest ./PHONE_NUMBER_SWAGGER.md
 ### Settings
 ``` yaml
 tag: package-phonenumber-2023-05-01-preview
-require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/2d4881cf7101773b8c677a267b53d915b30a8c6c/specification/communication/data-plane/PhoneNumbers/readme.md
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/4d2e746ac1e094f87bfe0807b1d51b375a6c5517/specification/communication/data-plane/PhoneNumbers/readme.md
 output-folder: ../azure/communication/phonenumbers/_generated
 namespace: azure.communication.phonenumbers
 license-header: MICROSOFT_MIT_NO_VERSION
@@ -22,4 +22,12 @@ v3: true
 python: true
 title: Phone Numbers Client
 models-mode: msrest
+```
+
+``` yaml
+directive:
+  from: swagger-document
+  where: $.definitions.PhoneNumberSearchResult.properties.error.x-ms-enum
+  transform: >
+    $["name"] = "PhoneNumberSearchResultError";
 ```

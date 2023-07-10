@@ -13,6 +13,8 @@ from ._generated.models import (
     PhoneNumberCapabilitiesRequest,
     PhoneNumberPurchaseRequest,
     PhoneNumberType,
+    OperatorInformationRequest,
+    OperatorInformationResult,
 )
 from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
@@ -419,5 +421,24 @@ class PhoneNumbersClient(object):
                 "locality", None),
             administrative_division=kwargs.pop(
                 "administrative_division", None),
+            **kwargs
+        )
+
+    @distributed_trace
+    def search_operator_information(
+            self,
+            phone_numbers,  # type: list(str)
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> OperatorInformationResult
+        """Searches for operator information for a given list of phone numbers.
+
+        :param phone_numbers: The phone number(s) whose operator information should be searched
+        :type phone_numbers: list(str)
+        :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
+        """
+        request = OperatorInformationRequest(phone_numbers = phone_numbers)
+        return self._phone_number_client.phone_numbers.operator_information_search(
+            request,
             **kwargs
         )

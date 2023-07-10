@@ -11,7 +11,7 @@ build_phone_numbers_get_search_result_request,
 build_phone_numbers_purchase_phone_numbers_request,
 build_phone_numbers_get_operation_request,
 build_phone_numbers_cancel_operation_request,
-build_phone_numbers_operator_information_search_request
+build_phone_numbers_operator_information_search_request,
 )
 
 test_id = "test_id"

@@ -32,6 +32,7 @@ from ._enums import PhoneNumberAssignmentType
 from ._enums import PhoneNumberCapabilityType
 from ._enums import PhoneNumberOperationStatus
 from ._enums import PhoneNumberOperationType
+from ._enums import PhoneNumberSearchResultError
 from ._enums import PhoneNumberType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -63,6 +64,7 @@ __all__ = [
     "PhoneNumberCapabilityType",
     "PhoneNumberOperationStatus",
     "PhoneNumberOperationType",
+    "PhoneNumberSearchResultError",
     "PhoneNumberType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
