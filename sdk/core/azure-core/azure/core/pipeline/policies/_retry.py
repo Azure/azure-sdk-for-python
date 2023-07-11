@@ -29,8 +29,8 @@ import logging
 import time
 from enum import Enum
 from azure.core.pipeline import PipelineResponse, PipelineRequest
-from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse
-from azure.core.rest import HttpResponse
+from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.rest import HttpResponse, HttpRequest
 from azure.core.exceptions import (
     AzureError,
     ClientAuthenticationError,
@@ -45,7 +45,7 @@ from . import _utils
 from ..._enum_meta import CaseInsensitiveEnumMeta
 
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
-HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 _LOGGER = logging.getLogger(__name__)
 
