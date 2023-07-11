@@ -402,7 +402,7 @@ class AzureBlobFileSystemConfiguration(_model_base.Model):
     :ivar identity_reference: This property is mutually exclusive with both accountKey and sasKey;
      exactly
      one must be specified.
-    :vartype identity_reference: ~azure.batch.models.ComputeNodeIdentityReference
+    :vartype identity_reference: ~azure.batch.models.BatchNodeIdentityReference
     """
 
     account_name: str = rest_field(name="accountName")
@@ -420,7 +420,7 @@ class AzureBlobFileSystemConfiguration(_model_base.Model):
     relative_mount_path: str = rest_field(name="relativeMountPath")
     """All file systems are mounted relative to the Batch mounts directory, accessible
      via the AZ_BATCH_NODE_MOUNTS_DIR environment variable. Required."""
-    identity_reference: Optional["_models.ComputeNodeIdentityReference"] = rest_field(name="identityReference")
+    identity_reference: Optional["_models.BatchNodeIdentityReference"] = rest_field(name="identityReference")
     """This property is mutually exclusive with both accountKey and sasKey; exactly
      one must be specified."""
 
@@ -434,7 +434,7 @@ class AzureBlobFileSystemConfiguration(_model_base.Model):
         account_key: Optional[str] = None,
         sas_key: Optional[str] = None,
         blobfuse_options: Optional[str] = None,
-        identity_reference: Optional["_models.ComputeNodeIdentityReference"] = None,
+        identity_reference: Optional["_models.BatchNodeIdentityReference"] = None,
     ):
         ...
 
@@ -583,6 +583,10 @@ class BatchErrorDetail(_model_base.Model):
 class BatchJob(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """An Azure Batch Job.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The ID is case-preserving and case-insensitive (that is, you may not have two
      IDs within an Account that differ only by case).
     :vartype id: str
@@ -671,7 +675,7 @@ class BatchJob(_model_base.Model):  # pylint: disable=too-many-instance-attribut
      specified here by
      specifying the same setting name with a different value.
     :vartype common_environment_settings: list[~azure.batch.models.EnvironmentSetting]
-    :ivar pool_info: Specifies how a Job should be assigned to a Pool.
+    :ivar pool_info: Specifies how a Job should be assigned to a Pool. Required.
     :vartype pool_info: ~azure.batch.models.PoolInformation
     :ivar on_all_tasks_complete: The default is noaction. Known values are: "noaction" and
      "terminatejob".
@@ -698,37 +702,39 @@ class BatchJob(_model_base.Model):  # pylint: disable=too-many-instance-attribut
     :vartype stats: ~azure.batch.models.JobStatistics
     """
 
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(readonly=True)
     """The ID is case-preserving and case-insensitive (that is, you may not have two
      IDs within an Account that differ only by case)."""
-    display_name: Optional[str] = rest_field(name="displayName")
+    display_name: Optional[str] = rest_field(name="displayName", readonly=True)
     """The display name for the Job."""
-    uses_task_dependencies: Optional[bool] = rest_field(name="usesTaskDependencies")
+    uses_task_dependencies: Optional[bool] = rest_field(name="usesTaskDependencies", readonly=True)
     """Whether Tasks in the Job can define dependencies on each other. The default is
      false."""
-    url: Optional[str] = rest_field()
+    url: Optional[str] = rest_field(readonly=True)
     """The URL of the Job."""
-    e_tag: Optional[str] = rest_field(name="eTag")
+    e_tag: Optional[str] = rest_field(name="eTag", readonly=True)
     """This is an opaque string. You can use it to detect whether the Job has changed
      between requests. In particular, you can be pass the ETag when updating a Job
      to specify that your changes should take effect only if nobody else has
      modified the Job in the meantime."""
-    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified")
+    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", readonly=True)
     """This is the last time at which the Job level data, such as the Job state or
      priority, changed. It does not factor in task-level changes such as adding new
      Tasks or Tasks changing state."""
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime")
+    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", readonly=True)
     """The creation time of the Job."""
-    state: Optional[Union[str, "_models.JobState"]] = rest_field()
+    state: Optional[Union[str, "_models.JobState"]] = rest_field(readonly=True)
     """The state of the Job. Known values are: \"active\", \"disabling\", \"disabled\", \"enabling\",
      \"terminating\", \"completed\", and \"deleting\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime")
+    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", readonly=True)
     """The time at which the Job entered its current state."""
-    previous_state: Optional[Union[str, "_models.JobState"]] = rest_field(name="previousState")
+    previous_state: Optional[Union[str, "_models.JobState"]] = rest_field(name="previousState", readonly=True)
     """This property is not set if the Job is in its initial Active state. Known values are:
      \"active\", \"disabling\", \"disabled\", \"enabling\", \"terminating\", \"completed\", and
      \"deleting\"."""
-    previous_state_transition_time: Optional[datetime.datetime] = rest_field(name="previousStateTransitionTime")
+    previous_state_transition_time: Optional[datetime.datetime] = rest_field(
+        name="previousStateTransitionTime", readonly=True
+    )
     """This property is not set if the Job is in its initial Active state."""
     priority: Optional[int] = rest_field()
     """Priority values can range from -1000 to 1000, with -1000 being the lowest
@@ -738,14 +744,14 @@ class BatchJob(_model_base.Model):  # pylint: disable=too-many-instance-attribut
      will take precedence and will be able requeue tasks from this job. You can
      update a job's allowTaskPreemption after it has been created using the update
      job API."""
-    max_parallel_tasks: int = rest_field(name="maxParallelTasks", default=-1)
+    max_parallel_tasks: Optional[int] = rest_field(name="maxParallelTasks")
     """The value of maxParallelTasks must be -1 or greater than 0 if specified. If not
      specified, the default value is -1, which means there's no limit to the number
      of tasks that can be run at once. You can update a job's maxParallelTasks after
      it has been created using the update job API."""
     constraints: Optional["_models.JobConstraints"] = rest_field()
     """The execution constraints for a Job."""
-    job_manager_task: Optional["_models.JobManagerTask"] = rest_field(name="jobManagerTask")
+    job_manager_task: Optional["_models.JobManagerTask"] = rest_field(name="jobManagerTask", readonly=True)
     """The Job Manager Task is automatically started when the Job is created. The
      Batch service tries to schedule the Job Manager Task before any other Tasks in
      the Job. When shrinking a Pool, the Batch service tries to preserve Nodes where
@@ -768,35 +774,37 @@ class BatchJob(_model_base.Model):  # pylint: disable=too-many-instance-attribut
      to tolerate being interrupted and restarted without causing any corruption or
      duplicate data. The best practice for long running Tasks is to use some form of
      checkpointing."""
-    job_preparation_task: Optional["_models.JobPreparationTask"] = rest_field(name="jobPreparationTask")
+    job_preparation_task: Optional["_models.JobPreparationTask"] = rest_field(name="jobPreparationTask", readonly=True)
     """The Job Preparation Task is a special Task run on each Compute Node before any
      other Task of the Job."""
-    job_release_task: Optional["_models.JobReleaseTask"] = rest_field(name="jobReleaseTask")
+    job_release_task: Optional["_models.JobReleaseTask"] = rest_field(name="jobReleaseTask", readonly=True)
     """The Job Release Task is a special Task run at the end of the Job on each
      Compute Node that has run any other Task of the Job."""
     common_environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
-        name="commonEnvironmentSettings"
+        name="commonEnvironmentSettings", readonly=True
     )
     """Individual Tasks can override an environment setting specified here by
      specifying the same setting name with a different value."""
-    pool_info: Optional["_models.PoolInformation"] = rest_field(name="poolInfo")
-    """Specifies how a Job should be assigned to a Pool."""
+    pool_info: "_models.PoolInformation" = rest_field(name="poolInfo")
+    """Specifies how a Job should be assigned to a Pool. Required."""
     on_all_tasks_complete: Optional[Union[str, "_models.OnAllTasksComplete"]] = rest_field(name="onAllTasksComplete")
     """The default is noaction. Known values are: \"noaction\" and \"terminatejob\"."""
-    on_task_failure: Optional[Union[str, "_models.OnTaskFailure"]] = rest_field(name="onTaskFailure")
+    on_task_failure: Optional[Union[str, "_models.OnTaskFailure"]] = rest_field(name="onTaskFailure", readonly=True)
     """A Task is considered to have failed if has a failureInfo. A failureInfo is set
      if the Task completes with a non-zero exit code after exhausting its retry
      count, or if there was an error starting the Task, for example due to a
      resource file download error. The default is noaction. Known values are: \"noaction\" and
      \"performexitoptionsjobaction\"."""
-    network_configuration: Optional["_models.JobNetworkConfiguration"] = rest_field(name="networkConfiguration")
+    network_configuration: Optional["_models.JobNetworkConfiguration"] = rest_field(
+        name="networkConfiguration", readonly=True
+    )
     """The network configuration for the Job."""
     metadata: Optional[List["_models.MetadataItem"]] = rest_field()
     """The Batch service does not assign any meaning to metadata; it is solely for the
      use of user code."""
-    execution_info: Optional["_models.JobExecutionInformation"] = rest_field(name="executionInfo")
+    execution_info: Optional["_models.JobExecutionInformation"] = rest_field(name="executionInfo", readonly=True)
     """Contains information about the execution of a Job in the Azure Batch service."""
-    stats: Optional["_models.JobStatistics"] = rest_field()
+    stats: Optional["_models.JobStatistics"] = rest_field(readonly=True)
     """This property is populated only if the CloudJob was retrieved with an expand
      clause including the 'stats' attribute; otherwise it is null. The statistics
      may not be immediately available. The Batch service performs periodic roll-up
@@ -806,32 +814,13 @@ class BatchJob(_model_base.Model):  # pylint: disable=too-many-instance-attribut
     def __init__(
         self,
         *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        display_name: Optional[str] = None,
-        uses_task_dependencies: Optional[bool] = None,
-        url: Optional[str] = None,
-        e_tag: Optional[str] = None,
-        last_modified: Optional[datetime.datetime] = None,
-        creation_time: Optional[datetime.datetime] = None,
-        state: Optional[Union[str, "_models.JobState"]] = None,
-        state_transition_time: Optional[datetime.datetime] = None,
-        previous_state: Optional[Union[str, "_models.JobState"]] = None,
-        previous_state_transition_time: Optional[datetime.datetime] = None,
+        pool_info: "_models.PoolInformation",
         priority: Optional[int] = None,
         allow_task_preemption: Optional[bool] = None,
-        max_parallel_tasks: int = -1,
+        max_parallel_tasks: Optional[int] = None,
         constraints: Optional["_models.JobConstraints"] = None,
-        job_manager_task: Optional["_models.JobManagerTask"] = None,
-        job_preparation_task: Optional["_models.JobPreparationTask"] = None,
-        job_release_task: Optional["_models.JobReleaseTask"] = None,
-        common_environment_settings: Optional[List["_models.EnvironmentSetting"]] = None,
-        pool_info: Optional["_models.PoolInformation"] = None,
         on_all_tasks_complete: Optional[Union[str, "_models.OnAllTasksComplete"]] = None,
-        on_task_failure: Optional[Union[str, "_models.OnTaskFailure"]] = None,
-        network_configuration: Optional["_models.JobNetworkConfiguration"] = None,
         metadata: Optional[List["_models.MetadataItem"]] = None,
-        execution_info: Optional["_models.JobExecutionInformation"] = None,
-        stats: Optional["_models.JobStatistics"] = None,
     ):
         ...
 
@@ -846,10 +835,8 @@ class BatchJob(_model_base.Model):  # pylint: disable=too-many-instance-attribut
         super().__init__(*args, **kwargs)
 
 
-class BatchJobAddParameters(_model_base.Model):  # pylint: disable=too-many-instance-attributes
-    """An Azure Batch Job Add Definition.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
+class BatchJobCreateParameters(_model_base.Model):  # pylint: disable=too-many-instance-attributes
+    """Parameters to Create an Azure Batch Job.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -932,6 +919,11 @@ class BatchJobAddParameters(_model_base.Model):  # pylint: disable=too-many-inst
     :ivar metadata: The Batch service does not assign any meaning to metadata; it is solely for the
      use of user code.
     :vartype metadata: list[~azure.batch.models.MetadataItem]
+    :ivar stats: This property is populated only if the CloudJob was retrieved with an expand
+     clause including the 'stats' attribute; otherwise it is null. The statistics
+     may not be immediately available. The Batch service performs periodic roll-up
+     of statistics. The typical delay is about 30 minutes.
+    :vartype stats: ~azure.batch.models.JobStatistics
     """
 
     id: str = rest_field()
@@ -950,7 +942,7 @@ class BatchJobAddParameters(_model_base.Model):  # pylint: disable=too-many-inst
      will take precedence and will be able requeue tasks from this job. You can
      update a job's allowTaskPreemption after it has been created using the update
      job API."""
-    max_parallel_tasks: int = rest_field(name="maxParallelTasks", default=-1)
+    max_parallel_tasks: Optional[int] = rest_field(name="maxParallelTasks")
     """The value of maxParallelTasks must be -1 or greater than 0 if specified. If not
      specified, the default value is -1, which means there's no limit to the number
      of tasks that can be run at once. You can update a job's maxParallelTasks after
@@ -1001,13 +993,16 @@ class BatchJobAddParameters(_model_base.Model):  # pylint: disable=too-many-inst
      count, or if there was an error starting the Task, for example due to a
      resource file download error. The default is noaction. Known values are: \"noaction\" and
      \"performexitoptionsjobaction\"."""
-    network_configuration: Optional["_models.JobNetworkConfiguration"] = rest_field(
-        name="networkConfiguration", readonly=True
-    )
+    network_configuration: Optional["_models.JobNetworkConfiguration"] = rest_field(name="networkConfiguration")
     """The network configuration for the Job."""
     metadata: Optional[List["_models.MetadataItem"]] = rest_field()
     """The Batch service does not assign any meaning to metadata; it is solely for the
      use of user code."""
+    stats: Optional["_models.JobStatistics"] = rest_field()
+    """This property is populated only if the CloudJob was retrieved with an expand
+     clause including the 'stats' attribute; otherwise it is null. The statistics
+     may not be immediately available. The Batch service performs periodic roll-up
+     of statistics. The typical delay is about 30 minutes."""
 
     @overload
     def __init__(
@@ -1019,7 +1014,7 @@ class BatchJobAddParameters(_model_base.Model):  # pylint: disable=too-many-inst
         uses_task_dependencies: Optional[bool] = None,
         priority: Optional[int] = None,
         allow_task_preemption: Optional[bool] = None,
-        max_parallel_tasks: int = -1,
+        max_parallel_tasks: Optional[int] = None,
         constraints: Optional["_models.JobConstraints"] = None,
         job_manager_task: Optional["_models.JobManagerTask"] = None,
         job_preparation_task: Optional["_models.JobPreparationTask"] = None,
@@ -1027,7 +1022,9 @@ class BatchJobAddParameters(_model_base.Model):  # pylint: disable=too-many-inst
         common_environment_settings: Optional[List["_models.EnvironmentSetting"]] = None,
         on_all_tasks_complete: Optional[Union[str, "_models.OnAllTasksComplete"]] = None,
         on_task_failure: Optional[Union[str, "_models.OnTaskFailure"]] = None,
+        network_configuration: Optional["_models.JobNetworkConfiguration"] = None,
         metadata: Optional[List["_models.MetadataItem"]] = None,
+        stats: Optional["_models.JobStatistics"] = None,
     ):
         ...
 
@@ -1075,87 +1072,13 @@ class BatchJobDisableParameters(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobPatchParameters(_model_base.Model):
-    """An Azure Batch Job Update Definition.
-
-    :ivar priority: Priority values can range from -1000 to 1000, with -1000 being the lowest
-     priority and 1000 being the highest priority. The default value is 0.
-    :vartype priority: int
-    :ivar allow_task_preemption: If the value is set to True, other high priority jobs submitted to
-     the system
-     will take precedence and will be able requeue tasks from this job. You can
-     update a job's allowTaskPreemption after it has been created using the update
-     job API.
-    :vartype allow_task_preemption: bool
-    :ivar max_parallel_tasks: The value of maxParallelTasks must be -1 or greater than 0 if
-     specified. If not
-     specified, the default value is -1, which means there's no limit to the number
-     of tasks that can be run at once. You can update a job's maxParallelTasks after
-     it has been created using the update job API.
-    :vartype max_parallel_tasks: int
-    :ivar constraints: The execution constraints for a Job.
-    :vartype constraints: ~azure.batch.models.JobConstraints
-    :ivar pool_info: Specifies how a Job should be assigned to a Pool.
-    :vartype pool_info: ~azure.batch.models.PoolInformation
-    :ivar on_all_tasks_complete: The default is noaction. Known values are: "noaction" and
-     "terminatejob".
-    :vartype on_all_tasks_complete: str or ~azure.batch.models.OnAllTasksComplete
-    :ivar metadata: The Batch service does not assign any meaning to metadata; it is solely for the
-     use of user code.
-    :vartype metadata: list[~azure.batch.models.MetadataItem]
-    """
-
-    priority: Optional[int] = rest_field()
-    """Priority values can range from -1000 to 1000, with -1000 being the lowest
-     priority and 1000 being the highest priority. The default value is 0."""
-    allow_task_preemption: Optional[bool] = rest_field(name="allowTaskPreemption")
-    """If the value is set to True, other high priority jobs submitted to the system
-     will take precedence and will be able requeue tasks from this job. You can
-     update a job's allowTaskPreemption after it has been created using the update
-     job API."""
-    max_parallel_tasks: int = rest_field(name="maxParallelTasks", default=-1)
-    """The value of maxParallelTasks must be -1 or greater than 0 if specified. If not
-     specified, the default value is -1, which means there's no limit to the number
-     of tasks that can be run at once. You can update a job's maxParallelTasks after
-     it has been created using the update job API."""
-    constraints: Optional["_models.JobConstraints"] = rest_field()
-    """The execution constraints for a Job."""
-    pool_info: Optional["_models.PoolInformation"] = rest_field(name="poolInfo")
-    """Specifies how a Job should be assigned to a Pool."""
-    on_all_tasks_complete: Optional[Union[str, "_models.OnAllTasksComplete"]] = rest_field(name="onAllTasksComplete")
-    """The default is noaction. Known values are: \"noaction\" and \"terminatejob\"."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field()
-    """The Batch service does not assign any meaning to metadata; it is solely for the
-     use of user code."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        priority: Optional[int] = None,
-        allow_task_preemption: Optional[bool] = None,
-        max_parallel_tasks: int = -1,
-        constraints: Optional["_models.JobConstraints"] = None,
-        pool_info: Optional["_models.PoolInformation"] = None,
-        on_all_tasks_complete: Optional[Union[str, "_models.OnAllTasksComplete"]] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class BatchJobSchedule(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """A Job Schedule that allows recurring Jobs by specifying when to run Jobs and a
     specification used to create each Job.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :ivar id: A string that uniquely identifies the schedule within the Account.
     :vartype id: str
@@ -1186,9 +1109,9 @@ class BatchJobSchedule(_model_base.Model):  # pylint: disable=too-many-instance-
      its initial active state.
     :vartype previous_state_transition_time: ~datetime.datetime
     :ivar schedule: All times are fixed respective to UTC and are not impacted by daylight saving
-     time.
+     time. Required.
     :vartype schedule: ~azure.batch.models.Schedule
-    :ivar job_specification: Specifies details of the Jobs to be created on a schedule.
+    :ivar job_specification: Specifies details of the Jobs to be created on a schedule. Required.
     :vartype job_specification: ~azure.batch.models.JobSpecification
     :ivar execution_info: Contains information about Jobs that have been and will be run under a
      Job
@@ -1201,66 +1124,58 @@ class BatchJobSchedule(_model_base.Model):  # pylint: disable=too-many-instance-
     :vartype stats: ~azure.batch.models.JobScheduleStatistics
     """
 
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(readonly=True)
     """A string that uniquely identifies the schedule within the Account."""
-    display_name: Optional[str] = rest_field(name="displayName")
+    display_name: Optional[str] = rest_field(name="displayName", readonly=True)
     """The display name for the schedule."""
-    url: Optional[str] = rest_field()
+    url: Optional[str] = rest_field(readonly=True)
     """The URL of the Job Schedule."""
-    e_tag: Optional[str] = rest_field(name="eTag")
+    e_tag: Optional[str] = rest_field(name="eTag", readonly=True)
     """This is an opaque string. You can use it to detect whether the Job Schedule has
      changed between requests. In particular, you can be pass the ETag with an
      Update Job Schedule request to specify that your changes should take effect
      only if nobody else has modified the schedule in the meantime."""
-    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified")
+    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", readonly=True)
     """This is the last time at which the schedule level data, such as the Job
      specification or recurrence information, changed. It does not factor in
      job-level changes such as new Jobs being created or Jobs changing state."""
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime")
+    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", readonly=True)
     """The creation time of the Job Schedule."""
-    state: Optional[Union[str, "_models.JobScheduleState"]] = rest_field()
+    state: Optional[Union[str, "_models.JobScheduleState"]] = rest_field(readonly=True)
     """The state of the Job Schedule. Known values are: \"active\", \"completed\", \"disabled\",
      \"terminating\", and \"deleting\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime")
+    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", readonly=True)
     """The time at which the Job Schedule entered the current state."""
-    previous_state: Optional[Union[str, "_models.JobScheduleState"]] = rest_field(name="previousState")
+    previous_state: Optional[Union[str, "_models.JobScheduleState"]] = rest_field(name="previousState", readonly=True)
     """This property is not present if the Job Schedule is in its initial active state. Known values
      are: \"active\", \"completed\", \"disabled\", \"terminating\", and \"deleting\"."""
-    previous_state_transition_time: Optional[datetime.datetime] = rest_field(name="previousStateTransitionTime")
+    previous_state_transition_time: Optional[datetime.datetime] = rest_field(
+        name="previousStateTransitionTime", readonly=True
+    )
     """This property is not present if the Job Schedule is in its initial active state."""
-    schedule: Optional["_models.Schedule"] = rest_field()
+    schedule: "_models.Schedule" = rest_field()
     """All times are fixed respective to UTC and are not impacted by daylight saving
-     time."""
-    job_specification: Optional["_models.JobSpecification"] = rest_field(name="jobSpecification")
-    """Specifies details of the Jobs to be created on a schedule."""
-    execution_info: Optional["_models.JobScheduleExecutionInformation"] = rest_field(name="executionInfo")
+     time. Required."""
+    job_specification: "_models.JobSpecification" = rest_field(name="jobSpecification")
+    """Specifies details of the Jobs to be created on a schedule. Required."""
+    execution_info: Optional["_models.JobScheduleExecutionInformation"] = rest_field(
+        name="executionInfo", readonly=True
+    )
     """Contains information about Jobs that have been and will be run under a Job
      Schedule."""
     metadata: Optional[List["_models.MetadataItem"]] = rest_field()
     """The Batch service does not assign any meaning to metadata; it is solely for the
      use of user code."""
-    stats: Optional["_models.JobScheduleStatistics"] = rest_field()
+    stats: Optional["_models.JobScheduleStatistics"] = rest_field(readonly=True)
     """Resource usage statistics for a Job Schedule."""
 
     @overload
     def __init__(
         self,
         *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        display_name: Optional[str] = None,
-        url: Optional[str] = None,
-        e_tag: Optional[str] = None,
-        last_modified: Optional[datetime.datetime] = None,
-        creation_time: Optional[datetime.datetime] = None,
-        state: Optional[Union[str, "_models.JobScheduleState"]] = None,
-        state_transition_time: Optional[datetime.datetime] = None,
-        previous_state: Optional[Union[str, "_models.JobScheduleState"]] = None,
-        previous_state_transition_time: Optional[datetime.datetime] = None,
-        schedule: Optional["_models.Schedule"] = None,
-        job_specification: Optional["_models.JobSpecification"] = None,
-        execution_info: Optional["_models.JobScheduleExecutionInformation"] = None,
+        schedule: "_models.Schedule",
+        job_specification: "_models.JobSpecification",
         metadata: Optional[List["_models.MetadataItem"]] = None,
-        stats: Optional["_models.JobScheduleStatistics"] = None,
     ):
         ...
 
@@ -1275,7 +1190,7 @@ class BatchJobSchedule(_model_base.Model):  # pylint: disable=too-many-instance-
         super().__init__(*args, **kwargs)
 
 
-class BatchJobScheduleAddParameters(_model_base.Model):
+class BatchJobScheduleCreateParameters(_model_base.Model):
     """A Job Schedule that allows recurring Jobs by specifying when to run Jobs and a
     specification used to create each Job.
 
@@ -1331,7 +1246,7 @@ class BatchJobScheduleAddParameters(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobSchedulePatchParameters(_model_base.Model):
+class BatchJobScheduleUpdateParameters(_model_base.Model):
     """A Job Schedule that allows recurring Jobs by specifying when to run Jobs and a
     specification used to create each Job.
 
@@ -1360,52 +1275,6 @@ class BatchJobSchedulePatchParameters(_model_base.Model):
         *,
         schedule: Optional["_models.Schedule"] = None,
         job_specification: Optional["_models.JobSpecification"] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class BatchJobScheduleUpdateParameters(_model_base.Model):
-    """A Job Schedule that allows recurring Jobs by specifying when to run Jobs and a
-    specification used to create each Job.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar schedule: All times are fixed respective to UTC and are not impacted by daylight saving
-     time. Required.
-    :vartype schedule: ~azure.batch.models.Schedule
-    :ivar job_specification: Specifies details of the Jobs to be created on a schedule. Required.
-    :vartype job_specification: ~azure.batch.models.JobSpecification
-    :ivar metadata: The Batch service does not assign any meaning to metadata; it is solely for the
-     use of user code.
-    :vartype metadata: list[~azure.batch.models.MetadataItem]
-    """
-
-    schedule: "_models.Schedule" = rest_field()
-    """All times are fixed respective to UTC and are not impacted by daylight saving
-     time. Required."""
-    job_specification: "_models.JobSpecification" = rest_field(name="jobSpecification")
-    """Specifies details of the Jobs to be created on a schedule. Required."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field()
-    """The Batch service does not assign any meaning to metadata; it is solely for the
-     use of user code."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        schedule: "_models.Schedule",
-        job_specification: "_models.JobSpecification",
         metadata: Optional[List["_models.MetadataItem"]] = None,
     ):
         ...
@@ -1452,7 +1321,7 @@ class BatchJobTerminateParameters(_model_base.Model):
 
 
 class BatchJobUpdateParameters(_model_base.Model):
-    """An Azure Batch Job Update Definition.
+    """An Azure Batch Job Update Model.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1491,7 +1360,7 @@ class BatchJobUpdateParameters(_model_base.Model):
      will take precedence and will be able requeue tasks from this job. You can
      update a job's allowTaskPreemption after it has been created using the update
      job API."""
-    max_parallel_tasks: int = rest_field(name="maxParallelTasks", default=-1)
+    max_parallel_tasks: Optional[int] = rest_field(name="maxParallelTasks")
     """The value of maxParallelTasks must be -1 or greater than 0 if specified. If not
      specified, the default value is -1, which means there's no limit to the number
      of tasks that can be run at once. You can update a job's maxParallelTasks after
@@ -1513,7 +1382,7 @@ class BatchJobUpdateParameters(_model_base.Model):
         pool_info: "_models.PoolInformation",
         priority: Optional[int] = None,
         allow_task_preemption: Optional[bool] = None,
-        max_parallel_tasks: int = -1,
+        max_parallel_tasks: Optional[int] = None,
         constraints: Optional["_models.JobConstraints"] = None,
         on_all_tasks_complete: Optional[Union[str, "_models.OnAllTasksComplete"]] = None,
         metadata: Optional[List["_models.MetadataItem"]] = None,
@@ -1531,8 +1400,519 @@ class BatchJobUpdateParameters(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class BatchNode(_model_base.Model):  # pylint: disable=too-many-instance-attributes
+    """A Compute Node in the Batch service.
+
+    :ivar id: Every Compute Node that is added to a Pool is assigned a unique ID. Whenever a
+     Compute Node is removed from a Pool, all of its local files are deleted, and
+     the ID is reclaimed and could be reused for new Compute Nodes.
+    :vartype id: str
+    :ivar url: The URL of the Compute Node.
+    :vartype url: str
+    :ivar state: The Spot/Low-priority Compute Node has been preempted. Tasks which were running
+     on the Compute Node when it was preempted will be rescheduled when another
+     Compute Node becomes available. Known values are: "idle", "rebooting", "reimaging", "running",
+     "unusable", "creating", "starting", "waitingforstarttask", "starttaskfailed", "unknown",
+     "leavingpool", "offline", and "preempted".
+    :vartype state: str or ~azure.batch.models.BatchNodeState
+    :ivar scheduling_state: Whether the Compute Node is available for Task scheduling. Known values
+     are: "enabled" and "disabled".
+    :vartype scheduling_state: str or ~azure.batch.models.SchedulingState
+    :ivar state_transition_time: The time at which the Compute Node entered its current state.
+    :vartype state_transition_time: ~datetime.datetime
+    :ivar last_boot_time: This property may not be present if the Compute Node state is unusable.
+    :vartype last_boot_time: ~datetime.datetime
+    :ivar allocation_time: This is the time when the Compute Node was initially allocated and
+     doesn't
+     change once set. It is not updated when the Compute Node is service healed or
+     preempted.
+    :vartype allocation_time: ~datetime.datetime
+    :ivar ip_address: Every Compute Node that is added to a Pool is assigned a unique IP address.
+     Whenever a Compute Node is removed from a Pool, all of its local files are
+     deleted, and the IP address is reclaimed and could be reused for new Compute
+     Nodes.
+    :vartype ip_address: str
+    :ivar affinity_id: Note that this is just a soft affinity. If the target Compute Node is busy
+     or
+     unavailable at the time the Task is scheduled, then the Task will be scheduled
+     elsewhere.
+    :vartype affinity_id: str
+    :ivar vm_size: For information about available sizes of virtual machines in Pools, see Choose
+     a VM size for Compute Nodes in an Azure Batch Pool
+     (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
+    :vartype vm_size: str
+    :ivar total_tasks_run: The total number of Job Tasks completed on the Compute Node. This
+     includes Job
+     Manager Tasks and normal Tasks, but not Job Preparation, Job Release or Start
+     Tasks.
+    :vartype total_tasks_run: int
+    :ivar running_tasks_count: The total number of currently running Job Tasks on the Compute Node.
+     This
+     includes Job Manager Tasks and normal Tasks, but not Job Preparation, Job
+     Release or Start Tasks.
+    :vartype running_tasks_count: int
+    :ivar running_task_slots_count: The total number of scheduling slots used by currently running
+     Job Tasks on the
+     Compute Node. This includes Job Manager Tasks and normal Tasks, but not Job
+     Preparation, Job Release or Start Tasks.
+    :vartype running_task_slots_count: int
+    :ivar total_tasks_succeeded: The total number of Job Tasks which completed successfully (with
+     exitCode 0) on
+     the Compute Node. This includes Job Manager Tasks and normal Tasks, but not Job
+     Preparation, Job Release or Start Tasks.
+    :vartype total_tasks_succeeded: int
+    :ivar recent_tasks: This property is present only if at least one Task has run on this Compute
+     Node
+     since it was assigned to the Pool.
+    :vartype recent_tasks: list[~azure.batch.models.TaskInformation]
+    :ivar start_task: Batch will retry Tasks when a recovery operation is triggered on a Node.
+     Examples of recovery operations include (but are not limited to) when an
+     unhealthy Node is rebooted or a Compute Node disappeared due to host failure.
+     Retries due to recovery operations are independent of and are not counted
+     against the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal
+     retry due to a recovery operation may occur. Because of this, all Tasks should
+     be idempotent. This means Tasks need to tolerate being interrupted and
+     restarted without causing any corruption or duplicate data. The best practice
+     for long running Tasks is to use some form of checkpointing. In some cases the
+     StartTask may be re-run even though the Compute Node was not rebooted. Special
+     care should be taken to avoid StartTasks which create breakaway process or
+     install/launch services from the StartTask working directory, as this will
+     block Batch from being able to re-run the StartTask.
+    :vartype start_task: ~azure.batch.models.StartTask
+    :ivar start_task_info: Information about a StartTask running on a Compute Node.
+    :vartype start_task_info: ~azure.batch.models.StartTaskInformation
+    :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
+     the specified
+     Certificate store and location. For Linux Compute Nodes, the Certificates are
+     stored in a directory inside the Task working directory and an environment
+     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
+     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
+     is created in the user's home directory (e.g., /home/{user-name}/certs) and
+     Certificates are placed in that directory.
+    :vartype certificate_references: list[~azure.batch.models.CertificateReference]
+    :ivar errors: The list of errors that are currently being encountered by the Compute Node.
+    :vartype errors: list[~azure.batch.models.BatchNodeError]
+    :ivar is_dedicated: Whether this Compute Node is a dedicated Compute Node. If false, the
+     Compute
+     Node is a Spot/Low-priority Compute Node.
+    :vartype is_dedicated: bool
+    :ivar endpoint_configuration: The endpoint configuration for the Compute Node.
+    :vartype endpoint_configuration: ~azure.batch.models.BatchNodeEndpointConfiguration
+    :ivar node_agent_info: The Batch Compute Node agent is a program that runs on each Compute Node
+     in the
+     Pool and provides Batch capability on the Compute Node.
+    :vartype node_agent_info: ~azure.batch.models.NodeAgentInformation
+    :ivar virtual_machine_info: Info about the current state of the virtual machine.
+    :vartype virtual_machine_info: ~azure.batch.models.VirtualMachineInfo
+    """
+
+    id: Optional[str] = rest_field()
+    """Every Compute Node that is added to a Pool is assigned a unique ID. Whenever a
+     Compute Node is removed from a Pool, all of its local files are deleted, and
+     the ID is reclaimed and could be reused for new Compute Nodes."""
+    url: Optional[str] = rest_field()
+    """The URL of the Compute Node."""
+    state: Optional[Union[str, "_models.BatchNodeState"]] = rest_field()
+    """The Spot/Low-priority Compute Node has been preempted. Tasks which were running
+     on the Compute Node when it was preempted will be rescheduled when another
+     Compute Node becomes available. Known values are: \"idle\", \"rebooting\", \"reimaging\",
+     \"running\", \"unusable\", \"creating\", \"starting\", \"waitingforstarttask\",
+     \"starttaskfailed\", \"unknown\", \"leavingpool\", \"offline\", and \"preempted\"."""
+    scheduling_state: Optional[Union[str, "_models.SchedulingState"]] = rest_field(name="schedulingState")
+    """Whether the Compute Node is available for Task scheduling. Known values are: \"enabled\" and
+     \"disabled\"."""
+    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime")
+    """The time at which the Compute Node entered its current state."""
+    last_boot_time: Optional[datetime.datetime] = rest_field(name="lastBootTime")
+    """This property may not be present if the Compute Node state is unusable."""
+    allocation_time: Optional[datetime.datetime] = rest_field(name="allocationTime")
+    """This is the time when the Compute Node was initially allocated and doesn't
+     change once set. It is not updated when the Compute Node is service healed or
+     preempted."""
+    ip_address: Optional[str] = rest_field(name="ipAddress")
+    """Every Compute Node that is added to a Pool is assigned a unique IP address.
+     Whenever a Compute Node is removed from a Pool, all of its local files are
+     deleted, and the IP address is reclaimed and could be reused for new Compute
+     Nodes."""
+    affinity_id: Optional[str] = rest_field(name="affinityId")
+    """Note that this is just a soft affinity. If the target Compute Node is busy or
+     unavailable at the time the Task is scheduled, then the Task will be scheduled
+     elsewhere."""
+    vm_size: Optional[str] = rest_field(name="vmSize")
+    """For information about available sizes of virtual machines in Pools, see Choose
+     a VM size for Compute Nodes in an Azure Batch Pool
+     (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes)."""
+    total_tasks_run: Optional[int] = rest_field(name="totalTasksRun")
+    """The total number of Job Tasks completed on the Compute Node. This includes Job
+     Manager Tasks and normal Tasks, but not Job Preparation, Job Release or Start
+     Tasks."""
+    running_tasks_count: Optional[int] = rest_field(name="runningTasksCount")
+    """The total number of currently running Job Tasks on the Compute Node. This
+     includes Job Manager Tasks and normal Tasks, but not Job Preparation, Job
+     Release or Start Tasks."""
+    running_task_slots_count: Optional[int] = rest_field(name="runningTaskSlotsCount")
+    """The total number of scheduling slots used by currently running Job Tasks on the
+     Compute Node. This includes Job Manager Tasks and normal Tasks, but not Job
+     Preparation, Job Release or Start Tasks."""
+    total_tasks_succeeded: Optional[int] = rest_field(name="totalTasksSucceeded")
+    """The total number of Job Tasks which completed successfully (with exitCode 0) on
+     the Compute Node. This includes Job Manager Tasks and normal Tasks, but not Job
+     Preparation, Job Release or Start Tasks."""
+    recent_tasks: Optional[List["_models.TaskInformation"]] = rest_field(name="recentTasks")
+    """This property is present only if at least one Task has run on this Compute Node
+     since it was assigned to the Pool."""
+    start_task: Optional["_models.StartTask"] = rest_field(name="startTask")
+    """Batch will retry Tasks when a recovery operation is triggered on a Node.
+     Examples of recovery operations include (but are not limited to) when an
+     unhealthy Node is rebooted or a Compute Node disappeared due to host failure.
+     Retries due to recovery operations are independent of and are not counted
+     against the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal
+     retry due to a recovery operation may occur. Because of this, all Tasks should
+     be idempotent. This means Tasks need to tolerate being interrupted and
+     restarted without causing any corruption or duplicate data. The best practice
+     for long running Tasks is to use some form of checkpointing. In some cases the
+     StartTask may be re-run even though the Compute Node was not rebooted. Special
+     care should be taken to avoid StartTasks which create breakaway process or
+     install/launch services from the StartTask working directory, as this will
+     block Batch from being able to re-run the StartTask."""
+    start_task_info: Optional["_models.StartTaskInformation"] = rest_field(name="startTaskInfo")
+    """Information about a StartTask running on a Compute Node."""
+    certificate_references: Optional[List["_models.CertificateReference"]] = rest_field(name="certificateReferences")
+    """For Windows Nodes, the Batch service installs the Certificates to the specified
+     Certificate store and location. For Linux Compute Nodes, the Certificates are
+     stored in a directory inside the Task working directory and an environment
+     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
+     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
+     is created in the user's home directory (e.g., /home/{user-name}/certs) and
+     Certificates are placed in that directory."""
+    errors: Optional[List["_models.BatchNodeError"]] = rest_field()
+    """The list of errors that are currently being encountered by the Compute Node."""
+    is_dedicated: Optional[bool] = rest_field(name="isDedicated")
+    """Whether this Compute Node is a dedicated Compute Node. If false, the Compute
+     Node is a Spot/Low-priority Compute Node."""
+    endpoint_configuration: Optional["_models.BatchNodeEndpointConfiguration"] = rest_field(
+        name="endpointConfiguration"
+    )
+    """The endpoint configuration for the Compute Node."""
+    node_agent_info: Optional["_models.NodeAgentInformation"] = rest_field(name="nodeAgentInfo")
+    """The Batch Compute Node agent is a program that runs on each Compute Node in the
+     Pool and provides Batch capability on the Compute Node."""
+    virtual_machine_info: Optional["_models.VirtualMachineInfo"] = rest_field(name="virtualMachineInfo")
+    """Info about the current state of the virtual machine."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        url: Optional[str] = None,
+        state: Optional[Union[str, "_models.BatchNodeState"]] = None,
+        scheduling_state: Optional[Union[str, "_models.SchedulingState"]] = None,
+        state_transition_time: Optional[datetime.datetime] = None,
+        last_boot_time: Optional[datetime.datetime] = None,
+        allocation_time: Optional[datetime.datetime] = None,
+        ip_address: Optional[str] = None,
+        affinity_id: Optional[str] = None,
+        vm_size: Optional[str] = None,
+        total_tasks_run: Optional[int] = None,
+        running_tasks_count: Optional[int] = None,
+        running_task_slots_count: Optional[int] = None,
+        total_tasks_succeeded: Optional[int] = None,
+        recent_tasks: Optional[List["_models.TaskInformation"]] = None,
+        start_task: Optional["_models.StartTask"] = None,
+        start_task_info: Optional["_models.StartTaskInformation"] = None,
+        certificate_references: Optional[List["_models.CertificateReference"]] = None,
+        errors: Optional[List["_models.BatchNodeError"]] = None,
+        is_dedicated: Optional[bool] = None,
+        endpoint_configuration: Optional["_models.BatchNodeEndpointConfiguration"] = None,
+        node_agent_info: Optional["_models.NodeAgentInformation"] = None,
+        virtual_machine_info: Optional["_models.VirtualMachineInfo"] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class BatchNodeEndpointConfiguration(_model_base.Model):
+    """The endpoint configuration for the Compute Node.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar inbound_endpoints: The list of inbound endpoints that are accessible on the Compute Node.
+     Required.
+    :vartype inbound_endpoints: list[~azure.batch.models.InboundEndpoint]
+    """
+
+    inbound_endpoints: List["_models.InboundEndpoint"] = rest_field(name="inboundEndpoints")
+    """The list of inbound endpoints that are accessible on the Compute Node. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        inbound_endpoints: List["_models.InboundEndpoint"],
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class BatchNodeError(_model_base.Model):
+    """An error encountered by a Compute Node.
+
+    :ivar code: An identifier for the Compute Node error. Codes are invariant and are intended
+     to be consumed programmatically.
+    :vartype code: str
+    :ivar message: A message describing the Compute Node error, intended to be suitable for
+     display in a user interface.
+    :vartype message: str
+    :ivar error_details: The list of additional error details related to the Compute Node error.
+    :vartype error_details: list[~azure.batch.models.NameValuePair]
+    """
+
+    code: Optional[str] = rest_field()
+    """An identifier for the Compute Node error. Codes are invariant and are intended
+     to be consumed programmatically."""
+    message: Optional[str] = rest_field()
+    """A message describing the Compute Node error, intended to be suitable for
+     display in a user interface."""
+    error_details: Optional[List["_models.NameValuePair"]] = rest_field(name="errorDetails")
+    """The list of additional error details related to the Compute Node error."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        message: Optional[str] = None,
+        error_details: Optional[List["_models.NameValuePair"]] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class BatchNodeGetRemoteLoginSettingsResult(_model_base.Model):
+    """The remote login settings for a Compute Node.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar remote_login_ip_address: The IP address used for remote login to the Compute Node.
+     Required.
+    :vartype remote_login_ip_address: str
+    :ivar remote_login_port: The port used for remote login to the Compute Node. Required.
+    :vartype remote_login_port: int
+    """
+
+    remote_login_ip_address: str = rest_field(name="remoteLoginIPAddress")
+    """The IP address used for remote login to the Compute Node. Required."""
+    remote_login_port: int = rest_field(name="remoteLoginPort")
+    """The port used for remote login to the Compute Node. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        remote_login_ip_address: str,
+        remote_login_port: int,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class BatchNodeIdentityReference(_model_base.Model):
+    """The reference to a user assigned identity associated with the Batch pool which
+    a compute node will use.
+
+    :ivar resource_id: The ARM resource id of the user assigned identity.
+    :vartype resource_id: str
+    """
+
+    resource_id: Optional[str] = rest_field(name="resourceId")
+    """The ARM resource id of the user assigned identity."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class BatchNodeInformation(_model_base.Model):
+    """Information about the Compute Node on which a Task ran.
+
+    :ivar affinity_id: An identifier for the Node on which the Task ran, which can be passed when
+     adding a Task to request that the Task be scheduled on this Compute Node.
+    :vartype affinity_id: str
+    :ivar node_url: The URL of the Compute Node on which the Task ran.
+    :vartype node_url: str
+    :ivar pool_id: The ID of the Pool on which the Task ran.
+    :vartype pool_id: str
+    :ivar node_id: The ID of the Compute Node on which the Task ran.
+    :vartype node_id: str
+    :ivar task_root_directory: The root directory of the Task on the Compute Node.
+    :vartype task_root_directory: str
+    :ivar task_root_directory_url: The URL to the root directory of the Task on the Compute Node.
+    :vartype task_root_directory_url: str
+    """
+
+    affinity_id: Optional[str] = rest_field(name="affinityId")
+    """An identifier for the Node on which the Task ran, which can be passed when
+     adding a Task to request that the Task be scheduled on this Compute Node."""
+    node_url: Optional[str] = rest_field(name="nodeUrl")
+    """The URL of the Compute Node on which the Task ran."""
+    pool_id: Optional[str] = rest_field(name="poolId")
+    """The ID of the Pool on which the Task ran."""
+    node_id: Optional[str] = rest_field(name="nodeId")
+    """The ID of the Compute Node on which the Task ran."""
+    task_root_directory: Optional[str] = rest_field(name="taskRootDirectory")
+    """The root directory of the Task on the Compute Node."""
+    task_root_directory_url: Optional[str] = rest_field(name="taskRootDirectoryUrl")
+    """The URL to the root directory of the Task on the Compute Node."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        affinity_id: Optional[str] = None,
+        node_url: Optional[str] = None,
+        pool_id: Optional[str] = None,
+        node_id: Optional[str] = None,
+        task_root_directory: Optional[str] = None,
+        task_root_directory_url: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class BatchNodeUser(_model_base.Model):
+    """A user Account for RDP or SSH access on a Compute Node.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: The user name of the Account. Required.
+    :vartype name: str
+    :ivar is_admin: The default value is false.
+    :vartype is_admin: bool
+    :ivar expiry_time: If omitted, the default is 1 day from the current time. For Linux Compute
+     Nodes, the expiryTime has a precision up to a day.
+    :vartype expiry_time: ~datetime.datetime
+    :ivar password: The password is required for Windows Compute Nodes (those created with
+     'cloudServiceConfiguration', or created with 'virtualMachineConfiguration' using a Windows
+     Image reference). For Linux Compute Nodes, the password can optionally be specified along with
+     the sshPublicKey property.
+    :vartype password: str
+    :ivar ssh_public_key: The public key should be compatible with OpenSSH encoding and should be
+     base 64
+     encoded. This property can be specified only for Linux Compute Nodes. If this
+     is specified for a Windows Compute Node, then the Batch service rejects the
+     request; if you are calling the REST API directly, the HTTP status code is 400
+     (Bad Request).
+    :vartype ssh_public_key: str
+    """
+
+    name: str = rest_field()
+    """The user name of the Account. Required."""
+    is_admin: Optional[bool] = rest_field(name="isAdmin")
+    """The default value is false."""
+    expiry_time: Optional[datetime.datetime] = rest_field(name="expiryTime")
+    """If omitted, the default is 1 day from the current time. For Linux Compute
+     Nodes, the expiryTime has a precision up to a day."""
+    password: Optional[str] = rest_field()
+    """The password is required for Windows Compute Nodes (those created with
+     'cloudServiceConfiguration', or created with 'virtualMachineConfiguration' using a Windows
+     Image reference). For Linux Compute Nodes, the password can optionally be specified along with
+     the sshPublicKey property."""
+    ssh_public_key: Optional[str] = rest_field(name="sshPublicKey")
+    """The public key should be compatible with OpenSSH encoding and should be base 64
+     encoded. This property can be specified only for Linux Compute Nodes. If this
+     is specified for a Windows Compute Node, then the Batch service rejects the
+     request; if you are calling the REST API directly, the HTTP status code is 400
+     (Bad Request)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        is_admin: Optional[bool] = None,
+        expiry_time: Optional[datetime.datetime] = None,
+        password: Optional[str] = None,
+        ssh_public_key: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """A Pool in the Azure Batch service.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :ivar id: The ID can contain any combination of alphanumeric characters including hyphens and
      underscores, and cannot contain more than 64 characters. The ID is case-preserving and
@@ -1640,12 +2020,12 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
      location. For Certificates with visibility of 'remoteUser', a 'certs' directory
      is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory.
+     Certificates are placed in that directory. Required.
     :vartype certificate_references: list[~azure.batch.models.CertificateReference]
     :ivar application_package_references: Changes to Package references affect all new Nodes
      joining the Pool, but do not
      affect Compute Nodes that are already in the Pool until they are rebooted or
-     reimaged. There is a maximum of 10 Package references on any given Pool.
+     reimaged. There is a maximum of 10 Package references on any given Pool. Required.
     :vartype application_package_references: list[~azure.batch.models.ApplicationPackageReference]
     :ivar application_licenses: The list of application licenses must be a subset of available
      Batch service application licenses. If a license is requested which is not supported, Pool
@@ -1659,7 +2039,7 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     :vartype task_scheduling_policy: ~azure.batch.models.TaskSchedulingPolicy
     :ivar user_accounts: The list of user Accounts to be created on each Compute Node in the Pool.
     :vartype user_accounts: list[~azure.batch.models.UserAccount]
-    :ivar metadata: A list of name-value pairs associated with the Pool as metadata.
+    :ivar metadata: A list of name-value pairs associated with the Pool as metadata. Required.
     :vartype metadata: list[~azure.batch.models.MetadataItem]
     :ivar stats: This property is populated only if the CloudPool was retrieved with an expand
      clause including the 'stats' attribute; otherwise it is null. The statistics
@@ -1680,83 +2060,91 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     :vartype current_node_communication_mode: str or ~azure.batch.models.NodeCommunicationMode
     """
 
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(readonly=True)
     """The ID can contain any combination of alphanumeric characters including hyphens and
      underscores, and cannot contain more than 64 characters. The ID is case-preserving and
      case-insensitive (that is, you may not have two IDs within an Account that differ only by
      case)."""
-    display_name: Optional[str] = rest_field(name="displayName")
+    display_name: Optional[str] = rest_field(name="displayName", readonly=True)
     """The display name need not be unique and can contain any Unicode characters up
      to a maximum length of 1024."""
-    url: Optional[str] = rest_field()
+    url: Optional[str] = rest_field(readonly=True)
     """The URL of the Pool."""
-    e_tag: Optional[str] = rest_field(name="eTag")
+    e_tag: Optional[str] = rest_field(name="eTag", readonly=True)
     """This is an opaque string. You can use it to detect whether the Pool has changed
      between requests. In particular, you can be pass the ETag when updating a Pool
      to specify that your changes should take effect only if nobody else has
      modified the Pool in the meantime."""
-    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified")
+    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", readonly=True)
     """This is the last time at which the Pool level data, such as the
      targetDedicatedNodes or enableAutoscale settings, changed. It does not factor
      in node-level changes such as a Compute Node changing state."""
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime")
+    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", readonly=True)
     """The creation time of the Pool."""
-    state: Optional[Union[str, "_models.PoolState"]] = rest_field()
+    state: Optional[Union[str, "_models.PoolState"]] = rest_field(readonly=True)
     """The current state of the Pool. Known values are: \"active\" and \"deleting\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime")
+    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", readonly=True)
     """The time at which the Pool entered its current state."""
-    allocation_state: Optional[Union[str, "_models.AllocationState"]] = rest_field(name="allocationState")
+    allocation_state: Optional[Union[str, "_models.AllocationState"]] = rest_field(
+        name="allocationState", readonly=True
+    )
     """Whether the Pool is resizing. Known values are: \"steady\", \"resizing\", and \"stopping\"."""
-    allocation_state_transition_time: Optional[datetime.datetime] = rest_field(name="allocationStateTransitionTime")
+    allocation_state_transition_time: Optional[datetime.datetime] = rest_field(
+        name="allocationStateTransitionTime", readonly=True
+    )
     """The time at which the Pool entered its current allocation state."""
-    vm_size: Optional[str] = rest_field(name="vmSize")
+    vm_size: Optional[str] = rest_field(name="vmSize", readonly=True)
     """For information about available sizes of virtual machines in Pools, see Choose
      a VM size for Compute Nodes in an Azure Batch Pool
      (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes)."""
     cloud_service_configuration: Optional["_models.CloudServiceConfiguration"] = rest_field(
-        name="cloudServiceConfiguration"
+        name="cloudServiceConfiguration", readonly=True
     )
     """This property and virtualMachineConfiguration are mutually exclusive and one of the properties
      must be specified. This property cannot be specified if the Batch Account was created with its
      poolAllocationMode property set to 'UserSubscription'."""
     virtual_machine_configuration: Optional["_models.VirtualMachineConfiguration"] = rest_field(
-        name="virtualMachineConfiguration"
+        name="virtualMachineConfiguration", readonly=True
     )
     """This property and cloudServiceConfiguration are mutually exclusive and one of
      the properties must be specified."""
-    resize_timeout: Optional[datetime.timedelta] = rest_field(name="resizeTimeout")
+    resize_timeout: Optional[datetime.timedelta] = rest_field(name="resizeTimeout", readonly=True)
     """This is the timeout for the most recent resize operation. (The initial sizing
      when the Pool is created counts as a resize.) The default value is 15 minutes."""
-    resize_errors: Optional[List["_models.ResizeError"]] = rest_field(name="resizeErrors")
+    resize_errors: Optional[List["_models.ResizeError"]] = rest_field(name="resizeErrors", readonly=True)
     """This property is set only if one or more errors occurred during the last Pool
      resize, and only when the Pool allocationState is Steady."""
-    current_dedicated_nodes: Optional[int] = rest_field(name="currentDedicatedNodes")
+    current_dedicated_nodes: Optional[int] = rest_field(name="currentDedicatedNodes", readonly=True)
     """The number of dedicated Compute Nodes currently in the Pool."""
-    current_low_priority_nodes: Optional[int] = rest_field(name="currentLowPriorityNodes")
+    current_low_priority_nodes: Optional[int] = rest_field(name="currentLowPriorityNodes", readonly=True)
     """Spot/Low-priority Compute Nodes which have been preempted are included in this
      count."""
-    target_dedicated_nodes: Optional[int] = rest_field(name="targetDedicatedNodes")
+    target_dedicated_nodes: Optional[int] = rest_field(name="targetDedicatedNodes", readonly=True)
     """The desired number of dedicated Compute Nodes in the Pool."""
-    target_low_priority_nodes: Optional[int] = rest_field(name="targetLowPriorityNodes")
+    target_low_priority_nodes: Optional[int] = rest_field(name="targetLowPriorityNodes", readonly=True)
     """The desired number of Spot/Low-priority Compute Nodes in the Pool."""
-    enable_auto_scale: Optional[bool] = rest_field(name="enableAutoScale")
+    enable_auto_scale: Optional[bool] = rest_field(name="enableAutoScale", readonly=True)
     """If false, at least one of targetDedicatedNodes and targetLowPriorityNodes must
      be specified. If true, the autoScaleFormula property is required and the Pool
      automatically resizes according to the formula. The default value is false."""
-    auto_scale_formula: Optional[str] = rest_field(name="autoScaleFormula")
+    auto_scale_formula: Optional[str] = rest_field(name="autoScaleFormula", readonly=True)
     """This property is set only if the Pool automatically scales, i.e.
      enableAutoScale is true."""
-    auto_scale_evaluation_interval: Optional[datetime.timedelta] = rest_field(name="autoScaleEvaluationInterval")
+    auto_scale_evaluation_interval: Optional[datetime.timedelta] = rest_field(
+        name="autoScaleEvaluationInterval", readonly=True
+    )
     """This property is set only if the Pool automatically scales, i.e.
      enableAutoScale is true."""
-    auto_scale_run: Optional["_models.AutoScaleRun"] = rest_field(name="autoScaleRun")
+    auto_scale_run: Optional["_models.AutoScaleRun"] = rest_field(name="autoScaleRun", readonly=True)
     """This property is set only if the Pool automatically scales, i.e.
      enableAutoScale is true."""
-    enable_inter_node_communication: Optional[bool] = rest_field(name="enableInterNodeCommunication")
+    enable_inter_node_communication: Optional[bool] = rest_field(name="enableInterNodeCommunication", readonly=True)
     """This imposes restrictions on which Compute Nodes can be assigned to the Pool.
      Specifying this value can reduce the chance of the requested number of Compute
      Nodes to be allocated in the Pool."""
-    network_configuration: Optional["_models.NetworkConfiguration"] = rest_field(name="networkConfiguration")
+    network_configuration: Optional["_models.NetworkConfiguration"] = rest_field(
+        name="networkConfiguration", readonly=True
+    )
     """The network configuration for a Pool."""
     start_task: Optional["_models.StartTask"] = rest_field(name="startTask")
     """Batch will retry Tasks when a recovery operation is triggered on a Node.
@@ -1772,40 +2160,44 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      care should be taken to avoid StartTasks which create breakaway process or
      install/launch services from the StartTask working directory, as this will
      block Batch from being able to re-run the StartTask."""
-    certificate_references: Optional[List["_models.CertificateReference"]] = rest_field(name="certificateReferences")
+    certificate_references: List["_models.CertificateReference"] = rest_field(name="certificateReferences")
     """For Windows Nodes, the Batch service installs the Certificates to the specified
      Certificate store and location. For Linux Compute Nodes, the Certificates are
      stored in a directory inside the Task working directory and an environment
      variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
      location. For Certificates with visibility of 'remoteUser', a 'certs' directory
      is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory."""
-    application_package_references: Optional[List["_models.ApplicationPackageReference"]] = rest_field(
+     Certificates are placed in that directory. Required."""
+    application_package_references: List["_models.ApplicationPackageReference"] = rest_field(
         name="applicationPackageReferences"
     )
     """Changes to Package references affect all new Nodes joining the Pool, but do not
      affect Compute Nodes that are already in the Pool until they are rebooted or
-     reimaged. There is a maximum of 10 Package references on any given Pool."""
-    application_licenses: Optional[List[str]] = rest_field(name="applicationLicenses")
+     reimaged. There is a maximum of 10 Package references on any given Pool. Required."""
+    application_licenses: Optional[List[str]] = rest_field(name="applicationLicenses", readonly=True)
     """The list of application licenses must be a subset of available Batch service application
      licenses. If a license is requested which is not supported, Pool creation will fail."""
-    task_slots_per_node: Optional[int] = rest_field(name="taskSlotsPerNode")
+    task_slots_per_node: Optional[int] = rest_field(name="taskSlotsPerNode", readonly=True)
     """The default value is 1. The maximum value is the smaller of 4 times the number
      of cores of the vmSize of the pool or 256."""
-    task_scheduling_policy: Optional["_models.TaskSchedulingPolicy"] = rest_field(name="taskSchedulingPolicy")
+    task_scheduling_policy: Optional["_models.TaskSchedulingPolicy"] = rest_field(
+        name="taskSchedulingPolicy", readonly=True
+    )
     """If not specified, the default is spread."""
-    user_accounts: Optional[List["_models.UserAccount"]] = rest_field(name="userAccounts")
+    user_accounts: Optional[List["_models.UserAccount"]] = rest_field(name="userAccounts", readonly=True)
     """The list of user Accounts to be created on each Compute Node in the Pool."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field()
-    """A list of name-value pairs associated with the Pool as metadata."""
-    stats: Optional["_models.PoolStatistics"] = rest_field()
+    metadata: List["_models.MetadataItem"] = rest_field()
+    """A list of name-value pairs associated with the Pool as metadata. Required."""
+    stats: Optional["_models.PoolStatistics"] = rest_field(readonly=True)
     """This property is populated only if the CloudPool was retrieved with an expand
      clause including the 'stats' attribute; otherwise it is null. The statistics
      may not be immediately available. The Batch service performs periodic roll-up
      of statistics. The typical delay is about 30 minutes."""
-    mount_configuration: Optional[List["_models.MountConfiguration"]] = rest_field(name="mountConfiguration")
+    mount_configuration: Optional[List["_models.MountConfiguration"]] = rest_field(
+        name="mountConfiguration", readonly=True
+    )
     """This supports Azure Files, NFS, CIFS/SMB, and Blobfuse."""
-    identity: Optional["_models.BatchPoolIdentity"] = rest_field()
+    identity: Optional["_models.BatchPoolIdentity"] = rest_field(readonly=True)
     """The list of user identities associated with the Batch pool. The user identity
      dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'."""
@@ -1815,7 +2207,7 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     """If omitted, the default value is Default. Known values are: \"default\", \"classic\", and
      \"simplified\"."""
     current_node_communication_mode: Optional[Union[str, "_models.NodeCommunicationMode"]] = rest_field(
-        name="currentNodeCommunicationMode"
+        name="currentNodeCommunicationMode", readonly=True
     )
     """The current state of the pool communication mode. Known values are: \"default\", \"classic\",
      and \"simplified\"."""
@@ -1824,44 +2216,11 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     def __init__(
         self,
         *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        display_name: Optional[str] = None,
-        url: Optional[str] = None,
-        e_tag: Optional[str] = None,
-        last_modified: Optional[datetime.datetime] = None,
-        creation_time: Optional[datetime.datetime] = None,
-        state: Optional[Union[str, "_models.PoolState"]] = None,
-        state_transition_time: Optional[datetime.datetime] = None,
-        allocation_state: Optional[Union[str, "_models.AllocationState"]] = None,
-        allocation_state_transition_time: Optional[datetime.datetime] = None,
-        vm_size: Optional[str] = None,
-        cloud_service_configuration: Optional["_models.CloudServiceConfiguration"] = None,
-        virtual_machine_configuration: Optional["_models.VirtualMachineConfiguration"] = None,
-        resize_timeout: Optional[datetime.timedelta] = None,
-        resize_errors: Optional[List["_models.ResizeError"]] = None,
-        current_dedicated_nodes: Optional[int] = None,
-        current_low_priority_nodes: Optional[int] = None,
-        target_dedicated_nodes: Optional[int] = None,
-        target_low_priority_nodes: Optional[int] = None,
-        enable_auto_scale: Optional[bool] = None,
-        auto_scale_formula: Optional[str] = None,
-        auto_scale_evaluation_interval: Optional[datetime.timedelta] = None,
-        auto_scale_run: Optional["_models.AutoScaleRun"] = None,
-        enable_inter_node_communication: Optional[bool] = None,
-        network_configuration: Optional["_models.NetworkConfiguration"] = None,
+        certificate_references: List["_models.CertificateReference"],
+        application_package_references: List["_models.ApplicationPackageReference"],
+        metadata: List["_models.MetadataItem"],
         start_task: Optional["_models.StartTask"] = None,
-        certificate_references: Optional[List["_models.CertificateReference"]] = None,
-        application_package_references: Optional[List["_models.ApplicationPackageReference"]] = None,
-        application_licenses: Optional[List[str]] = None,
-        task_slots_per_node: Optional[int] = None,
-        task_scheduling_policy: Optional["_models.TaskSchedulingPolicy"] = None,
-        user_accounts: Optional[List["_models.UserAccount"]] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
-        stats: Optional["_models.PoolStatistics"] = None,
-        mount_configuration: Optional[List["_models.MountConfiguration"]] = None,
-        identity: Optional["_models.BatchPoolIdentity"] = None,
         target_node_communication_mode: Optional[Union[str, "_models.NodeCommunicationMode"]] = None,
-        current_node_communication_mode: Optional[Union[str, "_models.NodeCommunicationMode"]] = None,
     ):
         ...
 
@@ -1876,7 +2235,7 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolAddParameters(_model_base.Model):  # pylint: disable=too-many-instance-attributes
+class BatchPoolCreateParameters(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """A Pool in the Azure Batch service.
 
     All required parameters must be populated in order to send to Azure.
@@ -2175,27 +2534,29 @@ class BatchPoolEnableAutoScaleParameters(_model_base.Model):
 class BatchPoolEvaluateAutoScaleParameters(_model_base.Model):
     """Options for evaluating an automatic scaling formula on a Pool.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar auto_scale_formula: The formula is validated and its results calculated, but it is not
      applied to
      the Pool. To apply the formula to the Pool, 'Enable automatic scaling on a
      Pool'. For more information about specifying this formula, see Automatically
      scale Compute Nodes in an Azure Batch Pool
-     (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
+     (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling). Required.
     :vartype auto_scale_formula: str
     """
 
-    auto_scale_formula: Optional[str] = rest_field(name="autoScaleFormula")
+    auto_scale_formula: str = rest_field(name="autoScaleFormula")
     """The formula is validated and its results calculated, but it is not applied to
      the Pool. To apply the formula to the Pool, 'Enable automatic scaling on a
      Pool'. For more information about specifying this formula, see Automatically
      scale Compute Nodes in an Azure Batch Pool
-     (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling)."""
+     (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling). Required."""
 
     @overload
     def __init__(
         self,
         *,
-        auto_scale_formula: Optional[str] = None,
+        auto_scale_formula: str,
     ):
         ...
 
@@ -2257,7 +2618,61 @@ class BatchPoolIdentity(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolPatchParameters(_model_base.Model):
+class BatchPoolResizeParameters(_model_base.Model):
+    """Options for changing the size of a Pool.
+
+    :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool.
+    :vartype target_dedicated_nodes: int
+    :ivar target_low_priority_nodes: The desired number of Spot/Low-priority Compute Nodes in the
+     Pool.
+    :vartype target_low_priority_nodes: int
+    :ivar resize_timeout: The default value is 15 minutes. The minimum value is 5 minutes. If you
+     specify
+     a value less than 5 minutes, the Batch service returns an error; if you are
+     calling the REST API directly, the HTTP status code is 400 (Bad Request).
+    :vartype resize_timeout: ~datetime.timedelta
+    :ivar node_deallocation_option: The default value is requeue. Known values are: "requeue",
+     "terminate", "taskcompletion", and "retaineddata".
+    :vartype node_deallocation_option: str or ~azure.batch.models.BatchNodeDeallocationOption
+    """
+
+    target_dedicated_nodes: Optional[int] = rest_field(name="targetDedicatedNodes")
+    """The desired number of dedicated Compute Nodes in the Pool."""
+    target_low_priority_nodes: Optional[int] = rest_field(name="targetLowPriorityNodes")
+    """The desired number of Spot/Low-priority Compute Nodes in the Pool."""
+    resize_timeout: Optional[datetime.timedelta] = rest_field(name="resizeTimeout")
+    """The default value is 15 minutes. The minimum value is 5 minutes. If you specify
+     a value less than 5 minutes, the Batch service returns an error; if you are
+     calling the REST API directly, the HTTP status code is 400 (Bad Request)."""
+    node_deallocation_option: Optional[Union[str, "_models.BatchNodeDeallocationOption"]] = rest_field(
+        name="nodeDeallocationOption"
+    )
+    """The default value is requeue. Known values are: \"requeue\", \"terminate\", \"taskcompletion\",
+     and \"retaineddata\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_dedicated_nodes: Optional[int] = None,
+        target_low_priority_nodes: Optional[int] = None,
+        resize_timeout: Optional[datetime.timedelta] = None,
+        node_deallocation_option: Optional[Union[str, "_models.BatchNodeDeallocationOption"]] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class BatchPoolUpdateParameters(_model_base.Model):
     """A Pool in the Azure Batch service.
 
     :ivar start_task: Batch will retry Tasks when a recovery operation is triggered on a Node.
@@ -2354,159 +2769,6 @@ class BatchPoolPatchParameters(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolResizeParameters(_model_base.Model):
-    """Options for changing the size of a Pool.
-
-    :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool.
-    :vartype target_dedicated_nodes: int
-    :ivar target_low_priority_nodes: The desired number of Spot/Low-priority Compute Nodes in the
-     Pool.
-    :vartype target_low_priority_nodes: int
-    :ivar resize_timeout: The default value is 15 minutes. The minimum value is 5 minutes. If you
-     specify
-     a value less than 5 minutes, the Batch service returns an error; if you are
-     calling the REST API directly, the HTTP status code is 400 (Bad Request).
-    :vartype resize_timeout: ~datetime.timedelta
-    :ivar node_deallocation_option: The default value is requeue. Known values are: "requeue",
-     "terminate", "taskcompletion", and "retaineddata".
-    :vartype node_deallocation_option: str or ~azure.batch.models.ComputeNodeDeallocationOption
-    """
-
-    target_dedicated_nodes: Optional[int] = rest_field(name="targetDedicatedNodes")
-    """The desired number of dedicated Compute Nodes in the Pool."""
-    target_low_priority_nodes: Optional[int] = rest_field(name="targetLowPriorityNodes")
-    """The desired number of Spot/Low-priority Compute Nodes in the Pool."""
-    resize_timeout: Optional[datetime.timedelta] = rest_field(name="resizeTimeout")
-    """The default value is 15 minutes. The minimum value is 5 minutes. If you specify
-     a value less than 5 minutes, the Batch service returns an error; if you are
-     calling the REST API directly, the HTTP status code is 400 (Bad Request)."""
-    node_deallocation_option: Optional[Union[str, "_models.ComputeNodeDeallocationOption"]] = rest_field(
-        name="nodeDeallocationOption"
-    )
-    """The default value is requeue. Known values are: \"requeue\", \"terminate\", \"taskcompletion\",
-     and \"retaineddata\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        target_dedicated_nodes: Optional[int] = None,
-        target_low_priority_nodes: Optional[int] = None,
-        resize_timeout: Optional[datetime.timedelta] = None,
-        node_deallocation_option: Optional[Union[str, "_models.ComputeNodeDeallocationOption"]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class BatchPoolUpdatePropertiesParameters(_model_base.Model):
-    """A Pool in the Azure Batch service.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar start_task: Batch will retry Tasks when a recovery operation is triggered on a Node.
-     Examples of recovery operations include (but are not limited to) when an
-     unhealthy Node is rebooted or a Compute Node disappeared due to host failure.
-     Retries due to recovery operations are independent of and are not counted
-     against the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal
-     retry due to a recovery operation may occur. Because of this, all Tasks should
-     be idempotent. This means Tasks need to tolerate being interrupted and
-     restarted without causing any corruption or duplicate data. The best practice
-     for long running Tasks is to use some form of checkpointing. In some cases the
-     StartTask may be re-run even though the Compute Node was not rebooted. Special
-     care should be taken to avoid StartTasks which create breakaway process or
-     install/launch services from the StartTask working directory, as this will
-     block Batch from being able to re-run the StartTask.
-    :vartype start_task: ~azure.batch.models.StartTask
-    :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
-     the specified
-     Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
-     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
-     is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory. Required.
-    :vartype certificate_references: list[~azure.batch.models.CertificateReference]
-    :ivar application_package_references: Changes to Package references affect all new Nodes
-     joining the Pool, but do not
-     affect Compute Nodes that are already in the Pool until they are rebooted or
-     reimaged. There is a maximum of 10 Package references on any given Pool. Required.
-    :vartype application_package_references: list[~azure.batch.models.ApplicationPackageReference]
-    :ivar metadata: A list of name-value pairs associated with the Pool as metadata. Required.
-    :vartype metadata: list[~azure.batch.models.MetadataItem]
-    :ivar target_node_communication_mode: If omitted, the default value is Default. Known values
-     are: "default", "classic", and "simplified".
-    :vartype target_node_communication_mode: str or ~azure.batch.models.NodeCommunicationMode
-    """
-
-    start_task: Optional["_models.StartTask"] = rest_field(name="startTask")
-    """Batch will retry Tasks when a recovery operation is triggered on a Node.
-     Examples of recovery operations include (but are not limited to) when an
-     unhealthy Node is rebooted or a Compute Node disappeared due to host failure.
-     Retries due to recovery operations are independent of and are not counted
-     against the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal
-     retry due to a recovery operation may occur. Because of this, all Tasks should
-     be idempotent. This means Tasks need to tolerate being interrupted and
-     restarted without causing any corruption or duplicate data. The best practice
-     for long running Tasks is to use some form of checkpointing. In some cases the
-     StartTask may be re-run even though the Compute Node was not rebooted. Special
-     care should be taken to avoid StartTasks which create breakaway process or
-     install/launch services from the StartTask working directory, as this will
-     block Batch from being able to re-run the StartTask."""
-    certificate_references: List["_models.CertificateReference"] = rest_field(name="certificateReferences")
-    """For Windows Nodes, the Batch service installs the Certificates to the specified
-     Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
-     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
-     is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory. Required."""
-    application_package_references: List["_models.ApplicationPackageReference"] = rest_field(
-        name="applicationPackageReferences"
-    )
-    """Changes to Package references affect all new Nodes joining the Pool, but do not
-     affect Compute Nodes that are already in the Pool until they are rebooted or
-     reimaged. There is a maximum of 10 Package references on any given Pool. Required."""
-    metadata: List["_models.MetadataItem"] = rest_field()
-    """A list of name-value pairs associated with the Pool as metadata. Required."""
-    target_node_communication_mode: Optional[Union[str, "_models.NodeCommunicationMode"]] = rest_field(
-        name="targetNodeCommunicationMode"
-    )
-    """If omitted, the default value is Default. Known values are: \"default\", \"classic\", and
-     \"simplified\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        certificate_references: List["_models.CertificateReference"],
-        application_package_references: List["_models.ApplicationPackageReference"],
-        metadata: List["_models.MetadataItem"],
-        start_task: Optional["_models.StartTask"] = None,
-        target_node_communication_mode: Optional[Union[str, "_models.NodeCommunicationMode"]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class BatchTask(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """Batch will retry Tasks when a recovery operation is triggered on a Node.
     Examples of recovery operations include (but are not limited to) when an
@@ -2517,6 +2779,8 @@ class BatchTask(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     be idempotent. This means Tasks need to tolerate being interrupted and
     restarted without causing any corruption or duplicate data. The best practice
     for long running Tasks is to use some form of checkpointing.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: The ID can contain any combination of alphanumeric characters including hyphens and
      underscores, and cannot contain more than 64 characters.
@@ -2601,7 +2865,7 @@ class BatchTask(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     :ivar execution_info: Information about the execution of a Task.
     :vartype execution_info: ~azure.batch.models.TaskExecutionInformation
     :ivar node_info: Information about the Compute Node on which a Task ran.
-    :vartype node_info: ~azure.batch.models.ComputeNodeInformation
+    :vartype node_info: ~azure.batch.models.BatchNodeInformation
     :ivar multi_instance_settings: Multi-instance Tasks are commonly used to support MPI Tasks. In
      the MPI case,
      if any of the subtasks fail (for example due to exiting with a non-zero exit
@@ -2633,36 +2897,38 @@ class BatchTask(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     :vartype authentication_token_settings: ~azure.batch.models.AuthenticationTokenSettings
     """
 
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(readonly=True)
     """The ID can contain any combination of alphanumeric characters including hyphens and
      underscores, and cannot contain more than 64 characters."""
-    display_name: Optional[str] = rest_field(name="displayName")
+    display_name: Optional[str] = rest_field(name="displayName", readonly=True)
     """The display name need not be unique and can contain any Unicode characters up
      to a maximum length of 1024."""
-    url: Optional[str] = rest_field()
+    url: Optional[str] = rest_field(readonly=True)
     """The URL of the Task."""
-    e_tag: Optional[str] = rest_field(name="eTag")
+    e_tag: Optional[str] = rest_field(name="eTag", readonly=True)
     """This is an opaque string. You can use it to detect whether the Task has changed
      between requests. In particular, you can be pass the ETag when updating a Task
      to specify that your changes should take effect only if nobody else has
      modified the Task in the meantime."""
-    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified")
+    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", readonly=True)
     """The last modified time of the Task."""
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime")
+    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", readonly=True)
     """The creation time of the Task."""
-    exit_conditions: Optional["_models.ExitConditions"] = rest_field(name="exitConditions")
+    exit_conditions: Optional["_models.ExitConditions"] = rest_field(name="exitConditions", readonly=True)
     """How the Batch service should respond when the Task completes."""
-    state: Optional[Union[str, "_models.TaskState"]] = rest_field()
+    state: Optional[Union[str, "_models.TaskState"]] = rest_field(readonly=True)
     """The state of the Task. Known values are: \"active\", \"preparing\", \"running\", and
      \"completed\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime")
+    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", readonly=True)
     """The time at which the Task entered its current state."""
-    previous_state: Optional[Union[str, "_models.TaskState"]] = rest_field(name="previousState")
+    previous_state: Optional[Union[str, "_models.TaskState"]] = rest_field(name="previousState", readonly=True)
     """This property is not set if the Task is in its initial Active state. Known values are:
      \"active\", \"preparing\", \"running\", and \"completed\"."""
-    previous_state_transition_time: Optional[datetime.datetime] = rest_field(name="previousStateTransitionTime")
+    previous_state_transition_time: Optional[datetime.datetime] = rest_field(
+        name="previousStateTransitionTime", readonly=True
+    )
     """This property is not set if the Task is in its initial Active state."""
-    command_line: Optional[str] = rest_field(name="commandLine")
+    command_line: Optional[str] = rest_field(name="commandLine", readonly=True)
     """For multi-instance Tasks, the command line is executed as the primary Task,
      after the primary Task and all subtasks have finished executing the
      coordination command line. The command line does not run under a shell, and
@@ -2673,7 +2939,7 @@ class BatchTask(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      file paths, it should use a relative path (relative to the Task working
      directory), or use the Batch provided environment variable
      (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables)."""
-    container_settings: Optional["_models.TaskContainerSettings"] = rest_field(name="containerSettings")
+    container_settings: Optional["_models.TaskContainerSettings"] = rest_field(name="containerSettings", readonly=True)
     """If the Pool that will run this Task has containerConfiguration set, this must
      be set as well. If the Pool that will run this Task doesn't have
      containerConfiguration set, this must not be set. When this is specified, all
@@ -2683,46 +2949,50 @@ class BatchTask(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      is executed in the container. Files produced in the container outside of
      AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host disk, meaning that
      Batch file APIs will not be able to access those files."""
-    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(name="resourceFiles")
+    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(name="resourceFiles", readonly=True)
     """For multi-instance Tasks, the resource files will only be downloaded to the
      Compute Node on which the primary Task is executed. There is a maximum size for
      the list of resource files.  When the max size is exceeded, the request will
      fail and the response error code will be RequestEntityTooLarge. If this occurs,
      the collection of ResourceFiles must be reduced in size. This can be achieved
      using .zip files, Application Packages, or Docker Containers."""
-    output_files: Optional[List["_models.OutputFile"]] = rest_field(name="outputFiles")
+    output_files: Optional[List["_models.OutputFile"]] = rest_field(name="outputFiles", readonly=True)
     """For multi-instance Tasks, the files will only be uploaded from the Compute Node
      on which the primary Task is executed."""
-    environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(name="environmentSettings")
+    environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
+        name="environmentSettings", readonly=True
+    )
     """A list of environment variable settings for the Task."""
-    affinity_info: Optional["_models.AffinityInformation"] = rest_field(name="affinityInfo")
+    affinity_info: Optional["_models.AffinityInformation"] = rest_field(name="affinityInfo", readonly=True)
     """A locality hint that can be used by the Batch service to select a Compute Node
      on which to start a Task."""
     constraints: Optional["_models.TaskConstraints"] = rest_field()
     """Execution constraints to apply to a Task."""
-    required_slots: Optional[int] = rest_field(name="requiredSlots")
+    required_slots: Optional[int] = rest_field(name="requiredSlots", readonly=True)
     """The default is 1. A Task can only be scheduled to run on a compute node if the
      node has enough free scheduling slots available. For multi-instance Tasks, this
      must be 1."""
-    user_identity: Optional["_models.UserIdentity"] = rest_field(name="userIdentity")
+    user_identity: Optional["_models.UserIdentity"] = rest_field(name="userIdentity", readonly=True)
     """If omitted, the Task runs as a non-administrative user unique to the Task."""
-    execution_info: Optional["_models.TaskExecutionInformation"] = rest_field(name="executionInfo")
+    execution_info: Optional["_models.TaskExecutionInformation"] = rest_field(name="executionInfo", readonly=True)
     """Information about the execution of a Task."""
-    node_info: Optional["_models.ComputeNodeInformation"] = rest_field(name="nodeInfo")
+    node_info: Optional["_models.BatchNodeInformation"] = rest_field(name="nodeInfo", readonly=True)
     """Information about the Compute Node on which a Task ran."""
-    multi_instance_settings: Optional["_models.MultiInstanceSettings"] = rest_field(name="multiInstanceSettings")
+    multi_instance_settings: Optional["_models.MultiInstanceSettings"] = rest_field(
+        name="multiInstanceSettings", readonly=True
+    )
     """Multi-instance Tasks are commonly used to support MPI Tasks. In the MPI case,
      if any of the subtasks fail (for example due to exiting with a non-zero exit
      code) the entire multi-instance Task fails. The multi-instance Task is then
      terminated and retried, up to its retry limit."""
-    stats: Optional["_models.TaskStatistics"] = rest_field()
+    stats: Optional["_models.TaskStatistics"] = rest_field(readonly=True)
     """Resource usage statistics for a Task."""
-    depends_on: Optional["_models.TaskDependencies"] = rest_field(name="dependsOn")
+    depends_on: Optional["_models.TaskDependencies"] = rest_field(name="dependsOn", readonly=True)
     """This Task will not be scheduled until all Tasks that it depends on have
      completed successfully. If any of those Tasks fail and exhaust their retry
      counts, this Task will never be scheduled."""
     application_package_references: Optional[List["_models.ApplicationPackageReference"]] = rest_field(
-        name="applicationPackageReferences"
+        name="applicationPackageReferences", readonly=True
     )
     """Application packages are downloaded and deployed to a shared directory, not the
      Task working directory. Therefore, if a referenced package is already on the
@@ -2731,7 +3001,7 @@ class BatchTask(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      because the package has been deleted or because download failed, the Task
      fails."""
     authentication_token_settings: Optional["_models.AuthenticationTokenSettings"] = rest_field(
-        name="authenticationTokenSettings"
+        name="authenticationTokenSettings", readonly=True
     )
     """If this property is set, the Batch service provides the Task with an
      authentication token which can be used to authenticate Batch service operations
@@ -2745,33 +3015,7 @@ class BatchTask(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     def __init__(
         self,
         *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        display_name: Optional[str] = None,
-        url: Optional[str] = None,
-        e_tag: Optional[str] = None,
-        last_modified: Optional[datetime.datetime] = None,
-        creation_time: Optional[datetime.datetime] = None,
-        exit_conditions: Optional["_models.ExitConditions"] = None,
-        state: Optional[Union[str, "_models.TaskState"]] = None,
-        state_transition_time: Optional[datetime.datetime] = None,
-        previous_state: Optional[Union[str, "_models.TaskState"]] = None,
-        previous_state_transition_time: Optional[datetime.datetime] = None,
-        command_line: Optional[str] = None,
-        container_settings: Optional["_models.TaskContainerSettings"] = None,
-        resource_files: Optional[List["_models.ResourceFile"]] = None,
-        output_files: Optional[List["_models.OutputFile"]] = None,
-        environment_settings: Optional[List["_models.EnvironmentSetting"]] = None,
-        affinity_info: Optional["_models.AffinityInformation"] = None,
         constraints: Optional["_models.TaskConstraints"] = None,
-        required_slots: Optional[int] = None,
-        user_identity: Optional["_models.UserIdentity"] = None,
-        execution_info: Optional["_models.TaskExecutionInformation"] = None,
-        node_info: Optional["_models.ComputeNodeInformation"] = None,
-        multi_instance_settings: Optional["_models.MultiInstanceSettings"] = None,
-        stats: Optional["_models.TaskStatistics"] = None,
-        depends_on: Optional["_models.TaskDependencies"] = None,
-        application_package_references: Optional[List["_models.ApplicationPackageReference"]] = None,
-        authentication_token_settings: Optional["_models.AuthenticationTokenSettings"] = None,
     ):
         ...
 
@@ -2786,7 +3030,44 @@ class BatchTask(_model_base.Model):  # pylint: disable=too-many-instance-attribu
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskAddParameters(_model_base.Model):  # pylint: disable=too-many-instance-attributes
+class BatchTaskCollection(_model_base.Model):
+    """A collection of Azure Batch Tasks to add.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: The total serialized size of this collection must be less than 1MB. If it is
+     greater than 1MB (for example if each Task has 100's of resource files or
+     environment variables), the request will fail with code 'RequestBodyTooLarge'
+     and should be retried again with fewer Tasks. Required.
+    :vartype value: list[~azure.batch.models.BatchTaskCreateParameters]
+    """
+
+    value: List["_models.BatchTaskCreateParameters"] = rest_field()
+    """The total serialized size of this collection must be less than 1MB. If it is
+     greater than 1MB (for example if each Task has 100's of resource files or
+     environment variables), the request will fail with code 'RequestBodyTooLarge'
+     and should be retried again with fewer Tasks. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: List["_models.BatchTaskCreateParameters"],
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class BatchTaskCreateParameters(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """Batch will retry Tasks when a recovery operation is triggered on a Node.
     Examples of recovery operations include (but are not limited to) when an
     unhealthy Node is rebooted or a Compute Node disappeared due to host failure.
@@ -3003,43 +3284,6 @@ class BatchTaskAddParameters(_model_base.Model):  # pylint: disable=too-many-ins
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskCollection(_model_base.Model):
-    """A collection of Azure Batch Tasks to add.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: The total serialized size of this collection must be less than 1MB. If it is
-     greater than 1MB (for example if each Task has 100's of resource files or
-     environment variables), the request will fail with code 'RequestBodyTooLarge'
-     and should be retried again with fewer Tasks. Required.
-    :vartype value: list[~azure.batch.models.BatchTask]
-    """
-
-    value: List["_models.BatchTask"] = rest_field()
-    """The total serialized size of this collection must be less than 1MB. If it is
-     greater than 1MB (for example if each Task has 100's of resource files or
-     environment variables), the request will fail with code 'RequestBodyTooLarge'
-     and should be retried again with fewer Tasks. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.BatchTask"],
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class BatchTaskListSubtasksResult(_model_base.Model):
     """The result of listing the subtasks of a Task.
 
@@ -3069,51 +3313,18 @@ class BatchTaskListSubtasksResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskUpdateParameters(_model_base.Model):
-    """Batch will retry Tasks when a recovery operation is triggered on a Node.
-    Examples of recovery operations include (but are not limited to) when an
-    unhealthy Node is rebooted or a Compute Node disappeared due to host failure.
-    Retries due to recovery operations are independent of and are not counted
-    against the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal
-    retry due to a recovery operation may occur. Because of this, all Tasks should
-    be idempotent. This means Tasks need to tolerate being interrupted and
-    restarted without causing any corruption or duplicate data. The best practice
-    for long running Tasks is to use some form of checkpointing.
-
-    :ivar constraints: Execution constraints to apply to a Task.
-    :vartype constraints: ~azure.batch.models.TaskConstraints
-    """
-
-    constraints: Optional["_models.TaskConstraints"] = rest_field()
-    """Execution constraints to apply to a Task."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        constraints: Optional["_models.TaskConstraints"] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class Certificate(_model_base.Model):
+class Certificate(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """A Certificate that can be installed on Compute Nodes and can be used to
     authenticate operations on the machine.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
     :ivar thumbprint: The X.509 thumbprint of the Certificate. This is a sequence of up to 40 hex
-     digits.
+     digits. Required.
     :vartype thumbprint: str
-    :ivar thumbprint_algorithm: The algorithm used to derive the thumbprint.
+    :ivar thumbprint_algorithm: The algorithm used to derive the thumbprint. Required.
     :vartype thumbprint_algorithm: str
     :ivar url: The URL of the Certificate.
     :vartype url: str
@@ -3133,67 +3344,6 @@ class Certificate(_model_base.Model):
     :ivar delete_certificate_error: This property is set only if the Certificate is in the
      DeleteFailed state.
     :vartype delete_certificate_error: ~azure.batch.models.DeleteCertificateError
-    """
-
-    thumbprint: Optional[str] = rest_field()
-    """The X.509 thumbprint of the Certificate. This is a sequence of up to 40 hex
-     digits."""
-    thumbprint_algorithm: Optional[str] = rest_field(name="thumbprintAlgorithm")
-    """The algorithm used to derive the thumbprint."""
-    url: Optional[str] = rest_field()
-    """The URL of the Certificate."""
-    state: Optional[Union[str, "_models.CertificateState"]] = rest_field()
-    """The state of the Certificate. Known values are: \"active\", \"deleting\", and \"deletefailed\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime")
-    """The time at which the Certificate entered its current state."""
-    previous_state: Optional[Union[str, "_models.CertificateState"]] = rest_field(name="previousState")
-    """This property is not set if the Certificate is in its initial active state. Known values are:
-     \"active\", \"deleting\", and \"deletefailed\"."""
-    previous_state_transition_time: Optional[datetime.datetime] = rest_field(name="previousStateTransitionTime")
-    """This property is not set if the Certificate is in its initial Active state."""
-    public_data: Optional[str] = rest_field(name="publicData")
-    """The public part of the Certificate as a base-64 encoded .cer file."""
-    delete_certificate_error: Optional["_models.DeleteCertificateError"] = rest_field(name="deleteCertificateError")
-    """This property is set only if the Certificate is in the DeleteFailed state."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        thumbprint: Optional[str] = None,
-        thumbprint_algorithm: Optional[str] = None,
-        url: Optional[str] = None,
-        state: Optional[Union[str, "_models.CertificateState"]] = None,
-        state_transition_time: Optional[datetime.datetime] = None,
-        previous_state: Optional[Union[str, "_models.CertificateState"]] = None,
-        previous_state_transition_time: Optional[datetime.datetime] = None,
-        public_data: Optional[str] = None,
-        delete_certificate_error: Optional["_models.DeleteCertificateError"] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class CertificateAddParameters(_model_base.Model):
-    """A Certificate that can be installed on Compute Nodes and can be used to
-    authenticate operations on the machine.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar thumbprint: The X.509 thumbprint of the Certificate. This is a sequence of up to 40 hex
-     digits. Required.
-    :vartype thumbprint: str
-    :ivar thumbprint_algorithm: The algorithm used to derive the thumbprint. Required.
-    :vartype thumbprint_algorithm: str
     :ivar data: The base64-encoded contents of the Certificate. The maximum size is 10KB. Required.
     :vartype data: str
     :ivar certificate_format: The format of the Certificate data. Known values are: "pfx" and
@@ -3208,6 +3358,25 @@ class CertificateAddParameters(_model_base.Model):
      digits. Required."""
     thumbprint_algorithm: str = rest_field(name="thumbprintAlgorithm")
     """The algorithm used to derive the thumbprint. Required."""
+    url: Optional[str] = rest_field(readonly=True)
+    """The URL of the Certificate."""
+    state: Optional[Union[str, "_models.CertificateState"]] = rest_field(readonly=True)
+    """The state of the Certificate. Known values are: \"active\", \"deleting\", and \"deletefailed\"."""
+    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", readonly=True)
+    """The time at which the Certificate entered its current state."""
+    previous_state: Optional[Union[str, "_models.CertificateState"]] = rest_field(name="previousState", readonly=True)
+    """This property is not set if the Certificate is in its initial active state. Known values are:
+     \"active\", \"deleting\", and \"deletefailed\"."""
+    previous_state_transition_time: Optional[datetime.datetime] = rest_field(
+        name="previousStateTransitionTime", readonly=True
+    )
+    """This property is not set if the Certificate is in its initial Active state."""
+    public_data: Optional[str] = rest_field(name="publicData", readonly=True)
+    """The public part of the Certificate as a base-64 encoded .cer file."""
+    delete_certificate_error: Optional["_models.DeleteCertificateError"] = rest_field(
+        name="deleteCertificateError", readonly=True
+    )
+    """This property is set only if the Certificate is in the DeleteFailed state."""
     data: str = rest_field()
     """The base64-encoded contents of the Certificate. The maximum size is 10KB. Required."""
     certificate_format: Optional[Union[str, "_models.CertificateFormat"]] = rest_field(name="certificateFormat")
@@ -3437,513 +3606,6 @@ class CloudServiceConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ComputeNode(_model_base.Model):  # pylint: disable=too-many-instance-attributes
-    """A Compute Node in the Batch service.
-
-    :ivar id: Every Compute Node that is added to a Pool is assigned a unique ID. Whenever a
-     Compute Node is removed from a Pool, all of its local files are deleted, and
-     the ID is reclaimed and could be reused for new Compute Nodes.
-    :vartype id: str
-    :ivar url: The URL of the Compute Node.
-    :vartype url: str
-    :ivar state: The Spot/Low-priority Compute Node has been preempted. Tasks which were running
-     on the Compute Node when it was preempted will be rescheduled when another
-     Compute Node becomes available. Known values are: "idle", "rebooting", "reimaging", "running",
-     "unusable", "creating", "starting", "waitingforstarttask", "starttaskfailed", "unknown",
-     "leavingpool", "offline", and "preempted".
-    :vartype state: str or ~azure.batch.models.ComputeNodeState
-    :ivar scheduling_state: Whether the Compute Node is available for Task scheduling. Known values
-     are: "enabled" and "disabled".
-    :vartype scheduling_state: str or ~azure.batch.models.SchedulingState
-    :ivar state_transition_time: The time at which the Compute Node entered its current state.
-    :vartype state_transition_time: ~datetime.datetime
-    :ivar last_boot_time: This property may not be present if the Compute Node state is unusable.
-    :vartype last_boot_time: ~datetime.datetime
-    :ivar allocation_time: This is the time when the Compute Node was initially allocated and
-     doesn't
-     change once set. It is not updated when the Compute Node is service healed or
-     preempted.
-    :vartype allocation_time: ~datetime.datetime
-    :ivar ip_address: Every Compute Node that is added to a Pool is assigned a unique IP address.
-     Whenever a Compute Node is removed from a Pool, all of its local files are
-     deleted, and the IP address is reclaimed and could be reused for new Compute
-     Nodes.
-    :vartype ip_address: str
-    :ivar affinity_id: Note that this is just a soft affinity. If the target Compute Node is busy
-     or
-     unavailable at the time the Task is scheduled, then the Task will be scheduled
-     elsewhere.
-    :vartype affinity_id: str
-    :ivar vm_size: For information about available sizes of virtual machines in Pools, see Choose
-     a VM size for Compute Nodes in an Azure Batch Pool
-     (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
-    :vartype vm_size: str
-    :ivar total_tasks_run: The total number of Job Tasks completed on the Compute Node. This
-     includes Job
-     Manager Tasks and normal Tasks, but not Job Preparation, Job Release or Start
-     Tasks.
-    :vartype total_tasks_run: int
-    :ivar running_tasks_count: The total number of currently running Job Tasks on the Compute Node.
-     This
-     includes Job Manager Tasks and normal Tasks, but not Job Preparation, Job
-     Release or Start Tasks.
-    :vartype running_tasks_count: int
-    :ivar running_task_slots_count: The total number of scheduling slots used by currently running
-     Job Tasks on the
-     Compute Node. This includes Job Manager Tasks and normal Tasks, but not Job
-     Preparation, Job Release or Start Tasks.
-    :vartype running_task_slots_count: int
-    :ivar total_tasks_succeeded: The total number of Job Tasks which completed successfully (with
-     exitCode 0) on
-     the Compute Node. This includes Job Manager Tasks and normal Tasks, but not Job
-     Preparation, Job Release or Start Tasks.
-    :vartype total_tasks_succeeded: int
-    :ivar recent_tasks: This property is present only if at least one Task has run on this Compute
-     Node
-     since it was assigned to the Pool.
-    :vartype recent_tasks: list[~azure.batch.models.TaskInformation]
-    :ivar start_task: Batch will retry Tasks when a recovery operation is triggered on a Node.
-     Examples of recovery operations include (but are not limited to) when an
-     unhealthy Node is rebooted or a Compute Node disappeared due to host failure.
-     Retries due to recovery operations are independent of and are not counted
-     against the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal
-     retry due to a recovery operation may occur. Because of this, all Tasks should
-     be idempotent. This means Tasks need to tolerate being interrupted and
-     restarted without causing any corruption or duplicate data. The best practice
-     for long running Tasks is to use some form of checkpointing. In some cases the
-     StartTask may be re-run even though the Compute Node was not rebooted. Special
-     care should be taken to avoid StartTasks which create breakaway process or
-     install/launch services from the StartTask working directory, as this will
-     block Batch from being able to re-run the StartTask.
-    :vartype start_task: ~azure.batch.models.StartTask
-    :ivar start_task_info: Information about a StartTask running on a Compute Node.
-    :vartype start_task_info: ~azure.batch.models.StartTaskInformation
-    :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
-     the specified
-     Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
-     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
-     is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory.
-    :vartype certificate_references: list[~azure.batch.models.CertificateReference]
-    :ivar errors: The list of errors that are currently being encountered by the Compute Node.
-    :vartype errors: list[~azure.batch.models.ComputeNodeError]
-    :ivar is_dedicated: Whether this Compute Node is a dedicated Compute Node. If false, the
-     Compute
-     Node is a Spot/Low-priority Compute Node.
-    :vartype is_dedicated: bool
-    :ivar endpoint_configuration: The endpoint configuration for the Compute Node.
-    :vartype endpoint_configuration: ~azure.batch.models.ComputeNodeEndpointConfiguration
-    :ivar node_agent_info: The Batch Compute Node agent is a program that runs on each Compute Node
-     in the
-     Pool and provides Batch capability on the Compute Node.
-    :vartype node_agent_info: ~azure.batch.models.NodeAgentInformation
-    :ivar virtual_machine_info: Info about the current state of the virtual machine.
-    :vartype virtual_machine_info: ~azure.batch.models.VirtualMachineInfo
-    """
-
-    id: Optional[str] = rest_field()
-    """Every Compute Node that is added to a Pool is assigned a unique ID. Whenever a
-     Compute Node is removed from a Pool, all of its local files are deleted, and
-     the ID is reclaimed and could be reused for new Compute Nodes."""
-    url: Optional[str] = rest_field()
-    """The URL of the Compute Node."""
-    state: Optional[Union[str, "_models.ComputeNodeState"]] = rest_field()
-    """The Spot/Low-priority Compute Node has been preempted. Tasks which were running
-     on the Compute Node when it was preempted will be rescheduled when another
-     Compute Node becomes available. Known values are: \"idle\", \"rebooting\", \"reimaging\",
-     \"running\", \"unusable\", \"creating\", \"starting\", \"waitingforstarttask\",
-     \"starttaskfailed\", \"unknown\", \"leavingpool\", \"offline\", and \"preempted\"."""
-    scheduling_state: Optional[Union[str, "_models.SchedulingState"]] = rest_field(name="schedulingState")
-    """Whether the Compute Node is available for Task scheduling. Known values are: \"enabled\" and
-     \"disabled\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime")
-    """The time at which the Compute Node entered its current state."""
-    last_boot_time: Optional[datetime.datetime] = rest_field(name="lastBootTime")
-    """This property may not be present if the Compute Node state is unusable."""
-    allocation_time: Optional[datetime.datetime] = rest_field(name="allocationTime")
-    """This is the time when the Compute Node was initially allocated and doesn't
-     change once set. It is not updated when the Compute Node is service healed or
-     preempted."""
-    ip_address: Optional[str] = rest_field(name="ipAddress")
-    """Every Compute Node that is added to a Pool is assigned a unique IP address.
-     Whenever a Compute Node is removed from a Pool, all of its local files are
-     deleted, and the IP address is reclaimed and could be reused for new Compute
-     Nodes."""
-    affinity_id: Optional[str] = rest_field(name="affinityId")
-    """Note that this is just a soft affinity. If the target Compute Node is busy or
-     unavailable at the time the Task is scheduled, then the Task will be scheduled
-     elsewhere."""
-    vm_size: Optional[str] = rest_field(name="vmSize")
-    """For information about available sizes of virtual machines in Pools, see Choose
-     a VM size for Compute Nodes in an Azure Batch Pool
-     (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes)."""
-    total_tasks_run: Optional[int] = rest_field(name="totalTasksRun")
-    """The total number of Job Tasks completed on the Compute Node. This includes Job
-     Manager Tasks and normal Tasks, but not Job Preparation, Job Release or Start
-     Tasks."""
-    running_tasks_count: Optional[int] = rest_field(name="runningTasksCount")
-    """The total number of currently running Job Tasks on the Compute Node. This
-     includes Job Manager Tasks and normal Tasks, but not Job Preparation, Job
-     Release or Start Tasks."""
-    running_task_slots_count: Optional[int] = rest_field(name="runningTaskSlotsCount")
-    """The total number of scheduling slots used by currently running Job Tasks on the
-     Compute Node. This includes Job Manager Tasks and normal Tasks, but not Job
-     Preparation, Job Release or Start Tasks."""
-    total_tasks_succeeded: Optional[int] = rest_field(name="totalTasksSucceeded")
-    """The total number of Job Tasks which completed successfully (with exitCode 0) on
-     the Compute Node. This includes Job Manager Tasks and normal Tasks, but not Job
-     Preparation, Job Release or Start Tasks."""
-    recent_tasks: Optional[List["_models.TaskInformation"]] = rest_field(name="recentTasks")
-    """This property is present only if at least one Task has run on this Compute Node
-     since it was assigned to the Pool."""
-    start_task: Optional["_models.StartTask"] = rest_field(name="startTask")
-    """Batch will retry Tasks when a recovery operation is triggered on a Node.
-     Examples of recovery operations include (but are not limited to) when an
-     unhealthy Node is rebooted or a Compute Node disappeared due to host failure.
-     Retries due to recovery operations are independent of and are not counted
-     against the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal
-     retry due to a recovery operation may occur. Because of this, all Tasks should
-     be idempotent. This means Tasks need to tolerate being interrupted and
-     restarted without causing any corruption or duplicate data. The best practice
-     for long running Tasks is to use some form of checkpointing. In some cases the
-     StartTask may be re-run even though the Compute Node was not rebooted. Special
-     care should be taken to avoid StartTasks which create breakaway process or
-     install/launch services from the StartTask working directory, as this will
-     block Batch from being able to re-run the StartTask."""
-    start_task_info: Optional["_models.StartTaskInformation"] = rest_field(name="startTaskInfo")
-    """Information about a StartTask running on a Compute Node."""
-    certificate_references: Optional[List["_models.CertificateReference"]] = rest_field(name="certificateReferences")
-    """For Windows Nodes, the Batch service installs the Certificates to the specified
-     Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
-     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
-     is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory."""
-    errors: Optional[List["_models.ComputeNodeError"]] = rest_field()
-    """The list of errors that are currently being encountered by the Compute Node."""
-    is_dedicated: Optional[bool] = rest_field(name="isDedicated")
-    """Whether this Compute Node is a dedicated Compute Node. If false, the Compute
-     Node is a Spot/Low-priority Compute Node."""
-    endpoint_configuration: Optional["_models.ComputeNodeEndpointConfiguration"] = rest_field(
-        name="endpointConfiguration"
-    )
-    """The endpoint configuration for the Compute Node."""
-    node_agent_info: Optional["_models.NodeAgentInformation"] = rest_field(name="nodeAgentInfo")
-    """The Batch Compute Node agent is a program that runs on each Compute Node in the
-     Pool and provides Batch capability on the Compute Node."""
-    virtual_machine_info: Optional["_models.VirtualMachineInfo"] = rest_field(name="virtualMachineInfo")
-    """Info about the current state of the virtual machine."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        url: Optional[str] = None,
-        state: Optional[Union[str, "_models.ComputeNodeState"]] = None,
-        scheduling_state: Optional[Union[str, "_models.SchedulingState"]] = None,
-        state_transition_time: Optional[datetime.datetime] = None,
-        last_boot_time: Optional[datetime.datetime] = None,
-        allocation_time: Optional[datetime.datetime] = None,
-        ip_address: Optional[str] = None,
-        affinity_id: Optional[str] = None,
-        vm_size: Optional[str] = None,
-        total_tasks_run: Optional[int] = None,
-        running_tasks_count: Optional[int] = None,
-        running_task_slots_count: Optional[int] = None,
-        total_tasks_succeeded: Optional[int] = None,
-        recent_tasks: Optional[List["_models.TaskInformation"]] = None,
-        start_task: Optional["_models.StartTask"] = None,
-        start_task_info: Optional["_models.StartTaskInformation"] = None,
-        certificate_references: Optional[List["_models.CertificateReference"]] = None,
-        errors: Optional[List["_models.ComputeNodeError"]] = None,
-        is_dedicated: Optional[bool] = None,
-        endpoint_configuration: Optional["_models.ComputeNodeEndpointConfiguration"] = None,
-        node_agent_info: Optional["_models.NodeAgentInformation"] = None,
-        virtual_machine_info: Optional["_models.VirtualMachineInfo"] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ComputeNodeEndpointConfiguration(_model_base.Model):
-    """The endpoint configuration for the Compute Node.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar inbound_endpoints: The list of inbound endpoints that are accessible on the Compute Node.
-     Required.
-    :vartype inbound_endpoints: list[~azure.batch.models.InboundEndpoint]
-    """
-
-    inbound_endpoints: List["_models.InboundEndpoint"] = rest_field(name="inboundEndpoints")
-    """The list of inbound endpoints that are accessible on the Compute Node. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        inbound_endpoints: List["_models.InboundEndpoint"],
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ComputeNodeError(_model_base.Model):
-    """An error encountered by a Compute Node.
-
-    :ivar code: An identifier for the Compute Node error. Codes are invariant and are intended
-     to be consumed programmatically.
-    :vartype code: str
-    :ivar message: A message describing the Compute Node error, intended to be suitable for
-     display in a user interface.
-    :vartype message: str
-    :ivar error_details: The list of additional error details related to the Compute Node error.
-    :vartype error_details: list[~azure.batch.models.NameValuePair]
-    """
-
-    code: Optional[str] = rest_field()
-    """An identifier for the Compute Node error. Codes are invariant and are intended
-     to be consumed programmatically."""
-    message: Optional[str] = rest_field()
-    """A message describing the Compute Node error, intended to be suitable for
-     display in a user interface."""
-    error_details: Optional[List["_models.NameValuePair"]] = rest_field(name="errorDetails")
-    """The list of additional error details related to the Compute Node error."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        error_details: Optional[List["_models.NameValuePair"]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ComputeNodeGetRemoteLoginSettingsResult(_model_base.Model):
-    """The remote login settings for a Compute Node.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar remote_login_ip_address: The IP address used for remote login to the Compute Node.
-     Required.
-    :vartype remote_login_ip_address: str
-    :ivar remote_login_port: The port used for remote login to the Compute Node. Required.
-    :vartype remote_login_port: int
-    """
-
-    remote_login_ip_address: str = rest_field(name="remoteLoginIPAddress")
-    """The IP address used for remote login to the Compute Node. Required."""
-    remote_login_port: int = rest_field(name="remoteLoginPort")
-    """The port used for remote login to the Compute Node. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        remote_login_ip_address: str,
-        remote_login_port: int,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ComputeNodeIdentityReference(_model_base.Model):
-    """The reference to a user assigned identity associated with the Batch pool which
-    a compute node will use.
-
-    :ivar resource_id: The ARM resource id of the user assigned identity.
-    :vartype resource_id: str
-    """
-
-    resource_id: Optional[str] = rest_field(name="resourceId")
-    """The ARM resource id of the user assigned identity."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ComputeNodeInformation(_model_base.Model):
-    """Information about the Compute Node on which a Task ran.
-
-    :ivar affinity_id: An identifier for the Node on which the Task ran, which can be passed when
-     adding a Task to request that the Task be scheduled on this Compute Node.
-    :vartype affinity_id: str
-    :ivar node_url: The URL of the Compute Node on which the Task ran.
-    :vartype node_url: str
-    :ivar pool_id: The ID of the Pool on which the Task ran.
-    :vartype pool_id: str
-    :ivar node_id: The ID of the Compute Node on which the Task ran.
-    :vartype node_id: str
-    :ivar task_root_directory: The root directory of the Task on the Compute Node.
-    :vartype task_root_directory: str
-    :ivar task_root_directory_url: The URL to the root directory of the Task on the Compute Node.
-    :vartype task_root_directory_url: str
-    """
-
-    affinity_id: Optional[str] = rest_field(name="affinityId")
-    """An identifier for the Node on which the Task ran, which can be passed when
-     adding a Task to request that the Task be scheduled on this Compute Node."""
-    node_url: Optional[str] = rest_field(name="nodeUrl")
-    """The URL of the Compute Node on which the Task ran."""
-    pool_id: Optional[str] = rest_field(name="poolId")
-    """The ID of the Pool on which the Task ran."""
-    node_id: Optional[str] = rest_field(name="nodeId")
-    """The ID of the Compute Node on which the Task ran."""
-    task_root_directory: Optional[str] = rest_field(name="taskRootDirectory")
-    """The root directory of the Task on the Compute Node."""
-    task_root_directory_url: Optional[str] = rest_field(name="taskRootDirectoryUrl")
-    """The URL to the root directory of the Task on the Compute Node."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        affinity_id: Optional[str] = None,
-        node_url: Optional[str] = None,
-        pool_id: Optional[str] = None,
-        node_id: Optional[str] = None,
-        task_root_directory: Optional[str] = None,
-        task_root_directory_url: Optional[str] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ComputeNodeUser(_model_base.Model):
-    """A user Account for RDP or SSH access on a Compute Node.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar name: The user name of the Account. Required.
-    :vartype name: str
-    :ivar is_admin: The default value is false.
-    :vartype is_admin: bool
-    :ivar expiry_time: If omitted, the default is 1 day from the current time. For Linux Compute
-     Nodes, the expiryTime has a precision up to a day.
-    :vartype expiry_time: ~datetime.datetime
-    :ivar password: The password is required for Windows Compute Nodes (those created with
-     'cloudServiceConfiguration', or created with 'virtualMachineConfiguration' using a Windows
-     Image reference). For Linux Compute Nodes, the password can optionally be specified along with
-     the sshPublicKey property.
-    :vartype password: str
-    :ivar ssh_public_key: The public key should be compatible with OpenSSH encoding and should be
-     base 64
-     encoded. This property can be specified only for Linux Compute Nodes. If this
-     is specified for a Windows Compute Node, then the Batch service rejects the
-     request; if you are calling the REST API directly, the HTTP status code is 400
-     (Bad Request).
-    :vartype ssh_public_key: str
-    """
-
-    name: str = rest_field()
-    """The user name of the Account. Required."""
-    is_admin: Optional[bool] = rest_field(name="isAdmin")
-    """The default value is false."""
-    expiry_time: Optional[datetime.datetime] = rest_field(name="expiryTime")
-    """If omitted, the default is 1 day from the current time. For Linux Compute
-     Nodes, the expiryTime has a precision up to a day."""
-    password: Optional[str] = rest_field()
-    """The password is required for Windows Compute Nodes (those created with
-     'cloudServiceConfiguration', or created with 'virtualMachineConfiguration' using a Windows
-     Image reference). For Linux Compute Nodes, the password can optionally be specified along with
-     the sshPublicKey property."""
-    ssh_public_key: Optional[str] = rest_field(name="sshPublicKey")
-    """The public key should be compatible with OpenSSH encoding and should be base 64
-     encoded. This property can be specified only for Linux Compute Nodes. If this
-     is specified for a Windows Compute Node, then the Batch service rejects the
-     request; if you are calling the REST API directly, the HTTP status code is 400
-     (Bad Request)."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        is_admin: Optional[bool] = None,
-        expiry_time: Optional[datetime.datetime] = None,
-        password: Optional[str] = None,
-        ssh_public_key: Optional[str] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class ContainerConfiguration(_model_base.Model):
     """The configuration for container-enabled Pools.
 
@@ -4005,7 +3667,7 @@ class ContainerRegistry(_model_base.Model):
     :ivar identity_reference: The reference to a user assigned identity associated with the Batch
      pool which
      a compute node will use.
-    :vartype identity_reference: ~azure.batch.models.ComputeNodeIdentityReference
+    :vartype identity_reference: ~azure.batch.models.BatchNodeIdentityReference
     """
 
     username: Optional[str] = rest_field()
@@ -4014,7 +3676,7 @@ class ContainerRegistry(_model_base.Model):
     """The password to log into the registry server."""
     registry_server: Optional[str] = rest_field(name="registryServer")
     """If omitted, the default is \"docker.io\"."""
-    identity_reference: Optional["_models.ComputeNodeIdentityReference"] = rest_field(name="identityReference")
+    identity_reference: Optional["_models.BatchNodeIdentityReference"] = rest_field(name="identityReference")
     """The reference to a user assigned identity associated with the Batch pool which
      a compute node will use."""
 
@@ -4025,7 +3687,7 @@ class ContainerRegistry(_model_base.Model):
         username: Optional[str] = None,
         password: Optional[str] = None,
         registry_server: Optional[str] = None,
-        identity_reference: Optional["_models.ComputeNodeIdentityReference"] = None,
+        identity_reference: Optional["_models.BatchNodeIdentityReference"] = None,
     ):
         ...
 
@@ -7106,10 +6768,10 @@ class NodeDisableSchedulingParameters(_model_base.Model):
     :ivar node_disable_scheduling_option: The default value is requeue. Known values are:
      "requeue", "terminate", and "taskcompletion".
     :vartype node_disable_scheduling_option: str or
-     ~azure.batch.models.DisableComputeNodeSchedulingOption
+     ~azure.batch.models.DisableBatchNodeSchedulingOption
     """
 
-    node_disable_scheduling_option: Optional[Union[str, "_models.DisableComputeNodeSchedulingOption"]] = rest_field(
+    node_disable_scheduling_option: Optional[Union[str, "_models.DisableBatchNodeSchedulingOption"]] = rest_field(
         name="nodeDisableSchedulingOption"
     )
     """The default value is requeue. Known values are: \"requeue\", \"terminate\", and
@@ -7119,7 +6781,7 @@ class NodeDisableSchedulingParameters(_model_base.Model):
     def __init__(
         self,
         *,
-        node_disable_scheduling_option: Optional[Union[str, "_models.DisableComputeNodeSchedulingOption"]] = None,
+        node_disable_scheduling_option: Optional[Union[str, "_models.DisableBatchNodeSchedulingOption"]] = None,
     ):
         ...
 
@@ -7216,10 +6878,10 @@ class NodeRebootParameters(_model_base.Model):
 
     :ivar node_reboot_option: The default value is requeue. Known values are: "requeue",
      "terminate", "taskcompletion", and "retaineddata".
-    :vartype node_reboot_option: str or ~azure.batch.models.ComputeNodeRebootOption
+    :vartype node_reboot_option: str or ~azure.batch.models.BatchNodeRebootOption
     """
 
-    node_reboot_option: Optional[Union[str, "_models.ComputeNodeRebootOption"]] = rest_field(name="nodeRebootOption")
+    node_reboot_option: Optional[Union[str, "_models.BatchNodeRebootOption"]] = rest_field(name="nodeRebootOption")
     """The default value is requeue. Known values are: \"requeue\", \"terminate\", \"taskcompletion\",
      and \"retaineddata\"."""
 
@@ -7227,7 +6889,7 @@ class NodeRebootParameters(_model_base.Model):
     def __init__(
         self,
         *,
-        node_reboot_option: Optional[Union[str, "_models.ComputeNodeRebootOption"]] = None,
+        node_reboot_option: Optional[Union[str, "_models.BatchNodeRebootOption"]] = None,
     ):
         ...
 
@@ -7247,10 +6909,10 @@ class NodeReimageParameters(_model_base.Model):
 
     :ivar node_reimage_option: The default value is requeue. Known values are: "requeue",
      "terminate", "taskcompletion", and "retaineddata".
-    :vartype node_reimage_option: str or ~azure.batch.models.ComputeNodeReimageOption
+    :vartype node_reimage_option: str or ~azure.batch.models.BatchNodeReimageOption
     """
 
-    node_reimage_option: Optional[Union[str, "_models.ComputeNodeReimageOption"]] = rest_field(name="nodeReimageOption")
+    node_reimage_option: Optional[Union[str, "_models.BatchNodeReimageOption"]] = rest_field(name="nodeReimageOption")
     """The default value is requeue. Known values are: \"requeue\", \"terminate\", \"taskcompletion\",
      and \"retaineddata\"."""
 
@@ -7258,7 +6920,7 @@ class NodeReimageParameters(_model_base.Model):
     def __init__(
         self,
         *,
-        node_reimage_option: Optional[Union[str, "_models.ComputeNodeReimageOption"]] = None,
+        node_reimage_option: Optional[Union[str, "_models.BatchNodeReimageOption"]] = None,
     ):
         ...
 
@@ -7287,7 +6949,7 @@ class NodeRemoveParameters(_model_base.Model):
     :vartype resize_timeout: ~datetime.timedelta
     :ivar node_deallocation_option: The default value is requeue. Known values are: "requeue",
      "terminate", "taskcompletion", and "retaineddata".
-    :vartype node_deallocation_option: str or ~azure.batch.models.ComputeNodeDeallocationOption
+    :vartype node_deallocation_option: str or ~azure.batch.models.BatchNodeDeallocationOption
     """
 
     node_list: List[str] = rest_field(name="nodeList")
@@ -7296,7 +6958,7 @@ class NodeRemoveParameters(_model_base.Model):
     """The default value is 15 minutes. The minimum value is 5 minutes. If you specify
      a value less than 5 minutes, the Batch service returns an error; if you are
      calling the REST API directly, the HTTP status code is 400 (Bad Request)."""
-    node_deallocation_option: Optional[Union[str, "_models.ComputeNodeDeallocationOption"]] = rest_field(
+    node_deallocation_option: Optional[Union[str, "_models.BatchNodeDeallocationOption"]] = rest_field(
         name="nodeDeallocationOption"
     )
     """The default value is requeue. Known values are: \"requeue\", \"terminate\", \"taskcompletion\",
@@ -7308,7 +6970,7 @@ class NodeRemoveParameters(_model_base.Model):
         *,
         node_list: List[str],
         resize_timeout: Optional[datetime.timedelta] = None,
-        node_deallocation_option: Optional[Union[str, "_models.ComputeNodeDeallocationOption"]] = None,
+        node_deallocation_option: Optional[Union[str, "_models.BatchNodeDeallocationOption"]] = None,
     ):
         ...
 
@@ -7545,7 +7207,7 @@ class OutputFileBlobContainerDestination(_model_base.Model):
     :vartype container_url: str
     :ivar identity_reference: The identity must have write access to the Azure Blob Storage
      container.
-    :vartype identity_reference: ~azure.batch.models.ComputeNodeIdentityReference
+    :vartype identity_reference: ~azure.batch.models.BatchNodeIdentityReference
     :ivar upload_headers: These headers will be specified when uploading files to Azure Storage.
      Official
      document on allowed headers when uploading blobs:
@@ -7563,7 +7225,7 @@ class OutputFileBlobContainerDestination(_model_base.Model):
     container_url: str = rest_field(name="containerUrl")
     """If not using a managed identity, the URL must include a Shared Access Signature
      (SAS) granting write permissions to the container. Required."""
-    identity_reference: Optional["_models.ComputeNodeIdentityReference"] = rest_field(name="identityReference")
+    identity_reference: Optional["_models.BatchNodeIdentityReference"] = rest_field(name="identityReference")
     """The identity must have write access to the Azure Blob Storage container."""
     upload_headers: Optional[List["_models.HttpHeader"]] = rest_field(name="uploadHeaders")
     """These headers will be specified when uploading files to Azure Storage. Official
@@ -7576,7 +7238,7 @@ class OutputFileBlobContainerDestination(_model_base.Model):
         *,
         container_url: str,
         path: Optional[str] = None,
-        identity_reference: Optional["_models.ComputeNodeIdentityReference"] = None,
+        identity_reference: Optional["_models.BatchNodeIdentityReference"] = None,
         upload_headers: Optional[List["_models.HttpHeader"]] = None,
     ):
         ...
@@ -8348,7 +8010,7 @@ class ResourceFile(_model_base.Model):
     :ivar identity_reference: The reference to a user assigned identity associated with the Batch
      pool which
      a compute node will use.
-    :vartype identity_reference: ~azure.batch.models.ComputeNodeIdentityReference
+    :vartype identity_reference: ~azure.batch.models.BatchNodeIdentityReference
     """
 
     auto_storage_container_name: Optional[str] = rest_field(name="autoStorageContainerName")
@@ -8387,7 +8049,7 @@ class ResourceFile(_model_base.Model):
      will be ignored if it is specified for a resourceFile which will be downloaded
      to a Windows Compute Node. If this property is not specified for a Linux
      Compute Node, then a default value of 0770 is applied to the file."""
-    identity_reference: Optional["_models.ComputeNodeIdentityReference"] = rest_field(name="identityReference")
+    identity_reference: Optional["_models.BatchNodeIdentityReference"] = rest_field(name="identityReference")
     """The reference to a user assigned identity associated with the Batch pool which
      a compute node will use."""
 
@@ -8401,7 +8063,7 @@ class ResourceFile(_model_base.Model):
         blob_prefix: Optional[str] = None,
         file_path: Optional[str] = None,
         file_mode: Optional[str] = None,
-        identity_reference: Optional["_models.ComputeNodeIdentityReference"] = None,
+        identity_reference: Optional["_models.BatchNodeIdentityReference"] = None,
     ):
         ...
 
@@ -8877,7 +8539,7 @@ class SubtaskInformation(_model_base.Model):  # pylint: disable=too-many-instanc
     :ivar id: The ID of the subtask.
     :vartype id: int
     :ivar node_info: Information about the Compute Node on which a Task ran.
-    :vartype node_info: ~azure.batch.models.ComputeNodeInformation
+    :vartype node_info: ~azure.batch.models.BatchNodeInformation
     :ivar start_time: The time at which the subtask started running. If the subtask has been
      restarted or retried, this is the most recent time at which the subtask started
      running.
@@ -8917,7 +8579,7 @@ class SubtaskInformation(_model_base.Model):  # pylint: disable=too-many-instanc
 
     id: Optional[int] = rest_field()
     """The ID of the subtask."""
-    node_info: Optional["_models.ComputeNodeInformation"] = rest_field(name="nodeInfo")
+    node_info: Optional["_models.BatchNodeInformation"] = rest_field(name="nodeInfo")
     """Information about the Compute Node on which a Task ran."""
     start_time: Optional[datetime.datetime] = rest_field(name="startTime")
     """The time at which the subtask started running. If the subtask has been
@@ -8956,7 +8618,7 @@ class SubtaskInformation(_model_base.Model):  # pylint: disable=too-many-instanc
         self,
         *,
         id: Optional[int] = None,  # pylint: disable=redefined-builtin
-        node_info: Optional["_models.ComputeNodeInformation"] = None,
+        node_info: Optional["_models.BatchNodeInformation"] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         exit_code: Optional[int] = None,
@@ -9638,17 +9300,17 @@ class TaskSchedulingPolicy(_model_base.Model):
 
     :ivar node_fill_type: If not specified, the default is spread. Required. Known values are:
      "spread" and "pack".
-    :vartype node_fill_type: str or ~azure.batch.models.ComputeNodeFillType
+    :vartype node_fill_type: str or ~azure.batch.models.BatchNodeFillType
     """
 
-    node_fill_type: Union[str, "_models.ComputeNodeFillType"] = rest_field(name="nodeFillType")
+    node_fill_type: Union[str, "_models.BatchNodeFillType"] = rest_field(name="nodeFillType")
     """If not specified, the default is spread. Required. Known values are: \"spread\" and \"pack\"."""
 
     @overload
     def __init__(
         self,
         *,
-        node_fill_type: Union[str, "_models.ComputeNodeFillType"],
+        node_fill_type: Union[str, "_models.BatchNodeFillType"],
     ):
         ...
 
@@ -9842,7 +9504,7 @@ class UploadBatchServiceLogsConfiguration(_model_base.Model):
     :vartype end_time: ~datetime.datetime
     :ivar identity_reference: The identity must have write access to the Azure Blob Storage
      container.
-    :vartype identity_reference: ~azure.batch.models.ComputeNodeIdentityReference
+    :vartype identity_reference: ~azure.batch.models.BatchNodeIdentityReference
     """
 
     container_url: str = rest_field(name="containerUrl")
@@ -9861,7 +9523,7 @@ class UploadBatchServiceLogsConfiguration(_model_base.Model):
      since the entire log file is always uploaded, but the operation should not
      retrieve fewer logs than have been requested. If omitted, the default is to
      upload all logs available after the startTime."""
-    identity_reference: Optional["_models.ComputeNodeIdentityReference"] = rest_field(name="identityReference")
+    identity_reference: Optional["_models.BatchNodeIdentityReference"] = rest_field(name="identityReference")
     """The identity must have write access to the Azure Blob Storage container."""
 
     @overload
@@ -9871,7 +9533,7 @@ class UploadBatchServiceLogsConfiguration(_model_base.Model):
         container_url: str,
         start_time: datetime.datetime,
         end_time: Optional[datetime.datetime] = None,
-        identity_reference: Optional["_models.ComputeNodeIdentityReference"] = None,
+        identity_reference: Optional["_models.BatchNodeIdentityReference"] = None,
     ):
         ...
 

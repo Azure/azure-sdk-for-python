@@ -50,7 +50,7 @@ class _TaskWorkflowManager(object):
         client,
         original_add_collection,
         job_id: str,
-        task_collection: BatchTaskCollection,
+        collection: BatchTaskCollection,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
@@ -66,7 +66,7 @@ class _TaskWorkflowManager(object):
 
         # synchronized through lock variables
         self._max_tasks_per_request = MAX_TASKS_PER_REQUEST
-        self.tasks_to_add = collections.deque(task_collection)
+        self.tasks_to_add = collections.deque(collection)
         self._error_lock = threading.Lock()
         self._max_tasks_lock = threading.Lock()
         self._pending_queue_lock = threading.Lock()
@@ -99,7 +99,7 @@ class _TaskWorkflowManager(object):
             add_collection_response = self._original_add_collection(
                 self._client,
                 job_id=self._job_id,
-                task_collection=BatchTaskCollection(value=chunk_tasks_to_add),
+                collection=BatchTaskCollection(value=chunk_tasks_to_add),
                 time_out = self._time_out,
                 client_request_id = self._client_request_id,
                 return_client_request_id = self._return_client_request_id,
@@ -217,7 +217,7 @@ def build_new_add_collection(original_add_collection):
     def bulk_add_collection(
         self,
         job_id: str,
-        task_collection: BatchTaskCollection,
+        collection: BatchTaskCollection,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -247,8 +247,8 @@ def build_new_add_collection(original_add_collection):
 
         :param job_id: The ID of the Job to which the Task collection is to be added. Required.
         :type job_id: str
-        :param task_collection: The Tasks to be added. Required.
-        :type task_collection: ~azure.batch.models.BatchTaskCollection
+        :param collection: The Tasks to be added. Required.
+        :type collection: ~azure.batch.models.BatchTaskCollection
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -282,7 +282,7 @@ def build_new_add_collection(original_add_collection):
 
         results_queue = collections.deque()  # deque operations(append/pop) are thread-safe
         task_workflow_manager = _TaskWorkflowManager(
-            self, original_add_collection, job_id, task_collection, time_out,client_request_id, 
+            self, original_add_collection, job_id, collection, time_out,client_request_id, 
             return_client_request_id , ocp_date, content_type, **kwargs
         )
 
@@ -324,8 +324,8 @@ def batch_error_exception_string(self):
     return ret
 
 
-def build_new_get_properties_from_compute_node(original_get):
-    def new_get_properties_from_compute_node( 
+def build_new_get_properties_from_batch_node(original_get):
+    def new_get_properties_from_batch_node( 
         self,
         pool_id: str,
         node_id: str,
@@ -347,8 +347,8 @@ def build_new_get_properties_from_compute_node(original_get):
         :param file_path: The path to the Compute Node file that you want to get the properties of.
          Required.
         :type file_path: str
-        :param file_get_properties_from_compute_node_options: Parameter group. Default value is None.
-        :type file_get_properties_from_compute_node_options:
+        :param file_get_properties_from_batch_node_options: Parameter group. Default value is None.
+        :type file_get_properties_from_batch_node_options:
          ~azure-batch.models.FileGetPropertiesFromComputeNodeOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: result of cls(response)
@@ -367,8 +367,8 @@ def build_new_get_properties_from_compute_node(original_get):
         ocp_date=ocp_date, if__modified__since=if__modified__since, if__unmodified__since=if__unmodified__since, **kwargs)
         return get_response[0].http_response
 
-    new_get_properties_from_compute_node.metadata = {"url": "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"}  # type: ignore
-    return new_get_properties_from_compute_node
+    new_get_properties_from_batch_node.metadata = {"url": "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"}  # type: ignore
+    return new_get_properties_from_batch_node
 
 
 def build_new_get_properties_from_task(original_get):
@@ -489,8 +489,8 @@ def build_new_get_from_task(original_get):
     return new_get_from_task
 
 
-def build_new_get_from_compute_node(original_get):
-    def new_get_from_compute_node( 
+def build_new_get_from_batch_node(original_get):
+    def new_get_from_batch_node( 
         self,
         pool_id: str,
         node_id: str,
@@ -556,8 +556,8 @@ def build_new_get_from_compute_node(original_get):
         if__modified__since=if__modified__since, if__unmodified__since=if__unmodified__since, ocp_range=ocp_range, **kwargs)
         return get_response
 
-    new_get_from_compute_node.metadata = {"url": "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"}  # type: ignore
-    return new_get_from_compute_node
+    new_get_from_batch_node.metadata = {"url": "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"}  # type: ignore
+    return new_get_from_batch_node
 
 
 def build_new_get_remote_desktop(original_get):
@@ -639,10 +639,10 @@ def patch_sdk():
     )
 
     operations_modules.FileOperations.get_from_task = build_new_get_from_task(operations_modules.FileOperations.get_from_task)
-    operations_modules.FileOperations.get_from_compute_node = build_new_get_from_compute_node(operations_modules.FileOperations.get_from_compute_node)
-    operations_modules.FileOperations.get_properties_from_compute_node = build_new_get_properties_from_compute_node(operations_modules.FileOperations.get_properties_from_compute_node)
+    operations_modules.FileOperations.get_from_batch_node = build_new_get_from_batch_node(operations_modules.FileOperations.get_from_batch_node)
+    operations_modules.FileOperations.get_properties_from_batch_node = build_new_get_properties_from_batch_node(operations_modules.FileOperations.get_properties_from_batch_node)
     operations_modules.FileOperations.get_properties_from_task = build_new_get_properties_from_task(operations_modules.FileOperations.get_properties_from_task)
 
-    operations_modules.ComputeNodesOperations.get_remote_desktop = build_new_get_remote_desktop(operations_modules.ComputeNodesOperations.get_remote_desktop)
+    operations_modules.BatchNodesOperations.get_remote_desktop = build_new_get_remote_desktop(operations_modules.BatchNodesOperations.get_remote_desktop)
     models = importlib.import_module("azure.batch.models")
     # models.BatchErrorException.__str__ = batch_error_exception_string

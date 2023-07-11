@@ -19,40 +19,35 @@ from ._models import AzureFileShareConfiguration
 from ._models import BatchError
 from ._models import BatchErrorDetail
 from ._models import BatchJob
-from ._models import BatchJobAddParameters
+from ._models import BatchJobCreateParameters
 from ._models import BatchJobDisableParameters
-from ._models import BatchJobPatchParameters
 from ._models import BatchJobSchedule
-from ._models import BatchJobScheduleAddParameters
-from ._models import BatchJobSchedulePatchParameters
+from ._models import BatchJobScheduleCreateParameters
 from ._models import BatchJobScheduleUpdateParameters
 from ._models import BatchJobTerminateParameters
 from ._models import BatchJobUpdateParameters
+from ._models import BatchNode
+from ._models import BatchNodeEndpointConfiguration
+from ._models import BatchNodeError
+from ._models import BatchNodeGetRemoteLoginSettingsResult
+from ._models import BatchNodeIdentityReference
+from ._models import BatchNodeInformation
+from ._models import BatchNodeUser
 from ._models import BatchPool
-from ._models import BatchPoolAddParameters
+from ._models import BatchPoolCreateParameters
 from ._models import BatchPoolEnableAutoScaleParameters
 from ._models import BatchPoolEvaluateAutoScaleParameters
 from ._models import BatchPoolIdentity
-from ._models import BatchPoolPatchParameters
 from ._models import BatchPoolResizeParameters
-from ._models import BatchPoolUpdatePropertiesParameters
+from ._models import BatchPoolUpdateParameters
 from ._models import BatchTask
-from ._models import BatchTaskAddParameters
 from ._models import BatchTaskCollection
+from ._models import BatchTaskCreateParameters
 from ._models import BatchTaskListSubtasksResult
-from ._models import BatchTaskUpdateParameters
 from ._models import Certificate
-from ._models import CertificateAddParameters
 from ._models import CertificateReference
 from ._models import CifsMountConfiguration
 from ._models import CloudServiceConfiguration
-from ._models import ComputeNode
-from ._models import ComputeNodeEndpointConfiguration
-from ._models import ComputeNodeError
-from ._models import ComputeNodeGetRemoteLoginSettingsResult
-from ._models import ComputeNodeIdentityReference
-from ._models import ComputeNodeInformation
-from ._models import ComputeNodeUser
 from ._models import ContainerConfiguration
 from ._models import ContainerRegistry
 from ._models import DataDisk
@@ -155,21 +150,21 @@ from ._models import WindowsUserConfiguration
 from ._enums import AccessScope
 from ._enums import AllocationState
 from ._enums import AutoUserScope
+from ._enums import BatchNodeDeallocationOption
+from ._enums import BatchNodeFillType
+from ._enums import BatchNodeRebootOption
+from ._enums import BatchNodeReimageOption
+from ._enums import BatchNodeState
 from ._enums import CachingType
 from ._enums import CertificateFormat
 from ._enums import CertificateState
 from ._enums import CertificateStoreLocation
 from ._enums import CertificateVisibility
-from ._enums import ComputeNodeDeallocationOption
-from ._enums import ComputeNodeFillType
-from ._enums import ComputeNodeRebootOption
-from ._enums import ComputeNodeReimageOption
-from ._enums import ComputeNodeState
 from ._enums import ContainerType
 from ._enums import ContainerWorkingDirectory
 from ._enums import DependencyAction
 from ._enums import DiffDiskPlacement
-from ._enums import DisableComputeNodeSchedulingOption
+from ._enums import DisableBatchNodeSchedulingOption
 from ._enums import DisableJobOption
 from ._enums import DiskEncryptionTarget
 from ._enums import DynamicVNetAssignmentScope
@@ -220,40 +215,35 @@ __all__ = [
     "BatchError",
     "BatchErrorDetail",
     "BatchJob",
-    "BatchJobAddParameters",
+    "BatchJobCreateParameters",
     "BatchJobDisableParameters",
-    "BatchJobPatchParameters",
     "BatchJobSchedule",
-    "BatchJobScheduleAddParameters",
-    "BatchJobSchedulePatchParameters",
+    "BatchJobScheduleCreateParameters",
     "BatchJobScheduleUpdateParameters",
     "BatchJobTerminateParameters",
     "BatchJobUpdateParameters",
+    "BatchNode",
+    "BatchNodeEndpointConfiguration",
+    "BatchNodeError",
+    "BatchNodeGetRemoteLoginSettingsResult",
+    "BatchNodeIdentityReference",
+    "BatchNodeInformation",
+    "BatchNodeUser",
     "BatchPool",
-    "BatchPoolAddParameters",
+    "BatchPoolCreateParameters",
     "BatchPoolEnableAutoScaleParameters",
     "BatchPoolEvaluateAutoScaleParameters",
     "BatchPoolIdentity",
-    "BatchPoolPatchParameters",
     "BatchPoolResizeParameters",
-    "BatchPoolUpdatePropertiesParameters",
+    "BatchPoolUpdateParameters",
     "BatchTask",
-    "BatchTaskAddParameters",
     "BatchTaskCollection",
+    "BatchTaskCreateParameters",
     "BatchTaskListSubtasksResult",
-    "BatchTaskUpdateParameters",
     "Certificate",
-    "CertificateAddParameters",
     "CertificateReference",
     "CifsMountConfiguration",
     "CloudServiceConfiguration",
-    "ComputeNode",
-    "ComputeNodeEndpointConfiguration",
-    "ComputeNodeError",
-    "ComputeNodeGetRemoteLoginSettingsResult",
-    "ComputeNodeIdentityReference",
-    "ComputeNodeInformation",
-    "ComputeNodeUser",
     "ContainerConfiguration",
     "ContainerRegistry",
     "DataDisk",
@@ -355,21 +345,21 @@ __all__ = [
     "AccessScope",
     "AllocationState",
     "AutoUserScope",
+    "BatchNodeDeallocationOption",
+    "BatchNodeFillType",
+    "BatchNodeRebootOption",
+    "BatchNodeReimageOption",
+    "BatchNodeState",
     "CachingType",
     "CertificateFormat",
     "CertificateState",
     "CertificateStoreLocation",
     "CertificateVisibility",
-    "ComputeNodeDeallocationOption",
-    "ComputeNodeFillType",
-    "ComputeNodeRebootOption",
-    "ComputeNodeReimageOption",
-    "ComputeNodeState",
     "ContainerType",
     "ContainerWorkingDirectory",
     "DependencyAction",
     "DiffDiskPlacement",
-    "DisableComputeNodeSchedulingOption",
+    "DisableBatchNodeSchedulingOption",
     "DisableJobOption",
     "DiskEncryptionTarget",
     "DynamicVNetAssignmentScope",

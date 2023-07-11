@@ -59,32 +59,35 @@ def _timedelta_as_isostr(td: timedelta) -> str:
     if days:
         date_str = "%sD" % days
 
-    # Build time
-    time_str = "T"
+    if hours or minutes or seconds:
+        # Build time
+        time_str = "T"
 
-    # Hours
-    bigger_exists = date_str or hours
-    if bigger_exists:
-        time_str += "{:02}H".format(hours)
+        # Hours
+        bigger_exists = date_str or hours
+        if bigger_exists:
+            time_str += "{:02}H".format(hours)
 
-    # Minutes
-    bigger_exists = bigger_exists or minutes
-    if bigger_exists:
-        time_str += "{:02}M".format(minutes)
+        # Minutes
+        bigger_exists = bigger_exists or minutes
+        if bigger_exists:
+            time_str += "{:02}M".format(minutes)
 
-    # Seconds
-    try:
-        if seconds.is_integer():
-            seconds_string = "{:02}".format(int(seconds))
-        else:
-            # 9 chars long w/ leading 0, 6 digits after decimal
-            seconds_string = "%09.6f" % seconds
-            # Remove trailing zeros
-            seconds_string = seconds_string.rstrip("0")
-    except AttributeError:  # int.is_integer() raises
-        seconds_string = "{:02}".format(seconds)
+        # Seconds
+        try:
+            if seconds.is_integer():
+                seconds_string = "{:02}".format(int(seconds))
+            else:
+                # 9 chars long w/ leading 0, 6 digits after decimal
+                seconds_string = "%09.6f" % seconds
+                # Remove trailing zeros
+                seconds_string = seconds_string.rstrip("0")
+        except AttributeError:  # int.is_integer() raises
+            seconds_string = "{:02}".format(seconds)
 
-    time_str += "{}S".format(seconds_string)
+        time_str += "{}S".format(seconds_string)
+    else:
+        time_str = ""
 
     return "P" + date_str + time_str
 
@@ -640,7 +643,7 @@ class _RestField:
         self,
         *,
         name: typing.Optional[str] = None,
-        type: typing.Optional[typing.Callable] = None,
+        type: typing.Optional[typing.Callable] = None,  # pylint: disable=redefined-builtin
         is_discriminator: bool = False,
         readonly: bool = False,
         default: typing.Any = _UNSET,
@@ -659,7 +662,7 @@ class _RestField:
             raise ValueError("Rest name was never set")
         return self._rest_name_input
 
-    def __get__(self, obj: Model, type=None):
+    def __get__(self, obj: Model, type=None):  # pylint: disable=redefined-builtin
         # by this point, type and rest_name will have a value bc we default
         # them in __new__ of the Model class
         item = obj.get(self._rest_name)
@@ -688,7 +691,7 @@ class _RestField:
 def rest_field(
     *,
     name: typing.Optional[str] = None,
-    type: typing.Optional[typing.Callable] = None,
+    type: typing.Optional[typing.Callable] = None,  # pylint: disable=redefined-builtin
     readonly: bool = False,
     default: typing.Any = _UNSET,
 ) -> typing.Any:
@@ -696,6 +699,8 @@ def rest_field(
 
 
 def rest_discriminator(
-    *, name: typing.Optional[str] = None, type: typing.Optional[typing.Callable] = None
+    *,
+    name: typing.Optional[str] = None,
+    type: typing.Optional[typing.Callable] = None,  # pylint: disable=redefined-builtin
 ) -> typing.Any:
     return _RestField(name=name, type=type, is_discriminator=True)

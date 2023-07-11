@@ -14,8 +14,7 @@ from ._operations import CertificatesOperations
 from ._operations import FileOperations
 from ._operations import JobScheduleOperations
 from ._operations import TaskOperations
-from ._operations import ComputeNodesOperations
-from ._operations import ComputeNodeExtensionsOperations
+from ._operations import BatchNodesOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -30,8 +29,7 @@ __all__ = [
     "FileOperations",
     "JobScheduleOperations",
     "TaskOperations",
-    "ComputeNodesOperations",
-    "ComputeNodeExtensionsOperations",
+    "BatchNodesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

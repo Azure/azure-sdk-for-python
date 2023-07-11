@@ -17,9 +17,8 @@ from ._serialization import Deserializer, Serializer
 from .operations import (
     AccountOperations,
     ApplicationsOperations,
+    BatchNodesOperations,
     CertificatesOperations,
-    ComputeNodeExtensionsOperations,
-    ComputeNodesOperations,
     FileOperations,
     JobOperations,
     JobScheduleOperations,
@@ -51,10 +50,8 @@ class BatchServiceClient:  # pylint: disable=client-accepts-api-version-keyword,
     :vartype job_schedule: azure.batch.operations.JobScheduleOperations
     :ivar task: TaskOperations operations
     :vartype task: azure.batch.operations.TaskOperations
-    :ivar compute_nodes: ComputeNodesOperations operations
-    :vartype compute_nodes: azure.batch.operations.ComputeNodesOperations
-    :ivar compute_node_extensions: ComputeNodeExtensionsOperations operations
-    :vartype compute_node_extensions: azure.batch.operations.ComputeNodeExtensionsOperations
+    :ivar batch_nodes: BatchNodesOperations operations
+    :vartype batch_nodes: azure.batch.operations.BatchNodesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: Service host. Required.
@@ -79,10 +76,7 @@ class BatchServiceClient:  # pylint: disable=client-accepts-api-version-keyword,
         self.file = FileOperations(self._client, self._config, self._serialize, self._deserialize)
         self.job_schedule = JobScheduleOperations(self._client, self._config, self._serialize, self._deserialize)
         self.task = TaskOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.compute_nodes = ComputeNodesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.compute_node_extensions = ComputeNodeExtensionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.batch_nodes = BatchNodesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

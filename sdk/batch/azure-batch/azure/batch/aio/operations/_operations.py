@@ -36,34 +36,34 @@ from ...operations._operations import (
     build_account_list_supported_images_request,
     build_applications_get_request,
     build_applications_list_request,
-    build_certificates_add_request,
+    build_batch_nodes_add_user_request,
+    build_batch_nodes_delete_user_request,
+    build_batch_nodes_disable_scheduling_request,
+    build_batch_nodes_enable_scheduling_request,
+    build_batch_nodes_get_extensions_request,
+    build_batch_nodes_get_remote_desktop_request,
+    build_batch_nodes_get_remote_login_settings_request,
+    build_batch_nodes_get_request,
+    build_batch_nodes_list_extensions_request,
+    build_batch_nodes_list_request,
+    build_batch_nodes_reboot_request,
+    build_batch_nodes_reimage_request,
+    build_batch_nodes_update_user_request,
+    build_batch_nodes_upload_batch_service_logs_request,
     build_certificates_cancel_deletion_request,
+    build_certificates_create_request,
     build_certificates_delete_request,
     build_certificates_get_request,
     build_certificates_list_request,
-    build_compute_node_extensions_get_request,
-    build_compute_node_extensions_list_request,
-    build_compute_nodes_add_user_request,
-    build_compute_nodes_delete_user_request,
-    build_compute_nodes_disable_scheduling_request,
-    build_compute_nodes_enable_scheduling_request,
-    build_compute_nodes_get_remote_desktop_request,
-    build_compute_nodes_get_remote_login_settings_request,
-    build_compute_nodes_get_request,
-    build_compute_nodes_list_request,
-    build_compute_nodes_reboot_request,
-    build_compute_nodes_reimage_request,
-    build_compute_nodes_update_user_request,
-    build_compute_nodes_upload_batch_service_logs_request,
-    build_file_delete_from_compute_node_request,
+    build_file_delete_from_batch_node_request,
     build_file_delete_from_task_request,
-    build_file_get_from_compute_node_request,
+    build_file_get_from_batch_node_request,
     build_file_get_from_task_request,
-    build_file_get_properties_from_compute_node_request,
+    build_file_get_properties_from_batch_node_request,
     build_file_get_properties_from_task_request,
-    build_file_list_from_compute_node_request,
+    build_file_list_from_batch_node_request,
     build_file_list_from_task_request,
-    build_job_add_request,
+    build_job_create_request,
     build_job_delete_request,
     build_job_disable_request,
     build_job_enable_request,
@@ -74,7 +74,7 @@ from ...operations._operations import (
     build_job_list_preparation_and_release_task_status_request,
     build_job_list_request,
     build_job_patch_request,
-    build_job_schedule_add_request,
+    build_job_schedule_create_request,
     build_job_schedule_delete_request,
     build_job_schedule_disable_request,
     build_job_schedule_enable_request,
@@ -86,7 +86,7 @@ from ...operations._operations import (
     build_job_schedule_update_request,
     build_job_terminate_request,
     build_job_update_request,
-    build_pool_add_request,
+    build_pool_create_request,
     build_pool_delete_request,
     build_pool_disable_auto_scale_request,
     build_pool_enable_auto_scale_request,
@@ -102,11 +102,11 @@ from ...operations._operations import (
     build_pool_stop_resize_request,
     build_pool_update_properties_request,
     build_task_add_collection_request,
-    build_task_add_request,
+    build_task_create_request,
     build_task_delete_request,
     build_task_get_request,
+    build_task_get_subtasks_request,
     build_task_list_request,
-    build_task_list_subtasks_request,
     build_task_reactivate_request,
     build_task_terminate_request,
     build_task_update_request,
@@ -582,9 +582,9 @@ class PoolOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def add(  # pylint: disable=inconsistent-return-statements
+    async def create(  # pylint: disable=inconsistent-return-statements
         self,
-        pool: _models.BatchPoolAddParameters,
+        parameters: _models.BatchPoolCreateParameters,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -592,14 +592,14 @@ class PoolOperations:
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        """Adds a Pool to the specified Account.
+        """Creates a Pool to the specified Account.
 
         When naming Pools, avoid including sensitive information such as user names or
         secret project names. This information may appear in telemetry logs accessible
         to Microsoft Support engineers.
 
-        :param pool: The Pool to be added. Required.
-        :type pool: ~azure.batch.models.BatchPoolAddParameters
+        :param parameters: The Pool to be created. Required.
+        :type parameters: ~azure.batch.models.BatchPoolCreateParameters
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -639,9 +639,9 @@ class PoolOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(pool, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_pool_add_request(
+        request = build_pool_create_request(
             time_out=time_out,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
@@ -1155,7 +1155,7 @@ class PoolOperations:
     async def patch(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        pool_update: _models.BatchPoolPatchParameters,
+        parameters: _models.BatchPoolUpdateParameters,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -1175,8 +1175,8 @@ class PoolOperations:
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param pool_update: The parameters for the request. Required.
-        :type pool_update: ~azure.batch.models.BatchPoolPatchParameters
+        :param parameters: The parameters for the request. Required.
+        :type parameters: ~azure.batch.models.BatchPoolUpdateParameters
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -1236,7 +1236,7 @@ class PoolOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(pool_update, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_pool_patch_request(
             pool_id=pool_id,
@@ -1366,7 +1366,7 @@ class PoolOperations:
     async def enable_auto_scale(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        pool_enable_auto_scale_parameter: _models.BatchPoolEnableAutoScaleParameters,
+        parameters: _models.BatchPoolEnableAutoScaleParameters,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -1389,8 +1389,8 @@ class PoolOperations:
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param pool_enable_auto_scale_parameter: The parameters for the request. Required.
-        :type pool_enable_auto_scale_parameter: ~azure.batch.models.BatchPoolEnableAutoScaleParameters
+        :param parameters: The parameters for the request. Required.
+        :type parameters: ~azure.batch.models.BatchPoolEnableAutoScaleParameters
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -1450,7 +1450,7 @@ class PoolOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(pool_enable_auto_scale_parameter, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_pool_enable_auto_scale_request(
             pool_id=pool_id,
@@ -1852,7 +1852,7 @@ class PoolOperations:
     async def update_properties(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        pool_update_properties_parameter: _models.BatchPoolUpdatePropertiesParameters,
+        parameters: _models.BatchPool,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -1868,8 +1868,8 @@ class PoolOperations:
 
         :param pool_id: The ID of the Pool to update. Required.
         :type pool_id: str
-        :param pool_update_properties_parameter: The parameters for the request. Required.
-        :type pool_update_properties_parameter: ~azure.batch.models.BatchPoolUpdatePropertiesParameters
+        :param parameters: The parameters for the request. Required.
+        :type parameters: ~azure.batch.models.BatchPool
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -1909,7 +1909,7 @@ class PoolOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(pool_update_properties_parameter, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_pool_update_properties_request(
             pool_id=pool_id,
@@ -2669,7 +2669,7 @@ class JobOperations:
     async def patch(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        job_patch_parameter: _models.BatchJobPatchParameters,
+        parameters: _models.BatchJobUpdateParameters,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -2689,8 +2689,8 @@ class JobOperations:
 
         :param job_id: The ID of the Job whose properties you want to update. Required.
         :type job_id: str
-        :param job_patch_parameter: The parameters for the request. Required.
-        :type job_patch_parameter: ~azure.batch.models.BatchJobPatchParameters
+        :param parameters: The parameters for the request. Required.
+        :type parameters: ~azure.batch.models.BatchJobUpdateParameters
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -2750,7 +2750,7 @@ class JobOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(job_patch_parameter, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_job_patch_request(
             job_id=job_id,
@@ -2796,7 +2796,7 @@ class JobOperations:
     async def update(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        job_update_parameter: _models.BatchJobUpdateParameters,
+        parameters: _models.BatchJob,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -2816,8 +2816,8 @@ class JobOperations:
 
         :param job_id: The ID of the Job whose properties you want to update. Required.
         :type job_id: str
-        :param job_update_parameter: The parameters for the request. Required.
-        :type job_update_parameter: ~azure.batch.models.BatchJobUpdateParameters
+        :param parameters: The parameters for the request. Required.
+        :type parameters: ~azure.batch.models.BatchJob
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -2877,7 +2877,7 @@ class JobOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(job_update_parameter, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_job_update_request(
             job_id=job_id,
@@ -2923,7 +2923,7 @@ class JobOperations:
     async def disable(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        job_disable_parameter: _models.BatchJobDisableParameters,
+        parameters: _models.BatchJobDisableParameters,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -2948,8 +2948,8 @@ class JobOperations:
 
         :param job_id: The ID of the Job to disable. Required.
         :type job_id: str
-        :param job_disable_parameter: The parameters for the request. Required.
-        :type job_disable_parameter: ~azure.batch.models.BatchJobDisableParameters
+        :param parameters: The parameters for the request. Required.
+        :type parameters: ~azure.batch.models.BatchJobDisableParameters
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -3009,7 +3009,7 @@ class JobOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(job_disable_parameter, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_job_disable_request(
             job_id=job_id,
@@ -3528,9 +3528,9 @@ class JobOperations:
             return cls(pipeline_response, None, response_headers)
 
     @distributed_trace_async
-    async def add(  # pylint: disable=inconsistent-return-statements
+    async def create(  # pylint: disable=inconsistent-return-statements
         self,
-        job: _models.BatchJobAddParameters,
+        parameters: _models.BatchJobCreateParameters,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -3538,7 +3538,7 @@ class JobOperations:
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        """Adds a Job to the specified Account.
+        """Creates a Job to the specified Account.
 
         The Batch service supports two ways to control the work done as part of a Job.
         In the first approach, the user specifies a Job Manager Task. The Batch service
@@ -3550,8 +3550,8 @@ class JobOperations:
         This information may appear in telemetry logs accessible to Microsoft Support
         engineers.
 
-        :param job: The Job to be added. Required.
-        :type job: ~azure.batch.models.BatchJobAddParameters
+        :param parameters: The Job to be crated. Required.
+        :type parameters: ~azure.batch.models.BatchJobCreateParameters
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -3591,9 +3591,9 @@ class JobOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(job, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_job_add_request(
+        request = build_job_create_request(
             time_out=time_out,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
@@ -4112,9 +4112,9 @@ class CertificatesOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def add(  # pylint: disable=inconsistent-return-statements
+    async def create(  # pylint: disable=inconsistent-return-statements
         self,
-        certificate: _models.CertificateAddParameters,
+        parameters: _models.Certificate,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -4122,12 +4122,12 @@ class CertificatesOperations:
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        """Adds a Certificate to the specified Account.
+        """Creates a Certificate to the specified Account.
 
-        Adds a Certificate to the specified Account.
+        Creates a Certificate to the specified Account.
 
-        :param certificate: The Certificate to be added. Required.
-        :type certificate: ~azure.batch.models.CertificateAddParameters
+        :param parameters: The Certificate to be created. Required.
+        :type parameters: ~azure.batch.models.Certificate
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -4167,9 +4167,9 @@ class CertificatesOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(certificate, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_certificates_add_request(
+        request = build_certificates_create_request(
             time_out=time_out,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
@@ -4958,7 +4958,7 @@ class FileOperations:
         return 200 <= response.status_code <= 299
 
     @distributed_trace_async
-    async def delete_from_compute_node(  # pylint: disable=inconsistent-return-statements
+    async def delete_from_batch_node(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         node_id: str,
@@ -5020,7 +5020,7 @@ class FileOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_file_delete_from_compute_node_request(
+        request = build_file_delete_from_batch_node_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
@@ -5055,7 +5055,7 @@ class FileOperations:
             return cls(pipeline_response, None, response_headers)
 
     @distributed_trace_async
-    async def get_from_compute_node(
+    async def get_from_batch_node(
         self,
         pool_id: str,
         node_id: str,
@@ -5125,7 +5125,7 @@ class FileOperations:
 
         cls: ClsType[bytes] = kwargs.pop("cls", None)
 
-        request = build_file_get_from_compute_node_request(
+        request = build_file_get_from_batch_node_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
@@ -5178,7 +5178,7 @@ class FileOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_properties_from_compute_node(
+    async def get_properties_from_batch_node(
         self,
         pool_id: str,
         node_id: str,
@@ -5243,7 +5243,7 @@ class FileOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_file_get_properties_from_compute_node_request(
+        request = build_file_get_properties_from_batch_node_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
@@ -5415,7 +5415,7 @@ class FileOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_from_compute_node(
+    def list_from_batch_node(
         self,
         pool_id: str,
         node_id: str,
@@ -5480,7 +5480,7 @@ class FileOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_file_list_from_compute_node_request(
+                request = build_file_list_from_batch_node_request(
                     pool_id=pool_id,
                     node_id=node_id,
                     maxresults=maxresults,
@@ -5910,7 +5910,7 @@ class JobScheduleOperations:
     async def patch(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
-        job_schedule_update: _models.BatchJobSchedulePatchParameters,
+        parameters: _models.BatchJobScheduleUpdateParameters,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -5932,8 +5932,8 @@ class JobScheduleOperations:
 
         :param job_schedule_id: The ID of the Job Schedule to update. Required.
         :type job_schedule_id: str
-        :param job_schedule_update: The parameters for the request. Required.
-        :type job_schedule_update: ~azure.batch.models.BatchJobSchedulePatchParameters
+        :param parameters: The parameters for the request. Required.
+        :type parameters: ~azure.batch.models.BatchJobScheduleUpdateParameters
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -5993,7 +5993,7 @@ class JobScheduleOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(job_schedule_update, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_job_schedule_patch_request(
             job_schedule_id=job_schedule_id,
@@ -6039,7 +6039,7 @@ class JobScheduleOperations:
     async def update(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
-        job_schedule: _models.BatchJobScheduleUpdateParameters,
+        parameters: _models.BatchJobSchedule,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -6061,8 +6061,8 @@ class JobScheduleOperations:
 
         :param job_schedule_id: The ID of the Job Schedule to update. Required.
         :type job_schedule_id: str
-        :param job_schedule: The parameters for the request. Required.
-        :type job_schedule: ~azure.batch.models.BatchJobScheduleUpdateParameters
+        :param parameters: The parameters for the request. Required.
+        :type parameters: ~azure.batch.models.BatchJobSchedule
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -6122,7 +6122,7 @@ class JobScheduleOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(job_schedule, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_job_schedule_update_request(
             job_schedule_id=job_schedule_id,
@@ -6501,9 +6501,9 @@ class JobScheduleOperations:
             return cls(pipeline_response, None, response_headers)
 
     @distributed_trace_async
-    async def add(  # pylint: disable=inconsistent-return-statements
+    async def create(  # pylint: disable=inconsistent-return-statements
         self,
-        job_schedule: _models.BatchJobScheduleAddParameters,
+        cloud_job_schedule: _models.BatchJobScheduleCreateParameters,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -6511,12 +6511,12 @@ class JobScheduleOperations:
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        """Adds a Job Schedule to the specified Account.
+        """Creates a Job Schedule to the specified Account.
 
-        Adds a Job Schedule to the specified Account.
+        Creates a Job Schedule to the specified Account.
 
-        :param job_schedule: The Job Schedule to be added. Required.
-        :type job_schedule: ~azure.batch.models.BatchJobScheduleAddParameters
+        :param cloud_job_schedule: The Job Schedule to be created. Required.
+        :type cloud_job_schedule: ~azure.batch.models.BatchJobScheduleCreateParameters
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -6556,9 +6556,9 @@ class JobScheduleOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(job_schedule, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(cloud_job_schedule, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_job_schedule_add_request(
+        request = build_job_schedule_create_request(
             time_out=time_out,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
@@ -6732,10 +6732,10 @@ class TaskOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def add(  # pylint: disable=inconsistent-return-statements
+    async def create(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        task: _models.BatchTaskAddParameters,
+        task: _models.BatchTaskCreateParameters,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -6743,16 +6743,16 @@ class TaskOperations:
         ocp_date: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        """Adds a Task to the specified Job.
+        """Creates a Task to the specified Job.
 
         The maximum lifetime of a Task from addition to completion is 180 days. If a
         Task has not completed within 180 days of being added it will be terminated by
         the Batch service and left in whatever state it was in at that time.
 
-        :param job_id: The ID of the Job to which the Task is to be added. Required.
+        :param job_id: The ID of the Job to which the Task is to be created. Required.
         :type job_id: str
-        :param task: The Task to be added. Required.
-        :type task: ~azure.batch.models.BatchTaskAddParameters
+        :param task: The Task to be created. Required.
+        :type task: ~azure.batch.models.BatchTaskCreateParameters
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -6794,7 +6794,7 @@ class TaskOperations:
 
         _content = json.dumps(task, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_task_add_request(
+        request = build_task_create_request(
             job_id=job_id,
             time_out=time_out,
             client_request_id=client_request_id,
@@ -6960,7 +6960,7 @@ class TaskOperations:
     async def add_collection(
         self,
         job_id: str,
-        task_collection: _models.BatchTaskCollection,
+        collection: _models.BatchTaskCollection,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -6987,8 +6987,8 @@ class TaskOperations:
 
         :param job_id: The ID of the Job to which the Task collection is to be added. Required.
         :type job_id: str
-        :param task_collection: The Tasks to be added. Required.
-        :type task_collection: ~azure.batch.models.BatchTaskCollection
+        :param collection: The Tasks to be added. Required.
+        :type collection: ~azure.batch.models.BatchTaskCollection
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -7028,7 +7028,7 @@ class TaskOperations:
         )
         cls: ClsType[_models.TaskAddCollectionResult] = kwargs.pop("cls", None)
 
-        _content = json.dumps(task_collection, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(collection, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_task_add_collection_request(
             job_id=job_id,
@@ -7325,7 +7325,7 @@ class TaskOperations:
         self,
         job_id: str,
         task_id: str,
-        task: _models.BatchTaskUpdateParameters,
+        parameters: _models.BatchTask,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -7343,8 +7343,8 @@ class TaskOperations:
         :type job_id: str
         :param task_id: The ID of the Task to update. Required.
         :type task_id: str
-        :param task: The parameters for the request. Required.
-        :type task: ~azure.batch.models.BatchTaskUpdateParameters
+        :param parameters: The parameters for the request. Required.
+        :type parameters: ~azure.batch.models.BatchTask
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -7404,7 +7404,7 @@ class TaskOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(task, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_task_update_request(
             job_id=job_id,
@@ -7448,7 +7448,7 @@ class TaskOperations:
             return cls(pipeline_response, None, response_headers)
 
     @distributed_trace_async
-    async def list_subtasks(
+    async def get_subtasks(
         self,
         job_id: str,
         task_id: str,
@@ -7505,7 +7505,7 @@ class TaskOperations:
 
         cls: ClsType[_models.BatchTaskListSubtasksResult] = kwargs.pop("cls", None)
 
-        request = build_task_list_subtasks_request(
+        request = build_task_get_subtasks_request(
             job_id=job_id,
             task_id=task_id,
             time_out=time_out,
@@ -7789,14 +7789,14 @@ class TaskOperations:
             return cls(pipeline_response, None, response_headers)
 
 
-class ComputeNodesOperations:
+class BatchNodesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.batch.aio.BatchServiceClient`'s
-        :attr:`compute_nodes` attribute.
+        :attr:`batch_nodes` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -7811,7 +7811,7 @@ class ComputeNodesOperations:
         self,
         pool_id: str,
         node_id: str,
-        user: _models.ComputeNodeUser,
+        parameters: _models.BatchNodeUser,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -7828,8 +7828,8 @@ class ComputeNodesOperations:
         :type pool_id: str
         :param node_id: The ID of the machine on which you want to create a user Account. Required.
         :type node_id: str
-        :param user: The user Account to be created. Required.
-        :type user: ~azure.batch.models.ComputeNodeUser
+        :param parameters: The user Account to be created. Required.
+        :type parameters: ~azure.batch.models.BatchNodeUser
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -7869,9 +7869,9 @@ class ComputeNodesOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(user, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_compute_nodes_add_user_request(
+        request = build_batch_nodes_add_user_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out=time_out,
@@ -7965,7 +7965,7 @@ class ComputeNodesOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_compute_nodes_delete_user_request(
+        request = build_batch_nodes_delete_user_request(
             pool_id=pool_id,
             node_id=node_id,
             user_name=user_name,
@@ -8068,7 +8068,7 @@ class ComputeNodesOperations:
 
         _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_compute_nodes_update_user_request(
+        request = build_batch_nodes_update_user_request(
             pool_id=pool_id,
             node_id=node_id,
             user_name=user_name,
@@ -8118,7 +8118,7 @@ class ComputeNodesOperations:
         ocp_date: Optional[str] = None,
         select: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.ComputeNode:
+    ) -> _models.BatchNode:
         """Gets information about the specified Compute Node.
 
         Gets information about the specified Compute Node.
@@ -8145,8 +8145,8 @@ class ComputeNodesOperations:
         :paramtype select: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: ComputeNode. The ComputeNode is compatible with MutableMapping
-        :rtype: ~azure.batch.models.ComputeNode
+        :return: BatchNode. The BatchNode is compatible with MutableMapping
+        :rtype: ~azure.batch.models.BatchNode
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8160,9 +8160,9 @@ class ComputeNodesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ComputeNode] = kwargs.pop("cls", None)
+        cls: ClsType[_models.BatchNode] = kwargs.pop("cls", None)
 
-        request = build_compute_nodes_get_request(
+        request = build_batch_nodes_get_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out=time_out,
@@ -8197,7 +8197,7 @@ class ComputeNodesOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ComputeNode, response.json())
+            deserialized = _deserialize(_models.BatchNode, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8271,7 +8271,7 @@ class ComputeNodesOperations:
         else:
             _content = None
 
-        request = build_compute_nodes_reboot_request(
+        request = build_batch_nodes_reboot_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out=time_out,
@@ -8377,7 +8377,7 @@ class ComputeNodesOperations:
         else:
             _content = None
 
-        request = build_compute_nodes_reimage_request(
+        request = build_batch_nodes_reimage_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out=time_out,
@@ -8637,7 +8637,7 @@ class ComputeNodesOperations:
             else:
                 _content = None
 
-        request = build_compute_nodes_disable_scheduling_request(
+        request = build_batch_nodes_disable_scheduling_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out=time_out,
@@ -8729,7 +8729,7 @@ class ComputeNodesOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_compute_nodes_enable_scheduling_request(
+        request = build_batch_nodes_enable_scheduling_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out=time_out,
@@ -8775,7 +8775,7 @@ class ComputeNodesOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.ComputeNodeGetRemoteLoginSettingsResult:
+    ) -> _models.BatchNodeGetRemoteLoginSettingsResult:
         """Gets the settings required for remote login to a Compute Node.
 
         Before you can remotely login to a Compute Node using the remote login
@@ -8805,9 +8805,9 @@ class ComputeNodesOperations:
         :paramtype ocp_date: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: ComputeNodeGetRemoteLoginSettingsResult. The ComputeNodeGetRemoteLoginSettingsResult
-         is compatible with MutableMapping
-        :rtype: ~azure.batch.models.ComputeNodeGetRemoteLoginSettingsResult
+        :return: BatchNodeGetRemoteLoginSettingsResult. The BatchNodeGetRemoteLoginSettingsResult is
+         compatible with MutableMapping
+        :rtype: ~azure.batch.models.BatchNodeGetRemoteLoginSettingsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8821,9 +8821,9 @@ class ComputeNodesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ComputeNodeGetRemoteLoginSettingsResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.BatchNodeGetRemoteLoginSettingsResult] = kwargs.pop("cls", None)
 
-        request = build_compute_nodes_get_remote_login_settings_request(
+        request = build_batch_nodes_get_remote_login_settings_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out=time_out,
@@ -8857,7 +8857,7 @@ class ComputeNodesOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ComputeNodeGetRemoteLoginSettingsResult, response.json())
+            deserialized = _deserialize(_models.BatchNodeGetRemoteLoginSettingsResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8921,7 +8921,7 @@ class ComputeNodesOperations:
 
         cls: ClsType[bytes] = kwargs.pop("cls", None)
 
-        request = build_compute_nodes_get_remote_desktop_request(
+        request = build_batch_nodes_get_remote_desktop_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out=time_out,
@@ -8967,7 +8967,7 @@ class ComputeNodesOperations:
         self,
         pool_id: str,
         node_id: str,
-        upload_batch_service_logs_configuration: _models.UploadBatchServiceLogsConfiguration,
+        parameters: _models.UploadBatchServiceLogsConfiguration,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -8988,10 +8988,8 @@ class ComputeNodesOperations:
         :param node_id: The ID of the Compute Node for which you want to get the Remote Desktop
          Protocol file. Required.
         :type node_id: str
-        :param upload_batch_service_logs_configuration: The Azure Batch service log files upload
-         configuration. Required.
-        :type upload_batch_service_logs_configuration:
-         ~azure.batch.models.UploadBatchServiceLogsConfiguration
+        :param parameters: The Azure Batch service log files upload configuration. Required.
+        :type parameters: ~azure.batch.models.UploadBatchServiceLogsConfiguration
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -9032,9 +9030,9 @@ class ComputeNodesOperations:
         )
         cls: ClsType[_models.UploadBatchServiceLogsResult] = kwargs.pop("cls", None)
 
-        _content = json.dumps(upload_batch_service_logs_configuration, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_compute_nodes_upload_batch_service_logs_request(
+        request = build_batch_nodes_upload_batch_service_logs_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out=time_out,
@@ -9088,7 +9086,7 @@ class ComputeNodesOperations:
         filter: Optional[str] = None,
         select: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ComputeNode"]:
+    ) -> AsyncIterable["_models.BatchNode"]:
         """Lists the Compute Nodes in the specified Pool.
 
         Lists the Compute Nodes in the specified Pool.
@@ -9118,14 +9116,14 @@ class ComputeNodesOperations:
         :paramtype filter: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
-        :return: An iterator like instance of ComputeNode
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.ComputeNode]
+        :return: An iterator like instance of BatchNode
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchNode]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.ComputeNode]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.BatchNode]] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -9138,7 +9136,7 @@ class ComputeNodesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_compute_nodes_list_request(
+                request = build_batch_nodes_list_request(
                     pool_id=pool_id,
                     maxresults=maxresults,
                     ocp_date=ocp_date,
@@ -9172,7 +9170,7 @@ class ComputeNodesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ComputeNode], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchNode], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
@@ -9195,26 +9193,8 @@ class ComputeNodesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-
-class ComputeNodeExtensionsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.batch.aio.BatchServiceClient`'s
-        :attr:`compute_node_extensions` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace_async
-    async def get(
+    async def get_extensions(
         self,
         pool_id: str,
         node_id: str,
@@ -9274,7 +9254,7 @@ class ComputeNodeExtensionsOperations:
 
         cls: ClsType[_models.NodeVMExtension] = kwargs.pop("cls", None)
 
-        request = build_compute_node_extensions_get_request(
+        request = build_batch_nodes_get_extensions_request(
             pool_id=pool_id,
             node_id=node_id,
             extension_name=extension_name,
@@ -9318,7 +9298,7 @@ class ComputeNodeExtensionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(
+    def list_extensions(
         self,
         pool_id: str,
         node_id: str,
@@ -9378,7 +9358,7 @@ class ComputeNodeExtensionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_compute_node_extensions_list_request(
+                request = build_batch_nodes_list_extensions_request(
                     pool_id=pool_id,
                     node_id=node_id,
                     maxresults=maxresults,

@@ -41,6 +41,109 @@ class AutoUserScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Node in a Pool."""
 
 
+class BatchNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchNodeDeallocationOption."""
+
+    REQUEUE = "requeue"
+    """Terminate running Task processes and requeue the Tasks. The Tasks will run again when a Compute
+    #: Node is available. Remove Compute Nodes as soon as Tasks have been terminated."""
+    TERMINATE = "terminate"
+    """Terminate running Tasks. The Tasks will be completed with failureInfo indicating that they were
+    #: terminated, and will not run again. Remove Compute Nodes as soon as Tasks have been terminated."""
+    TASK_COMPLETION = "taskcompletion"
+    """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Remove Compute
+    #: Nodes when all Tasks have completed."""
+    RETAINED_DATA = "retaineddata"
+    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
+    #: expire. Schedule no new Tasks while waiting. Remove Compute Nodes when all Task retention
+    #: periods have expired."""
+
+
+class BatchNodeFillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchNodeFillType."""
+
+    SPREAD = "spread"
+    """Tasks should be assigned evenly across all Compute Nodes in the Pool."""
+    PACK = "pack"
+    """As many Tasks as possible (taskSlotsPerNode) should be assigned to each Compute Node in the
+    #: Pool before any Tasks are assigned to the next Compute Node in the Pool."""
+
+
+class BatchNodeRebootOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchNodeRebootOption."""
+
+    REQUEUE = "requeue"
+    """Terminate running Task processes and requeue the Tasks. The Tasks will run again when a Compute
+    #: Node is available. Restart the Compute Node as soon as Tasks have been terminated."""
+    TERMINATE = "terminate"
+    """Terminate running Tasks. The Tasks will be completed with failureInfo indicating that they were
+    #: terminated, and will not run again. Restart the Compute Node as soon as Tasks have been
+    #: terminated."""
+    TASK_COMPLETION = "taskcompletion"
+    """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Restart the
+    #: Compute Node when all Tasks have completed."""
+    RETAINED_DATA = "retaineddata"
+    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
+    #: expire. Schedule no new Tasks while waiting. Restart the Compute Node when all Task retention
+    #: periods have expired."""
+
+
+class BatchNodeReimageOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchNodeReimageOption."""
+
+    REQUEUE = "requeue"
+    """Terminate running Task processes and requeue the Tasks. The Tasks will run again when a Compute
+    #: Node is available. Reimage the Compute Node as soon as Tasks have been terminated."""
+    TERMINATE = "terminate"
+    """Terminate running Tasks. The Tasks will be completed with failureInfo indicating that they were
+    #: terminated, and will not run again. Reimage the Compute Node as soon as Tasks have been
+    #: terminated."""
+    TASK_COMPLETION = "taskcompletion"
+    """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Reimage the
+    #: Compute Node when all Tasks have completed."""
+    RETAINED_DATA = "retaineddata"
+    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
+    #: expire. Schedule no new Tasks while waiting. Reimage the Compute Node when all Task retention
+    #: periods have expired."""
+
+
+class BatchNodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchNodeState."""
+
+    IDLE = "idle"
+    """The Compute Node is not currently running a Task."""
+    REBOOTING = "rebooting"
+    """The Compute Node is rebooting."""
+    REIMAGING = "reimaging"
+    """The Compute Node is reimaging."""
+    RUNNING = "running"
+    """The Compute Node is running one or more Tasks (other than a StartTask)."""
+    UNUSABLE = "unusable"
+    """The Compute Node cannot be used for Task execution due to errors."""
+    CREATING = "creating"
+    """The Batch service has obtained the underlying virtual machine from Azure Compute, but it has
+    #: not yet started to join the Pool."""
+    STARTING = "starting"
+    """The Batch service is starting on the underlying virtual machine."""
+    WAITING_FOR_START_TASK = "waitingforstarttask"
+    """The StartTask has started running on the Compute Node, but waitForSuccess is set and the
+    #: StartTask has not yet completed."""
+    START_TASK_FAILED = "starttaskfailed"
+    """The StartTask has failed on the Compute Node (and exhausted all retries), and waitForSuccess is
+    #: set. The Compute Node is not usable for running Tasks."""
+    UNKNOWN = "unknown"
+    """The Batch service has lost contact with the Compute Node, and does not know its true state."""
+    LEAVING_POOL = "leavingpool"
+    """The Compute Node is leaving the Pool, either because the user explicitly removed it or because
+    #: the Pool is resizing or autoscaling down."""
+    OFFLINE = "offline"
+    """The Compute Node is not currently running a Task, and scheduling of new Tasks to the Compute
+    #: Node is disabled."""
+    PREEMPTED = "preempted"
+    """The Spot/Low-priority Compute Node has been preempted. Tasks which were running on the Compute
+    #: Node when it was preempted will be rescheduled when another Compute Node becomes available."""
+
+
 class CachingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CachingType."""
 
@@ -101,109 +204,6 @@ class CertificateVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Compute Node."""
 
 
-class ComputeNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ComputeNodeDeallocationOption."""
-
-    REQUEUE = "requeue"
-    """Terminate running Task processes and requeue the Tasks. The Tasks will run again when a Compute
-    #: Node is available. Remove Compute Nodes as soon as Tasks have been terminated."""
-    TERMINATE = "terminate"
-    """Terminate running Tasks. The Tasks will be completed with failureInfo indicating that they were
-    #: terminated, and will not run again. Remove Compute Nodes as soon as Tasks have been terminated."""
-    TASK_COMPLETION = "taskcompletion"
-    """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Remove Compute
-    #: Nodes when all Tasks have completed."""
-    RETAINED_DATA = "retaineddata"
-    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
-    #: expire. Schedule no new Tasks while waiting. Remove Compute Nodes when all Task retention
-    #: periods have expired."""
-
-
-class ComputeNodeFillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ComputeNodeFillType."""
-
-    SPREAD = "spread"
-    """Tasks should be assigned evenly across all Compute Nodes in the Pool."""
-    PACK = "pack"
-    """As many Tasks as possible (taskSlotsPerNode) should be assigned to each Compute Node in the
-    #: Pool before any Tasks are assigned to the next Compute Node in the Pool."""
-
-
-class ComputeNodeRebootOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ComputeNodeRebootOption."""
-
-    REQUEUE = "requeue"
-    """Terminate running Task processes and requeue the Tasks. The Tasks will run again when a Compute
-    #: Node is available. Restart the Compute Node as soon as Tasks have been terminated."""
-    TERMINATE = "terminate"
-    """Terminate running Tasks. The Tasks will be completed with failureInfo indicating that they were
-    #: terminated, and will not run again. Restart the Compute Node as soon as Tasks have been
-    #: terminated."""
-    TASK_COMPLETION = "taskcompletion"
-    """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Restart the
-    #: Compute Node when all Tasks have completed."""
-    RETAINED_DATA = "retaineddata"
-    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
-    #: expire. Schedule no new Tasks while waiting. Restart the Compute Node when all Task retention
-    #: periods have expired."""
-
-
-class ComputeNodeReimageOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ComputeNodeReimageOption."""
-
-    REQUEUE = "requeue"
-    """Terminate running Task processes and requeue the Tasks. The Tasks will run again when a Compute
-    #: Node is available. Reimage the Compute Node as soon as Tasks have been terminated."""
-    TERMINATE = "terminate"
-    """Terminate running Tasks. The Tasks will be completed with failureInfo indicating that they were
-    #: terminated, and will not run again. Reimage the Compute Node as soon as Tasks have been
-    #: terminated."""
-    TASK_COMPLETION = "taskcompletion"
-    """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Reimage the
-    #: Compute Node when all Tasks have completed."""
-    RETAINED_DATA = "retaineddata"
-    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
-    #: expire. Schedule no new Tasks while waiting. Reimage the Compute Node when all Task retention
-    #: periods have expired."""
-
-
-class ComputeNodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ComputeNodeState."""
-
-    IDLE = "idle"
-    """The Compute Node is not currently running a Task."""
-    REBOOTING = "rebooting"
-    """The Compute Node is rebooting."""
-    REIMAGING = "reimaging"
-    """The Compute Node is reimaging."""
-    RUNNING = "running"
-    """The Compute Node is running one or more Tasks (other than a StartTask)."""
-    UNUSABLE = "unusable"
-    """The Compute Node cannot be used for Task execution due to errors."""
-    CREATING = "creating"
-    """The Batch service has obtained the underlying virtual machine from Azure Compute, but it has
-    #: not yet started to join the Pool."""
-    STARTING = "starting"
-    """The Batch service is starting on the underlying virtual machine."""
-    WAITING_FOR_START_TASK = "waitingforstarttask"
-    """The StartTask has started running on the Compute Node, but waitForSuccess is set and the
-    #: StartTask has not yet completed."""
-    START_TASK_FAILED = "starttaskfailed"
-    """The StartTask has failed on the Compute Node (and exhausted all retries), and waitForSuccess is
-    #: set. The Compute Node is not usable for running Tasks."""
-    UNKNOWN = "unknown"
-    """The Batch service has lost contact with the Compute Node, and does not know its true state."""
-    LEAVING_POOL = "leavingpool"
-    """The Compute Node is leaving the Pool, either because the user explicitly removed it or because
-    #: the Pool is resizing or autoscaling down."""
-    OFFLINE = "offline"
-    """The Compute Node is not currently running a Task, and scheduling of new Tasks to the Compute
-    #: Node is disabled."""
-    PREEMPTED = "preempted"
-    """The Spot/Low-priority Compute Node has been preempted. Tasks which were running on the Compute
-    #: Node when it was preempted will be rescheduled when another Compute Node becomes available."""
-
-
 class ContainerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ContainerType."""
 
@@ -239,8 +239,8 @@ class DiffDiskPlacement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Ephemeral OS Disk is stored on the VM cache."""
 
 
-class DisableComputeNodeSchedulingOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DisableComputeNodeSchedulingOption."""
+class DisableBatchNodeSchedulingOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DisableBatchNodeSchedulingOption."""
 
     REQUEUE = "requeue"
     """Terminate running Task processes and requeue the Tasks. The Tasks may run again on other

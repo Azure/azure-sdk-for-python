@@ -300,13 +300,13 @@ class JobPreparer(AzureMgmtPreparer):
         if self.is_live:
             self.client = self._get_batch_client(**kwargs)
             pool = self._get_batch_pool_id(**kwargs)
-            self.resource = azure.batch.models.BatchJobAddParameters(
+            self.resource = azure.batch.models.BatchJobCreateParameters(
                 id=name,
                 pool_info=pool,
                 **self.extra_args
             )
             try:
-                self.client.job.add(self.resource)
+                self.client.job.create(self.resource)
             except azure.core.exceptions.HttpResponseError as e:
                 message = "{}:{} ".format(e.error.code, e.error.message)
                 for v in e.error.values:
