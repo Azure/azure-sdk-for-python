@@ -31,25 +31,27 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._web_pub_sub_custom_domains_operations import (
+from ...operations._web_pub_sub_replicas_operations import (
     build_create_or_update_request,
     build_delete_request,
     build_get_request,
     build_list_request,
+    build_restart_request,
+    build_update_request,
 )
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class WebPubSubCustomDomainsOperations:
+class WebPubSubReplicasOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.webpubsub.aio.WebPubSubManagementClient`'s
-        :attr:`web_pub_sub_custom_domains` attribute.
+        :attr:`web_pub_sub_replicas` attribute.
     """
 
     models = _models
@@ -62,10 +64,8 @@ class WebPubSubCustomDomainsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(
-        self, resource_group_name: str, resource_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.CustomDomain"]:
-        """List all custom domains.
+    def list(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> AsyncIterable["_models.Replica"]:
+        """List all replicas belong to this resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -73,15 +73,15 @@ class WebPubSubCustomDomainsOperations:
         :param resource_name: The name of the resource. Required.
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CustomDomain or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.webpubsub.models.CustomDomain]
+        :return: An iterator like instance of either Replica or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.webpubsub.models.Replica]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.CustomDomainList] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ReplicaList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -125,7 +125,7 @@ class WebPubSubCustomDomainsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("CustomDomainList", pipeline_response)
+            deserialized = self._deserialize("ReplicaList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -150,23 +150,25 @@ class WebPubSubCustomDomainsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/webPubSub/{resourceName}/customDomains"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/webPubSub/{resourceName}/replicas"
     }
 
     @distributed_trace_async
-    async def get(self, resource_group_name: str, resource_name: str, name: str, **kwargs: Any) -> _models.CustomDomain:
-        """Get a custom domain.
+    async def get(
+        self, resource_group_name: str, resource_name: str, replica_name: str, **kwargs: Any
+    ) -> _models.Replica:
+        """Get the replica and its properties.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_name: The name of the resource. Required.
         :type resource_name: str
-        :param name: Custom domain name. Required.
-        :type name: str
+        :param replica_name: The name of the replica. Required.
+        :type replica_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CustomDomain or the result of cls(response)
-        :rtype: ~azure.mgmt.webpubsub.models.CustomDomain
+        :return: Replica or the result of cls(response)
+        :rtype: ~azure.mgmt.webpubsub.models.Replica
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -181,12 +183,12 @@ class WebPubSubCustomDomainsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.CustomDomain] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Replica] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
-            name=name,
+            replica_name=replica_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata["url"],
@@ -208,7 +210,7 @@ class WebPubSubCustomDomainsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CustomDomain", pipeline_response)
+        deserialized = self._deserialize("Replica", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -216,17 +218,17 @@ class WebPubSubCustomDomainsOperations:
         return deserialized
 
     get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/webPubSub/{resourceName}/customDomains/{name}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/webPubSub/{resourceName}/replicas/{replicaName}"
     }
 
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         resource_name: str,
-        name: str,
-        parameters: Union[_models.CustomDomain, IO],
+        replica_name: str,
+        parameters: Union[_models.Replica, IO],
         **kwargs: Any
-    ) -> _models.CustomDomain:
+    ) -> _models.Replica:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -240,7 +242,7 @@ class WebPubSubCustomDomainsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.CustomDomain] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Replica] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -248,12 +250,12 @@ class WebPubSubCustomDomainsOperations:
         if isinstance(parameters, (IOBase, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, "CustomDomain")
+            _json = self._serialize.body(parameters, "Replica")
 
         request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
-            name=name,
+            replica_name=replica_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -273,20 +275,24 @@ class WebPubSubCustomDomainsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [201]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CustomDomain", pipeline_response)
+        if response.status_code == 200:
+            deserialized = self._deserialize("Replica", pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize("Replica", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/webPubSub/{resourceName}/customDomains/{name}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/webPubSub/{resourceName}/replicas/{replicaName}"
     }
 
     @overload
@@ -294,23 +300,23 @@ class WebPubSubCustomDomainsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        name: str,
-        parameters: _models.CustomDomain,
+        replica_name: str,
+        parameters: _models.Replica,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.CustomDomain]:
-        """Create or update a custom domain.
+    ) -> AsyncLROPoller[_models.Replica]:
+        """Create or update a replica.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_name: The name of the resource. Required.
         :type resource_name: str
-        :param name: Custom domain name. Required.
-        :type name: str
-        :param parameters: Required.
-        :type parameters: ~azure.mgmt.webpubsub.models.CustomDomain
+        :param replica_name: The name of the replica. Required.
+        :type replica_name: str
+        :param parameters: Parameters for the create or update operation. Required.
+        :type parameters: ~azure.mgmt.webpubsub.models.Replica
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -322,9 +328,9 @@ class WebPubSubCustomDomainsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either CustomDomain or the result of
+        :return: An instance of AsyncLROPoller that returns either Replica or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.webpubsub.models.CustomDomain]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.webpubsub.models.Replica]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -333,22 +339,22 @@ class WebPubSubCustomDomainsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        name: str,
+        replica_name: str,
         parameters: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.CustomDomain]:
-        """Create or update a custom domain.
+    ) -> AsyncLROPoller[_models.Replica]:
+        """Create or update a replica.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_name: The name of the resource. Required.
         :type resource_name: str
-        :param name: Custom domain name. Required.
-        :type name: str
-        :param parameters: Required.
+        :param replica_name: The name of the replica. Required.
+        :type replica_name: str
+        :param parameters: Parameters for the create or update operation. Required.
         :type parameters: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'text/json'. Default value is "application/json".
@@ -361,9 +367,9 @@ class WebPubSubCustomDomainsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either CustomDomain or the result of
+        :return: An instance of AsyncLROPoller that returns either Replica or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.webpubsub.models.CustomDomain]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.webpubsub.models.Replica]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -372,21 +378,22 @@ class WebPubSubCustomDomainsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        name: str,
-        parameters: Union[_models.CustomDomain, IO],
+        replica_name: str,
+        parameters: Union[_models.Replica, IO],
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.CustomDomain]:
-        """Create or update a custom domain.
+    ) -> AsyncLROPoller[_models.Replica]:
+        """Create or update a replica.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_name: The name of the resource. Required.
         :type resource_name: str
-        :param name: Custom domain name. Required.
-        :type name: str
-        :param parameters: Is either a CustomDomain type or a IO type. Required.
-        :type parameters: ~azure.mgmt.webpubsub.models.CustomDomain or IO
+        :param replica_name: The name of the replica. Required.
+        :type replica_name: str
+        :param parameters: Parameters for the create or update operation. Is either a Replica type or a
+         IO type. Required.
+        :type parameters: ~azure.mgmt.webpubsub.models.Replica or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
          'text/json'. Default value is None.
         :paramtype content_type: str
@@ -398,9 +405,9 @@ class WebPubSubCustomDomainsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either CustomDomain or the result of
+        :return: An instance of AsyncLROPoller that returns either Replica or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.webpubsub.models.CustomDomain]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.webpubsub.models.Replica]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -408,7 +415,7 @@ class WebPubSubCustomDomainsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.CustomDomain] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Replica] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -416,7 +423,7 @@ class WebPubSubCustomDomainsOperations:
             raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 resource_name=resource_name,
-                name=name,
+                replica_name=replica_name,
                 parameters=parameters,
                 api_version=api_version,
                 content_type=content_type,
@@ -428,7 +435,7 @@ class WebPubSubCustomDomainsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("CustomDomain", pipeline_response)
+            deserialized = self._deserialize("Replica", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -452,12 +459,27 @@ class WebPubSubCustomDomainsOperations:
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/webPubSub/{resourceName}/customDomains/{name}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/webPubSub/{resourceName}/replicas/{replicaName}"
     }
 
-    async def _delete_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, resource_name: str, name: str, **kwargs: Any
+    @distributed_trace_async
+    async def delete(  # pylint: disable=inconsistent-return-statements
+        self, resource_group_name: str, resource_name: str, replica_name: str, **kwargs: Any
     ) -> None:
+        """Operation to delete a replica.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the resource. Required.
+        :type resource_name: str
+        :param replica_name: The name of the replica. Required.
+        :type replica_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -475,10 +497,10 @@ class WebPubSubCustomDomainsOperations:
         request = build_delete_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
-            name=name,
+            replica_name=replica_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
+            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -492,7 +514,7 @@ class WebPubSubCustomDomainsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -500,23 +522,319 @@ class WebPubSubCustomDomainsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/webPubSub/{resourceName}/customDomains/{name}"
+    delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/webPubSub/{resourceName}/replicas/{replicaName}"
     }
 
-    @distributed_trace_async
-    async def begin_delete(
-        self, resource_group_name: str, resource_name: str, name: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Delete a custom domain.
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        replica_name: str,
+        parameters: Union[_models.Replica, IO],
+        **kwargs: Any
+    ) -> _models.Replica:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Replica] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "Replica")
+
+        request = build_update_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            replica_name=replica_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            template_url=self._update_initial.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("Replica", pipeline_response)
+
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = self._deserialize("Replica", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    _update_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/webPubSub/{resourceName}/replicas/{replicaName}"
+    }
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        replica_name: str,
+        parameters: _models.Replica,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Replica]:
+        """Operation to update an exiting replica.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_name: The name of the resource. Required.
         :type resource_name: str
-        :param name: Custom domain name. Required.
-        :type name: str
+        :param replica_name: The name of the replica. Required.
+        :type replica_name: str
+        :param parameters: Parameters for the update operation. Required.
+        :type parameters: ~azure.mgmt.webpubsub.models.Replica
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either Replica or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.webpubsub.models.Replica]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        replica_name: str,
+        parameters: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Replica]:
+        """Operation to update an exiting replica.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the resource. Required.
+        :type resource_name: str
+        :param replica_name: The name of the replica. Required.
+        :type replica_name: str
+        :param parameters: Parameters for the update operation. Required.
+        :type parameters: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Known values are: 'application/json', 'text/json'. Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either Replica or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.webpubsub.models.Replica]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        replica_name: str,
+        parameters: Union[_models.Replica, IO],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Replica]:
+        """Operation to update an exiting replica.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the resource. Required.
+        :type resource_name: str
+        :param replica_name: The name of the replica. Required.
+        :type replica_name: str
+        :param parameters: Parameters for the update operation. Is either a Replica type or a IO type.
+         Required.
+        :type parameters: ~azure.mgmt.webpubsub.models.Replica or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
+         'text/json'. Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either Replica or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.webpubsub.models.Replica]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Replica] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
+                replica_name=replica_name,
+                parameters=parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("Replica", pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    begin_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/webPubSub/{resourceName}/replicas/{replicaName}"
+    }
+
+    async def _restart_initial(  # pylint: disable=inconsistent-return-statements
+        self, resource_group_name: str, resource_name: str, replica_name: str, **kwargs: Any
+    ) -> None:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        request = build_restart_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            replica_name=replica_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self._restart_initial.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    _restart_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/webPubSub/{resourceName}/replicas/{replicaName}/restart"
+    }
+
+    @distributed_trace_async
+    async def begin_restart(
+        self, resource_group_name: str, resource_name: str, replica_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Operation to restart a replica.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the resource. Required.
+        :type resource_name: str
+        :param replica_name: The name of the replica. Required.
+        :type replica_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -538,10 +856,10 @@ class WebPubSubCustomDomainsOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._delete_initial(  # type: ignore
+            raw_result = await self._restart_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 resource_name=resource_name,
-                name=name,
+                replica_name=replica_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -571,6 +889,6 @@ class WebPubSubCustomDomainsOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/webPubSub/{resourceName}/customDomains/{name}"
+    begin_restart.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SignalRService/webPubSub/{resourceName}/replicas/{replicaName}/restart"
     }
