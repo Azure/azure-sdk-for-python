@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
-from typing import cast, Union, Any, TYPE_CHECKING, Iterable
+from typing import cast, Union, Any, TYPE_CHECKING, Sequence
 from ._common._constants import SchemaFormat
 
 from ._generated.rest import schema as schema_rest
@@ -72,7 +72,7 @@ def build_get_schema_props_request(
         **http_request_kwargs,
     )
 
-def build_get_schema_request(args: Iterable, kwargs: Any) -> HttpRequest:
+def build_get_schema_request(args: Sequence[str], kwargs: Any) -> HttpRequest:
     http_request_kwargs = get_http_request_kwargs(kwargs)
     try:
         # Check positional args for schema_id.

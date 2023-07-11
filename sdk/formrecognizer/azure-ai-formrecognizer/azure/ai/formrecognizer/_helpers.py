@@ -4,6 +4,7 @@
 # ------------------------------------
 
 import re
+from typing import Any, Optional
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, SansIOHTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
@@ -75,17 +76,28 @@ def adjust_value_type(value_type):
     return value_type
 
 
-def adjust_confidence(score):
-    """Adjust confidence when not returned."""
+def adjust_confidence(score: Optional[float]) -> float:
+    """Adjust confidence when not returned.
+
+    :param float or None score: Confidence score to be adjusted.
+    :return: The adjusted confidence score.
+    :rtype: float
+    """
     if score is None:
         return 1.0
     return score
 
 
-def adjust_text_angle(text_angle):
-    """Adjust to (-180, 180]"""
-    if text_angle > 180:
-        text_angle -= 360
+def adjust_text_angle(text_angle: Optional[float]) -> Optional[float]:
+    """Adjust to (-180, 180]
+
+    :param float or None text_angle: The text angle to be adjusted.
+    :return: The adjusted text angle.
+    :rtype: float
+    """
+    if text_angle is not None:
+        if text_angle > 180.0:
+            text_angle -= 360.0
     return text_angle
 
 
@@ -104,8 +116,13 @@ def get_authentication_policy(credential):
     return authentication_policy
 
 
-def get_content_type(form):
-    """Source: https://en.wikipedia.org/wiki/Magic_number_(programming)#Magic_numbers_in_files"""
+def get_content_type(form: Any) -> str:
+    """Source: https://en.wikipedia.org/wiki/Magic_number_(programming)#Magic_numbers_in_files
+
+    :param any form: The input form data.
+    :return: Returns an appropriate content type based on the input data.
+    :rtype: str
+    """
 
     if isinstance(form, bytes):
         return check_beginning_bytes(form)
