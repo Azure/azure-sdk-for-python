@@ -24,8 +24,6 @@ from azure.core.pipeline.policies import (
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import (
-    HttpResponseError,
-    ClientAuthenticationError,
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceModifiedError,

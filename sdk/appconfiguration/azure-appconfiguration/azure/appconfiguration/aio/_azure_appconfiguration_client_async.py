@@ -17,8 +17,6 @@ from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import (
-    HttpResponseError,
-    ClientAuthenticationError,
     ResourceExistsError,
     ResourceModifiedError,
     ResourceNotFoundError,
