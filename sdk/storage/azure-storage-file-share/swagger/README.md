@@ -148,3 +148,31 @@ directive:
         delete $[oldName];
     }
 ```
+
+## Remove ShareName, Directory, and FileName - we have direct URIs
+
+This directive is necessary for Python (also this directive is copied from .net) because we removed our call to _format_url_section in our generated code.
+
+```yaml
+directive:
+- from: swagger-document
+  where: $["x-ms-paths"]
+  transform: >
+   Object.keys($).map(id => {
+     if (id.includes('/{shareName}/{directory}/{fileName}'))
+     {
+       $[id.replace('/{shareName}/{directory}/{fileName}', '?shareName_dir_file')] = $[id];
+       delete $[id];
+     }
+     else if (id.includes('/{shareName}/{directory}'))
+     {
+       $[id.replace('/{shareName}/{directory}', '?shareName_dir')] = $[id];
+       delete $[id];
+     }
+     else if (id.includes('/{shareName}'))
+     {
+       $[id.replace('/{shareName}', '?shareName')] = $[id];
+       delete $[id];
+     }
+   });
+```
