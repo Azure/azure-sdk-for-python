@@ -399,7 +399,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
             }
         ]
 
-        completion = await openai.ChatCompletion.create(
+        completion = await openai.ChatCompletion.acreate(
             messages=messages,
             functions=functions,
             **kwargs
@@ -426,7 +426,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                 "content": "{\"temperature\": \"22\", \"unit\": \"celsius\", \"description\": \"Sunny\"}"
             }
         )
-        function_completion = await openai.ChatCompletion.create(
+        function_completion = await openai.ChatCompletion.acreate(
             messages=messages,
             functions=functions,
             **kwargs
