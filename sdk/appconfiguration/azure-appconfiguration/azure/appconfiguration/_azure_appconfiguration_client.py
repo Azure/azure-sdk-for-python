@@ -195,7 +195,6 @@ class AzureAppConfigurationClient:
         select = kwargs.pop("fields", None)
         if select:
             select = ["locked" if x == "read_only" else x for x in select]
-        error_map = {401: ClientAuthenticationError}
 
         try:
             return self._impl.get_key_values(  # type: ignore
@@ -203,7 +202,6 @@ class AzureAppConfigurationClient:
                 key=key_filter,
                 select=select,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
-                error_map=error_map,
                 **kwargs
             )
         except binascii.Error as exc:
@@ -245,7 +243,7 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
+        error_map = {}
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
@@ -297,7 +295,7 @@ class AzureAppConfigurationClient:
         """
         key_value = configuration_setting._to_generated()
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
-        error_map = {401: ClientAuthenticationError, 412: ResourceExistsError}
+        error_map = {412: ResourceExistsError}
         try:
             key_value_added = self._impl.put_key_value(
                 entity=key_value,
@@ -353,7 +351,7 @@ class AzureAppConfigurationClient:
         """
         key_value = configuration_setting._to_generated()
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
-        error_map = {401: ClientAuthenticationError, 409: ResourceReadOnlyError}
+        error_map = {409: ResourceReadOnlyError}
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
@@ -411,7 +409,7 @@ class AzureAppConfigurationClient:
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
-        error_map = {401: ClientAuthenticationError, 409: ResourceReadOnlyError}
+        error_map = {409: ResourceReadOnlyError}
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
@@ -474,7 +472,6 @@ class AzureAppConfigurationClient:
         select = kwargs.pop("fields", None)
         if select:
             select = ["locked" if x == "read_only" else x for x in select]
-        error_map = {401: ClientAuthenticationError}
 
         try:
             return self._impl.get_revisions(  # type: ignore
@@ -482,7 +479,6 @@ class AzureAppConfigurationClient:
                 key=key_filter,
                 select=select,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
-                error_map=error_map,
                 **kwargs
             )
         except binascii.Error as exc:
@@ -518,7 +514,7 @@ class AzureAppConfigurationClient:
             read_only_config_setting = client.set_read_only(config_setting)
             read_only_config_setting = client.set_read_only(config_setting, read_only=False)
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
+        error_map = {}
 
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
