@@ -32,14 +32,12 @@ from azure.core.pipeline import (
     PipelineResponse,
     PipelineContext,
 )
-from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
-from azure.core.rest import HttpResponse, HttpRequest
 from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
 from ._tools import await_result as _await_result
 from .transport import HttpTransport
 
-HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
-HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 
 _LOGGER = logging.getLogger(__name__)
