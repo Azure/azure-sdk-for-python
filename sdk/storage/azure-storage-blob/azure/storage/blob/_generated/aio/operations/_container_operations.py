@@ -33,6 +33,7 @@ from ...operations._container_operations import (
     build_delete_request,
     build_filter_blobs_request,
     build_get_access_policy_request,
+    build_get_account_info_request,
     build_get_properties_request,
     build_list_blob_flat_segment_request,
     build_list_blob_hierarchy_segment_request,
@@ -1910,3 +1911,72 @@ class ContainerOperations:
         return deserialized
 
     list_blob_hierarchy_segment.metadata = {"url": "{url}"}
+
+    @distributed_trace_async
+    async def get_account_info(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Returns the sku name and account kind.
+
+        :keyword restype: restype. Default value is "account". Note that overriding this default value
+         may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype: Literal["account"] = kwargs.pop("restype", _params.pop("restype", "account"))
+        comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        request = build_get_account_info_request(
+            url=self._config.url,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
+            template_url=self.get_account_info.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-sku-name"] = self._deserialize("str", response.headers.get("x-ms-sku-name"))
+        response_headers["x-ms-account-kind"] = self._deserialize("str", response.headers.get("x-ms-account-kind"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    get_account_info.metadata = {"url": "{url}"}
