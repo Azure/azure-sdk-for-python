@@ -244,8 +244,6 @@ class AzureAppConfigurationClient:
         error_map = {}
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
-        if match_condition == MatchConditions.IfModified:
-            error_map[304] = ResourceNotModifiedError
         if match_condition == MatchConditions.IfPresent:
             error_map[412] = ResourceNotFoundError
         if match_condition == MatchConditions.IfMissing:
