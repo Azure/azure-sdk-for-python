@@ -40,7 +40,7 @@ class AzureSchemaRegistry:  # pylint: disable=client-accepts-api-version-keyword
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "https://{endpoint}"
         self._config = AzureSchemaRegistryConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -80,5 +80,5 @@ class AzureSchemaRegistry:  # pylint: disable=client-accepts-api-version-keyword
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)
