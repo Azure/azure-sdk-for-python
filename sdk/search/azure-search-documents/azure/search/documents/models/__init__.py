@@ -60,4 +60,5 @@ __all__ = (
     "SearchMode",
     "SemanticErrorHandling",
     "QueryDebugMode",
+    "Vector",
 )
