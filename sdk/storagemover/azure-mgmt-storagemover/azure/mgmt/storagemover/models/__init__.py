@@ -10,8 +10,12 @@ from ._models_py3 import Agent
 from ._models_py3 import AgentList
 from ._models_py3 import AgentPropertiesErrorDetails
 from ._models_py3 import AgentUpdateParameters
+from ._models_py3 import AzureKeyVaultSmbCredentials
 from ._models_py3 import AzureStorageBlobContainerEndpointProperties
 from ._models_py3 import AzureStorageBlobContainerEndpointUpdateProperties
+from ._models_py3 import AzureStorageSmbFileShareEndpointProperties
+from ._models_py3 import AzureStorageSmbFileShareEndpointUpdateProperties
+from ._models_py3 import Credentials
 from ._models_py3 import Endpoint
 from ._models_py3 import EndpointBaseProperties
 from ._models_py3 import EndpointBaseUpdateParameters
@@ -37,6 +41,8 @@ from ._models_py3 import ProjectList
 from ._models_py3 import ProjectUpdateParameters
 from ._models_py3 import ProxyResource
 from ._models_py3 import Resource
+from ._models_py3 import SmbMountEndpointProperties
+from ._models_py3 import SmbMountEndpointUpdateProperties
 from ._models_py3 import StorageMover
 from ._models_py3 import StorageMoverList
 from ._models_py3 import StorageMoverUpdateParameters
@@ -47,6 +53,7 @@ from ._storage_mover_mgmt_client_enums import ActionType
 from ._storage_mover_mgmt_client_enums import AgentStatus
 from ._storage_mover_mgmt_client_enums import CopyMode
 from ._storage_mover_mgmt_client_enums import CreatedByType
+from ._storage_mover_mgmt_client_enums import CredentialType
 from ._storage_mover_mgmt_client_enums import EndpointType
 from ._storage_mover_mgmt_client_enums import JobRunScanStatus
 from ._storage_mover_mgmt_client_enums import JobRunStatus
@@ -62,8 +69,12 @@ __all__ = [
     "AgentList",
     "AgentPropertiesErrorDetails",
     "AgentUpdateParameters",
+    "AzureKeyVaultSmbCredentials",
     "AzureStorageBlobContainerEndpointProperties",
     "AzureStorageBlobContainerEndpointUpdateProperties",
+    "AzureStorageSmbFileShareEndpointProperties",
+    "AzureStorageSmbFileShareEndpointUpdateProperties",
+    "Credentials",
     "Endpoint",
     "EndpointBaseProperties",
     "EndpointBaseUpdateParameters",
@@ -89,6 +100,8 @@ __all__ = [
     "ProjectUpdateParameters",
     "ProxyResource",
     "Resource",
+    "SmbMountEndpointProperties",
+    "SmbMountEndpointUpdateProperties",
     "StorageMover",
     "StorageMoverList",
     "StorageMoverUpdateParameters",
@@ -98,6 +111,7 @@ __all__ = [
     "AgentStatus",
     "CopyMode",
     "CreatedByType",
+    "CredentialType",
     "EndpointType",
     "JobRunScanStatus",
     "JobRunStatus",

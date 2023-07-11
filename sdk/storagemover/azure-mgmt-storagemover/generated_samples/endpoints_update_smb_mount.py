@@ -14,7 +14,7 @@ from azure.mgmt.storagemover import StorageMoverMgmtClient
     pip install azure-identity
     pip install azure-mgmt-storagemover
 # USAGE
-    python endpoints_list.py
+    python endpoints_update_smb_mount.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,25 @@ def main():
         subscription_id="60bcfc77-6589-4da2-b7fd-f9ec9322cf95",
     )
 
-    response = client.endpoints.list(
+    response = client.endpoints.update(
         resource_group_name="examples-rg",
         storage_mover_name="examples-storageMoverName",
+        endpoint_name="examples-endpointName",
+        endpoint={
+            "properties": {
+                "credentials": {
+                    "passwordUri": "https://examples-azureKeyVault.vault.azure.net/secrets/examples-updated-password",
+                    "type": "AzureKeyVaultSmb",
+                    "usernameUri": "https://examples-azureKeyVault.vault.azure.net/secrets/examples-updated-username",
+                },
+                "description": "Updated Endpoint Description",
+                "endpointType": "SmbMount",
+            }
+        },
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/preview/2023-07-01-preview/examples/Endpoints_List.json
+# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/preview/2023-07-01-preview/examples/Endpoints_Update_SmbMount.json
 if __name__ == "__main__":
     main()
