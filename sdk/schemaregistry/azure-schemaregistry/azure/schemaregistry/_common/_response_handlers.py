@@ -27,20 +27,13 @@ from ._schema import SchemaProperties, Schema
 from ._constants import SchemaFormat
 
 
-def _parse_schema_properties_dict(response):
+def _parse_schema_properties_dict(response_headers):
     return {
-        "id": response.headers.get("schema-id"),
-        "group_name": response.headers.get("schema-group-name"),
-        "name": response.headers.get("schema-name"),
-        "version": int(response.headers.get("schema-version"))
+        "id": response_headers.get("Schema-Id"),
+        "group_name": response_headers.get("Schema-Group-Name"),
+        "name": response_headers.get("Schema-Name"),
+        "version": int(response_headers.get("Schema-Version"))
     }
-
-
-def _parse_response_schema_properties(response, format):
-    # pylint:disable=redefined-builtin
-    properties_dict = _parse_schema_properties_dict(response)
-    properties_dict["format"] = SchemaFormat(format)
-    return SchemaProperties(**properties_dict)
 
 def _get_format(content_type: str) -> SchemaFormat:
     # pylint:disable=redefined-builtin
@@ -54,10 +47,22 @@ def _get_format(content_type: str) -> SchemaFormat:
         format = SchemaFormat.CUSTOM
     return format
 
-def _parse_response_schema(response):
-    schema_props_dict = _parse_schema_properties_dict(response)
-    schema_props_dict["format"] = _get_format(response.headers.get("content-type"))
+def prepare_schema_properties_result(
+    format, pipeline_response, deserialized, response_headers
+):    # pylint:disable=unused-argument,redefined-builtin
+    properties_dict = _parse_schema_properties_dict(response_headers)
+    properties_dict["format"] = SchemaFormat(format)
+    pipeline_response.http_response.read()
+    pipeline_response.http_response.raise_for_status()
+    return SchemaProperties(**properties_dict)
 
+def prepare_schema_result(
+    pipeline_response, deserialized, response_headers
+):    # pylint:disable=unused-argument
+    schema_props_dict = _parse_schema_properties_dict(response_headers)
+    schema_props_dict["format"] = _get_format(response_headers.get("Content-Type"))
+    pipeline_response.http_response.read()
+    pipeline_response.http_response.raise_for_status()
     return Schema(
-        definition=response.text(), properties=SchemaProperties(**schema_props_dict)
+        definition=pipeline_response.http_response.text(), properties=SchemaProperties(**schema_props_dict)
     )
