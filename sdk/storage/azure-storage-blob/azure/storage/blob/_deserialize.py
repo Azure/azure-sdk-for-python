@@ -172,13 +172,13 @@ def get_blob_properties_from_generated_code(generated):
     blob.has_versions_only = generated.has_versions_only
     return blob
 
-# Deserialize a list of BlobTag objects into a dict.
 def parse_tags(generated_tags: Optional[List["BlobTag"]]) -> Union[Dict[str, str], None]:
     """Deserialize a list of BlobTag objects into a dict.
+
     :param Optional[List[BlobTag]] generated_tags:
-            A list containing the BlobTag objects from generated code.
-        :returns: A dictionary of the BlobTag objects.
-        :rtype: Dict[str, str] or None
+    A list containing the BlobTag objects from generated code.
+    :returns: A dictionary of the BlobTag objects.
+    :rtype: Dict[str, str] or None
     """
     if generated_tags:
         tag_dict = {t.key: t.value for t in generated_tags.blob_tag_set}

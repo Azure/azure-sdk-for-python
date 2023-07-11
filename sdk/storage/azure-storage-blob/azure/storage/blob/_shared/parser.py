@@ -23,18 +23,16 @@ else:
 def _to_utc_datetime(value):
     return value.strftime('%Y-%m-%dT%H:%M:%SZ')
 
+# Converts an RFC 1123 date string to a UTC datetime.
 def _rfc_1123_to_datetime(rfc_1123: str) -> datetime:
-    """Converts an RFC 1123 date string to a UTC datetime.
-    """
     if not rfc_1123:
         return None
 
     return datetime.strptime(rfc_1123, "%a, %d %b %Y %H:%M:%S %Z")
 
+# Converts an MS filetime string to a UTC datetime. "0" indicates None.
+# If parsing MS Filetime fails, tries RFC 1123 as backup.
 def _filetime_to_datetime(filetime: str) -> datetime:
-    """Converts an MS filetime string to a UTC datetime. "0" indicates None.
-    If parsing MS Filetime fails, tries RFC 1123 as backup.
-    """
     if not filetime:
         return None
 

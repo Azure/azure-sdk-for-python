@@ -1290,6 +1290,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             encoding=encoding,
             **kwargs)
 
+    # This code is a copy from _generated.
+    # Once Autorest is able to provide request preparation this code should be removed.
     def _generate_delete_blobs_subrequest_options(
         self, snapshot=None,
         version_id=None,
@@ -1506,6 +1508,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
         return self._batch_send(*reqs, **options)
 
+    # This code is a copy from _generated.
+    # Once Autorest is able to provide request preparation this code should be removed.
     def _generate_set_tiers_subrequest_options(
         self, tier, snapshot=None, version_id=None, rehydrate_priority=None, lease_access_conditions=None, **kwargs
     ):

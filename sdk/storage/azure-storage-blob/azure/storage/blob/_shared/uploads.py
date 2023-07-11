@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=no-self-use
 
 from concurrent import futures
 from io import BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation
@@ -407,8 +406,8 @@ class SubStream(IOBase):
         try:
             # only the main thread runs this, so there's no need grabbing the lock
             wrapped_stream.seek(0, SEEK_CUR)
-        except:
-            raise ValueError("Wrapped stream must support seek().")
+        except Exception as exc:
+            raise ValueError("Wrapped stream must support seek().") from exc
 
         self._lock = lockObj
         self._wrapped_stream = wrapped_stream

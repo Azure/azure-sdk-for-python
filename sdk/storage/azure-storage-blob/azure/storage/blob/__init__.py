@@ -121,8 +121,13 @@ def upload_blob_to_url(
         return client.upload_blob(data=data, blob_type=BlobType.BlockBlob, **kwargs)
 
 
-# Download data to specified open file-handle.
 def _download_to_stream(client, handle, **kwargs):
+    """
+    Download data to specified open file-handle.
+
+    :param BlobClient client: The BlobClient to download with.
+    :param Stream handle: A Stream to download the data into.
+    """
     stream = client.download_blob(**kwargs)
     stream.readinto(handle)
 
