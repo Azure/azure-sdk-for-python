@@ -10,7 +10,7 @@ from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import ( # pylint:disable=non-abstract-transport-import,no-name-in-module
+from azure.core.pipeline.transport import (  # pylint:disable=non-abstract-transport-import,no-name-in-module
     RequestsTransport,
 )
 from azure.core.pipeline.policies import (
@@ -390,7 +390,7 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 
     @distributed_trace
-    def delete_configuration_setting(   # pylint:disable=delete-operation-wrong-return-type
+    def delete_configuration_setting(  # pylint:disable=delete-operation-wrong-return-type
         self, key: str, label: Optional[str] = None, **kwargs
     ) -> ConfigurationSetting:
         """Delete a ConfigurationSetting if it exists
