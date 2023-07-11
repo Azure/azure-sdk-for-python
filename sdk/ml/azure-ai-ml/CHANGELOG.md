@@ -1,12 +1,14 @@
 # Release History
 
+## 1.10.0 (Unreleased)
+
 ## 1.9.0 (Unreleased)
 
 ### Other Changes
 
 - Improved the output when printing a workspace object to be more clean and readable. 
 
-## 1.8.0 (Unreleased)
+## 1.8.0 (2023-06-12)
 
 ### Features Added
 - Added support to enable set workspace connection secret expiry time.
