@@ -194,16 +194,17 @@ directive:
         if (property.includes('/{containerName}/{blob}'))
         {
             var oldName = property;
-            var newName = property.replace('/{containerName}/{blob}', '');
+            var newName = property.replace('/{containerName}/{blob}', '?restype=temp');
             $[newName] = $[oldName];
             delete $[oldName];
         }
         else if (property.includes('/{containerName}'))
         {
             var oldName = property;
-            var newName = property.replace('/{containerName}', '');
+            var newName = property.replace('/{containerName}', '?restype=temp');
             $[newName] = $[oldName];
             delete $[oldName];
         }
     }
 ```
+

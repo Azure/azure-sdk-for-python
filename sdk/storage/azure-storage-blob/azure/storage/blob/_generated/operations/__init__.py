@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from ._service_operations import ServiceOperations
-from ._blob_operations import BlobOperations
 from ._container_operations import ContainerOperations
+from ._blob_operations import BlobOperations
 from ._page_blob_operations import PageBlobOperations
 from ._append_blob_operations import AppendBlobOperations
 from ._block_blob_operations import BlockBlobOperations
@@ -19,8 +19,8 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "ServiceOperations",
-    "BlobOperations",
     "ContainerOperations",
+    "BlobOperations",
     "PageBlobOperations",
     "AppendBlobOperations",
     "BlockBlobOperations",

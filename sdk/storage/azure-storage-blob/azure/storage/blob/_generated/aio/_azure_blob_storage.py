@@ -30,10 +30,10 @@ class AzureBlobStorage:  # pylint: disable=client-accepts-api-version-keyword
 
     :ivar service: ServiceOperations operations
     :vartype service: azure.storage.blob.aio.operations.ServiceOperations
-    :ivar blob: BlobOperations operations
-    :vartype blob: azure.storage.blob.aio.operations.BlobOperations
     :ivar container: ContainerOperations operations
     :vartype container: azure.storage.blob.aio.operations.ContainerOperations
+    :ivar blob: BlobOperations operations
+    :vartype blob: azure.storage.blob.aio.operations.BlobOperations
     :ivar page_blob: PageBlobOperations operations
     :vartype page_blob: azure.storage.blob.aio.operations.PageBlobOperations
     :ivar append_blob: AppendBlobOperations operations
@@ -61,8 +61,8 @@ class AzureBlobStorage:  # pylint: disable=client-accepts-api-version-keyword
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.blob = BlobOperations(self._client, self._config, self._serialize, self._deserialize)
         self.container = ContainerOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.blob = BlobOperations(self._client, self._config, self._serialize, self._deserialize)
         self.page_blob = PageBlobOperations(self._client, self._config, self._serialize, self._deserialize)
         self.append_blob = AppendBlobOperations(self._client, self._config, self._serialize, self._deserialize)
         self.block_blob = BlockBlobOperations(self._client, self._config, self._serialize, self._deserialize)

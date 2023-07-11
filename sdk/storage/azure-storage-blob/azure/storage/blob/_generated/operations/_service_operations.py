@@ -228,6 +228,34 @@ def build_get_user_delegation_key_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
+def build_get_account_info_request(url: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    restype: Literal["account"] = kwargs.pop("restype", _params.pop("restype", "account"))
+    comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    accept = _headers.pop("Accept", "application/xml")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "{url}")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["restype"] = _SERIALIZER.query("restype", restype, "str")
+    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
+
+    # Construct headers
+    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_submit_batch_request(
     url: str,
     *,
@@ -803,6 +831,76 @@ class ServiceOperations:
         return deserialized
 
     get_user_delegation_key.metadata = {"url": "{url}"}
+
+    @distributed_trace
+    def get_account_info(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Returns the sku name and account kind.
+
+        :keyword restype: restype. Default value is "account". Note that overriding this default value
+         may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype: Literal["account"] = kwargs.pop("restype", _params.pop("restype", "account"))
+        comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        request = build_get_account_info_request(
+            url=self._config.url,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
+            template_url=self.get_account_info.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-sku-name"] = self._deserialize("str", response.headers.get("x-ms-sku-name"))
+        response_headers["x-ms-account-kind"] = self._deserialize("str", response.headers.get("x-ms-account-kind"))
+        response_headers["x-ms-is-hns-enabled"] = self._deserialize("bool", response.headers.get("x-ms-is-hns-enabled"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    get_account_info.metadata = {"url": "{url}"}
 
     @distributed_trace
     def submit_batch(
