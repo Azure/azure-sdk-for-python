@@ -60,8 +60,7 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
             from_identifier = identifier_from_raw_id(from_id)
             to_id = mapper["to"]["rawId"]
             to_identifier = identifier_from_raw_id(to_id)
-            unique_id = self._parse_ids_from_identifier(from_identifier) + self._parse_ids_from_identifier(
-                to_identifier)
+            unique_id = self._parse_ids_from_identifier(from_identifier) + self._parse_ids_from_identifier(to_identifier)
             self.incoming_call_context_store[unique_id] = incoming_call_context
             return True
         else:

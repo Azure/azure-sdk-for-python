@@ -41,7 +41,7 @@ class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase)
         print("starting test")
         try:
             # create caller and receiver
-            print('TEST SCENARIO: _play_media_in_a_call')
+            print('TEST SCENARIO: _create_VOIP_call_and_answer_then_hangup')
             caller = self.identity_client.create_user()
             target = self.identity_client.create_user()
             call_automation_client_caller = CallAutomationClient.from_connection_string(self.connection_str, source=caller) # for creating call
