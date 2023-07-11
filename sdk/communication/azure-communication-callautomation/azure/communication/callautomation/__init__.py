@@ -41,9 +41,9 @@ from ._generated.models._enums import (
     RecordingFormat,
     RecognizeInputType,
     DtmfTone,
-    Gender,
     CallConnectionState,
-    RecordingState
+    RecordingState,
+    Gender
 )
 __all__ = [
     # clients
@@ -57,7 +57,6 @@ __all__ = [
     "FileSource",
     "TextSource",
     "SsmlSource",
-    "Gender",
     "Choice",
     "ChannelAffinity",
 
@@ -89,6 +88,7 @@ __all__ = [
     "RecognizeInputType",
     "DtmfTone",
     "CallConnectionState",
-    "RecordingState"
+    "RecordingState",
+    "Gender"
 ]
 __version__ = VERSION

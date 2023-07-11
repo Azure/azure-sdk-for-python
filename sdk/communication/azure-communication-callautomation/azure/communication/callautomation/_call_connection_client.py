@@ -412,9 +412,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         dtmf_max_tones_to_collect: Optional[int] = None,
         dtmf_stop_tones: Optional[List[str or 'DtmfTone']] = None,
         speech_language: Optional[str] = None,
-        speech_recognition_model_endpoint_id: Optional[str] = None,
         choices: Optional[List['Choice']] = None,
         end_silence_timeout_in_ms: Optional[int] = None,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
         **kwargs
     ) -> None:
         """Recognize tones from specific participant in this call.
@@ -447,13 +447,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.DtmfTone]
         :keyword speech_language: Speech language to be recognized, If not set default is en-US.
         :paramtype speech_language: str
-        :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
-        :paramtype speech_recognition_model_endpoint_id: str
         :keyword choices: Defines Ivr choices for recognize.
         :paramtype choices: list[~azure.communication.callautomation.models.Choice]
         :keyword end_silence_timeout_in_ms: The length of end silence when user stops speaking and cogservice
          send response.
         :paramtype end_silence_timeout_in_ms: int
+        :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+        :paramtype speech_recognition_model_endpoint_id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -502,7 +502,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         recognize_request = RecognizeRequest(
             recognize_input_type=input_type,
-            play_prompt=play_source_single._to_generated(),#pylint:disable=protected-access
+            play_prompt=
+            play_source_single._to_generated() if play_source_single is not None else None,#pylint:disable=protected-access
             interrupt_call_media_operation=interrupt_call_media_operation,
             operation_context=operation_context,
             recognize_options=options,
