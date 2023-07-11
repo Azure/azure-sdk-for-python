@@ -232,6 +232,8 @@ class TextSource(object):
         https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"""
     play_source_cache_id: Optional[str]
     """Cached source id of the play media, if it exists."""
+    custom_voice_endpoint_id: Optional[str]
+    """Endpoint where the custom voice was deployed"""
 
     def __init__(
             self,
@@ -241,6 +243,7 @@ class TextSource(object):
             voice_gender: Optional[Union[str, 'Gender']] = None,
             voice_name: Optional[str] = None,
             play_source_cache_id: Optional[str] = None,
+            custom_voice_endpoint_id: Optional[str] = None,
             **kwargs
     ):
         super().__init__(**kwargs)
@@ -249,6 +252,7 @@ class TextSource(object):
         self.voice_gender = voice_gender
         self.voice_name = voice_name
         self.play_source_cache_id = play_source_cache_id
+        self.custom_voice_endpoint_id = custom_voice_endpoint_id
 
     def _to_generated(self):
         return PlaySourceInternal(
@@ -257,7 +261,8 @@ class TextSource(object):
             text=self.text,
             source_locale=self.source_locale,
             voice_gender=self.voice_gender,
-            voice_name=self.voice_name),
+            voice_name=self.voice_name,
+            custom_voice_endpoint_id=self.custom_voice_endpoint_id),
             play_source_id=self.play_source_cache_id
         )
 
@@ -268,28 +273,36 @@ class SsmlSource(object):
     :type ssml_text: str
     :keyword play_source_cache_id: Cached source id of the play media, if it exists.
     :paramtype play_source_cache_id: str
+    :ivar custom_voice_endpoint_id: Endpoint id where the custom voice model is deployed.
+    :vartype custom_voice_endpoint_id: str
     """
 
     ssml_text: str
     """Ssml string for the cognitive service to be played."""
     play_source_cache_id: Optional[str]
     """Cached source id of the play media, if it exists."""
+    custom_voice_endpoint_id: Optional[str]
+    """Endpoint where the custom voice model was deployed."""
 
     def __init__(
             self,
             ssml_text: str,
             *,
             play_source_cache_id: Optional[str] = None,
+            custom_voice_endpoint_id: Optional[str] = None,
             **kwargs
     ):
         super().__init__(**kwargs)
         self.ssml_text = ssml_text
         self.play_source_cache_id = play_source_cache_id
+        self.custom_voice_endpoint_id = custom_voice_endpoint_id
 
     def _to_generated(self):
         return PlaySourceInternal(
             source_type=PlaySourceType.SSML,
-            ssml_source=SsmlSourceInternal(ssml_text=self.ssml_text),
+            ssml_source=SsmlSourceInternal(
+                ssml_text=self.ssml_text,
+                custom_voice_endpoint_id=self.custom_voice_endpoint_id),
             play_source_id=self.play_source_cache_id
         )
 

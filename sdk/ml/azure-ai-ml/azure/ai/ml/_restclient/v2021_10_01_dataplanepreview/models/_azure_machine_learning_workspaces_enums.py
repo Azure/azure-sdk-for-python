@@ -7,23 +7,22 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class BaseEnvironmentSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class BaseEnvironmentSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Base environment type."""
 
     ENVIRONMENT_ASSET = "EnvironmentAsset"
 
 
-class BindingType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class BindingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Different Binding types"""
 
     BASIC = "Basic"
 
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
     USER = "User"
@@ -32,7 +31,7 @@ class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     KEY = "Key"
 
 
-class CredentialsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CredentialsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the datastore credentials type."""
 
     ACCOUNT_KEY = "AccountKey"
@@ -42,7 +41,7 @@ class CredentialsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SERVICE_PRINCIPAL = "ServicePrincipal"
 
 
-class DataReferenceCredentialType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DataReferenceCredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SAS = "SAS"
     DOCKER_CREDENTIALS = "DockerCredentials"
@@ -50,7 +49,7 @@ class DataReferenceCredentialType(with_metaclass(CaseInsensitiveEnumMeta, str, E
     NO_CREDENTIALS = "NoCredentials"
 
 
-class DatastoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DatastoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the datastore contents type."""
 
     AZURE_BLOB = "AzureBlob"
@@ -59,7 +58,7 @@ class DatastoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AZURE_FILE = "AzureFile"
 
 
-class DataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the type of data."""
 
     URI_FILE = "uri_file"
@@ -67,7 +66,7 @@ class DataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MLTABLE = "mltable"
 
 
-class DistributionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DistributionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the job distribution type."""
 
     PY_TORCH = "PyTorch"
@@ -75,35 +74,35 @@ class DistributionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MPI = "Mpi"
 
 
-class EarlyTerminationPolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EarlyTerminationPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     BANDIT = "Bandit"
     MEDIAN_STOPPING = "MedianStopping"
     TRUNCATION_SELECTION = "TruncationSelection"
 
 
-class EnvironmentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class EnvironmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Environment type is either user created or curated by Azure ML service"""
 
     CURATED = "Curated"
     USER_CREATED = "UserCreated"
 
 
-class Goal(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Goal(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines supported metric goals for hyperparameter tuning"""
 
     MINIMIZE = "Minimize"
     MAXIMIZE = "Maximize"
 
 
-class IdentityConfigurationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class IdentityConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine identity framework."""
 
     MANAGED = "Managed"
     AML_TOKEN = "AMLToken"
 
 
-class InferencingServerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class InferencingServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Inferencing server type for various targets."""
 
     AZURE_ML_ONLINE = "AzureMLOnline"
@@ -112,7 +111,7 @@ class InferencingServerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CUSTOM = "Custom"
 
 
-class InputDataDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class InputDataDeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the input data delivery mode."""
 
     READ_ONLY_MOUNT = "ReadOnlyMount"
@@ -120,7 +119,7 @@ class InputDataDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DOWNLOAD = "Download"
 
 
-class InputPathType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class InputPathType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Input path type for package inputs."""
 
     URL = "Url"
@@ -128,7 +127,7 @@ class InputPathType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PATH_VERSION = "PathVersion"
 
 
-class JobInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class JobInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the Job Input Type."""
 
     DATASET = "Dataset"
@@ -136,20 +135,20 @@ class JobInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LITERAL = "Literal"
 
 
-class JobLimitsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class JobLimitsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     COMMAND = "Command"
     SWEEP = "Sweep"
 
 
-class JobOutputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class JobOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the Job Output Type."""
 
     URI = "Uri"
     DATASET = "Dataset"
 
 
-class JobStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of a job."""
 
     NOT_STARTED = "NotStarted"
@@ -168,7 +167,7 @@ class JobStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNKNOWN = "Unknown"
 
 
-class JobType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the type of job."""
 
     COMMAND = "Command"
@@ -177,28 +176,28 @@ class JobType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     BASE = "Base"
 
 
-class ListViewType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ACTIVE_ONLY = "ActiveOnly"
     ARCHIVED_ONLY = "ArchivedOnly"
     ALL = "All"
 
 
-class OperatingSystemType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OperatingSystemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of operating system."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
 
-class OutputDataDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OutputDataDeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Output data delivery mode enums."""
 
     READ_WRITE_MOUNT = "ReadWriteMount"
     UPLOAD = "Upload"
 
 
-class PackageBuildState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PackageBuildState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Package build state returned in package response."""
 
     NOT_STARTED = "NotStarted"
@@ -207,28 +206,28 @@ class PackageBuildState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
 
 
-class PackageInputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PackageInputDeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Mounting type of the model or the inputs"""
 
     COPY = "Copy"
     DOWNLOAD = "Download"
 
 
-class PackageInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class PackageInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of the inputs."""
 
     URI_FILE = "UriFile"
     URI_FOLDER = "UriFolder"
 
 
-class ProtectionLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Protection level associated with the Intellectual Property."""
 
     ALL = "All"
     NONE = "None"
 
 
-class ReferenceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine which reference method to use for an asset."""
 
     ID = "Id"
@@ -236,14 +235,14 @@ class ReferenceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     OUTPUT_PATH = "OutputPath"
 
 
-class SamplingAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SamplingAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     GRID = "Grid"
     RANDOM = "Random"
     BAYESIAN = "Bayesian"
 
 
-class SecretsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SecretsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the datastore secrets type."""
 
     ACCOUNT_KEY = "AccountKey"
@@ -252,7 +251,7 @@ class SecretsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SERVICE_PRINCIPAL = "ServicePrincipal"
 
 
-class ServiceDataAccessAuthIdentity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ServiceDataAccessAuthIdentity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NONE = "None"
     WORKSPACE_SYSTEM_ASSIGNED_IDENTITY = "WorkspaceSystemAssignedIdentity"

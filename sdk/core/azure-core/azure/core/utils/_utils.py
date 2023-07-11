@@ -91,6 +91,8 @@ def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping[str, Any]
     :param args: The input mapping structure.
     :type args: Mapping[str, Any] or Iterable[Tuple[str, Any]
 
+    :param args: The positional arguments to pass to the dict.
+    :type args: any
     :return: A case-insensitive mutable mapping object.
     :rtype: ~collections.abc.MutableMapping
     """

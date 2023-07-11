@@ -3037,6 +3037,8 @@ class RecognizeOptions(_serialization.Model):
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar speech_language: Speech language to be recognized, If not set default is en-US.
     :vartype speech_language: str
+    :ivar speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+    :vartype speech_recognition_model_endpoint_id: str
     :ivar dtmf_options: Defines configurations for DTMF.
     :vartype dtmf_options: ~azure.communication.callautomation.models.DtmfOptions
     :ivar choices: Defines Ivr choices for recognize.
@@ -3055,6 +3057,7 @@ class RecognizeOptions(_serialization.Model):
         "initial_silence_timeout_in_seconds": {"key": "initialSilenceTimeoutInSeconds", "type": "int"},
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
         "speech_language": {"key": "speechLanguage", "type": "str"},
+        "speech_recognition_model_endpoint_id": {"key": "speechRecognitionModelEndpointId", "type": "str"},
         "dtmf_options": {"key": "dtmfOptions", "type": "DtmfOptions"},
         "choices": {"key": "choices", "type": "[Choice]"},
         "speech_options": {"key": "speechOptions", "type": "SpeechOptions"},
@@ -3067,6 +3070,7 @@ class RecognizeOptions(_serialization.Model):
         interrupt_prompt: Optional[bool] = None,
         initial_silence_timeout_in_seconds: Optional[int] = None,
         speech_language: Optional[str] = None,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
         dtmf_options: Optional["_models.DtmfOptions"] = None,
         choices: Optional[List["_models.Choice"]] = None,
         speech_options: Optional["_models.SpeechOptions"] = None,
@@ -3083,6 +3087,8 @@ class RecognizeOptions(_serialization.Model):
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword speech_language: Speech language to be recognized, If not set default is en-US.
         :paramtype speech_language: str
+        :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+        :paramtype speech_recognition_model_endpoint_id: str
         :keyword dtmf_options: Defines configurations for DTMF.
         :paramtype dtmf_options: ~azure.communication.callautomation.models.DtmfOptions
         :keyword choices: Defines Ivr choices for recognize.
@@ -3095,6 +3101,7 @@ class RecognizeOptions(_serialization.Model):
         self.initial_silence_timeout_in_seconds = initial_silence_timeout_in_seconds
         self.target_participant = target_participant
         self.speech_language = speech_language
+        self.speech_recognition_model_endpoint_id = speech_recognition_model_endpoint_id
         self.dtmf_options = dtmf_options
         self.choices = choices
         self.speech_options = speech_options
@@ -3810,6 +3817,8 @@ class SsmlSource(_serialization.Model):
 
     :ivar ssml_text: Ssml string for the cognitive service to be played. Required.
     :vartype ssml_text: str
+    :ivar custom_voice_endpoint_id: Endpoint where the custom voice was deployed.
+    :vartype custom_voice_endpoint_id: str
     """
 
     _validation = {
@@ -3818,15 +3827,19 @@ class SsmlSource(_serialization.Model):
 
     _attribute_map = {
         "ssml_text": {"key": "ssmlText", "type": "str"},
+        "custom_voice_endpoint_id": {"key": "customVoiceEndpointId", "type": "str"},
     }
 
-    def __init__(self, *, ssml_text: str, **kwargs: Any) -> None:
+    def __init__(self, *, ssml_text: str, custom_voice_endpoint_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword ssml_text: Ssml string for the cognitive service to be played. Required.
         :paramtype ssml_text: str
+        :keyword custom_voice_endpoint_id: Endpoint where the custom voice was deployed.
+        :paramtype custom_voice_endpoint_id: str
         """
         super().__init__(**kwargs)
         self.ssml_text = ssml_text
+        self.custom_voice_endpoint_id = custom_voice_endpoint_id
 
 
 class StartCallRecordingRequest(_serialization.Model):
@@ -4014,6 +4027,8 @@ class TextSource(_serialization.Model):
      href="https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
      />`.
     :vartype voice_name: str
+    :ivar custom_voice_endpoint_id: Endpoint where the custom voice was deployed.
+    :vartype custom_voice_endpoint_id: str
     """
 
     _validation = {
@@ -4025,6 +4040,7 @@ class TextSource(_serialization.Model):
         "source_locale": {"key": "sourceLocale", "type": "str"},
         "voice_gender": {"key": "voiceGender", "type": "str"},
         "voice_name": {"key": "voiceName", "type": "str"},
+        "custom_voice_endpoint_id": {"key": "customVoiceEndpointId", "type": "str"},
     }
 
     def __init__(
@@ -4034,6 +4050,7 @@ class TextSource(_serialization.Model):
         source_locale: Optional[str] = None,
         voice_gender: Optional[Union[str, "_models.Gender"]] = None,
         voice_name: Optional[str] = None,
+        custom_voice_endpoint_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4051,12 +4068,15 @@ class TextSource(_serialization.Model):
          href="https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
          />`.
         :paramtype voice_name: str
+        :keyword custom_voice_endpoint_id: Endpoint where the custom voice was deployed.
+        :paramtype custom_voice_endpoint_id: str
         """
         super().__init__(**kwargs)
         self.text = text
         self.source_locale = source_locale
         self.voice_gender = voice_gender
         self.voice_name = voice_name
+        self.custom_voice_endpoint_id = custom_voice_endpoint_id
 
 
 class ToneInfo(_serialization.Model):

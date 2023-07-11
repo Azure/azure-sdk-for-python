@@ -274,6 +274,11 @@ A method that's decorated by the ServicePreparer from the example would be calle
 `testservice_secret` as keyword arguments. These arguments use the real values from your `.env` file as the variable
 values in live mode, and the fake values specified in the decorator in playback mode.
 
+**Be sure to match the formatting of live values in playback values.** For example, if the actual service endpoint in
+your `.env` file doesn't end with a trailing slash (`/`), adding a trailing slash to your playback endpoint value will
+result in playback errors. The exact value of your live variables will be replaced with the exact value of your playback
+variables in recordings.
+
 > **Note:** The EnvironmentVariableLoader expects environment variables for service tests to be prefixed with the
 > service name (e.g. `KEYVAULT_` for Key Vault tests). You'll need to set environment variables for
 > `{SERVICE}_TENANT_ID`, `{SERVICE}_CLIENT_ID`, and `{SERVICE}_CLIENT_SECRET` for a service principal when using this

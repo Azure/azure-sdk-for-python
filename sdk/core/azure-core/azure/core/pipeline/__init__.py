@@ -26,8 +26,8 @@
 
 from typing import TypeVar, Generic, Dict, Any
 
-HTTPResponseType = TypeVar("HTTPResponseType", covariant=True)
-HTTPRequestType = TypeVar("HTTPRequestType", covariant=True)
+HTTPResponseType_co = TypeVar("HTTPResponseType_co", covariant=True)
+HTTPRequestType_co = TypeVar("HTTPRequestType_co", covariant=True)
 
 
 class PipelineContext(Dict[str, Any]):
@@ -121,7 +121,7 @@ class PipelineContext(Dict[str, Any]):
         return super(PipelineContext, self).pop(*args)
 
 
-class PipelineRequest(Generic[HTTPRequestType]):
+class PipelineRequest(Generic[HTTPRequestType_co]):
     """A pipeline request object.
 
     Container for moving the HttpRequest through the pipeline.
@@ -133,12 +133,12 @@ class PipelineRequest(Generic[HTTPRequestType]):
     :type context: ~azure.core.pipeline.PipelineContext
     """
 
-    def __init__(self, http_request: HTTPRequestType, context: PipelineContext) -> None:
+    def __init__(self, http_request: HTTPRequestType_co, context: PipelineContext) -> None:
         self.http_request = http_request
         self.context = context
 
 
-class PipelineResponse(Generic[HTTPRequestType, HTTPResponseType]):
+class PipelineResponse(Generic[HTTPRequestType_co, HTTPResponseType_co]):
     """A pipeline response object.
 
     The PipelineResponse interface exposes an HTTP response object as it returns through the pipeline of Policy objects.
@@ -158,8 +158,8 @@ class PipelineResponse(Generic[HTTPRequestType, HTTPResponseType]):
 
     def __init__(
         self,
-        http_request: HTTPRequestType,
-        http_response: HTTPResponseType,
+        http_request: HTTPRequestType_co,
+        http_response: HTTPResponseType_co,
         context: PipelineContext,
     ) -> None:
         self.http_request = http_request
