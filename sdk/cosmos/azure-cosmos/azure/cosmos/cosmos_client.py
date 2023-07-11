@@ -213,9 +213,11 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :param str conn_str: The connection string.
         :param credential: Alternative credentials to use instead of the key
             provided in the connection string.
-        :type credential: str or dict(str, str)
-        :param Optional[str] consistency_level:
+        :type credential: Union[str, Dict[str, str]]
+        :param str consistency_level:
             Consistency level to use for the session. The default value is None (Account level).
+        :returns: A CosmosClient instance representing the new client.
+        :rtype: ~azure.cosmos.CosmosClient
         """
         settings = _parse_connection_str(conn_str, credential)
         return cls(
@@ -249,11 +251,11 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         """
         Create a new database with the given ID (name).
 
-        :param id: ID (name) of the database to create.
+        :param str id: ID (name) of the database to create.
         :param offer_throughput: The provisioned throughput for this offer.
-        :paramtype offer_throughput: int or ~azure.cosmos.ThroughputProperties.
+        :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
@@ -306,12 +308,12 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
             This function does not check or update existing database settings or
             offer throughput if they differ from what is passed in.
 
-        :param id: ID (name) of the database to read or create.
+        :param str id: ID (name) of the database to read or create.
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :param offer_throughput: The provisioned throughput for this offer.
-        :type offer_throughput: int or ~azure.cosmos.ThroughputProperties.
+        :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
@@ -367,10 +369,10 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of database properties (dicts).
-        :rtype: Iterable[dict[str, str]]
+        :rtype: Iterable[Dict[str, str]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -402,15 +404,15 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         """Query the databases in a Cosmos DB SQL database account.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
-        :param list[str] parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :param List[str] parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param bool enable_cross_partition_query: Allow scan on the queries which couldn't be
             served as indexing was opted out on the requested paths.
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of database properties (dicts).
-        :rtype: Iterable[dict[str, str]]
+        :rtype: Iterable[Dict[str, str]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -451,9 +453,9 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         :param database: The ID (name), dict representing the properties or :class:`DatabaseProxy`
             instance of the database to delete.
-        :type database: str or dict(str, str) or ~azure.cosmos.DatabaseProxy
+        :type database: Union[str, Dict[str, str], ~azure.cosmos.DatabaseProxy]
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.

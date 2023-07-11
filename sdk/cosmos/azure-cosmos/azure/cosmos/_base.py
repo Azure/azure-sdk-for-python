@@ -110,7 +110,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 ):
     """Gets HTTP request headers.
 
-    :param cosmos_client_connection.CosmosClient cosmos_client:
+    :param _cosmos_client_connection.CosmosClientConnection cosmos_client_connection:
     :param dict default_headers:
     :param str verb:
     :param str path:

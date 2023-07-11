@@ -676,7 +676,7 @@ class DatabaseProxy(object):
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
-            If the replace failed or the user with given ID does not exist.
+            If the replace operation failed or the user with given ID does not exist.
         :returns: A `UserProxy` instance representing the user after replace went through.
         :rtype: ~azure.cosmos.aio.UserProxy
         """
