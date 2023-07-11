@@ -88,11 +88,9 @@ class PipelineContext(Dict[str, Any]):
             raise ValueError("Context value {} cannot be deleted.".format(key))
         return super(PipelineContext, self).__delitem__(key)
 
-    def clear(self) -> None:
+    def clear(self):  # pylint: disable=docstring-missing-return, docstring-missing-rtype
         """Context objects cannot be cleared.
 
-        :return: None
-        :rtype: None
         :raises: TypeError
         """
         raise TypeError("Context objects cannot be cleared.")
