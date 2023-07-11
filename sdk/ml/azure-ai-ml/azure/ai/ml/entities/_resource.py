@@ -23,7 +23,8 @@ class Resource(abc.ABC):
 
     This class should not be instantiated directly. Instead, use the subclasses.
 
-    Resource is an abstract object that serves as a base for creating resources. It contains common properties and methods for all resources.
+    Resource is an abstract object that serves as a base for creating resources. It contains common properties and
+    methods for all resources.
 
     :param name: The name of the resource.
     :type name: str

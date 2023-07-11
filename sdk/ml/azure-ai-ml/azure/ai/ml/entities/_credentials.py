@@ -132,6 +132,7 @@ class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
     :type pat: str
 
     .. admonition:: Example:
+
         .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START personal_access_token_configuration]
             :end-before: [END personal_access_token_configuration]
@@ -506,6 +507,7 @@ class UserIdentityConfiguration(_BaseIdentityConfiguration):
     """User identity configuration.
 
     .. admonition:: Example:
+
         .. literalinclude:: ../samples/ml_samples_authentication.py
             :start-after: [START user_identity_configuration]
             :end-before: [END user_identity_configuration]
@@ -550,6 +552,7 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
     """AzureML Token identity configuration.
 
     .. admonition:: Example:
+
         .. literalinclude:: ../samples/ml_samples_authentication.py
             :start-after: [START aml_token_configuration]
             :end-before: [END aml_token_configuration]

@@ -41,7 +41,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
     :type kwargs: dict
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         *,
         endpoint: Optional[str] = None,
@@ -52,7 +52,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
         status: Optional[str] = None,
         port: Optional[int] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs: Dict,  # pylint: disable=unused-argument
+        **kwargs: Dict,
     ) -> None:
         self.endpoint = endpoint
         self.type = type

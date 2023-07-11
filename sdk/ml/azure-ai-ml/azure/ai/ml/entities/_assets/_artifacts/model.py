@@ -55,7 +55,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
     :param stage: The stage of the resource.
     :type stage: str
     :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict[str, Any]
+    :type kwargs: dict
 
     .. admonition:: Example:
 

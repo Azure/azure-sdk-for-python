@@ -72,6 +72,7 @@ class RecurrencePattern(RestTranslatableMixin):
     :type month_days: Union[int, list[int]]
 
     .. admonition:: Example:
+
         .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START job_schedule_configuration]
             :end-before: [END job_schedule_configuration]
@@ -132,7 +133,8 @@ class CronTrigger(TriggerBase):
     :param start_time: The start time for the trigger. If using a datetime object, leave the tzinfo as None and use
         the ``time_zone`` parameter to specify a time zone if needed. If using a string, use the format
         YYYY-MM-DDThh:mm:ss. Defaults to running the first workload instantly and continuing future workloads
-        based on the schedule. If the start time is in the past, the first workload is run at the next calculated run time.
+        based on the schedule. If the start time is in the past, the first workload is run at the next calculated run
+        time.
     :type start_time: Union[str, datetime]
     :param end_time: The start time for the trigger. If using a datetime object, leave the tzinfo as None and use
         the ``time_zone`` parameter to specify a time zone if needed. If using a string, use the format
@@ -144,6 +146,7 @@ class CronTrigger(TriggerBase):
     :raises: Exception if end_time is in the past.
 
     .. admonition:: Example:
+
         .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START cron_trigger_configuration]
             :end-before: [END cron_trigger_configuration]
@@ -211,12 +214,14 @@ class RecurrenceTrigger(TriggerBase):
     :param frequency: Specifies the frequency that the schedule should be triggered with.
      Possible values include: "minute", "hour", "day", "week", "month".
     :type frequency: str
-    :param interval: Specifies the interval in conjunction with the frequency that the schedule should be triggered with.
+    :param interval: Specifies the interval in conjunction with the frequency that the schedule should be triggered
+        with.
     :type interval: int
     :param schedule: Specifies the recurrence pattern.
     :type schedule: ~azure.ai.ml.entities.RecurrencePattern
 
     .. admonition:: Example:
+
         .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START job_schedule_configuration]
             :end-before: [END job_schedule_configuration]

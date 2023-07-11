@@ -16,10 +16,12 @@ class IntellectualProperty(RestTranslatableMixin):
 
     :param publisher: The publisher's name.
     :type publisher: str
-    :param protection_level: Asset Protection Level. Accepted values are IPProtectionLevel.ALL ("all") and IPProtectionLevel.NONE ("none").
+    :param protection_level: Asset Protection Level. Accepted values are IPProtectionLevel.ALL ("all") and
+        IPProtectionLevel.NONE ("none").
     :type protection_level: Union[str, ~azure.ai.ml.constants.IPProtectionLevel]
 
     .. admonition:: Example:
+
         .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START intellectual_property_configuration]
             :end-before: [END intellectual_property_configuration]

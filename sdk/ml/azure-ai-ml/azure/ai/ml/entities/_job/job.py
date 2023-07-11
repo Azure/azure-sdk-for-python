@@ -61,14 +61,15 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     :type tags: dict[str, str]
     :param properties: The job property dictionary.
     :type properties: dict[str, str]
-    :param experiment_name: The name of the experiment the job will be created under. Defaults to the name of the current directory.
+    :param experiment_name: The name of the experiment the job will be created under. Defaults to the name of the
+        current directory.
     :type experiment_name: str
     :param services: Information on services associated with the job.
     :type services: dict[str, ~azure.ai.ml.entities.JobService]
     :param compute: Information about the compute resources associated with the job.
     :type compute: str
     :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict[str, Any]
+    :type kwargs: dict
     """
 
     def __init__(
@@ -81,7 +82,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         experiment_name: Optional[str] = None,
         compute: Optional[str] = None,
         services: Optional[Dict[str, JobService]] = None,
-        **kwargs,
+        **kwargs: Dict,
     ) -> None:
         self._type = kwargs.pop("type", JobType.COMMAND)
         self._status = kwargs.pop("status", None)
@@ -165,7 +166,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
         :param kwargs: Additional arguments to pass to the YAML serializer.
-        :type kwargs: dict[str, Any]
+        :type kwargs: dict
         :raises: FileExistsError if dest is a file path and the file already exists.
         :raises: IOError if dest is an open file and the file is not writable.
         """

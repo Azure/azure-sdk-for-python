@@ -105,7 +105,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
     :param max_instance_count: The maximum number of instances or nodes used by the compute target.
     :type max_instance_count: int
     :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict[str, Any]
+    :type kwargs: dict
 
     .. admonition:: Example:
         :class: tip

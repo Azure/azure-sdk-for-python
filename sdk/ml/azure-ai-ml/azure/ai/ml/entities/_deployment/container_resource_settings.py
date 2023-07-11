@@ -16,7 +16,8 @@ module_logger = logging.getLogger(__name__)
 class ResourceSettings(RestTranslatableMixin):
     """Resource settings for a container.
 
-    This class uses Kubernetes Resource unit formats. For more information, see https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/.
+    This class uses Kubernetes Resource unit formats. For more information, see
+    https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/.
 
     :param cpu: The CPU resource settings for a container.
     :type cpu: str

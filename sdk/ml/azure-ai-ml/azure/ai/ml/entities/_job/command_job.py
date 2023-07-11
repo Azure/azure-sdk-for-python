@@ -98,7 +98,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     :param limits: The limits for the job.
     :type limits: ~azure.ai.ml.entities.CommandJobLimits
     :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict[str, Any]
+    :type kwargs: dict
 
     .. admonition:: Example:
         :class: tip

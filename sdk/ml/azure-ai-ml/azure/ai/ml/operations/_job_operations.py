@@ -130,13 +130,15 @@ logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 class JobOperations(_ScopeDependentOperations):
     """Initiates an instance of JobOperations
 
-    You should not instantiate this class directly. Instead, you should create an MLClient instance and access JobOperations via its "jobs" attribute.
+    You should not instantiate this class directly. Instead, you should create an MLClient instance and access
+    JobOperations via its "jobs" attribute.
 
     :param operation_scope: Scope variables for the operations classes of an MLClient object.
     :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
-    :param service_client_02_2023_preview: Service client to allow end users to operate on Azure Machine Learning Workspace resources.
+    :param service_client_02_2023_preview: Service client to allow end users to operate on Azure Machine Learning
+        Workspace resources.
     :type service_client_02_2023_preview: ~azure.ai.ml._restclient.v2023_02_01_preview.AzureMachineLearningWorkspaces
     :param all_operations: All operations classes of an MLClient object.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
@@ -168,7 +170,9 @@ class JobOperations(_ScopeDependentOperations):
         self._api_base_url = None
         self._container = "azureml"
         self._credential = credential
-        self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
+        self._orchestrators = OperationOrchestrator(
+            self._all_operations, self._operation_scope, self._operation_config
+        )
 
         self._kwargs = kwargs
 
@@ -250,9 +254,12 @@ class JobOperations(_ScopeDependentOperations):
     ) -> Iterable[Job]:
         """Lists jobs in the workspace.
 
-        :param parent_job_name: When provided, only returns jobs that are children of the named job. Defaults to None, listing all jobs in the workspace.
+        :param parent_job_name: When provided, only returns jobs that are children of the named job. Defaults to None,
+            listing all jobs in the workspace.
         :type parent_job_name: str
-        :param list_view_type: The view type for including/excluding archived jobs. Accepted values include "ListViewType.ACTIVE_ONLY", "ListViewType.ARCHIVED_ONLY", "ListViewType.ALL". Defaults to ListViewType.ACTIVE_ONLY, excluding archived jobs.
+        :param list_view_type: The view type for including/excluding archived jobs. Accepted values include
+            "ListViewType.ACTIVE_ONLY", "ListViewType.ARCHIVED_ONLY", "ListViewType.ALL". Defaults to
+            ListViewType.ACTIVE_ONLY, excluding archived jobs.
         :type list_view_type: ~azure.mgmt.machinelearningservices.models.ListViewType
         :return: An iterator like instance of Job objects.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Job]
@@ -265,7 +272,8 @@ class JobOperations(_ScopeDependentOperations):
                 :end-before: [END job_operations_list]
                 :language: python
                 :dedent: 8
-                :caption: Retrieving a list of the archived jobs in a workspace with parent job named "iris-dataset-jobs".
+                :caption: Retrieving a list of the archived jobs in a workspace with parent job named
+                "iris-dataset-jobs".
         """
 
         schedule_defined = kwargs.pop("schedule_defined", None)
@@ -437,9 +445,8 @@ class JobOperations(_ScopeDependentOperations):
                 compute_name = str(compute)
             else:
                 raise ValueError(
-                    "compute must be either an arm id of Compute, a Compute object or a compute name but got {}".format(
-                        type(compute)
-                    )
+                    "compute must be either an arm id of Compute, a Compute object or a compute name but"
+                    f" got {type(compute)}"
                 )
 
             if is_data_binding_expression(compute_name):
@@ -461,7 +468,8 @@ class JobOperations(_ScopeDependentOperations):
     @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.PUBLICAPI)
     def validate(self, job: Job, *, raise_on_failure: bool = False, **kwargs) -> ValidationResult:
         """Validates a Job object before submitting to the service. Anonymous assets may be created if there are inline
-        defined entities such as Component, Environment, and Code. Only pipeline jobs are supported for validation for now.
+        defined entities such as Component, Environment, and Code. Only pipeline jobs are supported for validation for
+        now.
 
         :param job: The job object to be validated.
         :type job: ~azure.ai.ml.entities.Job
@@ -546,7 +554,8 @@ class JobOperations(_ScopeDependentOperations):
         skip_validation: bool = False,
         **kwargs,
     ) -> Job:
-        """Creates or updates a job. If entities such as Environment or Code are defined inline, they'll be created together with the job.
+        """Creates or updates a job. If entities such as Environment or Code are defined inline, they'll be created
+        together with the job.
 
         :param job: The job object.
         :type job: ~azure.ai.ml.entities.Job
@@ -559,8 +568,8 @@ class JobOperations(_ScopeDependentOperations):
         :param experiment_name: The name of the experiment the job will be created under. If None is provided,
             job will be created under experiment 'Default'.
         :type experiment_name: str
-        :param skip_validation: Specifies whether or not to skip validation before creating or updating the job. Note that validation for dependent
-            resources such as an anonymous component will not be skipped.
+        :param skip_validation: Specifies whether or not to skip validation before creating or updating the job. Note
+            that validation for dependent resources such as an anonymous component will not be skipped.
         :type skip_validation: bool
         :raises [~azure.ai.ml.exceptions.UserErrorException, ~azure.ai.ml.exceptions.ValidationException]: Raised if
             Job cannot be successfully validated. Details will be provided in the error message.
@@ -571,8 +580,10 @@ class JobOperations(_ScopeDependentOperations):
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.JobException: Raised if Job object or attributes correctly formatted.
             Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
-        :raises ~azure.ai.ml.exceptions.DockerEngineNotAvailableError: Raised if Docker Engine is not available for local job.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty
+            directory.
+        :raises ~azure.ai.ml.exceptions.DockerEngineNotAvailableError: Raised if Docker Engine is not available for
+            local job.
         :return: Created or updated job.
         :rtype: ~azure.ai.ml.entities.Job
 
@@ -1178,7 +1189,9 @@ class JobOperations(_ScopeDependentOperations):
                 message=f"Supported input path value are ARM id, AzureML id, remote uri or local path.\n"
                 f"Met {type(e)}:\n{e}",
                 target=ErrorTarget.JOB,
-                no_personal_data_message="Supported input path value are ARM id, AzureML id, remote uri or local path.",
+                no_personal_data_message=(
+                    "Supported input path value are ARM id, AzureML id, " "remote uri or local path."
+                ),
                 error=e,
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,

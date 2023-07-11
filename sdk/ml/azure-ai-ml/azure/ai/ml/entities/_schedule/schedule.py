@@ -52,7 +52,7 @@ class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
     :param properties: A dictionary of properties to associate with the schedule.
     :type properties: dict[str, str]
     :param kwargs: Additional keyword arguments passed to the Resource constructor.
-    :type kwargs: dict[str, Any]
+    :type kwargs: dict
     """
 
     def __init__(
@@ -83,7 +83,7 @@ class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
             If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
         :param kwargs: Additional arguments to pass to the YAML serializer.
-        :type kwargs: dict[str, Any]
+        :type kwargs: dict
         :raises: FileExistsError if dest is a file path and the file already exists.
         :raises: IOError if dest is an open file and the file is not writable.
         """
@@ -184,6 +184,7 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
     :type properties: dict[str, str]
 
     .. admonition:: Example:
+
         .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START job_schedule_configuration]
             :end-before: [END job_schedule_configuration]

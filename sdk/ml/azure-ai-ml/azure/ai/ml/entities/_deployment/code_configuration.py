@@ -16,8 +16,8 @@ module_logger = logging.getLogger(__name__)
 class CodeConfiguration(DictMixin):
     """Code configuration for a scoring job.
 
-    :param code: The code directory containing the scoring script. The code can be an Code object, an ARM resource ID of an existing code asset, a local path,
-    or "http:", "https:", or "azureml:" url pointing to a remote location.
+    :param code: The code directory containing the scoring script. The code can be an Code object, an ARM resource ID
+        of an existing code asset, a local path, or "http:", "https:", or "azureml:" url pointing to a remote location.
     :type code: Union[~azure.ai.ml.entities.Code, str]
     :param scoring_script: The scoring script file path relative to the code directory.
     :type scoring_script: str

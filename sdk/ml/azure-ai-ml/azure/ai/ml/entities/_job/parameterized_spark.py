@@ -39,7 +39,7 @@ class ParameterizedSpark(SparkJobEntryMixin):
     :param args: The arguments for the job.
     :type args: str
     :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict[str, Any]
+    :type kwargs: dict
     """
 
     def __init__(
