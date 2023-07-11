@@ -236,7 +236,7 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
-        error_map = {}
+        error_map = {}  # type: Dict[int, Any]
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfPresent:
@@ -334,7 +334,7 @@ class AzureAppConfigurationClient:
         """
         key_value = configuration_setting._to_generated()
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
-        error_map = {409: ResourceReadOnlyError}
+        error_map = {409: ResourceReadOnlyError}  # type: Dict[int, Any]
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
@@ -386,7 +386,7 @@ class AzureAppConfigurationClient:
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
-        error_map = {409: ResourceReadOnlyError}
+        error_map = {409: ResourceReadOnlyError}  # type: Dict[int, Any]
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
@@ -488,8 +488,7 @@ class AzureAppConfigurationClient:
             read_only_config_setting = client.set_read_only(config_setting)
             read_only_config_setting = client.set_read_only(config_setting, read_only=False)
         """
-        error_map = {}
-
+        error_map = {}  # type: Dict[int, Any]
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
@@ -589,7 +588,7 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.appconfiguration.Snapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        error_map = {}
+        error_map = {}  # type: Dict[int, Any]
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
@@ -631,7 +630,7 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.appconfiguration.Snapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        error_map = {}
+        error_map = {}  # type: Dict[int, Any]
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
