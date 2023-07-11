@@ -208,6 +208,8 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
 class TablesBaseClient(AccountHostsMixin):
     """Base class for TableClient
 
+    :ivar str table_name: The name of the table.
+    :ivar str scheme: The scheme component in the full URL to the Tables account.
     :param str endpoint: A URL to an Azure Tables account.
     :keyword credential:
         The credentials with which to authenticate. This is optional if the
