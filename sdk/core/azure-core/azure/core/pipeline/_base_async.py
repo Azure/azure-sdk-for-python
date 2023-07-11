@@ -33,7 +33,6 @@ from .transport import AsyncHttpTransport
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-HTTPResponseType = TypeVar("HTTPResponseType")
 AsyncPoliciesType = Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 
@@ -87,7 +86,7 @@ class _AsyncTransportRunner(
 
     def __init__(self, sender: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]) -> None:
         super(_AsyncTransportRunner, self).__init__()
-        self._sender: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType] = sender
+        self._sender = sender
 
     async def send(
         self, request: PipelineRequest[HTTPRequestType]
@@ -138,7 +137,7 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         policies: Optional[AsyncPoliciesType] = None,
     ) -> None:
         self._impl_policies: List[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]] = []
-        self._transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType] = transport
+        self._transport = transport
 
         for policy in policies or []:
             if isinstance(policy, SansIOHTTPPolicy):
