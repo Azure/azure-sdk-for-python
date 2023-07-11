@@ -28,7 +28,7 @@ class FormRecognizerClientBaseAsync:
         try:
             endpoint = endpoint.rstrip("/")
         except AttributeError:
-            raise ValueError("Parameter 'endpoint' must be a string.")
+            raise ValueError("Parameter 'endpoint' must be a string.")  # pylint: disable=raise-missing-from
 
         self._endpoint = endpoint
         self._credential = credential

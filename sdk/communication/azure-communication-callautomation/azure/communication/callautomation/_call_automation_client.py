@@ -31,8 +31,6 @@ from ._models import (
 )
 from ._content_downloader import ContentDownloader
 from ._utils import (
-    get_repeatability_guid,
-    get_repeatability_timestamp,
     serialize_phone_identifier,
     serialize_identifier,
     serialize_communication_user_identifier
@@ -75,9 +73,9 @@ class CallAutomationClient:
      or ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: Azure Communication Call Automation API version.
     :paramtype api_version: str
-    :keyword source_identity: ACS User Identity to be used when the call is created or answered.
+    :keyword source: ACS User Identity to be used when the call is created or answered.
      If not provided, service will generate one.
-    :paramtype source_identity: ~azure.communication.callautomation.CommunicationUserIdentifier
+    :paramtype source: ~azure.communication.callautomation.CommunicationUserIdentifier
     """
     def __init__(
             self,
@@ -85,7 +83,7 @@ class CallAutomationClient:
             credential: Union['TokenCredential', 'AzureKeyCredential'],
             *,
             api_version: Optional[str] = None,
-            source_identity: Optional['CommunicationUserIdentifier'] = None,
+            source: Optional['CommunicationUserIdentifier'] = None,
             **kwargs
     ) -> None:
         if not credential:
@@ -103,6 +101,7 @@ class CallAutomationClient:
 
         self._client = AzureCommunicationCallAutomationService(
             endpoint,
+            credential,
             api_version=api_version or DEFAULT_VERSION,
             authentication_policy=get_authentication_policy(
                 endpoint, credential),
@@ -111,7 +110,7 @@ class CallAutomationClient:
 
         self._call_recording_client = self._client.call_recording
         self._downloader = ContentDownloader(self._call_recording_client)
-        self.source_identity = source_identity
+        self.source = source
 
     @classmethod
     def from_connection_string(
@@ -129,7 +128,6 @@ class CallAutomationClient:
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, access_key, **kwargs)
 
-    @distributed_trace
     def get_call_connection(
         self,
         call_connection_id: str,
@@ -191,7 +189,7 @@ class CallAutomationClient:
                 target_participant.source_caller_id_number) if target_participant.source_caller_id_number else None,
             source_display_name=target_participant.source_display_name,
             source_identity=serialize_communication_user_identifier(
-                self.source_identity) if self.source_identity else None,
+                self.source) if self.source else None,
             operation_context=operation_context,
             media_streaming_configuration=media_streaming_configuration.to_generated(
             ) if media_streaming_configuration else None,
@@ -201,8 +199,6 @@ class CallAutomationClient:
 
         result = self._client.create_call(
             create_call_request=create_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
         return CallConnectionProperties._from_generated(# pylint:disable=protected-access
@@ -261,8 +257,8 @@ class CallAutomationClient:
             source_caller_id_number=serialize_phone_identifier(
                 source_caller_id_number) if source_caller_id_number else None,
             source_display_name=source_display_name,
-            source_identity=serialize_identifier(
-                self.source_identity) if self.source_identity else None,
+            source=serialize_identifier(
+                self.source) if self.source else None,
             operation_context=operation_context,
             media_streaming_configuration=media_streaming_configuration.to_generated(
             ) if media_streaming_configuration else None,
@@ -272,8 +268,6 @@ class CallAutomationClient:
 
         result = self._client.create_call(
             create_call_request=create_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs
         )
         return CallConnectionProperties._from_generated(result)  # pylint:disable=protected-access
@@ -314,15 +308,13 @@ class CallAutomationClient:
             media_streaming_configuration=media_streaming_configuration.to_generated(
             ) if media_streaming_configuration else None,
             azure_cognitive_services_endpoint_url=azure_cognitive_services_endpoint_url,
-            answered_by_identifier=serialize_communication_user_identifier(
-                self.source_identity) if self.source_identity else None,
+            answered_by=serialize_communication_user_identifier(
+                self.source) if self.source else None,
             operation_context=operation_context
         )
 
         result = self._client.answer_call(
             answer_call_request=answer_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs
         )
         return CallConnectionProperties._from_generated(result)  # pylint:disable=protected-access
@@ -358,8 +350,6 @@ class CallAutomationClient:
 
         self._client.redirect_call(
             redirect_call_request=redirect_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs
         )
 
@@ -389,8 +379,6 @@ class CallAutomationClient:
 
         self._client.reject_call(
             reject_call_request=reject_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs
         )
 
@@ -535,9 +523,7 @@ class CallAutomationClient:
             audio_channel_participant_ordering = kwargs.pop("audio_channel_participant_ordering", None),
             recording_storage_type = kwargs.pop("recording_storage_type", None),
             external_storage_location = kwargs.pop("external_storage_location", None),
-            channel_affinity = channel_affinity_internal,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid()
+            channel_affinity = channel_affinity_internal
         )
 
         recording_state_result = self._call_recording_client.start_recording(
@@ -627,12 +613,12 @@ class CallAutomationClient:
 
         :param recording_url: Recording's url to be downloaded
         :type recording_url: str
-        :param offset: If provided, only download the bytes of the content in the specified range.
+        :keyword offset: If provided, only download the bytes of the content in the specified range.
          Offset of starting byte.
-        :type offset: int
-        :param length: If provided, only download the bytes of the content in the specified range.
+        :paramtype offset: int
+        :keyword length: If provided, only download the bytes of the content in the specified range.
          Length of the bytes to be downloaded.
-        :type length: int
+        :paramtype length: int
         :return: Iterable[bytes]
         :rtype: Iterable[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
