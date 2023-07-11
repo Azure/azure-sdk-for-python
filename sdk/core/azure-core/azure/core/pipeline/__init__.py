@@ -97,7 +97,7 @@ class PipelineContext(Dict[str, Any]):
         """
         raise TypeError("Context objects cannot be cleared.")
 
-    def update(self, *args, **kwargs):
+    def update(self, *args, **kwargs) -> None:
         """Context objects cannot be updated.
 
         :param str args: The key to update.
