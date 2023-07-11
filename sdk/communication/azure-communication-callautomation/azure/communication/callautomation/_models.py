@@ -44,6 +44,7 @@ if TYPE_CHECKING:
         TransferCallResponse as TransferParticipantResultRest,
         RecordingStateResponse as RecordingStateResultRest,
         MuteParticipantsResponse as MuteParticipantsResultRest,
+        SendDtmfResponse as SendDtmfResponseRest,
     )
 
 class CallInvite(object):
@@ -218,6 +219,8 @@ class TextSource(object):
     :paramtype voice_name: str
     :keyword play_source_cache_id: Cached source id of the play media, if it exists.
     :paramtype play_source_cache_id: str
+    :keyword custom_voice_endpoint_id: Endpoint where the custom voice was deployed.
+    :paramtype custom_voice_endpoint_id: str
     """
 
     text: str
@@ -233,7 +236,7 @@ class TextSource(object):
     play_source_cache_id: Optional[str]
     """Cached source id of the play media, if it exists."""
     custom_voice_endpoint_id: Optional[str]
-    """Endpoint where the custom voice was deployed"""
+    """Endpoint where the custom voice was deployed."""
 
     def __init__(
             self,
@@ -258,11 +261,11 @@ class TextSource(object):
         return PlaySourceInternal(
             source_type=PlaySourceType.TEXT,
             text_source=TextSourceInternal(
-            text=self.text,
-            source_locale=self.source_locale,
-            voice_gender=self.voice_gender,
-            voice_name=self.voice_name,
-            custom_voice_endpoint_id=self.custom_voice_endpoint_id),
+                text=self.text,
+                source_locale=self.source_locale,
+                voice_gender=self.voice_gender,
+                voice_name=self.voice_name,
+                custom_voice_endpoint_id=self.custom_voice_endpoint_id),
             play_source_id=self.play_source_cache_id
         )
 
@@ -273,8 +276,8 @@ class SsmlSource(object):
     :type ssml_text: str
     :keyword play_source_cache_id: Cached source id of the play media, if it exists.
     :paramtype play_source_cache_id: str
-    :ivar custom_voice_endpoint_id: Endpoint id where the custom voice model is deployed.
-    :vartype custom_voice_endpoint_id: str
+    :keyword custom_voice_endpoint_id: Endpoint id where the custom voice model is deployed.
+    :paramtype custom_voice_endpoint_id: str
     """
 
     ssml_text: str
@@ -661,3 +664,25 @@ class MuteParticipantsResult(object):
     @classmethod
     def _from_generated(cls, mute_participants_result_generated: 'MuteParticipantsResultRest'):
         return cls(operation_context=mute_participants_result_generated.operation_context)
+
+class SendDtmfResult(object):
+    """The response payload for send Dtmf.
+    :keyword operation_context: The operation context provided by client.
+    :paramtype operation_context: str
+    """
+
+    operation_context: Optional[str]
+    """The operation context provided by client."""
+
+    def __init__(
+        self,
+        *,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        super().__init__(**kwargs)
+        self.operation_context = operation_context
+
+    @classmethod
+    def _from_generated(cls, send_dtmf_result_generated: 'SendDtmfResponseRest'):
+        return cls(operation_context=send_dtmf_result_generated.operation_context)

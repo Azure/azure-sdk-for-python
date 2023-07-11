@@ -111,7 +111,7 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
                 service_bus_receiver.complete_message(msg)
 
     def wait_for_messages(self, unique_id, time_out) -> None:
-        """Create new ServiceBus client.
+        """Wait for messages.
         Checks the Service Bus queue specified by the unique_id for messages and stores them in the event_store.
 
         :param unique_id: Identifier used to keep track of ServiceBus message queue.
@@ -156,7 +156,7 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
             event = self.event_store[call_connection_id][event_type]
             return event
         return None
-    
+
     def load_persisted_events(self, test_name) -> None:
         """
         Load persisted events.

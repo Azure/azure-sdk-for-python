@@ -99,7 +99,7 @@ class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase)
             file_source = FileSource(url=play_source_uri)
 
             caller_call_connection.play_media_to_all(
-                play_source=file_source,
+                play_source=file_source
             )
 
             # check for PlayCompleted event

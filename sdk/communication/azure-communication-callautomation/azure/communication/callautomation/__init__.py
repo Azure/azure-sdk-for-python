@@ -14,6 +14,7 @@ from ._models import (
     FileSource,
     TextSource,
     SsmlSource,
+    Choice,
     CallParticipant,
     RecordingProperties,
     AddParticipantResult,
@@ -21,7 +22,8 @@ from ._models import (
     TransferCallResult,
     MediaStreamingConfiguration,
     ChannelAffinity,
-    MuteParticipantsResult
+    MuteParticipantsResult,
+    SendDtmfResult
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -60,6 +62,7 @@ __all__ = [
     "FileSource",
     "TextSource",
     "SsmlSource",
+    "Choice",
     "ChannelAffinity",
     "MediaStreamingConfiguration",
 
@@ -71,6 +74,7 @@ __all__ = [
     "RemoveParticipantResult",
     "TransferCallResult",
     "MuteParticipantsResult",
+    "SendDtmfResult",
 
     # common ACS communication identifier
     "CommunicationIdentifier",

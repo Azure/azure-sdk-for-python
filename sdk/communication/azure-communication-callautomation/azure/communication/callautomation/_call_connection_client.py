@@ -20,6 +20,7 @@ from ._models import (
     RemoveParticipantResult,
     TransferCallResult,
     MuteParticipantsResult,
+    SendDtmfResult,
 )
 from ._generated._client import AzureCommunicationCallAutomationService
 from ._generated.models import (
@@ -415,9 +416,10 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         operation_context: Optional[str] = None,
         interrupt_prompt: bool = False,
         dtmf_inter_tone_timeout: Optional[int] = None,
-        dtmf_max_tones_to_collect: Optional[str] = None,
+        dtmf_max_tones_to_collect: Optional[int] = None,
         dtmf_stop_tones: Optional[List[str or 'DtmfTone']] = None,
-        choices: Optional[List["Choice"]] = None,
+        speech_language: Optional[str] = None,
+        choices: Optional[List['Choice']] = None,
         end_silence_timeout_in_ms: Optional[int] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         **kwargs
@@ -450,9 +452,15 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype dtmf_max_tones_to_collect: int
         :keyword dtmf_stop_tones: List of tones that will stop recognizing.
         :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.DtmfTone]
-        :keyword speech_recognition_model_endpoint_id:
-        Endpoint id where the custom speech recognition model was deployed.
-        :paramtype speech_recognition_model_endpoint_id:
+        :keyword speech_language: Speech language to be recognized, If not set default is en-US.
+        :paramtype speech_language: str
+        :keyword choices: Defines Ivr choices for recognize.
+        :paramtype choices: list[~azure.communication.callautomation.models.Choice]
+        :keyword end_silence_timeout_in_ms: The length of end silence when user stops speaking and cogservice
+         send response.
+        :paramtype end_silence_timeout_in_ms: int
+        :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+        :paramtype speech_recognition_model_endpoint_id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -461,6 +469,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             interrupt_prompt=interrupt_prompt,
             initial_silence_timeout_in_seconds=initial_silence_timeout,
             target_participant=serialize_identifier(target_participant),
+            speech_language=speech_language,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id
         )
 
@@ -471,11 +480,11 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         else:
             play_source_single = play_prompt
 
-        if isinstance(input_type, str):
+        if not isinstance(input_type, RecognizeInputType):
             input_type = RecognizeInputType[input_type.upper()]
 
         if input_type == RecognizeInputType.DTMF:
-            dtmf_options=DtmfOptions(
+            dtmf_options = DtmfOptions(
                 inter_tone_timeout_in_seconds=dtmf_inter_tone_timeout,
                 max_tones_to_collect=dtmf_max_tones_to_collect,
                 stop_tones=dtmf_stop_tones
@@ -485,7 +494,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             speech_options = SpeechOptions(end_silence_timeout_in_ms=end_silence_timeout_in_ms)
             options.speech_options = speech_options
         elif input_type == RecognizeInputType.SPEECH_OR_DTMF:
-            dtmf_options=DtmfOptions(
+            dtmf_options = DtmfOptions(
                 inter_tone_timeout_in_seconds=dtmf_inter_tone_timeout,
                 max_tones_to_collect=dtmf_max_tones_to_collect,
                 stop_tones=dtmf_stop_tones
@@ -494,7 +503,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             options.dtmf_options = dtmf_options
             options.speech_options = speech_options
         elif input_type == RecognizeInputType.CHOICES:
-            options.choices = choices
+            options.choices = [choice._to_generated() for choice in choices] #pylint:disable=protected-access
         else:
             raise NotImplementedError(f"{type(input_type).__name__} is not supported")
 
@@ -587,7 +596,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         *,
         operation_context: Optional[str] = None,
         **kwargs
-    ) -> None:
+    ) -> SendDtmfResult:
         """Send Dtmf tones to this call.
 
         :param tones: List of tones to be sent to target participant.
@@ -596,8 +605,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
-        :return: None
-        :rtype: None
+        :return: SendDtmfResult
+        :rtype: ~azure.communication.callautomation.SendDtmfResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         send_dtmf_request = SendDtmfRequest(
@@ -605,10 +614,12 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             target_participant=serialize_identifier(target_participant),
             operation_context=operation_context)
 
-        self._call_media_client.send_dtmf(
+        response = self._call_media_client.send_dtmf(
             self._call_connection_id,
             send_dtmf_request,
             **kwargs)
+
+        return SendDtmfResult._from_generated(response)  # pylint:disable=protected-access
 
     @distributed_trace
     def mute_participants(

@@ -540,8 +540,8 @@ class CallAutomationClient(object):
         :keyword length: If provided, only download the bytes of the content in the specified range.
          Length of the bytes to be downloaded.
         :paramtype length: int
-        :return: Iterable[bytes]
-        :rtype: Iterable[bytes]
+        :return: AsyncIterable[bytes]
+        :rtype: AsyncIterable[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         stream = await self._downloader.download_streaming(
