@@ -172,7 +172,7 @@ class JobOperations(_ScopeDependentOperations):
         self._credential = credential
         self._orchestrators = OperationOrchestrator(
             self._all_operations, self._operation_scope, self._operation_config
-        )
+        )  # pylint: disable=line-too-long
 
         self._kwargs = kwargs
 

@@ -173,15 +173,7 @@ def command(
     :param compute: The compute target the job will run on.
     :type compute: str
     :param inputs: A mapping of input names to input data sources used in the job.
-    :type inputs: dict[str, Union[
-        ~azure.ai.ml.Input,
-        str,
-        bool,
-        int,
-        float,
-        Enum,
-        ]
-    ]
+    :type inputs: dict[str, Union[~azure.ai.ml.Input, str, bool, int, float, Enum]]
     :param outputs: A mapping of output names to output data sources used in the job.
     :type outputs: dict[str, Union[str, ~azure.ai.ml.Output]]
     :param instance_count: The number of instances or nodes to be used by the compute target. Defaults to 1.
