@@ -161,11 +161,11 @@ class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
 
 
 class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
-    """Username Password Credentials.
+    """Username and password credentials.
 
-    :param username: username
+    :param username: The username.
     :type username: str
-    :param password: password
+    :param password: The password.
     :type password: str
     """
 
@@ -174,7 +174,7 @@ class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
         *,
         username: str,
         password: str,
-    ):
+    ) -> None:
         super().__init__()
         self.type = camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
         self.username = username
@@ -199,13 +199,27 @@ class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
 
 
 class BaseTenantCredentials(RestTranslatableMixin, DictMixin, ABC):
+    """Base class for tenant credentials.
+
+    This class should not be instantiated directly. Instead, use one of its subclasses.
+
+    :param authority_url: The authority URL.
+    :type authority_url: str
+    :param resource_url: The resource URL.
+    :type resource_url: str
+    :param tenant_id: The tenant ID.
+    :type tenant_id: str
+    :param client_id: The client ID.
+    :type client_id: str
+    """
+
     def __init__(
         self,
         authority_url: str = _get_active_directory_url_from_metadata(),
         resource_url: Optional[str] = None,
         tenant_id: Optional[str] = None,
         client_id: Optional[str] = None,
-    ):
+    ) -> None:
         super().__init__()
         self.authority_url = authority_url
         self.resource_url = resource_url

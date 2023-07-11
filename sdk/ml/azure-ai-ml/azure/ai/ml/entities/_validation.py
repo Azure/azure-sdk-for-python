@@ -11,7 +11,7 @@ import os.path
 import typing
 from os import PathLike
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import msrest
 import pydash
@@ -81,46 +81,49 @@ class ValidationResult(object):
     is immutable.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._target_obj = None
         self._errors = []
         self._warnings = []
 
     @property
-    def error_messages(self):
-        """Return all messages of errors in the validation result.
-        For example, if repr(self) is:
-        {
-            "errors": [
-                {
-                    "path": "jobs.job_a.inputs.input_str",
-                    "message": "input_str is required",
-                    "value": None,
-                },
-                {
-                    "path": "jobs.job_a.inputs.input_str",
-                    "message": "input_str must be in the format of xxx",
-                    "value": None,
-                },
-                {
-                    "path": "settings.on_init",
-                    "message": "On_init job name job_b not exists in jobs.",
-                    "value": None,
-                },
-            ],
-            "warnings": [
-                {
-                    "path": "jobs.job_a.inputs.input_str",
-                    "message": "input_str is required",
-                    "value": None,
-                }
-            ]
-        }
-        then the error_messages will be:
-        {
-            "jobs.job_a.inputs.input_str": "input_str is required; input_str must be in the format of xxx",
-            "settings.on_init": "On_init job name job_b not exists in jobs.",
-        }
+    def error_messages(self) -> Dict:
+        """
+        Return all messages of errors in the validation result.
+
+        .. admonition:: Example:
+            For example, if repr(self) is:
+            {
+                "errors": [
+                    {
+                        "path": "jobs.job_a.inputs.input_str",
+                        "message": "input_str is required",
+                        "value": None,
+                    },
+                    {
+                        "path": "jobs.job_a.inputs.input_str",
+                        "message": "input_str must be in the format of xxx",
+                        "value": None,
+                    },
+                    {
+                        "path": "settings.on_init",
+                        "message": "On_init job name job_b not exists in jobs.",
+                        "value": None,
+                    },
+                ],
+                "warnings": [
+                    {
+                        "path": "jobs.job_a.inputs.input_str",
+                        "message": "input_str is required",
+                        "value": None,
+                    }
+                ]
+            }
+            then the error_messages will be:
+            {
+                "jobs.job_a.inputs.input_str": "input_str is required; input_str must be in the format of xxx",
+                "settings.on_init": "On_init job name job_b not exists in jobs.",
+            }
         """
         messages = {}
         for diagnostic in self._errors:
@@ -160,7 +163,7 @@ class ValidationResult(object):
                 result[diagnostic_type] = messages
         return result
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Get the string representation of the validation result."""
         return json.dumps(self._to_dict(), indent=2)
 
