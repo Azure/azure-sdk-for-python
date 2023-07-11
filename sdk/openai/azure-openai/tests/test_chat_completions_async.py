@@ -432,5 +432,6 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
             **kwargs
         )
         assert function_completion
-        assert function_completion.choices[0].message.content
+        assert "sunny" in function_completion.choices[0].message.content.lower()
+        assert "22" in function_completion.choices[0].message.content
         assert function_completion.choices[0].message.role == "assistant"
