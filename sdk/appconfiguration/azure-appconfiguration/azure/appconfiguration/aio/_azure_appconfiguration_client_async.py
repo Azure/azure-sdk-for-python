@@ -600,12 +600,22 @@ class AzureAppConfigurationClient:
         :return: The Snapshot returned from the service.
         :rtype: ~azure.appconfiguration.Snapshot
         """
+        error_map = {}
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        if match_condition == MatchConditions.IfModified:
+            error_map[412] = ResourceNotModifiedError
+        if match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        if match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         try:
             generated_snapshot = await self._impl.update_snapshot(
                 name=name,
                 entity=SnapshotUpdateParameters(status=SnapshotStatus.ARCHIVED),
                 if_match=prep_if_match(etag, match_condition),
                 if_none_match=prep_if_none_match(etag, match_condition),
+                error_map=error_map,
                 **kwargs
             )
             return Snapshot._from_generated(generated_snapshot)
@@ -631,12 +641,22 @@ class AzureAppConfigurationClient:
         :return: The Snapshot returned from the service.
         :rtype: ~azure.appconfiguration.Snapshot
         """
+        error_map = {}
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        if match_condition == MatchConditions.IfModified:
+            error_map[412] = ResourceNotModifiedError
+        if match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        if match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         try:
             generated_snapshot = await self._impl.update_snapshot(
                 name=name,
                 entity=SnapshotUpdateParameters(status=SnapshotStatus.READY),
                 if_match=prep_if_match(etag, match_condition),
                 if_none_match=prep_if_none_match(etag, match_condition),
+                error_map=error_map,
                 **kwargs
             )
             return Snapshot._from_generated(generated_snapshot)
