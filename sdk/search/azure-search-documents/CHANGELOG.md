@@ -1,14 +1,10 @@
 # Release History
 
-## 11.4.0b6 (Unreleased)
+## 11.4.0b6 (2023-07-11)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added `top_k` support for `VectorSearch`.
 
 ## 11.4.0b5 (2023-07-11)
 
