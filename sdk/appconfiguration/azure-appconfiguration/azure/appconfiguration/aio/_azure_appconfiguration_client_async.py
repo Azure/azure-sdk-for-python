@@ -219,11 +219,11 @@ class AzureAppConfigurationClient:
         """
         error_map = {}
         if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
+            error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
+            error_map.update({412: ResourceNotFoundError})
         if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
+            error_map.update({412: ResourceExistsError})
 
         try:
             key_value = await self._impl.get_key_value(
@@ -334,13 +334,13 @@ class AzureAppConfigurationClient:
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
         error_map = {409: ResourceReadOnlyError}
         if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
+            error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
+            error_map.update({412: ResourceNotModifiedError})
         if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
+            error_map.update({412: ResourceNotFoundError})
         if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
+            error_map.update({412: ResourceExistsError})
 
         try:
             key_value_set = await self._impl.put_key_value(
@@ -393,13 +393,13 @@ class AzureAppConfigurationClient:
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
         error_map = {409: ResourceReadOnlyError}
         if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
+            error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
+            error_map.update({412: ResourceNotModifiedError})
         if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
+            error_map.update({412: ResourceNotFoundError})
         if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
+            error_map.update({412: ResourceExistsError})
 
         try:
             key_value_deleted = await self._impl.delete_key_value(
@@ -503,13 +503,13 @@ class AzureAppConfigurationClient:
 
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
+            error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
+            error_map.update({412: ResourceNotModifiedError})
         if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
+            error_map.update({412: ResourceNotFoundError})
         if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
+            error_map.update({412: ResourceExistsError})
 
         try:
             if read_only:
@@ -600,13 +600,13 @@ class AzureAppConfigurationClient:
         """
         error_map = {}
         if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
+            error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
+            error_map.update({412: ResourceNotModifiedError})
         if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
+            error_map.update({412: ResourceNotFoundError})
         if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
+            error_map.update({412: ResourceExistsError})
         try:
             generated_snapshot = await self._impl.update_snapshot(
                 name=name,
@@ -641,13 +641,13 @@ class AzureAppConfigurationClient:
         """
         error_map = {}
         if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
+            error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
+            error_map.update({412: ResourceNotModifiedError})
         if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
+            error_map.update({412: ResourceNotFoundError})
         if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
+            error_map.update({412: ResourceExistsError})
         try:
             generated_snapshot = await self._impl.update_snapshot(
                 name=name,
