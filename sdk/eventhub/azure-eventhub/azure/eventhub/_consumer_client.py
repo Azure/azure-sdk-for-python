@@ -275,7 +275,7 @@ class EventHubConsumerClient(
          or a single partition. In the latter case load-balancing does not apply.
          If a checkpoint store is not provided, the checkpoint will be maintained internally
          in memory, and the `EventHubConsumerClient` instance will receive events without load-balancing.
-        :paramtype checkpoint_store: ~azure.eventhub.CheckpointStore or None
+        :paramtype checkpoint_store: ~azure.eventhub.CheckpointStore, optional
         :keyword float load_balancing_interval: When load-balancing kicks in. This is the interval, in seconds,
          between two load-balancing evaluations. Default is 10 seconds.
         :keyword float partition_ownership_expiration_interval: A partition ownership will expire after this number
