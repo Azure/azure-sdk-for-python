@@ -422,3 +422,92 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert "sunny" in function_completion.choices[0].message.content.lower()
         assert "22" in function_completion.choices[0].message.content
         assert function_completion.choices[0].message.role == "assistant"
+
+    @pytest.mark.parametrize("api_type", [OPENAI])
+    @configure
+    def test_chat_completion_function_call(self, azure_openai_creds, api_type):
+        messages = [
+            {"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."},
+            {"role": "user", "content": "What's the weather like today in Seattle?"}
+        ]
+
+        kwargs = {"model": azure_openai_creds["chat_completions_model"]} if api_type == "openai" \
+          else {"deployment_id": azure_openai_creds["chat_completions_name"]}
+
+        functions=[
+            {
+                "name": "get_current_weather",
+                "description": "Get the current weather",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The city and state, e.g. San Francisco, CA",
+                        },
+                        "format": {
+                            "type": "string",
+                            "enum": ["celsius", "fahrenheit"],
+                            "description": "The temperature unit to use. Infer this from the users location.",
+                        },
+                    },
+                    "required": ["location"],
+                },
+            },
+            {
+                "name": "get_current_temperature",
+                "description": "Get the current temperature",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The city and state, e.g. San Francisco, CA",
+                        },
+                        "format": {
+                            "type": "string",
+                            "enum": ["celsius", "fahrenheit"],
+                            "description": "The temperature unit to use.",
+                        },
+                    },
+                    "required": ["location"],
+                },
+            }
+        ]
+
+        completion = openai.ChatCompletion.create(
+            messages=messages,
+            functions=functions,
+            function_call={"name": "get_current_temperature"},
+            **kwargs
+        )
+        assert completion.id
+        assert completion.object == "chat.completion"
+        assert completion.created
+        assert completion.model
+        assert completion.usage.completion_tokens is not None
+        assert completion.usage.prompt_tokens is not None
+        assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+        assert len(completion.choices) == 1
+        assert completion.choices[0].finish_reason
+        assert completion.choices[0].index is not None
+        assert completion.choices[0].message.role
+        function_call =  completion.choices[0].message.function_call
+        assert function_call.name == "get_current_temperature"
+        assert "Seattle" in function_call.arguments
+
+        messages.append(
+            {
+                "role": "function",
+                "name": "get_current_temperature",
+                "content": "{\"temperature\": \"22\", \"unit\": \"celsius\"}"
+            }
+        )
+        function_completion = openai.ChatCompletion.create(
+            messages=messages,
+            functions=functions,
+            **kwargs
+        )
+        assert function_completion
+        assert "22" in function_completion.choices[0].message.content
+        assert function_completion.choices[0].message.role == "assistant"
