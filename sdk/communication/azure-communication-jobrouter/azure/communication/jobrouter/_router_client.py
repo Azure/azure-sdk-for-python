@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import sys
 from datetime import datetime
 from typing import (
     Any,
@@ -14,19 +15,24 @@ from typing import (
 )
 from urllib.parse import urlparse
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 from azure.core.credentials import AzureKeyCredential
 from azure.communication.jobrouter._shared.policy import HMACCredentialsPolicy
 
-from ._generated.models._patch import _convert_str_to_datetime  # pylint:disable=protected-access
-from ._generated._serialization import Serializer  # pylint:disable=protected-access
+from ._datetimeutils import _convert_str_to_datetime  # pylint:disable=protected-access
 from ._generated import AzureCommunicationJobRouterService
-from ._generated.models import (
-    RouterQueueStatistics,
+from ._enums import (
     RouterWorkerStateSelector,
     RouterJobStatusSelector,
-    AcceptJobOfferResult,
+)
+from ._models import (
+    RouterQueueStatistics,
     UnassignJobResult,
     RouterJobPositionDetails,
     CancelJobRequest,
@@ -37,23 +43,23 @@ from ._generated.models import (
     ChannelConfiguration,
     RouterWorker,
     RouterWorkerItem,
-    DeclineJobOfferResult,
-    ReclassifyJobResult,
-    CancelJobResult,
-    CompleteJobResult,
-    CloseJobResult,
-    QueueAssignment,
     RouterJob,
     RouterJobItem,
-    JobMatchingMode
+    JobMatchingMode,
+    UnassignJobRequest,
+    AcceptJobOfferResult
+)
+
+from ._router_serializer import (
+    _deserialize_from_json, # pylint:disable=protected-access
+    _serialize_to_json, # pylint:disable=protected-access
+    _SERIALIZER, # pylint:disable=protected-access
 )
 
 from ._shared.utils import parse_connection_str
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
-
-
-_SERIALIZER = Serializer()
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-many-lines
@@ -161,6 +167,9 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         return self._client.job_router.get_queue_statistics(
             id = queue_id,
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterQueueStatistics",
+                                                                                                 deserialized_json_response),
             **kwargs
         )
 
@@ -201,7 +210,10 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         return self._client.job_router.upsert_worker(
             worker_id = worker_id,
-            patch = router_worker,
+            patch = _serialize_to_json(router_worker, "RouterWorker"),  # pylint:disable=protected-access
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterWorker",
+                                                                                                 deserialized_json_response),
             **kwargs
         )
 
@@ -230,7 +242,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             self,
             worker_id: str,
             *,
-            queue_assignments: Optional[Dict[str, QueueAssignment]],
+            queue_assignments: Optional[Dict[str, Union[JSON, None]]],
             total_capacity: Optional[int],
             labels: Optional[Dict[str, Union[int, float, str, bool]]],
             tags: Optional[Dict[str, Union[int, float, str, bool]]],
@@ -353,7 +365,10 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         return self._client.job_router.upsert_worker(
             worker_id = worker_id,
-            patch = patch,
+            patch = _serialize_to_json(patch, "RouterWorker"),  # pylint:disable=protected-access
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterWorker",
+                                                                                                 deserialized_json_response),
             **kwargs
         )
 
@@ -385,6 +400,9 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         return self._client.job_router.get_worker(
             worker_id = worker_id,
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterWorker",
+                                                                                                 deserialized_json_response),
             **kwargs
         )
 
@@ -452,6 +470,9 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             channel_id = channel_id,
             queue_id = queue_id,
             has_capacity = has_capacity,
+            # pylint:disable=protected-access
+            cls = lambda deserialized_json_array: [_deserialize_from_json("RouterWorkerItem", elem) for elem in
+                                                   deserialized_json_array],
             **kwargs
         )
 
@@ -521,7 +542,10 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         return self._client.job_router.upsert_job(
             id = job_id,
-            patch = router_job,
+            patch = _serialize_to_json(router_job, "RouterJob"),  # pylint:disable=protected-access
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterJob",
+                                                                                                 deserialized_json_response),
             **kwargs
         )
 
@@ -698,7 +722,10 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         return self._client.job_router.upsert_job(
             id = job_id,
-            patch = patch,
+            patch = _serialize_to_json(patch, "RouterJob"),  # pylint:disable=protected-access
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterJob",
+                                                                                                 deserialized_json_response),
             **kwargs
         )
 
@@ -730,6 +757,9 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         return self._client.job_router.get_job(
             id = job_id,
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("RouterJob",
+                                                                                                 deserialized_json_response),
             **kwargs
         )
 
@@ -823,6 +853,9 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             classification_policy_id = classification_policy_id,
             scheduled_before = scheduled_before,
             scheduled_after = scheduled_after,
+            # pylint:disable=protected-access
+            cls = lambda deserialized_json_array: [_deserialize_from_json("RouterJobItem", elem) for elem in
+                                                   deserialized_json_array],
             **kwargs
         )
 
@@ -885,6 +918,9 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         return self._client.job_router.get_in_queue_position(
             id = job_id,
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("RouterJobPositionDetails",
+                                                                                                 deserialized_json_response),
             **kwargs
         )
 
@@ -894,7 +930,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             job_id: str,
             assignment_id: str,
             **kwargs: Any
-    ) -> CloseJobResult:
+    ) -> JSON:
         """Closes a completed job.
 
         :param str job_id: Id of the job.
@@ -905,17 +941,17 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
          custom values. Default value is None.
         :paramtype disposition_code: Optional[str]
 
-        :keyword close_time: If not provided, worker capacity is released immediately along with a
+        :keyword close_at: If not provided, worker capacity is released immediately along with a
          JobClosedEvent notification. If provided, worker capacity is released along with a JobClosedEvent notification
          at a future time. Default value is None.
-        :paramtype close_time: Optional[~datetime.datetime]
+        :paramtype close_at: Optional[~datetime.datetime]
 
         :keyword note: (Optional) A note that will be appended to the jobs' Notes collection with the
          current timestamp. Default value is None.
         :paramtype note: Optional[str]
 
         :return: CloseJobResult
-        :rtype: ~azure.communication.jobrouter.CloseJobResult
+        :rtype: MutableMapping[str, Any]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -934,21 +970,20 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             raise ValueError("assignment_id cannot be None.")
 
         disposition_code = kwargs.pop('disposition_code', None)
-        close_time = kwargs.pop('close_time', None)
+        close_at = kwargs.pop('close_at', None)
         note = kwargs.pop('note', None)
 
         close_job_request = CloseJobRequest(
             assignment_id = assignment_id,
             disposition_code = disposition_code,
-            close_time = close_time,
+            close_at = close_at,
             note = note
         )
 
         return self._client.job_router.close_job_action(
             id = job_id,
-            close_job_request = close_job_request,
             # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_response, args: CloseJobResult(deserialized_response),
+            close_job_request = _serialize_to_json(close_job_request, "CloseJobRequest"),
             **kwargs
         )
 
@@ -958,7 +993,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             job_id: str,
             assignment_id: str,
             **kwargs: Any
-    ) -> CompleteJobResult:
+    ) -> JSON:
         """Completes an assigned job.
 
         :param str job_id: Id of the job.
@@ -970,7 +1005,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :paramtype note: Optional[str]
 
         :return: CompleteJobResult
-        :rtype: ~azure.communication.jobrouter.CompleteJobResult
+        :rtype: MutableMapping[str, Any]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -997,9 +1032,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         return self._client.job_router.complete_job_action(
             id = job_id,
-            complete_job_request = complete_job_request,
             # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_response, args: CompleteJobResult(deserialized_response),
+            complete_job_request = _serialize_to_json(complete_job_request, "CompleteJobRequest"),
             **kwargs
         )
 
@@ -1008,7 +1042,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             self,
             job_id: str,
             **kwargs: Any
-    ) -> CancelJobResult:
+    ) -> JSON:
         """Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
         :param str job_id: Id of the job.
@@ -1023,7 +1057,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :paramtype disposition_code: Optional[str]
 
         :return: CancelJobResult
-        :rtype: ~azure.communication.jobrouter.CancelJobResult
+        :rtype: MutableMapping[str, Any]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1049,9 +1083,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         return self._client.job_router.cancel_job_action(
             id = job_id,
-            cancel_job_request = cancel_job_request,
             # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_response, args: CancelJobResult(deserialized_response),
+            cancel_job_request = _serialize_to_json(cancel_job_request, "CancelJobRequest"),
             **kwargs
         )
 
@@ -1060,13 +1093,13 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             self,
             job_id: str,
             **kwargs: Any
-    ) -> ReclassifyJobResult:
+    ) -> JSON:
         """Reclassify a job.
 
         :param str job_id: Id of the job.
 
         :return: ReclassifyJobResult
-        :rtype: ~azure.communication.jobrouter.ReclassifyJobResult
+        :rtype: MutableMapping[str, Any]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1083,8 +1116,6 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         return self._client.job_router.reclassify_job_action(
             id = job_id,
-            # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_response, args: ReclassifyJobResult(deserialized_response),
             **kwargs
         )
 
@@ -1093,12 +1124,17 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             self,
             job_id: str,
             assignment_id: str,
+            *,
+            suspend_matching: Optional[bool] = None,
             **kwargs: Any
     ) -> UnassignJobResult:
         """Unassign a job.
 
         :param str job_id: Id of the job.
         :param str assignment_id: Id of the assignment.
+
+        :keyword suspend_matching: The name of this policy.
+        :paramtype suspend_matching: Optional[bool]
 
         :return: UnassignJobResult
         :rtype: ~azure.communication.jobrouter.UnassignJobResult
@@ -1119,10 +1155,17 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         if not assignment_id:
             raise ValueError("assignment_id cannot be None.")
 
+        unassign_job_request = UnassignJobRequest(
+            suspend_matching = suspend_matching
+        )
 
         return self._client.job_router.unassign_job_action(
             id = job_id,
             assignment_id = assignment_id,
+            unassign_job_request = _serialize_to_json(unassign_job_request, "UnassignJobRequest"),  # pylint:disable=protected-access,
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("UnassignJobResult",
+                                                                                                 deserialized_json_response),
             **kwargs
         )
 
@@ -1167,6 +1210,9 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         return self._client.job_router.accept_job_action(
             worker_id = worker_id,
             offer_id = offer_id,
+            # pylint:disable=protected-access
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("AcceptJobOfferResult",
+                                                                                                 deserialized_json_response),
             **kwargs
         )
 
@@ -1175,8 +1221,10 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             self,
             worker_id: str,
             offer_id: str,
+            *,
+            retry_offer_at: Optional[datetime] = None,
             **kwargs: Any
-    ) -> DeclineJobOfferResult:
+    ) -> JSON:
         """Declines an offer to work on a job.
 
         :param worker_id: Id of the worker.
@@ -1184,11 +1232,11 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :param offer_id: Id of the offer.
         :type offer_id: str
 
-        :keyword reoffer_time_utc: If the reoffer time is not provided, then this job will not be re-offered to the
+        :keyword retry_offer_at: If the reoffer time is not provided, then this job will not be re-offered to the
         worker who declined this job unless the worker is de-registered and re-registered.  If a reoffer time is
         provided, then the job will be re-matched to eligible workers after the reoffer time.  The worker that declined
         the job will also be eligible for the job at that time.
-        :paramtype reoffer_time_utc: Optional[Union[str, ~datetime.datetime]]
+        :paramtype retry_offer_at: Optional[~datetime.datetime]
 
         :return: DeclineJobOfferResult
         :rtype: ~azure.communication.jobrouter.DeclineJobOfferResult
@@ -1210,15 +1258,14 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             raise ValueError("offer_id cannot be None.")
 
         decline_job_offer_request = DeclineJobOfferRequest(
-            reoffer_time_utc = kwargs.pop('reoffer_time_utc', None)
+            retry_offer_at = retry_offer_at
         )
 
         return self._client.job_router.decline_job_action(
             worker_id = worker_id,
             offer_id = offer_id,
-            decline_job_offer_request = decline_job_offer_request,
             # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_response, args: DeclineJobOfferResult(deserialized_response),
+            decline_job_offer_request = _serialize_to_json(decline_job_offer_request, "DeclineJobOfferRequest"),
             **kwargs
         )
 

@@ -9,10 +9,10 @@
         "Authorization": "Sanitized",
         "Content-Length": "174",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "fea2d542-106f-11ee-8b36-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "69430aea-2034-11ee-9400-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 21 Jun 2023 20:12:49 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 21:46:37 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -28,12 +28,12 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 21 Jun 2023 20:12:49 GMT",
+        "Date": "Tue, 11 Jul 2023 21:46:37 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 21 Jun 2023 20:12:49 GMT",
-        "trace-id": "74276669-d69c-ebb0-8095-ba27712bcbe6",
+        "Last-Modified": "Tue, 11 Jul 2023 21:46:37 GMT",
+        "trace-id": "ae96dea4-30d0-0491-536f-6c45cebaea69",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0wVmTZAAAAAB0q9QCS3qRSqL7pKh8yrTvWVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
+        "X-Azure-Ref": "0vc2tZAAAAACthAdFHqO\u002BR6PnyslBQf8tWVZSMzExMDAwMTE1MDM5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -57,10 +57,10 @@
         "Authorization": "Sanitized",
         "Content-Length": "212",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "feb9c947-106f-11ee-a216-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "69576f84-2034-11ee-905a-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 21 Jun 2023 20:12:49 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 21:46:37 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -78,12 +78,12 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 21 Jun 2023 20:12:49 GMT",
+        "Date": "Tue, 11 Jul 2023 21:46:37 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 21 Jun 2023 20:12:49 GMT",
-        "trace-id": "5b132ab0-3df3-d004-a445-76eb5af5ee17",
+        "Last-Modified": "Tue, 11 Jul 2023 21:46:37 GMT",
+        "trace-id": "814b9411-c570-5fd6-bb92-14cd8888bc04",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0wVmTZAAAAAAyOMbjf8YtS6Ak0Mfy\u002B1OcWVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
+        "X-Azure-Ref": "0vc2tZAAAAACp7wnoNvVBSbNYOv6TikY3WVZSMzExMDAwMTE1MDM5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -107,12 +107,12 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Content-Length": "1585",
+        "Content-Length": "1288",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "fed1100c-106f-11ee-b629-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "696f25b1-2034-11ee-bf03-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 21 Jun 2023 20:12:49 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 21:46:37 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -140,19 +140,6 @@
                 "value": "test_value"
               }
             ]
-          },
-          {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value"
-                }
-              ]
-            }
           },
           {
             "kind": "pass-through",
@@ -203,20 +190,6 @@
                 "expedite": false
               }
             ]
-          },
-          {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value",
-                  "expedite": false
-                }
-              ]
-            }
           },
           {
             "kind": "pass-through",
@@ -245,12 +218,12 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 21 Jun 2023 20:12:49 GMT",
+        "Date": "Tue, 11 Jul 2023 21:46:37 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 21 Jun 2023 20:12:49 GMT",
-        "trace-id": "4ab2e1bc-2fd1-3ce1-28ba-a6aa9f858b55",
+        "Last-Modified": "Tue, 11 Jul 2023 21:46:37 GMT",
+        "trace-id": "7cfca930-f160-c65f-b479-ceb24a170dc1",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0wVmTZAAAAAAa9xJlCRvsTbFlBY9neiBsWVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
+        "X-Azure-Ref": "0vc2tZAAAAABr57VI75h7TKd5hl\u002BywpwiWVZSMzExMDAwMTE1MDM5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -279,19 +252,6 @@
                 "value": "test_value"
               }
             ]
-          },
-          {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value"
-                }
-              ]
-            }
           },
           {
             "kind": "pass-through",
@@ -344,20 +304,6 @@
                 "value": "test_value"
               }
             ]
-          },
-          {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value",
-                  "expedite": false
-                }
-              ]
-            }
           },
           {
             "kind": "pass-through",
@@ -392,10 +338,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "feeb98b3-106f-11ee-9b15-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "6985cdb7-2034-11ee-aa07-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 21 Jun 2023 20:12:49 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 21:46:37 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -403,12 +349,12 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 21 Jun 2023 20:12:49 GMT",
+        "Date": "Tue, 11 Jul 2023 21:46:37 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 21 Jun 2023 20:12:49 GMT",
-        "trace-id": "39bd9c9b-a5ec-977b-6b63-6b7b38ef7dc7",
+        "Last-Modified": "Tue, 11 Jul 2023 21:46:37 GMT",
+        "trace-id": "2d219e4d-1b7e-be8d-6d20-b43ff0dadff0",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0wVmTZAAAAAD8ebwD\u002B67ZSI2ZVGo570g9WVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
+        "X-Azure-Ref": "0vc2tZAAAAADvWPSK0ETFQa9zCVoytjqcWVZSMzExMDAwMTE1MDM5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -437,19 +383,6 @@
                 "value": "test_value"
               }
             ]
-          },
-          {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value"
-                }
-              ]
-            }
           },
           {
             "kind": "pass-through",
@@ -504,20 +437,6 @@
             ]
           },
           {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value",
-                  "expedite": false
-                }
-              ]
-            }
-          },
-          {
             "kind": "pass-through",
             "key": "testKey",
             "labelOperator": "equal"
@@ -549,12 +468,12 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Content-Length": "1596",
+        "Content-Length": "1299",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "fef6c7f9-106f-11ee-9b0f-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "6991f933-2034-11ee-9416-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 21 Jun 2023 20:12:50 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 21:46:37 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -582,19 +501,6 @@
                 "value": "test_value"
               }
             ]
-          },
-          {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value"
-                }
-              ]
-            }
           },
           {
             "kind": "pass-through",
@@ -647,20 +553,6 @@
             ]
           },
           {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value",
-                  "expedite": false
-                }
-              ]
-            }
-          },
-          {
             "kind": "pass-through",
             "key": "testKey",
             "labelOperator": "equal"
@@ -687,12 +579,12 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 21 Jun 2023 20:12:49 GMT",
+        "Date": "Tue, 11 Jul 2023 21:46:37 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 21 Jun 2023 20:12:49 GMT",
-        "trace-id": "0092dbde-925f-20d2-fd80-b4d52e603290",
+        "Last-Modified": "Tue, 11 Jul 2023 21:46:37 GMT",
+        "trace-id": "cb9ee5b7-9b3d-c7de-4402-a96d9cf3eb74",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0wVmTZAAAAABSSaUiIrxeRpwUbdxaTs2PWVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
+        "X-Azure-Ref": "0vc2tZAAAAABZ3h9q2AwxR6Aa0rL3v3SFWVZSMzExMDAwMTE1MDM5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -721,19 +613,6 @@
                 "value": "test_value"
               }
             ]
-          },
-          {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value"
-                }
-              ]
-            }
           },
           {
             "kind": "pass-through",
@@ -789,20 +668,6 @@
             ]
           },
           {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value",
-                  "expedite": false
-                }
-              ]
-            }
-          },
-          {
             "kind": "pass-through",
             "key": "testKey",
             "labelOperator": "equal"
@@ -835,10 +700,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "ff17962b-106f-11ee-a307-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "69b2faa4-2034-11ee-bbf7-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 21 Jun 2023 20:12:50 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 21:46:37 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -846,12 +711,12 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 21 Jun 2023 20:12:49 GMT",
+        "Date": "Tue, 11 Jul 2023 21:46:37 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 21 Jun 2023 20:12:49 GMT",
-        "trace-id": "14224041-3cdb-c139-db57-acf8d9d5b3f1",
+        "Last-Modified": "Tue, 11 Jul 2023 21:46:37 GMT",
+        "trace-id": "12fd1fca-d6de-367c-d9c2-b2286e3d85af",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0wlmTZAAAAACKpPBDYdiwTJtFuu7kcm51WVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
+        "X-Azure-Ref": "0vc2tZAAAAAD9LhiM\u002B6fBT7PIvvitHgqpWVZSMzExMDAwMTE1MDM5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -880,19 +745,6 @@
                 "value": "test_value"
               }
             ]
-          },
-          {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value"
-                }
-              ]
-            }
           },
           {
             "kind": "pass-through",
@@ -948,20 +800,6 @@
             ]
           },
           {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value",
-                  "expedite": false
-                }
-              ]
-            }
-          },
-          {
             "kind": "pass-through",
             "key": "testKey",
             "labelOperator": "equal"
@@ -993,12 +831,12 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Content-Length": "1543",
+        "Content-Length": "1272",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "ff239c86-106f-11ee-8d79-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "69bfb028-2034-11ee-9de3-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 21 Jun 2023 20:12:50 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 21:46:37 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -1026,19 +864,6 @@
                 "value": "test_value"
               }
             ]
-          },
-          {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value"
-                }
-              ]
-            }
           },
           {
             "kind": "pass-through",
@@ -1094,20 +919,6 @@
             ]
           },
           {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value",
-                  "expedite": false
-                }
-              ]
-            }
-          },
-          {
             "kind": "pass-through",
             "key": "testKey",
             "labelOperator": "equal"
@@ -1134,12 +945,12 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 21 Jun 2023 20:12:50 GMT",
+        "Date": "Tue, 11 Jul 2023 21:46:38 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 21 Jun 2023 20:12:50 GMT",
-        "trace-id": "b1acc482-0796-0448-856b-d99d9959d1dc",
+        "Last-Modified": "Tue, 11 Jul 2023 21:46:38 GMT",
+        "trace-id": "6d749f2f-310b-84ac-8a33-70a5a271ebc0",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0wlmTZAAAAACJGpbYMPuvR6P9Z6yuhVK8WVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
+        "X-Azure-Ref": "0vc2tZAAAAAA5ED/VXiqtQIheKpspoqxwWVZSMzExMDAwMTE1MDM5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -1168,19 +979,6 @@
                 "value": "test_value"
               }
             ]
-          },
-          {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value"
-                }
-              ]
-            }
           },
           {
             "kind": "pass-through",
@@ -1236,20 +1034,6 @@
                 "value": "test_value"
               }
             ]
-          },
-          {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value",
-                  "expedite": false
-                }
-              ]
-            }
           },
           {
             "kind": "pass-through",
@@ -1284,10 +1068,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "ff47c33c-106f-11ee-8874-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "69dee00e-2034-11ee-95df-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 21 Jun 2023 20:12:50 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 21:46:38 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -1295,12 +1079,12 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 21 Jun 2023 20:12:50 GMT",
+        "Date": "Tue, 11 Jul 2023 21:46:38 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 21 Jun 2023 20:12:50 GMT",
-        "trace-id": "a7a67b5b-3042-8283-a27e-cb078be8bf5a",
+        "Last-Modified": "Tue, 11 Jul 2023 21:46:38 GMT",
+        "trace-id": "588a30f6-c01c-9faa-3bfb-9b5cc455cb49",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0wlmTZAAAAAAWK05VaqoKTL2J4D4XZHghWVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
+        "X-Azure-Ref": "0vs2tZAAAAAAPKNDgurWjSJ5wKd\u002BhfMdwWVZSMzExMDAwMTE1MDM5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -1329,19 +1113,6 @@
                 "value": "test_value"
               }
             ]
-          },
-          {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value"
-                }
-              ]
-            }
           },
           {
             "kind": "pass-through",
@@ -1397,20 +1168,6 @@
                 "value": "test_value"
               }
             ]
-          },
-          {
-            "kind": "rule-engine",
-            "rule": {
-              "kind": "static-rule",
-              "value": [
-                {
-                  "key": "test_key",
-                  "labelOperator": "equal",
-                  "value": "test_value",
-                  "expedite": false
-                }
-              ]
-            }
           },
           {
             "kind": "pass-through",
@@ -1445,19 +1202,19 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "ff5258e2-106f-11ee-9f18-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "69eb1e93-2034-11ee-ae0e-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 21 Jun 2023 20:12:50 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 21:46:38 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
-        "Date": "Wed, 21 Jun 2023 20:12:50 GMT",
-        "trace-id": "de8b6f44-9626-3737-8408-e1d86db6a4b2",
-        "X-Azure-Ref": "0wlmTZAAAAAD5r\u002BMhO4PmR5ab7DIais15WVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
+        "Date": "Tue, 11 Jul 2023 21:46:38 GMT",
+        "trace-id": "6eb777d9-869f-69b4-cf4e-30af9464b26f",
+        "X-Azure-Ref": "0vs2tZAAAAABvIqEoveHiTbtzJI2LcHe1WVZSMzExMDAwMTE1MDM5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
@@ -1470,19 +1227,19 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "ff6542c2-106f-11ee-87b5-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "69fcc089-2034-11ee-ab76-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 21 Jun 2023 20:12:50 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 21:46:38 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
-        "Date": "Wed, 21 Jun 2023 20:12:50 GMT",
-        "trace-id": "68ce4996-88e8-cec7-e226-90d303e55479",
-        "X-Azure-Ref": "0wlmTZAAAAAC09dkxkpcAS7GBBVtuhCSiWVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
+        "Date": "Tue, 11 Jul 2023 21:46:38 GMT",
+        "trace-id": "f425acef-7662-196f-7388-6edeae2755de",
+        "X-Azure-Ref": "0vs2tZAAAAAB2P8gOiDYvQ7BJQLdKXi0VWVZSMzExMDAwMTE1MDM5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
@@ -1495,19 +1252,19 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "ff7d5122-106f-11ee-b072-046c590f95d2",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "6a18ad6f-2034-11ee-a602-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 21 Jun 2023 20:12:50 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 21:46:38 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
-        "Date": "Wed, 21 Jun 2023 20:12:50 GMT",
-        "trace-id": "3bce7345-8a0e-73c7-1945-a880ed20d36a",
-        "X-Azure-Ref": "0wlmTZAAAAAC5\u002Be/EbH/LT5hvAXkZ/A4LWVZSMzExMDAwMTE1MDA5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
+        "Date": "Tue, 11 Jul 2023 21:46:38 GMT",
+        "trace-id": "609ac302-2d53-031d-3fbd-0ad7dab4f9ea",
+        "X-Azure-Ref": "0vs2tZAAAAADo9MqQ3xL5R6KqOJTe2T8GWVZSMzExMDAwMTE1MDM5AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
