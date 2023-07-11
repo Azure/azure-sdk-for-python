@@ -27,9 +27,9 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
         # There's a similar scenario in azure-storage-blob, the check logic is from there.
         try:
             from yarl import URL
-            from azure.core.pipeline.transport import (
+            from azure.core.pipeline.transport import (  # pylint:disable=non-abstract-transport-import,no-name-in-module
                 AioHttpTransport,
-            )  # pylint:disable=non-abstract-transport-import,no-name-in-module
+            )
 
             if (
                 isinstance(request.context.transport, AioHttpTransport)
