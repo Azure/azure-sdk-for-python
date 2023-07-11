@@ -1,14 +1,10 @@
 # Release History
 
-## 11.4.0b5 (Unreleased)
+## 11.4.0b5 (2023-07-11)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Exposed `azure.search.documents.models.Vector`.
 
 ## 11.4.0b4 (2023-07-11)
 
