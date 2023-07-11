@@ -7,7 +7,6 @@ import time
 from typing import TYPE_CHECKING
 
 import isodate
-import six
 from msal import TokenCache
 
 from azure.core.credentials import AccessToken
@@ -17,10 +16,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 from .._internal import _scopes_to_resource
 from .._internal.pipeline import build_pipeline
 
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
+ABC = abc.ABC
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
@@ -56,10 +52,7 @@ class ManagedIdentityClientBase(ABC):
                     message = "Failed to deserialize JSON from response"
                 else:
                     message = 'Unexpected content type "{}"'.format(response.http_response.content_type)
-                six.raise_from(
-                    ClientAuthenticationError(message=message, response=response.http_response),
-                    ex,
-                )
+                raise ClientAuthenticationError(message=message, response=response.http_response) from ex
 
         if not content:
             raise ClientAuthenticationError(message="No token received.", response=response.http_response)
