@@ -5,6 +5,9 @@
 ### Bugs Fixed
 - Fixed a bug when deserializing unknown architecture and os values in `ArtifactManifestProperties` object. ([#28469](https://github.com/Azure/azure-sdk-for-python/issues/28469) [#30077](https://github.com/Azure/azure-sdk-for-python/issues/30077))
 
+### Other Changes
+- Enum type properties in `ArtifactManifestProperties` class would be type `str` when its value is not in enum's known list.
+
 ## 1.1.0 (2023-05-17)
 
 ### Breaking Changes
