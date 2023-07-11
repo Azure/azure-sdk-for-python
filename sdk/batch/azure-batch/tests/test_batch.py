@@ -425,7 +425,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         # Test Update Pool Parameters
-        params = models.BatchPool(
+        params = models.BatchPoolUpdateParameters(
             certificate_references=[], 
             application_package_references=[], 
             metadata=[models.MetadataItem(name='foo', value='bar')],
@@ -434,7 +434,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         # Test Patch Pool Parameters
-        params = models.BatchPoolUpdateParameters(metadata=[models.MetadataItem(name='foo2', value='bar2')])
+        params = models.BatchPoolPatchParameters(metadata=[models.MetadataItem(name='foo2', value='bar2')])
         response = client.pool.patch(test_paas_pool.id, params)
         assert response is None
 

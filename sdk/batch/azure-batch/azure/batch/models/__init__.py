@@ -38,6 +38,7 @@ from ._models import BatchPoolCreateParameters
 from ._models import BatchPoolEnableAutoScaleParameters
 from ._models import BatchPoolEvaluateAutoScaleParameters
 from ._models import BatchPoolIdentity
+from ._models import BatchPoolPatchParameters
 from ._models import BatchPoolResizeParameters
 from ._models import BatchPoolUpdateParameters
 from ._models import BatchTask
@@ -234,6 +235,7 @@ __all__ = [
     "BatchPoolEnableAutoScaleParameters",
     "BatchPoolEvaluateAutoScaleParameters",
     "BatchPoolIdentity",
+    "BatchPoolPatchParameters",
     "BatchPoolResizeParameters",
     "BatchPoolUpdateParameters",
     "BatchTask",

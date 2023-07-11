@@ -4947,7 +4947,7 @@ class PoolOperations:
     def patch(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        parameters: _models.BatchPoolUpdateParameters,
+        parameters: _models.BatchPoolPatchParameters,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -4968,7 +4968,7 @@ class PoolOperations:
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
         :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure.batch.models.BatchPoolUpdateParameters
+        :type parameters: ~azure.batch.models.BatchPoolPatchParameters
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -5644,7 +5644,7 @@ class PoolOperations:
     def update_properties(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        parameters: _models.BatchPool,
+        parameters: _models.BatchPoolUpdateParameters,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -5661,7 +5661,7 @@ class PoolOperations:
         :param pool_id: The ID of the Pool to update. Required.
         :type pool_id: str
         :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure.batch.models.BatchPool
+        :type parameters: ~azure.batch.models.BatchPoolUpdateParameters
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int

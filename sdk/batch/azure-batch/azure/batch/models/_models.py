@@ -1912,8 +1912,6 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: The ID can contain any combination of alphanumeric characters including hyphens and
      underscores, and cannot contain more than 64 characters. The ID is case-preserving and
      case-insensitive (that is, you may not have two IDs within an Account that differ only by
@@ -2020,12 +2018,12 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
      location. For Certificates with visibility of 'remoteUser', a 'certs' directory
      is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory. Required.
+     Certificates are placed in that directory.
     :vartype certificate_references: list[~azure.batch.models.CertificateReference]
     :ivar application_package_references: Changes to Package references affect all new Nodes
      joining the Pool, but do not
      affect Compute Nodes that are already in the Pool until they are rebooted or
-     reimaged. There is a maximum of 10 Package references on any given Pool. Required.
+     reimaged. There is a maximum of 10 Package references on any given Pool.
     :vartype application_package_references: list[~azure.batch.models.ApplicationPackageReference]
     :ivar application_licenses: The list of application licenses must be a subset of available
      Batch service application licenses. If a license is requested which is not supported, Pool
@@ -2039,7 +2037,7 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     :vartype task_scheduling_policy: ~azure.batch.models.TaskSchedulingPolicy
     :ivar user_accounts: The list of user Accounts to be created on each Compute Node in the Pool.
     :vartype user_accounts: list[~azure.batch.models.UserAccount]
-    :ivar metadata: A list of name-value pairs associated with the Pool as metadata. Required.
+    :ivar metadata: A list of name-value pairs associated with the Pool as metadata.
     :vartype metadata: list[~azure.batch.models.MetadataItem]
     :ivar stats: This property is populated only if the CloudPool was retrieved with an expand
      clause including the 'stats' attribute; otherwise it is null. The statistics
@@ -2160,20 +2158,22 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      care should be taken to avoid StartTasks which create breakaway process or
      install/launch services from the StartTask working directory, as this will
      block Batch from being able to re-run the StartTask."""
-    certificate_references: List["_models.CertificateReference"] = rest_field(name="certificateReferences")
+    certificate_references: Optional[List["_models.CertificateReference"]] = rest_field(
+        name="certificateReferences", readonly=True
+    )
     """For Windows Nodes, the Batch service installs the Certificates to the specified
      Certificate store and location. For Linux Compute Nodes, the Certificates are
      stored in a directory inside the Task working directory and an environment
      variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
      location. For Certificates with visibility of 'remoteUser', a 'certs' directory
      is created in the user's home directory (e.g., /home/{user-name}/certs) and
-     Certificates are placed in that directory. Required."""
-    application_package_references: List["_models.ApplicationPackageReference"] = rest_field(
-        name="applicationPackageReferences"
+     Certificates are placed in that directory."""
+    application_package_references: Optional[List["_models.ApplicationPackageReference"]] = rest_field(
+        name="applicationPackageReferences", readonly=True
     )
     """Changes to Package references affect all new Nodes joining the Pool, but do not
      affect Compute Nodes that are already in the Pool until they are rebooted or
-     reimaged. There is a maximum of 10 Package references on any given Pool. Required."""
+     reimaged. There is a maximum of 10 Package references on any given Pool."""
     application_licenses: Optional[List[str]] = rest_field(name="applicationLicenses", readonly=True)
     """The list of application licenses must be a subset of available Batch service application
      licenses. If a license is requested which is not supported, Pool creation will fail."""
@@ -2186,8 +2186,8 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     """If not specified, the default is spread."""
     user_accounts: Optional[List["_models.UserAccount"]] = rest_field(name="userAccounts", readonly=True)
     """The list of user Accounts to be created on each Compute Node in the Pool."""
-    metadata: List["_models.MetadataItem"] = rest_field()
-    """A list of name-value pairs associated with the Pool as metadata. Required."""
+    metadata: Optional[List["_models.MetadataItem"]] = rest_field(readonly=True)
+    """A list of name-value pairs associated with the Pool as metadata."""
     stats: Optional["_models.PoolStatistics"] = rest_field(readonly=True)
     """This property is populated only if the CloudPool was retrieved with an expand
      clause including the 'stats' attribute; otherwise it is null. The statistics
@@ -2216,9 +2216,6 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     def __init__(
         self,
         *,
-        certificate_references: List["_models.CertificateReference"],
-        application_package_references: List["_models.ApplicationPackageReference"],
-        metadata: List["_models.MetadataItem"],
         start_task: Optional["_models.StartTask"] = None,
         target_node_communication_mode: Optional[Union[str, "_models.NodeCommunicationMode"]] = None,
     ):
@@ -2618,61 +2615,7 @@ class BatchPoolIdentity(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolResizeParameters(_model_base.Model):
-    """Options for changing the size of a Pool.
-
-    :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool.
-    :vartype target_dedicated_nodes: int
-    :ivar target_low_priority_nodes: The desired number of Spot/Low-priority Compute Nodes in the
-     Pool.
-    :vartype target_low_priority_nodes: int
-    :ivar resize_timeout: The default value is 15 minutes. The minimum value is 5 minutes. If you
-     specify
-     a value less than 5 minutes, the Batch service returns an error; if you are
-     calling the REST API directly, the HTTP status code is 400 (Bad Request).
-    :vartype resize_timeout: ~datetime.timedelta
-    :ivar node_deallocation_option: The default value is requeue. Known values are: "requeue",
-     "terminate", "taskcompletion", and "retaineddata".
-    :vartype node_deallocation_option: str or ~azure.batch.models.BatchNodeDeallocationOption
-    """
-
-    target_dedicated_nodes: Optional[int] = rest_field(name="targetDedicatedNodes")
-    """The desired number of dedicated Compute Nodes in the Pool."""
-    target_low_priority_nodes: Optional[int] = rest_field(name="targetLowPriorityNodes")
-    """The desired number of Spot/Low-priority Compute Nodes in the Pool."""
-    resize_timeout: Optional[datetime.timedelta] = rest_field(name="resizeTimeout")
-    """The default value is 15 minutes. The minimum value is 5 minutes. If you specify
-     a value less than 5 minutes, the Batch service returns an error; if you are
-     calling the REST API directly, the HTTP status code is 400 (Bad Request)."""
-    node_deallocation_option: Optional[Union[str, "_models.BatchNodeDeallocationOption"]] = rest_field(
-        name="nodeDeallocationOption"
-    )
-    """The default value is requeue. Known values are: \"requeue\", \"terminate\", \"taskcompletion\",
-     and \"retaineddata\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        target_dedicated_nodes: Optional[int] = None,
-        target_low_priority_nodes: Optional[int] = None,
-        resize_timeout: Optional[datetime.timedelta] = None,
-        node_deallocation_option: Optional[Union[str, "_models.BatchNodeDeallocationOption"]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class BatchPoolUpdateParameters(_model_base.Model):
+class BatchPoolPatchParameters(_model_base.Model):
     """A Pool in the Azure Batch service.
 
     :ivar start_task: Batch will retry Tasks when a recovery operation is triggered on a Node.
@@ -2754,6 +2697,159 @@ class BatchPoolUpdateParameters(_model_base.Model):
         certificate_references: Optional[List["_models.CertificateReference"]] = None,
         application_package_references: Optional[List["_models.ApplicationPackageReference"]] = None,
         metadata: Optional[List["_models.MetadataItem"]] = None,
+        target_node_communication_mode: Optional[Union[str, "_models.NodeCommunicationMode"]] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class BatchPoolResizeParameters(_model_base.Model):
+    """Options for changing the size of a Pool.
+
+    :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool.
+    :vartype target_dedicated_nodes: int
+    :ivar target_low_priority_nodes: The desired number of Spot/Low-priority Compute Nodes in the
+     Pool.
+    :vartype target_low_priority_nodes: int
+    :ivar resize_timeout: The default value is 15 minutes. The minimum value is 5 minutes. If you
+     specify
+     a value less than 5 minutes, the Batch service returns an error; if you are
+     calling the REST API directly, the HTTP status code is 400 (Bad Request).
+    :vartype resize_timeout: ~datetime.timedelta
+    :ivar node_deallocation_option: The default value is requeue. Known values are: "requeue",
+     "terminate", "taskcompletion", and "retaineddata".
+    :vartype node_deallocation_option: str or ~azure.batch.models.BatchNodeDeallocationOption
+    """
+
+    target_dedicated_nodes: Optional[int] = rest_field(name="targetDedicatedNodes")
+    """The desired number of dedicated Compute Nodes in the Pool."""
+    target_low_priority_nodes: Optional[int] = rest_field(name="targetLowPriorityNodes")
+    """The desired number of Spot/Low-priority Compute Nodes in the Pool."""
+    resize_timeout: Optional[datetime.timedelta] = rest_field(name="resizeTimeout")
+    """The default value is 15 minutes. The minimum value is 5 minutes. If you specify
+     a value less than 5 minutes, the Batch service returns an error; if you are
+     calling the REST API directly, the HTTP status code is 400 (Bad Request)."""
+    node_deallocation_option: Optional[Union[str, "_models.BatchNodeDeallocationOption"]] = rest_field(
+        name="nodeDeallocationOption"
+    )
+    """The default value is requeue. Known values are: \"requeue\", \"terminate\", \"taskcompletion\",
+     and \"retaineddata\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_dedicated_nodes: Optional[int] = None,
+        target_low_priority_nodes: Optional[int] = None,
+        resize_timeout: Optional[datetime.timedelta] = None,
+        node_deallocation_option: Optional[Union[str, "_models.BatchNodeDeallocationOption"]] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class BatchPoolUpdateParameters(_model_base.Model):
+    """A Pool in the Azure Batch service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar start_task: Batch will retry Tasks when a recovery operation is triggered on a Node.
+     Examples of recovery operations include (but are not limited to) when an
+     unhealthy Node is rebooted or a Compute Node disappeared due to host failure.
+     Retries due to recovery operations are independent of and are not counted
+     against the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal
+     retry due to a recovery operation may occur. Because of this, all Tasks should
+     be idempotent. This means Tasks need to tolerate being interrupted and
+     restarted without causing any corruption or duplicate data. The best practice
+     for long running Tasks is to use some form of checkpointing. In some cases the
+     StartTask may be re-run even though the Compute Node was not rebooted. Special
+     care should be taken to avoid StartTasks which create breakaway process or
+     install/launch services from the StartTask working directory, as this will
+     block Batch from being able to re-run the StartTask.
+    :vartype start_task: ~azure.batch.models.StartTask
+    :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
+     the specified
+     Certificate store and location. For Linux Compute Nodes, the Certificates are
+     stored in a directory inside the Task working directory and an environment
+     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
+     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
+     is created in the user's home directory (e.g., /home/{user-name}/certs) and
+     Certificates are placed in that directory. Required.
+    :vartype certificate_references: list[~azure.batch.models.CertificateReference]
+    :ivar application_package_references: Changes to Package references affect all new Nodes
+     joining the Pool, but do not
+     affect Compute Nodes that are already in the Pool until they are rebooted or
+     reimaged. There is a maximum of 10 Package references on any given Pool. Required.
+    :vartype application_package_references: list[~azure.batch.models.ApplicationPackageReference]
+    :ivar metadata: A list of name-value pairs associated with the Pool as metadata. Required.
+    :vartype metadata: list[~azure.batch.models.MetadataItem]
+    :ivar target_node_communication_mode: If omitted, the default value is Default. Known values
+     are: "default", "classic", and "simplified".
+    :vartype target_node_communication_mode: str or ~azure.batch.models.NodeCommunicationMode
+    """
+
+    start_task: Optional["_models.StartTask"] = rest_field(name="startTask")
+    """Batch will retry Tasks when a recovery operation is triggered on a Node.
+     Examples of recovery operations include (but are not limited to) when an
+     unhealthy Node is rebooted or a Compute Node disappeared due to host failure.
+     Retries due to recovery operations are independent of and are not counted
+     against the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal
+     retry due to a recovery operation may occur. Because of this, all Tasks should
+     be idempotent. This means Tasks need to tolerate being interrupted and
+     restarted without causing any corruption or duplicate data. The best practice
+     for long running Tasks is to use some form of checkpointing. In some cases the
+     StartTask may be re-run even though the Compute Node was not rebooted. Special
+     care should be taken to avoid StartTasks which create breakaway process or
+     install/launch services from the StartTask working directory, as this will
+     block Batch from being able to re-run the StartTask."""
+    certificate_references: List["_models.CertificateReference"] = rest_field(name="certificateReferences")
+    """For Windows Nodes, the Batch service installs the Certificates to the specified
+     Certificate store and location. For Linux Compute Nodes, the Certificates are
+     stored in a directory inside the Task working directory and an environment
+     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
+     location. For Certificates with visibility of 'remoteUser', a 'certs' directory
+     is created in the user's home directory (e.g., /home/{user-name}/certs) and
+     Certificates are placed in that directory. Required."""
+    application_package_references: List["_models.ApplicationPackageReference"] = rest_field(
+        name="applicationPackageReferences"
+    )
+    """Changes to Package references affect all new Nodes joining the Pool, but do not
+     affect Compute Nodes that are already in the Pool until they are rebooted or
+     reimaged. There is a maximum of 10 Package references on any given Pool. Required."""
+    metadata: List["_models.MetadataItem"] = rest_field()
+    """A list of name-value pairs associated with the Pool as metadata. Required."""
+    target_node_communication_mode: Optional[Union[str, "_models.NodeCommunicationMode"]] = rest_field(
+        name="targetNodeCommunicationMode"
+    )
+    """If omitted, the default value is Default. Known values are: \"default\", \"classic\", and
+     \"simplified\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        certificate_references: List["_models.CertificateReference"],
+        application_package_references: List["_models.ApplicationPackageReference"],
+        metadata: List["_models.MetadataItem"],
+        start_task: Optional["_models.StartTask"] = None,
         target_node_communication_mode: Optional[Union[str, "_models.NodeCommunicationMode"]] = None,
     ):
         ...
@@ -8677,7 +8773,7 @@ class TaskAddResult(_model_base.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar status: The status of the add Task request. Required. Known values are: "success",
+    :ivar status: The status of the add Task request. Required. Known values are: "Success",
      "clienterror", and "servererror".
     :vartype status: str or ~azure.batch.models.TaskAddStatus
     :ivar task_id: The ID of the Task for which this is the result. Required.
@@ -8696,7 +8792,7 @@ class TaskAddResult(_model_base.Model):
     """
 
     status: Union[str, "_models.TaskAddStatus"] = rest_field()
-    """The status of the add Task request. Required. Known values are: \"success\", \"clienterror\",
+    """The status of the add Task request. Required. Known values are: \"Success\", \"clienterror\",
      and \"servererror\"."""
     task_id: str = rest_field(name="taskId")
     """The ID of the Task for which this is the result. Required."""
