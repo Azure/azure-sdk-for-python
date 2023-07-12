@@ -541,7 +541,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         deleted state and ready for recovery or purging. This operation includes deletion-specific information.
 
         :keyword bool include_pending: Specifies whether to include certificates which are not completely deleted.
-            Only available for API versions v7.0 and up.
+            Only available for API versions v7.0 and up. Key Vault treats this as False by default.
 
         :return: An iterator-like instance of DeletedCertificate
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.DeletedCertificate]
@@ -577,7 +577,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         Requires certificates/list permission.
 
         :keyword bool include_pending: Specifies whether to include certificates which are not completely provisioned.
-            Only available for API versions v7.0 and up.
+            Only available for API versions v7.0 and up. Key Vault treats this as False by default.
 
         :returns: An iterator-like instance of CertificateProperties
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.CertificateProperties]
