@@ -73,7 +73,7 @@ class CallInvite:
     voip_headers: Optional[Dict[str, str]]
     """Custom context for VOIP"""
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         target: CommunicationIdentifier,
         *,
@@ -101,12 +101,11 @@ class ServerCallLocator:
     kind: str = "serverCallLocator"
     """This is for locating the call with server call id."""
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         server_call_id: str,
         **kwargs
     ):
-        super().__init__(**kwargs)
         self.server_call_id = server_call_id
         self.kind = "serverCallLocator"
 
@@ -125,7 +124,7 @@ class GroupCallLocator:
     kind: str = "groupCallLocator"
     """This is for locating the call with group call id."""
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         group_call_id: str,
         **kwargs
@@ -155,7 +154,7 @@ class ChannelAffinity:
     channel: int
     """ Channel number to which bitstream from a particular participant will be written."""
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         target_participant: CommunicationIdentifier,
         channel: int,
@@ -181,7 +180,7 @@ class FileSource:
     play_source_cache_id: Optional[str]
     """Cached source id of the play media, if it exists."""
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         url: str,
         *,
@@ -239,8 +238,7 @@ class TextSource:
         voice_gender: Optional[Union[str, 'Gender']] = None,
         voice_name: Optional[str] = None,
         play_source_cache_id: Optional[str] = None,
-        custom_voice_endpoint_id: Optional[str] = None,
-        **kwargs
+        custom_voice_endpoint_id: Optional[str] = None
     ):
         self.text = text
         self.source_locale = source_locale
@@ -284,8 +282,7 @@ class SsmlSource:
         ssml_text: str,
         *,
         play_source_cache_id: Optional[str] = None,
-        custom_voice_endpoint_id: Optional[str] = None,
-        **kwargs
+        custom_voice_endpoint_id: Optional[str] = None
     ):
         self.ssml_text = ssml_text
         self.play_source_cache_id = play_source_cache_id
@@ -327,8 +324,7 @@ class MediaStreamingConfiguration:
         transport_url: str,
         transport_type: Union[str, 'MediaStreamingTransportType'],
         content_type: Union[str, 'MediaStreamingContentType'],
-        audio_channel_type: Union[str, 'MediaStreamingAudioChannelType'],
-        **kwargs
+        audio_channel_type: Union[str, 'MediaStreamingAudioChannelType']
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
@@ -405,16 +401,14 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         call_connection_id: Optional[str] = None,
         server_call_id: Optional[str] = None,
         targets: Optional[List[CommunicationIdentifier]] = None,
-        call_connection_state:
-        Optional[Union[str, 'CallConnectionState']] = None,
+        call_connection_state: Optional[Union[str, 'CallConnectionState']] = None,
         callback_url: Optional[str] = None,
         media_subscription_id: Optional[str] = None,
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
         source: Optional[CommunicationIdentifier] = None,
         correlation_id: Optional[str] = None,
-        answered_by: Optional[CommunicationUserIdentifier] = None,
-        **kwargs
+        answered_by: Optional[CommunicationUserIdentifier] = None
     ):
         self.call_connection_id = call_connection_id
         self.server_call_id = server_call_id
@@ -475,8 +469,7 @@ class RecordingProperties:
         self,
         *,
         recording_id: Optional[str] = None,
-        recording_state: Optional[Union[str,'RecordingState']] = None,
-        **kwargs
+        recording_state: Optional[Union[str,'RecordingState']] = None
     ):
         self.recording_id = recording_id
         self.recording_state = recording_state
@@ -507,8 +500,7 @@ class CallParticipant:
         self,
         *,
         identifier: Optional[CommunicationIdentifier] = None,
-        is_muted: bool = False,
-        **kwargs
+        is_muted: bool = False
     ):
         self.identifier = identifier
         self.is_muted = is_muted
@@ -539,8 +531,7 @@ class AddParticipantResult:
         self,
         *,
         participant: Optional[CallParticipant] = None,
-        operation_context: Optional[str] = None,
-        **kwargs
+        operation_context: Optional[str] = None
     ):
         self.participant = participant
         self.operation_context = operation_context
@@ -568,8 +559,7 @@ class RemoveParticipantResult:
     def __init__(
         self,
         *,
-        operation_context: Optional[str] = None,
-        **kwargs
+        operation_context: Optional[str] = None
     ) -> None:
         self.operation_context = operation_context
 
@@ -591,10 +581,8 @@ class TransferCallResult:
     def __init__(
         self,
         *,
-        operation_context: Optional[str] = None,
-        **kwargs
+        operation_context: Optional[str] = None
     ) -> None:
-        super().__init__(**kwargs)
         self.operation_context = operation_context
 
     @classmethod
@@ -628,10 +616,8 @@ class Choice:
         label: str,
         phrases: List[str],
         *,
-        tone: Optional[Union[str, 'DtmfTone']] = None,
-        **kwargs
+        tone: Optional[Union[str, 'DtmfTone']] = None
     ):
-        super().__init__(**kwargs)
         self.label = label
         self.phrases = phrases
         self.tone = tone
@@ -653,10 +639,8 @@ class MuteParticipantsResult:
     def __init__(
         self,
         *,
-        operation_context: Optional[str] = None,
-        **kwargs
+        operation_context: Optional[str] = None
     ) -> None:
-        super().__init__(**kwargs)
         self.operation_context = operation_context
 
     @classmethod

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Union, Optional, TYPE_CHECKING, Iterable, Dict, cast, overload
+from typing import List, Union, Optional, TYPE_CHECKING, Iterable, Dict, overload
 from urllib.parse import urlparse
 import warnings
 
@@ -29,7 +29,8 @@ from ._generated.models import (
 from ._models import (
     CallConnectionProperties,
     RecordingProperties,
-    ChannelAffinity
+    ChannelAffinity,
+    CallInvite
 )
 from ._content_downloader import ContentDownloader
 from ._utils import (
@@ -39,7 +40,6 @@ from ._utils import (
 )
 if TYPE_CHECKING:
     from ._models  import (
-        CallInvite,
         ServerCallLocator,
         GroupCallLocator,
         MediaStreamingConfiguration
@@ -266,7 +266,7 @@ class CallAutomationClient:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         warnings.warn(
-            f"The method 'create_group_call' is deprecated. Please use 'create_call' instead.",
+            "The method 'create_group_call' is deprecated. Please use 'create_call' instead.",
             DeprecationWarning
         )
         user_custom_context = None

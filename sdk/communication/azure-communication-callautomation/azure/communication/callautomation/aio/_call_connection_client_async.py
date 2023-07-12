@@ -29,6 +29,7 @@ from .._models import (
     RemoveParticipantResult,
     TransferCallResult,
     MuteParticipantsResult,
+    CallInvite
 )
 from .._generated.aio import AzureCommunicationCallAutomationService
 from .._generated.models import (
@@ -62,7 +63,6 @@ if TYPE_CHECKING:
         FileSource,
         TextSource,
         SsmlSource,
-        CallInvite,
         Choice
     )
     from azure.core.credentials_async import (
@@ -434,7 +434,7 @@ class CallConnectionClient:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         warnings.warn(
-            f"The method 'play_media_to_all' is deprecated. Please use 'play_media' instead.",
+            "The method 'play_media_to_all' is deprecated. Please use 'play_media' instead.",
             DeprecationWarning
         )
         play_source_single = None

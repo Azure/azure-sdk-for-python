@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING, Optional, List, Union, Dict
+import warnings
 try:
     from typing import Literal
 except ImportError:
@@ -27,6 +28,7 @@ from ._models import (
     RemoveParticipantResult,
     TransferCallResult,
     MuteParticipantsResult,
+    CallInvite
 )
 from ._generated._client import AzureCommunicationCallAutomationService
 from ._generated.models import (
@@ -60,7 +62,6 @@ if TYPE_CHECKING:
         FileSource,
         TextSource,
         SsmlSource,
-        CallInvite,
         Choice
     )
     from azure.core.credentials import (
@@ -220,7 +221,7 @@ class CallConnectionClient:
         """
         return self._call_connection_client.get_participants(
             self._call_connection_id,
-            cls=lambda participants: [CallParticipant._from_generated(p) for p in participants],
+            cls=lambda participants: [CallParticipant._from_generated(p) for p in participants],  # pylint:disable=protected-access
             **kwargs
         )
 
@@ -261,7 +262,7 @@ class CallConnectionClient:
             request,
             **kwargs
         )
-        return TransferCallResult._from_generated(result)
+        return TransferCallResult._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace
     def add_participant(
@@ -426,6 +427,10 @@ class CallConnectionClient:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        warnings.warn(
+            "The method 'play_media_to_all' is deprecated. Please use 'play_media' instead.",
+            DeprecationWarning
+        )
         play_source_single = None
         if isinstance(play_source, list):
             if play_source:  # Check if the list is not empty

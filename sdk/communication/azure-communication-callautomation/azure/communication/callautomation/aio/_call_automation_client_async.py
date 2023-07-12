@@ -26,7 +26,8 @@ from .._generated.models import (
 )
 from .._models import (
     CallConnectionProperties,
-    RecordingProperties
+    RecordingProperties,
+    CallInvite
 )
 from ._content_downloader_async import ContentDownloader
 from .._utils import (
@@ -36,7 +37,6 @@ from .._utils import (
 )
 if TYPE_CHECKING:
     from .._models  import (
-        CallInvite,
         ServerCallLocator,
         GroupCallLocator,
         MediaStreamingConfiguration,
@@ -265,7 +265,7 @@ class CallAutomationClient:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         warnings.warn(
-            f"The method 'create_group_call' is deprecated. Please use 'create_call' instead.",
+            "The method 'create_group_call' is deprecated. Please use 'create_call' instead.",
             DeprecationWarning
         )
         user_custom_context = None
@@ -518,7 +518,7 @@ class CallAutomationClient:
         **kwargs
     ) -> RecordingProperties:
         # pylint:disable=protected-access
-        channel_affinity: List[ChannelAffinity] = kwargs.pop("channel_affinity", None) or []
+        channel_affinity: List['ChannelAffinity'] = kwargs.pop("channel_affinity", None) or []
         channel_affinity_internal = [c._to_generated() for c in channel_affinity]
         call_locator: Optional[CallLocator] = None
         if args:

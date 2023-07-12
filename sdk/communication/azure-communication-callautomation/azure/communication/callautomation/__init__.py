@@ -99,21 +99,21 @@ __version__ = VERSION
 def __getattr__(name):
     if name == 'CallInvite':
         warnings.warn(
-            f"CallInvite is deprecated and should not be used. Please pass in keyword arguments directly.",
+            "CallInvite is deprecated and should not be used. Please pass in keyword arguments directly.",
             DeprecationWarning
         )
         from ._models import CallInvite
         return CallInvite
     if name == 'GroupCallLocator':
         warnings.warn(
-            f"GroupCallLocator is deprecated and should not be used. Please pass in 'group_call_id' directly.",
+            "GroupCallLocator is deprecated and should not be used. Please pass in 'group_call_id' directly.",
             DeprecationWarning
         )
         from ._models import GroupCallLocator
         return GroupCallLocator
     if name == 'ServerCallLocator':
         warnings.warn(
-            f"ServerCallLocator is deprecated and should not be used. Please pass in 'server_call_id' directly.",
+            "ServerCallLocator is deprecated and should not be used. Please pass in 'server_call_id' directly.",
             DeprecationWarning
         )
         from ._models import ServerCallLocator
