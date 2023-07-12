@@ -3,10 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import BinaryIO, TypeVar, Union, Any
+from typing import BinaryIO, Dict, Union, Any, Mapping
 from abc import abstractmethod
-
-ObjectType = TypeVar("ObjectType")
 
 
 class AbstractAvroObjectEncoder(object):
@@ -17,9 +15,8 @@ class AbstractAvroObjectEncoder(object):
     @abstractmethod
     def get_schema_fullname(
         self,
-        schema,
-    ):
-        # type: (str) -> str
+        schema: str,
+    ) -> str:
         """
         Returns the namespace-qualified name of the provided schema.
         Schema must be a Avro RecordSchema:
@@ -32,15 +29,14 @@ class AbstractAvroObjectEncoder(object):
     @abstractmethod
     def encode(
         self,
-        content,
-        schema,
-    ):
-        # type: (ObjectType, str) -> bytes
+        content: Mapping[str, Any],
+        schema: str,
+    ) -> bytes:
         """Convert the provided value to it's binary representation and write it to the stream.
         Schema must be a Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
         :param content: An object to encode
-        :type content: ObjectType
+        :type content: Mapping[str, Any]
         :param schema: An Avro RecordSchema
         :type schema: str
         :returns: Encoded bytes
@@ -48,7 +44,7 @@ class AbstractAvroObjectEncoder(object):
         """
 
     @abstractmethod
-    def decode(self, content: Union[bytes, BinaryIO], reader: Any):
+    def decode(self, content: Union[bytes, BinaryIO], reader: Any) -> Dict[str, Any]:
         """Read the binary representation into a specific type.
         Return type will be ignored, since the schema is deduced from the provided bytes.
         :param content: A stream of bytes or bytes directly
@@ -58,5 +54,5 @@ class AbstractAvroObjectEncoder(object):
         :keyword readers_schema: An optional reader's schema as defined by the Apache Avro specification.
         :paramtype readers_schema: str or None
         :returns: An instantiated object
-        :rtype: ObjectType
+        :rtype: Dict[str, Any]
         """
