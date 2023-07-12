@@ -57,15 +57,16 @@ from ..rest import HttpRequest, HttpResponse, AsyncHttpResponse
 
 
 HttpRequestType = Union[LegacyHttpRequest, HttpRequest]
-HttpResponseType = Union[LegacyHttpResponse, HttpResponse]
+HttpResponseType = Union[LegacyHttpResponse, HttpResponse]  # Sync only
+AllHttpResponseType = Union[
+    LegacyHttpResponse, HttpResponse, LegacyAsyncHttpResponse, AsyncHttpResponse
+]  # Sync or async
 LegacyPipelineResponseType = PipelineResponse[LegacyHttpRequest, LegacyHttpResponse]
 NewPipelineResponseType = PipelineResponse[HttpRequest, HttpResponse]
 PipelineResponseType = PipelineResponse[HttpRequestType, HttpResponseType]
 HttpRequestTypeVar = TypeVar("HttpRequestTypeVar", bound=HttpRequestType)
-HttpResponseTypeVar = TypeVar("HttpResponseTypeVar", bound=HttpResponseType)
-
-# Some tool functions here works for all HttpResponse, and need to be typed as such to be used in all context
-AllHTTPResponseType = Union[LegacyHttpResponse, HttpResponse, LegacyAsyncHttpResponse, AsyncHttpResponse]
+HttpResponseTypeVar = TypeVar("HttpResponseTypeVar", bound=HttpResponseType)  # Sync only
+AllHttpResponseTypeVar = TypeVar("AllHttpResponseTypeVar", bound=AllHttpResponseType)  # Sync or async
 
 ABC = abc.ABC
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
@@ -79,7 +80,7 @@ _FAILED = frozenset(["canceled", "failed"])
 _SUCCEEDED = frozenset(["succeeded"])
 
 
-def _get_content(response: AllHTTPResponseType) -> bytes:
+def _get_content(response: AllHttpResponseType) -> bytes:
     """Get the content of this response. This is designed specifically to avoid
     a warning of mypy for body() access, as this method is deprecated.
 
@@ -123,7 +124,7 @@ class OperationFailed(Exception):
     pass
 
 
-def _as_json(response: AllHTTPResponseType) -> Dict[str, Any]:
+def _as_json(response: AllHttpResponseType) -> Dict[str, Any]:
     """Assuming this is not empty, return the content as JSON.
 
     Result/exceptions is not determined if you call this method without testing _is_empty.
@@ -140,7 +141,7 @@ def _as_json(response: AllHTTPResponseType) -> Dict[str, Any]:
         raise DecodeError("Error occurred in deserializing the response body.") from err
 
 
-def _raise_if_bad_http_status_and_method(response: AllHTTPResponseType) -> None:
+def _raise_if_bad_http_status_and_method(response: AllHttpResponseType) -> None:
     """Check response status code is valid.
 
     Must be 200, 201, 202, or 204.
@@ -155,7 +156,7 @@ def _raise_if_bad_http_status_and_method(response: AllHTTPResponseType) -> None:
     raise BadStatus("Invalid return status {!r} for {!r} operation".format(code, response.request.method))
 
 
-def _is_empty(response: AllHTTPResponseType) -> bool:
+def _is_empty(response: AllHttpResponseType) -> bool:
     """Check if response body contains meaningful content.
 
     :param response: The response object.
@@ -249,7 +250,7 @@ class _FinalStateViaOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OPERATION_LOCATION_FINAL_STATE = "operation-location"
 
 
-class OperationResourcePolling(LongRunningOperation[HttpRequestType, AllHTTPResponseType]):
+class OperationResourcePolling(LongRunningOperation[HttpRequestTypeVar, AllHttpResponseTypeVar]):
     """Implements a operation resource polling, typically from Operation-Location.
 
     :param str operation_location_header: Name of the header to return operation format (default 'operation-location')
@@ -273,7 +274,7 @@ class OperationResourcePolling(LongRunningOperation[HttpRequestType, AllHTTPResp
         self._location_url = None
         self._lro_options = lro_options or {}
 
-    def can_poll(self, pipeline_response: PipelineResponse[HttpRequestType, AllHTTPResponseType]) -> bool:
+    def can_poll(self, pipeline_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]) -> bool:
         """Check if status monitor header (e.g. Operation-Location) is present.
 
         :param pipeline_response: Initial REST call response.
@@ -295,7 +296,7 @@ class OperationResourcePolling(LongRunningOperation[HttpRequestType, AllHTTPResp
         return self._async_url
 
     def get_final_get_url(
-        self, pipeline_response: PipelineResponse[HttpRequestType, AllHTTPResponseType]
+        self, pipeline_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]
     ) -> Optional[str]:
         """If a final GET is needed, returns the URL.
 
@@ -334,7 +335,9 @@ class OperationResourcePolling(LongRunningOperation[HttpRequestType, AllHTTPResp
 
         return None
 
-    def set_initial_status(self, pipeline_response: PipelineResponse[HttpRequestType, AllHTTPResponseType]) -> str:
+    def set_initial_status(
+        self, pipeline_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]
+    ) -> str:
         """Process first response after initiating long running operation.
 
         :param pipeline_response: Initial REST call response.
@@ -351,14 +354,14 @@ class OperationResourcePolling(LongRunningOperation[HttpRequestType, AllHTTPResp
             return "InProgress"
         raise OperationFailed("Operation failed or canceled")
 
-    def _set_async_url_if_present(self, response: AllHTTPResponseType) -> None:
+    def _set_async_url_if_present(self, response: AllHttpResponseType) -> None:
         self._async_url = response.headers[self._operation_location_header]
 
         location_url = response.headers.get("location")
         if location_url:
             self._location_url = location_url
 
-    def get_status(self, pipeline_response: PipelineResponse[HttpRequestType, AllHTTPResponseType]) -> str:
+    def get_status(self, pipeline_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]) -> str:
         """Process the latest status update retrieved from an "Operation-Location" header.
 
         :param pipeline_response: Initial REST call response.
@@ -378,13 +381,13 @@ class OperationResourcePolling(LongRunningOperation[HttpRequestType, AllHTTPResp
         return status
 
 
-class LocationPolling(LongRunningOperation[HttpRequestType, AllHTTPResponseType]):
+class LocationPolling(LongRunningOperation[HttpRequestTypeVar, AllHttpResponseTypeVar]):
     """Implements a Location polling."""
 
     _location_url: str
     """Location header"""
 
-    def can_poll(self, pipeline_response: PipelineResponse[HttpRequestType, AllHTTPResponseType]) -> bool:
+    def can_poll(self, pipeline_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]) -> bool:
         """True if contains a Location header
 
         :param pipeline_response: Initial REST call response.
@@ -404,7 +407,7 @@ class LocationPolling(LongRunningOperation[HttpRequestType, AllHTTPResponseType]
         return self._location_url
 
     def get_final_get_url(
-        self, pipeline_response: PipelineResponse[HttpRequestType, AllHTTPResponseType]
+        self, pipeline_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]
     ) -> Optional[str]:
         """If a final GET is needed, returns the URL.
 
@@ -417,7 +420,9 @@ class LocationPolling(LongRunningOperation[HttpRequestType, AllHTTPResponseType]
         """
         return None
 
-    def set_initial_status(self, pipeline_response: PipelineResponse[HttpRequestType, AllHTTPResponseType]) -> str:
+    def set_initial_status(
+        self, pipeline_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]
+    ) -> str:
         """Process first response after initiating long running operation.
 
         :param pipeline_response: Initial REST call response.
@@ -433,7 +438,7 @@ class LocationPolling(LongRunningOperation[HttpRequestType, AllHTTPResponseType]
             return "InProgress"
         raise OperationFailed("Operation failed or canceled")
 
-    def get_status(self, pipeline_response: PipelineResponse[HttpRequestType, AllHTTPResponseType]) -> str:
+    def get_status(self, pipeline_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]) -> str:
         """Return the status string extracted from this response.
 
         For Location polling, it means the status monitor returns 202.
@@ -450,12 +455,12 @@ class LocationPolling(LongRunningOperation[HttpRequestType, AllHTTPResponseType]
         return "InProgress" if response.status_code == 202 else "Succeeded"
 
 
-class StatusCheckPolling(LongRunningOperation[HttpRequestType, AllHTTPResponseType]):
+class StatusCheckPolling(LongRunningOperation[HttpRequestTypeVar, AllHttpResponseTypeVar]):
     """Should be the fallback polling, that don't poll but exit successfully
     if not other polling are detected and status code is 2xx.
     """
 
-    def can_poll(self, pipeline_response: PipelineResponse[HttpRequestType, AllHTTPResponseType]) -> bool:
+    def can_poll(self, pipeline_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]) -> bool:
         """Answer if this polling method could be used.
 
         For this implementation, always True.
@@ -477,7 +482,9 @@ class StatusCheckPolling(LongRunningOperation[HttpRequestType, AllHTTPResponseTy
         """
         raise ValueError("This polling doesn't support polling url")
 
-    def set_initial_status(self, pipeline_response: PipelineResponse[HttpRequestType, AllHTTPResponseType]) -> str:
+    def set_initial_status(
+        self, pipeline_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]
+    ) -> str:
         """Process first response after initiating long running operation.
 
         Will succeed immediately.
@@ -489,7 +496,7 @@ class StatusCheckPolling(LongRunningOperation[HttpRequestType, AllHTTPResponseTy
         """
         return "Succeeded"
 
-    def get_status(self, pipeline_response: PipelineResponse[HttpRequestType, AllHTTPResponseType]) -> str:
+    def get_status(self, pipeline_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]) -> str:
         """Return the status string extracted from this response.
 
         Only possible status is success.
@@ -502,7 +509,7 @@ class StatusCheckPolling(LongRunningOperation[HttpRequestType, AllHTTPResponseTy
         return "Succeeded"
 
     def get_final_get_url(
-        self, pipeline_response: PipelineResponse[HttpRequestType, AllHTTPResponseType]
+        self, pipeline_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]
     ) -> Optional[str]:
         """If a final GET is needed, returns the URL.
 
@@ -515,7 +522,7 @@ class StatusCheckPolling(LongRunningOperation[HttpRequestType, AllHTTPResponseTy
 
 
 class _SansIOLROBasePolling(
-    Generic[PollingReturnType_co, PipelineClientType]
+    Generic[PollingReturnType_co, PipelineClientType, HttpRequestTypeVar, AllHttpResponseTypeVar]
 ):  # pylint: disable=too-many-instance-attributes
     """A base class that has no opinion on IO, to help mypy be accurate.
 
@@ -530,7 +537,7 @@ class _SansIOLROBasePolling(
     _deserialization_callback: Callable[[Any], PollingReturnType_co]
     """The deserialization callback that returns the final instance."""
 
-    _operation: LongRunningOperation[HttpRequestType, AllHTTPResponseType]
+    _operation: LongRunningOperation[HttpRequestTypeVar, AllHttpResponseTypeVar]
     """The algorithm this poller has decided to use. Will loop through 'can_poll' of the input algorithms to decide."""
 
     _status: str
@@ -542,7 +549,7 @@ class _SansIOLROBasePolling(
     def __init__(
         self,
         timeout: float = 30,
-        lro_algorithms: Optional[Sequence[LongRunningOperation[HttpRequestType, AllHTTPResponseType]]] = None,
+        lro_algorithms: Optional[Sequence[LongRunningOperation[HttpRequestTypeVar, AllHttpResponseTypeVar]]] = None,
         lro_options: Optional[Dict[str, Any]] = None,
         path_format_arguments: Optional[Dict[str, str]] = None,
         **operation_config: Any
@@ -561,9 +568,9 @@ class _SansIOLROBasePolling(
     def initialize(
         self,
         client: PipelineClientType,
-        initial_response: PipelineResponse[HttpRequestType, AllHTTPResponseType],
+        initial_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar],
         deserialization_callback: Callable[
-            [PipelineResponse[HttpRequestType, AllHTTPResponseType]], PollingReturnType_co
+            [PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]], PollingReturnType_co
         ],
     ) -> None:
         """Set the initial status of this LRO.
@@ -655,7 +662,7 @@ class _SansIOLROBasePolling(
         return self._parse_resource(self._pipeline_response)
 
     def _parse_resource(
-        self, pipeline_response: PipelineResponse[HttpRequestType, AllHTTPResponseType]
+        self, pipeline_response: PipelineResponse[HttpRequestTypeVar, AllHttpResponseTypeVar]
     ) -> PollingReturnType_co:
         """Assuming this response is a resource, use the deserialization callback to parse it.
         If body is empty, assuming no resource to return.
@@ -691,6 +698,8 @@ class LROBasePolling(
     _SansIOLROBasePolling[
         PollingReturnType_co,
         PipelineClient[HttpRequestTypeVar, HttpResponseTypeVar],
+        HttpRequestTypeVar,
+        HttpResponseTypeVar,
     ],
     PollingMethod[PollingReturnType_co],
 ):  # pylint: disable=too-many-instance-attributes

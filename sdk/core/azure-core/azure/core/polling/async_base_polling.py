@@ -59,6 +59,8 @@ class AsyncLROBasePolling(
     _SansIOLROBasePolling[
         PollingReturnType_co,
         AsyncPipelineClient[HttpRequestTypeVar, AsyncHttpResponseTypeVar],
+        HttpRequestTypeVar,
+        AsyncHttpResponseTypeVar,
     ],
     AsyncPollingMethod[PollingReturnType_co],
 ):
