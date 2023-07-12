@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Iterable, Optional, List, Union, Dict
+from typing import TYPE_CHECKING, Optional, List, Union, Dict
 try:
     from typing import Literal
 except ImportError:
@@ -68,7 +68,7 @@ if TYPE_CHECKING:
         AzureKeyCredential
     )
 
-MediaSources = Union[FileSource, TextSource, SsmlSource]
+MediaSources = Union['FileSource', 'TextSource', 'SsmlSource']
 
 
 class CallConnectionClient:

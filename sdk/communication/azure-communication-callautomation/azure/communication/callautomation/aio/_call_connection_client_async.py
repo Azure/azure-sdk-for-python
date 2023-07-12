@@ -72,7 +72,7 @@ if TYPE_CHECKING:
         AzureKeyCredential
     )
 
-MediaSources = Union[FileSource, TextSource, SsmlSource]
+MediaSources = Union['FileSource', 'TextSource', 'SsmlSource']
 
 
 class CallConnectionClient:
