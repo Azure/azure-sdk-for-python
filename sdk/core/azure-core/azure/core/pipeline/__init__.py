@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 
-from typing import TypeVar, Generic, Dict, Any, Tuple, List, Optional
+from typing import TypeVar, Generic, Dict, Any, Tuple, List, Optional, Union, overload
 
 HTTPResponseType_co = TypeVar("HTTPResponseType_co", covariant=True)
 HTTPRequestType_co = TypeVar("HTTPRequestType_co", covariant=True)
@@ -104,7 +104,15 @@ class PipelineContext(Dict[str, Any]):
         """
         raise TypeError("Context objects cannot be updated.")
 
-    def pop(self, *args: str) -> Any:  # type: ignore # This is too hard to get the right overload for low benefits
+    @overload
+    def pop(self, __key: str) -> Any:
+        ...
+
+    @overload
+    def pop(self, __key: str, __default: Optional[Any]) -> Any:
+        ...
+
+    def pop(self, *args: Any) -> Any:
         """Removes specified key and returns the value.
 
         :param args: The key to remove.
