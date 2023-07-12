@@ -101,7 +101,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
         content: Optional[ContentType] = None,
         data: Optional[Dict[str, Any]] = None,
         files: Optional[FilesType] = None,
-        **kwargs
+        **kwargs: Any
     ):
         self.url = url
         self.method = method
@@ -117,7 +117,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
             files=files,
             json=json,
         )
-        self.headers = case_insensitive_dict(default_headers)
+        self.headers: MutableMapping[str, str] = case_insensitive_dict(default_headers)
         self.headers.update(headers or {})
 
         if kwargs:
@@ -170,7 +170,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
     def __repr__(self) -> str:
         return "<HttpRequest [{}], url: '{}'>".format(self.method, self.url)
 
-    def __deepcopy__(self, memo=None) -> "HttpRequest":
+    def __deepcopy__(self, memo: Optional[Dict[int, Any]] = None) -> "HttpRequest":
         try:
             request = HttpRequest(
                 method=self.method,
@@ -336,7 +336,7 @@ class HttpResponse(_HttpResponseBase):
         ...
 
     @abc.abstractmethod
-    def __exit__(self, *args) -> None:
+    def __exit__(self, *args: Any) -> None:
         ...
 
     @abc.abstractmethod
