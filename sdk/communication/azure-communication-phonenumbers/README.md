@@ -158,7 +158,7 @@ purchase_poller = phone_numbers_client.begin_purchase_phone_numbers(
 Releases an acquired phone number.
 
 ```python
-poller = self.phone_number_client.begin_release_phone_number(
+poller = phone_numbers_client.begin_release_phone_number(
     "<phone number>",
     polling = True
 )
@@ -174,7 +174,7 @@ Updates the specified phone number capabilities for Calling and SMS to one of:
 - `PhoneNumberCapabilityType.INBOUND_OUTBOUND`
 
 ```python
-poller = self.phone_number_client.begin_update_phone_number_capabilities(
+poller = phone_numbers_client.begin_update_phone_number_capabilities(
     "<phone number>",
     PhoneNumberCapabilityType.OUTBOUND,
     PhoneNumberCapabilityType.INBOUND_OUTBOUND,

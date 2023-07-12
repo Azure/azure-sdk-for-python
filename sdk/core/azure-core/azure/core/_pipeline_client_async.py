@@ -35,9 +35,7 @@ from typing import (
     Generic,
     Optional,
     cast,
-    TYPE_CHECKING,
 )
-from typing_extensions import Protocol
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
 from .pipeline.transport._base import PipelineClientBase
@@ -51,17 +49,8 @@ from .pipeline.policies import (
 )
 
 
-if TYPE_CHECKING:  # Protocol and non-Protocol can't mix in Python 3.7
-
-    class _AsyncContextManagerCloseable(AsyncContextManager, Protocol):
-        """Defines a context manager that is closeable at the same time."""
-
-        async def close(self):
-            ...
-
-
 HTTPRequestType = TypeVar("HTTPRequestType")
-AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", bound="_AsyncContextManagerCloseable")
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", bound="AsyncContextManager")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -80,11 +69,9 @@ class _Coroutine(Awaitable[AsyncHTTPResponseType]):
     This allows the dev to either use the "async with" syntax, or simply the object directly.
     It's also why "send_request" is not declared as async, since it couldn't be both easily.
 
-    "wrapped" must be an awaitable that returns an object that:
-    - has an async "close()"
-    - has an "__aexit__" method (IOW, is an async context manager)
+    "wrapped" must be an awaitable object that returns an object implements the async context manager protocol.
 
-    This permits this code to work for both requests.
+    This permits this code to work for both following requests.
 
     ```python
     from azure.core import AsyncPipelineClient
@@ -123,9 +110,6 @@ class _Coroutine(Awaitable[AsyncHTTPResponseType]):
 
     async def __aexit__(self, *args) -> None:
         await self._response.__aexit__(*args)
-
-    async def close(self) -> None:
-        await self._response.close()
 
 
 class AsyncPipelineClient(

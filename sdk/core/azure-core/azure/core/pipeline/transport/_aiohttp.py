@@ -87,7 +87,9 @@ class AioHttpTransport(AsyncHttpTransport):
             :caption: Asynchronous transport with aiohttp.
     """
 
-    def __init__(self, *, session: Optional[aiohttp.ClientSession] = None, loop=None, session_owner=True, **kwargs):
+    def __init__(
+        self, *, session: Optional[aiohttp.ClientSession] = None, loop=None, session_owner: bool = True, **kwargs
+    ):
         if loop and sys.version_info >= (3, 10):
             raise ValueError("Starting with Python 3.10, asyncio doesn’t support loop as a parameter anymore")
         self._loop = loop
@@ -299,7 +301,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         on the *content-encoding* header.
     """
 
-    def __init__(self, pipeline: AsyncPipeline, response: AsyncHttpResponse, *, decompress=True) -> None:
+    def __init__(self, pipeline: AsyncPipeline, response: AsyncHttpResponse, *, decompress: bool = True) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
@@ -367,7 +369,12 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     """
 
     def __init__(
-        self, request: HttpRequest, aiohttp_response: aiohttp.ClientResponse, block_size=None, *, decompress=True
+        self,
+        request: HttpRequest,
+        aiohttp_response: aiohttp.ClientResponse,
+        block_size: Optional[int] = None,
+        *,
+        decompress: bool = True
     ) -> None:
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse

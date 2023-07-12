@@ -8,19 +8,24 @@
 
 """
 FILE: list_revision_async_sample.py
+
 DESCRIPTION:
     This sample demos list revision operations for app configuration
-USAGE: python list_revision_async_sample.py
-"""
 
+USAGE: python list_revision_async_sample.py
+
+    Set the environment variables with your own values before running the sample:
+    1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
+"""
 import asyncio
+import os
 from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.aio import AzureAppConfigurationClient
-from util import print_configuration_setting, get_connection_string
+from util import print_configuration_setting
 
 
 async def main():
-    CONNECTION_STRING = get_connection_string()
+    CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
     # Create app config client
     client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
