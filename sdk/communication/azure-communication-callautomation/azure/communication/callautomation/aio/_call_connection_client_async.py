@@ -4,10 +4,18 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING, Optional, List, Union, Dict
+try:
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
+
 from urllib.parse import urlparse
+import warnings
+
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 from .._utils import (
@@ -63,7 +71,8 @@ if TYPE_CHECKING:
         CommunicationIdentifier,
     )
     from .._generated.models._enums import DtmfTone
-    from azure.core.exceptions import HttpResponseError
+
+MediaSources = Union[FileSource, TextSource, SsmlSource]
 
 
 class CallConnectionClient:
@@ -358,9 +367,8 @@ class CallConnectionClient:
     @distributed_trace_async
     async def play_media(
         self,
-        play_source: Union['FileSource', 'TextSource', 'SsmlSource',
-                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
-        play_to: List['CommunicationIdentifier'],
+        play_source: Union[MediaSources, List[MediaSources]],
+        play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
@@ -375,8 +383,10 @@ class CallConnectionClient:
          list[~azure.communication.callautomation.FileSource or
           ~azure.communication.callautomation.TextSource or
           ~azure.communication.callautomation.SsmlSource]
+        :param play_to: The targets to play media to. Default value is 'all', to play media
+         to all participants in the call.
         :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
-        :keyword loop: if the media should be repeated until cancelled.
+        :keyword loop: Whether the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
@@ -384,17 +394,17 @@ class CallConnectionClient:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        play_source_single: Union['FileSource', 'TextSource', 'SsmlSource'] = None
+        play_source_single: MediaSources = None
         if isinstance(play_source, list):
             if play_source:  # Check if the list is not empty
                 play_source_single = play_source[0]
         else:
             play_source_single = play_source
 
+        audience = [] if play_to == "all" else [serialize_identifier(i) for i in play_to]
         play_request = PlayRequest(
-            play_source_info=play_source_single._to_generated(),#pylint:disable=protected-access
-            play_to=[serialize_identifier(identifier)
-                     for identifier in play_to],
+            play_source_info=play_source_single._to_generated(),  # pylint:disable=protected-access
+            play_to=audience,
             play_options=PlayOptions(loop=loop),
             operation_context=operation_context,
             **kwargs
@@ -404,8 +414,7 @@ class CallConnectionClient:
     @distributed_trace_async
     async def play_media_to_all(
         self,
-        play_source: Union['FileSource', 'TextSource', 'SsmlSource',
-                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
+        play_source: Union['FileSource', List['FileSource']],
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
@@ -415,11 +424,7 @@ class CallConnectionClient:
 
         :param play_source: A PlaySource representing the source to play.
         :type play_source: ~azure.communication.callautomation.FileSource or
-         ~azure.communication.callautomation.TextSource or
-         ~azure.communication.callautomation.SsmlSource or
-         list[~azure.communication.callautomation.FileSource or
-          ~azure.communication.callautomation.TextSource or
-          ~azure.communication.callautomation.SsmlSource]
+         list[~azure.communication.callautomation.FileSource]
         :keyword loop: if the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
@@ -428,7 +433,11 @@ class CallConnectionClient:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        play_source_single: Union['FileSource', 'TextSource', 'SsmlSource'] = None
+        warnings.warn(
+            f"The method 'play_media_to_all' is deprecated. Please use 'play_media' instead.",
+            DeprecationWarning
+        )
+        play_source_single = None
         if isinstance(play_source, list):
             if play_source:  # Check if the list is not empty
                 play_source_single = play_source[0]
@@ -437,7 +446,6 @@ class CallConnectionClient:
 
         await self.play_media(
             play_source=play_source_single,
-            play_to=[],
             loop=loop,
             operation_context=operation_context,
             **kwargs
