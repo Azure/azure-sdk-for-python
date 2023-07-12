@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .. import _model_base
 from .._model_base import rest_field
@@ -702,38 +702,38 @@ class BatchJob(_model_base.Model):  # pylint: disable=too-many-instance-attribut
     :vartype stats: ~azure.batch.models.JobStatistics
     """
 
-    id: Optional[str] = rest_field(readonly=True)
+    id: Optional[str] = rest_field(visibility=["read"])
     """The ID is case-preserving and case-insensitive (that is, you may not have two
      IDs within an Account that differ only by case)."""
-    display_name: Optional[str] = rest_field(name="displayName", readonly=True)
+    display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
     """The display name for the Job."""
-    uses_task_dependencies: Optional[bool] = rest_field(name="usesTaskDependencies", readonly=True)
+    uses_task_dependencies: Optional[bool] = rest_field(name="usesTaskDependencies", visibility=["read"])
     """Whether Tasks in the Job can define dependencies on each other. The default is
      false."""
-    url: Optional[str] = rest_field(readonly=True)
+    url: Optional[str] = rest_field(visibility=["read"])
     """The URL of the Job."""
-    e_tag: Optional[str] = rest_field(name="eTag", readonly=True)
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
     """This is an opaque string. You can use it to detect whether the Job has changed
      between requests. In particular, you can be pass the ETag when updating a Job
      to specify that your changes should take effect only if nobody else has
      modified the Job in the meantime."""
-    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", readonly=True)
+    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", visibility=["read"])
     """This is the last time at which the Job level data, such as the Job state or
      priority, changed. It does not factor in task-level changes such as adding new
      Tasks or Tasks changing state."""
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", readonly=True)
+    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"])
     """The creation time of the Job."""
-    state: Optional[Union[str, "_models.JobState"]] = rest_field(readonly=True)
+    state: Optional[Union[str, "_models.JobState"]] = rest_field(visibility=["read"])
     """The state of the Job. Known values are: \"active\", \"disabling\", \"disabled\", \"enabling\",
      \"terminating\", \"completed\", and \"deleting\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", readonly=True)
+    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", visibility=["read"])
     """The time at which the Job entered its current state."""
-    previous_state: Optional[Union[str, "_models.JobState"]] = rest_field(name="previousState", readonly=True)
+    previous_state: Optional[Union[str, "_models.JobState"]] = rest_field(name="previousState", visibility=["read"])
     """This property is not set if the Job is in its initial Active state. Known values are:
      \"active\", \"disabling\", \"disabled\", \"enabling\", \"terminating\", \"completed\", and
      \"deleting\"."""
     previous_state_transition_time: Optional[datetime.datetime] = rest_field(
-        name="previousStateTransitionTime", readonly=True
+        name="previousStateTransitionTime", visibility=["read"]
     )
     """This property is not set if the Job is in its initial Active state."""
     priority: Optional[int] = rest_field()
@@ -751,7 +751,7 @@ class BatchJob(_model_base.Model):  # pylint: disable=too-many-instance-attribut
      it has been created using the update job API."""
     constraints: Optional["_models.JobConstraints"] = rest_field()
     """The execution constraints for a Job."""
-    job_manager_task: Optional["_models.JobManagerTask"] = rest_field(name="jobManagerTask", readonly=True)
+    job_manager_task: Optional["_models.JobManagerTask"] = rest_field(name="jobManagerTask", visibility=["read"])
     """The Job Manager Task is automatically started when the Job is created. The
      Batch service tries to schedule the Job Manager Task before any other Tasks in
      the Job. When shrinking a Pool, the Batch service tries to preserve Nodes where
@@ -774,14 +774,16 @@ class BatchJob(_model_base.Model):  # pylint: disable=too-many-instance-attribut
      to tolerate being interrupted and restarted without causing any corruption or
      duplicate data. The best practice for long running Tasks is to use some form of
      checkpointing."""
-    job_preparation_task: Optional["_models.JobPreparationTask"] = rest_field(name="jobPreparationTask", readonly=True)
+    job_preparation_task: Optional["_models.JobPreparationTask"] = rest_field(
+        name="jobPreparationTask", visibility=["read"]
+    )
     """The Job Preparation Task is a special Task run on each Compute Node before any
      other Task of the Job."""
-    job_release_task: Optional["_models.JobReleaseTask"] = rest_field(name="jobReleaseTask", readonly=True)
+    job_release_task: Optional["_models.JobReleaseTask"] = rest_field(name="jobReleaseTask", visibility=["read"])
     """The Job Release Task is a special Task run at the end of the Job on each
      Compute Node that has run any other Task of the Job."""
     common_environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
-        name="commonEnvironmentSettings", readonly=True
+        name="commonEnvironmentSettings", visibility=["read"]
     )
     """Individual Tasks can override an environment setting specified here by
      specifying the same setting name with a different value."""
@@ -789,22 +791,24 @@ class BatchJob(_model_base.Model):  # pylint: disable=too-many-instance-attribut
     """Specifies how a Job should be assigned to a Pool. Required."""
     on_all_tasks_complete: Optional[Union[str, "_models.OnAllTasksComplete"]] = rest_field(name="onAllTasksComplete")
     """The default is noaction. Known values are: \"noaction\" and \"terminatejob\"."""
-    on_task_failure: Optional[Union[str, "_models.OnTaskFailure"]] = rest_field(name="onTaskFailure", readonly=True)
+    on_task_failure: Optional[Union[str, "_models.OnTaskFailure"]] = rest_field(
+        name="onTaskFailure", visibility=["read"]
+    )
     """A Task is considered to have failed if has a failureInfo. A failureInfo is set
      if the Task completes with a non-zero exit code after exhausting its retry
      count, or if there was an error starting the Task, for example due to a
      resource file download error. The default is noaction. Known values are: \"noaction\" and
      \"performexitoptionsjobaction\"."""
     network_configuration: Optional["_models.JobNetworkConfiguration"] = rest_field(
-        name="networkConfiguration", readonly=True
+        name="networkConfiguration", visibility=["read"]
     )
     """The network configuration for the Job."""
     metadata: Optional[List["_models.MetadataItem"]] = rest_field()
     """The Batch service does not assign any meaning to metadata; it is solely for the
      use of user code."""
-    execution_info: Optional["_models.JobExecutionInformation"] = rest_field(name="executionInfo", readonly=True)
+    execution_info: Optional["_models.JobExecutionInformation"] = rest_field(name="executionInfo", visibility=["read"])
     """Contains information about the execution of a Job in the Azure Batch service."""
-    stats: Optional["_models.JobStatistics"] = rest_field(readonly=True)
+    stats: Optional["_models.JobStatistics"] = rest_field(visibility=["read"])
     """This property is populated only if the CloudJob was retrieved with an expand
      clause including the 'stats' attribute; otherwise it is null. The statistics
      may not be immediately available. The Batch service performs periodic roll-up
@@ -919,11 +923,6 @@ class BatchJobCreateParameters(_model_base.Model):  # pylint: disable=too-many-i
     :ivar metadata: The Batch service does not assign any meaning to metadata; it is solely for the
      use of user code.
     :vartype metadata: list[~azure.batch.models.MetadataItem]
-    :ivar stats: This property is populated only if the CloudJob was retrieved with an expand
-     clause including the 'stats' attribute; otherwise it is null. The statistics
-     may not be immediately available. The Batch service performs periodic roll-up
-     of statistics. The typical delay is about 30 minutes.
-    :vartype stats: ~azure.batch.models.JobStatistics
     """
 
     id: str = rest_field()
@@ -998,11 +997,6 @@ class BatchJobCreateParameters(_model_base.Model):  # pylint: disable=too-many-i
     metadata: Optional[List["_models.MetadataItem"]] = rest_field()
     """The Batch service does not assign any meaning to metadata; it is solely for the
      use of user code."""
-    stats: Optional["_models.JobStatistics"] = rest_field()
-    """This property is populated only if the CloudJob was retrieved with an expand
-     clause including the 'stats' attribute; otherwise it is null. The statistics
-     may not be immediately available. The Batch service performs periodic roll-up
-     of statistics. The typical delay is about 30 minutes."""
 
     @overload
     def __init__(
@@ -1024,7 +1018,6 @@ class BatchJobCreateParameters(_model_base.Model):  # pylint: disable=too-many-i
         on_task_failure: Optional[Union[str, "_models.OnTaskFailure"]] = None,
         network_configuration: Optional["_models.JobNetworkConfiguration"] = None,
         metadata: Optional[List["_models.MetadataItem"]] = None,
-        stats: Optional["_models.JobStatistics"] = None,
     ):
         ...
 
@@ -1124,33 +1117,35 @@ class BatchJobSchedule(_model_base.Model):  # pylint: disable=too-many-instance-
     :vartype stats: ~azure.batch.models.JobScheduleStatistics
     """
 
-    id: Optional[str] = rest_field(readonly=True)
+    id: Optional[str] = rest_field(visibility=["read"])
     """A string that uniquely identifies the schedule within the Account."""
-    display_name: Optional[str] = rest_field(name="displayName", readonly=True)
+    display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
     """The display name for the schedule."""
-    url: Optional[str] = rest_field(readonly=True)
+    url: Optional[str] = rest_field(visibility=["read"])
     """The URL of the Job Schedule."""
-    e_tag: Optional[str] = rest_field(name="eTag", readonly=True)
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
     """This is an opaque string. You can use it to detect whether the Job Schedule has
      changed between requests. In particular, you can be pass the ETag with an
      Update Job Schedule request to specify that your changes should take effect
      only if nobody else has modified the schedule in the meantime."""
-    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", readonly=True)
+    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", visibility=["read"])
     """This is the last time at which the schedule level data, such as the Job
      specification or recurrence information, changed. It does not factor in
      job-level changes such as new Jobs being created or Jobs changing state."""
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", readonly=True)
+    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"])
     """The creation time of the Job Schedule."""
-    state: Optional[Union[str, "_models.JobScheduleState"]] = rest_field(readonly=True)
+    state: Optional[Union[str, "_models.JobScheduleState"]] = rest_field(visibility=["read"])
     """The state of the Job Schedule. Known values are: \"active\", \"completed\", \"disabled\",
      \"terminating\", and \"deleting\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", readonly=True)
+    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", visibility=["read"])
     """The time at which the Job Schedule entered the current state."""
-    previous_state: Optional[Union[str, "_models.JobScheduleState"]] = rest_field(name="previousState", readonly=True)
+    previous_state: Optional[Union[str, "_models.JobScheduleState"]] = rest_field(
+        name="previousState", visibility=["read"]
+    )
     """This property is not present if the Job Schedule is in its initial active state. Known values
      are: \"active\", \"completed\", \"disabled\", \"terminating\", and \"deleting\"."""
     previous_state_transition_time: Optional[datetime.datetime] = rest_field(
-        name="previousStateTransitionTime", readonly=True
+        name="previousStateTransitionTime", visibility=["read"]
     )
     """This property is not present if the Job Schedule is in its initial active state."""
     schedule: "_models.Schedule" = rest_field()
@@ -1159,14 +1154,14 @@ class BatchJobSchedule(_model_base.Model):  # pylint: disable=too-many-instance-
     job_specification: "_models.JobSpecification" = rest_field(name="jobSpecification")
     """Specifies details of the Jobs to be created on a schedule. Required."""
     execution_info: Optional["_models.JobScheduleExecutionInformation"] = rest_field(
-        name="executionInfo", readonly=True
+        name="executionInfo", visibility=["read"]
     )
     """Contains information about Jobs that have been and will be run under a Job
      Schedule."""
     metadata: Optional[List["_models.MetadataItem"]] = rest_field()
     """The Batch service does not assign any meaning to metadata; it is solely for the
      use of user code."""
-    stats: Optional["_models.JobScheduleStatistics"] = rest_field(readonly=True)
+    stats: Optional["_models.JobScheduleStatistics"] = rest_field(visibility=["read"])
     """Resource usage statistics for a Job Schedule."""
 
     @overload
@@ -2058,90 +2053,92 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     :vartype current_node_communication_mode: str or ~azure.batch.models.NodeCommunicationMode
     """
 
-    id: Optional[str] = rest_field(readonly=True)
+    id: Optional[str] = rest_field(visibility=["read"])
     """The ID can contain any combination of alphanumeric characters including hyphens and
      underscores, and cannot contain more than 64 characters. The ID is case-preserving and
      case-insensitive (that is, you may not have two IDs within an Account that differ only by
      case)."""
-    display_name: Optional[str] = rest_field(name="displayName", readonly=True)
+    display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
     """The display name need not be unique and can contain any Unicode characters up
      to a maximum length of 1024."""
-    url: Optional[str] = rest_field(readonly=True)
+    url: Optional[str] = rest_field(visibility=["read"])
     """The URL of the Pool."""
-    e_tag: Optional[str] = rest_field(name="eTag", readonly=True)
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
     """This is an opaque string. You can use it to detect whether the Pool has changed
      between requests. In particular, you can be pass the ETag when updating a Pool
      to specify that your changes should take effect only if nobody else has
      modified the Pool in the meantime."""
-    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", readonly=True)
+    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", visibility=["read"])
     """This is the last time at which the Pool level data, such as the
      targetDedicatedNodes or enableAutoscale settings, changed. It does not factor
      in node-level changes such as a Compute Node changing state."""
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", readonly=True)
+    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"])
     """The creation time of the Pool."""
-    state: Optional[Union[str, "_models.PoolState"]] = rest_field(readonly=True)
+    state: Optional[Union[str, "_models.PoolState"]] = rest_field(visibility=["read"])
     """The current state of the Pool. Known values are: \"active\" and \"deleting\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", readonly=True)
+    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", visibility=["read"])
     """The time at which the Pool entered its current state."""
     allocation_state: Optional[Union[str, "_models.AllocationState"]] = rest_field(
-        name="allocationState", readonly=True
+        name="allocationState", visibility=["read"]
     )
     """Whether the Pool is resizing. Known values are: \"steady\", \"resizing\", and \"stopping\"."""
     allocation_state_transition_time: Optional[datetime.datetime] = rest_field(
-        name="allocationStateTransitionTime", readonly=True
+        name="allocationStateTransitionTime", visibility=["read"]
     )
     """The time at which the Pool entered its current allocation state."""
-    vm_size: Optional[str] = rest_field(name="vmSize", readonly=True)
+    vm_size: Optional[str] = rest_field(name="vmSize", visibility=["read"])
     """For information about available sizes of virtual machines in Pools, see Choose
      a VM size for Compute Nodes in an Azure Batch Pool
      (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes)."""
     cloud_service_configuration: Optional["_models.CloudServiceConfiguration"] = rest_field(
-        name="cloudServiceConfiguration", readonly=True
+        name="cloudServiceConfiguration", visibility=["read"]
     )
     """This property and virtualMachineConfiguration are mutually exclusive and one of the properties
      must be specified. This property cannot be specified if the Batch Account was created with its
      poolAllocationMode property set to 'UserSubscription'."""
     virtual_machine_configuration: Optional["_models.VirtualMachineConfiguration"] = rest_field(
-        name="virtualMachineConfiguration", readonly=True
+        name="virtualMachineConfiguration", visibility=["read"]
     )
     """This property and cloudServiceConfiguration are mutually exclusive and one of
      the properties must be specified."""
-    resize_timeout: Optional[datetime.timedelta] = rest_field(name="resizeTimeout", readonly=True)
+    resize_timeout: Optional[datetime.timedelta] = rest_field(name="resizeTimeout", visibility=["read"])
     """This is the timeout for the most recent resize operation. (The initial sizing
      when the Pool is created counts as a resize.) The default value is 15 minutes."""
-    resize_errors: Optional[List["_models.ResizeError"]] = rest_field(name="resizeErrors", readonly=True)
+    resize_errors: Optional[List["_models.ResizeError"]] = rest_field(name="resizeErrors", visibility=["read"])
     """This property is set only if one or more errors occurred during the last Pool
      resize, and only when the Pool allocationState is Steady."""
-    current_dedicated_nodes: Optional[int] = rest_field(name="currentDedicatedNodes", readonly=True)
+    current_dedicated_nodes: Optional[int] = rest_field(name="currentDedicatedNodes", visibility=["read"])
     """The number of dedicated Compute Nodes currently in the Pool."""
-    current_low_priority_nodes: Optional[int] = rest_field(name="currentLowPriorityNodes", readonly=True)
+    current_low_priority_nodes: Optional[int] = rest_field(name="currentLowPriorityNodes", visibility=["read"])
     """Spot/Low-priority Compute Nodes which have been preempted are included in this
      count."""
-    target_dedicated_nodes: Optional[int] = rest_field(name="targetDedicatedNodes", readonly=True)
+    target_dedicated_nodes: Optional[int] = rest_field(name="targetDedicatedNodes", visibility=["read"])
     """The desired number of dedicated Compute Nodes in the Pool."""
-    target_low_priority_nodes: Optional[int] = rest_field(name="targetLowPriorityNodes", readonly=True)
+    target_low_priority_nodes: Optional[int] = rest_field(name="targetLowPriorityNodes", visibility=["read"])
     """The desired number of Spot/Low-priority Compute Nodes in the Pool."""
-    enable_auto_scale: Optional[bool] = rest_field(name="enableAutoScale", readonly=True)
+    enable_auto_scale: Optional[bool] = rest_field(name="enableAutoScale", visibility=["read"])
     """If false, at least one of targetDedicatedNodes and targetLowPriorityNodes must
      be specified. If true, the autoScaleFormula property is required and the Pool
      automatically resizes according to the formula. The default value is false."""
-    auto_scale_formula: Optional[str] = rest_field(name="autoScaleFormula", readonly=True)
+    auto_scale_formula: Optional[str] = rest_field(name="autoScaleFormula", visibility=["read"])
     """This property is set only if the Pool automatically scales, i.e.
      enableAutoScale is true."""
     auto_scale_evaluation_interval: Optional[datetime.timedelta] = rest_field(
-        name="autoScaleEvaluationInterval", readonly=True
+        name="autoScaleEvaluationInterval", visibility=["read"]
     )
     """This property is set only if the Pool automatically scales, i.e.
      enableAutoScale is true."""
-    auto_scale_run: Optional["_models.AutoScaleRun"] = rest_field(name="autoScaleRun", readonly=True)
+    auto_scale_run: Optional["_models.AutoScaleRun"] = rest_field(name="autoScaleRun", visibility=["read"])
     """This property is set only if the Pool automatically scales, i.e.
      enableAutoScale is true."""
-    enable_inter_node_communication: Optional[bool] = rest_field(name="enableInterNodeCommunication", readonly=True)
+    enable_inter_node_communication: Optional[bool] = rest_field(
+        name="enableInterNodeCommunication", visibility=["read"]
+    )
     """This imposes restrictions on which Compute Nodes can be assigned to the Pool.
      Specifying this value can reduce the chance of the requested number of Compute
      Nodes to be allocated in the Pool."""
     network_configuration: Optional["_models.NetworkConfiguration"] = rest_field(
-        name="networkConfiguration", readonly=True
+        name="networkConfiguration", visibility=["read"]
     )
     """The network configuration for a Pool."""
     start_task: Optional["_models.StartTask"] = rest_field(name="startTask")
@@ -2159,7 +2156,7 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      install/launch services from the StartTask working directory, as this will
      block Batch from being able to re-run the StartTask."""
     certificate_references: Optional[List["_models.CertificateReference"]] = rest_field(
-        name="certificateReferences", readonly=True
+        name="certificateReferences", visibility=["read"]
     )
     """For Windows Nodes, the Batch service installs the Certificates to the specified
      Certificate store and location. For Linux Compute Nodes, the Certificates are
@@ -2169,35 +2166,35 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      is created in the user's home directory (e.g., /home/{user-name}/certs) and
      Certificates are placed in that directory."""
     application_package_references: Optional[List["_models.ApplicationPackageReference"]] = rest_field(
-        name="applicationPackageReferences", readonly=True
+        name="applicationPackageReferences", visibility=["read"]
     )
     """Changes to Package references affect all new Nodes joining the Pool, but do not
      affect Compute Nodes that are already in the Pool until they are rebooted or
      reimaged. There is a maximum of 10 Package references on any given Pool."""
-    application_licenses: Optional[List[str]] = rest_field(name="applicationLicenses", readonly=True)
+    application_licenses: Optional[List[str]] = rest_field(name="applicationLicenses", visibility=["read"])
     """The list of application licenses must be a subset of available Batch service application
      licenses. If a license is requested which is not supported, Pool creation will fail."""
-    task_slots_per_node: Optional[int] = rest_field(name="taskSlotsPerNode", readonly=True)
+    task_slots_per_node: Optional[int] = rest_field(name="taskSlotsPerNode", visibility=["read"])
     """The default value is 1. The maximum value is the smaller of 4 times the number
      of cores of the vmSize of the pool or 256."""
     task_scheduling_policy: Optional["_models.TaskSchedulingPolicy"] = rest_field(
-        name="taskSchedulingPolicy", readonly=True
+        name="taskSchedulingPolicy", visibility=["read"]
     )
     """If not specified, the default is spread."""
-    user_accounts: Optional[List["_models.UserAccount"]] = rest_field(name="userAccounts", readonly=True)
+    user_accounts: Optional[List["_models.UserAccount"]] = rest_field(name="userAccounts", visibility=["read"])
     """The list of user Accounts to be created on each Compute Node in the Pool."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field(readonly=True)
+    metadata: Optional[List["_models.MetadataItem"]] = rest_field(visibility=["read"])
     """A list of name-value pairs associated with the Pool as metadata."""
-    stats: Optional["_models.PoolStatistics"] = rest_field(readonly=True)
+    stats: Optional["_models.PoolStatistics"] = rest_field(visibility=["read"])
     """This property is populated only if the CloudPool was retrieved with an expand
      clause including the 'stats' attribute; otherwise it is null. The statistics
      may not be immediately available. The Batch service performs periodic roll-up
      of statistics. The typical delay is about 30 minutes."""
     mount_configuration: Optional[List["_models.MountConfiguration"]] = rest_field(
-        name="mountConfiguration", readonly=True
+        name="mountConfiguration", visibility=["read"]
     )
     """This supports Azure Files, NFS, CIFS/SMB, and Blobfuse."""
-    identity: Optional["_models.BatchPoolIdentity"] = rest_field(readonly=True)
+    identity: Optional["_models.BatchPoolIdentity"] = rest_field(visibility=["read"])
     """The list of user identities associated with the Batch pool. The user identity
      dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'."""
@@ -2207,7 +2204,7 @@ class BatchPool(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     """If omitted, the default value is Default. Known values are: \"default\", \"classic\", and
      \"simplified\"."""
     current_node_communication_mode: Optional[Union[str, "_models.NodeCommunicationMode"]] = rest_field(
-        name="currentNodeCommunicationMode", readonly=True
+        name="currentNodeCommunicationMode", visibility=["read"]
     )
     """The current state of the pool communication mode. Known values are: \"default\", \"classic\",
      and \"simplified\"."""
@@ -2993,38 +2990,38 @@ class BatchTask(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     :vartype authentication_token_settings: ~azure.batch.models.AuthenticationTokenSettings
     """
 
-    id: Optional[str] = rest_field(readonly=True)
+    id: Optional[str] = rest_field(visibility=["read"])
     """The ID can contain any combination of alphanumeric characters including hyphens and
      underscores, and cannot contain more than 64 characters."""
-    display_name: Optional[str] = rest_field(name="displayName", readonly=True)
+    display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
     """The display name need not be unique and can contain any Unicode characters up
      to a maximum length of 1024."""
-    url: Optional[str] = rest_field(readonly=True)
+    url: Optional[str] = rest_field(visibility=["read"])
     """The URL of the Task."""
-    e_tag: Optional[str] = rest_field(name="eTag", readonly=True)
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
     """This is an opaque string. You can use it to detect whether the Task has changed
      between requests. In particular, you can be pass the ETag when updating a Task
      to specify that your changes should take effect only if nobody else has
      modified the Task in the meantime."""
-    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", readonly=True)
+    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", visibility=["read"])
     """The last modified time of the Task."""
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", readonly=True)
+    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"])
     """The creation time of the Task."""
-    exit_conditions: Optional["_models.ExitConditions"] = rest_field(name="exitConditions", readonly=True)
+    exit_conditions: Optional["_models.ExitConditions"] = rest_field(name="exitConditions", visibility=["read"])
     """How the Batch service should respond when the Task completes."""
-    state: Optional[Union[str, "_models.TaskState"]] = rest_field(readonly=True)
+    state: Optional[Union[str, "_models.TaskState"]] = rest_field(visibility=["read"])
     """The state of the Task. Known values are: \"active\", \"preparing\", \"running\", and
      \"completed\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", readonly=True)
+    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", visibility=["read"])
     """The time at which the Task entered its current state."""
-    previous_state: Optional[Union[str, "_models.TaskState"]] = rest_field(name="previousState", readonly=True)
+    previous_state: Optional[Union[str, "_models.TaskState"]] = rest_field(name="previousState", visibility=["read"])
     """This property is not set if the Task is in its initial Active state. Known values are:
      \"active\", \"preparing\", \"running\", and \"completed\"."""
     previous_state_transition_time: Optional[datetime.datetime] = rest_field(
-        name="previousStateTransitionTime", readonly=True
+        name="previousStateTransitionTime", visibility=["read"]
     )
     """This property is not set if the Task is in its initial Active state."""
-    command_line: Optional[str] = rest_field(name="commandLine", readonly=True)
+    command_line: Optional[str] = rest_field(name="commandLine", visibility=["read"])
     """For multi-instance Tasks, the command line is executed as the primary Task,
      after the primary Task and all subtasks have finished executing the
      coordination command line. The command line does not run under a shell, and
@@ -3035,7 +3032,9 @@ class BatchTask(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      file paths, it should use a relative path (relative to the Task working
      directory), or use the Batch provided environment variable
      (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables)."""
-    container_settings: Optional["_models.TaskContainerSettings"] = rest_field(name="containerSettings", readonly=True)
+    container_settings: Optional["_models.TaskContainerSettings"] = rest_field(
+        name="containerSettings", visibility=["read"]
+    )
     """If the Pool that will run this Task has containerConfiguration set, this must
      be set as well. If the Pool that will run this Task doesn't have
      containerConfiguration set, this must not be set. When this is specified, all
@@ -3045,50 +3044,50 @@ class BatchTask(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      is executed in the container. Files produced in the container outside of
      AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host disk, meaning that
      Batch file APIs will not be able to access those files."""
-    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(name="resourceFiles", readonly=True)
+    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(name="resourceFiles", visibility=["read"])
     """For multi-instance Tasks, the resource files will only be downloaded to the
      Compute Node on which the primary Task is executed. There is a maximum size for
      the list of resource files.  When the max size is exceeded, the request will
      fail and the response error code will be RequestEntityTooLarge. If this occurs,
      the collection of ResourceFiles must be reduced in size. This can be achieved
      using .zip files, Application Packages, or Docker Containers."""
-    output_files: Optional[List["_models.OutputFile"]] = rest_field(name="outputFiles", readonly=True)
+    output_files: Optional[List["_models.OutputFile"]] = rest_field(name="outputFiles", visibility=["read"])
     """For multi-instance Tasks, the files will only be uploaded from the Compute Node
      on which the primary Task is executed."""
     environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
-        name="environmentSettings", readonly=True
+        name="environmentSettings", visibility=["read"]
     )
     """A list of environment variable settings for the Task."""
-    affinity_info: Optional["_models.AffinityInformation"] = rest_field(name="affinityInfo", readonly=True)
+    affinity_info: Optional["_models.AffinityInformation"] = rest_field(name="affinityInfo", visibility=["read"])
     """A locality hint that can be used by the Batch service to select a Compute Node
      on which to start a Task."""
     constraints: Optional["_models.TaskConstraints"] = rest_field()
     """Execution constraints to apply to a Task."""
-    required_slots: Optional[int] = rest_field(name="requiredSlots", readonly=True)
+    required_slots: Optional[int] = rest_field(name="requiredSlots", visibility=["read"])
     """The default is 1. A Task can only be scheduled to run on a compute node if the
      node has enough free scheduling slots available. For multi-instance Tasks, this
      must be 1."""
-    user_identity: Optional["_models.UserIdentity"] = rest_field(name="userIdentity", readonly=True)
+    user_identity: Optional["_models.UserIdentity"] = rest_field(name="userIdentity", visibility=["read"])
     """If omitted, the Task runs as a non-administrative user unique to the Task."""
-    execution_info: Optional["_models.TaskExecutionInformation"] = rest_field(name="executionInfo", readonly=True)
+    execution_info: Optional["_models.TaskExecutionInformation"] = rest_field(name="executionInfo", visibility=["read"])
     """Information about the execution of a Task."""
-    node_info: Optional["_models.BatchNodeInformation"] = rest_field(name="nodeInfo", readonly=True)
+    node_info: Optional["_models.BatchNodeInformation"] = rest_field(name="nodeInfo", visibility=["read"])
     """Information about the Compute Node on which a Task ran."""
     multi_instance_settings: Optional["_models.MultiInstanceSettings"] = rest_field(
-        name="multiInstanceSettings", readonly=True
+        name="multiInstanceSettings", visibility=["read"]
     )
     """Multi-instance Tasks are commonly used to support MPI Tasks. In the MPI case,
      if any of the subtasks fail (for example due to exiting with a non-zero exit
      code) the entire multi-instance Task fails. The multi-instance Task is then
      terminated and retried, up to its retry limit."""
-    stats: Optional["_models.TaskStatistics"] = rest_field(readonly=True)
+    stats: Optional["_models.TaskStatistics"] = rest_field(visibility=["read"])
     """Resource usage statistics for a Task."""
-    depends_on: Optional["_models.TaskDependencies"] = rest_field(name="dependsOn", readonly=True)
+    depends_on: Optional["_models.TaskDependencies"] = rest_field(name="dependsOn", visibility=["read"])
     """This Task will not be scheduled until all Tasks that it depends on have
      completed successfully. If any of those Tasks fail and exhaust their retry
      counts, this Task will never be scheduled."""
     application_package_references: Optional[List["_models.ApplicationPackageReference"]] = rest_field(
-        name="applicationPackageReferences", readonly=True
+        name="applicationPackageReferences", visibility=["read"]
     )
     """Application packages are downloaded and deployed to a shared directory, not the
      Task working directory. Therefore, if a referenced package is already on the
@@ -3097,7 +3096,7 @@ class BatchTask(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      because the package has been deleted or because download failed, the Task
      fails."""
     authentication_token_settings: Optional["_models.AuthenticationTokenSettings"] = rest_field(
-        name="authenticationTokenSettings", readonly=True
+        name="authenticationTokenSettings", visibility=["read"]
     )
     """If this property is set, the Batch service provides the Task with an
      authentication token which can be used to authenticate Batch service operations
@@ -3454,30 +3453,34 @@ class Certificate(_model_base.Model):  # pylint: disable=too-many-instance-attri
      digits. Required."""
     thumbprint_algorithm: str = rest_field(name="thumbprintAlgorithm")
     """The algorithm used to derive the thumbprint. Required."""
-    url: Optional[str] = rest_field(readonly=True)
+    url: Optional[str] = rest_field(visibility=["read"])
     """The URL of the Certificate."""
-    state: Optional[Union[str, "_models.CertificateState"]] = rest_field(readonly=True)
+    state: Optional[Union[str, "_models.CertificateState"]] = rest_field(visibility=["read"])
     """The state of the Certificate. Known values are: \"active\", \"deleting\", and \"deletefailed\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", readonly=True)
+    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", visibility=["read"])
     """The time at which the Certificate entered its current state."""
-    previous_state: Optional[Union[str, "_models.CertificateState"]] = rest_field(name="previousState", readonly=True)
+    previous_state: Optional[Union[str, "_models.CertificateState"]] = rest_field(
+        name="previousState", visibility=["read"]
+    )
     """This property is not set if the Certificate is in its initial active state. Known values are:
      \"active\", \"deleting\", and \"deletefailed\"."""
     previous_state_transition_time: Optional[datetime.datetime] = rest_field(
-        name="previousStateTransitionTime", readonly=True
+        name="previousStateTransitionTime", visibility=["read"]
     )
     """This property is not set if the Certificate is in its initial Active state."""
-    public_data: Optional[str] = rest_field(name="publicData", readonly=True)
+    public_data: Optional[str] = rest_field(name="publicData", visibility=["read"])
     """The public part of the Certificate as a base-64 encoded .cer file."""
     delete_certificate_error: Optional["_models.DeleteCertificateError"] = rest_field(
-        name="deleteCertificateError", readonly=True
+        name="deleteCertificateError", visibility=["read"]
     )
     """This property is set only if the Certificate is in the DeleteFailed state."""
-    data: str = rest_field()
+    data: str = rest_field(visibility=["create"])
     """The base64-encoded contents of the Certificate. The maximum size is 10KB. Required."""
-    certificate_format: Optional[Union[str, "_models.CertificateFormat"]] = rest_field(name="certificateFormat")
+    certificate_format: Optional[Union[str, "_models.CertificateFormat"]] = rest_field(
+        name="certificateFormat", visibility=["create"]
+    )
     """The format of the Certificate data. Known values are: \"pfx\" and \"cer\"."""
-    password: Optional[str] = rest_field()
+    password: Optional[str] = rest_field(visibility=["create"])
     """This must be omitted if the Certificate format is cer."""
 
     @overload
@@ -4463,7 +4466,7 @@ class ImageReference(_model_base.Model):
      about the firewall settings for the Batch Compute Node agent to communicate
      with the Batch service see
      https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration."""
-    exact_version: Optional[str] = rest_field(name="exactVersion", readonly=True)
+    exact_version: Optional[str] = rest_field(name="exactVersion", visibility=["read"])
     """The specific version of the platform image or marketplace image used to create
      the node. This read-only field differs from 'version' only if the value
      specified for 'version' when the pool was created was 'latest'."""
@@ -9809,9 +9812,9 @@ class UserAssignedIdentity(_model_base.Model):
 
     resource_id: str = rest_field(name="resourceId")
     """The ARM resource id of the user assigned identity. Required."""
-    client_id: Optional[str] = rest_field(name="clientId", readonly=True)
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
     """The client id of the user assigned identity."""
-    principal_id: Optional[str] = rest_field(name="principalId", readonly=True)
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
     """The principal id of the user assigned identity."""
 
     @overload
@@ -10074,10 +10077,10 @@ class VMExtension(_model_base.Model):
      upgrade minor versions unless redeployed, even with this property set to true.
     :vartype auto_upgrade_minor_version: bool
     :ivar settings: JSON formatted public settings for the extension.
-    :vartype settings: any
+    :vartype settings: dict[str, str]
     :ivar protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :vartype protected_settings: any
+    :vartype protected_settings: dict[str, str]
     :ivar provision_after_extensions: Collection of extension names after which this extension
      needs to be
      provisioned.
@@ -10096,9 +10099,9 @@ class VMExtension(_model_base.Model):
     """Indicates whether the extension should use a newer minor version if one is
      available at deployment time. Once deployed, however, the extension will not
      upgrade minor versions unless redeployed, even with this property set to true."""
-    settings: Optional[Any] = rest_field()
+    settings: Optional[Dict[str, str]] = rest_field()
     """JSON formatted public settings for the extension."""
-    protected_settings: Optional[Any] = rest_field(name="protectedSettings")
+    protected_settings: Optional[Dict[str, str]] = rest_field(name="protectedSettings")
     """The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all."""
     provision_after_extensions: Optional[List[str]] = rest_field(name="provisionAfterExtensions")
@@ -10114,8 +10117,8 @@ class VMExtension(_model_base.Model):
         type: str,
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
-        settings: Optional[Any] = None,
-        protected_settings: Optional[Any] = None,
+        settings: Optional[Dict[str, str]] = None,
+        protected_settings: Optional[Dict[str, str]] = None,
         provision_after_extensions: Optional[List[str]] = None,
     ):
         ...

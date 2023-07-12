@@ -138,7 +138,7 @@ def _serialize_datetime(o):
 
 def _is_readonly(p):
     try:
-        return p._readonly  # pylint: disable=protected-access
+        return p._visibility == ["read"]  # pylint: disable=protected-access
     except AttributeError:
         return False
 
@@ -645,14 +645,14 @@ class _RestField:
         name: typing.Optional[str] = None,
         type: typing.Optional[typing.Callable] = None,  # pylint: disable=redefined-builtin
         is_discriminator: bool = False,
-        readonly: bool = False,
+        visibility: typing.Optional[typing.List[str]] = None,
         default: typing.Any = _UNSET,
     ):
         self._type = type
         self._rest_name_input = name
         self._module: typing.Optional[str] = None
         self._is_discriminator = is_discriminator
-        self._readonly = readonly
+        self._visibility = visibility
         self._is_model = False
         self._default = default
 
@@ -692,10 +692,10 @@ def rest_field(
     *,
     name: typing.Optional[str] = None,
     type: typing.Optional[typing.Callable] = None,  # pylint: disable=redefined-builtin
-    readonly: bool = False,
+    visibility: typing.Optional[typing.List[str]] = None,
     default: typing.Any = _UNSET,
 ) -> typing.Any:
-    return _RestField(name=name, type=type, readonly=readonly, default=default)
+    return _RestField(name=name, type=type, visibility=visibility, default=default)
 
 
 def rest_discriminator(

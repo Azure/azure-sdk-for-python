@@ -11,14 +11,14 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccessScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """AccessScope."""
+    """AccessScope enums."""
 
     JOB = "job"
     """Grants access to perform all operations on the Job containing the Task."""
 
 
 class AllocationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """AllocationState."""
+    """AllocationState enums."""
 
     STEADY = "steady"
     """The Pool is not resizing. There are no changes to the number of Compute Nodes in the Pool in
@@ -32,7 +32,7 @@ class AllocationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class AutoUserScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """AutoUserScope."""
+    """AutoUserScope enums."""
 
     TASK = "task"
     """Specifies that the service should create a new user for the Task."""
@@ -42,7 +42,7 @@ class AutoUserScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class BatchNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchNodeDeallocationOption."""
+    """BatchNodeDeallocationOption enums."""
 
     REQUEUE = "requeue"
     """Terminate running Task processes and requeue the Tasks. The Tasks will run again when a Compute
@@ -60,7 +60,7 @@ class BatchNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class BatchNodeFillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchNodeFillType."""
+    """BatchNodeFillType enums."""
 
     SPREAD = "spread"
     """Tasks should be assigned evenly across all Compute Nodes in the Pool."""
@@ -70,7 +70,7 @@ class BatchNodeFillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class BatchNodeRebootOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchNodeRebootOption."""
+    """BatchNodeRebootOption enums."""
 
     REQUEUE = "requeue"
     """Terminate running Task processes and requeue the Tasks. The Tasks will run again when a Compute
@@ -89,7 +89,7 @@ class BatchNodeRebootOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class BatchNodeReimageOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchNodeReimageOption."""
+    """BatchNodeReimageOption enums."""
 
     REQUEUE = "requeue"
     """Terminate running Task processes and requeue the Tasks. The Tasks will run again when a Compute
@@ -108,7 +108,7 @@ class BatchNodeReimageOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class BatchNodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchNodeState."""
+    """BatchNodeState enums."""
 
     IDLE = "idle"
     """The Compute Node is not currently running a Task."""
@@ -145,7 +145,7 @@ class BatchNodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class CachingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CachingType."""
+    """CachingType enums."""
 
     NONE = "none"
     """The caching mode for the disk is not enabled."""
@@ -156,7 +156,7 @@ class CachingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class CertificateFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CertificateFormat."""
+    """CertificateFormat enums."""
 
     PFX = "pfx"
     """The Certificate is a PFX (PKCS#12) formatted Certificate or Certificate chain."""
@@ -165,7 +165,7 @@ class CertificateFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class CertificateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CertificateState."""
+    """CertificateState enums."""
 
     ACTIVE = "active"
     """The Certificate is available for use in Pools."""
@@ -182,7 +182,7 @@ class CertificateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class CertificateStoreLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CertificateStoreLocation."""
+    """CertificateStoreLocation enums."""
 
     CURRENT_USER = "currentuser"
     """Certificates should be installed to the CurrentUser Certificate store."""
@@ -191,7 +191,7 @@ class CertificateStoreLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class CertificateVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CertificateVisibility."""
+    """CertificateVisibility enums."""
 
     START_TASK = "starttask"
     """The Certificate should be visible to the user account under which the StartTask is run. Note
@@ -205,14 +205,14 @@ class CertificateVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ContainerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ContainerType."""
+    """ContainerType enums."""
 
     DOCKER_COMPATIBLE = "dockerCompatible"
     """A Docker compatible container technology will be used to launch the containers."""
 
 
 class ContainerWorkingDirectory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ContainerWorkingDirectory."""
+    """ContainerWorkingDirectory enums."""
 
     TASK_WORKING_DIRECTORY = "taskWorkingDirectory"
     """Use the standard Batch service Task working directory, which will contain the Task Resource
@@ -223,7 +223,7 @@ class ContainerWorkingDirectory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DependencyAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DependencyAction."""
+    """DependencyAction enums."""
 
     SATISFY = "satisfy"
     """Satisfy tasks waiting on this task; once all dependencies are satisfied, the task will be
@@ -233,14 +233,14 @@ class DependencyAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DiffDiskPlacement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DiffDiskPlacement."""
+    """AccessDiffDiskPlacementScope enums."""
 
     CACHE_DISK = "cachedisk"
     """The Ephemeral OS Disk is stored on the VM cache."""
 
 
 class DisableBatchNodeSchedulingOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DisableBatchNodeSchedulingOption."""
+    """DisableBatchNodeSchedulingOption enums."""
 
     REQUEUE = "requeue"
     """Terminate running Task processes and requeue the Tasks. The Tasks may run again on other
@@ -255,7 +255,7 @@ class DisableBatchNodeSchedulingOption(str, Enum, metaclass=CaseInsensitiveEnumM
 
 
 class DisableJobOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DisableJobOption."""
+    """DisableJobOption enums."""
 
     REQUEUE = "requeue"
     """Terminate running Tasks and requeue them. The Tasks will run again when the Job is enabled."""
@@ -267,7 +267,7 @@ class DisableJobOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DiskEncryptionTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DiskEncryptionTarget."""
+    """DiskEncryptionTarget enums."""
 
     OS_DISK = "osdisk"
     """The OS Disk on the compute node is encrypted."""
@@ -277,7 +277,7 @@ class DiskEncryptionTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DynamicVNetAssignmentScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DynamicVNetAssignmentScope."""
+    """DynamicVNetAssignmentScope enums."""
 
     NONE = "none"
     """No dynamic VNet assignment is enabled."""
@@ -286,7 +286,7 @@ class DynamicVNetAssignmentScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ElevationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ElevationLevel."""
+    """ElevationLevel enums."""
 
     NON_ADMIN = "nonadmin"
     """The user is a standard user without elevated access."""
@@ -295,7 +295,7 @@ class ElevationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ErrorCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ErrorCategory."""
+    """ErrorCategory enums."""
 
     USER_ERROR = "usererror"
     """The error is due to a user issue, such as misconfiguration."""
@@ -304,7 +304,7 @@ class ErrorCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class InboundEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """InboundEndpointProtocol."""
+    """InboundEndpointProtocol enums."""
 
     TCP = "tcp"
     """Use TCP for the endpoint."""
@@ -313,7 +313,7 @@ class InboundEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class IPAddressProvisioningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """IPAddressProvisioningType."""
+    """IPAddressProvisioningType enums."""
 
     BATCH_MANAGED = "batchmanaged"
     """A public IP will be created and managed by Batch. There may be multiple public IPs depending on
@@ -325,7 +325,7 @@ class IPAddressProvisioningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class JobAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """JobAction."""
+    """JobAction enums."""
 
     NONE = "none"
     """Take no action."""
@@ -337,7 +337,7 @@ class JobAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class JobPreparationTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """JobPreparationTaskState."""
+    """JobPreparationTaskState enums."""
 
     RUNNING = "running"
     """The Task is currently running (including retrying)."""
@@ -348,7 +348,7 @@ class JobPreparationTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class JobReleaseTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """JobReleaseTaskState."""
+    """JobReleaseTaskState enums."""
 
     RUNNING = "running"
     """The Task is currently running (including retrying)."""
@@ -359,7 +359,7 @@ class JobReleaseTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class JobScheduleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """JobScheduleState."""
+    """JobScheduleState enums."""
 
     ACTIVE = "active"
     """The Job Schedule is active and will create Jobs as per its schedule."""
@@ -381,7 +381,7 @@ class JobScheduleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class JobState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """JobState."""
+    """JobState enums."""
 
     ACTIVE = "active"
     """The Job is available to have Tasks scheduled."""
@@ -405,7 +405,7 @@ class JobState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class LoginMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """LoginMode."""
+    """LoginMode enums."""
 
     BATCH = "batch"
     """The LOGON32_LOGON_BATCH Win32 login mode. The batch login mode is recommended for long running
@@ -419,7 +419,7 @@ class LoginMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class NetworkSecurityGroupRuleAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """NetworkSecurityGroupRuleAccess."""
+    """NetworkSecurityGroupRuleAccess enums."""
 
     ALLOW = "allow"
     """Allow access."""
@@ -428,7 +428,7 @@ class NetworkSecurityGroupRuleAccess(str, Enum, metaclass=CaseInsensitiveEnumMet
 
 
 class NodeCommunicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """NodeCommunicationMode."""
+    """NodeCommunicationMode enums."""
 
     DEFAULT = "default"
     """The node communication mode is automatically set by the Batch service."""
@@ -442,7 +442,7 @@ class NodeCommunicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class NodePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """NodePlacementPolicyType."""
+    """NodePlacementPolicyType enums."""
 
     REGIONAL = "regional"
     """All nodes in the pool will be allocated in the same region."""
@@ -452,15 +452,16 @@ class NodePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class OnAllTasksComplete(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OnAllTasksComplete."""
+    """The action the Batch service should take when all Tasks in the Job are in the completed state."""
 
     NO_ACTION = "noaction"
     """Do nothing. The Job remains active unless terminated or disabled by some other means."""
     TERMINATE_JOB = "terminatejob"
+    """Terminate the Job. The Job's terminateReason is set to 'AllTasksComplete'."""
 
 
 class OnTaskFailure(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OnTaskFailure."""
+    """OnTaskFailure enums."""
 
     NO_ACTION = "noaction"
     """Do nothing. The Job remains active unless terminated or disabled by some other means."""
@@ -469,7 +470,7 @@ class OnTaskFailure(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OSType."""
+    """OSType enums."""
 
     LINUX = "linux"
     """The Linux operating system."""
@@ -478,7 +479,7 @@ class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class OutputFileUploadCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OutputFileUploadCondition."""
+    """OutputFileUploadCondition enums."""
 
     TASK_SUCCESS = "tasksuccess"
     """Upload the file(s) only after the Task process exits with an exit code of 0."""
@@ -489,7 +490,7 @@ class OutputFileUploadCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PoolIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PoolIdentityType."""
+    """PoolIdentityType enums."""
 
     USER_ASSIGNED = "UserAssigned"
     """Batch pool has user assigned identities with it."""
@@ -499,7 +500,7 @@ class PoolIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PoolLifetimeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PoolLifetimeOption."""
+    """PoolLifetimeOption enums."""
 
     JOB_SCHEDULE = "jobschedule"
     """The Pool exists for the lifetime of the Job Schedule. The Batch Service creates the Pool when
@@ -512,7 +513,7 @@ class PoolLifetimeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PoolState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PoolState."""
+    """PoolState enums."""
 
     ACTIVE = "active"
     """The Pool is available to run Tasks subject to the availability of Compute Nodes."""
@@ -522,7 +523,7 @@ class PoolState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SchedulingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SchedulingState."""
+    """SchedulingState enums."""
 
     ENABLED = "enabled"
     """Tasks can be scheduled on the Compute Node."""
@@ -532,7 +533,7 @@ class SchedulingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class StartTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """StartTaskState."""
+    """StartTaskState enums."""
 
     RUNNING = "running"
     """The StartTask is currently running."""
@@ -543,15 +544,18 @@ class StartTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """StatusLevelTypes."""
+    """Level code."""
 
     ERROR = "Error"
+    """Error"""
     INFO = "Info"
+    """Info"""
     WARNING = "Warning"
+    """Warning"""
 
 
 class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """StorageAccountType."""
+    """StorageAccountType enums."""
 
     STANDARD_L_R_S = "standard_lrs"
     """The data disk should use standard locally redundant storage."""
@@ -560,7 +564,7 @@ class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SubtaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SubtaskState."""
+    """SubtaskState enums."""
 
     PREPARING = "preparing"
     """The Task has been assigned to a Compute Node, but is waiting for a required Job Preparation
@@ -578,7 +582,7 @@ class SubtaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class TaskAddStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TaskAddStatus."""
+    """TaskAddStatus enums."""
 
     SUCCESS = "Success"
     """The Task was added successfully."""
@@ -590,7 +594,7 @@ class TaskAddStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class TaskExecutionResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TaskExecutionResult."""
+    """TaskExecutionResult enums."""
 
     SUCCESS = "success"
     """The Task ran successfully."""
@@ -600,7 +604,7 @@ class TaskExecutionResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class TaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TaskState."""
+    """TaskState enums."""
 
     ACTIVE = "active"
     """The Task is queued and able to run, but is not currently assigned to a Compute Node. A Task
@@ -622,7 +626,7 @@ class TaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class VerificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """VerificationType."""
+    """VerificationType enums."""
 
     VERIFIED = "verified"
     """The Image is guaranteed to be compatible with the associated Compute Node agent SKU and all

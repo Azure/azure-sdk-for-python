@@ -23,15 +23,13 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._model_base import AzureJSONEncoder, _deserialize
 from .._serialization import Serializer
-from .._vendor import _format_url_section
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -105,7 +103,7 @@ def build_applications_get_request(
         "applicationId": _SERIALIZER.url("application_id", application_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -223,8 +221,6 @@ def build_pool_create_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools"
 
@@ -243,7 +239,6 @@ def build_pool_create_request(
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -304,24 +299,22 @@ def build_pool_delete_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}"
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -339,13 +332,12 @@ def build_pool_delete_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -358,24 +350,22 @@ def build_pool_exists_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}"
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -393,13 +383,12 @@ def build_pool_exists_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
 
     return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -412,9 +401,9 @@ def build_pool_get_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     select: Optional[str] = None,
     expand: Optional[str] = None,
     **kwargs: Any
@@ -431,7 +420,7 @@ def build_pool_get_request(
         "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -453,12 +442,12 @@ def build_pool_get_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -472,9 +461,9 @@ def build_pool_patch_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -482,15 +471,13 @@ def build_pool_patch_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}"
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -508,14 +495,13 @@ def build_pool_patch_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -533,15 +519,13 @@ def build_pool_disable_auto_scale_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/disableautoscale"
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -557,7 +541,6 @@ def build_pool_disable_auto_scale_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -570,9 +553,9 @@ def build_pool_enable_auto_scale_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -580,15 +563,13 @@ def build_pool_enable_auto_scale_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/enableautoscale"
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -606,14 +587,13 @@ def build_pool_enable_auto_scale_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -640,7 +620,7 @@ def build_pool_evaluate_auto_scale_request(
         "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -670,9 +650,9 @@ def build_pool_resize_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -680,15 +660,13 @@ def build_pool_resize_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/resize"
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -706,14 +684,13 @@ def build_pool_resize_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -726,24 +703,22 @@ def build_pool_stop_resize_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/stopresize"
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -761,13 +736,12 @@ def build_pool_stop_resize_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -786,15 +760,13 @@ def build_pool_update_properties_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/updateproperties"
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -811,7 +783,6 @@ def build_pool_update_properties_request(
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -824,9 +795,9 @@ def build_pool_remove_nodes_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -834,15 +805,13 @@ def build_pool_remove_nodes_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/removenodes"
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -860,14 +829,13 @@ def build_pool_remove_nodes_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1000,24 +968,22 @@ def build_job_delete_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}"
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1035,13 +1001,12 @@ def build_job_delete_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1054,9 +1019,9 @@ def build_job_get_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     select: Optional[str] = None,
     expand: Optional[str] = None,
     **kwargs: Any
@@ -1073,7 +1038,7 @@ def build_job_get_request(
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1095,12 +1060,12 @@ def build_job_get_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1114,9 +1079,9 @@ def build_job_patch_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1124,15 +1089,13 @@ def build_job_patch_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}"
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1150,14 +1113,13 @@ def build_job_patch_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1170,9 +1132,9 @@ def build_job_update_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1180,15 +1142,13 @@ def build_job_update_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}"
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1206,14 +1166,13 @@ def build_job_update_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1226,9 +1185,9 @@ def build_job_disable_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1236,15 +1195,13 @@ def build_job_disable_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/disable"
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1262,14 +1219,13 @@ def build_job_disable_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1282,24 +1238,22 @@ def build_job_enable_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/enable"
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1317,13 +1271,12 @@ def build_job_enable_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1336,9 +1289,9 @@ def build_job_terminate_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1346,15 +1299,13 @@ def build_job_terminate_request(
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/terminate"
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1372,13 +1323,12 @@ def build_job_terminate_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
@@ -1398,8 +1348,6 @@ def build_job_create_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs"
 
@@ -1418,7 +1366,6 @@ def build_job_create_request(
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1496,7 +1443,7 @@ def build_job_list_from_job_schedule_request(
         "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1549,7 +1496,7 @@ def build_job_list_preparation_and_release_task_status_request(
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1597,7 +1544,7 @@ def build_job_get_task_counts_request(
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1631,8 +1578,6 @@ def build_certificates_create_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/certificates"
 
@@ -1651,7 +1596,6 @@ def build_certificates_create_request(
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1715,8 +1659,6 @@ def build_certificates_cancel_deletion_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})/canceldelete"
     path_format_arguments = {
@@ -1724,7 +1666,7 @@ def build_certificates_cancel_deletion_request(
         "thumbprint": _SERIALIZER.url("thumbprint", thumbprint, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1740,7 +1682,6 @@ def build_certificates_cancel_deletion_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1759,8 +1700,6 @@ def build_certificates_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})"
     path_format_arguments = {
@@ -1768,7 +1707,7 @@ def build_certificates_delete_request(
         "thumbprint": _SERIALIZER.url("thumbprint", thumbprint, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1784,7 +1723,6 @@ def build_certificates_delete_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1813,7 +1751,7 @@ def build_certificates_get_request(
         "thumbprint": _SERIALIZER.url("thumbprint", thumbprint, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1852,8 +1790,6 @@ def build_file_delete_from_task_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"
     path_format_arguments = {
@@ -1862,7 +1798,7 @@ def build_file_delete_from_task_request(
         "filePath": _SERIALIZER.url("file_path", file_path, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1880,7 +1816,6 @@ def build_file_delete_from_task_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1894,8 +1829,8 @@ def build_file_get_from_task_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     ocp_range: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -1913,7 +1848,7 @@ def build_file_get_from_task_request(
         "filePath": _SERIALIZER.url("file_path", file_path, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1929,10 +1864,10 @@ def build_file_get_from_task_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
     if ocp_range is not None:
         _headers["ocp-range"] = _SERIALIZER.header("ocp_range", ocp_range, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1949,16 +1884,14 @@ def build_file_get_properties_from_task_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"
     path_format_arguments = {
@@ -1967,7 +1900,7 @@ def build_file_get_properties_from_task_request(
         "filePath": _SERIALIZER.url("file_path", file_path, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1983,11 +1916,10 @@ def build_file_get_properties_from_task_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
 
     return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2008,8 +1940,6 @@ def build_file_delete_from_batch_node_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"
     path_format_arguments = {
@@ -2018,7 +1948,7 @@ def build_file_delete_from_batch_node_request(
         "filePath": _SERIALIZER.url("file_path", file_path, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2036,7 +1966,6 @@ def build_file_delete_from_batch_node_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2050,8 +1979,8 @@ def build_file_get_from_batch_node_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     ocp_range: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -2069,7 +1998,7 @@ def build_file_get_from_batch_node_request(
         "filePath": _SERIALIZER.url("file_path", file_path, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2085,10 +2014,10 @@ def build_file_get_from_batch_node_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
     if ocp_range is not None:
         _headers["ocp-range"] = _SERIALIZER.header("ocp_range", ocp_range, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -2105,16 +2034,14 @@ def build_file_get_properties_from_batch_node_request(
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"
     path_format_arguments = {
@@ -2123,7 +2050,7 @@ def build_file_get_properties_from_batch_node_request(
         "filePath": _SERIALIZER.url("file_path", file_path, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2139,11 +2066,10 @@ def build_file_get_properties_from_batch_node_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
 
     return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2174,7 +2100,7 @@ def build_file_list_from_task_request(
         "taskId": _SERIALIZER.url("task_id", task_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2227,7 +2153,7 @@ def build_file_list_from_batch_node_request(
         "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2262,24 +2188,22 @@ def build_job_schedule_exists_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}"
     path_format_arguments = {
         "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2297,13 +2221,12 @@ def build_job_schedule_exists_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
 
     return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2316,24 +2239,22 @@ def build_job_schedule_delete_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}"
     path_format_arguments = {
         "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2351,13 +2272,12 @@ def build_job_schedule_delete_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2370,9 +2290,9 @@ def build_job_schedule_get_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     select: Optional[str] = None,
     expand: Optional[str] = None,
     **kwargs: Any
@@ -2389,7 +2309,7 @@ def build_job_schedule_get_request(
         "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2411,12 +2331,12 @@ def build_job_schedule_get_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2430,9 +2350,9 @@ def build_job_schedule_patch_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2440,15 +2360,13 @@ def build_job_schedule_patch_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}"
     path_format_arguments = {
         "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2466,14 +2384,13 @@ def build_job_schedule_patch_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2486,9 +2403,9 @@ def build_job_schedule_update_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2496,15 +2413,13 @@ def build_job_schedule_update_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}"
     path_format_arguments = {
         "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2522,14 +2437,13 @@ def build_job_schedule_update_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2542,24 +2456,22 @@ def build_job_schedule_disable_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}/disable"
     path_format_arguments = {
         "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2577,13 +2489,12 @@ def build_job_schedule_disable_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2596,24 +2507,22 @@ def build_job_schedule_enable_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}/enable"
     path_format_arguments = {
         "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2631,13 +2540,12 @@ def build_job_schedule_enable_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2650,24 +2558,22 @@ def build_job_schedule_terminate_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}/terminate"
     path_format_arguments = {
         "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2685,13 +2591,12 @@ def build_job_schedule_terminate_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2709,8 +2614,6 @@ def build_job_schedule_create_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobschedules"
 
@@ -2729,7 +2632,6 @@ def build_job_schedule_create_request(
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2796,15 +2698,13 @@ def build_task_create_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/tasks"
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2821,7 +2721,6 @@ def build_task_create_request(
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2851,7 +2750,7 @@ def build_task_list_request(
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2902,7 +2801,7 @@ def build_task_add_collection_request(
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2933,17 +2832,15 @@ def build_task_delete_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}"
     path_format_arguments = {
@@ -2951,7 +2848,7 @@ def build_task_delete_request(
         "taskId": _SERIALIZER.url("task_id", task_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2969,13 +2866,12 @@ def build_task_delete_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2989,9 +2885,9 @@ def build_task_get_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     select: Optional[str] = None,
     expand: Optional[str] = None,
     **kwargs: Any
@@ -3009,7 +2905,7 @@ def build_task_get_request(
         "taskId": _SERIALIZER.url("task_id", task_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3031,12 +2927,12 @@ def build_task_get_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -3051,9 +2947,9 @@ def build_task_update_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3061,8 +2957,6 @@ def build_task_update_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}"
     path_format_arguments = {
@@ -3070,7 +2964,7 @@ def build_task_update_request(
         "taskId": _SERIALIZER.url("task_id", task_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3088,14 +2982,13 @@ def build_task_update_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3124,7 +3017,7 @@ def build_task_list_subtasks_request(
         "taskId": _SERIALIZER.url("task_id", task_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3156,17 +3049,15 @@ def build_task_terminate_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}/terminate"
     path_format_arguments = {
@@ -3174,7 +3065,7 @@ def build_task_terminate_request(
         "taskId": _SERIALIZER.url("task_id", task_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3192,13 +3083,12 @@ def build_task_terminate_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3212,17 +3102,15 @@ def build_task_reactivate_request(
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
     if__match: Optional[str] = None,
-    if__none__match: Optional[str] = None,
-    if__modified__since: Optional[str] = None,
-    if__unmodified__since: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    if_modified_since: Optional[str] = None,
+    if_unmodified_since: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}/reactivate"
     path_format_arguments = {
@@ -3230,7 +3118,7 @@ def build_task_reactivate_request(
         "taskId": _SERIALIZER.url("task_id", task_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3248,13 +3136,12 @@ def build_task_reactivate_request(
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     if if__match is not None:
         _headers["if-match"] = _SERIALIZER.header("if__match", if__match, "str")
-    if if__none__match is not None:
-        _headers["if-none-match"] = _SERIALIZER.header("if__none__match", if__none__match, "str")
-    if if__modified__since is not None:
-        _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
-    if if__unmodified__since is not None:
-        _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_modified_since is not None:
+        _headers["if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "str")
+    if if_unmodified_since is not None:
+        _headers["if-unmodified-since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3274,8 +3161,6 @@ def build_batch_nodes_add_user_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/users"
     path_format_arguments = {
@@ -3283,7 +3168,7 @@ def build_batch_nodes_add_user_request(
         "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3300,7 +3185,6 @@ def build_batch_nodes_add_user_request(
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3320,8 +3204,6 @@ def build_batch_nodes_delete_user_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/users/{userName}"
     path_format_arguments = {
@@ -3330,7 +3212,7 @@ def build_batch_nodes_delete_user_request(
         "userName": _SERIALIZER.url("user_name", user_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3346,7 +3228,6 @@ def build_batch_nodes_delete_user_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3367,8 +3248,6 @@ def build_batch_nodes_update_user_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/users/{userName}"
     path_format_arguments = {
@@ -3377,7 +3256,7 @@ def build_batch_nodes_update_user_request(
         "userName": _SERIALIZER.url("user_name", user_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3394,7 +3273,6 @@ def build_batch_nodes_update_user_request(
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3423,7 +3301,7 @@ def build_batch_nodes_get_request(
         "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3461,8 +3339,6 @@ def build_batch_nodes_reboot_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/reboot"
     path_format_arguments = {
@@ -3470,7 +3346,7 @@ def build_batch_nodes_reboot_request(
         "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3487,7 +3363,6 @@ def build_batch_nodes_reboot_request(
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3507,8 +3382,6 @@ def build_batch_nodes_reimage_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/reimage"
     path_format_arguments = {
@@ -3516,7 +3389,7 @@ def build_batch_nodes_reimage_request(
         "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3533,7 +3406,6 @@ def build_batch_nodes_reimage_request(
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3553,8 +3425,6 @@ def build_batch_nodes_disable_scheduling_request(
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/disablescheduling"
     path_format_arguments = {
@@ -3562,7 +3432,7 @@ def build_batch_nodes_disable_scheduling_request(
         "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3578,7 +3448,6 @@ def build_batch_nodes_disable_scheduling_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
@@ -3599,8 +3468,6 @@ def build_batch_nodes_enable_scheduling_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/enablescheduling"
     path_format_arguments = {
@@ -3608,7 +3475,7 @@ def build_batch_nodes_enable_scheduling_request(
         "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3624,7 +3491,6 @@ def build_batch_nodes_enable_scheduling_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3652,7 +3518,7 @@ def build_batch_nodes_get_remote_login_settings_request(
         "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3696,7 +3562,7 @@ def build_batch_nodes_get_remote_desktop_request(
         "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3741,7 +3607,7 @@ def build_batch_nodes_upload_batch_service_logs_request(
         "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3787,7 +3653,7 @@ def build_batch_nodes_list_request(
         "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3840,7 +3706,7 @@ def build_batch_nodes_get_extensions_request(
         "extensionName": _SERIALIZER.url("extension_name", extension_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3888,7 +3754,7 @@ def build_batch_nodes_list_extensions_request(
         "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -4598,9 +4464,9 @@ class PoolOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Pool from the specified Account.
@@ -4639,21 +4505,21 @@ class PoolOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -4680,9 +4546,9 @@ class PoolOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4718,9 +4584,9 @@ class PoolOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> bool:
         """Gets basic properties of a Pool.
@@ -4746,21 +4612,21 @@ class PoolOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: bool
@@ -4787,9 +4653,9 @@ class PoolOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4829,9 +4695,9 @@ class PoolOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
         **kwargs: Any
@@ -4859,21 +4725,21 @@ class PoolOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
@@ -4904,9 +4770,9 @@ class PoolOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             select=select,
             expand=expand,
             api_version=self._config.api_version,
@@ -4954,9 +4820,9 @@ class PoolOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Pool.
@@ -4988,21 +4854,21 @@ class PoolOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -5037,9 +4903,9 @@ class PoolOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5165,9 +5031,9 @@ class PoolOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Enables automatic scaling for a Pool.
@@ -5202,21 +5068,21 @@ class PoolOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -5251,9 +5117,9 @@ class PoolOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5402,9 +5268,9 @@ class PoolOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Changes the number of Compute Nodes that are assigned to a Pool.
@@ -5440,21 +5306,21 @@ class PoolOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -5489,9 +5355,9 @@ class PoolOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5532,9 +5398,9 @@ class PoolOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Stops an ongoing resize operation on the Pool.
@@ -5568,21 +5434,21 @@ class PoolOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -5609,9 +5475,9 @@ class PoolOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5750,9 +5616,9 @@ class PoolOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Removes Compute Nodes from the specified Pool.
@@ -5784,21 +5650,21 @@ class PoolOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -5833,9 +5699,9 @@ class PoolOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6225,9 +6091,9 @@ class JobOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Job.
@@ -6262,21 +6128,21 @@ class JobOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -6303,9 +6169,9 @@ class JobOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6341,9 +6207,9 @@ class JobOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
         **kwargs: Any
@@ -6373,21 +6239,21 @@ class JobOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
@@ -6418,9 +6284,9 @@ class JobOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             select=select,
             expand=expand,
             api_version=self._config.api_version,
@@ -6468,9 +6334,9 @@ class JobOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job.
@@ -6502,21 +6368,21 @@ class JobOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -6551,9 +6417,9 @@ class JobOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6595,9 +6461,9 @@ class JobOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job.
@@ -6629,21 +6495,21 @@ class JobOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -6678,9 +6544,9 @@ class JobOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6722,9 +6588,9 @@ class JobOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Disables the specified Job, preventing new Tasks from running.
@@ -6761,21 +6627,21 @@ class JobOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -6810,9 +6676,9 @@ class JobOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6853,9 +6719,9 @@ class JobOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Enables the specified Job, allowing new Tasks to run.
@@ -6888,21 +6754,21 @@ class JobOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -6929,9 +6795,9 @@ class JobOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6971,9 +6837,9 @@ class JobOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
@@ -7009,21 +6875,21 @@ class JobOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7045,9 +6911,9 @@ class JobOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
@@ -7083,21 +6949,21 @@ class JobOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7119,9 +6985,9 @@ class JobOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
@@ -7157,21 +7023,21 @@ class JobOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7193,9 +7059,9 @@ class JobOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Terminates the specified Job, marking it as completed.
@@ -7231,21 +7097,21 @@ class JobOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -7286,9 +7152,9 @@ class JobOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -8526,8 +8392,8 @@ class FileOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         ocp_range: Optional[str] = None,
         **kwargs: Any
     ) -> bytes:
@@ -8553,16 +8419,16 @@ class FileOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword ocp_range: The byte range to be retrieved. The default is to retrieve the entire file.
          The
          format is bytes=startRange-endRange. Default value is None.
@@ -8594,8 +8460,8 @@ class FileOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             ocp_range=ocp_range,
             api_version=self._config.api_version,
             headers=_headers,
@@ -8649,8 +8515,8 @@ class FileOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> bool:
         """Gets the properties of the specified Task file.
@@ -8675,16 +8541,16 @@ class FileOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: bool
@@ -8712,8 +8578,8 @@ class FileOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -8857,8 +8723,8 @@ class FileOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         ocp_range: Optional[str] = None,
         **kwargs: Any
     ) -> bytes:
@@ -8884,16 +8750,16 @@ class FileOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword ocp_range: The byte range to be retrieved. The default is to retrieve the entire file.
          The
          format is bytes=startRange-endRange. Default value is None.
@@ -8925,8 +8791,8 @@ class FileOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             ocp_range=ocp_range,
             api_version=self._config.api_version,
             headers=_headers,
@@ -8980,8 +8846,8 @@ class FileOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> bool:
         """Gets the properties of the specified Compute Node file.
@@ -9006,16 +8872,16 @@ class FileOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: bool
@@ -9043,8 +8909,8 @@ class FileOperations:
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -9358,9 +9224,9 @@ class JobScheduleOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> bool:
         """Checks the specified Job Schedule exists.
@@ -9388,21 +9254,21 @@ class JobScheduleOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: bool
@@ -9429,9 +9295,9 @@ class JobScheduleOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -9471,9 +9337,9 @@ class JobScheduleOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Job Schedule from the specified Account.
@@ -9505,21 +9371,21 @@ class JobScheduleOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -9546,9 +9412,9 @@ class JobScheduleOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -9584,9 +9450,9 @@ class JobScheduleOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
         **kwargs: Any
@@ -9614,21 +9480,21 @@ class JobScheduleOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
@@ -9659,9 +9525,9 @@ class JobScheduleOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             select=select,
             expand=expand,
             api_version=self._config.api_version,
@@ -9709,9 +9575,9 @@ class JobScheduleOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job Schedule.
@@ -9745,21 +9611,21 @@ class JobScheduleOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -9794,9 +9660,9 @@ class JobScheduleOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -9838,9 +9704,9 @@ class JobScheduleOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job Schedule.
@@ -9874,21 +9740,21 @@ class JobScheduleOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -9923,9 +9789,9 @@ class JobScheduleOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -9966,9 +9832,9 @@ class JobScheduleOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Disables a Job Schedule.
@@ -9996,21 +9862,21 @@ class JobScheduleOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -10037,9 +9903,9 @@ class JobScheduleOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -10078,9 +9944,9 @@ class JobScheduleOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Enables a Job Schedule.
@@ -10108,21 +9974,21 @@ class JobScheduleOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -10149,9 +10015,9 @@ class JobScheduleOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -10190,9 +10056,9 @@ class JobScheduleOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Terminates a Job Schedule.
@@ -10220,21 +10086,21 @@ class JobScheduleOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -10261,9 +10127,9 @@ class JobScheduleOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -10873,9 +10739,9 @@ class TaskOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Task from the specified Job.
@@ -10909,21 +10775,21 @@ class TaskOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -10951,9 +10817,9 @@ class TaskOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -10990,9 +10856,9 @@ class TaskOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
         **kwargs: Any
@@ -11026,21 +10892,21 @@ class TaskOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
@@ -11072,9 +10938,9 @@ class TaskOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             select=select,
             expand=expand,
             api_version=self._config.api_version,
@@ -11124,9 +10990,9 @@ class TaskOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Task.
@@ -11156,21 +11022,21 @@ class TaskOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -11206,9 +11072,9 @@ class TaskOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -11350,9 +11216,9 @@ class TaskOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Terminates the specified Task.
@@ -11384,21 +11250,21 @@ class TaskOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -11426,9 +11292,9 @@ class TaskOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -11468,9 +11334,9 @@ class TaskOperations:
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
         if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Reactivates a Task, allowing it to run again even if its retry count has been
@@ -11507,21 +11373,21 @@ class TaskOperations:
          The operation will be performed only if the resource's current ETag on the
          service exactly matches the value specified by the client. Default value is None.
         :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
+        :keyword if_none_match: An ETag value associated with the version of the resource known to the
+         client.
          The operation will be performed only if the resource's current ETag on the
          service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
+        :paramtype if_none_match: str
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
          client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+        :paramtype if_modified_since: str
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
          known to the
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
+        :paramtype if_unmodified_since: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -11549,9 +11415,9 @@ class TaskOperations:
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if__match=if__match,
-            if__none__match=if__none__match,
-            if__modified__since=if__modified__since,
-            if__unmodified__since=if__unmodified__since,
+            if_none_match=if_none_match,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
