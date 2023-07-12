@@ -182,7 +182,8 @@ directive:
 
 ### Remove {containerName} and {blobName} from url
 
-This directive is necessary for Python (also this directive is copied from .net) because we removed our call to _format_url_section in our generated code
+This directive is necessary for Python (also this directive is copied from .net) because we removed our call to
+_format_url_section in our generated code. We also add dummy query parameters to avoid collisions.
 
 ```yaml
 directive:
@@ -194,14 +195,14 @@ directive:
         if (property.includes('/{containerName}/{blob}'))
         {
             var oldName = property;
-            var newName = property.replace('/{containerName}/{blob}', '?restype=blob');
+            var newName = property.replace('/{containerName}/{blob}', '?restype=dummyBlob');
             $[newName] = $[oldName];
             delete $[oldName];
         }
         else if (property.includes('/{containerName}'))
         {
             var oldName = property;
-            var newName = property.replace('/{containerName}', '?restype=container');
+            var newName = property.replace('/{containerName}', '?restype=dummyContainer');
             $[newName] = $[oldName];
             delete $[oldName];
         }

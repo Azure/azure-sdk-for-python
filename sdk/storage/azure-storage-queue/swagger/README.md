@@ -128,7 +128,8 @@ directive:
 
 ## Remove {queueName} from url
 
-This directive is necessary for Python (also this directive is copied from .net) because we removed our call to _format_url_section in our generated code. Python has added removal of messageId, and we need to add a dummy query parameter to avoid url collisions
+This directive is necessary for Python (also this directive is copied from .net) because we removed our call to
+_format_url_section in our generated code. We also add dummy query parameters to avoid collisions.
 
 ```yaml
 directive:
@@ -140,7 +141,7 @@ directive:
         if (property.includes('/{queueName}/messages/{messageid}'))
         {
             var oldName = property;
-            var newName = property.replace('/{queueName}', '').replace('/{messageid}', '?restype=common');
+            var newName = property.replace('/{queueName}', '').replace('/{messageid}', '?restype=dummpyMessage');
             $[newName] = $[oldName];
             delete $[oldName];
         }

@@ -111,8 +111,8 @@ directive:
 
 ## Don't include FileSystem and Path in path - we have direct URIs.
 
-This directive is necessary for Python (also this directive is copied from .net) because we removed our call to _format_url_section in our generated code.
-
+This directive is necessary for Python (also this directive is copied from .net) because we removed our call to
+_format_url_section in our generated code.
 
 ```yaml
 directive:

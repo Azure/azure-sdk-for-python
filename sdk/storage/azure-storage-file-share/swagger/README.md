@@ -151,7 +151,8 @@ directive:
 
 ## Remove ShareName, Directory, and FileName - we have direct URIs
 
-This directive is necessary for Python (also this directive is copied from .net) because we removed our call to _format_url_section in our generated code.
+This directive is necessary for Python (also this directive is copied from .net) because we removed our call to
+_format_url_section in our generated code. We also add dummy query parameters to avoid collisions.
 
 ```yaml
 directive:
@@ -161,17 +162,17 @@ directive:
    Object.keys($).map(id => {
      if (id.includes('/{shareName}/{directory}/{fileName}'))
      {
-       $[id.replace('/{shareName}/{directory}/{fileName}', '?shareName_dir_file')] = $[id];
+       $[id.replace('/{shareName}/{directory}/{fileName}', '?dummyFile')] = $[id];
        delete $[id];
      }
      else if (id.includes('/{shareName}/{directory}'))
      {
-       $[id.replace('/{shareName}/{directory}', '?shareName_dir')] = $[id];
+       $[id.replace('/{shareName}/{directory}', '?dummyDir')] = $[id];
        delete $[id];
      }
      else if (id.includes('/{shareName}'))
      {
-       $[id.replace('/{shareName}', '?shareName')] = $[id];
+       $[id.replace('/{shareName}', '?dummyShare')] = $[id];
        delete $[id];
      }
    });
