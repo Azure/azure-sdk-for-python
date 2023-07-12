@@ -45,7 +45,7 @@ class CommunicationTokenCredential(object):
         self._some_thread_refreshing = False
         self._is_closed = Event()
 
-    def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
+    def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument, docstring-missing-param
         # type (*str, **Any) -> AccessToken
         """The value of the configured token.
         :param any scopes: Scopes to be added to the token.
