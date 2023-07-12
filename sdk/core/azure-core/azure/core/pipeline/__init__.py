@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 
-from typing import TypeVar, Generic, Dict, Any, Tuple, List, Optional, Union, overload
+from typing import TypeVar, Generic, Dict, Any, Tuple, List, Optional, overload
 
 HTTPResponseType_co = TypeVar("HTTPResponseType_co", covariant=True)
 HTTPRequestType_co = TypeVar("HTTPRequestType_co", covariant=True)
