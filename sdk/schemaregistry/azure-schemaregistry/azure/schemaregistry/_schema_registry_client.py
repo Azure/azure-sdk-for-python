@@ -129,7 +129,8 @@ class SchemaRegistryClient(object):
         """
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
-        http_response, schema_properties = self._generated_client.schema.register(
+        # TODO: below register func returns this value when cls passed in, type should be updated
+        schema_properties = self._generated_client.schema.register(
             group_name=group_name,
             schema_name=name,
             schema_content=cast(IO[Any], definition),
@@ -139,7 +140,6 @@ class SchemaRegistryClient(object):
             cls=partial(prepare_schema_properties_result, format),
             **http_request_kwargs,
         )
-        http_response.raise_for_status()
         return SchemaProperties(**schema_properties)
 
     @overload
@@ -212,6 +212,7 @@ class SchemaRegistryClient(object):
                     """Missing required argument(s). Specify either `schema_id` """
                     """or `group_name`, `name`, `version."""
                 )
+            # TODO: below should return whatever cls returns as type
             http_response, schema_properties = self._generated_client.schema.get_schema_version(
                 group_name=group_name,
                 schema_name=name,
@@ -219,7 +220,6 @@ class SchemaRegistryClient(object):
                 cls=prepare_schema_result,
                 **http_request_kwargs,
             )
-        http_response.raise_for_status()
         http_response.read()
         return Schema(
             definition=http_response.text(), properties=SchemaProperties(**schema_properties)
@@ -259,7 +259,8 @@ class SchemaRegistryClient(object):
         """
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
-        http_response, schema_properties = self._generated_client.schema.query_id_by_content(
+        # TODO: below should return whatever cls returns as type
+        schema_properties = self._generated_client.schema.query_id_by_content(
             group_name=group_name,
             schema_name=name,
             schema_content=cast(IO[Any], definition),
@@ -269,6 +270,4 @@ class SchemaRegistryClient(object):
             cls=partial(prepare_schema_properties_result, format),
             **http_request_kwargs,
         )
-
-        http_response.raise_for_status()
         return SchemaProperties(**schema_properties)

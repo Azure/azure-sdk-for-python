@@ -44,6 +44,7 @@ from .._generated.aio._client import AzureSchemaRegistry
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.pipeline.transport import AsyncHttpResponse
 
 
 class SchemaRegistryClient(object):
@@ -131,7 +132,7 @@ class SchemaRegistryClient(object):
         """
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
-        http_response, schema_properties = await self._generated_client.schema.register(
+        schema_properties = await self._generated_client.schema.register(
             group_name=group_name,
             schema_name=name,
             schema_content=cast(IO[Any], definition),
@@ -141,7 +142,6 @@ class SchemaRegistryClient(object):
             cls=partial(prepare_schema_properties_result, format),
             **http_request_kwargs,
         )
-        http_response.raise_for_status()
         return SchemaProperties(**schema_properties)
 
     @overload
@@ -221,7 +221,6 @@ class SchemaRegistryClient(object):
                 cls=prepare_schema_result,
                 **http_request_kwargs,
             )
-        http_response.raise_for_status()
         # TODO: ask Izzy if this is the right way to access the text when stream=True
         await http_response.read()
         return Schema(
@@ -262,7 +261,7 @@ class SchemaRegistryClient(object):
         """
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
-        http_response, schema_properties = await self._generated_client.schema.query_id_by_content(
+        schema_properties = await self._generated_client.schema.query_id_by_content(
             group_name=group_name,
             schema_name=name,
             schema_content=cast(IO[Any], definition),
@@ -272,6 +271,4 @@ class SchemaRegistryClient(object):
             cls=partial(prepare_schema_properties_result, format),
             **http_request_kwargs,
         )
-
-        http_response.raise_for_status()
         return SchemaProperties(**schema_properties)

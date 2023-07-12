@@ -23,16 +23,33 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ._schema import SchemaProperties, Schema
+from typing import (
+    cast,
+    Tuple,
+    Any,
+    Mapping,
+    Dict,
+    TYPE_CHECKING,
+    Iterator,
+    AsyncIterator,
+    Union
+)
 from ._constants import SchemaFormat
 
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineResponse
+    from azure.core.pipeline.async_base import AsyncPipelineResponse
+    from azure.core.pipeline.transport import HttpResponse, AsyncHttpResponse
 
-def _parse_schema_properties_dict(response_headers):
+
+def _parse_schema_properties_dict(
+    response_headers: Mapping[str, Union[str, int]]
+) -> Dict[str, Union[str, int]]:
     return {
-        "id": response_headers.get("Schema-Id"),
-        "group_name": response_headers.get("Schema-Group-Name"),
-        "name": response_headers.get("Schema-Name"),
-        "version": int(response_headers.get("Schema-Version"))
+        "id": response_headers["Schema-Id"],
+        "group_name": response_headers["Schema-Group-Name"],
+        "name": response_headers["Schema-Name"],
+        "version": int(response_headers["Schema-Version"])
     }
 
 def _get_format(content_type: str) -> SchemaFormat:
@@ -47,16 +64,25 @@ def _get_format(content_type: str) -> SchemaFormat:
         format = SchemaFormat.CUSTOM
     return format
 
-def prepare_schema_properties_result(
-    format, pipeline_response, deserialized, response_headers
-):    # pylint:disable=unused-argument,redefined-builtin
+def prepare_schema_properties_result(    # pylint:disable=unused-argument,redefined-builtin
+    format: str,
+    pipeline_response: Union["PipelineResponse", "AsyncPipelineResponse"],
+    deserialized: Union[Iterator[bytes], AsyncIterator[bytes]],
+    response_headers: Mapping[str, Union[str, int]]
+) -> Dict[str, Union[str, int]]:
     properties_dict = _parse_schema_properties_dict(response_headers)
     properties_dict["format"] = SchemaFormat(format)
-    return pipeline_response.http_response, properties_dict
+    pipeline_response.http_response.raise_for_status()
+    return properties_dict
 
-def prepare_schema_result(
-    pipeline_response, deserialized, response_headers
-):    # pylint:disable=unused-argument
+def prepare_schema_result(    # pylint:disable=unused-argument
+    pipeline_response: Union["PipelineResponse", "AsyncPipelineResponse"],
+    deserialized: Union[Iterator[bytes], AsyncIterator[bytes]],
+    response_headers: Mapping[str, Union[str, int]]
+) -> Tuple[Union["HttpResponse", "AsyncHttpResponse"], Dict[str, Union[int, str]]]:
     properties_dict = _parse_schema_properties_dict(response_headers)
-    properties_dict["format"] = _get_format(response_headers.get("Content-Type"))
+    properties_dict["format"] = _get_format(
+        cast(str, response_headers.get("Content-Type"))
+    )
+    pipeline_response.http_response.raise_for_status()
     return pipeline_response.http_response, properties_dict
