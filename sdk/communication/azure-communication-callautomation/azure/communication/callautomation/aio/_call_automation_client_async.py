@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import List, Union, Optional, TYPE_CHECKING, AsyncIterable, Dict, overload
 from urllib.parse import urlparse
+import warnings
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
@@ -59,7 +60,6 @@ if TYPE_CHECKING:
         RecordingFormat,
         RecordingStorage
     )
-    from azure.core.exceptions import HttpResponseError
 
 
 class CallAutomationClient:
@@ -154,9 +154,13 @@ class CallAutomationClient:
     @distributed_trace_async
     async def create_call(
         self,
-        target_participant: 'CallInvite',
+        target_participant: Union['CommunicationIdentifier', List['CommunicationIdentifier']],
         callback_url: str,
         *,
+        source_caller_id_number: Optional['PhoneNumberIdentifier'] = None,
+        source_display_name: Optional[str] = None,
+        sip_headers: Optional[Dict[str, str]] = None,
+        voip_headers: Optional[Dict[str, str]] = None,
         operation_context: Optional[str] = None,
         media_streaming_configuration: Optional['MediaStreamingConfiguration'] = None,
         azure_cognitive_services_endpoint_url: Optional[str] = None,
@@ -165,11 +169,21 @@ class CallAutomationClient:
         """Create a call connection request to a target identity.
 
         :param target_participant: Call invitee's information.
-        :type target_participant: ~azure.communication.callautomation.CallInvite
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :param callback_url: The call back url where callback events are sent.
         :type callback_url: str
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
+        :keyword source_caller_id_number: The source caller Id, a phone number,
+         that's shown to the PSTN participant being invited.
+         Required only when calling a PSTN callee.
+        :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
+        :keyword source_display_name: Display name of the caller.
+        :paramtype source_display_name: str
+        :keyword sip_headers: Sip Headers for PSTN Call
+        :paramtype sip_headers: Dict[str, str]
+        :keyword voip_headers: Voip Headers for Voip Call
+        :paramtype voip_headers: Dict[str, str]
         :keyword media_streaming_configuration: Media Streaming Configuration.
         :paramtype media_streaming_configuration: ~azure.communication.callautomation.MediaStreamingConfiguration
         :keyword azure_cognitive_services_endpoint_url:
@@ -179,25 +193,36 @@ class CallAutomationClient:
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = CustomContext(
-            voip_headers=target_participant.voip_headers,
-            sip_headers=target_participant.sip_headers
-            ) if target_participant.sip_headers or target_participant.voip_headers else None
+        # Backwards compatibility with old API signature
+        if isinstance(target_participant, CallInvite):
+            sip_headers = sip_headers or target_participant.sip_headers
+            voip_headers = voip_headers or target_participant.voip_headers
+            source_caller_id_number = source_caller_id_number or target_participant.source_caller_id_number
+            source_display_name = source_display_name or target_participant.source_display_name
+            target_participant = target_participant.target
+
+        user_custom_context = None
+        if sip_headers or voip_headers:
+            user_custom_context = CustomContext(
+                voip_headers=voip_headers,
+                sip_headers=sip_headers
+            )
+        try:
+            targets = [serialize_identifier(p) for p in target_participant]
+        except TypeError:
+            targets = [serialize_identifier(target_participant)]
+        media_config = media_streaming_configuration.to_generated() if media_streaming_configuration else None
         create_call_request = CreateCallRequest(
-            targets=[serialize_identifier(target_participant.target)],
+            targets=targets,
             callback_uri=callback_url,
-            source_caller_id_number=serialize_phone_identifier(
-                target_participant.source_caller_id_number) if target_participant.source_caller_id_number else None,
+            source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             source_display_name=target_participant.source_display_name,
-            source_identity=serialize_communication_user_identifier(
-                self.source) if self.source else None,
+            source_identity=serialize_communication_user_identifier(self.source),
             operation_context=operation_context,
-            media_streaming_configuration=media_streaming_configuration.to_generated(
-            ) if media_streaming_configuration else None,
+            media_streaming_configuration=media_config,
             azure_cognitive_services_endpoint_url=azure_cognitive_services_endpoint_url,
             custom_context=user_custom_context
         )
-
         result = await self._client.create_call(
             create_call_request=create_call_request,
             **kwargs
@@ -213,8 +238,6 @@ class CallAutomationClient:
         source_caller_id_number: Optional['PhoneNumberIdentifier'] = None,
         source_display_name: Optional[str] = None,
         operation_context: Optional[str] = None,
-        media_streaming_configuration: Optional['MediaStreamingConfiguration'] = None,
-        azure_cognitive_services_endpoint_url: Optional[str] = None,
         sip_headers: Optional[Dict[str, str]] = None,
         voip_headers: Optional[Dict[str, str]] = None,
         **kwargs
@@ -233,11 +256,6 @@ class CallAutomationClient:
         :paramtype source_display_name: str
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
-        :keyword media_streaming_configuration: Media Streaming Configuration.
-        :paramtype media_streaming_configuration: ~azure.communication.callautomation.MediaStreamingConfiguration
-        :keyword azure_cognitive_services_endpoint_url:
-         The identifier of the Cognitive Service resource assigned to this call.
-        :paramtype azure_cognitive_services_endpoint_url: str
         :keyword sip_headers: Sip Headers for PSTN Call
         :paramtype sip_headers: Dict[str, str]
         :keyword voip_headers: Voip Headers for Voip Call
@@ -246,25 +264,25 @@ class CallAutomationClient:
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = CustomContext(
-            voip_headers=voip_headers, sip_headers=sip_headers) if sip_headers or voip_headers else None
-
+        warnings.warn(
+            f"The method 'create_group_call' is deprecated. Please use 'create_call' instead.",
+            DeprecationWarning
+        )
+        user_custom_context = None
+        if sip_headers or voip_headers:
+            user_custom_context = CustomContext(
+                voip_headers=voip_headers,
+                sip_headers=sip_headers
+            )
         create_call_request = CreateCallRequest(
-            targets=[serialize_identifier(identifier)
-                     for identifier in target_participants],
+            targets=[serialize_identifier(p) for p in target_participants],
             callback_uri=callback_url,
-            source_caller_id_number=serialize_phone_identifier(
-                source_caller_id_number) if source_caller_id_number else None,
+            source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             source_display_name=source_display_name,
-            source_identity=serialize_identifier(
-                self.source) if self.source else None,
+            source_identity=serialize_communication_user_identifier(self.source),
             operation_context=operation_context,
-            media_streaming_configuration=media_streaming_configuration.to_generated(
-            ) if media_streaming_configuration else None,
-            azure_cognitive_services_endpoint_url=azure_cognitive_services_endpoint_url,
             custom_context=user_custom_context,
         )
-
         result = await self._client.create_call(
             create_call_request=create_call_request,
             **kwargs
@@ -321,7 +339,10 @@ class CallAutomationClient:
     async def redirect_call(
         self,
         incoming_call_context: str,
-        target_participant: 'CallInvite',
+        target_participant: 'CommunicationIdentifier',
+        *,
+        sip_headers: Optional[Dict[str, str]] = None,
+        voip_headers: Optional[Dict[str, str]] = None,
         **kwargs
     ) -> None:
         """Redirect incoming call to a specific target.
@@ -330,22 +351,32 @@ class CallAutomationClient:
          Use this value to redirect incoming call.
         :type incoming_call_context: str
         :param target_participant: The target identity to redirect the call to.
-        :type target_participant: ~azure.communication.callautomation.CallInvite
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
+        :keyword sip_headers: Sip Headers for PSTN Call
+        :paramtype sip_headers: Dict[str, str]
+        :keyword voip_headers: Voip Headers for Voip Call
+        :paramtype voip_headers: Dict[str, str]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = CustomContext(
-            voip_headers=target_participant.voip_headers,
-            sip_headers=target_participant.sip_headers
-            ) if target_participant.sip_headers or target_participant.voip_headers else None
+        # Backwards compatibility with old API signature
+        if isinstance(target_participant, CallInvite):
+            sip_headers = sip_headers or target_participant.sip_headers
+            voip_headers = voip_headers or target_participant.voip_headers
+            target_participant = target_participant.target
 
+        user_custom_context = None
+        if sip_headers or voip_headers:
+            user_custom_context = CustomContext(
+                voip_headers=voip_headers,
+                sip_headers=sip_headers
+            )
         redirect_call_request = RedirectCallRequest(
             incoming_call_context=incoming_call_context,
-            target=serialize_identifier(target_participant.target),
+            target=serialize_identifier(target_participant),
             custom_context=user_custom_context
         )
-
         await self._client.redirect_call(
             redirect_call_request=redirect_call_request,
             **kwargs

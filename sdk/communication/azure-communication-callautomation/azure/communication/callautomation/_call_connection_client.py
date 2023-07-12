@@ -5,8 +5,10 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING, Iterable, Optional, List, Union, Dict
 from urllib.parse import urlparse
+
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
+
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
 from ._utils import (
@@ -44,6 +46,7 @@ from ._shared.utils import (
 )
 if TYPE_CHECKING:
     from ._call_automation_client import CallAutomationClient
+    from ._shared.models import PhoneNumberIdentifier
     from ._models  import (
         FileSource,
         TextSource,
@@ -59,7 +62,6 @@ if TYPE_CHECKING:
         CommunicationIdentifier,
     )
     from ._generated.models._enums import DtmfTone
-    from azure.core.exceptions import HttpResponseError
 
 
 class CallConnectionClient:
@@ -202,14 +204,18 @@ class CallConnectionClient:
         return CallParticipant._from_generated(participant) # pylint:disable=protected-access
 
     @distributed_trace
-    def list_participants(self, **kwargs) -> Iterable[CallParticipant]:
+    def list_participants(self, **kwargs) -> ItemPaged[CallParticipant]:
         """List all participants in this call.
 
-        :return: List of CallParticipant
-        :rtype: Iterable[azure.communication.callautomation.CallParticipant]
+        :return: An iterable of CallParticipant
+        :rtype: ~azure.core.paging.ItemPaged[azure.communication.callautomation.CallParticipant]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._call_connection_client.get_participants(self._call_connection_id, **kwargs)
+        return self._call_connection_client.get_participants(
+            self._call_connection_id,
+            cls=lambda participants: [CallParticipant._from_generated(p) for p in participants],
+            **kwargs
+        )
 
     @distributed_trace
     def transfer_call_to_participant(
@@ -253,34 +259,57 @@ class CallConnectionClient:
     @distributed_trace
     def add_participant(
         self,
-        target_participant: 'CallInvite',
+        target_participant: 'CommunicationIdentifier',
         *,
         invitation_timeout: Optional[int] = None,
         operation_context: Optional[str] = None,
+        sip_headers: Optional[Dict[str, str]] = None,
+        voip_headers: Optional[Dict[str, str]] = None,
+        source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
+        source_display_name: Optional[str] = None,
         **kwargs
     ) -> AddParticipantResult:
         """Add a participant to this call.
 
         :param target_participant: The participant being added.
-        :type target_participant: ~azure.communication.callautomation.CallInvite
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword invitation_timeout: Timeout to wait for the invited participant to pickup.
          The maximum value of this is 180 seconds.
         :paramtype invitation_timeout: int
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
+        :keyword sip_headers: Sip Headers for PSTN Call
+        :paramtype sip_headers: Dict[str, str]
+        :keyword voip_headers: Voip Headers for Voip Call
+        :paramtype voip_headers: Dict[str, str]
+        :keyword source_caller_id_number: The source caller Id, a phone number,
+         that's shown to the PSTN participant being invited.
+         Required only when calling a PSTN callee.
+        :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
+        :keyword source_display_name: Display name of the caller.
+        :paramtype source_display_name: str
         :return: AddParticipantResult
         :rtype: ~azure.communication.callautomation.AddParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = CustomContext(
-            voip_headers=target_participant.voip_headers,
-            sip_headers=target_participant.sip_headers
-            ) if target_participant.sip_headers or target_participant.voip_headers else None
+        # Backwards compatibility with old API signature
+        if isinstance(target_participant, CallInvite):
+            sip_headers = sip_headers or target_participant.sip_headers
+            voip_headers = voip_headers or target_participant.voip_headers
+            source_caller_id_number = source_caller_id_number or target_participant.source_caller_id_number
+            source_display_name = source_display_name or target_participant.source_display_name
+            target_participant = target_participant.target
+
+        user_custom_context = None
+        if sip_headers or voip_headers:
+            user_custom_context = CustomContext(
+                voip_headers=voip_headers,
+                sip_headers=sip_headers
+            )
         add_participant_request = AddParticipantRequest(
-            participant_to_add=serialize_identifier(target_participant.target),
-            source_caller_id_number=serialize_phone_identifier(
-                target_participant.source_caller_id_number) if target_participant.source_caller_id_number else None,
-            source_display_name=target_participant.source_display_name,
+            participant_to_add=serialize_identifier(target_participant),
+            source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
+            source_display_name=source_display_name,
             custom_context=user_custom_context,
             invitation_timeout=invitation_timeout,
             operation_context=operation_context
@@ -290,7 +319,7 @@ class CallConnectionClient:
             add_participant_request,
             **kwargs
         )
-        return AddParticipantResult._from_generated(response) # pylint:disable=protected-access
+        return AddParticipantResult._from_generated(response)  # pylint:disable=protected-access
 
     @distributed_trace
     def remove_participant(

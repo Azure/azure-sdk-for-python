@@ -47,7 +47,7 @@ if TYPE_CHECKING:
     )
 
 
-class _CallInvite:
+class CallInvite:
     """Details of call invitation for outgoing call.
 
     :param target: Target's identity.
@@ -90,7 +90,7 @@ class _CallInvite:
         self.voip_headers = voip_headers
 
 
-class _ServerCallLocator:
+class ServerCallLocator:
     """The locator to locate ongoing call, using server call id.
 
     :param server_call_id: The server call id of ongoing call.
@@ -114,7 +114,7 @@ class _ServerCallLocator:
         return CallLocator(kind=self.kind, server_call_id=self.server_call_id)
 
 
-class _GroupCallLocator:
+class GroupCallLocator:
     """The locator to locate ongoing call, using group call id.
 
     :param group_call_id: The group call id of ongoing call.

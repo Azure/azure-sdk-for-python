@@ -45,6 +45,7 @@ from .._shared.utils import (
 )
 if TYPE_CHECKING:
     from ._call_automation_client_async import CallAutomationClient
+    from .._shared.models import PhoneNumberIdentifier
     from .._models  import (
         FileSource,
         TextSource,
@@ -204,18 +205,21 @@ class CallConnectionClient:
             target_participant.raw_id,
             **kwargs
         )
-        return CallParticipant._from_generated(participant) # pylint:disable=protected-access
+        return CallParticipant._from_generated(participant)  # pylint:disable=protected-access
 
     @distributed_trace
     def list_participants(self, **kwargs) -> AsyncItemPaged[CallParticipant]:
         """List all participants from a call.
 
-        :return: List of CallParticipant
-        :rtype: ItemPaged[azure.communication.callautomation.CallParticipant]
+        :return: Async iterable of CallParticipant
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[azure.communication.callautomation.CallParticipant]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        # TODO: This method is completely broken.
-        return self._call_connection_client.get_participants(self._call_connection_id, **kwargs)
+        return self._call_connection_client.get_participants(
+            self._call_connection_id,
+            cls=lambda participants: [CallParticipant._from_generated(p) for p in participants],  # pylint:disable=protected-access
+            **kwargs
+        )
 
     @distributed_trace_async
     async def transfer_call_to_participant(
@@ -260,44 +264,67 @@ class CallConnectionClient:
     @distributed_trace_async
     async def add_participant(
         self,
-        target_participant: 'CallInvite',
+        target_participant: 'CommunicationIdentifier',
         *,
         invitation_timeout: Optional[int] = None,
         operation_context: Optional[str] = None,
+        sip_headers: Optional[Dict[str, str]] = None,
+        voip_headers: Optional[Dict[str, str]] = None,
+        source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
+        source_display_name: Optional[str] = None,
         **kwargs
     ) -> AddParticipantResult:
         """Add a participant to the call.
 
         :param target_participant: The participant being added.
-        :type target_participant: ~azure.communication.callautomation.CallInvite
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword invitation_timeout: Timeout to wait for the invited participant to pickup.
          The maximum value of this is 180 seconds.
         :paramtype invitation_timeout: int
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
+        :keyword sip_headers: Sip Headers for PSTN Call
+        :paramtype sip_headers: Dict[str, str]
+        :keyword voip_headers: Voip Headers for Voip Call
+        :paramtype voip_headers: Dict[str, str]
+        :keyword source_caller_id_number: The source caller Id, a phone number,
+         that's shown to the PSTN participant being invited.
+         Required only when calling a PSTN callee.
+        :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
+        :keyword source_display_name: Display name of the caller.
+        :paramtype source_display_name: str
         :return: AddParticipantResult
         :rtype: ~azure.communication.callautomation.AddParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = CustomContext(
-            voip_headers=target_participant.voip_headers,
-            sip_headers=target_participant.sip_headers
-            ) if target_participant.sip_headers or target_participant.voip_headers else None
+        # Backwards compatibility with old API signature
+        if isinstance(target_participant, CallInvite):
+            sip_headers = sip_headers or target_participant.sip_headers
+            voip_headers = voip_headers or target_participant.voip_headers
+            source_caller_id_number = source_caller_id_number or target_participant.source_caller_id_number
+            source_display_name = source_display_name or target_participant.source_display_name
+            target_participant = target_participant.target
+
+        user_custom_context = None
+        if sip_headers or voip_headers:
+            user_custom_context = CustomContext(
+                voip_headers=voip_headers,
+                sip_headers=sip_headers
+            )
         add_participant_request = AddParticipantRequest(
-            participant_to_add=serialize_identifier(target_participant.target),
-            source_caller_id_number=serialize_phone_identifier(
-                target_participant.source_caller_id_number) if target_participant.source_caller_id_number else None,
-            source_display_name=target_participant.source_display_name,
+            participant_to_add=serialize_identifier(target_participant),
+            source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
+            source_display_name=source_display_name,
             custom_context=user_custom_context,
             invitation_timeout=invitation_timeout,
-            operation_context=operation_context)
-
+            operation_context=operation_context
+        )
         response = await self._call_connection_client.add_participant(
             self._call_connection_id,
             add_participant_request,
-            **kwargs)
-
-        return AddParticipantResult._from_generated(response) # pylint:disable=protected-access
+            **kwargs
+        )
+        return AddParticipantResult._from_generated(response)  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def remove_participant(

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Dict, Any, Union
+from typing import Dict, Any, Optional, Union
 from ._shared.models import (
     CommunicationIdentifier,
     CommunicationUserIdentifier,
@@ -18,9 +18,8 @@ from ._generated.models import (
     PhoneNumberIdentifierModel
 )
 
-def serialize_identifier(
-        identifier:CommunicationIdentifier
-        ) -> Dict[str, Any]:
+
+def serialize_identifier(identifier:CommunicationIdentifier) -> Dict[str, Any]:
     """Serialize the Communication identifier into CommunicationIdentifierModel
 
     :param identifier: Identifier object
@@ -29,49 +28,50 @@ def serialize_identifier(
     """
     try:
         request_model = {'raw_id': identifier.raw_id}
-
         if identifier.kind and identifier.kind != CommunicationIdentifierKind.UNKNOWN:
             request_model[identifier.kind] = dict(identifier.properties)
         return request_model
     except AttributeError:
-        raise TypeError("Unsupported identifier type " +
-                        identifier.__class__.__name__)
+        raise TypeError(f"Unsupported identifier type: {identifier.__class__.__name__}")
 
-def serialize_phone_identifier(
-        identifier:PhoneNumberIdentifier
-        ) -> PhoneNumberIdentifierModel:
+
+def serialize_phone_identifier(identifier: Optional[PhoneNumberIdentifier]) -> Optional[PhoneNumberIdentifierModel]:
     """Serialize the Communication identifier into CommunicationIdentifierModel
 
     :param identifier: PhoneNumberIdentifier
     :type identifier: PhoneNumberIdentifier
     :return: PhoneNumberIdentifierModel
     """
+    if identifier is None:
+        return None
     try:
         if identifier.kind and identifier.kind == CommunicationIdentifierKind.PHONE_NUMBER:
             request_model = PhoneNumberIdentifierModel(value=identifier.properties['value'])
             return request_model
-        raise AttributeError
     except AttributeError:
-        raise TypeError("Unsupported identifier type " +
-                        identifier.__class__.__name__)
+        pass
+    raise TypeError(f"Unsupported phone identifier type: {identifier.__class__.__name__}")
+
 
 def serialize_communication_user_identifier(
-        identifier:CommunicationUserIdentifier
-        ) -> CommunicationUserIdentifierModel:
+    identifier: Optional[CommunicationUserIdentifier]
+) -> Optional[CommunicationUserIdentifierModel]:
     """Serialize the CommunicationUserIdentifier into CommunicationUserIdentifierModel
 
     :param identifier: CommunicationUserIdentifier
     :type identifier: CommunicationUserIdentifier
     :return: CommunicationUserIdentifierModel
     """
+    if identifier is None:
+        return None
     try:
         if identifier.kind and identifier.kind == CommunicationIdentifierKind.COMMUNICATION_USER:
             request_model = CommunicationUserIdentifierModel(id=identifier.properties['id'])
             return request_model
-        raise AttributeError
     except AttributeError:
-        raise TypeError("Unsupported identifier type " +
-                        identifier.__class__.__name__)
+        pass
+    raise TypeError(f"Unsupported user identifier type: {identifier.__class__.__name__}")
+
 
 def deserialize_identifier(
         identifier_model:CommunicationIdentifierModel
@@ -98,6 +98,7 @@ def deserialize_identifier(
         )
     return UnknownIdentifier(raw_id)
 
+
 def deserialize_phone_identifier(
         identifier_model:PhoneNumberIdentifierModel
         ) -> Union[PhoneNumberIdentifier, None]:
@@ -111,6 +112,7 @@ def deserialize_phone_identifier(
     if identifier_model:
         return PhoneNumberIdentifier(identifier_model.value)
     return None
+
 
 def deserialize_comm_user_identifier(
         identifier_model:CommunicationUserIdentifierModel
