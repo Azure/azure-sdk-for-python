@@ -21,7 +21,7 @@ _HTTP1_1_IDENTIFIER = "HTTP/1.1"
 _HTTP_LINE_ENDING = "\r\n"
 
 
-def serialize_iso(attr):  # pylint: disable=inconsistent-return-statements
+def serialize_iso(attr):
     """Serialize Datetime object into ISO-8601 formatted string.
 
     :param Datetime attr: Object to be serialized.
@@ -40,12 +40,9 @@ def serialize_iso(attr):  # pylint: disable=inconsistent-return-statements
         date = f"{utc.tm_year:04}-{utc.tm_mon:02}-{utc.tm_mday:02}T{utc.tm_hour:02}:{utc.tm_min:02}:{utc.tm_sec:02}"
         return date + 'Z'
     except (ValueError, OverflowError) as err:
-        msg = "Unable to serialize datetime object."
-        raise (ValueError, msg, err)  # pylint: disable=raising-bad-type
+        raise ValueError("Unable to serialize datetime object.") from err
     except AttributeError as err:
-        msg = "ISO-8601 object must be valid Datetime object."
-        raise (TypeError, msg, err)  # pylint: disable=raising-bad-type
-
+        raise TypeError("ISO-8601 object must be valid datetime object.") from err
 
 def get_length(data):
     length = None
