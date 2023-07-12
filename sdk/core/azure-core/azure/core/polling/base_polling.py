@@ -654,7 +654,9 @@ class _SansIOLROBasePolling(
         """
         return self._parse_resource(self._pipeline_response)
 
-    def _parse_resource(self, pipeline_response: PipelineResponse[HttpRequestType, AllHTTPResponseType]) -> PollingReturnType_co:
+    def _parse_resource(
+        self, pipeline_response: PipelineResponse[HttpRequestType, AllHTTPResponseType]
+    ) -> PollingReturnType_co:
         """Assuming this response is a resource, use the deserialization callback to parse it.
         If body is empty, assuming no resource to return.
 
