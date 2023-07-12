@@ -569,8 +569,8 @@ class JobOperations(_ScopeDependentOperations):
         :param skip_validation: Specifies whether or not to skip validation before creating or updating the job. Note
             that validation for dependent resources such as an anonymous component will not be skipped.
         :type skip_validation: bool
-        :raises Union[~azure.ai.ml.exceptions.UserErrorException, ~azure.ai.ml.exceptions.ValidationException]: Raised if
-            Job cannot be successfully validated. Details will be provided in the error message.
+        :raises Union[~azure.ai.ml.exceptions.UserErrorException, ~azure.ai.ml.exceptions.ValidationException]: Raised
+            if Job cannot be successfully validated. Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if Job assets
             (e.g. Data, Code, Model, Environment) cannot be successfully validated.
             Details will be provided in the error message.
