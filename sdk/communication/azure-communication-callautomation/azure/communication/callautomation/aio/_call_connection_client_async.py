@@ -53,7 +53,11 @@ from .._shared.utils import (
 )
 if TYPE_CHECKING:
     from ._call_automation_client_async import CallAutomationClient
-    from .._shared.models import PhoneNumberIdentifier
+    from .._generated.models._enums import DtmfTone
+    from .._shared.models import (
+        PhoneNumberIdentifier,
+        CommunicationIdentifier
+    )
     from .._models  import (
         FileSource,
         TextSource,
@@ -67,10 +71,6 @@ if TYPE_CHECKING:
     from azure.core.credentials import (
         AzureKeyCredential
     )
-    from .._shared.models import (
-        CommunicationIdentifier,
-    )
-    from .._generated.models._enums import DtmfTone
 
 MediaSources = Union[FileSource, TextSource, SsmlSource]
 
@@ -279,7 +279,7 @@ class CallConnectionClient:
         operation_context: Optional[str] = None,
         sip_headers: Optional[Dict[str, str]] = None,
         voip_headers: Optional[Dict[str, str]] = None,
-        source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
+        source_caller_id_number: Optional['PhoneNumberIdentifier'] = None,
         source_display_name: Optional[str] = None,
         **kwargs
     ) -> AddParticipantResult:
