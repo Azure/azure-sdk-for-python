@@ -14,7 +14,7 @@ from azure.mgmt.elasticsan import ElasticSanMgmtClient
     pip install azure-identity
     pip install azure-mgmt-elasticsan
 # USAGE
-    python elastic_sans_update_maximum_set_gen.py
+    python private_endpoint_connections_create_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,17 +29,25 @@ def main():
         subscription_id="subscriptionid",
     )
 
-    response = client.elastic_sans.begin_update(
+    response = client.private_endpoint_connections.begin_create(
         resource_group_name="resourcegroupname",
         elastic_san_name="elasticsanname",
+        private_endpoint_connection_name="privateendpointconnectionname",
         parameters={
-            "properties": {"baseSizeTiB": 10, "extendedCapacitySizeTiB": 22},
-            "tags": {"key4212": "cqvcnwfefljntgeio"},
+            "properties": {
+                "groupIds": ["sytxzqlcoapcaywthgwvwcw"],
+                "privateEndpoint": {},
+                "privateLinkServiceConnectionState": {
+                    "actionsRequired": "None",
+                    "description": "Auto-Approved",
+                    "status": "Pending",
+                },
+            }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2022-12-01-preview/examples/ElasticSans_Update_MaximumSet_Gen.json
+# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2022-12-01-preview/examples/PrivateEndpointConnections_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

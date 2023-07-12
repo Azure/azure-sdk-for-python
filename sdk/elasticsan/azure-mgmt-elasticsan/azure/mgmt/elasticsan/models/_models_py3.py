@@ -8,9 +8,15 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -18,59 +24,68 @@ if TYPE_CHECKING:
 
 
 class Resource(_serialization.Model):
-    """The resource model definition.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Azure resource identifier.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: Azure resource tags.
-    :vartype tags: dict[str, str]
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.elasticsan.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
-        """
-        :keyword tags: Azure resource tags.
-        :paramtype tags: dict[str, str]
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.tags = tags
+        self.system_data = None
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Azure resource identifier.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: Azure resource tags.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.elasticsan.models.SystemData
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     """
 
@@ -78,24 +93,28 @@ class TrackedResource(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, location: Optional[str] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword tags: Azure resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         """
-        super().__init__(tags=tags, **kwargs)
+        super().__init__(**kwargs)
+        self.tags = tags
         self.location = location
 
 
@@ -106,18 +125,21 @@ class ElasticSan(TrackedResource):  # pylint: disable=too-many-instance-attribut
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Azure resource identifier.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: Azure resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
-    :vartype location: str
-    :ivar system_data: Resource metadata required by ARM RPC.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.elasticsan.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar sku: resource sku. Required.
     :vartype sku: ~azure.mgmt.elasticsan.models.Sku
     :ivar availability_zones: Logical zone for Elastic San resource; example: ["1"].
@@ -139,6 +161,9 @@ class ElasticSan(TrackedResource):  # pylint: disable=too-many-instance-attribut
     :vartype total_m_bps: int
     :ivar total_size_ti_b: Total size of the Elastic San appliance in TB.
     :vartype total_size_ti_b: int
+    :ivar private_endpoint_connections: The list of Private Endpoint Connections.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.elasticsan.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -146,6 +171,7 @@ class ElasticSan(TrackedResource):  # pylint: disable=too-many-instance-attribut
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
+        "location": {"required": True},
         "sku": {"required": True},
         "provisioning_state": {"readonly": True},
         "base_size_ti_b": {"required": True},
@@ -155,15 +181,16 @@ class ElasticSan(TrackedResource):  # pylint: disable=too-many-instance-attribut
         "total_iops": {"readonly": True},
         "total_m_bps": {"readonly": True},
         "total_size_ti_b": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
         "sku": {"key": "properties.sku", "type": "Sku"},
         "availability_zones": {"key": "properties.availabilityZones", "type": "[str]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
@@ -174,23 +201,27 @@ class ElasticSan(TrackedResource):  # pylint: disable=too-many-instance-attribut
         "total_iops": {"key": "properties.totalIops", "type": "int"},
         "total_m_bps": {"key": "properties.totalMBps", "type": "int"},
         "total_size_ti_b": {"key": "properties.totalSizeTiB", "type": "int"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
     }
 
     def __init__(
         self,
         *,
+        location: str,
         sku: "_models.Sku",
         base_size_ti_b: int,
         extended_capacity_size_ti_b: int,
         tags: Optional[Dict[str, str]] = None,
-        location: Optional[str] = None,
         availability_zones: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword tags: Azure resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword sku: resource sku. Required.
         :paramtype sku: ~azure.mgmt.elasticsan.models.Sku
@@ -203,7 +234,6 @@ class ElasticSan(TrackedResource):  # pylint: disable=too-many-instance-attribut
         :paramtype extended_capacity_size_ti_b: int
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.system_data = None
         self.sku = sku
         self.availability_zones = availability_zones
         self.provisioning_state = None
@@ -214,6 +244,7 @@ class ElasticSan(TrackedResource):  # pylint: disable=too-many-instance-attribut
         self.total_iops = None
         self.total_m_bps = None
         self.total_size_ti_b = None
+        self.private_endpoint_connections = None
 
 
 class ElasticSanList(_serialization.Model):
@@ -221,16 +252,13 @@ class ElasticSanList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: An array of Elastic San objects. Required.
+    :ivar value: An array of Elastic San objects.
     :vartype value: list[~azure.mgmt.elasticsan.models.ElasticSan]
     :ivar next_link: URI to fetch the next section of the paginated response.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"required": True},
         "next_link": {"readonly": True},
     }
 
@@ -239,137 +267,14 @@ class ElasticSanList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ElasticSan"], **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ElasticSan"]] = None, **kwargs: Any) -> None:
         """
-        :keyword value: An array of Elastic San objects. Required.
+        :keyword value: An array of Elastic San objects.
         :paramtype value: list[~azure.mgmt.elasticsan.models.ElasticSan]
         """
         super().__init__(**kwargs)
         self.value = value
         self.next_link = None
-
-
-class ElasticSanOperationDisplay(_serialization.Model):
-    """Metadata about an operation.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar provider: Localized friendly form of the resource provider name. Required.
-    :vartype provider: str
-    :ivar resource: Localized friendly form of the resource type related to this action/operation.
-     Required.
-    :vartype resource: str
-    :ivar operation: Localized friendly name for the operation, as it should be shown to the user.
-     Required.
-    :vartype operation: str
-    :ivar description: Localized friendly description for the operation, as it should be shown to
-     the user. Required.
-    :vartype description: str
-    """
-
-    _validation = {
-        "provider": {"required": True},
-        "resource": {"required": True},
-        "operation": {"required": True},
-        "description": {"required": True},
-    }
-
-    _attribute_map = {
-        "provider": {"key": "provider", "type": "str"},
-        "resource": {"key": "resource", "type": "str"},
-        "operation": {"key": "operation", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-    }
-
-    def __init__(self, *, provider: str, resource: str, operation: str, description: str, **kwargs):
-        """
-        :keyword provider: Localized friendly form of the resource provider name. Required.
-        :paramtype provider: str
-        :keyword resource: Localized friendly form of the resource type related to this
-         action/operation. Required.
-        :paramtype resource: str
-        :keyword operation: Localized friendly name for the operation, as it should be shown to the
-         user. Required.
-        :paramtype operation: str
-        :keyword description: Localized friendly description for the operation, as it should be shown
-         to the user. Required.
-        :paramtype description: str
-        """
-        super().__init__(**kwargs)
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
-        self.description = description
-
-
-class ElasticSanOperationListResult(_serialization.Model):
-    """List of operations supported by the RP.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: An array of operations supported by the ElasticSan RP. Required.
-    :vartype value: list[~azure.mgmt.elasticsan.models.ElasticSanRPOperation]
-    :ivar next_link: URI to fetch the next section of the paginated response.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ElasticSanRPOperation]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["_models.ElasticSanRPOperation"], next_link: Optional[str] = None, **kwargs):
-        """
-        :keyword value: An array of operations supported by the ElasticSan RP. Required.
-        :paramtype value: list[~azure.mgmt.elasticsan.models.ElasticSanRPOperation]
-        :keyword next_link: URI to fetch the next section of the paginated response.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class ElasticSanRPOperation(_serialization.Model):
-    """Description of a ElasticSan RP Operation.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar name: The name of the operation being performed on this particular object. Required.
-    :vartype name: str
-    :ivar is_data_action: Indicates whether the operation applies to data-plane.
-    :vartype is_data_action: bool
-    :ivar display: Additional metadata about RP operation.
-    :vartype display: ~azure.mgmt.elasticsan.models.ElasticSanOperationDisplay
-    """
-
-    _validation = {
-        "name": {"required": True},
-        "is_data_action": {"readonly": True},
-        "display": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "is_data_action": {"key": "isDataAction", "type": "bool"},
-        "display": {"key": "display", "type": "ElasticSanOperationDisplay"},
-    }
-
-    def __init__(self, *, name: str, **kwargs):
-        """
-        :keyword name: The name of the operation being performed on this particular object. Required.
-        :paramtype name: str
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.is_data_action = None
-        self.display = None
 
 
 class ElasticSanUpdate(_serialization.Model):
@@ -395,8 +300,8 @@ class ElasticSanUpdate(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         base_size_ti_b: Optional[int] = None,
         extended_capacity_size_ti_b: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Update tags.
         :paramtype tags: dict[str, str]
@@ -409,26 +314,6 @@ class ElasticSanUpdate(_serialization.Model):
         self.tags = tags
         self.base_size_ti_b = base_size_ti_b
         self.extended_capacity_size_ti_b = extended_capacity_size_ti_b
-
-
-class Error(_serialization.Model):
-    """The resource management error response.
-
-    :ivar error: RP error response.
-    :vartype error: ~azure.mgmt.elasticsan.models.ErrorResponse
-    """
-
-    _attribute_map = {
-        "error": {"key": "error", "type": "ErrorResponse"},
-    }
-
-    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs):
-        """
-        :keyword error: RP error response.
-        :paramtype error: ~azure.mgmt.elasticsan.models.ErrorResponse
-        """
-        super().__init__(**kwargs)
-        self.error = error
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -452,15 +337,15 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorResponse(_serialization.Model):
-    """The resource management error response.
+class ErrorDetail(_serialization.Model):
+    """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -471,7 +356,7 @@ class ErrorResponse(_serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.elasticsan.models.ErrorResponse]
+    :vartype details: list[~azure.mgmt.elasticsan.models.ErrorDetail]
     :ivar additional_info: The error additional info.
     :vartype additional_info: list[~azure.mgmt.elasticsan.models.ErrorAdditionalInfo]
     """
@@ -488,11 +373,11 @@ class ErrorResponse(_serialization.Model):
         "code": {"key": "code", "type": "str"},
         "message": {"key": "message", "type": "str"},
         "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorResponse]"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -500,6 +385,27 @@ class ErrorResponse(_serialization.Model):
         self.target = None
         self.details = None
         self.additional_info = None
+
+
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.elasticsan.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.elasticsan.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
 
 
 class IscsiTargetInfo(_serialization.Model):
@@ -537,7 +443,7 @@ class IscsiTargetInfo(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, *, status: Optional[Union[str, "_models.OperationalStatus"]] = None, **kwargs):
+    def __init__(self, *, status: Optional[Union[str, "_models.OperationalStatus"]] = None, **kwargs: Any) -> None:
         """
         :keyword status: Operational status of the iSCSI Target. Known values are: "Invalid",
          "Unknown", "Healthy", "Unhealthy", "Updating", "Running", "Stopped", and "Stopped
@@ -563,13 +469,433 @@ class NetworkRuleSet(_serialization.Model):
         "virtual_network_rules": {"key": "virtualNetworkRules", "type": "[VirtualNetworkRule]"},
     }
 
-    def __init__(self, *, virtual_network_rules: Optional[List["_models.VirtualNetworkRule"]] = None, **kwargs):
+    def __init__(
+        self, *, virtual_network_rules: Optional[List["_models.VirtualNetworkRule"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword virtual_network_rules: The list of virtual network rules.
         :paramtype virtual_network_rules: list[~azure.mgmt.elasticsan.models.VirtualNetworkRule]
         """
         super().__init__(**kwargs)
         self.virtual_network_rules = virtual_network_rules
+
+
+class Operation(_serialization.Model):
+    """Details of a REST API operation, returned from the Resource Provider Operations API.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
+     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
+    :vartype name: str
+    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
+     data-plane operations and "false" for ARM/control-plane operations.
+    :vartype is_data_action: bool
+    :ivar display: Localized display information for this particular operation.
+    :vartype display: ~azure.mgmt.elasticsan.models.OperationDisplay
+    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
+     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
+     and "user,system".
+    :vartype origin: str or ~azure.mgmt.elasticsan.models.Origin
+    :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
+     internal only APIs. "Internal"
+    :vartype action_type: str or ~azure.mgmt.elasticsan.models.ActionType
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "is_data_action": {"readonly": True},
+        "origin": {"readonly": True},
+        "action_type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "action_type": {"key": "actionType", "type": "str"},
+    }
+
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
+        """
+        :keyword display: Localized display information for this particular operation.
+        :paramtype display: ~azure.mgmt.elasticsan.models.OperationDisplay
+        """
+        super().__init__(**kwargs)
+        self.name = None
+        self.is_data_action = None
+        self.display = display
+        self.origin = None
+        self.action_type = None
+
+
+class OperationDisplay(_serialization.Model):
+    """Localized display information for this particular operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
+     Monitoring Insights" or "Microsoft Compute".
+    :vartype provider: str
+    :ivar resource: The localized friendly name of the resource type related to this operation.
+     E.g. "Virtual Machines" or "Job Schedule Collections".
+    :vartype resource: str
+    :ivar operation: The concise, localized friendly name for the operation; suitable for
+     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
+    :vartype operation: str
+    :ivar description: The short, localized friendly description of the operation; suitable for
+     tool tips and detailed views.
+    :vartype description: str
+    """
+
+    _validation = {
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.provider = None
+        self.resource = None
+        self.operation = None
+        self.description = None
+
+
+class OperationListResult(_serialization.Model):
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
+    to get the next set of results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of operations supported by the resource provider.
+    :vartype value: list[~azure.mgmt.elasticsan.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results (if there are any).
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class PrivateEndpoint(_serialization.Model):
+    """Response for PrivateEndpoint.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The ARM identifier for Private Endpoint.
+    :vartype id: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
+
+
+class PrivateEndpointConnection(Resource):
+    """Response for PrivateEndpoint Connection object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.elasticsan.models.SystemData
+    :ivar provisioning_state: Provisioning State of Private Endpoint connection resource. Known
+     values are: "Invalid", "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating",
+     and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.elasticsan.models.ProvisioningStates
+    :ivar private_endpoint: Private Endpoint resource.
+    :vartype private_endpoint: ~azure.mgmt.elasticsan.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: Private Link Service Connection State. Required.
+    :vartype private_link_service_connection_state:
+     ~azure.mgmt.elasticsan.models.PrivateLinkServiceConnectionState
+    :ivar group_ids: List of resources private endpoint is mapped.
+    :vartype group_ids: list[str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "private_link_service_connection_state": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
+        "group_ids": {"key": "properties.groupIds", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        private_link_service_connection_state: "_models.PrivateLinkServiceConnectionState",
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+        group_ids: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword private_endpoint: Private Endpoint resource.
+        :paramtype private_endpoint: ~azure.mgmt.elasticsan.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: Private Link Service Connection State.
+         Required.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.elasticsan.models.PrivateLinkServiceConnectionState
+        :keyword group_ids: List of resources private endpoint is mapped.
+        :paramtype group_ids: list[str]
+        """
+        super().__init__(**kwargs)
+        self.provisioning_state = None
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.group_ids = group_ids
+
+
+class PrivateEndpointConnectionListResult(_serialization.Model):
+    """List of private endpoint connections associated with SAN.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of private endpoint connections.
+    :vartype value: list[~azure.mgmt.elasticsan.models.PrivateEndpointConnection]
+    :ivar next_link: URI to fetch the next section of the paginated response.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: Array of private endpoint connections.
+        :paramtype value: list[~azure.mgmt.elasticsan.models.PrivateEndpointConnection]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class PrivateLinkResource(Resource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.elasticsan.models.SystemData
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :ivar required_zone_names: The private link resource Private link DNS zone name.
+    :vartype required_zone_names: list[str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "group_id": {"readonly": True},
+        "required_members": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
+        "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
+    }
+
+    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword required_zone_names: The private link resource Private link DNS zone name.
+        :paramtype required_zone_names: list[str]
+        """
+        super().__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = required_zone_names
+
+
+class PrivateLinkResourceListResult(_serialization.Model):
+    """A list of private link resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of private link resources.
+    :vartype value: list[~azure.mgmt.elasticsan.models.PrivateLinkResource]
+    :ivar next_link: URI to fetch the next section of the paginated response.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[PrivateLinkResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: Array of private link resources.
+        :paramtype value: list[~azure.mgmt.elasticsan.models.PrivateLinkResource]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class PrivateLinkServiceConnectionState(_serialization.Model):
+    """Response for Private Link Service Connection state.
+
+    :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
+     of the service. Known values are: "Pending", "Approved", "Failed", and "Rejected".
+    :vartype status: str or ~azure.mgmt.elasticsan.models.PrivateEndpointServiceConnectionStatus
+    :ivar description: The reason for approval/rejection of the connection.
+    :vartype description: str
+    :ivar actions_required: A message indicating if changes on the service provider require any
+     updates on the consumer.
+    :vartype actions_required: str
+    """
+
+    _attribute_map = {
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = None,
+        description: Optional[str] = None,
+        actions_required: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
+         owner of the service. Known values are: "Pending", "Approved", "Failed", and "Rejected".
+        :paramtype status: str or ~azure.mgmt.elasticsan.models.PrivateEndpointServiceConnectionStatus
+        :keyword description: The reason for approval/rejection of the connection.
+        :paramtype description: str
+        :keyword actions_required: A message indicating if changes on the service provider require any
+         updates on the consumer.
+        :paramtype actions_required: str
+        """
+        super().__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.actions_required = actions_required
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.elasticsan.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
 
 
 class Sku(_serialization.Model):
@@ -593,8 +919,12 @@ class Sku(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Union[str, "_models.SkuName"], tier: Optional[Union[str, "_models.SkuTier"]] = None, **kwargs
-    ):
+        self,
+        *,
+        name: Union[str, "_models.SkuName"],
+        tier: Optional[Union[str, "_models.SkuTier"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The sku name. Required. Known values are: "Premium_LRS" and "Premium_ZRS".
         :paramtype name: str or ~azure.mgmt.elasticsan.models.SkuName
@@ -627,7 +957,7 @@ class SKUCapability(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -674,8 +1004,12 @@ class SkuInformation(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Union[str, "_models.SkuName"], tier: Optional[Union[str, "_models.SkuTier"]] = None, **kwargs
-    ):
+        self,
+        *,
+        name: Union[str, "_models.SkuName"],
+        tier: Optional[Union[str, "_models.SkuTier"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Sku Name. Required. Known values are: "Premium_LRS" and "Premium_ZRS".
         :paramtype name: str or ~azure.mgmt.elasticsan.models.SkuName
@@ -698,20 +1032,25 @@ class SkuInformationList(_serialization.Model):
 
     :ivar value: List of ResourceType Sku.
     :vartype value: list[~azure.mgmt.elasticsan.models.SkuInformation]
+    :ivar next_link: URI to fetch the next section of the paginated response.
+    :vartype next_link: str
     """
 
     _validation = {
         "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[SkuInformation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
+        self.next_link = None
 
 
 class SkuLocationInfo(_serialization.Model):
@@ -735,7 +1074,7 @@ class SkuLocationInfo(_serialization.Model):
         "zones": {"key": "zones", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.location = None
@@ -758,7 +1097,9 @@ class SourceCreationData(_serialization.Model):
         "source_uri": {"key": "sourceUri", "type": "str"},
     }
 
-    def __init__(self, *, create_source: Optional[str] = None, source_uri: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, create_source: Optional[Literal["None"]] = None, source_uri: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword create_source: This enumerates the possible sources of a volume creation. Default
          value is "None".
@@ -809,8 +1150,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -865,7 +1206,7 @@ class VirtualNetworkRule(_serialization.Model):
         "state": {"key": "state", "type": "str"},
     }
 
-    def __init__(self, *, virtual_network_resource_id: str, action: str = "Allow", **kwargs):
+    def __init__(self, *, virtual_network_resource_id: str, action: Literal["Allow"] = "Allow", **kwargs: Any) -> None:
         """
         :keyword virtual_network_resource_id: Resource ID of a subnet, for example:
          /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
@@ -880,26 +1221,29 @@ class VirtualNetworkRule(_serialization.Model):
         self.state = None
 
 
-class Volume(Resource):
+class Volume(ProxyResource):
     """Response for Volume request.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Azure resource identifier.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: Azure resource tags.
-    :vartype tags: dict[str, str]
-    :ivar system_data: Resource metadata required by ARM RPC.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.elasticsan.models.SystemData
     :ivar volume_id: Unique Id of the volume in GUID format.
     :vartype volume_id: str
     :ivar creation_data: State of the operation on the resource.
     :vartype creation_data: ~azure.mgmt.elasticsan.models.SourceCreationData
-    :ivar size_gi_b: Volume size.
+    :ivar size_gi_b: Volume size. Required.
     :vartype size_gi_b: int
     :ivar storage_target: Storage target information.
     :vartype storage_target: ~azure.mgmt.elasticsan.models.IscsiTargetInfo
@@ -911,6 +1255,7 @@ class Volume(Resource):
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "volume_id": {"readonly": True},
+        "size_gi_b": {"required": True},
         "storage_target": {"readonly": True},
     }
 
@@ -918,7 +1263,6 @@ class Volume(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
         "system_data": {"key": "systemData", "type": "SystemData"},
         "volume_id": {"key": "properties.volumeId", "type": "str"},
         "creation_data": {"key": "properties.creationData", "type": "SourceCreationData"},
@@ -927,43 +1271,36 @@ class Volume(Resource):
     }
 
     def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        creation_data: Optional["_models.SourceCreationData"] = None,
-        size_gi_b: Optional[int] = None,
-        **kwargs
-    ):
+        self, *, size_gi_b: int, creation_data: Optional["_models.SourceCreationData"] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword tags: Azure resource tags.
-        :paramtype tags: dict[str, str]
         :keyword creation_data: State of the operation on the resource.
         :paramtype creation_data: ~azure.mgmt.elasticsan.models.SourceCreationData
-        :keyword size_gi_b: Volume size.
+        :keyword size_gi_b: Volume size. Required.
         :paramtype size_gi_b: int
         """
-        super().__init__(tags=tags, **kwargs)
-        self.system_data = None
+        super().__init__(**kwargs)
         self.volume_id = None
         self.creation_data = creation_data
         self.size_gi_b = size_gi_b
         self.storage_target = None
 
 
-class VolumeGroup(Resource):
+class VolumeGroup(ProxyResource):
     """Response for Volume Group request.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Azure resource identifier.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: Azure resource tags.
-    :vartype tags: dict[str, str]
-    :ivar system_data: Resource metadata required by ARM RPC.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.elasticsan.models.SystemData
     :ivar provisioning_state: State of the operation on the resource. Known values are: "Invalid",
      "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", and "Deleting".
@@ -975,6 +1312,9 @@ class VolumeGroup(Resource):
     :ivar network_acls: A collection of rules governing the accessibility from specific network
      locations.
     :vartype network_acls: ~azure.mgmt.elasticsan.models.NetworkRuleSet
+    :ivar private_endpoint_connections: The list of Private Endpoint Connections.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.elasticsan.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -983,32 +1323,33 @@ class VolumeGroup(Resource):
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
         "system_data": {"key": "systemData", "type": "SystemData"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "protocol_type": {"key": "properties.protocolType", "type": "str"},
         "encryption": {"key": "properties.encryption", "type": "str"},
         "network_acls": {"key": "properties.networkAcls", "type": "NetworkRuleSet"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
     }
 
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
         protocol_type: Optional[Union[str, "_models.StorageTargetType"]] = None,
         encryption: Optional[Union[str, "_models.EncryptionType"]] = None,
         network_acls: Optional["_models.NetworkRuleSet"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword tags: Azure resource tags.
-        :paramtype tags: dict[str, str]
         :keyword protocol_type: Type of storage target. Known values are: "Iscsi" and "None".
         :paramtype protocol_type: str or ~azure.mgmt.elasticsan.models.StorageTargetType
         :keyword encryption: Type of encryption. "EncryptionAtRestWithPlatformKey"
@@ -1017,12 +1358,12 @@ class VolumeGroup(Resource):
          locations.
         :paramtype network_acls: ~azure.mgmt.elasticsan.models.NetworkRuleSet
         """
-        super().__init__(tags=tags, **kwargs)
-        self.system_data = None
+        super().__init__(**kwargs)
         self.provisioning_state = None
         self.protocol_type = protocol_type
         self.encryption = encryption
         self.network_acls = network_acls
+        self.private_endpoint_connections = None
 
 
 class VolumeGroupList(_serialization.Model):
@@ -1030,16 +1371,13 @@ class VolumeGroupList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: An array of Volume Groups objects. Required.
+    :ivar value: An array of Volume Groups objects.
     :vartype value: list[~azure.mgmt.elasticsan.models.VolumeGroup]
     :ivar next_link: URI to fetch the next section of the paginated response.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"required": True},
         "next_link": {"readonly": True},
     }
 
@@ -1048,9 +1386,9 @@ class VolumeGroupList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.VolumeGroup"], **kwargs):
+    def __init__(self, *, value: Optional[List["_models.VolumeGroup"]] = None, **kwargs: Any) -> None:
         """
-        :keyword value: An array of Volume Groups objects. Required.
+        :keyword value: An array of Volume Groups objects.
         :paramtype value: list[~azure.mgmt.elasticsan.models.VolumeGroup]
         """
         super().__init__(**kwargs)
@@ -1061,8 +1399,6 @@ class VolumeGroupList(_serialization.Model):
 class VolumeGroupUpdate(_serialization.Model):
     """Volume Group request.
 
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
     :ivar protocol_type: Type of storage target. Known values are: "Iscsi" and "None".
     :vartype protocol_type: str or ~azure.mgmt.elasticsan.models.StorageTargetType
     :ivar encryption: Type of encryption. "EncryptionAtRestWithPlatformKey"
@@ -1073,7 +1409,6 @@ class VolumeGroupUpdate(_serialization.Model):
     """
 
     _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
         "protocol_type": {"key": "properties.protocolType", "type": "str"},
         "encryption": {"key": "properties.encryption", "type": "str"},
         "network_acls": {"key": "properties.networkAcls", "type": "NetworkRuleSet"},
@@ -1082,15 +1417,12 @@ class VolumeGroupUpdate(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
         protocol_type: Optional[Union[str, "_models.StorageTargetType"]] = None,
         encryption: Optional[Union[str, "_models.EncryptionType"]] = None,
         network_acls: Optional["_models.NetworkRuleSet"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
         :keyword protocol_type: Type of storage target. Known values are: "Iscsi" and "None".
         :paramtype protocol_type: str or ~azure.mgmt.elasticsan.models.StorageTargetType
         :keyword encryption: Type of encryption. "EncryptionAtRestWithPlatformKey"
@@ -1100,7 +1432,6 @@ class VolumeGroupUpdate(_serialization.Model):
         :paramtype network_acls: ~azure.mgmt.elasticsan.models.NetworkRuleSet
         """
         super().__init__(**kwargs)
-        self.tags = tags
         self.protocol_type = protocol_type
         self.encryption = encryption
         self.network_acls = network_acls
@@ -1111,16 +1442,13 @@ class VolumeList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: An array of Volume objects. Required.
+    :ivar value: An array of Volume objects.
     :vartype value: list[~azure.mgmt.elasticsan.models.Volume]
     :ivar next_link: URI to fetch the next section of the paginated response.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"required": True},
         "next_link": {"readonly": True},
     }
 
@@ -1129,9 +1457,9 @@ class VolumeList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Volume"], **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Volume"]] = None, **kwargs: Any) -> None:
         """
-        :keyword value: An array of Volume objects. Required.
+        :keyword value: An array of Volume objects.
         :paramtype value: list[~azure.mgmt.elasticsan.models.Volume]
         """
         super().__init__(**kwargs)
@@ -1142,24 +1470,18 @@ class VolumeList(_serialization.Model):
 class VolumeUpdate(_serialization.Model):
     """Response for Volume request.
 
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
     :ivar size_gi_b: Volume size.
     :vartype size_gi_b: int
     """
 
     _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
         "size_gi_b": {"key": "properties.sizeGiB", "type": "int"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, size_gi_b: Optional[int] = None, **kwargs):
+    def __init__(self, *, size_gi_b: Optional[int] = None, **kwargs: Any) -> None:
         """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
         :keyword size_gi_b: Volume size.
         :paramtype size_gi_b: int
         """
         super().__init__(**kwargs)
-        self.tags = tags
         self.size_gi_b = size_gi_b
