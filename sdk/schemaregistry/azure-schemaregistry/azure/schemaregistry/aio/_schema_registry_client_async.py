@@ -23,22 +23,23 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, TYPE_CHECKING, Union, overload
+from __future__ import annotations
+from typing import Any, TYPE_CHECKING, Union, overload, cast, IO
+from functools import partial
 
 from azure.core.tracing.decorator_async import distributed_trace_async
+
 from .._utils import (
-    build_get_schema_props_request,
-    build_get_schema_request,
-    build_register_schema_request,
-    get_case_insensitive_format
+    get_http_request_kwargs,
+    get_case_insensitive_format,
+    get_content_type
 )
 from .._common._constants import SchemaFormat, DEFAULT_VERSION
 from .._common._schema import Schema, SchemaProperties
 from .._common._response_handlers import (
-    _parse_response_schema,
-    _parse_response_schema_properties,
+    prepare_schema_result,
+    prepare_schema_properties_result
 )
-
 from .._generated.aio._client import AzureSchemaRegistry
 
 if TYPE_CHECKING:
@@ -129,12 +130,19 @@ class SchemaRegistryClient(object):
 
         """
         format = get_case_insensitive_format(format)
-        request = build_register_schema_request(
-            group_name, name, definition, format, kwargs
+        http_request_kwargs = get_http_request_kwargs(kwargs)
+        http_response, schema_properties = await self._generated_client.schema.register(
+            group_name=group_name,
+            schema_name=name,
+            schema_content=cast(IO[Any], definition),
+            content_type=kwargs.pop(
+                "content_type", get_content_type(format)
+            ),
+            cls=partial(prepare_schema_properties_result, format),
+            **http_request_kwargs,
         )
-        response = await self._generated_client.send_request(request, **kwargs)
-        response.raise_for_status()
-        return _parse_response_schema_properties(response, format)
+        http_response.raise_for_status()
+        return SchemaProperties(**schema_properties)
 
     @overload
     async def get_schema(self, schema_id: str, **kwargs: Any) -> Schema:
@@ -181,10 +189,44 @@ class SchemaRegistryClient(object):
                 :dedent: 4
                 :caption: Get schema by version.
         """
-        request = build_get_schema_request(args, kwargs)
-        response = await self._generated_client.send_request(request, **kwargs)
-        response.raise_for_status()
-        return _parse_response_schema(response)
+        http_request_kwargs = get_http_request_kwargs(kwargs)
+        try:
+            # Check positional args for schema_id.
+            # Else, check if schema_id was passed in with keyword.
+            try:
+                schema_id = args[0]
+            except IndexError:
+                schema_id = kwargs.pop("schema_id")
+            schema_id = cast(str, schema_id)
+            http_response, schema_properties = await self._generated_client.schema.get_by_id(
+                id=schema_id,
+                cls=prepare_schema_result,
+                **http_request_kwargs
+            )
+        except KeyError:
+            # If group_name, name, and version aren't passed in as kwargs, raise error.
+            try:
+                group_name = kwargs.pop("group_name")
+                name = kwargs.pop("name")
+                version = kwargs.pop("version")
+            except KeyError:
+                raise TypeError(    # pylint:disable=raise-missing-from
+                    """Missing required argument(s). Specify either `schema_id` """
+                    """or `group_name`, `name`, `version."""
+                )
+            http_response, schema_properties = await self._generated_client.schema.get_schema_version(
+                group_name=group_name,
+                schema_name=name,
+                schema_version=version,
+                cls=prepare_schema_result,
+                **http_request_kwargs,
+            )
+        http_response.raise_for_status()
+        # TODO: ask Izzy if this is the right way to access the text when stream=True
+        await http_response.read()
+        return Schema(
+            definition=http_response.text(), properties=SchemaProperties(**schema_properties)
+        )
 
     @distributed_trace_async
     async def get_schema_properties(
@@ -219,9 +261,17 @@ class SchemaRegistryClient(object):
 
         """
         format = get_case_insensitive_format(format)
-        request = build_get_schema_props_request(
-            group_name, name, definition, format, kwargs
+        http_request_kwargs = get_http_request_kwargs(kwargs)
+        http_response, schema_properties = await self._generated_client.schema.query_id_by_content(
+            group_name=group_name,
+            schema_name=name,
+            schema_content=cast(IO[Any], definition),
+            content_type=kwargs.pop(
+                "content_type", get_content_type(format)
+            ),
+            cls=partial(prepare_schema_properties_result, format),
+            **http_request_kwargs,
         )
-        response = await self._generated_client.send_request(request, **kwargs)
-        response.raise_for_status()
-        return _parse_response_schema_properties(response, format)
+
+        http_response.raise_for_status()
+        return SchemaProperties(**schema_properties)

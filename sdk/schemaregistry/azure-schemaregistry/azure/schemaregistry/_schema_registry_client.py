@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING, Union, overload, cast
+from typing import Any, TYPE_CHECKING, Union, overload, cast, IO
 from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
@@ -129,16 +129,18 @@ class SchemaRegistryClient(object):
         """
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
-        return self._generated_client.schema.register(
+        http_response, schema_properties = self._generated_client.schema.register(
             group_name=group_name,
             schema_name=name,
-            schema_content=definition,
+            schema_content=cast(IO[Any], definition),
             content_type=kwargs.pop(
                 "content_type", get_content_type(format)
             ),
             cls=partial(prepare_schema_properties_result, format),
             **http_request_kwargs,
         )
+        http_response.raise_for_status()
+        return SchemaProperties(**schema_properties)
 
     @overload
     def get_schema(self, schema_id: str, **kwargs: Any) -> Schema:
@@ -194,7 +196,7 @@ class SchemaRegistryClient(object):
             except IndexError:
                 schema_id = kwargs.pop("schema_id")
             schema_id = cast(str, schema_id)
-            return self._generated_client.schema.get_by_id(
+            http_response, schema_properties = self._generated_client.schema.get_by_id(
                 id=schema_id,
                 cls=prepare_schema_result,
                 **http_request_kwargs
@@ -210,13 +212,18 @@ class SchemaRegistryClient(object):
                     """Missing required argument(s). Specify either `schema_id` """
                     """or `group_name`, `name`, `version."""
                 )
-            return self._generated_client.schema.get_schema_version(
+            http_response, schema_properties = self._generated_client.schema.get_schema_version(
                 group_name=group_name,
                 schema_name=name,
                 schema_version=version,
                 cls=prepare_schema_result,
                 **http_request_kwargs,
             )
+        http_response.raise_for_status()
+        http_response.read()
+        return Schema(
+            definition=http_response.text(), properties=SchemaProperties(**schema_properties)
+        )
 
     @distributed_trace
     def get_schema_properties(
@@ -252,13 +259,16 @@ class SchemaRegistryClient(object):
         """
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
-        return self._generated_client.schema.query_id_by_content(
+        http_response, schema_properties = self._generated_client.schema.query_id_by_content(
             group_name=group_name,
             schema_name=name,
-            schema_content=definition,
+            schema_content=cast(IO[Any], definition),
             content_type=kwargs.pop(
                 "content_type", get_content_type(format)
             ),
             cls=partial(prepare_schema_properties_result, format),
             **http_request_kwargs,
         )
+
+        http_response.raise_for_status()
+        return SchemaProperties(**schema_properties)

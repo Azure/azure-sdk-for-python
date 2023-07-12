@@ -52,17 +52,11 @@ def prepare_schema_properties_result(
 ):    # pylint:disable=unused-argument,redefined-builtin
     properties_dict = _parse_schema_properties_dict(response_headers)
     properties_dict["format"] = SchemaFormat(format)
-    pipeline_response.http_response.read()
-    pipeline_response.http_response.raise_for_status()
-    return SchemaProperties(**properties_dict)
+    return pipeline_response.http_response, properties_dict
 
 def prepare_schema_result(
     pipeline_response, deserialized, response_headers
 ):    # pylint:disable=unused-argument
-    schema_props_dict = _parse_schema_properties_dict(response_headers)
-    schema_props_dict["format"] = _get_format(response_headers.get("Content-Type"))
-    pipeline_response.http_response.read()
-    pipeline_response.http_response.raise_for_status()
-    return Schema(
-        definition=pipeline_response.http_response.text(), properties=SchemaProperties(**schema_props_dict)
-    )
+    properties_dict = _parse_schema_properties_dict(response_headers)
+    properties_dict["format"] = _get_format(response_headers.get("Content-Type"))
+    return pipeline_response.http_response, properties_dict
