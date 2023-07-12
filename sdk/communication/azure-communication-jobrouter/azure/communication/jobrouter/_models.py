@@ -10,26 +10,28 @@
 import sys
 from typing import Any, Dict, List, Optional, Union
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-
 import datetime
 from datetime import timezone
 from dateutil.parser import parse
 
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
-
 from azure.core.serialization import _datetime_as_isostr  # pylint:disable=protected-access
 from azure.core.serialization import NULL as AzureCoreNull
 
+# pylint: disable=unused-import
 from ._enums import (
     ScoringRuleParameterSelector,
     LabelOperator,
     JobMatchModeType,
     ExpressionRouterRuleLanguage
 )
+
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 # cSpell:ignore tzinfos
