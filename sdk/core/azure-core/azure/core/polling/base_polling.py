@@ -354,7 +354,7 @@ class OperationResourcePolling(LongRunningOperation[HttpRequestTypeVar, AllHttpR
             return "InProgress"
         raise OperationFailed("Operation failed or canceled")
 
-    def _set_async_url_if_present(self, response: AllHttpResponseType) -> None:
+    def _set_async_url_if_present(self, response: AllHttpResponseTypeVar) -> None:
         self._async_url = response.headers[self._operation_location_header]
 
         location_url = response.headers.get("location")
