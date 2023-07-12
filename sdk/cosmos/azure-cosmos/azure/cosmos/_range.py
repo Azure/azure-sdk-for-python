@@ -54,7 +54,10 @@ class Range(object):
         return self.low < other.low or self.high < other.high
 
     def Contains(self, other):
-        """Check if the passed parameter is in the range of this object.
+        """Check if the passed in partition key is in the range of this object.
+        :param Union[_range.Range, str] other: the other range or partition key being checked
+        :returns: a boolean stating whether the parameter is in the range of this object.
+        :rtype: bool
         """
         if other is None:
             raise ValueError("other is None.")
@@ -65,6 +68,9 @@ class Range(object):
 
     def Intersect(self, other):
         """Check if the passed parameter intersects the range of this object.
+        :param _range.Range other: the other partition key range being checked
+        :returns: a boolean stating whether the partition key range passed intersects the range of this object.
+        :rtype: bool
         """
         if isinstance(other, Range):
             max_low = self.low if (self.low >= other.low) else other.low

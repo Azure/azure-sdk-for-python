@@ -188,11 +188,8 @@ def SynchronizedRequest(
     :param _GlobalEndpointManager global_endpoint_manager:
     :param documents.ConnectionPolicy connection_policy:
     :param azure.core.PipelineClient pipeline_client: PipelineClient to process the request.
-    :param str method:
-    :param str path:
-    :param (str, unicode, file-like stream object, dict, list or None) request_data:
-    :param dict query_params:
-    :param dict headers:
+    :param HttpRequest request: the HTTP request to be sent
+    :param (str, unicode, file-like stream object, dict, list or None) request_data: the data to be sent in the request
     :return: tuple of (result, headers)
     :rtype: tuple of (dict dict)
     """
@@ -202,7 +199,7 @@ def SynchronizedRequest(
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
 
-    # Pass _Request function with it's parameters to retry_utility's Execute method that wraps the call with retries
+    # Pass _Request function with its parameters to retry_utility's Execute method that wraps the call with retries
     return _retry_utility.Execute(
         client,
         global_endpoint_manager,

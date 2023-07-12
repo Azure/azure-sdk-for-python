@@ -92,6 +92,7 @@ class QueryIterable(PageIterator):
         This method only exists for backward compatibility reasons. (Because
         QueryIterable has exposed fetch_next_block api).
 
+        :param Any args:
         :return: List of results.
         :rtype: list
         """

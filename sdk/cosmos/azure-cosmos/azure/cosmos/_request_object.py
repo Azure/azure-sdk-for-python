@@ -28,12 +28,12 @@ class RequestObject(object):
         self.resource_type = resource_type
         self.operation_type = operation_type
         self.endpoint_override = endpoint_override
-        self.should_clear_session_token_on_session_read_failure = False
+        self.should_clear_session_token_on_session_read_failure = False  # pylint: disable=name-too-long
         self.use_preferred_locations = None
         self.location_index_to_route = None
         self.location_endpoint_to_route = None
 
-    def route_to_location_with_preferred_location_flag(self, location_index, use_preferred_locations):
+    def route_to_location_with_preferred_location_flag(self, location_index, use_preferred_locations): # pylint: disable=name-too-long
         self.location_index_to_route = location_index
         self.use_preferred_locations = use_preferred_locations
         self.location_endpoint_to_route = None

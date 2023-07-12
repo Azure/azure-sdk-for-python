@@ -61,10 +61,11 @@ class _SessionRetryPolicy(object):
             self.request.route_to_location(self.location_endpoint)
 
     def ShouldRetry(self, _exception):
-        """Returns true if should retry based on the passed-in exception.
+        """Returns true if the request should retry based on the passed-in exception.
 
-        :param (exceptions.CosmosHttpResponseError instance) exception:
-        :rtype: boolean
+        :param exceptions.CosmosHttpResponseError _exception:
+        :returns: a boolean stating whether the request should be retried
+        :rtype: bool
         """
         self.session_token_retry_count += 1
         # clear previous location-based routing directive
