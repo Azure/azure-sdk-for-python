@@ -17,11 +17,6 @@ from typing import (
 )
 from urllib.parse import urlparse
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -62,6 +57,13 @@ from .._router_serializer import (
 from .._shared.utils import parse_connection_str
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
+
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -170,9 +172,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         return await self._client.job_router.get_queue_statistics(
             id = queue_id,
-            # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterQueueStatistics",
-                                                                                                deserialized_json_response),
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterQueueStatistics", deserialized_json_response),
             **kwargs
         )
 
@@ -213,9 +214,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         return await self._client.job_router.upsert_worker(
             worker_id = worker_id,
             patch = _serialize_to_json(router_worker, "RouterWorker"),  # pylint:disable=protected-access
-            # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterWorker",
-                                                                                                deserialized_json_response),
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterWorker", deserialized_json_response),
             **kwargs
         )
 
@@ -372,9 +372,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         return await self._client.job_router.upsert_worker(
             worker_id = worker_id,
             patch = _serialize_to_json(patch, "RouterWorker"),  # pylint:disable=protected-access
-            # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterWorker",
-                                                                                                deserialized_json_response),
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterWorker", deserialized_json_response),
             **kwargs
         )
 
@@ -406,9 +405,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         return await self._client.job_router.get_worker(
             worker_id = worker_id,
-            # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterWorker",
-                                                                                                deserialized_json_response),
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterWorker", deserialized_json_response),
             **kwargs
         )
 
@@ -550,9 +548,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         return await self._client.job_router.upsert_job(
             id = job_id,
             patch = _serialize_to_json(router_job, "RouterJob"),  # pylint:disable=protected-access
-            # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterJob",
-                                                                                                deserialized_json_response),
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterJob", deserialized_json_response),
             **kwargs
         )
 
@@ -730,9 +727,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         return await self._client.job_router.upsert_job(
             id = job_id,
             patch = _serialize_to_json(patch, "RouterJob"),  # pylint:disable=protected-access
-            # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterJob",
-                                                                                                deserialized_json_response),
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterJob", deserialized_json_response),
             **kwargs
         )
 
@@ -764,9 +760,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         return await self._client.job_router.get_job(
             id = job_id,
-            # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("RouterJob",
-                                                                                                 deserialized_json_response),
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("RouterJob", deserialized_json_response),
             **kwargs
         )
 
@@ -1171,9 +1166,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             id = job_id,
             assignment_id = assignment_id,
             unassign_job_request = _serialize_to_json(unassign_job_request, "UnassignJobRequest"),
-            # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("UnassignJobResult",
-                                                                                                deserialized_json_response),
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("UnassignJobResult", deserialized_json_response),
             **kwargs
         )
 
@@ -1218,9 +1212,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         return await self._client.job_router.accept_job_action(
             worker_id = worker_id,
             offer_id = offer_id,
-            # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("AcceptJobOfferResult",
-                                                                                                deserialized_json_response),
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("AcceptJobOfferResult", deserialized_json_response),
             **kwargs
         )
 

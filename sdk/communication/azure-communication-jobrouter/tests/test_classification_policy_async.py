@@ -104,7 +104,7 @@ worker_selectors = [
             key = "test_key",
             label_operator = LabelOperator.EQUAL,
             value = "test_value",
-            ttl_seconds = 10.0,
+            expires_after_seconds = 10.0,
             expedite = False
         )
     ),
@@ -115,7 +115,7 @@ worker_selectors = [
                 key = "test_key",
                 label_operator = LabelOperator.EQUAL,
                 value = "test_value",
-                ttl_seconds = 10.0,
+                expires_after_seconds = 10.0,
                 expedite = False
             )
         ]
@@ -127,7 +127,7 @@ worker_selectors = [
     #             key = "test_key",
     #             label_operator = LabelOperator.EQUAL,
     #             value = "test_value",
-    #             ttl_seconds = 10.0,
+    #             expires_after_seconds = 10.0,
     #             expedite = False
     #         )]
     #     )
@@ -145,7 +145,7 @@ worker_selectors = [
                         key = "test_key",
                         label_operator = LabelOperator.EQUAL,
                         value = "test_value",
-                        ttl_seconds = 10.0,
+                        expires_after_seconds = 10.0,
                         expedite = False
                     )
                 ]

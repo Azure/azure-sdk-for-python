@@ -7,7 +7,8 @@
 # --------------------------------------------------------------------------
 
 import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+# pylint: disable=unused-import,ungrouped-imports
+from typing import Any
 
 from ._generated._serialization import (
     Serializer,
@@ -17,13 +18,14 @@ from ._generated import (
     Deserializer,
 )
 
+from . import _models
+from . import _enums
+
+
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-
-from . import _models
-from . import _enums
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 

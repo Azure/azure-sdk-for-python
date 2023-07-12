@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, Union
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -26,16 +26,13 @@ from azure.core.serialization import NULL as AzureCoreNull
 
 from ._enums import (
     ScoringRuleParameterSelector,
-    RouterWorkerStateSelector,
-    RouterWorkerState,
-    RouterWorkerSelectorStatus,
-    RouterJobStatusSelector,
-    RouterJobStatus,
     LabelOperator,
     JobMatchModeType,
     ExpressionRouterRuleLanguage
 )
 
+
+# cSpell:ignore tzinfos
 def _convert_str_to_datetime(datetime_as_str: str) -> datetime.datetime:
     dt = parse(datetime_as_str, tzinfos=[timezone.utc])
     return dt
@@ -66,7 +63,7 @@ class AcceptJobOfferResult:
         "worker_id": {"key": "workerId", "type": "str"},
     }
 
-    def __init__(self, *, assignment_id: str, job_id: str, worker_id: str, **kwargs: Any) -> None:
+    def __init__(self, *, assignment_id: str, job_id: str, worker_id: str) -> None:
         """
         :keyword assignment_id: The assignment Id that assigns a worker that has accepted an offer to a
          job. Required.
@@ -351,7 +348,7 @@ class CancelJobRequest:
         "disposition_code": {"key": "dispositionCode", "type": "str"},
     }
 
-    def __init__(self, *, note: Optional[str] = None, disposition_code: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, note: Optional[str] = None, disposition_code: Optional[str] = None) -> None:
         """
         :keyword note: (Optional) A note that will be appended to the jobs' Notes collection with the
          current timestamp.
@@ -388,7 +385,7 @@ class ChannelConfiguration:
         "max_number_of_jobs": {"key": "maxNumberOfJobs", "type": "int"},
     }
 
-    def __init__(self, *, capacity_cost_per_job: int, max_number_of_jobs: Optional[int] = None, **kwargs: Any) -> None:
+    def __init__(self, *, capacity_cost_per_job: int, max_number_of_jobs: Optional[int] = None) -> None:
         """
         :keyword capacity_cost_per_job: The amount of capacity that an instance of a job of this
          channel will consume of the total worker capacity. Required.
@@ -450,8 +447,7 @@ class ClassificationPolicy:
         fallback_queue_id: Optional[str] = None,
         queue_selectors: Optional[List["QueueSelectorAttachment"]] = None,
         prioritization_rule: Optional["RouterRule"] = None,
-        worker_selectors: Optional[List["WorkerSelectorAttachment"]] = None,
-        **kwargs: Any
+        worker_selectors: Optional[List["WorkerSelectorAttachment"]] = None
     ) -> None:
         """
         :keyword name: Friendly name of this policy.
@@ -483,38 +479,6 @@ class ClassificationPolicy:
         self.prioritization_rule = prioritization_rule
         self.worker_selectors = worker_selectors
 
-class ClassificationPolicyCollection:
-    """A paged collection of classification policies.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: Required.
-    :vartype value: list[~azure.communication.jobrouter.models.ClassificationPolicyItem]
-    :ivar next_link:
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ClassificationPolicyItem]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["ClassificationPolicyItem"], **kwargs: Any) -> None:
-        """
-        :keyword value: Required.
-        :paramtype value: list[~azure.communication.jobrouter.models.ClassificationPolicyItem]
-        """
-        super().__init__()
-        self.value = value
-        self.next_link = None
-
 
 class ClassificationPolicyItem:
     """Paged instance of ClassificationPolicy.
@@ -536,8 +500,7 @@ class ClassificationPolicyItem:
         self,
         *,
         classification_policy: Optional["ClassificationPolicy"] = None,
-        etag: Optional[str] = None,
-        **kwargs: Any
+        etag: Optional[str] = None
     ) -> None:
         """
         :keyword classification_policy: A container for the rules that govern how jobs are classified.
@@ -589,8 +552,7 @@ class CloseJobRequest:
         assignment_id: str,
         disposition_code: Optional[str] = None,
         close_at: Optional[datetime.datetime] = None,
-        note: Optional[str] = None,
-        **kwargs: Any
+        note: Optional[str] = None
     ) -> None:
         """
         :keyword assignment_id: The assignment within which the job is to be closed. Required.
@@ -635,7 +597,7 @@ class CompleteJobRequest:
         "note": {"key": "note", "type": "str"},
     }
 
-    def __init__(self, *, assignment_id: str, note: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, assignment_id: str, note: Optional[str] = None) -> None:
         """
         :keyword assignment_id: The assignment within the job to complete. Required.
         :paramtype assignment_id: str
@@ -858,7 +820,7 @@ class DeclineJobOfferRequest:
         "retry_offer_at": {"key": "retryOfferAt", "type": "iso-8601"},
     }
 
-    def __init__(self, *, retry_offer_at: Optional[datetime.datetime] = None, **kwargs: Any) -> None:
+    def __init__(self, *, retry_offer_at: Optional[datetime.datetime] = None) -> None:
         """
         :keyword retry_offer_at: If the RetryOfferAt is not provided, then this job will not be offered
          again to the worker who declined this job unless
@@ -911,7 +873,7 @@ class RouterRule:
         }
     }
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self) -> None:
         """ """
         super().__init__()
         self.kind: Optional[str] = None
@@ -972,8 +934,7 @@ class DistributionPolicy:
         *,
         name: Optional[str] = None,
         offer_expires_after_seconds: Optional[float] = None,
-        mode: Optional[DistributionMode] = None,
-        **kwargs: Any
+        mode: Optional[DistributionMode] = None
     ) -> None:
         """
         :keyword name: The human readable name of the policy.
@@ -989,42 +950,6 @@ class DistributionPolicy:
         self.name = name
         self.offer_expires_after_seconds = offer_expires_after_seconds
         self.mode = mode
-
-    def _serialize_to_json(self) -> JSON:
-        return _SERIALIZER._serialize(self, is_xml=False)
-
-
-class DistributionPolicyCollection:
-    """A paged collection of distribution policies.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: Required.
-    :vartype value: list[~azure.communication.jobrouter.models.DistributionPolicyItem]
-    :ivar next_link:
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[DistributionPolicyItem]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["DistributionPolicyItem"], **kwargs: Any) -> None:
-        """
-        :keyword value: Required.
-        :paramtype value: list[~azure.communication.jobrouter.models.DistributionPolicyItem]
-        """
-        super().__init__()
-        self.value = value
-        self.next_link = None
 
 
 class DistributionPolicyItem:
@@ -1047,8 +972,7 @@ class DistributionPolicyItem:
         self,
         *,
         distribution_policy: Optional[DistributionPolicy] = None,
-        etag: Optional[str] = None,
-        **kwargs: Any
+        etag: Optional[str] = None
     ) -> None:
         """
         :keyword distribution_policy: Policy governing how jobs are distributed to workers.
@@ -1089,8 +1013,7 @@ class ExceptionPolicy:
         self,
         *,
         name: Optional[str] = None,
-        exception_rules: Optional[Dict[str, "ExceptionRule"]] = None,
-        **kwargs: Any
+        exception_rules: Optional[Dict[str, "ExceptionRule"]] = None
     ) -> None:
         """
         :keyword name: (Optional) The name of the exception policy.
@@ -1103,39 +1026,6 @@ class ExceptionPolicy:
         self.id = None
         self.name = name
         self.exception_rules = exception_rules
-
-
-class ExceptionPolicyCollection:
-    """A paged collection of exception policies.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: Required.
-    :vartype value: list[~azure.communication.jobrouter.models.ExceptionPolicyItem]
-    :ivar next_link:
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ExceptionPolicyItem]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["ExceptionPolicyItem"], **kwargs: Any) -> None:
-        """
-        :keyword value: Required.
-        :paramtype value: list[~azure.communication.jobrouter.models.ExceptionPolicyItem]
-        """
-        super().__init__()
-        self.value = value
-        self.next_link = None
 
 
 class ExceptionPolicyItem:
@@ -1155,7 +1045,7 @@ class ExceptionPolicyItem:
     }
 
     def __init__(
-        self, *, exception_policy: Optional["ExceptionPolicy"] = None, etag: Optional[str] = None, **kwargs: Any
+        self, *, exception_policy: Optional["ExceptionPolicy"] = None, etag: Optional[str] = None
     ) -> None:
         """
         :keyword exception_policy: A policy that defines actions to execute when exception are
@@ -1192,7 +1082,7 @@ class ExceptionRule:
     }
 
     def __init__(
-        self, *, trigger: "ExceptionTrigger", actions: Dict[str, "ExceptionAction"], **kwargs: Any
+        self, *, trigger: "ExceptionTrigger", actions: Dict[str, "ExceptionAction"]
     ) -> None:
         """
         :keyword trigger: The trigger for this exception rule. Required.
@@ -1228,7 +1118,7 @@ class ExceptionTrigger:
 
     _subtype_map = {"kind": {"queue-length": "QueueLengthExceptionTrigger", "wait-time": "WaitTimeExceptionTrigger"}}
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self) -> None:
         """ """
         super().__init__()
         self.kind: Optional[str] = None
@@ -1348,8 +1238,7 @@ class FunctionRouterRuleCredential:
         *,
         function_key: Optional[str] = None,
         app_key: Optional[str] = None,
-        client_id: Optional[str] = None,
-        **kwargs: Any
+        client_id: Optional[str] = None
     ) -> None:
         """
         :keyword function_key: (Optional) Access key scoped to a particular function.
@@ -1397,8 +1286,7 @@ class JobMatchingMode:
         mode_type: Optional[Union[str, "JobMatchModeType"]] = None,
         queue_and_match_mode: Optional[JSON] = None,
         schedule_and_suspend_mode: Optional["ScheduleAndSuspendMode"] = None,
-        suspend_mode: Optional[JSON] = None,
-        **kwargs: Any
+        suspend_mode: Optional[JSON] = None
     ) -> None:
         """
         :keyword mode_type: Known values are: "queueAndMatchMode", "scheduleAndSuspendMode", and
@@ -1419,7 +1307,8 @@ class JobMatchingMode:
         self.suspend_mode = suspend_mode
 
     @classmethod
-    def initialize_schedule_and_suspend_mode(cls, schedule_and_suspend_mode: "ScheduleAndSuspendMode") -> "JobMatchingMode":
+    def initialize_schedule_and_suspend_mode(cls,
+                                             schedule_and_suspend_mode: "ScheduleAndSuspendMode") -> "JobMatchingMode":
         return cls(
             mode_type = JobMatchModeType.SCHEDULE_AND_SUSPEND_MODE,
             schedule_and_suspend_mode = schedule_and_suspend_mode,
@@ -1585,7 +1474,7 @@ class Oauth2ClientCredential:
         "client_secret": {"key": "clientSecret", "type": "str"},
     }
 
-    def __init__(self, *, client_id: Optional[str] = None, client_secret: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, client_id: Optional[str] = None, client_secret: Optional[str] = None) -> None:
         """
         :keyword client_id: ClientId for Contoso Authorization server.
         :paramtype client_id: str
@@ -1754,7 +1643,7 @@ class QueueWeightedAllocation:
         "queue_selectors": {"key": "queueSelectors", "type": "[RouterQueueSelector]"},
     }
 
-    def __init__(self, *, weight: float, queue_selectors: List["RouterQueueSelector"], **kwargs: Any) -> None:
+    def __init__(self, *, weight: float, queue_selectors: List["RouterQueueSelector"]) -> None:
         """
         :keyword weight: The percentage of this weight, expressed as a fraction of 1. Required.
         :paramtype weight: float
@@ -1973,8 +1862,7 @@ class RouterJob:  # pylint: disable=too-many-instance-attributes
         labels: Optional[Dict[str, Any]] = None,
         tags: Optional[Dict[str, Any]] = None,
         notes: Optional[Union[Dict[str, str], Dict[datetime.datetime, str]]] = None,
-        matching_mode: Optional["JobMatchingMode"] = None,
-        **kwargs: Any
+        matching_mode: Optional["JobMatchingMode"] = None
     ) -> None:
         """
         :keyword channel_reference: Reference to an external parent context, eg. call ID.
@@ -2005,7 +1893,7 @@ class RouterJob:  # pylint: disable=too-many-instance-attributes
         :paramtype matching_mode: ~azure.communication.jobrouter.models.JobMatchingMode
         """
         if notes:
-            for k in [key for key in notes.keys()]:
+            for k in list(notes.keys()):
                 v: str = notes[k]
                 if isinstance(k, str):
                     datetime_as_dt: datetime = _convert_str_to_datetime(k)  # pylint:disable=protected-access
@@ -2074,8 +1962,7 @@ class RouterJobAssignment:
         assigned_at: datetime.datetime,
         worker_id: Optional[str] = None,
         completed_at: Optional[datetime.datetime] = None,
-        closed_at: Optional[datetime.datetime] = None,
-        **kwargs: Any
+        closed_at: Optional[datetime.datetime] = None
     ) -> None:
         """
         :keyword assignment_id: The Id of the job assignment. Required.
@@ -2097,39 +1984,6 @@ class RouterJobAssignment:
         self.closed_at = closed_at
 
 
-class RouterJobCollection:
-    """A paged collection of jobs.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: Required.
-    :vartype value: list[~azure.communication.jobrouter.models.RouterJobItem]
-    :ivar next_link:
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[RouterJobItem]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["RouterJobItem"], **kwargs: Any) -> None:
-        """
-        :keyword value: Required.
-        :paramtype value: list[~azure.communication.jobrouter.models.RouterJobItem]
-        """
-        super().__init__()
-        self.value = value
-        self.next_link = None
-
-
 class RouterJobItem:
     """Paged instance of RouterJob.
 
@@ -2146,7 +2000,7 @@ class RouterJobItem:
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, *, job: Optional["RouterJob"] = None, etag: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, job: Optional["RouterJob"] = None, etag: Optional[str] = None) -> None:
         """
         :keyword job: A unit of work to be routed.
         :paramtype job: ~azure.communication.jobrouter.models.RouterJob
@@ -2196,8 +2050,7 @@ class RouterJobOffer:
         job_id: str,
         capacity_cost: int,
         offered_at: Optional[datetime.datetime] = None,
-        expires_at: Optional[datetime.datetime] = None,
-        **kwargs: Any
+        expires_at: Optional[datetime.datetime] = None
     ) -> None:
         """
         :keyword offer_id: The Id of the offer. Required.
@@ -2260,8 +2113,7 @@ class RouterJobPositionDetails:
         position: int,
         queue_id: str,
         queue_length: int,
-        estimated_wait_time_minutes: float,
-        **kwargs: Any
+        estimated_wait_time_minutes: float
     ) -> None:
         """
         :keyword job_id: Id of the job these details are about. Required.
@@ -2322,8 +2174,7 @@ class RouterQueue:
         name: Optional[str] = None,
         distribution_policy_id: Optional[str] = None,
         labels: Optional[Dict[str, Any]] = None,
-        exception_policy_id: Optional[str] = None,
-        **kwargs: Any
+        exception_policy_id: Optional[str] = None
     ) -> None:
         """
         :keyword name: The name of this queue.
@@ -2345,38 +2196,6 @@ class RouterQueue:
         self.labels = labels
         self.exception_policy_id = exception_policy_id
 
-class RouterQueueCollection:
-    """A paged collection of queues.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: Required.
-    :vartype value: list[~azure.communication.jobrouter.models.RouterQueueItem]
-    :ivar next_link:
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[RouterQueueItem]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["RouterQueueItem"], **kwargs: Any) -> None:
-        """
-        :keyword value: Required.
-        :paramtype value: list[~azure.communication.jobrouter.models.RouterQueueItem]
-        """
-        super().__init__()
-        self.value = value
-        self.next_link = None
-
 
 class RouterQueueItem:
     """Paged instance of RouterQueue.
@@ -2395,7 +2214,7 @@ class RouterQueueItem:
     }
 
     def __init__(
-        self, *, queue: Optional["RouterQueue"] = None, etag: Optional[str] = None, **kwargs: Any
+        self, *, queue: Optional["RouterQueue"] = None, etag: Optional[str] = None
     ) -> None:
         """
         :keyword queue: A queue that can contain jobs to be routed.
@@ -2439,8 +2258,7 @@ class RouterQueueSelector:
         *,
         key: str,
         label_operator: Union[str, "LabelOperator"],
-        value: Optional[JSON] = None,
-        **kwargs: Any
+        value: Optional[JSON] = None
     ) -> None:
         """
         :keyword key: The label key to query against. Required.
@@ -2493,8 +2311,7 @@ class RouterQueueStatistics:
         queue_id: str,
         length: int,
         estimated_wait_time_minutes: Optional[Dict[str, float]] = None,
-        longest_job_wait_time_minutes: Optional[float] = None,
-        **kwargs: Any
+        longest_job_wait_time_minutes: Optional[float] = None
     ) -> None:
         """
         :keyword queue_id: Id of the queue these details are about. Required.
@@ -2580,8 +2397,7 @@ class RouterWorker:  # pylint: disable=too-many-instance-attributes
         labels: Optional[Dict[str, Any]] = None,
         tags: Optional[Dict[str, Any]] = None,
         channel_configurations: Optional[Dict[str, "ChannelConfiguration"]] = None,
-        available_for_offers: Optional[bool] = None,
-        **kwargs: Any
+        available_for_offers: Optional[bool] = None
     ) -> None:
         """
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
@@ -2646,7 +2462,7 @@ class RouterWorkerAssignment:
     }
 
     def __init__(
-        self, *, assignment_id: str, job_id: str, capacity_cost: int, assigned_at: datetime.datetime, **kwargs: Any
+        self, *, assignment_id: str, job_id: str, capacity_cost: int, assigned_at: datetime.datetime
     ) -> None:
         """
         :keyword assignment_id: The Id of the assignment. Required.
@@ -2666,39 +2482,6 @@ class RouterWorkerAssignment:
         self.assigned_at = assigned_at
 
 
-class RouterWorkerCollection:
-    """A paged collection of workers.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: Required.
-    :vartype value: list[~azure.communication.jobrouter.models.RouterWorkerItem]
-    :ivar next_link:
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[RouterWorkerItem]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["RouterWorkerItem"], **kwargs: Any) -> None:
-        """
-        :keyword value: Required.
-        :paramtype value: list[~azure.communication.jobrouter.models.RouterWorkerItem]
-        """
-        super().__init__()
-        self.value = value
-        self.next_link = None
-
-
 class RouterWorkerItem:
     """Paged instance of RouterWorker.
 
@@ -2716,7 +2499,7 @@ class RouterWorkerItem:
     }
 
     def __init__(
-        self, *, worker: Optional["RouterWorker"] = None, etag: Optional[str] = None, **kwargs: Any
+        self, *, worker: Optional["RouterWorker"] = None, etag: Optional[str] = None
     ) -> None:
         """
         :keyword worker: An entity for jobs to be routed to.
@@ -2778,8 +2561,7 @@ class RouterWorkerSelector:
         label_operator: Union[str, "LabelOperator"],
         value: Optional[JSON] = None,
         expires_after_seconds: Optional[float] = None,
-        expedite: Optional[bool] = None,
-        **kwargs: Any
+        expedite: Optional[bool] = None
     ) -> None:
         """
         :keyword key: The label key to query against. Required.
@@ -2912,7 +2694,7 @@ class ScheduleAndSuspendMode:
         "schedule_at": {"key": "scheduleAt", "type": "iso-8601"},
     }
 
-    def __init__(self, *, schedule_at: Optional[datetime.datetime] = None, **kwargs: Any) -> None:
+    def __init__(self, *, schedule_at: Optional[datetime.datetime] = None) -> None:
         """
         :keyword schedule_at:
         :paramtype schedule_at: ~datetime.datetime
@@ -2929,8 +2711,8 @@ class ScoringRuleOptions:
     :vartype batch_size: int
     :ivar scoring_parameters: (Optional) List of extra parameters from the job that will be sent as
      part of the payload to scoring rule.
-     If not set, the job's labels (sent in the payload as ``job``\ ) and the job's worker selectors
-     (sent in the payload as ``selectors``\ )
+     If not set, the job's labels (sent in the payload as 'job' ) and the job's worker selectors
+     (sent in the payload as 'selectors' )
      are added to the payload of the scoring rule by default.
      Note: Worker labels are always sent with scoring payload.
     :vartype scoring_parameters: list[str or
@@ -2962,8 +2744,7 @@ class ScoringRuleOptions:
         batch_size: Optional[int] = None,
         scoring_parameters: Optional[List[Union[str, "ScoringRuleParameterSelector"]]] = None,
         allow_scoring_batch_of_workers: Optional[bool] = None,
-        descending_order: Optional[bool] = None,
-        **kwargs: Any
+        descending_order: Optional[bool] = None
     ) -> None:
         """
         :keyword batch_size: (Optional) Set batch size when AllowScoringBatchOfWorkers is set to true.
@@ -2971,8 +2752,8 @@ class ScoringRuleOptions:
         :paramtype batch_size: int
         :keyword scoring_parameters: (Optional) List of extra parameters from the job that will be sent
          as part of the payload to scoring rule.
-         If not set, the job's labels (sent in the payload as ``job``\ ) and the job's worker selectors
-         (sent in the payload as ``selectors``\ )
+         If not set, the job's labels (sent in the payload as 'job' ) and the job's worker selectors
+         (sent in the payload as 'selectors' )
          are added to the payload of the scoring rule by default.
          Note: Worker labels are always sent with scoring payload.
         :paramtype scoring_parameters: list[str or
@@ -3105,7 +2886,7 @@ class UnassignJobRequest:
         "suspend_matching": {"key": "suspendMatching", "type": "bool"},
     }
 
-    def __init__(self, *, suspend_matching: Optional[bool] = None, **kwargs: Any) -> None:
+    def __init__(self, *, suspend_matching: Optional[bool] = None) -> None:
         """
         :keyword suspend_matching: If set to true, then the job is not queued for
          re-matching with a worker.
@@ -3136,7 +2917,7 @@ class UnassignJobResult:
         "unassignment_count": {"key": "unassignmentCount", "type": "int"},
     }
 
-    def __init__(self, *, job_id: str, unassignment_count: int, **kwargs: Any) -> None:
+    def __init__(self, *, job_id: str, unassignment_count: int) -> None:
         """
         :keyword job_id: The Id of the job unassigned. Required.
         :paramtype job_id: str
@@ -3317,7 +3098,7 @@ class WorkerWeightedAllocation:
         "worker_selectors": {"key": "workerSelectors", "type": "[RouterWorkerSelector]"},
     }
 
-    def __init__(self, *, weight: float, worker_selectors: List["RouterWorkerSelector"], **kwargs: Any) -> None:
+    def __init__(self, *, weight: float, worker_selectors: List["RouterWorkerSelector"]) -> None:
         """
         :keyword weight: The percentage of this weight, expressed as a fraction of 1. Required.
         :paramtype weight: float
