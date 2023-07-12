@@ -33,7 +33,7 @@ The following are code samples that show common scenario operations with the Azu
     * List attached received shares
     * Delete a received share
 
-* [share_resources_examples.py](https://github.com/hopewelchmicrosoft/azure-sdk-for-python/blob/hope-new-branch/sdk/purview/azure-purview-sharing/samples/share_resources_examples.py) - Examples of Share Resources:
+* [share_resources_examples.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/purview/azure-purview-sharing/samples/share_resources_examples.py) - Examples of Share Resources:
     * List Share Resources
 
 ## Prerequisites
