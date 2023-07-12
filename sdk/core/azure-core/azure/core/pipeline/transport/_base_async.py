@@ -27,8 +27,7 @@ from __future__ import annotations
 import asyncio
 import abc
 from collections.abc import AsyncIterator
-from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic, Any, TYPE_CHECKING
-from contextlib import AbstractAsyncContextManager
+from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic, Any, TYPE_CHECKING, AsyncContextManager
 
 from ._base import _HttpResponseBase, _HttpClientTransportResponse, HttpRequest
 from ...utils._pipeline_transport_rest_shared_async import _PartGenerator
@@ -61,7 +60,7 @@ def _iterate_response_content(iterator):
 
 
 class AsyncHttpResponse(
-    _HttpResponseBase, AbstractAsyncContextManager["AsyncHttpResponse"]
+    _HttpResponseBase, AsyncContextManager["AsyncHttpResponse"]
 ):  # pylint: disable=abstract-method
     """An AsyncHttpResponse ABC.
 
@@ -114,7 +113,7 @@ class AsyncHttpClientTransportResponse(  # pylint: disable=abstract-method
 
 
 class AsyncHttpTransport(
-    AbstractAsyncContextManager,
+    AsyncContextManager["AsyncHttpTransport"],
     abc.ABC,
     Generic[HTTPRequestType, AsyncHTTPResponseType],
 ):
