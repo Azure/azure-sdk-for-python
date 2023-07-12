@@ -9,32 +9,27 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List
 from azure.core.exceptions import DeserializationError, SerializationError, raise_with_traceback
 
-from ._serialization import (
-    basestring,
-    unicode_str,
-    _FLATTEN,
-    _decode_attribute_map_key
-)
+from ._serialization import basestring, unicode_str, _FLATTEN, _decode_attribute_map_key
 from ._serialization import Deserializer as DeserializerGenerated
 
-class Deserializer(DeserializerGenerated):
 
+class Deserializer(DeserializerGenerated):
     @staticmethod
     def _flatten_subtype(cls, key, objects):
         if "_subtype_map" not in cls.__dict__:
             return {}
         result = dict(cls._subtype_map[key])
         for valuetype in cls._subtype_map[key].values():
-            result.update(Deserializer._flatten_subtype(objects[valuetype],key, objects))
+            result.update(Deserializer._flatten_subtype(objects[valuetype], key, objects))
         return result
 
     @staticmethod
     def _get_rest_key_parts(cls, attr_key):
         """Get the RestAPI key of this attr, split it and decode part
-                :param str attr_key: Attribute key must be in attribute_map.
-                :returns: A list of RestAPI part
-                :rtype: list
-                """
+        :param str attr_key: Attribute key must be in attribute_map.
+        :returns: A list of RestAPI part
+        :rtype: list
+        """
         rest_split_key = _FLATTEN.split(cls._attribute_map[attr_key]["key"])
         return [_decode_attribute_map_key(key_part) for key_part in rest_split_key]
 
@@ -70,10 +65,10 @@ class Deserializer(DeserializerGenerated):
                 try:
                     target = self.dependencies[flatten_mapping_type[subtype_value]]
                 except KeyError:
-                    raise_with_traceback(DeserializationError,
-                                         "Failed to deserialize: " + target.__class__.__name__)
+                    raise_with_traceback(DeserializationError, "Failed to deserialize: " + target.__class__.__name__)
 
         return target, target.__class__.__name__  # type: ignore
+
 
 __all__: List[str] = ["Deserializer"]  # Add all objects you want publicly available to users at this package level
 
