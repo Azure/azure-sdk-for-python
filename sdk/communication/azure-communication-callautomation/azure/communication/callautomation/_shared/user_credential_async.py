@@ -8,7 +8,6 @@ from asyncio import Condition, Lock, Event
 from datetime import timedelta
 from typing import Any
 import sys
-import six
 from .utils import get_current_utc_as_int
 from .utils import create_access_token
 from .utils_async import AsyncTimer
@@ -34,7 +33,7 @@ class CommunicationTokenCredential(object):
     _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 10
 
     def __init__(self, token: str, **kwargs: Any):
-        if not isinstance(token, six.string_types):
+        if not isinstance(token, str):
             raise TypeError("Token must be a string.")
         self._token = create_access_token(token)
         self._token_refresher = kwargs.pop('token_refresher', None)
