@@ -176,7 +176,7 @@ def parse_tags(generated_tags: Optional[List["BlobTag"]]) -> Union[Dict[str, str
     """Deserialize a list of BlobTag objects into a dict.
 
     :param Optional[List[BlobTag]] generated_tags:
-    A list containing the BlobTag objects from generated code.
+        A list containing the BlobTag objects from generated code.
     :returns: A dictionary of the BlobTag objects.
     :rtype: Dict[str, str] or None
     """
