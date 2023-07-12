@@ -12,7 +12,6 @@ from typing import Any, Awaitable
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import AzureCommunicationJobRouterServiceConfiguration
 from .operations import JobRouterAdministrationOperations, JobRouterOperations
@@ -40,10 +39,8 @@ class AzureCommunicationJobRouterService:  # pylint: disable=client-accepts-api-
         self._config = AzureCommunicationJobRouterServiceConfiguration(endpoint=endpoint, **kwargs)
         self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in _models._models.__dict__.items() if isinstance(v, type)}
-        client_models.update({k: v for k, v in _models.__dict__.items() if isinstance(v, type)})
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.job_router_administration = JobRouterAdministrationOperations(
             self._client, self._config, self._serialize, self._deserialize

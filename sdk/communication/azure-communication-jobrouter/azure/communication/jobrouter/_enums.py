@@ -10,7 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ExpressionLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ExpressionRouterRuleLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The expression language to compile to and execute."""
 
     POWER_FX = "powerFx"
