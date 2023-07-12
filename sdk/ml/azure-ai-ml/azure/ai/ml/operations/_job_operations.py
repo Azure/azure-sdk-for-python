@@ -130,8 +130,7 @@ logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 class JobOperations(_ScopeDependentOperations):
     """Initiates an instance of JobOperations
 
-    You should not instantiate this class directly. Instead, you should create an MLClient instance and access
-    JobOperations via its "jobs" attribute.
+    This class should not be instantiated directly. Instead, use the `jobs` attribute of an MLClient object.
 
     :param operation_scope: Scope variables for the operations classes of an MLClient object.
     :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
@@ -257,11 +256,10 @@ class JobOperations(_ScopeDependentOperations):
         :param parent_job_name: When provided, only returns jobs that are children of the named job. Defaults to None,
             listing all jobs in the workspace.
         :type parent_job_name: str
-        :param list_view_type: The view type for including/excluding archived jobs. Accepted values include
-            "ListViewType.ACTIVE_ONLY", "ListViewType.ARCHIVED_ONLY", "ListViewType.ALL". Defaults to
-            ListViewType.ACTIVE_ONLY, excluding archived jobs.
+        :param list_view_type: The view type for including/excluding archived jobs. Defaults to
+            ~azure.mgt.machinelearningservices.models.ListViewType.ACTIVE_ONLY, excluding archived jobs.
         :type list_view_type: ~azure.mgmt.machinelearningservices.models.ListViewType
-        :return: An iterator like instance of Job objects.
+        :return: An iterator-like instance of Job objects.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Job]
 
         .. admonition:: Example:
@@ -308,8 +306,8 @@ class JobOperations(_ScopeDependentOperations):
 
         :param name: The name of the job.
         :type name: str
-        :raises: ResourceNotFoundError if no job with the given name can be found.
-        :raises: UserErrorException if the name parameter is not a string.
+        :raises azure.core.exceptions.ResourceNotFoundError: Raised if no job with the given name can be found.
+        :raises ~azure.ai.ml.exceptions.UserErrorException: Raised if the name parameter is not a string.
         :return: Job object retrieved from the service.
         :rtype: ~azure.ai.ml.entities.Job
 
@@ -321,7 +319,7 @@ class JobOperations(_ScopeDependentOperations):
                 :end-before: [END job_operations_get]
                 :language: python
                 :dedent: 8
-                :caption: Retrieving the job in a workspace named "iris-dataset-job-1".
+                :caption: Retrieving a job named "iris-dataset-job-1".
         """
         if not isinstance(name, str):
             raise UserErrorException(f"{name} is a invalid input for client.jobs.get().")
@@ -379,7 +377,7 @@ class JobOperations(_ScopeDependentOperations):
 
         :param name: The name of the job.
         :type name: str
-        :raises: ResourceNotFoundError if no job with the given name can be found.
+        :raises azure.core.exceptions.ResourceNotFoundError: Raised if no job with the given name can be found.
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
 
@@ -468,8 +466,8 @@ class JobOperations(_ScopeDependentOperations):
     @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.PUBLICAPI)
     def validate(self, job: Job, *, raise_on_failure: bool = False, **kwargs) -> ValidationResult:
         """Validates a Job object before submitting to the service. Anonymous assets may be created if there are inline
-        defined entities such as Component, Environment, and Code. Only pipeline jobs are supported for validation for
-        now.
+        defined entities such as Component, Environment, and Code. Only pipeline jobs are supported for validation
+        currently.
 
         :param job: The job object to be validated.
         :type job: ~azure.ai.ml.entities.Job
@@ -571,7 +569,7 @@ class JobOperations(_ScopeDependentOperations):
         :param skip_validation: Specifies whether or not to skip validation before creating or updating the job. Note
             that validation for dependent resources such as an anonymous component will not be skipped.
         :type skip_validation: bool
-        :raises [~azure.ai.ml.exceptions.UserErrorException, ~azure.ai.ml.exceptions.ValidationException]: Raised if
+        :raises Union[~azure.ai.ml.exceptions.UserErrorException, ~azure.ai.ml.exceptions.ValidationException]: Raised if
             Job cannot be successfully validated. Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if Job assets
             (e.g. Data, Code, Model, Environment) cannot be successfully validated.
@@ -710,7 +708,7 @@ class JobOperations(_ScopeDependentOperations):
 
         :param name: The name of the job.
         :type name: str
-        :raises: ResourceNotFoundError if no job with the given name can be found.
+        :raises azure.core.exceptions.ResourceNotFoundError: Raised if no job with the given name can be found.
 
         .. admonition:: Example:
             :class: tip
@@ -732,7 +730,7 @@ class JobOperations(_ScopeDependentOperations):
 
         :param name: The name of the job.
         :type name: str
-        :raises: ResourceNotFoundError if no job with the given name can be found.
+        :raises azure.core.exceptions.ResourceNotFoundError: Raised if no job with the given name can be found.
 
         .. admonition:: Example:
             :class: tip
@@ -754,7 +752,7 @@ class JobOperations(_ScopeDependentOperations):
 
         :param name: The name of the job.
         :type name: str
-        :raises: ResourceNotFoundError if no job with the given name can be found.
+        :raises azure.core.exceptions.ResourceNotFoundError: Raised if no job with the given name can be found.
 
         .. admonition:: Example:
             :class: tip

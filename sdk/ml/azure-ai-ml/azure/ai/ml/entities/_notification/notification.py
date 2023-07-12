@@ -15,7 +15,7 @@ class Notification(RestTranslatableMixin):
 
     :param email_on: Send email notification to user on specified notification type. Accepted values are:
         "JobCompleted", "JobFailed", and "JobCancelled".
-    :type email_on: list[Literal].
+    :type email_on: list[str].
     :param: The email recipient list which. Note that this parameter has a character limit of 499 which
     includes all of the recipient strings and each comma seperator.
     :paramtype emails: list[str]

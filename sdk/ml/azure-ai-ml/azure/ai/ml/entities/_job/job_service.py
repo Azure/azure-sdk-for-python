@@ -32,7 +32,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
     :param port: The port for the endpoint.
     :type port: str
     :param nodes: Indicates whether the service has to run in all nodes.
-    :type nodes: int
+    :type nodes: Literal["all"]
     :param properties: Additional properties to set on the endpoint.
     :type properties: dict[str, str]
     :param status: The status of the endpoint.
@@ -159,7 +159,7 @@ class JobService(JobServiceBase):
     :param port: The port for the endpoint.
     :type port: str
     :param nodes: Indicates whether the service has to run in all nodes.
-    :type nodes: int
+    :type nodes: Literal["all"]
     :param properties: Additional properties to set on the endpoint.
     :type properties: dict[str, str]
     :param status: The status of the endpoint.
@@ -184,7 +184,7 @@ class SshJobService(JobServiceBase):
     :param port: The port for the endpoint.
     :type port: str
     :param nodes: Indicates whether the service has to run in all nodes.
-    :type nodes: int
+    :type nodes: Literal["all"]
     :param properties: Additional properties to set on the endpoint.
     :type properties: dict[str, str]
     :param status: The status of the endpoint.
@@ -243,7 +243,7 @@ class TensorBoardJobService(JobServiceBase):
     :param endpoint: The endpoint URL.
     :type endpoint: str
     :param port: The port for the endpoint.
-    :type nodes: str
+    :type nodes: Literal["all"]
     :param nodes: Indicates whether the service has to run in all nodes.
     :type port: int
     :param properties: Additional properties to set on the endpoint.
@@ -304,7 +304,7 @@ class JupyterLabJobService(JobServiceBase):
     :param endpoint: The endpoint URL.
     :type endpoint: str
     :param port: The port for the endpoint.
-    :type nodes: str
+    :type nodes: Literal["all"]
     :param nodes: Indicates whether the service has to run in all nodes.
     :type port: int
     :param properties: Additional properties to set on the endpoint.
@@ -360,7 +360,7 @@ class VsCodeJobService(JobServiceBase):
     :param endpoint: The endpoint URL.
     :type endpoint: str
     :param port: The port for the endpoint.
-    :type nodes: str
+    :type nodes: Literal["all"]
     :param nodes: Indicates whether the service has to run in all nodes.
     :type port: int
     :param properties: Additional properties to set on the endpoint.

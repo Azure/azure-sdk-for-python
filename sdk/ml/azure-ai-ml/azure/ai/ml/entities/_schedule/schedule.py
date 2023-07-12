@@ -118,7 +118,7 @@ class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
 
     @property
     def is_enabled(self) -> bool:
-        """Returns if the schedule is enabled or not.
+        """Specifies if the schedule is enabled or not.
 
         :rtype: bool
         """
@@ -135,7 +135,7 @@ class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
 
     @property
     def type(self) -> str:
-        """The schedule type. The possible values are 'job' and 'monitor'.
+        """The schedule type. Accepted values are 'job' and 'monitor'.
 
         :rtype: str
         """

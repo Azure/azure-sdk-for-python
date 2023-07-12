@@ -30,7 +30,7 @@ class Output(_InputOutputBase):
         'upload': Upload the data from the compute target,
         'direct': Pass in the URI as a string
     :type mode: str
-    :param description: The description of the output
+    :param description: The description of the output.
     :type description: str
     :param name: The name to be used to register the output as a Data or Model asset. A name can be set without
         setting a version.
@@ -62,7 +62,7 @@ class Output(_InputOutputBase):
             'upload': Upload the data from the compute target,
             'direct': Pass in the URI as a string
         :type mode: str
-        :param description: The description of the output
+        :param description: The description of the output.
         :type description: str
         :param name: The name to be used to register the output as a Data or Model asset. A name can be set without
             setting a version.
@@ -85,7 +85,7 @@ class Output(_InputOutputBase):
             'upload': Upload the data from the compute target,
             'direct': Pass in the URI as a string
         :type mode: str
-        :param description: The description of the output
+        :param description: The description of the output.
         :type description: str
         :param name: The name to be used to register the output as a Data or Model asset. A name can be set without
             setting a version.
@@ -95,7 +95,7 @@ class Output(_InputOutputBase):
         :type version: str
         """
 
-    def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, mode=None, description=None, **kwargs):
+    def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, mode=None, description=None, **kwargs) -> None:
         super(Output, self).__init__(type=type)
         # As an annotation, it is not allowed to initialize the _port_name.
         self._port_name = None

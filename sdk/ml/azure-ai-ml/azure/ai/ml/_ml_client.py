@@ -139,7 +139,6 @@ class MLClient:
             :language: python
             :dedent: 8
             :caption: Creating the MLClient with Azure Identity credentials and a sovereign cloud.
-
     """
 
     # pylint: disable=client-method-missing-type-annotations
