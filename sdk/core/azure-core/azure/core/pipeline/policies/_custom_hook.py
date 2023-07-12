@@ -25,10 +25,12 @@
 # --------------------------------------------------------------------------
 from typing import TypeVar
 from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.rest import HttpResponse, HttpRequest
 from ._base import SansIOHTTPPolicy
 
-HTTPRequestType = TypeVar("HTTPRequestType")
-HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 
 class CustomHookPolicy(SansIOHTTPPolicy):
