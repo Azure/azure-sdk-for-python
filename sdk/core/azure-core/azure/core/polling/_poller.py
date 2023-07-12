@@ -123,7 +123,7 @@ class _SansIONoPolling(Generic[PollingReturnType_co]):
         return None, initial_response, deserialization_callback
 
 
-class NoPolling(PollingMethod[PollingReturnType_co], _SansIONoPolling[PollingReturnType_co]):
+class NoPolling(_SansIONoPolling[PollingReturnType_co], PollingMethod[PollingReturnType_co]):
     """An empty poller that returns the deserialized initial response."""
 
     def run(self) -> None:

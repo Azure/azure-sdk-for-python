@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 import abc
-from collections.abc import MutableMapping
 from contextlib import AbstractContextManager
 from email.message import Message
 import json
@@ -34,7 +33,22 @@ import copy
 from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 
-from typing import Generic, TypeVar, IO, Union, Any, Mapping, Optional, Tuple, Iterator, Type, Dict, List, Sequence
+from typing import (
+    Generic,
+    TypeVar,
+    IO,
+    Union,
+    Any,
+    Mapping,
+    Optional,
+    Tuple,
+    Iterator,
+    Type,
+    Dict,
+    List,
+    Sequence,
+    MutableMapping,
+)
 
 from http.client import HTTPResponse as _HTTPResponse
 

@@ -24,8 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from collections.abc import Awaitable
-from typing import Callable, Any, Tuple, Generic, TypeVar, Generator
+from typing import Callable, Any, Tuple, Generic, TypeVar, Generator, Awaitable
 
 from ..exceptions import AzureError
 from ._poller import _SansIONoPolling
@@ -64,7 +63,7 @@ class AsyncPollingMethod(Generic[PollingReturnType_co]):
         raise TypeError("Polling method '{}' doesn't support from_continuation_token".format(cls.__name__))
 
 
-class AsyncNoPolling(AsyncPollingMethod[PollingReturnType_co], _SansIONoPolling[PollingReturnType_co]):
+class AsyncNoPolling(_SansIONoPolling[PollingReturnType_co], AsyncPollingMethod[PollingReturnType_co]):
     """An empty async poller that returns the deserialized initial response."""
 
     async def run(self) -> None:  # pylint:disable=invalid-overridden-method
