@@ -23,16 +23,18 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
+from __future__ import annotations
 import asyncio
 import abc
 from collections.abc import AsyncIterator
-from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic, Any
+from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic, Any, TYPE_CHECKING
 from contextlib import AbstractAsyncContextManager
 
 from ._base import _HttpResponseBase, _HttpClientTransportResponse, HttpRequest
 from ...utils._pipeline_transport_rest_shared_async import _PartGenerator
-from ... import AsyncPipelineClient
+
+if TYPE_CHECKING:
+    from ..._pipeline_client_async import AsyncPipelineClient
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPResponseType = TypeVar("HTTPResponseType")
