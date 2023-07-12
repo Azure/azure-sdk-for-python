@@ -5,7 +5,6 @@
 # pylint: skip-file
 
 from enum import Enum
-from six import with_metaclass
 from typing import Mapping, Optional, Union, Any
 
 try:
@@ -16,7 +15,7 @@ except ImportError:
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CommunicationIdentifierKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CommunicationIdentifierKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Communication Identifier Kind.
 
     For checking yet unknown identifiers it is better to rely on the presence of the `raw_id` property,
@@ -32,7 +31,7 @@ class CommunicationIdentifierKind(with_metaclass(CaseInsensitiveEnumMeta, str, E
     MICROSOFT_BOT = "microsoft_bot"
 
 
-class CommunicationCloudEnvironment(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CommunicationCloudEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The cloud environment that the identifier belongs to"""
 
     PUBLIC = "PUBLIC"
@@ -75,7 +74,7 @@ ACS_USER_GCCH_CLOUD_PREFIX = "8:gcch-acs:"
 SPOOL_USER_PREFIX = "8:spool:"
 
 
-class CommunicationUserIdentifier(object):
+class CommunicationUserIdentifier:
     """Represents a user in Azure Communication Service.
 
     :ivar str raw_id: Optional raw ID of the identifier.
@@ -114,7 +113,7 @@ PhoneNumberProperties = TypedDict(
 )
 
 
-class PhoneNumberIdentifier(object):
+class PhoneNumberIdentifier:
     """Represents a phone number.
 
     :ivar str raw_id: Optional raw ID of the identifier.
@@ -150,7 +149,7 @@ def _phone_number_raw_id(identifier: PhoneNumberIdentifier) -> str:
     return f'{PHONE_NUMBER_PREFIX}{value}'
 
 
-class UnknownIdentifier(object):
+class UnknownIdentifier:
     """Represents an identifier of an unknown type.
 
     It will be encountered in communications with endpoints that are not
@@ -188,7 +187,7 @@ MicrosoftTeamsUserProperties = TypedDict(
 )
 
 
-class MicrosoftTeamsUserIdentifier(object):
+class MicrosoftTeamsUserIdentifier:
     """Represents an identifier for a Microsoft Teams user.
 
     :ivar str raw_id: Optional raw ID of the identifier.
@@ -250,7 +249,7 @@ MicrosoftBotProperties = TypedDict(
 )
 
 
-class MicrosoftBotIdentifier(object):
+class MicrosoftBotIdentifier:
     """Represents an identifier for a Microsoft bot.
 
     :ivar str raw_id: Optional raw ID of the identifier.
