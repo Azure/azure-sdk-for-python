@@ -90,6 +90,8 @@ class CommunicationIdentityClient:
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
+        # There is logic downstream in method `get_authentication_policy` to handle string credential.
+        # Marking this as type: ignore to resolve mypy warning.
         return cls(endpoint, access_key, **kwargs)  # type: ignore
 
     @distributed_trace_async
