@@ -19,12 +19,12 @@ def is_statsbeat_enabled():
     return disabled is None or disabled.lower() != "true"
 
 
-def increment_statsbeat_initial_failure_count():
+def increment_statsbeat_initial_failure_count():  # pylint: disable=name-too-long
     with _STATSBEAT_STATE_LOCK:
         _STATSBEAT_STATE["INITIAL_FAILURE_COUNT"] += 1
 
 
-def increment_and_check_statsbeat_failure_count():
+def increment_and_check_statsbeat_failure_count():  # pylint: disable=name-too-long
     increment_statsbeat_initial_failure_count()
     return get_statsbeat_initial_failure_count() >= _STATSBEAT_FAILURE_COUNT_THRESHOLD
 

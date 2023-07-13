@@ -60,9 +60,11 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     """Azure Monitor Trace exporter for OpenTelemetry."""
 
     def export(self, spans: Sequence[ReadableSpan], **kwargs: Any) -> SpanExportResult: # pylint: disable=unused-argument
-        """Export span data
+        """Export span data.
+
         :param spans: Open Telemetry Spans to export.
-        :type spans: Sequence[~opentelemetry.trace.Span]
+        :type spans: ~typing.Sequence[~opentelemetry.trace.Span]
+        :return: The result of the export.
         :rtype: ~opentelemetry.sdk.trace.export.SpanExportResult
         """
         envelopes = []
@@ -101,8 +103,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
 
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "AzureMonitorTraceExporter":
-        """
-        Create an AzureMonitorTraceExporter from a connection string.
+        """Create an AzureMonitorTraceExporter from a connection string.
 
         This is the recommended way of instantation if a connection string is passed in explicitly.
         If a user wants to use a connection string provided by environment variable, the constructor
@@ -111,6 +112,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         :param str conn_str: The connection string to be used for authentication.
         :keyword str api_version: The service API version used. Defaults to latest.
         :returns an instance of ~AzureMonitorTraceExporter
+        :rtype: ~azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter
         """
         return cls(connection_string=conn_str, **kwargs)
 
@@ -590,6 +592,7 @@ def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
     destination = attributes.get("message_bus.destination")
     if peer_address and destination:
         return peer_address + "/" + destination
+    return None
 
 
 def _get_trace_export_result(result: ExportResult) -> SpanExportResult:
