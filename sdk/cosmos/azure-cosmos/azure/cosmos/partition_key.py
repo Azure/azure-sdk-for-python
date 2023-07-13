@@ -73,8 +73,7 @@ class PartitionKey(dict):
         # () -> str
         if self.kind == "MultiHash":
             return ''.join(self["paths"])
-        else:
-            return self["paths"][0]
+        return self["paths"][0]
 
     @path.setter
     def path(self, value):

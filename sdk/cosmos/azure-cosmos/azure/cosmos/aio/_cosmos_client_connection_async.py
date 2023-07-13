@@ -2531,15 +2531,15 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 ret.append(val)
             return ret
 
-        else:
-            # Parses the paths into a list of token each representing a property
-            partition_key_parts = base.ParsePaths(partitionKeyDefinition.get("paths"))
-            # Check if the partitionKey is system generated or not
-            is_system_key = partitionKeyDefinition["systemKey"] if "systemKey" in partitionKeyDefinition else False
 
-            # Navigates the document to retrieve the partitionKey specified in the paths
+        # Parses the paths into a list of token each representing a property
+        partition_key_parts = base.ParsePaths(partitionKeyDefinition.get("paths"))
+        # Check if the partitionKey is system generated or not
+        is_system_key = partitionKeyDefinition["systemKey"] if "systemKey" in partitionKeyDefinition else False
 
-            return self._retrieve_partition_key(partition_key_parts, document, is_system_key)
+        # Navigates the document to retrieve the partitionKey specified in the paths
+
+        return self._retrieve_partition_key(partition_key_parts, document, is_system_key)
 
     # Navigates the document to retrieve the partitionKey specified in the partition key parts
     def _retrieve_partition_key(self, partition_key_parts, document, is_system_key):
