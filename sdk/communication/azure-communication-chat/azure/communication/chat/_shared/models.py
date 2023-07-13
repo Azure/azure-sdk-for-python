@@ -5,7 +5,6 @@
 # pylint: skip-file
 
 from enum import Enum
-from six import with_metaclass
 from typing import Mapping, Optional, Union, Any
 
 try:
@@ -16,7 +15,7 @@ except ImportError:
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CommunicationIdentifierKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CommunicationIdentifierKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Communication Identifier Kind.
 
     For checking yet unknown identifiers it is better to rely on the presence of the `raw_id` property,
@@ -32,7 +31,7 @@ class CommunicationIdentifierKind(with_metaclass(CaseInsensitiveEnumMeta, str, E
     MICROSOFT_BOT = "microsoft_bot"
 
 
-class CommunicationCloudEnvironment(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CommunicationCloudEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The cloud environment that the identifier belongs to"""
 
     PUBLIC = "PUBLIC"
