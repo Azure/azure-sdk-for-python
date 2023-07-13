@@ -22,7 +22,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_resource_configuration]
             :end-before: [END spark_resource_configuration]
             :language: python

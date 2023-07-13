@@ -73,7 +73,7 @@ class RecurrencePattern(RestTranslatableMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/ml_samples_misc.py
+        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
             :start-after: [START job_schedule_configuration]
             :end-before: [END job_schedule_configuration]
             :language: python
@@ -147,7 +147,7 @@ class CronTrigger(TriggerBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/ml_samples_misc.py
+        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
             :start-after: [START cron_trigger_configuration]
             :end-before: [END cron_trigger_configuration]
             :language: python
@@ -222,7 +222,7 @@ class RecurrenceTrigger(TriggerBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/ml_samples_misc.py
+        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
             :start-after: [START job_schedule_configuration]
             :end-before: [END job_schedule_configuration]
             :language: python

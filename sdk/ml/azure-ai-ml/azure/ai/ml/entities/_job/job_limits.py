@@ -44,7 +44,7 @@ class CommandJobLimits(JobLimits):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_command_configurations.py
+        .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
             :start-after: [START command_job_definition]
             :end-before: [END command_job_definition]
             :language: python
@@ -91,7 +91,7 @@ class SweepJobLimits(JobLimits):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]
             :end-before: [END configure_sweep_job_bayesian_sampling_algorithm]
             :language: python

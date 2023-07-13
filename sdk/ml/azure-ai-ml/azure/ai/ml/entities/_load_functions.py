@@ -171,7 +171,7 @@ def load_job(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/ml_samples_misc.py
+        .. literalinclude:: ../../../../samples/ml_samples_misc.py
             :start-after: [START load_job]
             :end-before: [END load_job]
             :language: python
@@ -426,7 +426,7 @@ def load_model(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/ml_samples_misc.py
+        .. literalinclude:: ../../../../samples/ml_samples_misc.py
             :start-after: [START load_model]
             :end-before: [END load_model]
             :language: python
@@ -854,7 +854,7 @@ def load_model_package(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/ml_samples_misc.py
+        .. literalinclude:: ../../../../samples/ml_samples_misc.py
             :start-after: [START load_model_package]
             :end-before: [END load_model_package]
             :language: python

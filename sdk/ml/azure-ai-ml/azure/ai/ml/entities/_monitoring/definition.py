@@ -54,7 +54,7 @@ class MonitorDefinition(RestTranslatableMixin):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_monitor_definition]
             :end-before: [END spark_monitor_definition]
             :language: python

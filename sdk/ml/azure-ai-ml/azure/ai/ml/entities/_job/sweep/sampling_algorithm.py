@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Union, Optional
+from typing import Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     BayesianSamplingAlgorithm as RestBayesianSamplingAlgorithm,
@@ -57,7 +57,7 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_random_sampling_algorithm]
             :end-before: [END configure_sweep_job_random_sampling_algorithm]
             :language: python
@@ -111,7 +111,7 @@ class GridSamplingAlgorithm(SamplingAlgorithm):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_grid_sampling_algorithm]
             :end-before: [END configure_sweep_job_grid_sampling_algorithm]
             :language: python
@@ -139,7 +139,7 @@ class BayesianSamplingAlgorithm(SamplingAlgorithm):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]
             :end-before: [END configure_sweep_job_bayesian_sampling_algorithm]
             :language: python
