@@ -208,20 +208,10 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
 class TablesBaseClient(AccountHostsMixin):
     """Base class for TableClient
 
-    :ivar str table_name: The name of the table.
+    :ivar str account_name: The name of the Tables account.
     :ivar str scheme: The scheme component in the full URL to the Tables account.
-    :param str endpoint: A URL to an Azure Tables account.
-    :keyword credential:
-        The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
-        AzureSasCredential (azure-core), or a TokenCredential implementation from azure-identity.
-    :paramtype credential:
-        ~azure.core.credentials.AzureNamedKeyCredential or
-        ~azure.core.credentials.AzureSasCredential or
-        ~azure.core.credentials.TokenCredential or None
-    :keyword api_version: Specifies the version of the operation to use for this request. Default value
-        is "2019-02-02".
-    :paramtype api_version: str
+    :ivar str url: The storage endpoint.
+    :ivar str api_version: The service API version.
     """
 
     def __init__( # pylint: disable=missing-client-constructor-parameter-credential
@@ -231,6 +221,21 @@ class TablesBaseClient(AccountHostsMixin):
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
         **kwargs
     ) -> None:
+        """Create TablesBaseClient from a Credential.
+
+        :param str endpoint: A URL to an Azure Tables account.
+        :keyword credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
+            AzureSasCredential (azure-core), or a TokenCredential implementation from azure-identity.
+        :paramtype credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or None
+        :keyword api_version: Specifies the version of the operation to use for this request. Default value
+            is "2019-02-02".
+        :paramtype api_version: str
+        """
         super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs) # type: ignore
         self._client = AzureTable(
             self.url,
