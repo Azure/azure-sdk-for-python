@@ -32,13 +32,13 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._utils import (
     get_http_request_kwargs,
     get_case_insensitive_format,
-    get_content_type
+    get_content_type,
 )
 from .._common._constants import SchemaFormat, DEFAULT_VERSION
 from .._common._schema import Schema, SchemaProperties
 from .._common._response_handlers import (
     prepare_schema_result,
-    prepare_schema_properties_result
+    prepare_schema_properties_result,
 )
 from .._generated.aio._client import AzureSchemaRegistry
 
@@ -133,13 +133,11 @@ class SchemaRegistryClient(object):
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
-        schema_properties: Dict[str, Union[int, str]] = await self._generated_client.schema.register( # type: ignore
+        schema_properties: Dict[str, Union[int, str]] = await self._generated_client.schema.register(  # type: ignore
             group_name=group_name,
             schema_name=name,
             schema_content=cast(IO[Any], definition),
-            content_type=kwargs.pop(
-                "content_type", get_content_type(format)
-            ),
+            content_type=kwargs.pop("content_type", get_content_type(format)),
             cls=partial(prepare_schema_properties_result, format),
             **http_request_kwargs,
         )
@@ -156,7 +154,9 @@ class SchemaRegistryClient(object):
         ...
 
     @distributed_trace_async
-    async def get_schema(self, *args: str, **kwargs: Any) -> Schema:  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
+    async def get_schema(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
+        self, *args: str, **kwargs: Any
+    ) -> Schema:
         """Gets a registered schema. There are two ways to call this method:
 
         1) To get a registered schema by its unique ID, pass the `schema_id` parameter and any optional
@@ -202,10 +202,8 @@ class SchemaRegistryClient(object):
                 schema_id = kwargs.pop("schema_id")
             schema_id = cast(str, schema_id)
             # ignoring return type because the generated client operations are not annotated w/ cls return type
-            http_response, schema_properties = await self._generated_client.schema.get_by_id(   # type: ignore
-                id=schema_id,
-                cls=prepare_schema_result,
-                **http_request_kwargs
+            http_response, schema_properties = await self._generated_client.schema.get_by_id(  # type: ignore
+                id=schema_id, cls=prepare_schema_result, **http_request_kwargs
             )
         except KeyError:
             # If group_name, name, and version aren't passed in as kwargs, raise error.
@@ -214,7 +212,7 @@ class SchemaRegistryClient(object):
                 name = kwargs.pop("name")
                 version = kwargs.pop("version")
             except KeyError:
-                raise TypeError(    # pylint:disable=raise-missing-from
+                raise TypeError(  # pylint:disable=raise-missing-from
                     """Missing required argument(s). Specify either `schema_id` """
                     """or `group_name`, `name`, `version."""
                 )
@@ -228,7 +226,8 @@ class SchemaRegistryClient(object):
             )
         await http_response.read()
         return Schema(
-            definition=http_response.text(), properties=SchemaProperties(**schema_properties)
+            definition=http_response.text(),
+            properties=SchemaProperties(**schema_properties),
         )
 
     @distributed_trace_async
@@ -266,14 +265,14 @@ class SchemaRegistryClient(object):
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
-        schema_properties: Dict[str, Union[int, str]] = await self._generated_client.schema.query_id_by_content(    # type: ignore
-            group_name=group_name,
-            schema_name=name,
-            schema_content=cast(IO[Any], definition),
-            content_type=kwargs.pop(
-                "content_type", get_content_type(format)
-            ),
-            cls=partial(prepare_schema_properties_result, format),
-            **http_request_kwargs,
+        schema_properties: Dict[str, Union[int, str]] = (
+            await self._generated_client.schema.query_id_by_content(  # type: ignore
+                group_name=group_name,
+                schema_name=name,
+                schema_content=cast(IO[Any], definition),
+                content_type=kwargs.pop("content_type", get_content_type(format)),
+                cls=partial(prepare_schema_properties_result, format),
+                **http_request_kwargs,
+            )
         )
         return SchemaProperties(**schema_properties)
