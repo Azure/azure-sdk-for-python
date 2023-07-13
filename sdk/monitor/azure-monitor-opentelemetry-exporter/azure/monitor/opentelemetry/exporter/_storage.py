@@ -43,7 +43,7 @@ class LocalFileBlob:
                 )
         except Exception:
             pass  # keep silent
-        return ()
+        return None
 
     def put(self, data, lease_period=0):
         try:
