@@ -84,8 +84,8 @@ class CRUDTests(unittest.TestCase):
     """Python CRUD Tests.
     """
     configs = test_config._test_config
-    host = "https://localhost:8081"#configs.host
-    masterKey = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="#configs.masterKey
+    host = configs.host
+    masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
     last_headers = []
 
