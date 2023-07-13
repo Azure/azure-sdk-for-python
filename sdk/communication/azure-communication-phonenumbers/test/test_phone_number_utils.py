@@ -6,7 +6,10 @@
 
 import json
 import pytest
-from azure.communication.phonenumbers._shared.utils import parse_connection_str, get_current_utc_time, get_current_utc_as_int, create_access_token, get_authentication_policy, _convert_datetime_to_utc_int
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+from azure.communication.phonenumbers._shared.policy import HMACCredentialsPolicy
+from azure.communication.phonenumbers._shared.auth_policy_utils import get_authentication_policy
+from azure.communication.phonenumbers._shared.utils import parse_connection_str, get_current_utc_time, get_current_utc_as_int, create_access_token, _convert_datetime_to_utc_int
 from azure.core.credentials import AccessToken, AzureKeyCredential
 from datetime import datetime, timezone
 from msrest.serialization import TZ_UTC
@@ -64,17 +67,15 @@ def test_create_access_token_invalid_format():
     with pytest.raises(ValueError):
         create_access_token(token)
 
-@mock.patch('azure.core.pipeline.policies.BearerTokenCredentialPolicy', return_value=mock.MagicMock())
-def test_get_authentication_policy_bearer(mock_bearer):
+def test_get_authentication_policy_bearer():
     mock_credential = mock.MagicMock()
     mock_credential.get_token = mock.MagicMock()
     auth_policy = get_authentication_policy(test_endpoint, mock_credential)
-    assert isinstance(auth_policy, mock.MagicMock)
+    assert isinstance(auth_policy, BearerTokenCredentialPolicy)
 
-@mock.patch('azure.communication.phonenumbers._shared.policy.HMACCredentialsPolicy', return_value=mock.MagicMock())
-def test_get_authentication_policy_hmac(mock_hmac):
+def test_get_authentication_policy_hmac():
     auth_policy = get_authentication_policy(test_endpoint, 'keyValue')
-    assert isinstance(auth_policy, mock.MagicMock)
+    assert isinstance(auth_policy, HMACCredentialsPolicy)
 
 def test_get_authentication_policy_no_credential():
     with pytest.raises(ValueError):
