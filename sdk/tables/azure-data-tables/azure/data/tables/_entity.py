@@ -17,9 +17,10 @@ class TableEntity(dict):
 
     @property
     def metadata(self) -> Dict[str, Any]:
-        """Resets metadata to be a part of the entity
+        """Resets metadata to be a part of the entity.
+
         :return Dict of entity metadata
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         return self._metadata
 
@@ -69,5 +70,5 @@ the below with both create STRING typed properties on the entity::
 :param value:
 :type value: Any
 :param edm_type: Type of the value
-:type edm_type: str or :class:`~azure.data.tables.EdmType`
+:type edm_type: str or ~azure.data.tables.EdmType
 """
