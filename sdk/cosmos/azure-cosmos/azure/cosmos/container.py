@@ -131,11 +131,12 @@ class ContainerProxy(object):
         # type: (...) -> Dict[str, Any]
         """Read the container properties.
 
+        :param list args: The explicit arguments of the method.
         :keyword bool populate_partition_key_range_statistics: Enable returning partition key
             range statistics in response headers.
         :keyword bool populate_quota_info: Enable returning collection storage quota information in response headers.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.

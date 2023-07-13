@@ -140,6 +140,10 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
 
 async def ExecuteFunctionAsync(function, *args, **kwargs):
     """Stub method so that it can be used for mocking purposes as well.
+    :param Callable function: the function to execute.
+    :param list args: the explicit arguments for the function.
+    :returns: the result of executing the function with the passed in arguments
+    :rtype: tuple(dict, dict)
     """
     return await function(*args, **kwargs)
 

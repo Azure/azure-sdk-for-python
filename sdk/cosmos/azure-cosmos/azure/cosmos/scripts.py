@@ -293,8 +293,8 @@ class ScriptsProxy(object):
         :type trigger: Union[str, Dict[str, Any]]
         :param Dict[str, Any] body: A dict-like object representing the trigger to replace.
         :returns: A dict representing the trigger after replace went through.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the trigger with given
-            id does not exist.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the trigger
+            with given id does not exist.
         :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -405,8 +405,8 @@ class ScriptsProxy(object):
         :type udf: Union[str, Dict[str, Any]]
         :param Dict[str, Any] body: A dict-like object representing the udf to replace.
         :returns: A dict representing the user-defined function after replace went through.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the user-defined function
-            with the given id does not exist.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the user-defined
+            function with the given id does not exist.
         :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)

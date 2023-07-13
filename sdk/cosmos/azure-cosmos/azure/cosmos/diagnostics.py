@@ -52,7 +52,7 @@ class RecordDiagnostics(object):
     }
 
     def __init__(self):
-        self._headers = dict()
+        self._headers = {}
         self._body = None
         self._request_charge = 0
 

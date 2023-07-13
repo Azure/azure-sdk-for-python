@@ -17,6 +17,8 @@ async def await_result(func, *args, **kwargs):
     """If func returns an awaitable, await it.
     :param Callable func: The function to be awaited.
     :param List[Any] args: The explicit arguments for the function.
+    :returns: The result from awaiting the function.
+    :rtype: HttpResponse
     """
     result = func(*args, **kwargs)
     if hasattr(result, "__await__"):

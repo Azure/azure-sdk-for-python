@@ -36,6 +36,8 @@ from . import _retry_utility
 def _is_readable_stream(obj):
     """Checks whether obj is a file-like readable stream.
 
+    :param Union[str, unicode, file-like stream object, dict, list, None] obj: the object to be checked.
+    :returns: whether the object is a file-like readable stream.
     :rtype: boolean
     """
     if hasattr(obj, "read") and callable(getattr(obj, "read")):
@@ -49,10 +51,9 @@ def _request_body_from_data(data):
     When `data` is dict and list into unicode string; otherwise return `data`
     without making any change.
 
-    :param (str, unicode, file-like stream object, dict, list or None) data:
-
-    :rtype:
-        str, unicode, file-like stream object, or None
+    :param Union[str, unicode, file-like stream object, dict, list, None] data:
+    :returns: the json dump data.
+    :rtype: Union[str, unicode, file-like stream object, None]
 
     """
     if data is None or isinstance(data, str) or _is_readable_stream(data):
@@ -161,7 +162,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
             raise DecodeError(
                 message="Failed to decode JSON data: {}".format(e),
                 response=response,
-                error=e)
+                error=e) from e
 
     return result, headers
 

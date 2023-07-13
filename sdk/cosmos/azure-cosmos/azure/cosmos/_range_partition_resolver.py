@@ -81,6 +81,8 @@ class RangePartitionResolver(object):
     def _GetContainingRange(self, partition_key):
         """Get the containing range based on the partition key.
         :param str partition_key: The partition key to be used.
+        :returns: The containing key range.
+        :rtype: str
         """
         for keyrange in self.partition_map.keys():
             if keyrange.Contains(partition_key):

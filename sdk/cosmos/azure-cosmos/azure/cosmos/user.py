@@ -216,7 +216,7 @@ class UserProxy(object):
         the permission does not exist, it is inserted.
 
         :param Dict[str, Any] body: A dict-like object representing the permission to update or insert.
-        :param Callable response_hook: A callable invoked with the response metadata.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the upserted permission.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission could not be upserted.
         :rtype: Dict[str, Any]

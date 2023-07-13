@@ -738,11 +738,11 @@ def _replace_throughput(throughput: Union[int, ThroughputProperties], new_throug
             if throughput.offer_throughput:
                 new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
 
-    except AttributeError:
+    except AttributeError as e:
         if isinstance(throughput, int):
             new_throughput_properties["content"]["offerThroughput"] = throughput
         else:
-            raise TypeError("offer_throughput must be int or an instance of ThroughputProperties")
+            raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
 
 
 def _internal_resourcetype(resource_type: str) -> str:

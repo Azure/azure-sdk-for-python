@@ -1267,7 +1267,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         :param str path: the url to be used for the request.
         :param ~azure.cosmos.RequestObject request_params: the request parameters.
-        :param Union[str, unicode, Dict[Any, Any]] body: the request body.
+        :param Union[str, unicode, Dict[Any, Any]] request_data: the request body.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
         :rtype: tuple of (dict, dict)

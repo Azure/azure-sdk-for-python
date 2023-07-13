@@ -168,7 +168,7 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
         :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
-        :param int default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
+        :param int default_ttl: Default time to live (TTL) for items in the container. If unused, items do not expire.
         :param offer_throughput: The provisioned throughput for this offer.
         :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :param Dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
