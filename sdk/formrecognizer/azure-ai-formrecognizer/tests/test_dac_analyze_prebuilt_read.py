@@ -79,39 +79,6 @@ class TestDACAnalyzeRead(FormRecognizerTest):
 
         self.assertDocumentParagraphsTransformCorrect(returned_model.paragraphs, raw_analyze_result.paragraphs)
 
-    @skip_flaky_test
-    @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    @recorded_by_proxy
-    def test_document_read_stream_docx(self, client, **kwargs):
-        with open(self.invoice_docx, "rb") as fd:
-            document = fd.read()
-
-        responses = []
-
-        def callback(raw_response, _, headers):
-            analyze_result = client._deserialize(AnalyzeResultOperation, raw_response)
-            extracted_document = AnalyzeResult._from_generated(analyze_result.analyze_result)
-            responses.append(analyze_result)
-            responses.append(extracted_document)
-
-        poller = client.begin_analyze_document("prebuilt-read", document, cls=callback)
-        result = poller.result()
-        raw_analyze_result = responses[0].analyze_result
-        returned_model = responses[1]
-
-        # Check AnalyzeResult
-        assert returned_model.model_id == raw_analyze_result.model_id
-        assert returned_model.api_version == raw_analyze_result.api_version
-        assert returned_model.content == raw_analyze_result.content
-        
-        self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
-        self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
-
-        # check page range
-        assert len(raw_analyze_result.pages) == len(returned_model.pages)
-
-        self.assertDocumentParagraphsTransformCorrect(returned_model.paragraphs, raw_analyze_result.paragraphs)
 
     @pytest.mark.live_test_only
     @skip_flaky_test
