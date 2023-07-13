@@ -501,7 +501,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         .. admonition:: Example:
             :class: tip
 
-            .. literalinclude:: ../samples/ml_samples_command_configurations.py
+            .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
                 :start-after: [START command_set_resources]
                 :end-before: [END command_set_resources]
                 :language: python
@@ -537,7 +537,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         .. admonition:: Example:
             :class: tip
 
-            .. literalinclude:: ../samples/ml_samples_command_configurations.py
+            .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
                 :start-after: [START command_set_limits]
                 :end-before: [END command_set_limits]
                 :language: python
@@ -560,7 +560,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         .. admonition:: Example:
             :class: tip
 
-            .. literalinclude:: ../samples/ml_samples_command_configurations.py
+            .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
                 :start-after: [START command_set_queue_settings]
                 :end-before: [END command_set_queue_settings]
                 :language: python
@@ -649,7 +649,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         .. admonition:: Example:
             :class: tip
 
-            .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+            .. literalinclude:: ../../../../../samples/ml_samples_sweep_configurations.py
                 :start-after: [START configure_sweep_job_bandit_policy]
                 :end-before: [END configure_sweep_job_bandit_policy]
                 :language: python

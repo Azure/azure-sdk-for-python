@@ -33,7 +33,7 @@ class MaterializationSettings(RestTranslatableMixin):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START materialization_setting_configuration]
             :end-before: [END materialization_setting_configuration]
             :language: python
