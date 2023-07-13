@@ -13,6 +13,7 @@ from typing_extensions import Self
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._serialize import convert_dfs_url_to_blob_url, get_api_version
@@ -80,8 +81,8 @@ class FileSystemClient(StorageAccountHostsMixin):
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("account URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
         if not file_system_name:
             raise ValueError("Please specify a file system name.")
@@ -159,6 +160,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         :return a FileSystemClient
         :rtype ~azure.storage.filedatalake.FileSystemClient
 
@@ -175,6 +177,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         return cls(
             account_url, file_system_name=file_system_name, credential=credential, **kwargs)
 
+    @distributed_trace
     def acquire_lease(
         self, lease_duration=-1,  # type: int
         lease_id=None,  # type: Optional[str]
@@ -233,6 +236,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         lease.acquire(lease_duration=lease_duration, **kwargs)
         return lease
 
+    @distributed_trace
     def create_file_system(self, metadata=None,  # type: Optional[Dict[str, str]]
                            public_access=None,  # type: Optional[PublicAccess]
                            **kwargs):
@@ -281,6 +285,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                                                        container_encryption_scope=encryption_scope_options,
                                                        **kwargs)
 
+    @distributed_trace
     def exists(self, **kwargs):
         # type: (**Any) -> bool
         """
@@ -292,7 +297,8 @@ class FileSystemClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: boolean
+        :returns: True if a file system exists, False otherwise.
+        :rtype: bool
         """
         return self._container_client.exists(**kwargs)
 
@@ -324,6 +330,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                 _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts)
         return renamed_file_system
 
+    @distributed_trace
     def delete_file_system(self, **kwargs):
         # type: (Any) -> None
         """Marks the specified file system for deletion.
@@ -371,6 +378,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         """
         self._container_client.delete_container(**kwargs)
 
+    @distributed_trace
     def get_file_system_properties(self, **kwargs):
         # type: (Any) -> FileSystemProperties
         """Returns all user-defined metadata and system properties for the specified
@@ -400,6 +408,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         container_properties = self._container_client.get_container_properties(**kwargs)
         return FileSystemProperties._convert_from_container_props(container_properties)  # pylint: disable=protected-access
 
+    @distributed_trace
     def set_file_system_metadata(  # type: ignore
         self, metadata,  # type: Dict[str, str]
         **kwargs
@@ -441,6 +450,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: filesystem-updated property dict (Etag and last modified).
+        :rtype: Dict[str, str]
 
         .. admonition:: Example:
 
@@ -453,6 +463,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         """
         return self._container_client.set_container_metadata(metadata=metadata, **kwargs)
 
+    @distributed_trace
     def set_file_system_access_policy(
             self, signed_identifiers,  # type: Dict[str, AccessPolicy]
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
@@ -497,6 +508,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         return self._container_client.set_container_access_policy(signed_identifiers,
                                                                   public_access=public_access, **kwargs)
 
+    @distributed_trace
     def get_file_system_access_policy(self, **kwargs):
         # type: (Any) -> Dict[str, Any]
         """Gets the permissions for the specified file system.
@@ -521,6 +533,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             'signed_identifiers': access_policy['signed_identifiers']
         }
 
+    @distributed_trace
     def get_paths(self, path=None, # type: Optional[str]
                   recursive=True,  # type: Optional[bool]
                   max_results=None,  # type: Optional[int]
@@ -532,6 +545,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         :param str path:
             Filters the results to return only paths under the specified path.
+        :param Optional[bool] recursive: Optional. Set True for recursive, False for iterative.
         :param int max_results: An optional value that specifies the maximum
             number of items to return per page. If omitted or greater than 5,000, the
             response will include up to 5,000 items per page.
@@ -573,6 +587,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             command, recursive, path=path, max_results=max_results,
             page_iterator_class=PathPropertiesPaged, **kwargs)
 
+    @distributed_trace
     def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
                          metadata=None,  # type: Optional[Dict[str, str]]
                          **kwargs):
@@ -663,6 +678,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         directory_client.create_directory(metadata=metadata, **kwargs)
         return directory_client
 
+    @distributed_trace
     def delete_directory(self, directory,  # type: Union[DirectoryProperties, str]
                          **kwargs):
         # type: (...) -> DataLakeDirectoryClient
@@ -715,6 +731,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         directory_client.delete_directory(**kwargs)
         return directory_client
 
+    @distributed_trace
     def create_file(self, file,  # type: Union[FileProperties, str]
                     **kwargs):
         # type: (...) -> DataLakeFileClient
@@ -812,6 +829,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         file_client.create_file(**kwargs)
         return file_client
 
+    @distributed_trace
     def delete_file(self, file,  # type: Union[FileProperties, str]
                     **kwargs):
         # type: (...) -> DataLakeFileClient
@@ -897,6 +915,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
+        :returns: Returns the DataLake client for the restored soft-deleted path.
         :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient or azure.storage.file.datalake.DataLakeFileClient
         """
         _, url, undelete_source = self._undelete_path_options(deleted_path_name, deletion_id)
@@ -997,6 +1016,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)
 
+    @distributed_trace
     def list_deleted_paths(self, **kwargs):
         # type: (Any) -> ItemPaged[DeletedPathProperties]
         """Returns a generator to list the deleted (file or directory) paths under the specified file system.

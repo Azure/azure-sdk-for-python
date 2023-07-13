@@ -10,6 +10,7 @@ from typing import ( # pylint: disable=unused-import
     TYPE_CHECKING)
 
 from azure.core.exceptions import AzureError, HttpResponseError
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import BlobClient
 from .._serialize import get_api_version
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
@@ -245,6 +246,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         except HttpResponseError as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def set_access_control(self, owner=None,  # type: Optional[str]
                                  group=None,  # type: Optional[str]
                                  permissions=None,  # type: Optional[str]
@@ -312,6 +314,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         except HttpResponseError as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def get_access_control(self, upn=None,  # type: Optional[bool]
                                  **kwargs):
         # type: (...) -> Dict[str, Any]
@@ -363,9 +366,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    async def set_access_control_recursive(self,
-                                           acl,
-                                           **kwargs):
+    @distributed_trace_async
+    async def set_access_control_recursive(self, acl, **kwargs):
         # type: (str, **Any) -> AccessControlChangeResult
         """
         Sets the Access Control on a path and sub-paths.
@@ -418,6 +420,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         return await self._set_access_control_internal(options=options, progress_hook=progress_hook,
                                                        max_batches=max_batches)
 
+    @distributed_trace_async
     async def update_access_control_recursive(self, acl, **kwargs):
         # type: (str, **Any) -> AccessControlChangeResult
         """
@@ -472,6 +475,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         return await self._set_access_control_internal(options=options, progress_hook=progress_hook,
                                                        max_batches=max_batches)
 
+    @distributed_trace_async
     async def remove_access_control_recursive(self,
                                               acl,
                                               **kwargs):
@@ -706,10 +710,12 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: boolean
+        :returns: True if a path exists, False otherwise.
+        :rtype: bool
         """
         return await self._blob_client.exists(**kwargs)
 
+    @distributed_trace_async
     async def set_metadata(self, metadata,  # type: Dict[str, str]
                            **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime]]
@@ -756,6 +762,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         """
         return await self._blob_client.set_blob_metadata(metadata=metadata, **kwargs)
 
+    @distributed_trace_async
     async def set_http_headers(self, content_settings=None,  # type: Optional[ContentSettings]
                                **kwargs):
         # type: (...) -> Dict[str, Any]
@@ -797,6 +804,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         """
         return await self._blob_client.set_http_headers(content_settings=content_settings, **kwargs)
 
+    @distributed_trace_async
     async def acquire_lease(self, lease_duration=-1,  # type: Optional[int]
                             lease_id=None,  # type: Optional[str]
                             **kwargs):
