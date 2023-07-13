@@ -28,7 +28,7 @@ AttributeValue = Union[
     Sequence[int],
     Sequence[float],
 ]
-Attributes = Optional[Dict[str, AttributeValue]]
+Attributes = Dict[str, AttributeValue]
 
 __version__ = VERSION
 
@@ -206,7 +206,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
         return self.to_header()["traceparent"]
 
     @classmethod
-    def link(cls, traceparent: str, attributes: Attributes = None) -> None:
+    def link(cls, traceparent: str, attributes: Optional[Attributes] = None) -> None:
         """Links the context to the current tracer.
 
         :param traceparent: A complete traceparent
@@ -217,7 +217,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
         cls.link_from_headers({"traceparent": traceparent}, attributes)
 
     @classmethod
-    def link_from_headers(cls, headers: Dict[str, str], attributes: Attributes = None) -> None:
+    def link_from_headers(cls, headers: Dict[str, str], attributes: Optional[Attributes] = None) -> None:
         """Given a dictionary, extracts the context and links the context to the current tracer.
 
         :param headers: A key value pair dictionary
