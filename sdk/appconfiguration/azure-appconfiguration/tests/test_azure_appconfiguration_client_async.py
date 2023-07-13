@@ -147,7 +147,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             compare_kv = self.create_config_setting()
             with pytest.raises(ResourceNotFoundError):
                 await client.get_configuration_setting(compare_kv.key, compare_kv.label + "a")
-    
+
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_get_configuration_setting_with_etag(self, appconfiguration_connection_string):
@@ -165,7 +165,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             with pytest.raises(ResourceNotFoundError):
                 await client.get_configuration_setting(compare_kv.key, etag=compare_kv.etag)
             await client.get_configuration_setting(compare_kv.key, compare_kv.label, etag=compare_kv.etag)
-                
+
             await client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
 
     # method: delete_configuration_setting
@@ -205,7 +205,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             to_delete_kv = self.create_config_setting_no_label()
             await self.add_for_test(client, to_delete_kv)
             to_delete_kv = await client.get_configuration_setting(to_delete_kv.key, to_delete_kv.label)
-            
+
             # test delete with wrong etag
             with pytest.raises(ResourceModifiedError):
                 await client.delete_configuration_setting(
@@ -408,7 +408,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             )
             assert len(items) >= 1
             assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
-            
+
             await client.delete_configuration_setting(to_list_kv.key)
 
     # method: set_read_only
@@ -419,14 +419,14 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             to_set_kv = self.create_config_setting()
             await self.add_for_test(client, to_set_kv)
             to_set_kv = await client.get_configuration_setting(to_set_kv.key, to_set_kv.label)
-            
+
             read_only_kv = await client.set_read_only(to_set_kv)
             assert read_only_kv.read_only
             with pytest.raises(ResourceReadOnlyError):
                 await client.set_configuration_setting(read_only_kv)
             with pytest.raises(ResourceReadOnlyError):
                 await client.delete_configuration_setting(read_only_kv.key, read_only_kv.label)
-            
+
             writable_kv = await client.set_read_only(read_only_kv, False)
             assert not writable_kv.read_only
             await client.set_configuration_setting(writable_kv)
@@ -439,13 +439,11 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             to_set_kv = self.create_config_setting()
             await self.add_for_test(client, to_set_kv)
             to_set_kv = await client.get_configuration_setting(to_set_kv.key, to_set_kv.label)
-            
+
             to_set_kv.etag = "wrong etag"
             with pytest.raises(ResourceModifiedError):
-                await client.set_read_only(
-                    to_set_kv, False, match_condition=MatchConditions.IfNotModified
-                )
-            
+                await client.set_read_only(to_set_kv, False, match_condition=MatchConditions.IfNotModified)
+
             await client.delete_configuration_setting(to_set_kv)
 
     @app_config_decorator_async
@@ -857,7 +855,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             new = SecretReferenceConfigurationSetting("aref", "notaurl")  # cspell:disable-line
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
-            
+
             await client.delete_configuration_setting(new.key)
 
             new = SecretReferenceConfigurationSetting("aref1", "notaurl")  # cspell:disable-line
@@ -903,7 +901,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert recovered_snapshot.status == "ready"
 
         await self.tear_down()
-    
+
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_update_snapshot_status_with_etag(self, appconfiguration_connection_string):

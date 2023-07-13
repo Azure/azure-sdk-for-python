@@ -147,7 +147,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
         compare_kv = self.create_config_setting()
         with pytest.raises(ResourceNotFoundError):
             client.get_configuration_setting(compare_kv.key, compare_kv.label + "a")
-    
+
     @app_config_decorator
     @recorded_by_proxy
     def test_get_configuration_setting_with_etag(self, appconfiguration_connection_string):
@@ -165,7 +165,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
         with pytest.raises(ResourceNotFoundError):
             client.get_configuration_setting(compare_kv.key, etag=compare_kv.etag)
         client.get_configuration_setting(compare_kv.key, compare_kv.label, etag=compare_kv.etag)
-            
+
         client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
 
     # method: delete_configuration_setting
@@ -205,7 +205,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
         to_delete_kv = self.create_config_setting_no_label()
         self.add_for_test(client, to_delete_kv)
         to_delete_kv = client.get_configuration_setting(to_delete_kv.key, to_delete_kv.label)
-        
+
         # test delete with wrong etag
         with pytest.raises(ResourceModifiedError):
             client.delete_configuration_setting(
@@ -400,7 +400,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
         )
         assert len(items) >= 1
         assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
-        
+
         client.delete_configuration_setting(to_list_kv.key)
 
     # method: set_read_only
@@ -411,14 +411,14 @@ class TestAppConfigurationClient(AppConfigTestCase):
         to_set_kv = self.create_config_setting()
         self.add_for_test(client, to_set_kv)
         to_set_kv = client.get_configuration_setting(to_set_kv.key, to_set_kv.label)
-        
+
         read_only_kv = client.set_read_only(to_set_kv)
         assert read_only_kv.read_only
         with pytest.raises(ResourceReadOnlyError):
             client.set_configuration_setting(read_only_kv)
         with pytest.raises(ResourceReadOnlyError):
             client.delete_configuration_setting(read_only_kv.key, read_only_kv.label)
-        
+
         writable_kv = client.set_read_only(read_only_kv, False)
         assert not writable_kv.read_only
         client.set_configuration_setting(writable_kv)
@@ -434,10 +434,8 @@ class TestAppConfigurationClient(AppConfigTestCase):
 
         to_set_kv.etag = "wrong etag"
         with pytest.raises(ResourceModifiedError):
-            client.set_read_only(
-                to_set_kv, False, match_condition=MatchConditions.IfNotModified
-            )
-        
+            client.set_read_only(to_set_kv, False, match_condition=MatchConditions.IfNotModified)
+
         client.delete_configuration_setting(to_set_kv)
 
     @app_config_decorator
@@ -881,7 +879,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
         assert recovered_snapshot.status == "ready"
 
         self.tear_down()
-    
+
     @app_config_decorator
     @recorded_by_proxy
     def test_update_snapshot_status_with_etag(self, appconfiguration_connection_string):
