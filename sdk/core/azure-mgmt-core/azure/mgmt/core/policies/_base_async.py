@@ -36,7 +36,7 @@ from . import ARMAutoResourceProviderRegistrationPolicy
 _LOGGER = logging.getLogger(__name__)
 
 
-class AsyncARMAutoResourceProviderRegistrationPolicy(ARMAutoResourceProviderRegistrationPolicy, AsyncHTTPPolicy):
+class AsyncARMAutoResourceProviderRegistrationPolicy(ARMAutoResourceProviderRegistrationPolicy, AsyncHTTPPolicy): # pylint: disable=name-too-long
     """Auto register an ARM resource provider if not done yet."""
 
     async def send(self, request: PipelineRequest):  # pylint: disable=invalid-overridden-method
@@ -60,11 +60,17 @@ class AsyncARMAutoResourceProviderRegistrationPolicy(ARMAutoResourceProviderRegi
         """Synchronously register the RP is paremeter.
 
         Return False if we have a reason to believe this didn't work
+
+        :param any initial_request: The initial request
+        :param str url_prefix: The URL prefix
+        :param str rp_name: The resource provider name
+        :return: True if the registration succeeded, False otherwise
+        :rtype: bool
         """
         post_url = "{}providers/{}/register?api-version=2016-02-01".format(url_prefix, rp_name)
         get_url = "{}providers/{}?api-version=2016-02-01".format(url_prefix, rp_name)
         _LOGGER.warning(
-            "Resource provider '%s' used by this operation is not " "registered. We are registering for you.",
+            "Resource provider '%s' used by this operation is not " "registered. We are registering for you.", # pylint: disable=implicit-str-concat
             rp_name,
         )
         post_response = await self.next.send(self._build_next_request(initial_request, "POST", post_url))

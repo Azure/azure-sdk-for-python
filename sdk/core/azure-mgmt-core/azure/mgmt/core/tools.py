@@ -34,7 +34,7 @@ _ARMID_RE = re.compile(
     "(/providers/(?P<namespace>[^/]+)/(?P<type>[^/]*)/(?P<name>[^/]+)(?P<children>.*))?"
 )
 
-_CHILDREN_RE = re.compile("(?i)(/providers/(?P<child_namespace>[^/]+))?/" "(?P<child_type>[^/]*)/(?P<child_name>[^/]+)")
+_CHILDREN_RE = re.compile("(?i)(/providers/(?P<child_namespace>[^/]+))?/" "(?P<child_type>[^/]*)/(?P<child_name>[^/]+)") # pylint: disable=implicit-str-concat
 
 _ARMNAME_RE = re.compile("^[^<>%&:\\?/]{1,260}$")
 
@@ -93,6 +93,10 @@ def parse_resource_id(rid):
 def _populate_alternate_kwargs(kwargs):
     """Translates the parsed arguments into a format used by generic ARM commands
     such as the resource and lock commands.
+
+    :param any kwargs: The parsed arguments
+    :return: The translated arguments
+    :rtype: any
     """
 
     resource_namespace = kwargs["namespace"]
@@ -107,7 +111,12 @@ def _populate_alternate_kwargs(kwargs):
 
 
 def _get_parents_from_parts(kwargs):
-    """Get the parents given all the children parameters."""
+    """Get the parents given all the children parameters.
+
+    :param any kwargs: The children parameters
+    :return: The parents
+    :rtype: any
+    """
     parent_builder = []
     if kwargs["last_child_num"] is not None:
         parent_builder.append("{type}/{name}/".format(**kwargs))
@@ -131,7 +140,7 @@ def resource_id(**kwargs):
     This method builds the resource id from the left until the next required id parameter
     to be appended is not found. It then returns the built up id.
 
-    :param dict kwargs: The keyword arguments that will make up the id.
+    :keyword dict kwargs: The keyword arguments that will make up the id.
 
         The method accepts the following keyword arguments:
             - subscription (required): Subscription id

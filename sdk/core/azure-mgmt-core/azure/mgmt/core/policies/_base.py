@@ -37,7 +37,7 @@ from azure.core.pipeline.transport import HttpRequest
 _LOGGER = logging.getLogger(__name__)
 
 
-class ARMAutoResourceProviderRegistrationPolicy(HTTPPolicy):
+class ARMAutoResourceProviderRegistrationPolicy(HTTPPolicy): # pylint: disable=name-too-long
     """Auto register an ARM resource provider if not done yet."""
 
     def send(self, request):
@@ -72,6 +72,10 @@ class ARMAutoResourceProviderRegistrationPolicy(HTTPPolicy):
     def _extract_subscription_url(url):
         """Extract the first part of the URL, just after subscription:
         https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/
+
+        :param str url: The URL to extract the subscription ID from
+        :return: The subscription ID
+        :rtype: str
         """
         match = re.match(r".*/subscriptions/[a-f0-9-]+/", url, re.IGNORECASE)
         if not match:
@@ -88,11 +92,17 @@ class ARMAutoResourceProviderRegistrationPolicy(HTTPPolicy):
         """Synchronously register the RP is paremeter.
 
         Return False if we have a reason to believe this didn't work
+
+        :param any initial_request: The initial request
+        :param str url_prefix: The URL prefix
+        :param str rp_name: The resource provider name
+        :return: True if the registration succeeded, False otherwise
+        :rtype: bool
         """
         post_url = "{}providers/{}/register?api-version=2016-02-01".format(url_prefix, rp_name)
         get_url = "{}providers/{}?api-version=2016-02-01".format(url_prefix, rp_name)
         _LOGGER.warning(
-            "Resource provider '%s' used by this operation is not " "registered. We are registering for you.",
+            "Resource provider '%s' used by this operation is not " "registered. We are registering for you.", # pylint: disable=implicit-str-concat
             rp_name,
         )
         post_response = self.next.send(self._build_next_request(initial_request, "POST", post_url))
