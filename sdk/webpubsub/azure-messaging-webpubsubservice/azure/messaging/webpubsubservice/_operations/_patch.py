@@ -74,7 +74,7 @@ def get_token_by_key(endpoint: str, hub: str, key: str, **kwargs: Any) -> str:
         payload["role"] = roles
     if groups:
         payload["webpubsub.group"] = groups
-    return jwt.encode(payload, key, algorithm="HS256", headers=kwargs.pop("jwt_headers", {})).encode("utf-8")
+    return jwt.encode(payload, key, algorithm="HS256", headers=kwargs.pop("jwt_headers", {})).decode("utf-8")
 
 
 class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixinGenerated):
