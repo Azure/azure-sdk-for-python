@@ -34,7 +34,9 @@ _ARMID_RE = re.compile(
     "(/providers/(?P<namespace>[^/]+)/(?P<type>[^/]*)/(?P<name>[^/]+)(?P<children>.*))?"
 )
 
-_CHILDREN_RE = re.compile("(?i)(/providers/(?P<child_namespace>[^/]+))?/" "(?P<child_type>[^/]*)/(?P<child_name>[^/]+)") # pylint: disable=implicit-str-concat
+_CHILDREN_RE = re.compile(
+    "(?i)(/providers/(?P<child_namespace>[^/]+))?/" "(?P<child_type>[^/]*)/(?P<child_name>[^/]+)"
+)  # pylint: disable=implicit-str-concat
 
 _ARMNAME_RE = re.compile("^[^<>%&:\\?/]{1,260}$")
 
