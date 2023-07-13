@@ -26,7 +26,6 @@
 from typing import (
     cast,
     Tuple,
-    Any,
     Mapping,
     Dict,
     TYPE_CHECKING,
@@ -39,7 +38,7 @@ from ._constants import SchemaFormat
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.async_base import AsyncPipelineResponse
-    from azure.core.pipeline.transport import HttpResponse, AsyncHttpResponse
+    from azure.core.rest import HttpResponse, AsyncHttpResponse
 
 
 def _parse_schema_properties_dict(

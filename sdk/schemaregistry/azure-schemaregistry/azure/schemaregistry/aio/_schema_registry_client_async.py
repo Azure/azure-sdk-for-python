@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING, Union, overload, cast, IO
+from typing import Any, TYPE_CHECKING, Union, overload, cast, IO, Dict
 from functools import partial
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -44,7 +44,7 @@ from .._generated.aio._client import AzureSchemaRegistry
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline.transport import AsyncHttpResponse
+    from azure.core.rest import AsyncHttpResponse
 
 
 class SchemaRegistryClient(object):
@@ -132,7 +132,8 @@ class SchemaRegistryClient(object):
         """
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
-        schema_properties = await self._generated_client.schema.register(
+        # ignoring return type because the generated client operations are not annotated w/ cls return type
+        schema_properties: Dict[str, Union[int, str]] = await self._generated_client.schema.register( # type: ignore
             group_name=group_name,
             schema_name=name,
             schema_content=cast(IO[Any], definition),
@@ -190,6 +191,8 @@ class SchemaRegistryClient(object):
                 :caption: Get schema by version.
         """
         http_request_kwargs = get_http_request_kwargs(kwargs)
+        http_response: "AsyncHttpResponse"
+        schema_properties: Dict[str, Union[int, str]]
         try:
             # Check positional args for schema_id.
             # Else, check if schema_id was passed in with keyword.
@@ -198,7 +201,8 @@ class SchemaRegistryClient(object):
             except IndexError:
                 schema_id = kwargs.pop("schema_id")
             schema_id = cast(str, schema_id)
-            http_response, schema_properties = await self._generated_client.schema.get_by_id(
+            # ignoring return type because the generated client operations are not annotated w/ cls return type
+            http_response, schema_properties = await self._generated_client.schema.get_by_id(   # type: ignore
                 id=schema_id,
                 cls=prepare_schema_result,
                 **http_request_kwargs
@@ -214,14 +218,14 @@ class SchemaRegistryClient(object):
                     """Missing required argument(s). Specify either `schema_id` """
                     """or `group_name`, `name`, `version."""
                 )
-            http_response, schema_properties = await self._generated_client.schema.get_schema_version(
+            # ignoring return type because the generated client operations are not annotated w/ cls return type
+            http_response, schema_properties = await self._generated_client.schema.get_schema_version(  # type: ignore
                 group_name=group_name,
                 schema_name=name,
                 schema_version=version,
                 cls=prepare_schema_result,
                 **http_request_kwargs,
             )
-        # TODO: ask Izzy if this is the right way to access the text when stream=True
         await http_response.read()
         return Schema(
             definition=http_response.text(), properties=SchemaProperties(**schema_properties)
@@ -261,7 +265,8 @@ class SchemaRegistryClient(object):
         """
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
-        schema_properties = await self._generated_client.schema.query_id_by_content(
+        # ignoring return type because the generated client operations are not annotated w/ cls return type
+        schema_properties: Dict[str, Union[int, str]] = await self._generated_client.schema.query_id_by_content(    # type: ignore
             group_name=group_name,
             schema_name=name,
             schema_content=cast(IO[Any], definition),
