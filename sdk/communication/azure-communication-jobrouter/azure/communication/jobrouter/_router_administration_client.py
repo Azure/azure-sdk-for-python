@@ -18,11 +18,9 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 from azure.core.credentials import AzureKeyCredential
 from azure.communication.jobrouter._shared.policy import HMACCredentialsPolicy
-
-from ._generated._serialization import Serializer  # pylint:disable=protected-access
 from ._generated import AzureCommunicationJobRouterService
 # pylint: disable=unused-import,ungrouped-imports
-from ._generated.models import (
+from ._models import (
     ClassificationPolicy,
     DistributionPolicy,
     ExceptionPolicy,
@@ -43,18 +41,23 @@ from ._generated.models import (
     RuleEngineWorkerSelectorAttachment,
     PassThroughWorkerSelectorAttachment,
     WeightedAllocationWorkerSelectorAttachment,
-    StaticRule,
-    ExpressionRule,
-    FunctionRule,
+    StaticRouterRule,
+    ExpressionRouterRule,
+    FunctionRouterRule,
+    WebhookRouterRule,
+    DirectMapRouterRule,
     RouterQueue,
     RouterQueueItem
+)
+from ._router_serializer import (
+    _deserialize_from_json, # pylint:disable=protected-access
+    _serialize_to_json, # pylint:disable=protected-access
+    _SERIALIZER, # pylint:disable=protected-access
 )
 
 from ._shared.utils import parse_connection_str
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
-
-_SERIALIZER = Serializer()
 
 
 class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-methods,too-many-lines
@@ -168,7 +171,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return self._client.job_router_administration.upsert_exception_policy(
             id = exception_policy_id,
-            patch = exception_policy,
+            patch = _serialize_to_json(exception_policy, "ExceptionPolicy"),  # pylint:disable=protected-access
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("ExceptionPolicy", deserialized_json_response),
             **kwargs
         )
 
@@ -265,7 +270,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return self._client.job_router_administration.upsert_exception_policy(
             id = exception_policy_id,
-            patch = patch,
+            patch = _serialize_to_json(patch, "ExceptionPolicy"),  # pylint:disable=protected-access
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("ExceptionPolicy", deserialized_json_response),
             **kwargs
         )
 
@@ -297,6 +304,8 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return self._client.job_router_administration.get_exception_policy(
             id = exception_policy_id,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("ExceptionPolicy", deserialized_json_response),
             **kwargs
         )
 
@@ -340,6 +349,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return self._client.job_router_administration.list_exception_policies(
             params = params,
+            # pylint:disable=protected-access
+            cls = lambda deserialized_json_array: [_deserialize_from_json("ExceptionPolicyItem", elem) for elem in
+                                                   deserialized_json_array],
             **kwargs
         )
 
@@ -410,7 +422,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return self._client.job_router_administration.upsert_distribution_policy(
             id = distribution_policy_id,
-            patch = distribution_policy,
+            patch = _serialize_to_json(distribution_policy, "DistributionPolicy"),  # pylint:disable=protected-access,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("DistributionPolicy", deserialized_json_response),
             **kwargs
         )
 
@@ -515,7 +529,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return self._client.job_router_administration.upsert_distribution_policy(
             id = distribution_policy_id,
-            patch = patch,
+            patch = _serialize_to_json(patch, "DistributionPolicy"),  # pylint:disable=protected-access,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("DistributionPolicy", deserialized_json_response),
             **kwargs
         )
 
@@ -547,6 +563,8 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return self._client.job_router_administration.get_distribution_policy(
             id = distribution_policy_id,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("DistributionPolicy", deserialized_json_response),
             **kwargs
         )
 
@@ -590,6 +608,8 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return self._client.job_router_administration.list_distribution_policies(
             params = params,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda deserialized_json_array: [_deserialize_from_json("DistributionPolicyItem", elem) for elem in deserialized_json_array],
             **kwargs
         )
 
@@ -640,7 +660,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
         :param str queue_id: Id of the queue.
 
         :param queue: An instance of JobQueue.
-        :type queue: ~azure.communication.jobrouter.JobQueue
+        :type queue: ~azure.communication.jobrouter.RouterQueue
 
         :return: JobQueue
         :rtype: ~azure.communication.jobrouter.RouterQueue
@@ -660,7 +680,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return self._client.job_router_administration.upsert_queue(
             id = queue_id,
-            patch = queue,
+            patch = _serialize_to_json(queue, "RouterQueue"),  # pylint:disable=protected-access,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("RouterQueue", deserialized_json_response),
             **kwargs)
 
     @overload
@@ -771,7 +793,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return self._client.job_router_administration.upsert_queue(
             id = queue_id,
-            patch = patch,
+            patch = _serialize_to_json(patch, "RouterQueue"),  # pylint:disable=protected-access,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterQueue", deserialized_json_response),
             **kwargs)
 
     @distributed_trace
@@ -802,6 +826,8 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return self._client.job_router_administration.get_queue(
             id = queue_id,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args:_deserialize_from_json("RouterQueue", deserialized_json_response),
             **kwargs
         )
 
@@ -845,6 +871,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return self._client.job_router_administration.list_queues(
             params = params,
+            # pylint:disable=protected-access
+            cls = lambda deserialized_json_array: [_deserialize_from_json("RouterQueueItem", elem) for elem in
+                                                   deserialized_json_array],
             **kwargs
         )
 
@@ -915,7 +944,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return self._client.job_router_administration.upsert_classification_policy(
             id = classification_policy_id,
-            patch = classification_policy,
+            patch = _serialize_to_json(classification_policy, "ClassificationPolicy"),  # pylint:disable=protected-access,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("ClassificationPolicy", deserialized_json_response),
             **kwargs)
 
     @overload
@@ -946,7 +977,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
             name: Optional[str],
             fallback_queue_id: Optional[str],
             queue_selectors: Optional[List[Union[StaticQueueSelectorAttachment, ConditionalQueueSelectorAttachment, RuleEngineQueueSelectorAttachment, PassThroughQueueSelectorAttachment, WeightedAllocationQueueSelectorAttachment]]],  # pylint: disable=line-too-long
-            prioritization_rule: Optional[Union[StaticRule, ExpressionRule, FunctionRule]],
+            prioritization_rule: Optional[Union[StaticRouterRule, ExpressionRouterRule, FunctionRouterRule, WebhookRouterRule]],   # pylint: disable=line-too-long
             worker_selectors: Optional[List[Union[StaticWorkerSelectorAttachment, ConditionalWorkerSelectorAttachment, RuleEngineWorkerSelectorAttachment, PassThroughWorkerSelectorAttachment, WeightedAllocationWorkerSelectorAttachment]]],  # pylint: disable=line-too-long
             **kwargs: Any
     ) -> ClassificationPolicy:
@@ -1050,7 +1081,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return self._client.job_router_administration.upsert_classification_policy(
             id = classification_policy_id,
-            patch = patch,
+            patch = _serialize_to_json(patch, "ClassificationPolicy"),  # pylint:disable=protected-access,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("ClassificationPolicy", deserialized_json_response),
             **kwargs)
 
     @distributed_trace
@@ -1081,6 +1114,8 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return self._client.job_router_administration.get_classification_policy(
             classification_policy_id,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("ClassificationPolicy", deserialized_json_response),
             **kwargs)
 
     @distributed_trace
@@ -1122,6 +1157,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return self._client.job_router_administration.list_classification_policies(
             params = params,
+            # pylint:disable=protected-access
+            cls = lambda deserialized_json_array: [_deserialize_from_json("ClassificationPolicyItem", elem) for elem in
+                                                   deserialized_json_array],
             **kwargs)
 
     @distributed_trace
