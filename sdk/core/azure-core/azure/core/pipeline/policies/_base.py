@@ -107,7 +107,6 @@ class SansIOHTTPPolicy(Generic[HTTPRequestTypeVar, HTTPResponseTypeVar]):
         :type response: ~azure.core.pipeline.PipelineResponse
         """
 
-    # pylint: disable=no-self-use
     def on_exception(
         self,
         request: PipelineRequest[HTTPRequestTypeVar],  # pylint: disable=unused-argument

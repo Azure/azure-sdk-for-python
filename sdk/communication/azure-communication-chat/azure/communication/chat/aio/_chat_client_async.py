@@ -10,7 +10,6 @@ from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 from datetime import datetime
 from uuid import uuid4
 
-import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy

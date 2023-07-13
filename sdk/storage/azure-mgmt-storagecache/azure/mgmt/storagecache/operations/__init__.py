@@ -6,6 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._aml_filesystems_operations import AmlFilesystemsOperations
+from ._storage_cache_management_client_operations import StorageCacheManagementClientOperationsMixin
 from ._operations import Operations
 from ._skus_operations import SkusOperations
 from ._usage_models_operations import UsageModelsOperations
@@ -20,6 +22,8 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AmlFilesystemsOperations",
+    "StorageCacheManagementClientOperationsMixin",
     "Operations",
     "SkusOperations",
     "UsageModelsOperations",

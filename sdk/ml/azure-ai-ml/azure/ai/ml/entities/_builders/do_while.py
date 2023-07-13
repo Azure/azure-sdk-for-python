@@ -222,12 +222,12 @@ class DoWhile(LoopNode):
             if validation_result.passed:
                 # Check condition is a control output.
                 condition_name = self.condition if isinstance(self.condition, str) else self.condition._port_name
-                if not self.body._outputs[condition_name].is_control:
+                if not self.body._outputs[condition_name]._is_control_or_primitive_type:
                     validation_result.append_error(
                         yaml_path="condition",
                         message=(
-                            f"{condition_name} is not a control output. "
-                            "The condition of dowhile must be the control output of the body."
+                            f"{condition_name} is not a control output and is not primitive type. "
+                            "The condition of dowhile must be the control output or primitive type of the body."
                         ),
                     )
         return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
@@ -266,7 +266,7 @@ class DoWhile(LoopNode):
                     output, self.body.outputs, port_type="output", yaml_path="mapping"
                 )
                 if validate_results.passed:
-                    is_control_output = self.body._outputs[output_name].is_control
+                    is_control_output = self.body._outputs[output_name]._is_control_or_primitive_type
                     inputs = inputs if isinstance(inputs, list) else [inputs]
                     for item in inputs:
                         input_validate_results = self._validate_port(

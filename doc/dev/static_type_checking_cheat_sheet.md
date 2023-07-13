@@ -1,13 +1,13 @@
 # Static Type Checking Cheat Sheet
 
-This cheat sheet details guidance for typing as it relates to the Python SDK. Use your own judgment to achieve the best balance of clarity and flexibility for your Python client library. 
+This cheat sheet details guidance for typing as it relates to the Python SDK. Use your own judgment to achieve the best balance of clarity and flexibility for your Python client library.
 
 ### General guidance
 
 - Do provide type annotations (per [PEP 484](https://peps.python.org/pep-0484/)) to public APIs in the client library.
 - You do not need to annotate internal functions in a client library, but you should provide type hints where unit tests are worth writing or where type annotations will assist in understanding of the code.
 - Do not use comment style type hints. Use inline, annotation style.
-  
+
 ```python
 # No:
 def create_table(table_name):
@@ -35,7 +35,7 @@ table_map[table_name] = create_table(table_name)
 
 - You do not need to annotate `self` or `cls`.
 - Do return `None` from a constructor.
-  
+
 ```python
 # No:
 class KeyCredential:
@@ -60,7 +60,7 @@ class Tree:
     :param str location: The location for the tree.
     :param int num_branches: The number of branches on the tree
     :param str kind: The kind of tree.
-    
+
     Note: :ivar: docstrings are redundant since these vars/types are captured below
     """
 
@@ -72,7 +72,7 @@ class Tree:
     """The kind of tree."""
 
     def __init__(self, *, location: str, num_branches: int, kind: Optional[str] = None) -> None:
-        if kind: 
+        if kind:
             self.kind = kind
         self.location = location
         self.num_branches = num_branches
@@ -91,7 +91,7 @@ from typing_extensions import TypedDict
 
 ### Importing types
 
-- Do use only publicly exposed client library types in type hints. 
+- Do use only publicly exposed client library types in type hints.
 - Do import types from modules such as `typing`, `typing_extensions`, `collections`, and `collections.abc`(Note that indexing support for generic collection types from `collections.abc` is only supported on Python 3.9+).
 - Do not import regular type hints under a `typing.TYPE_CHECKING` block. You may use `TYPE_CHECKING` to fix a circular import or avoid importing a type only needed in type annotations that is otherwise costly to load at runtime.
 
@@ -116,7 +116,7 @@ if TYPE_CHECKING:
 
 ```python
 # mypy ignores only the error code in brackets
-ignore_me: int = 5 # type: ignore[misc] 
+ignore_me: int = 5 # type: ignore[misc]
 
 # pyright ignores only the error code in brackets
 ignored = result._private # pyright: ignore[reportPrivateUsage]
@@ -134,7 +134,7 @@ class Foo(Any): # type: ignore
 ### Unions
 
 - Use `typing.Union` when a parameter can accept more than one type.
-  
+
 ```python
 from typing import Union
 
@@ -324,15 +324,15 @@ S = TypeVar("S", bound=str)  # limited to str or any subtype of str
 from typing import TypeVar, Generic
 
 # No:
-T = TypeVar("T")
+T = TypeVar("T", covariant=True)
 
-class LROPoller(Generic[T]):
+class LROPoller(Generic["T"]):
     ...
 
 # Yes:
-PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
-class LROPoller(Generic[PollingReturnType]):
+class LROPoller(Generic[PollingReturnType_co]):
     ...
 ```
 
@@ -385,7 +385,7 @@ CredentialTypes = Union[AzureKeyCredential, TokenCredential, AzureSasCredential,
 ### Literals
 
 - You can use `typing.Literal` when you want to restrict based on exact values.
-  
+
 ```python
 from typing_extensions import Literal
 

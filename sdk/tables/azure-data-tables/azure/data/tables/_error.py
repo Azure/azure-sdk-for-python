@@ -19,10 +19,6 @@ from azure.core.exceptions import (
 from azure.core.pipeline.policies import ContentDecodePolicy
 
 
-def _to_str(value):
-    return str(value) if value is not None else None
-
-
 _ERROR_TYPE_NOT_SUPPORTED = "Type not supported when sending data to the service: {0}."
 _ERROR_VALUE_TOO_LARGE = "{0} is too large to be cast to type {1}."
 _ERROR_UNKNOWN = "Unknown error ({0})"

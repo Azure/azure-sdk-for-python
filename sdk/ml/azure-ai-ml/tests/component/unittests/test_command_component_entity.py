@@ -9,7 +9,6 @@ from zipfile import ZipFile
 
 import pydash
 import pytest
-from conftest import normalized_arm_id_in_object
 from test_utilities.utils import (
     build_temp_folder,
     mock_artifact_download_to_temp_directory,
@@ -25,6 +24,7 @@ from azure.ai.ml.entities._builders import Command, Sweep
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
 from azure.ai.ml.sweep import Choice
+from conftest import normalized_arm_id_in_object
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -549,9 +549,6 @@ class TestCommandComponentEntity:
     def test_invalid_component_outputs(self) -> None:
         yaml_path = "./tests/test_configs/components/invalid/helloworld_component_invalid_early_available_output.yml"
         component = load_component(yaml_path)
-        with pytest.raises(ValidationException) as e:
-            component._validate(raise_error=True)
-        assert "Early available output 'component_out_string' requires is_control as True, got None." in str(e.value)
         params_override = [
             {
                 "outputs": {

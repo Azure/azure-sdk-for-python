@@ -87,7 +87,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             ContentSettings object used to set path properties.
         :param metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: Optional[Dict[str, str]]
         :keyword lease:
             Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
@@ -325,7 +325,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             ContentSettings object used to set path properties.
         :keyword metadata:
             Name-value pairs associated with the blob as metadata.
-        :paramtype metadata: dict(str, str)
+        :paramtype metadata: Optional[Dict[str, str]]
         :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
@@ -683,13 +683,10 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         new_file_system, new_path, new_file_sas = self._parse_rename_path(new_name)
 
         new_file_client = DataLakeFileClient(
-            "{}://{}".format(self.scheme, self.primary_hostname), new_file_system, file_path=new_path,
+            f"{self.scheme}://{self.primary_hostname}", new_file_system, file_path=new_path,
             credential=self._raw_credential or new_file_sas,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode)
         await new_file_client._rename_path(  # pylint: disable=protected-access
-            '/{}/{}{}'.format(quote(unquote(self.file_system_name)),
-                              quote(unquote(self.path_name)),
-                              self._query_str),
-            **kwargs)
+            f'/{quote(unquote(self.file_system_name))}/{quote(unquote(self.path_name))}{self._query_str}', **kwargs)
         return new_file_client

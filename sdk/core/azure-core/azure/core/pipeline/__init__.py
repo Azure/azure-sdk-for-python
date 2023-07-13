@@ -26,8 +26,8 @@
 
 from typing import TypeVar, Generic, Dict, Any
 
-HTTPResponseType = TypeVar("HTTPResponseType")
-HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPResponseType_co = TypeVar("HTTPResponseType_co", covariant=True)
+HTTPRequestType_co = TypeVar("HTTPRequestType_co", covariant=True)
 
 
 class PipelineContext(Dict[str, Any]):
@@ -39,7 +39,8 @@ class PipelineContext(Dict[str, Any]):
     the pipeline.
 
     :param transport: The HTTP transport type.
-    :param kwargs: Developer-defined keyword arguments.
+    :type transport: ~azure.core.pipeline.transport.HttpTransport or ~azure.core.pipeline.transport.AsyncHttpTransport
+    :param any kwargs: Developer-defined keyword arguments.
     """
 
     _PICKLE_CONTEXT = {"deserialized_data"}
@@ -87,14 +88,16 @@ class PipelineContext(Dict[str, Any]):
             raise ValueError("Context value {} cannot be deleted.".format(key))
         return super(PipelineContext, self).__delitem__(key)
 
-    def clear(self):
+    def clear(self):  # pylint: disable=docstring-missing-return, docstring-missing-rtype
         """Context objects cannot be cleared.
 
         :raises: TypeError
         """
         raise TypeError("Context objects cannot be cleared.")
 
-    def update(self, *args, **kwargs):
+    def update(
+        self, *args, **kwargs
+    ):  # pylint: disable=docstring-missing-return, docstring-missing-rtype, docstring-missing-param
         """Context objects cannot be updated.
 
         :raises: TypeError
@@ -102,13 +105,20 @@ class PipelineContext(Dict[str, Any]):
         raise TypeError("Context objects cannot be updated.")
 
     def pop(self, *args):
-        """Removes specified key and returns the value."""
+        """Removes specified key and returns the value.
+
+        :param args: The key to remove.
+        :type args: str
+        :return: The value for this key.
+        :rtype: any
+        :raises: ValueError If the key is in the protected list.
+        """
         if args and args[0] in self._protected:
             raise ValueError("Context value {} cannot be popped.".format(args[0]))
         return super(PipelineContext, self).pop(*args)
 
 
-class PipelineRequest(Generic[HTTPRequestType]):
+class PipelineRequest(Generic[HTTPRequestType_co]):
     """A pipeline request object.
 
     Container for moving the HttpRequest through the pipeline.
@@ -120,12 +130,12 @@ class PipelineRequest(Generic[HTTPRequestType]):
     :type context: ~azure.core.pipeline.PipelineContext
     """
 
-    def __init__(self, http_request: HTTPRequestType, context: PipelineContext) -> None:
+    def __init__(self, http_request: HTTPRequestType_co, context: PipelineContext) -> None:
         self.http_request = http_request
         self.context = context
 
 
-class PipelineResponse(Generic[HTTPRequestType, HTTPResponseType]):
+class PipelineResponse(Generic[HTTPRequestType_co, HTTPResponseType_co]):
     """A pipeline response object.
 
     The PipelineResponse interface exposes an HTTP response object as it returns through the pipeline of Policy objects.
@@ -145,8 +155,8 @@ class PipelineResponse(Generic[HTTPRequestType, HTTPResponseType]):
 
     def __init__(
         self,
-        http_request: HTTPRequestType,
-        http_response: HTTPResponseType,
+        http_request: HTTPRequestType_co,
+        http_response: HTTPResponseType_co,
         context: PipelineContext,
     ) -> None:
         self.http_request = http_request

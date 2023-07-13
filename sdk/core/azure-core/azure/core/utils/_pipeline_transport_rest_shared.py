@@ -42,7 +42,7 @@ if TYPE_CHECKING:
 
     HTTPRequestType = Union[RestHttpRequestPy3, PipelineTransportHttpRequest]
     from ..pipeline.policies import SansIOHTTPPolicy
-    from azure.core.pipeline.transport import (
+    from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import
         HttpResponse as PipelineTransportHttpResponse,
         AioHttpTransportResponse as PipelineTransportAioHttpTransportResponse,
     )
@@ -57,6 +57,8 @@ class BytesIOSocket:
     """Mocking the "makefile" of socket for HTTPResponse.
     This can be used to create a http.client.HTTPResponse object
     based on bytes and not a real socket.
+
+    :param bytes bytes_data: The bytes to use to mock the socket.
     """
 
     def __init__(self, bytes_data):
@@ -75,6 +77,7 @@ def _format_parameters_helper(http_request, params):
 
     :param http_request: The http request whose parameters
      we are trying to format
+    :type http_request: any
     :param dict params: A dictionary of parameters.
     """
     query = urlparse(http_request.url).query
@@ -106,6 +109,11 @@ def _pad_attr_name(attr: str, backcompat_attrs: List[str]) -> str:
     for backcompat purposes. This function is called so if
     users access publicly call a private backcompat attribute,
     we can return them the private variable in getattr
+
+    :param str attr: The attribute name
+    :param list[str] backcompat_attrs: The list of backcompat attributes
+    :rtype: str
+    :return: The padded attribute name
     """
     return "_{}".format(attr) if attr in backcompat_attrs else attr
 
@@ -121,6 +129,7 @@ def _prepare_multipart_body_helper(http_request: "HTTPRequestType", content_inde
     Does nothing if "set_multipart_mixed" was never called.
     :param http_request: The http request whose multipart body we are trying
      to prepare
+    :type http_request: any
     :param int content_index: The current index of parts within the batch message.
     :returns: The updated index after all parts in this request have been added.
     :rtype: int
@@ -186,7 +195,9 @@ def _serialize_request(http_request: "HTTPRequestType") -> bytes:
 
     :param http_request: The http request which we are trying
      to serialize.
+    :type http_request: any
     :rtype: bytes
+    :return: The serialized request
     """
     if isinstance(http_request.body, dict):
         raise TypeError("Cannot serialize an HTTPRequest with dict body.")
@@ -210,6 +221,19 @@ def _decode_parts_helper(
     """Helper for _decode_parts.
 
     Rebuild an HTTP response from pure string.
+
+    :param response: The response to decode
+    :type response: ~azure.core.pipeline.transport.HttpResponse
+    :param message: The message to decode
+    :type message: ~email.message.Message
+    :param http_response_type: The type of response to return
+    :type http_response_type: ~azure.core.pipeline.transport.HttpResponse
+    :param requests: The requests that were batched together
+    :type requests: list[~azure.core.pipeline.transport.HttpRequest]
+    :param deserialize_response: The function to deserialize the response
+    :type deserialize_response: callable
+    :rtype: list[~azure.core.pipeline.transport.HttpResponse]
+    :return: The list of responses
     """
     responses = []
     for index, raw_response in enumerate(message.get_payload()):
@@ -241,6 +265,13 @@ def _get_raw_parts_helper(response, http_response_type):
 
     If parts are application/http use http_response_type or HttpClientTransportResponse
     as envelope.
+
+    :param response: The response to decode
+    :type response: ~azure.core.pipeline.transport.HttpResponse
+    :param http_response_type: The type of response to return
+    :type http_response_type: any
+    :rtype: iterator[~azure.core.pipeline.transport.HttpResponse]
+    :return: The parts of the response
     """
     body_as_bytes = response.body()
     # In order to use email.message parser, I need full HTTP bytes. Faking something to make the parser happy
@@ -255,7 +286,10 @@ def _parts_helper(
 ) -> Iterator["PipelineTransportHttpResponse"]:
     """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
 
+    :param response: The response to decode
+    :type response: ~azure.core.pipeline.transport.HttpResponse
     :rtype: iterator[HttpResponse]
+    :return: The parts of the response
     :raises ValueError: If the content is not multipart/mixed
     """
     if not response.content_type or not response.content_type.startswith("multipart/mixed"):
@@ -294,6 +328,8 @@ def _format_data_helper(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[O
 
     :param data: The request field data.
     :type data: str or file-like object.
+    :rtype: tuple[str, IO, str] or tuple[None, str]
+    :return: A tuple of (data name, data IO, "application/octet-stream") or (None, data str)
     """
     if hasattr(data, "read"):
         data = cast(IO, data)
@@ -317,7 +353,10 @@ def _aiohttp_body_helper(
     need to share this code across old and new aiohttp transport responses
     for backcompat.
 
+    :param response: The response to decode
+    :type response: ~azure.core.pipeline.transport.AioHttpTransportResponse
     :rtype: bytes
+    :return: The response's bytes
     """
     if response._content is None:
         raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")

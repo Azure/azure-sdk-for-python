@@ -31,28 +31,27 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "api-deprecated-versions": "2021-04-07",
-        "api-supported-versions": "2022-02-01, 2023-03-31-preview, 2023-06-14",
-        "Connection": "keep-alive",
+        "api-deprecated-versions": "2021-04-07, 2022-02-01",
+        "api-supported-versions": "2023-03-31-preview, 2023-06-14",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
-        "Location": "99421961577002400",
+        "Location": "9943543785807923",
         "MS-CV": "sanitized",
         "Repeatability-Result": "accepted",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "sanitized",
+        "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
-        "id": "99421961577002400",
-        "createdAt": "2023-06-05T22:43:49.8306329\u002B00:00",
-        "validFrom": "2023-06-05T22:43:49.7750976\u002B00:00",
-        "validUntil": "2023-12-02T22:43:49.7750976\u002B00:00"
+        "id": "9943543785807923",
+        "createdAt": "2023-07-05T22:17:38.6887495\u002B00:00",
+        "validFrom": "2023-07-05T22:17:38.614107\u002B00:00",
+        "validUntil": "2024-01-01T22:17:38.614107\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99421961577002400?api-version=2023-06-14",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/9943543785807923?api-version=2023-06-14",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -68,13 +67,12 @@
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "api-deprecated-versions": "2021-04-07",
-        "api-supported-versions": "2022-02-01, 2023-03-31-preview, 2023-06-14",
-        "Connection": "keep-alive",
+        "api-deprecated-versions": "2021-04-07, 2022-02-01",
+        "api-supported-versions": "2023-03-31-preview, 2023-06-14",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Request-Context": "appId=",
-        "x-azure-ref": "sanitized",
+        "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null

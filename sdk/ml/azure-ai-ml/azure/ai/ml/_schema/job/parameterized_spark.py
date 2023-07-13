@@ -98,7 +98,14 @@ class ParameterizedSparkSchema(PathAwareSchema):
         no_duplicates("archives", value)
 
     @pre_load
-    def deserialize_field_names(self, data, **kwargs):
+    def map_conf_field_names(self, data, **kwargs):
+        """Map the field names in the conf dictionary.
+        This function must be called after YamlFileSchema.load_from_file.
+        Given marshmallow executes the pre_load functions in the alphabetical order (marshmallow\\schema.py:L166,
+        functions will be checked in alphabetical order when inject to cls._hooks), we must make sure the function
+        name is alphabetically after "load_from_file".
+        """
+        # TODO: it's dangerous to depend on an alphabetical order, we'd better move related logic out of Schema.
         conf = data["conf"] if "conf" in data else None
         if conf is not None:
             for field_key, dict_key in CONF_KEY_MAP.items():
@@ -112,12 +119,13 @@ class ParameterizedSparkSchema(PathAwareSchema):
     @post_dump(pass_original=True)
     def serialize_field_names(self, data: Dict[str, Any], original_data: Dict[str, Any], **kwargs):
         conf = data["conf"] if "conf" in data else {}
-        if conf is not None or original_data.conf is not None:
+        if original_data.conf is not None and conf is not None:
             for field_name, value in original_data.conf.items():
                 if field_name not in conf:
                     if isinstance(value, str) and value.isdigit():
                         value = int(value)
                     conf[field_name] = value
+        if conf is not None:
             for field_name, dict_name in CONF_KEY_MAP.items():
                 val = conf.get(field_name, None)
                 if field_name in conf and val is not None:

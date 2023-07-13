@@ -185,7 +185,7 @@ class BlobAnalyticsLogging(GeneratedLogging):
     """
 
     def __init__(self, **kwargs):
-        self.version = kwargs.get('version', u'1.0')
+        self.version = kwargs.get('version', '1.0')
         self.delete = kwargs.get('delete', False)
         self.read = kwargs.get('read', False)
         self.write = kwargs.get('write', False)
@@ -221,7 +221,7 @@ class Metrics(GeneratedMetrics):
     """
 
     def __init__(self, **kwargs):
-        self.version = kwargs.get('version', u'1.0')
+        self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
         self.include_apis = kwargs.get('include_apis')
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
@@ -1147,7 +1147,7 @@ class BlobProperties(DictMixin):
     """Datetime value that uniquely identifies the blob snapshot."""
     blob_type: "BlobType"
     """String indicating this blob's type."""
-    metadata: Optional[Dict[str, str]]
+    metadata: Dict[str, str]
     """Name-value pairs associated with the blob as metadata."""
     last_modified: "datetime"
     """A datetime object representing the last time the blob was modified."""

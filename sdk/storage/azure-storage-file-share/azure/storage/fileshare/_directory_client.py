@@ -113,7 +113,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         if not share_name:
             raise ValueError("Please specify a share name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+            raise ValueError(f"Invalid URL: {account_url}")
 
         path_snapshot, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
@@ -175,7 +175,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             raise ValueError("Directory URL must be a string.")
         parsed_url = urlparse(directory_url.rstrip('/'))
         if not parsed_url.path and not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(directory_url))
+            raise ValueError(f"Invalid URL: {directory_url}")
         account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
         path_snapshot, _ = parse_query(parsed_url.query)
 
@@ -199,12 +199,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         directory_path = ""
         if self.directory_path:
             directory_path = "/" + quote(self.directory_path, safe='~')
-        return "{}://{}/{}{}{}".format(
-            self.scheme,
-            hostname,
-            quote(share_name),
-            directory_path,
-            self._query_str)
+        return f"{self.scheme}://{hostname}/{quote(share_name)}{directory_path}{self._query_str}"
 
     @classmethod
     def from_connection_string(
@@ -482,7 +477,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             new_dir_sas = self._query_str.strip('?')
 
         new_directory_client = ShareDirectoryClient(
-            '{}://{}'.format(self.scheme, self.primary_hostname), self.share_name, new_dir_path,
+            f'{self.scheme}://{self.primary_hostname}', self.share_name, new_dir_path,
             credential=new_dir_sas or self.credential, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,

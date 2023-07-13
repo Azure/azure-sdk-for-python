@@ -37,7 +37,7 @@ class AzureBlobStorageConfiguration(Configuration):  # pylint: disable=too-many-
 
         self.url = url
         self.version = version
-        kwargs.setdefault("sdk_moniker", "azureblobstorage/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", f"azureblobstorage/{VERSION}")
         self._configure(**kwargs)
 
     def _configure(
