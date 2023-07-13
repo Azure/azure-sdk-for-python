@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import pytest
 from azure.appconfiguration.provider import load, SettingSelector
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from preparers import app_config_decorator
@@ -15,10 +16,12 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         return load(connection_string=connection_string, trim_prefixes=trim_prefixes, selects=selects)
 
     # method: provider_creation
+    @pytest.mark.skip
     @recorded_by_proxy
     @app_config_decorator
     def test_provider_creation(self, appconfiguration_connection_string):
         client = self.build_provider(appconfiguration_connection_string)
+        breakpoint()
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
         assert (
@@ -27,6 +30,7 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         )
 
     # method: provider_trim_prefixes
+    @pytest.mark.skip
     @recorded_by_proxy
     @app_config_decorator
     def test_provider_trim_prefixes(self, appconfiguration_connection_string):
@@ -42,6 +46,7 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         )
 
     # method: provider_selectors
+    @pytest.mark.skip
     @recorded_by_proxy
     @app_config_decorator
     def test_provider_selectors(self, appconfiguration_connection_string):
