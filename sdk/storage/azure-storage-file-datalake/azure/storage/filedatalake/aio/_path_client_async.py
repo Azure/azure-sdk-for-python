@@ -238,7 +238,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: None
+        :returns: A dictionary containing information about the deleted path.
+        :rtype: Dict[str, Any]
         """
         options = self._delete_path_options(**kwargs)
         try:

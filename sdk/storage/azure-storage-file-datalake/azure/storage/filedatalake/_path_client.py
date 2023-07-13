@@ -303,7 +303,7 @@ class PathClient(StorageAccountHostsMixin):
         return options
 
     def _delete(self, **kwargs):
-        # type: (**Any) -> None
+        # type: (**Any) -> Dict[Union[datetime, str]]
         """
         Marks the specified path for deletion.
 
@@ -334,10 +334,12 @@ class PathClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
+        :returns: A dictionary containing information about the deleted path.
+        :rtype: Dict[str, Any]
         """
         options = self._delete_path_options(**kwargs)
         try:
-            self._client.path.delete(**options)
+            return self._client.path.delete(**options)
         except HttpResponseError as error:
             process_storage_error(error)
 
