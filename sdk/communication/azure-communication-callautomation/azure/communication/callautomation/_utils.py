@@ -4,8 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Dict, Any, Union
-import uuid
-from datetime import datetime
 from ._shared.models import (
     CommunicationIdentifier,
     CommunicationUserIdentifier,
@@ -19,12 +17,6 @@ from ._generated.models import (
     CommunicationUserIdentifierModel,
     PhoneNumberIdentifierModel
 )
-
-def get_repeatability_guid():
-    return uuid.uuid4()
-
-def get_repeatability_timestamp():
-    return datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
 
 def serialize_identifier(
         identifier:CommunicationIdentifier

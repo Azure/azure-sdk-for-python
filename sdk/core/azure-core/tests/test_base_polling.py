@@ -315,7 +315,11 @@ class TestBasePolling(object):
             headers = {}
         response = Response()
         response._content_consumed = True
-        response._content = json.dumps(body).encode("ascii") if body is not None else None
+        #  "requests" never returns None for content. Make sure it's empty bytes at worst
+        # In [4]: r=requests.get("https://httpbin.org/status/200")
+        # In [5]: r.content
+        # Out[5]: b''
+        response._content = json.dumps(body).encode("ascii") if body is not None else b""
         response.request = Request()
         response.request.method = method
         response.request.url = RESOURCE_URL
@@ -347,6 +351,8 @@ class TestBasePolling(object):
             request,
             response,
         )
+        if is_rest(response):
+            response._body()
         return PipelineResponse(request, response, None)  # context
 
     @staticmethod
@@ -390,6 +396,9 @@ class TestBasePolling(object):
             request,
             response,
         )
+        # Make sure body is loaded if this is "rest"
+        if is_rest(response):
+            response._body()
         return PipelineResponse(request, response, None)  # context
 
     @staticmethod

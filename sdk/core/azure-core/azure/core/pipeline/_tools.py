@@ -37,7 +37,6 @@ def await_result(func, *args, **kwargs):
     :type func: callable
     :param args: The positional arguments to pass to the function.
     :type args: list
-    :param any kwargs: The keyword arguments to pass to the function.
     :rtype: any
     :return: The result of the function
     :raises: TypeError

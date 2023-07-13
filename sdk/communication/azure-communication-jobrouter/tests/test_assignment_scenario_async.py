@@ -24,14 +24,11 @@ from azure.communication.jobrouter.aio import (
 )
 from azure.communication.jobrouter import (
     LongestIdleMode,
-    QueueAssignment,
     ChannelConfiguration,
     RouterJobStatus,
     RouterWorker,
     RouterJobOffer,
     AcceptJobOfferResult,
-    CompleteJobResult,
-    CloseJobResult,
     UnassignJobResult,
     RouterJob,
     RouterJobAssignment,
@@ -56,7 +53,7 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
                     if self._testMethodName in self.job_ids \
                             and any(self.job_ids[self._testMethodName]):
                         for _id in set(self.job_ids[self._testMethodName]):
-                            await self.clean_up_job(job_id = _id)
+                            await self.clean_up_job(job_id = _id, suppress_errors = True)
 
                     if self._testMethodName in self.worker_ids \
                             and any(self.worker_ids[self._testMethodName]):
@@ -142,7 +139,7 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
         router_client: JobRouterClient = self.create_client()
 
         async with router_client:
-            worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
+            worker_queue_assignments = {self.get_job_queue_id(): {}}
             worker_channel_configs = {
                 channel_id: ChannelConfiguration(capacity_cost_per_job = 1)
             }
@@ -171,7 +168,7 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
 
         async with router_client:
             router_job = await router_client.get_job(job_id = identifier)
-            assert router_job.job_status == RouterJobStatus.QUEUED
+            assert router_job.status == RouterJobStatus.QUEUED
 
     async def validate_worker_has_offer(
             self,
@@ -197,7 +194,6 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
             router_worker: RouterWorker = await router_client.get_worker(worker_id = worker_id)
             assert router_worker.state == RouterWorkerState.INACTIVE
 
-    @pytest.mark.skip(reason = "re-enable after job matching changes deployment is completed")
     @RouterPreparersAsync.router_test_decorator_async
     @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
@@ -240,11 +236,11 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
             assert len(job_offers) == 1
             job_offer: RouterJobOffer = job_offers[0]
             assert job_offer.capacity_cost == 1
-            assert job_offer.offer_time_utc is not None
-            assert job_offer.expiry_time_utc is not None
+            assert job_offer.offered_at is not None
+            assert job_offer.expires_at is not None
 
             # accept job offer
-            offer_id = job_offer.id
+            offer_id = job_offer.offer_id
             accept_job_offer_result: AcceptJobOfferResult = await router_client.accept_job_offer(
                 worker_id = self.get_router_worker_id(),
                 offer_id = offer_id
@@ -259,7 +255,7 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
                 await router_client.decline_job_offer(
                     worker_id = self.get_router_worker_id(),
                     offer_id = offer_id,
-                    reoffer_time_utc = datetime.min
+                    retry_offer_at = datetime.min
                 )
             assert sre is not None
             
@@ -283,11 +279,11 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
             assert len(job_offers) == 1
             job_offer: RouterJobOffer = job_offers[0]
             assert job_offer.capacity_cost == 1
-            assert job_offer.offer_time_utc is not None
-            assert job_offer.expiry_time_utc is not None
+            assert job_offer.offered_at is not None
+            assert job_offer.expires_at is not None
 
             # accept job offer
-            offer_id = job_offer.id
+            offer_id = job_offer.offer_id
             accept_job_offer_result: AcceptJobOfferResult = await router_client.accept_job_offer(
                 worker_id = self.get_router_worker_id(),
                 offer_id = offer_id
@@ -299,13 +295,13 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
             assignment_id = accept_job_offer_result.assignment_id
             
             # complete job
-            complete_job_result: CompleteJobResult = await router_client.complete_job(
+            await router_client.complete_job(
                 job_id = job_identifier,
                 assignment_id = assignment_id
             )
 
             # close job
-            close_job_result: CloseJobResult = await router_client.close_job(
+            await router_client.close_job(
                 job_id = job_identifier,
                 assignment_id = assignment_id
             )
@@ -314,7 +310,7 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
             queried_job: RouterJob = await router_client.get_job(job_id = job_identifier)
 
             job_assignment: RouterJobAssignment = queried_job.assignments[assignment_id]
-            assert job_assignment.assign_time is not None
+            assert job_assignment.assigned_at is not None
             assert job_assignment.worker_id == self.get_router_worker_id()
-            assert job_assignment.complete_time is not None
-            assert job_assignment.close_time is not None
+            assert job_assignment.completed_at is not None
+            assert job_assignment.closed_at is not None

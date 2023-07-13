@@ -6,7 +6,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import sys
 import re
 import os.path
 from io import open
@@ -40,8 +39,6 @@ exclude_packages = [
     # Exclude packages that will be covered by PEP420 or nspkg
     "azure",
 ]
-if sys.version_info < (3, 5, 3):
-    exclude_packages.extend(["*.aio", "*.aio.*"])
 
 setup(
     name=PACKAGE_NAME,
@@ -55,7 +52,7 @@ setup(
     author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/appconfiguration/azure-appconfiguration",
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",

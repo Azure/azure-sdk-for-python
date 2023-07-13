@@ -297,8 +297,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -326,7 +327,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {"url": "{url}/{filesystem}/{path}"}
+    create.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def update(
@@ -549,8 +550,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -595,7 +597,7 @@ class PathOperations:
 
         return deserialized
 
-    update.metadata = {"url": "{url}/{filesystem}/{path}"}
+    update.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def lease(  # pylint: disable=inconsistent-return-statements
@@ -625,7 +627,7 @@ class PathOperations:
          the current lease ID in "x-ms-lease-id" and the new lease ID in "x-ms-proposed-lease-id" to
          change the lease ID of an active lease. Use "renew" and specify the "x-ms-lease-id" to renew an
          existing lease. Use "release" and specify the "x-ms-lease-id" to release a lease. Known values
-         are: "acquire", "break", "change", "renew", and "release". Required.
+         are: "acquire", "break", "change", "renew", "release", and "break". Required.
         :type x_ms_lease_action: str or ~azure.storage.filedatalake.models.PathLeaseAction
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -700,8 +702,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -738,7 +741,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    lease.metadata = {"url": "{url}/{filesystem}/{path}"}
+    lease.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def read(
@@ -844,8 +847,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=True, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -932,7 +936,7 @@ class PathOperations:
 
         return deserialized  # type: ignore
 
-    read.metadata = {"url": "{url}/{filesystem}/{path}"}
+    read.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def get_properties(  # pylint: disable=inconsistent-return-statements
@@ -1029,8 +1033,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1068,7 +1073,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {"url": "{url}/{filesystem}/{path}"}
+    get_properties.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -1158,8 +1163,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1179,7 +1185,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {"url": "{url}/{filesystem}/{path}"}
+    delete.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def set_access_control(  # pylint: disable=inconsistent-return-statements
@@ -1281,8 +1287,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1305,7 +1312,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_access_control.metadata = {"url": "{url}/{filesystem}/{path}"}
+    set_access_control.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def set_access_control_recursive(
@@ -1398,8 +1405,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1425,7 +1433,7 @@ class PathOperations:
 
         return deserialized
 
-    set_access_control_recursive.metadata = {"url": "{url}/{filesystem}/{path}"}
+    set_access_control_recursive.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def flush_data(  # pylint: disable=inconsistent-return-statements
@@ -1596,8 +1604,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1628,7 +1637,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    flush_data.metadata = {"url": "{url}/{filesystem}/{path}"}
+    flush_data.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def append_data(  # pylint: disable=inconsistent-return-statements
@@ -1763,8 +1772,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1797,7 +1807,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    append_data.metadata = {"url": "{url}/{filesystem}/{path}"}
+    append_data.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def set_expiry(  # pylint: disable=inconsistent-return-statements
@@ -1861,8 +1871,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1885,7 +1896,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_expiry.metadata = {"url": "{url}/{filesystem}/{path}"}
+    set_expiry.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def undelete(  # pylint: disable=inconsistent-return-statements
@@ -1945,8 +1956,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1968,4 +1980,4 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    undelete.metadata = {"url": "{url}/{filesystem}/{path}"}
+    undelete.metadata = {"url": "{url}"}

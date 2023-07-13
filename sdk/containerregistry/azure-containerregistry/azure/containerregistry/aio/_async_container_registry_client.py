@@ -79,8 +79,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str endpoint: An ACR endpoint.
         :param credential: The credential with which to authenticate. This should be None in anonymous access.
         :type credential: ~azure.core.credentials_async.AsyncTokenCredential or None
-        :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
-            may result in unsupported behavior.
+        :keyword api_version: API Version. The default value is "2021-07-01".
         :paramtype api_version: str
         :keyword audience: URL to use for credential authentication with AAD. Its value could be
             "https://management.azure.com", "https://management.chinacloudapi.cn" or
@@ -251,6 +250,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """Get the properties of a repository
 
         :param str repository: Name of the repository
+        :return: The properties of a repository.
         :rtype: ~azure.containerregistry.RepositoryProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
@@ -408,6 +408,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param str repository: Name of the repository
         :param str tag_or_digest: The tag or digest of the manifest
+        :return: The properties of a registry artifact
         :rtype: ~azure.containerregistry.ArtifactManifestProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
 
@@ -441,6 +442,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str repository: Repository the tag belongs to
         :param tag: The tag to get properties for
         :type tag: str
+        :return: The properties for a tag.
         :rtype: ~azure.containerregistry.ArtifactTagProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
 

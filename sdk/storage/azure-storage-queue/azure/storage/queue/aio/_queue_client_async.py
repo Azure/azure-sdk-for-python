@@ -240,7 +240,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))  # type: ignore
         try:
-            return await self._client.queue.set_metadata(  # type: ignore
+            await self._client.queue.set_metadata(  # type: ignore
                 timeout=timeout, headers=headers, cls=return_response_headers, **kwargs
             )
         except HttpResponseError as error:
