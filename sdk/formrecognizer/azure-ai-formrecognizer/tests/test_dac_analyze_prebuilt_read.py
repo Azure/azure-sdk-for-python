@@ -58,7 +58,7 @@ class TestDACAnalyzeRead(FormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_document)
 
-        poller = client.begin_analyze_document("prebuilt-read", document, cls=callback)
+        poller = client.begin_analyze_document("prebuilt-read", document, features=[AnalysisFeature.LANGUAGES], cls=callback)
         result = poller.result()
         raw_analyze_result = responses[0].analyze_result
         returned_model = responses[1]
@@ -108,8 +108,6 @@ class TestDACAnalyzeRead(FormRecognizerTest):
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
-        assert len(returned_model.languages) > 0
-        self.assertDocumentLanguagesTransformCorrect(returned_model.languages, raw_analyze_result.languages)
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
@@ -146,8 +144,6 @@ class TestDACAnalyzeRead(FormRecognizerTest):
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
-        assert len(returned_model.languages) > 0
-        self.assertDocumentLanguagesTransformCorrect(returned_model.languages, raw_analyze_result.languages)
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
