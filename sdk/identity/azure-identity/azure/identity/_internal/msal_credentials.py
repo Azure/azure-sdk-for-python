@@ -28,6 +28,7 @@ class MsalCredential:   # pylint: disable=too-many-instance-attributes
             *,
             additionally_allowed_tenants: Optional[List[str]] = None,
             allow_broker: Optional[bool] = None,
+            parent_window_handle: Optional[int] = None,
             authority: Optional[str] = None,
             disable_instance_discovery: Optional[bool] = None,
             tenant_id: Optional[str] = None,
@@ -46,6 +47,7 @@ class MsalCredential:   # pylint: disable=too-many-instance-attributes
         self._client_credential = client_credential
         self._client_id = client_id
         self._allow_broker = allow_broker
+        self._parent_window_handle = parent_window_handle
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
         self._cache = kwargs.pop("_cache", None)

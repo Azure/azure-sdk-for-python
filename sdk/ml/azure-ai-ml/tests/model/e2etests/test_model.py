@@ -2,12 +2,11 @@ import os
 import re
 import uuid
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Iterator
 from unittest.mock import patch
 
 import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
-from six import Iterator
 from test_utilities.utils import sleep_if_live
 
 from azure.ai.ml import MLClient, load_model

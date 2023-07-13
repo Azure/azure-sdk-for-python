@@ -13,6 +13,11 @@ all APIs that accept `version_id` will operate on the version ID provided to the
 ### Features Added
 
 
+## 12.17.0 (2023-07-11)
+
+### Features Added
+- Stable release of features from 12.17.0b1
+
 ## 12.17.0b1 (2023-05-30)
 
 ### Features Added

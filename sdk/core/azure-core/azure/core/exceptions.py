@@ -34,6 +34,7 @@ _LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport._base import _HttpResponseBase
+    from azure.core.pipeline.policies import RequestHistory
 
 
 __all__ = [
@@ -70,7 +71,7 @@ def raise_with_traceback(exception: Callable, *args, **kwargs) -> None:
     """
     message = kwargs.pop("message", "")
     exc_type, exc_value, exc_traceback = sys.exc_info()
-    # If not called inside a "except", exc_type will be None. Assume it will not happen
+    # If not called inside an "except", exc_type will be None. Assume it will not happen
     if exc_type is None:
         raise ValueError("raise_with_traceback can only be used in except clauses")
     exc_msg = "{}, {}: {}".format(message, exc_type.__name__, exc_value)
@@ -383,7 +384,8 @@ class ResourceNotModifiedError(HttpResponseError):
 class TooManyRedirectsError(HttpResponseError):
     """Reached the maximum number of redirect attempts.
 
-    :param list[str] history: The history of requests made while trying to fulfill the request.
+    :param history: The history of requests made while trying to fulfill the request.
+    :type history: list[~azure.core.pipeline.policies.RequestHistory]
     """
 
     def __init__(self, history, *args, **kwargs):

@@ -20,7 +20,8 @@ from ._models import (
     RemoveParticipantResult,
     TransferCallResult,
     MediaStreamingConfiguration,
-    ChannelAffinity
+    ChannelAffinity,
+    MuteParticipantsResult
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -48,7 +49,7 @@ from ._generated.models._enums import (
     Gender
 )
 __all__ = [
-    # clients and parser
+    # clients
     "CallAutomationClient",
     "CallConnectionClient",
 
@@ -60,6 +61,7 @@ __all__ = [
     "TextSource",
     "SsmlSource",
     "ChannelAffinity",
+    "MediaStreamingConfiguration",
 
     # models for output
     "CallConnectionProperties",
@@ -68,7 +70,7 @@ __all__ = [
     "AddParticipantResult",
     "RemoveParticipantResult",
     "TransferCallResult",
-    "MediaStreamingConfiguration",
+    "MuteParticipantsResult",
 
     # common ACS communication identifier
     "CommunicationIdentifier",
