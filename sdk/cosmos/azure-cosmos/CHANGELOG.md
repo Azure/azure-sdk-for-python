@@ -4,7 +4,7 @@
 
 #### Features Added
 * Added **provisional** ability to limit Continuation Token size when querying for items. See [PR 30731](https://github.com/Azure/azure-sdk-for-python/pull/30731)
-
+* Added Support for Subpartitioning in Python SDK. See [PR 31121](https://github.com/Azure/azure-sdk-for-python/pull/31121)
 #### Breaking Changes
 
 #### Bugs Fixed
