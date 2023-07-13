@@ -37,7 +37,6 @@ from ._constants import SchemaFormat
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
-    from azure.core.pipeline.async_base import AsyncPipelineResponse
     from azure.core.rest import HttpResponse, AsyncHttpResponse
 
 
@@ -67,7 +66,7 @@ def _get_format(content_type: str) -> SchemaFormat:
 
 def prepare_schema_properties_result(  # pylint:disable=unused-argument,redefined-builtin
     format: str,
-    pipeline_response: Union["PipelineResponse", "AsyncPipelineResponse"],
+    pipeline_response: "PipelineResponse",
     deserialized: Union[Iterator[bytes], AsyncIterator[bytes]],
     response_headers: Mapping[str, Union[str, int]],
 ) -> Dict[str, Union[str, int]]:
@@ -78,7 +77,7 @@ def prepare_schema_properties_result(  # pylint:disable=unused-argument,redefine
 
 
 def prepare_schema_result(  # pylint:disable=unused-argument
-    pipeline_response: Union["PipelineResponse", "AsyncPipelineResponse"],
+    pipeline_response: "PipelineResponse",
     deserialized: Union[Iterator[bytes], AsyncIterator[bytes]],
     response_headers: Mapping[str, Union[str, int]],
 ) -> Tuple[Union["HttpResponse", "AsyncHttpResponse"], Dict[str, Union[int, str]]]:
