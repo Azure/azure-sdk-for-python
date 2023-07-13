@@ -776,7 +776,7 @@ class DataLakeFileClient(PathClient):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: True if a file exists, otherwise returns False.
-        :rtype: boolean
+        :rtype: bool
         """
         return self._exists(**kwargs)
 
