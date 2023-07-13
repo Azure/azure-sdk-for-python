@@ -46,7 +46,7 @@ HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 _LOGGER = logging.getLogger(__name__)
 
 
-class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
+class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
     """Async flavor of the retry policy.
 
     The async retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.

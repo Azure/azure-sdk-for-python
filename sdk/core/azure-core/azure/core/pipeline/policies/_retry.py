@@ -359,7 +359,7 @@ class RetryPolicyBase:
         retry_settings["file_positions"] = file_positions
 
 
-class RetryPolicy(RetryPolicyBase, HTTPPolicy):
+class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """A retry policy.
 
     The retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.

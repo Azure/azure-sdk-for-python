@@ -61,7 +61,7 @@ def _default_network_span_namer(http_request: HTTPRequestType) -> str:
     return path
 
 
-class DistributedTracingPolicy(SansIOHTTPPolicy):
+class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """The policy to create spans for Azure calls.
 
     :keyword network_span_namer: A callable to customize the span name

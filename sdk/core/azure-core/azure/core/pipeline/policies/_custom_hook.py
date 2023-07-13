@@ -33,7 +33,7 @@ HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 
-class CustomHookPolicy(SansIOHTTPPolicy):
+class CustomHookPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """A simple policy that enable the given callback
     with the response.
 

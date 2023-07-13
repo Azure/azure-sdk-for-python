@@ -149,7 +149,7 @@ class RedirectPolicyBase:
         return settings["redirects"] >= 0
 
 
-class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
+class RedirectPolicy(RedirectPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """A redirect policy.
 
     A redirect policy in the pipeline can be configured directly or per operation.

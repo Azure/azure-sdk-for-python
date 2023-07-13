@@ -25,7 +25,7 @@ AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, Lega
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 
-class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
+class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
     """Adds a bearer token Authorization header to requests.
 
     :param credential: The credential.

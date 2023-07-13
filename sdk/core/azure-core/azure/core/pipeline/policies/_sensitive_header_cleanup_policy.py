@@ -25,14 +25,15 @@
 # --------------------------------------------------------------------------
 from typing import List, Optional, Any, TypeVar
 from azure.core.pipeline import PipelineRequest
-from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
-from azure.core.rest import HttpRequest
+from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest, HttpResponse as LegacyHttpResponse
+from azure.core.rest import HttpRequest, HttpResponse
 from ._base import SansIOHTTPPolicy
 
+HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 
-class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
+class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """A simple policy that cleans up sensitive headers
 
     :keyword list[str] blocked_redirect_headers: The headers to clean up when redirecting to another domain.

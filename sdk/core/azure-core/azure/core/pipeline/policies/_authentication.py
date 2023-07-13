@@ -69,7 +69,7 @@ class _BearerTokenCredentialPolicyBase:
         return not self._token or self._token.expires_on - time.time() < 300
 
 
-class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
+class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """Adds a bearer token Authorization header to requests.
 
     :param credential: The credential.
@@ -208,7 +208,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         request.http_request.headers[self._name] = f"{self._prefix}{self._credential.key}"
 
 
-class AzureSasCredentialPolicy(SansIOHTTPPolicy):
+class AzureSasCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """Adds a shared access signature to query for the provided credential.
 
     :param credential: The credential used to authenticate requests.
