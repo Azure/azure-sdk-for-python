@@ -6,11 +6,10 @@
 import functools
 
 from azure.mgmt.cosmosdb import CosmosDBManagementClient
-from azure.mgmt.storage.models import StorageAccount, Endpoints
+from azure.mgmt.storage.models import StorageAccount
 from azure.mgmt.cosmosdb.models import (
     DatabaseAccountCreateUpdateParameters,
     Capability,
-    CreateUpdateOptions
 )
 
 from azure_devtools.scenario_tests.exceptions import AzureTestError

@@ -1,12 +1,21 @@
 # Release History
 
-## 7.11.1 (Unreleased)
+## 7.11.2 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 7.11.1 (2023-07-12)
+
+### Bugs Fixed
+
+- Fixed the error `end frame received on invalid channel` which was raised when a disconnect was sent by the service ([#30860](https://github.com/Azure/azure-sdk-for-python/pull/30860))
+- Fixed the error `link already closed` which was raised when the client was closing and disconnecting from the service ([#30836](https://github.com/Azure/azure-sdk-for-python/pull/30836))
 
 ### Other Changes
 

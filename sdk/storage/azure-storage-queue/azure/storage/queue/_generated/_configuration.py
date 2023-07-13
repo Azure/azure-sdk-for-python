@@ -6,10 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import sys
 from typing import Any
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 VERSION = "unknown"
 
@@ -30,7 +36,7 @@ class AzureQueueStorageConfiguration(Configuration):  # pylint: disable=too-many
 
     def __init__(self, url: str, **kwargs: Any) -> None:
         super(AzureQueueStorageConfiguration, self).__init__(**kwargs)
-        version = kwargs.pop("version", "2018-03-28")  # type: str
+        version: Literal["2018-03-28"] = kwargs.pop("version", "2018-03-28")
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
@@ -40,10 +46,7 @@ class AzureQueueStorageConfiguration(Configuration):  # pylint: disable=too-many
         kwargs.setdefault("sdk_moniker", "azurequeuestorage/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
