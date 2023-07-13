@@ -211,16 +211,13 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         if options.get("partitionKey") is partition_key._Undefined:
             headers[http_constants.HttpHeaders.PartitionKey] = [{}]
         # If partitionKey value is Empty, serialize it as [], which is the equivalent sent for migrated collections
-        elif options.get("partitionKey") is partition_key._Empty or partition_key._Empty in options.get("partitionKey"):
+        elif options.get("partitionKey") is partition_key._Empty:
             headers[http_constants.HttpHeaders.PartitionKey] = []
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
             # single partitioning uses a string and needs to be turned into a list
             pk_val = [options["partitionKey"]] if isinstance(options["partitionKey"], str) else options["partitionKey"]
-            if {} in pk_val:
-                headers[http_constants.HttpHeaders.PartitionKey] = pk_val
-            else:
-                headers[http_constants.HttpHeaders.PartitionKey] = json.dumps(pk_val)
+            headers[http_constants.HttpHeaders.PartitionKey] = json.dumps(pk_val)
 
     if options.get("enableCrossPartitionQuery"):
         headers[http_constants.HttpHeaders.EnableCrossPartitionQuery] = options["enableCrossPartitionQuery"]

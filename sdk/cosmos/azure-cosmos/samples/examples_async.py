@@ -101,8 +101,7 @@ async def examples_async():
         import json
 
         async for item in container.query_items(
-                query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"',
-                enable_cross_partition_query=True,
+                query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"'
         ):
             print(json.dumps(item, indent=True))
         # [END query_items]
@@ -176,6 +175,39 @@ async def examples_async():
         async for item in items:
             print(json.dumps(item, indent=True))
         # [END delete_all_items_by_partition_key]
+
+            # insert items in a subpartitioned container
+            # [START upsert_items]
+            for i in range(1, 10):
+                await container.upsert_item(
+                    dict(id="item{}".format(i), state="WA", city="Redmond", zipcode=98052, population="1000000")
+                )
+            # [END upsert_items]
+
+            # Modify an existing item in the container
+            # [START update_item]
+            item = await container.read_item("item2", partition_key=["WA", "Redmond", 98052])
+            item["value"] = "2000000"
+            updated_item = await container.upsert_item(item)
+            # [END update_item]
+
+            # Query the items in a container using SQL-like syntax. This example
+            # gets all items whose product model hasn't been discontinued.
+            # [START query_items]
+            import json
+
+            async for item in container.query_items(
+                    query='SELECT * FROM location l WHERE l.state = "WA" AND l.population = "1000000"'
+            ):
+                print(json.dumps(item, indent=True))
+            # [END query_items]
+
+            # [START delete_items]
+            async for item in container.query_items(
+                    query='SELECT * FROM location l WHERE l.population = "2000000"'
+            ):
+                await container.delete_item(item, partition_key=["WA", "Redmond", 98052])
+            # [END delete_items]
 
         await client.delete_database(database_name)
         print("Sample done running!")

@@ -2516,14 +2516,30 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
     # Extracts the partition key from the document using the partitionKey definition
     def _ExtractPartitionKey(self, partitionKeyDefinition, document):
+        if partitionKeyDefinition["kind"] == "MultiHash":
+            ret = []
+            for partition_key_level in partitionKeyDefinition.get("paths"):
+                # Parses the paths into a list of token each representing a property
+                partition_key_parts = base.ParsePaths([partition_key_level])
+                # Check if the partitionKey is system generated or not
+                is_system_key = partitionKeyDefinition["systemKey"] if "systemKey" in partitionKeyDefinition else False
 
-        # Parses the paths into a list of token each representing a property
-        partition_key_parts = base.ParsePaths(partitionKeyDefinition.get("paths"))
-        # Check if the partitionKey is system generated or not
-        is_system_key = partitionKeyDefinition["systemKey"] if "systemKey" in partitionKeyDefinition else False
+                # Navigates the document to retrieve the partitionKey specified in the paths
+                val = self._retrieve_partition_key(partition_key_parts, document, is_system_key)
+                if val is _Undefined:
+                    raise ValueError("Undefined Value in MultiHash PartitionKey.")
+                ret.append(val)
+            return ret
 
-        # Navigates the document to retrieve the partitionKey specified in the paths
-        return self._retrieve_partition_key(partition_key_parts, document, is_system_key)
+        else:
+            # Parses the paths into a list of token each representing a property
+            partition_key_parts = base.ParsePaths(partitionKeyDefinition.get("paths"))
+            # Check if the partitionKey is system generated or not
+            is_system_key = partitionKeyDefinition["systemKey"] if "systemKey" in partitionKeyDefinition else False
+
+            # Navigates the document to retrieve the partitionKey specified in the paths
+
+            return self._retrieve_partition_key(partition_key_parts, document, is_system_key)
 
     # Navigates the document to retrieve the partitionKey specified in the partition key parts
     def _retrieve_partition_key(self, partition_key_parts, document, is_system_key):

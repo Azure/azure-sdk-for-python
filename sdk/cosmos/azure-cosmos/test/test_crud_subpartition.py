@@ -125,7 +125,8 @@ class CRUDTests(unittest.TestCase):
         created_recorder = RecordDiagnostics()
         created_collection = created_db.create_container(id=collection_id,
                                                          indexing_policy=collection_indexing_policy,
-                                                         partition_key=PartitionKey(path=["/pk1", "/pk2", "/pk3"], kind="MultiHash"),
+                                                         partition_key=PartitionKey(path=["/pk1", "/pk2", "/pk3"],
+                                                                                    kind="MultiHash"),
                                                          response_hook=created_recorder)
         self.assertEqual(collection_id, created_collection.id)
         assert isinstance(created_recorder.headers, Mapping)
@@ -159,14 +160,18 @@ class CRUDTests(unittest.TestCase):
                                            created_container.read)
 
         container_proxy = created_db.create_container_if_not_exists(id=created_collection.id,
-                                                                    partition_key=PartitionKey(path=["/id1", "/id2", "/id3"], kind='MultiHash'))
+                                                                    partition_key=PartitionKey(path=
+                                                                                               ["/id1", "/id2", "/id3"],
+                                                                                               kind='MultiHash'))
         self.assertEqual(created_collection.id, container_proxy.id)
-        self.assertDictEqual(PartitionKey(path=["/id1", "/id2", "/id3"], kind='MultiHash'), container_proxy._properties['partitionKey'])
+        self.assertDictEqual(PartitionKey(path=["/id1", "/id2", "/id3"], kind='MultiHash'),
+                             container_proxy._properties['partitionKey'])
 
         container_proxy = created_db.create_container_if_not_exists(id=created_collection.id,
                                                                     partition_key=created_properties['partitionKey'])
         self.assertEqual(created_container.id, container_proxy.id)
-        self.assertDictEqual(PartitionKey(path=["/id1", "/id2", "/id3"], kind='MultiHash'), container_proxy._properties['partitionKey'])
+        self.assertDictEqual(PartitionKey(path=["/id1", "/id2", "/id3"], kind='MultiHash'),
+                             container_proxy._properties['partitionKey'])
 
         created_db.delete_container(created_collection.id)
 
@@ -202,7 +207,6 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(expected_offer.offer_throughput, offer_throughput)
 
         created_db.delete_container(created_collection.id)
-
 
     def test_partitioned_collection_partition_key_extraction(self):
         created_db = self.databaseForTest
@@ -242,10 +246,12 @@ class CRUDTests(unittest.TestCase):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # Create document with partitionkey not present in the document
-        created_document = created_collection2.create_item(document_definition)
-        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEqual(self.last_headers[1], [{}, {}])
-        del self.last_headers[:]
+        try:
+            created_document = created_collection2.create_item(document_definition)
+            _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+            self.assertFalse(True, 'Operation Should Fail.')
+        except ValueError as error:
+            self.assertEqual(str(error), "Undefined Value in MultiHash PartitionKey.")
 
         created_db.delete_container(created_collection.id)
         created_db.delete_container(created_collection2.id)
@@ -307,29 +313,15 @@ class CRUDTests(unittest.TestCase):
         created_db.delete_container(created_collection1.id)
         created_db.delete_container(created_collection2.id)
 
-    def test_partitioned_collection_path_parser(self):
-        test_dir = os.path.dirname(os.path.abspath(__file__))
-        with open(os.path.join(test_dir, "BaselineTest.PathParser.json")) as json_file:
-            entries = json.loads(json_file.read())
-        for entry in entries:
-            parts = base.ParsePaths([entry['path']])
-            self.assertEqual(parts, entry['parts'])
-
-        paths = ["/\"Ke \\ \\\" \\\' \\? \\a \\\b \\\f \\\n \\\r \\\t \\v y1\"/*"]
-        parts = ["Ke \\ \\\" \\\' \\? \\a \\\b \\\f \\\n \\\r \\\t \\v y1", "*"]
-        self.assertEqual(parts, base.ParsePaths(paths))
-
-        paths = ["/'Ke \\ \\\" \\\' \\? \\a \\\b \\\f \\\n \\\r \\\t \\v y1'/*"]
-        parts = ["Ke \\ \\\" \\\' \\? \\a \\\b \\\f \\\n \\\r \\\t \\v y1", "*"]
-        self.assertEqual(parts, base.ParsePaths(paths))
-
     def test_partitioned_collection_document_crud_and_query(self):
         created_db = self.databaseForTest
 
-        created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
+        created_collection = self.configs.create_multi_hash_multi_partition_collection_if_not_exist(self.client)
 
         document_definition = {'id': 'document',
-                               'key': 'value'}
+                               'key': 'value',
+                               'city': 'Redmond',
+                               'zipcode': '98052'}
 
         created_document = created_collection.create_item(
             body=document_definition
@@ -337,15 +329,19 @@ class CRUDTests(unittest.TestCase):
 
         self.assertEqual(created_document.get('id'), document_definition.get('id'))
         self.assertEqual(created_document.get('key'), document_definition.get('key'))
+        self.assertEqual(created_document.get('city'), document_definition.get('city'))
+        self.assertEqual(created_document.get('zipcode'), document_definition.get('zipcode'))
 
         # read document
         read_document = created_collection.read_item(
             item=created_document.get('id'),
-            partition_key=created_document.get('id')
+            partition_key=[created_document.get('city'), created_document.get('zipcode')]
         )
 
         self.assertEqual(read_document.get('id'), created_document.get('id'))
         self.assertEqual(read_document.get('key'), created_document.get('key'))
+        self.assertEqual(read_document.get('city'), created_document.get('city'))
+        self.assertEqual(read_document.get('zipcode'), created_document.get('zipcode'))
 
         # Read document feed doesn't require partitionKey as it's always a cross partition query
         documentlist = list(created_collection.read_all_items())
@@ -364,26 +360,33 @@ class CRUDTests(unittest.TestCase):
         # upsert document(create scenario)
         document_definition['id'] = 'document2'
         document_definition['key'] = 'value2'
+        document_definition['city'] = 'Atlanta'
+        document_definition['zipcode'] = '30363'
 
         upserted_document = created_collection.upsert_item(body=document_definition)
 
         self.assertEqual(upserted_document.get('id'), document_definition.get('id'))
         self.assertEqual(upserted_document.get('key'), document_definition.get('key'))
+        self.assertEqual(upserted_document.get('city'), document_definition.get('city'))
+        self.assertEqual(upserted_document.get('zipcode'), document_definition.get('zipcode'))
 
         documentlist = list(created_collection.read_all_items())
         self.assertEqual(2, len(documentlist))
 
         # delete document
-        created_collection.delete_item(item=upserted_document, partition_key=upserted_document.get('id'))
+        created_collection.delete_item(item=upserted_document, partition_key=[upserted_document.get('city'),
+                                                                              upserted_document.get('zipcode')])
 
-        # query document on the partition key specified in the predicate will pass even without setting enableCrossPartitionQuery or passing in the partitionKey value
+        # query document on the partition key specified in the predicate will pass even without setting
+        # enableCrossPartitionQuery or passing in the partitionKey value
         documentlist = list(created_collection.query_items(
             {
-                'query': 'SELECT * FROM root r WHERE r.id=\'' + replaced_document.get('id') + '\''  # nosec
+                'query': 'SELECT * FROM root r WHERE r.city=\'' + replaced_document.get('city') + '\' and r.zipcode=\'' + replaced_document.get('zipcode') + '\''  # pylint: disable=line-too-long
             }))
         self.assertEqual(1, len(documentlist))
 
-        # query document on any property other than partitionKey will fail without setting enableCrossPartitionQuery or passing in the partitionKey value
+        # query document on any property other than partitionKey will fail without setting enableCrossPartitionQuery
+        # or passing in the partitionKey value
         try:
             list(created_collection.query_items(
                 {
@@ -403,16 +406,46 @@ class CRUDTests(unittest.TestCase):
         # query document by providing the partitionKey value
         documentlist = list(created_collection.query_items(
             query='SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\'',  # nosec
-            partition_key=replaced_document.get('id')
+            partition_key=[replaced_document.get('city'), replaced_document.get('zipcode')]
         ))
 
         self.assertEqual(1, len(documentlist))
 
+        # Using incomplete extracted partition key in item body
+        incomplete_document ={'id': 'document3',
+                              'key': 'value3',
+                              'city': 'Vancouver'}
+
+        try:
+            created_collection.create_item(body=incomplete_document)
+            raise Exception("Test did not fail as expected.")
+        except ValueError as error:
+            self.assertTrue("Undefined Value in MultiHash PartitionKey." in
+                            str(error))
+
+        # using incomplete partition key in read item
+        try:
+            created_collection.read_item(created_document, partition_key=["Redmond"])
+            raise Exception("Test did not fail as expected")
+        except exceptions.CosmosHttpResponseError as error:
+            self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
+            self.assertTrue("Partition key provided either doesn't correspond to definition in the collection"
+                            in error.message)
+
+        # using mix value types for partition key
+        doc_mixed_types={'id': "doc4",
+                         'key': 'value4',
+                         'city': None,
+                         'zipcode': 1000}
+        created_mixed_type_doc = created_collection.create_item(body=doc_mixed_types)
+        self.assertEqual(doc_mixed_types.get('city'), created_mixed_type_doc.get('city'))
+        self.assertEqual(doc_mixed_types.get('zipcode'), created_mixed_type_doc.get('zipcode'))
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
         self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
                                     if HttpHeaders.PartitionKey in args[4].headers else '')
         return self.OriginalExecuteFunction(function, *args, **kwargs)
+
 
 if __name__ == '__main__':
     try:

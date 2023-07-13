@@ -2659,7 +2659,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
                 # Navigates the document to retrieve the partitionKey specified in the paths
                 val = self._retrieve_partition_key(partition_key_parts, document, is_system_key)
-                val = {} if val is _Undefined else val
+                if val is _Undefined:
+                    raise ValueError("Undefined Value in MultiHash PartitionKey.")
                 ret.append(val)
             return ret
 
