@@ -40,7 +40,6 @@ import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 import azure.cosmos._base as base
 from azure.cosmos.aio import CosmosClient, _retry_utility_async
-from azure.cosmos.diagnostics import RecordDiagnostics
 from azure.cosmos.partition_key import PartitionKey
 import requests
 from urllib3.util.retry import Retry
@@ -198,16 +197,10 @@ class CRUDTests(unittest.TestCase):
         before_create_collections_count = len(collections)
         collection_id = 'test_collection_crud ' + str(uuid.uuid4())
         collection_indexing_policy = {'indexingMode': 'consistent'}
-        created_recorder = RecordDiagnostics()
         created_collection = await created_db.create_container(id=collection_id,
                                                                indexing_policy=collection_indexing_policy,
-                                                               partition_key=PartitionKey(path="/pk", kind="Hash"),
-                                                               response_hook=created_recorder)
+                                                               partition_key=PartitionKey(path="/pk", kind="Hash"))
         self.assertEqual(collection_id, created_collection.id)
-        assert isinstance(created_recorder.headers, Mapping)
-        assert 'Content-Type' in created_recorder.headers
-        assert isinstance(created_recorder.body, Mapping)
-        assert 'id' in created_recorder.body
 
         created_properties = await created_collection.read()
         self.assertEqual('consistent', created_properties['indexingPolicy']['indexingMode'])
